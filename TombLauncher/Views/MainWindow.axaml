@@ -1,13 +1,14 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:TombLauncher.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:controls="clr-namespace:TombLauncher.Controls"
+        xmlns:viewModels="clr-namespace:TombLauncher.ViewModels.ViewModels;assembly=TombLauncher.ViewModels"
+        xmlns:vm="clr-namespace:TombLauncher.ViewModels.ViewModels;assembly=TombLauncher.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
+        x:DataType="viewModels:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="{Binding Title}">
 
@@ -22,7 +23,7 @@
             <StackPanel Orientation="Vertical">
                 <controls:IconButton ToolTip.Tip="Menu" Icon="Menu" Command="{Binding TogglePaneCmd}"></controls:IconButton>
                 
-                <ListBox Margin="2 0 -100 0" ItemsSource="{Binding MenuItems}">
+                <ListBox Margin="2 0 -100 0" ItemsSource="{Binding MenuItems}" SelectionMode="Single" SelectedItem="{Binding SelectedMenuItem}">
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="12 8"/>
@@ -42,7 +43,7 @@
             </StackPanel>
             
         </SplitView.Pane>
-        <TextBlock></TextBlock>
+        <TransitioningContentControl Content="{Binding CurrentPage}" />
     </SplitView>
     
 

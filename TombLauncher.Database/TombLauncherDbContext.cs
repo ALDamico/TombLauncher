@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TombLauncher.Database.Entities;
 using TombLauncher.Models;
 
 namespace TombLauncher.Database;

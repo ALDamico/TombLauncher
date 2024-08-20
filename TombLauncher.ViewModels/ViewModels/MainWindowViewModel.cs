@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
+using TombLauncher.Database.Entities;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Models;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
@@ -20,7 +20,8 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 ToolTip = "Welcome",
                 Icon = MaterialIconKind.HomeOutline,
-                Text = "Welcome"
+                Text = "Welcome",
+                PageViewModelFactory = new WelcomePageViewModel() { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" }
             },
             new MainMenuItemViewModel()
             {
@@ -48,13 +49,29 @@ public partial class MainWindowViewModel : ViewModelBase
         get => _isPaneOpen;
         set => SetProperty(ref _isPaneOpen, value);
     }
-    
+
     public ICommand TogglePaneCmd { get; }
 
     private void TogglePane()
     {
         IsPaneOpen = !IsPaneOpen;
     }
-    
+
     public ObservableCollection<MainMenuItemViewModel> MenuItems { get; }
+    private MainMenuItemViewModel _selectedMenuItem;
+
+    public MainMenuItemViewModel SelectedMenuItem
+    {
+        get => _selectedMenuItem;
+        set
+        {
+            SetProperty(ref _selectedMenuItem, value);
+            if (value != null)
+            {
+                CurrentPage = value.PageViewModelFactory;
+            }
+        }
+    }
+
+    [ObservableProperty] private PageViewModel _currentPage;
 }

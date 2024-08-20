@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.ViewModels;
 
 public abstract class ViewModelBase : ObservableObject
 {

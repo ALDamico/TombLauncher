@@ -1,6 +1,6 @@
 ﻿using Material.Icons;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.ViewModels;
 
 public class MainMenuItemViewModel : ViewModelBase
 {
@@ -25,5 +25,13 @@ public class MainMenuItemViewModel : ViewModelBase
     {
         get => _tooltip;
         set => SetProperty(ref _tooltip, value);
+    }
+
+    private Lazy<PageViewModel> _pageViewModelFactory;
+
+    public PageViewModel PageViewModelFactory
+    {
+        get => _pageViewModelFactory.Value;
+        set => _pageViewModelFactory = new Lazy<PageViewModel>(() => value);
     }
 }

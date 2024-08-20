@@ -35,9 +35,6 @@ namespace TombLauncher.Database.Migrations
                     b.Property<DateTime?>("InstallDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("LastPlayed")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Length")
                         .HasColumnType("INTEGER");
 

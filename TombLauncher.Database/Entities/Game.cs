@@ -1,6 +1,6 @@
-﻿using System;
+﻿using TombLauncher.Models;
 
-namespace TombLauncher.Models;
+namespace TombLauncher.Database.Entities;
 
 public class Game
 {
@@ -9,9 +9,7 @@ public class Game
     public string Author { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public DateTime? InstallDate { get; set; }
-    public DateTime? LastPlayed { get; set; }
     public GameEngine GameEngine { get; set; }
-    public TimeSpan TimePlayed { get; set; }
     public string Setting { get; set; }
     public GameLength Length { get; set; }
     public GameDifficulty Difficulty { get; set; }

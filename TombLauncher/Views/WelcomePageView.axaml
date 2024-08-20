@@ -1,0 +1,18 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels.ViewModels;assembly=TombLauncher.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.WelcomePageView"
+             x:DataType="viewModels:WelcomePageViewModel">
+    <Design.DataContext>
+        <viewModels:WelcomePageViewModel/>
+    </Design.DataContext>
+    <StackPanel>
+        <TextBlock FontSize="20" FontWeight="DemiBold">Welcome to Tomb Launcher</TextBlock>
+        <TextBlock>Tomb Launcher is a Tomb Raider Level Editor manager.</TextBlock>
+        <mdxaml:MarkdownScrollViewer Source="{Binding ChangeLogPath}" />
+    </StackPanel>
+</UserControl>

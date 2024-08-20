@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.ViewModels;
+using TombLauncher.ViewModels.ViewModels;
 using TombLauncher.Views;
 
 namespace TombLauncher;

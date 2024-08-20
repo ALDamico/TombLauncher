@@ -11,7 +11,7 @@ using TombLauncher.Database;
 namespace TombLauncher.Database.Migrations
 {
     [DbContext(typeof(TombLauncherDbContext))]
-    [Migration("20240814113142_Initial")]
+    [Migration("20240818134035_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -36,9 +36,6 @@ namespace TombLauncher.Database.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("InstallDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("LastPlayed")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Length")

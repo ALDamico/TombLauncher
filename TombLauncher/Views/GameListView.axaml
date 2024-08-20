@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="clr-namespace:TombLauncher.ViewModels.ViewModels;assembly=TombLauncher.ViewModels"
+             xmlns:controls="clr-namespace:TombLauncher.Controls"
+             x:Class="TombLauncher.Views.GameListView"
+             x:DataType="vm:GameListViewModel">
+    <Design.DataContext>
+        <vm:GameListViewModel/>
+    </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <DockPanel Grid.Row="0" LastChildFill="False">
+            <controls:IconButton Icon="Plus" ToolTip.Tip="Add"/>
+        </DockPanel>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Games}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Title}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

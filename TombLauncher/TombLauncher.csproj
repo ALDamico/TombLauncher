@@ -19,18 +19,21 @@
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.3" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.3" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.1.0" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+        <PackageReference Include="Markdown.Avalonia" Version="11.0.2" />
         <PackageReference Include="Material.Icons" Version="2.1.10" />
         <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Database\" />
-      <Folder Include="Models\" />
+      <ProjectReference Include="..\TombLauncher.Database\TombLauncher.Database.csproj" />
+      <ProjectReference Include="..\TombLauncher.ViewModels\TombLauncher.ViewModels.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TombLauncher.Database\TombLauncher.Database.csproj" />
+      <None Remove="Data\CHANGELOG.md" />
+      <AvaloniaResource Include="Data\CHANGELOG.md" />
     </ItemGroup>
 </Project>
