@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TombLauncher.Database\TombLauncher.Database.csproj" />
+      <ProjectReference Include="..\TombLauncher.Utils\TombLauncher.Utils.csproj" />
     </ItemGroup>
 
     <ItemGroup>

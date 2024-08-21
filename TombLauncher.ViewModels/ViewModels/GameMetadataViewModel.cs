@@ -13,4 +13,6 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private string _setting;
     [ObservableProperty] private string _length;
     [ObservableProperty] private string _difficulty;
+    [ObservableProperty] private string _installDirectory;
+    [ObservableProperty] private string _executablePath;
 }

@@ -10,9 +10,14 @@
     <Design.DataContext>
         <viewModels:WelcomePageViewModel/>
     </Design.DataContext>
-    <StackPanel>
-        <TextBlock FontSize="20" FontWeight="DemiBold">Welcome to Tomb Launcher</TextBlock>
-        <TextBlock>Tomb Launcher is a Tomb Raider Level Editor manager.</TextBlock>
-        <mdxaml:MarkdownScrollViewer Source="{Binding ChangeLogPath}" />
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" FontSize="20" FontWeight="DemiBold">Welcome to Tomb Launcher</TextBlock>
+        <TextBlock Grid.Row="1">Tomb Launcher is a Tomb Raider Level Editor manager.</TextBlock>
+        <mdxaml:MarkdownScrollViewer Grid.Row="2" Source="{Binding ChangeLogPath}" />
+    </Grid>
 </UserControl>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 using TombLauncher.Database.Entities;
@@ -27,19 +28,12 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 ToolTip = "My mods",
                 Icon = MaterialIconKind.Games,
-                Text = "My mods"
+                Text = "My mods",
+                PageViewModelFactory = Ioc.Default.GetRequiredService<GameListViewModel>()
             }
         };
+        CurrentPage = MenuItems.First().PageViewModelFactory;
         Title = "Tomb Launcher";
-        var tombRaider = new Game()
-        {
-            Title = "Tomb Raider",
-            Author = "Core Design",
-            ReleaseDate = new DateTime(1996, 11, 29),
-            GameEngine = GameEngine.TombRaider1
-        };
-        gamesUoW.Games.Insert(tombRaider);
-        var games = gamesUoW.Games.GetAll().ToList();
     }
 
     private bool _isPaneOpen;

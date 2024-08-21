@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace TombLauncher.ViewModels.Extensions;
+namespace TombLauncher.Utils;
 
 public static class EnumExtensions
 {

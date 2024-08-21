@@ -5,24 +5,42 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="clr-namespace:TombLauncher.ViewModels.ViewModels;assembly=TombLauncher.ViewModels"
              xmlns:controls="clr-namespace:TombLauncher.Controls"
+             xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
+             xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              x:Class="TombLauncher.Views.GameListView"
-             x:DataType="vm:GameListViewModel">
+             x:DataType="vm:GameListViewModel"
+             >
     <Design.DataContext>
         <vm:GameListViewModel/>
     </Design.DataContext>
+    
+    <Interaction.Behaviors>
+        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}"/>
+    </Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
+        <Border Grid.Row="0" Grid.RowSpan="3" IsVisible="{Binding IsBusy}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock>Loading games...</TextBlock>
+                <avaloniaProgressRing:ProgressRing IsActive="{Binding IsBusy}" Foreground="Blue" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="100"/>
+            </StackPanel>
+        </Border>
+        
+        
         <DockPanel Grid.Row="0" LastChildFill="False">
-            <controls:IconButton Icon="Plus" ToolTip.Tip="Add"/>
+            <controls:IconButton Icon="Plus" ToolTip.Tip="Add" Command="{Binding AddGameCmd}"/>
         </DockPanel>
         <DataGrid Grid.Row="1" ItemsSource="{Binding Games}">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Title}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
+        
+        
     </Grid>
 </UserControl>

@@ -1,18 +1,16 @@
-﻿using TombLauncher.Models;
+﻿namespace TombLauncher.Database.Dto;
 
-namespace TombLauncher.Database.Entities;
-
-public class Game
+public class GameMetadataDto
 {
     public int Id { get; set; }
     public string Title { get; set; }
     public string Author { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public DateTime? InstallDate { get; set; }
-    public GameEngine GameEngine { get; set; }
+    public string GameEngine { get; set; }
     public string Setting { get; set; }
-    public GameLength Length { get; set; }
-    public GameDifficulty Difficulty { get; set; }
+    public string Length { get; set; }
+    public string Difficulty { get; set; }
     public string InstallDirectory { get; set; }
     public string ExecutablePath { get; set; }
 }

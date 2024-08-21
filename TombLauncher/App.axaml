@@ -14,5 +14,6 @@
     <Application.Styles>
         <FluentTheme />
         <materialIcons:MaterialIconStyles/>
+        <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml"/>
     </Application.Styles>
 </Application>

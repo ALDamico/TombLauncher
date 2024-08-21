@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
+using TombLauncher.Database.Dto;
+using TombLauncher.Database.Dto.Extensions;
 using TombLauncher.Database.Entities;
 using TombLauncher.Database.Repositories;
 using TombLauncher.Models;
@@ -20,7 +22,7 @@ public class GamesUnitOfWork : IDisposable
     private Lazy<EfRepository<Game>> _games;
     private bool _disposed;
 
-    public EfRepository<Game> Games
+    internal EfRepository<Game> Games
         => _games.Value;
 
     public void Save()
@@ -37,7 +39,12 @@ public class GamesUnitOfWork : IDisposable
             }
         }
 
-        this._disposed = true;
+        _disposed = true;
+    }
+
+    public List<GameMetadataDto> GetGames()
+    {
+        return Games.GetAll().AsEnumerable().ToDtos().ToList();
     }
 
     public void Dispose()
