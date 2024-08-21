@@ -37,4 +37,8 @@
       <None Remove="Data\CHANGELOG.md" />
       <AvaloniaResource Include="Data\CHANGELOG.md" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Navigation\" />
+    </ItemGroup>
 </Project>

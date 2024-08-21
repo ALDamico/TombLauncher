@@ -37,10 +37,24 @@
         <DockPanel Grid.Row="0" LastChildFill="False">
             <controls:IconButton DockPanel.Dock="Right" Icon="Plus" ToolTip.Tip="Add" Command="{Binding AddGameCmd}" />
         </DockPanel>
+
         <StackPanel Grid.Row="1" HorizontalAlignment="Center"
-                    IsVisible="{Binding Games, Converter={StaticResource CollectionEmptyToVisibilityConverter}}">
-            <TextBlock FontSize="20" FontWeight="DemiBold" HorizontalAlignment="Center" Text="No games" />
-            <TextBlock FontStyle="Italic" HorizontalAlignment="Center">Try adding one</TextBlock>
+                    IsVisible="{Binding Games, Converter={StaticResource CollectionEmptyToVisibilityConverter}}"
+                    Orientation="Horizontal" VerticalAlignment="Center">
+            <Image Source="/Assets/Lara_Croft_Flashlight.png" Height="320" >
+                <Image.OpacityMask>
+                    <LinearGradientBrush StartPoint="0.1,0.1" EndPoint="1, 1">
+                        <LinearGradientBrush.GradientStops>
+                            <GradientStop Offset="0" Color="White"/>
+                            <GradientStop Offset="1" Color="Black"/>
+                        </LinearGradientBrush.GradientStops>
+                    </LinearGradientBrush>
+                </Image.OpacityMask>
+            </Image>
+            <StackPanel Orientation="Vertical">
+                <TextBlock FontSize="20" FontWeight="DemiBold" HorizontalAlignment="Center" Text="No games" />
+                <TextBlock FontStyle="Italic" HorizontalAlignment="Center">Try adding one</TextBlock>
+            </StackPanel>
         </StackPanel>
         <DataGrid Grid.Row="1" ItemsSource="{Binding Games}"
                   IsVisible="{Binding Games, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">

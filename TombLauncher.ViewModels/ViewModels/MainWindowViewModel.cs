@@ -1,20 +1,21 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
-using TombLauncher.Database.Entities;
 using TombLauncher.Database.UnitOfWork;
-using TombLauncher.Models;
+using TombLauncher.ViewModels.Navigation;
 
 namespace TombLauncher.ViewModels.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public MainWindowViewModel(GamesUnitOfWork gamesUoW)
+    public MainWindowViewModel(GamesUnitOfWork gamesUoW, NavigationManager navigationManager)
     {
+        _navigationManager = navigationManager;
+        _navigationManager.OnNavigated += OnNavigated;
         TogglePaneCmd = new RelayCommand(TogglePane);
+        GoBackCmd = new RelayCommand(GoBack, CanGoBack);
         MenuItems = new ObservableCollection<MainMenuItemViewModel>()
         {
             new MainMenuItemViewModel()
@@ -22,7 +23,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 ToolTip = "Welcome",
                 Icon = MaterialIconKind.HomeOutline,
                 Text = "Welcome",
-                PageViewModelFactory = new WelcomePageViewModel() { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" }
+                PageViewModelFactory = Ioc.Default.GetRequiredService<WelcomePageViewModel>()
             },
             new MainMenuItemViewModel()
             {
@@ -32,9 +33,18 @@ public partial class MainWindowViewModel : ViewModelBase
                 PageViewModelFactory = Ioc.Default.GetRequiredService<GameListViewModel>()
             }
         };
-        CurrentPage = MenuItems.First().PageViewModelFactory;
+        
+        _navigationManager.StartNavigation(MenuItems.First().PageViewModelFactory);
         Title = "Tomb Launcher";
     }
+
+    private void OnNavigated()
+    {
+        OnPropertyChanged(nameof(CurrentPage));
+        ((RelayCommand)GoBackCmd).NotifyCanExecuteChanged();
+    }
+
+    private readonly NavigationManager _navigationManager;
 
     private bool _isPaneOpen;
 
@@ -62,10 +72,22 @@ public partial class MainWindowViewModel : ViewModelBase
             SetProperty(ref _selectedMenuItem, value);
             if (value != null)
             {
-                CurrentPage = value.PageViewModelFactory;
+                _navigationManager.StartNavigation(value.PageViewModelFactory);
+                OnNavigated();
             }
         }
     }
 
-    [ObservableProperty] private PageViewModel _currentPage;
+    public PageViewModel CurrentPage => _navigationManager.GetCurrentPage();
+    public ICommand GoBackCmd { get; }
+
+    private void GoBack()
+    {
+        _navigationManager.GoBack();
+        OnNavigated();
+    }
+
+    private bool CanGoBack() => _navigationManager.CanGoBack();
+    
+    
 }

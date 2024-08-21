@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.ViewModels;
+using TombLauncher.ViewModels.Navigation;
 using TombLauncher.ViewModels.ViewModels;
 using TombLauncher.Views;
 
@@ -30,13 +31,19 @@ public partial class App : Application
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddEntityFrameworkSqlite();
+            serviceCollection.AddSingleton(_ => new WelcomePageViewModel(){ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md"});
             serviceCollection.AddScoped<GamesUnitOfWork>();
             serviceCollection.AddScoped<GameListViewModel>();
+            serviceCollection.AddSingleton(sp =>
+            {
+                var defaultPage = sp.GetRequiredService<WelcomePageViewModel>();
+                return new NavigationManager(defaultPage);
+            });
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(Ioc.Default.GetRequiredService<GamesUnitOfWork>()),
+                DataContext = new MainWindowViewModel(Ioc.Default.GetRequiredService<GamesUnitOfWork>(), Ioc.Default.GetRequiredService<NavigationManager>()),
             };
         }
 
