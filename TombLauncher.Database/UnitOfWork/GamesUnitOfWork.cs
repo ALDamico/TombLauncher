@@ -29,6 +29,46 @@ public class GamesUnitOfWork : IDisposable
     {
         _dbContext.SaveChanges();
     }
+
+    public void UpsertGame(GameMetadataDto game)
+    {
+        var entity = ToGame(game);
+        if (entity.Id == default)
+        {
+            Games.Insert(entity);
+        }
+        else
+        {
+            Games.Update(entity);
+        }
+        
+        Save();
+    }
+
+    private static Game ToGame(GameMetadataDto dto)
+    {
+        if (dto == null)
+        {
+            throw new ArgumentException("Dto can't be null", nameof(dto));
+        }
+        Enum.TryParse<GameLength>(dto.Length, out var gameLength);
+        Enum.TryParse<GameDifficulty>(dto.Difficulty, out var gameDifficulty);
+        Enum.TryParse<GameEngine>(dto.GameEngine, out var gameEngine);
+        return new Game()
+        {
+            Id = dto.Id,
+            Author = dto.Author,
+            Length = gameLength,
+            Difficulty = gameDifficulty,
+            Setting = dto.Setting,
+            Title = dto.Title,
+            ExecutablePath = dto.ExecutablePath,
+            GameEngine = gameEngine,
+            InstallDate = dto.InstallDate,
+            InstallDirectory = dto.InstallDirectory,
+            ReleaseDate = dto.ReleaseDate
+        };
+    }
     public void Dispose(bool disposing)
     {
         if (!_disposed)

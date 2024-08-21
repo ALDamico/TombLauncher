@@ -29,4 +29,20 @@ public static class GameExtensions
     {
         return games.Select(ToViewModel);
     }
+
+    public static GameMetadataDto ToDto(this GameMetadataViewModel game)
+    {
+        return new GameMetadataDto()
+        {
+            Id = game.Id,
+            Author = game.Author,
+            GameEngine = game.GameEngine,
+            InstallDate = game.InstallDate,
+            ReleaseDate = game.ReleaseDate,
+            Title = game.Title,
+            Setting = game.Setting,
+            Difficulty = game.Difficulty,
+            Length = game.Length
+        };
+    }
 }

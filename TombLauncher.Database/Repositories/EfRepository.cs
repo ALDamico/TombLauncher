@@ -77,7 +77,13 @@ public class EfRepository<T> : IRepository<T> where T : class
 
     public bool Update(T entity)
     {
-        throw new System.NotImplementedException();
+        if (_dbContext.Entry(entity).State == EntityState.Modified)
+        {
+            _dbSet.Update(entity);
+            return true;
+        }
+
+        return false;
     }
 
     public void Commit()
