@@ -24,7 +24,6 @@ public partial class GameListViewModel : PageViewModel
     private async void OnInit()
     {
         IsBusy = true;
-        await Task.Delay(5000);
         Games = _gamesUnitOfWork.GetGames().ToViewModels().ToObservableCollection();
         IsBusy = false;
     }

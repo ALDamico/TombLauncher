@@ -8,39 +8,50 @@
              xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              x:Class="TombLauncher.Views.GameListView"
-             x:DataType="vm:GameListViewModel"
-             >
+             x:DataType="vm:GameListViewModel">
     <Design.DataContext>
-        <vm:GameListViewModel/>
+        <vm:GameListViewModel />
     </Design.DataContext>
-    
+
     <Interaction.Behaviors>
-        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}"/>
+        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />
     </Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
-        <Border Grid.Row="0" Grid.RowSpan="3" IsVisible="{Binding IsBusy}">
+
+        <Border Grid.Row="0" Grid.RowSpan="3" IsVisible="{Binding IsBusy}" HorizontalAlignment="Center"
+                VerticalAlignment="Center">
             <StackPanel Orientation="Vertical">
-                <TextBlock>Loading games...</TextBlock>
-                <avaloniaProgressRing:ProgressRing IsActive="{Binding IsBusy}" Foreground="Blue" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="100"/>
+                <TextBlock HorizontalAlignment="Center">Loading games...</TextBlock>
+                <avaloniaProgressRing:ProgressRing IsActive="{Binding IsBusy}" Foreground="Blue"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" Width="100"
+                                                   Height="100" />
             </StackPanel>
         </Border>
-        
-        
+
+
         <DockPanel Grid.Row="0" LastChildFill="False">
-            <controls:IconButton Icon="Plus" ToolTip.Tip="Add" Command="{Binding AddGameCmd}"/>
+            <controls:IconButton DockPanel.Dock="Right" Icon="Plus" ToolTip.Tip="Add" Command="{Binding AddGameCmd}" />
         </DockPanel>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Games}">
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center"
+                    IsVisible="{Binding Games, Converter={StaticResource CollectionEmptyToVisibilityConverter}}">
+            <TextBlock FontSize="20" FontWeight="DemiBold" HorizontalAlignment="Center" Text="No games" />
+            <TextBlock FontStyle="Italic" HorizontalAlignment="Center">Try adding one</TextBlock>
+        </StackPanel>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Games}"
+                  IsVisible="{Binding Games, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Title}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Title" Binding="{Binding Title}" />
+                <DataGridTextColumn Header="Release date" Binding="{Binding ReleaseDate}" />
+                <DataGridTextColumn Header="Install date" Binding="{Binding InstallDate}" />
+                <DataGridTextColumn Header="Engine" Binding="{Binding GameEngine}" />
             </DataGrid.Columns>
         </DataGrid>
-        
-        
+
+
     </Grid>
 </UserControl>
