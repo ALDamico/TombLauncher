@@ -27,8 +27,6 @@ public partial class App : Application
             // Line below is needed to remove Avalonia data validation.
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);
-            
-            
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddEntityFrameworkSqlite();
@@ -43,12 +41,5 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
-    }
-
-    private IServiceProvider _serviceProvider;
-
-    public static IServiceProvider GetServiceProvider()
-    {
-        return (Current as App)?._serviceProvider;
     }
 }
