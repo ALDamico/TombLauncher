@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.ComponentModel;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -11,8 +12,9 @@ public partial class PageViewModel : ViewModelBase
         SaveCmd = new RelayCommand(Save, CanSave);
     }
     [ObservableProperty] private bool _isBusy;
+    [ObservableProperty] private string _busyMessage;
 
-    public ICommand SaveCmd { get; protected set; }
+    public RelayCommand SaveCmd { get; protected set; }
     protected virtual bool CanSave() => false;
 
     private async void Save()

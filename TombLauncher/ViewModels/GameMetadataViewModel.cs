@@ -1,5 +1,6 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.ComponentModel;
+using TombLauncher.Models.Models;
 
 namespace TombLauncher.ViewModels;
 
@@ -10,10 +11,10 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private string _author;
     [ObservableProperty] private DateTime? _releaseDate;
     [ObservableProperty] private DateTime? _installDate;
-    [ObservableProperty] private string _gameEngine;
+    [ObservableProperty] private GameEngine _gameEngine;
     [ObservableProperty] private string _setting;
-    [ObservableProperty] private string _length;
-    [ObservableProperty] private string _difficulty;
+    [ObservableProperty] private GameLength _length;
+    [ObservableProperty] private GameDifficulty _difficulty;
     [ObservableProperty] private string _installDirectory;
     [ObservableProperty] private string _executablePath;
     [ObservableProperty] private string _description;

@@ -51,19 +51,17 @@ public class GamesUnitOfWork : IDisposable
         {
             throw new ArgumentException("Dto can't be null", nameof(dto));
         }
-        Enum.TryParse<GameLength>(dto.Length, out var gameLength);
-        Enum.TryParse<GameDifficulty>(dto.Difficulty, out var gameDifficulty);
-        Enum.TryParse<GameEngine>(dto.GameEngine, out var gameEngine);
+        
         return new Game()
         {
             Id = dto.Id,
             Author = dto.Author,
-            Length = gameLength,
-            Difficulty = gameDifficulty,
+            Length = dto.Length,
+            Difficulty = dto.Difficulty,
             Setting = dto.Setting,
             Title = dto.Title,
             ExecutablePath = dto.ExecutablePath,
-            GameEngine = gameEngine,
+            GameEngine = dto.GameEngine,
             InstallDate = dto.InstallDate,
             InstallDirectory = dto.InstallDirectory,
             ReleaseDate = dto.ReleaseDate

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:TombLauncher.Controls"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.NewGameView"
              x:DataType="viewModels:NewGameViewModel">
@@ -22,7 +23,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -31,6 +35,21 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+        
+        <Border Grid.Row="0" Grid.RowSpan="9" Grid.Column="0" Grid.ColumnSpan="4" 
+                IsVisible="{Binding IsBusy}" HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            <StackPanel Orientation="Vertical">
+                
+                <avaloniaProgressRing:ProgressRing IsActive="{Binding IsBusy}" Foreground="Blue"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" Width="100"
+                                                   Height="100" />
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding BusyMessage}"></TextBlock>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding CurrentFile}"></TextBlock>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding PercentageComplete, StringFormat={}{0.00\%}}"></TextBlock>
+            </StackPanel>
+        </Border>
+        
         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Center" FontWeight="DemiBold"
                    FontSize="20">
             Insert new game
@@ -46,7 +65,36 @@
         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding GameMetadata.Author}"/>
         <TextBlock Grid.Row="3" Grid.Column="2" Text="Release date"/>
         <CalendarDatePicker Grid.Row="3" Grid.Column="3" SelectedDate="{Binding GameMetadata.ReleaseDate}"/>
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="Synopsis"/>
-        <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Text="{Binding GameMetadata.Description}"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Length"/>
+        <ComboBox Grid.Row="4" Grid.Column="1" 
+                  ItemsSource="{Binding AvailableLengths}" 
+                  SelectedValueBinding="{Binding Value}" 
+                  SelectedValue="{Binding GameMetadata.Length}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Description}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBlock Grid.Row="4" Grid.Column="2" Text="Difficulty"/>
+        <ComboBox Grid.Row="4" Grid.Column="3" ItemsSource="{Binding AvailableDifficulties}"
+                  SelectedValueBinding="{Binding Value}"
+                  SelectedValue="{Binding GameMetadata.Difficulty}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Description}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Setting"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding GameMetadata.Setting}"/>
+        
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="Synopsis"/>
+        <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4" Text="{Binding GameMetadata.Description}"/>
+        <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4" 
+                    HorizontalAlignment="Right" 
+                    Orientation="Horizontal" >
+            <controls:IconButton Icon="FloppyDisc" Text="Install" Command="{Binding SaveCmd}"></controls:IconButton>
+        </StackPanel>
     </Grid>
 </UserControl>

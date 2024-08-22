@@ -56,7 +56,7 @@
                 <TextBlock FontStyle="Italic" HorizontalAlignment="Center">Try adding one</TextBlock>
             </StackPanel>
         </StackPanel>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Games}"
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Games}" IsReadOnly="True"
                   IsVisible="{Binding Games, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Title" Binding="{Binding Title}" />

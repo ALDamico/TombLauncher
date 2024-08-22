@@ -21,6 +21,7 @@ public partial class GameListViewModel : PageViewModel
         _navigationManager = navigationManager;
         AddGameCmd = new RelayCommand(AddGame);
         Initialize += OnInit;
+        navigationManager.OnNavigated += OnInit;
     }
     
     private readonly NavigationManager _navigationManager;

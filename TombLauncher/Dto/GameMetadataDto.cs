@@ -1,4 +1,5 @@
 ﻿using System;
+using TombLauncher.Models.Models;
 
 namespace TombLauncher.Dto;
 
@@ -9,10 +10,10 @@ public class GameMetadataDto
     public string Author { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public DateTime? InstallDate { get; set; }
-    public string GameEngine { get; set; }
+    public GameEngine GameEngine { get; set; }
     public string Setting { get; set; }
-    public string Length { get; set; }
-    public string Difficulty { get; set; }
+    public GameLength Length { get; set; }
+    public GameDifficulty Difficulty { get; set; }
     public string InstallDirectory { get; set; }
     public string ExecutablePath { get; set; }
     public string Description { get; set; }

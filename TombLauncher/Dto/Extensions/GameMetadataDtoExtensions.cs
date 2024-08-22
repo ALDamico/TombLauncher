@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TombLauncher.Models.Models;
-using TombLauncher.Utils;
 
 namespace TombLauncher.Dto.Extensions;
 
@@ -13,15 +12,16 @@ public static class GameMetadataDtoExtensions
         {
             Id = game.Id,
             Author = game.Author,
-            GameEngine = game.GameEngine.GetDescription(),
+            GameEngine = game.GameEngine,
             InstallDate = game.InstallDate,
             ReleaseDate = game.ReleaseDate,
-            Difficulty = game.Difficulty.GetDescription(),
-            Length = game.Length.GetDescription(),
+            Difficulty = game.Difficulty,
+            Length = game.Length,
             Setting = game.Setting,
             Title = game.Title,
             ExecutablePath = game.ExecutablePath,
             InstallDirectory = game.InstallDirectory,
+            Description = game.Description
         };
     }
 
