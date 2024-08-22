@@ -4,8 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:controls="clr-namespace:TombLauncher.Controls"
-        xmlns:viewModels="clr-namespace:TombLauncher.ViewModels.ViewModels;assembly=TombLauncher.ViewModels"
-        xmlns:vm="clr-namespace:TombLauncher.ViewModels.ViewModels;assembly=TombLauncher.ViewModels"
+        xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
@@ -15,7 +14,7 @@
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <viewModels:MainWindowViewModel/>
     </Design.DataContext>
     <SplitView IsPaneOpen="{Binding IsPaneOpen}" DisplayMode="CompactInline">
         <SplitView.Pane>
@@ -30,7 +29,7 @@
                         </Style> 
                     </ListBox.Styles>
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type vm:MainMenuItemViewModel}">
+                        <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
                             <StackPanel Spacing="20"  Orientation="Horizontal">
                                 <avalonia:MaterialIcon Kind="{Binding Icon}"/>
                                 <TextBlock Text="{Binding Text}"></TextBlock>

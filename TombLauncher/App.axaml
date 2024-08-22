@@ -16,6 +16,9 @@
         <materialIcons:MaterialIconStyles />
         <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml" />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/MsgBoxStyles.axaml"/>
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ChildStyle.axaml"/>
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ModalStyle.axaml"/>
     </Application.Styles>
     <Application.Resources>
         <valueConverters:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />

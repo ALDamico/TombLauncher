@@ -1,7 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using TombLauncher.ViewModels.ViewModels;
+using TombLauncher.ViewModels;
 
 namespace TombLauncher;
 

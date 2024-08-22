@@ -1,15 +1,16 @@
 using System;
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Database.UnitOfWork;
+using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
-using TombLauncher.ViewModels.Navigation;
-using TombLauncher.ViewModels.ViewModels;
 using TombLauncher.Views;
 
 namespace TombLauncher;
@@ -39,6 +40,13 @@ public partial class App : Application
                 var defaultPage = sp.GetRequiredService<WelcomePageViewModel>();
                 return new NavigationManager(defaultPage);
             });
+            serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
+            {
+                ApplicationName = "Tomb Launcher",
+                UseApplicationNameInTitle = true,
+                ViewsAssemblyName = Assembly.GetExecutingAssembly().GetName().Name
+            }));
+            serviceCollection.AddScoped(_ => DialogServiceFactory.CreateMessageBoxService());
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);
             desktop.MainWindow = new MainWindow
