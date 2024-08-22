@@ -31,7 +31,10 @@ public partial class NewGameViewModel : PageViewModel
 
         InstallProgress = new Progress<CopyProgressInfo>(copyProgressInfo =>
         {
-            PercentageComplete = copyProgressInfo.Percentage;
+            if (copyProgressInfo.Percentage != null)
+            {
+                PercentageComplete = copyProgressInfo.Percentage;
+            }
             CurrentFile = copyProgressInfo.CurrentFileName;
             if (copyProgressInfo.Message != null)
             {
@@ -87,8 +90,12 @@ public partial class NewGameViewModel : PageViewModel
         {
             var installer = new TombRaiderLevelInstaller();
             GameMetadata.InstallDate = DateTime.Now;
-            installer.Install(Source, GameMetadata.ToDto(), InstallProgress);
+            var installLocation = installer.Install(Source, GameMetadata.ToDto(), InstallProgress);
             InstallProgress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
+            GameMetadata.InstallDirectory = installLocation;
+            var engineDetector = new TombRaiderEngineDetector();
+            var gameEngine = engineDetector.Detect(installLocation);
+            GameMetadata.GameEngine = gameEngine;
             _gamesUoW.UpsertGame(GameMetadata.ToDto());
         });
 

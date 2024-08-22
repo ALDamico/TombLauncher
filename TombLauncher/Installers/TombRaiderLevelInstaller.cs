@@ -9,7 +9,7 @@ namespace TombLauncher.Installers;
 
 public class TombRaiderLevelInstaller
 {
-    public void Install(string containingFolder, GameMetadataDto gameDto,
+    public string Install(string containingFolder, GameMetadataDto gameDto,
         IProgress<CopyProgressInfo> copyProgress = null)
     {
         if (!Directory.Exists(containingFolder) && !File.Exists(containingFolder))
@@ -38,6 +38,8 @@ public class TombRaiderLevelInstaller
         {
             ExtractZip(containingFolder, installFolder, copyProgress);
         }
+
+        return installFolder;
     }
 
     private void ExtractZip(string zipPath, string targetPath, IProgress<CopyProgressInfo> progress = null)

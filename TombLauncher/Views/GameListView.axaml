@@ -41,12 +41,12 @@
         <StackPanel Grid.Row="1" HorizontalAlignment="Center"
                     IsVisible="{Binding Games, Converter={StaticResource CollectionEmptyToVisibilityConverter}}"
                     Orientation="Horizontal" VerticalAlignment="Center">
-            <Image Source="/Assets/Lara_Croft_Flashlight.png" Height="320" >
+            <Image Source="/Assets/Lara_Croft_Flashlight.png" Height="320">
                 <Image.OpacityMask>
                     <LinearGradientBrush StartPoint="0.1,0.1" EndPoint="1, 1">
                         <LinearGradientBrush.GradientStops>
-                            <GradientStop Offset="0" Color="White"/>
-                            <GradientStop Offset="1" Color="Black"/>
+                            <GradientStop Offset="0" Color="White" />
+                            <GradientStop Offset="1" Color="Black" />
                         </LinearGradientBrush.GradientStops>
                     </LinearGradientBrush>
                 </Image.OpacityMask>
@@ -56,13 +56,28 @@
                 <TextBlock FontStyle="Italic" HorizontalAlignment="Center">Try adding one</TextBlock>
             </StackPanel>
         </StackPanel>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Games}" IsReadOnly="True"
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Games}" IsReadOnly="True" x:Name="GamesDataGrid"
                   IsVisible="{Binding Games, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Title" Binding="{Binding Title}" />
-                <DataGridTextColumn Header="Release date" Binding="{Binding ReleaseDate}" />
-                <DataGridTextColumn Header="Install date" Binding="{Binding InstallDate}" />
-                <DataGridTextColumn Header="Engine" Binding="{Binding GameEngine}" />
+                <DataGridTextColumn Header="Title" Binding="{Binding GameMetadata.Title}" />
+                <DataGridTextColumn Header="Release date" Binding="{Binding GameMetadata.ReleaseDate}" />
+                <DataGridTextColumn Header="Install date" Binding="{Binding GameMetadata.InstallDate}" />
+                <DataGridTextColumn Header="Engine" Binding="{Binding GameMetadata.GameEngine}" />
+                <DataGridTemplateColumn Header="Actions">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" IsVisible="{Binding AreCommandsVisible}">
+                                <controls:IconButton Icon="Play"
+                                                     ToolTip.Tip="{Binding GameMetadata.Title, StringFormat='Play {0}'}"
+                                                     Command="{Binding PlayCmd}" />
+                                <controls:IconButton Icon="Details" ToolTip.Tip="View details"
+                                                     Command="{Binding OpenCmd}">
+                                </controls:IconButton>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 

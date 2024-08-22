@@ -50,7 +50,7 @@
             <DockPanel Grid.Row="0">
                 <controls:IconButton Command="{Binding GoBackCmd}" Icon="ArrowBack"/>
             </DockPanel>
-            <TransitioningContentControl Grid.Row="1" Content="{Binding CurrentPage}" />
+            <TransitioningContentControl Margin="15" Grid.Row="1" Content="{Binding CurrentPage}" />
         </Grid>
         
     </SplitView>
