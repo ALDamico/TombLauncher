@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using TombLauncher.Navigation;
 
 namespace TombLauncher.ViewModels;
 

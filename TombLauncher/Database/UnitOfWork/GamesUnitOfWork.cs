@@ -67,7 +67,8 @@ public class GamesUnitOfWork : IDisposable
             GameEngine = dto.GameEngine,
             InstallDate = dto.InstallDate,
             InstallDirectory = dto.InstallDirectory,
-            ReleaseDate = dto.ReleaseDate
+            ReleaseDate = dto.ReleaseDate,
+            Description = dto.Description
         };
     }
     public void Dispose(bool disposing)

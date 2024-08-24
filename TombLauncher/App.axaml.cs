@@ -32,7 +32,7 @@ public partial class App : Application
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddEntityFrameworkSqlite();
-            serviceCollection.AddSingleton(_ => new WelcomePageViewModel(){ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md"});
+            serviceCollection.AddSingleton(sp => new WelcomePageViewModel(){ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md"});
             serviceCollection.AddScoped<GamesUnitOfWork>();
             serviceCollection.AddScoped<GameListViewModel>();
             serviceCollection.AddSingleton(sp =>

@@ -17,12 +17,12 @@ public partial class GameListView : UserControl
 
             row.PointerEntered += (o, eventArgs) =>
             {
-                var dataContext = row.DataContext as GameDataGridRowViewModel;
+                var dataContext = row.DataContext as GameWithStatsViewModel;
                 dataContext.AreCommandsVisible = true;
             };
             row.PointerExited += (o, eventArgs) =>
             {
-                var dataContext = row.DataContext as GameDataGridRowViewModel;
+                var dataContext = row.DataContext as GameWithStatsViewModel;
                 dataContext.AreCommandsVisible = false;
             };
         };

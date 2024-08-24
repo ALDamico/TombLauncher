@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using System;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Navigation;
 
 namespace TombLauncher;
 
@@ -18,4 +20,6 @@ sealed class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
+
+    public static NavigationManager NavigationManager => Ioc.Default.GetRequiredService<NavigationManager>();
 }

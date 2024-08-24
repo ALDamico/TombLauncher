@@ -9,24 +9,24 @@ using TombLauncher.Navigation;
 
 namespace TombLauncher.ViewModels;
 
-public partial class GameDataGridRowViewModel : ViewModelBase
+public partial class GameWithStatsViewModel : ViewModelBase
 {
-    public GameDataGridRowViewModel(NavigationManager navigationManager, GamesUnitOfWork gamesUnitOfWork)
+    public GameWithStatsViewModel( GamesUnitOfWork gamesUnitOfWork)
     {
         PlayCmd = new RelayCommand(Play);
         OpenCmd = new RelayCommand(Open);
-        _navigationManager = navigationManager;
         _gamesUnitOfWork = gamesUnitOfWork;
     }
 
     private void Open()
     {
+        Program.NavigationManager.NavigateTo(new GameDetailsViewModel(_gamesUnitOfWork, this));
         Console.WriteLine($"Opening details for {_gameMetadata.Title}");
     }
 
     private void Play()
     {
-        var currentPage = _navigationManager.GetCurrentPage();
+        var currentPage =  Program.NavigationManager.GetCurrentPage();
         currentPage.IsBusy = true;
         currentPage.BusyMessage = $"Starting {GameMetadata.Title}";
         var process = new Process()
@@ -45,13 +45,13 @@ public partial class GameDataGridRowViewModel : ViewModelBase
 
     private void OnGameExited(object sender, EventArgs args)
     {
-        var currentPage = _navigationManager.GetCurrentPage();
+        var currentPage = Program.NavigationManager.GetCurrentPage();
         currentPage.BusyMessage = "Saving play session...";
 
         var process = sender as Process;
         _gamesUnitOfWork.AddPlaySessionToGame(GameMetadata.ToDto(), process.StartTime, process.ExitTime);
         _gamesUnitOfWork.Save();
-        _navigationManager.StartNavigation(currentPage);
+        Program.NavigationManager.RequestRefresh();
         currentPage.IsBusy = false;
         currentPage.BusyMessage = null;
         
@@ -62,7 +62,6 @@ public partial class GameDataGridRowViewModel : ViewModelBase
     [ObservableProperty] private TimeSpan _totalPlayedTime;
     [ObservableProperty] private DateTime? _lastPlayed;
     [ObservableProperty] private bool _areCommandsVisible;
-    private NavigationManager _navigationManager;
     private readonly GamesUnitOfWork _gamesUnitOfWork;
     public ICommand PlayCmd { get; }
     public ICommand OpenCmd { get; }

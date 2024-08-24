@@ -19,7 +19,7 @@ namespace TombLauncher.ViewModels;
 
 public partial class NewGameViewModel : PageViewModel
 {
-    public NewGameViewModel(GamesUnitOfWork gamesUnitOfWork, IDialogService dialogService)
+    public NewGameViewModel(GamesUnitOfWork gamesUnitOfWork, IDialogService dialogService) 
     {
         _gamesUoW = gamesUnitOfWork;
         _dialogService = dialogService;
@@ -35,6 +35,7 @@ public partial class NewGameViewModel : PageViewModel
             {
                 PercentageComplete = copyProgressInfo.Percentage;
             }
+
             CurrentFileName = copyProgressInfo.CurrentFileName;
             if (copyProgressInfo.Message != null)
             {
@@ -60,7 +61,7 @@ public partial class NewGameViewModel : PageViewModel
     public ObservableCollection<EnumViewModel<GameLength>> AvailableLengths { get; }
     public ObservableCollection<EnumViewModel<GameDifficulty>> AvailableDifficulties { get; }
     public IProgress<CopyProgressInfo> InstallProgress { get; }
-    
+
     public ICommand PickZipArchiveCmd { get; }
 
     private async void PickZipArchive()
@@ -83,7 +84,7 @@ public partial class NewGameViewModel : PageViewModel
     protected override async void SaveInner()
     {
         IsBusy = true;
-        InstallProgress.Report(new CopyProgressInfo(){Message = $"Installing {_gameMetadata.Title}..."});
+        InstallProgress.Report(new CopyProgressInfo() { Message = $"Installing {_gameMetadata.Title}..." });
         await Task.Run(() =>
         {
             var installer = new TombRaiderLevelInstaller();
@@ -99,6 +100,7 @@ public partial class NewGameViewModel : PageViewModel
         });
 
         ClearBusy();
+        Program.NavigationManager.GoBack();
     }
 
     protected override bool CanSave()
@@ -112,6 +114,7 @@ public partial class NewGameViewModel : PageViewModel
         {
             SaveCmd.NotifyCanExecuteChanged();
         }
+
         base.OnPropertyChanged(e);
     }
 }

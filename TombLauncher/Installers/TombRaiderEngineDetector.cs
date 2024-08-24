@@ -26,7 +26,7 @@ public class TombRaiderEngineDetector
     private HashSet<string> _knownGameExecutables;
     public GameEngine Detect(string containingFolder)
     {
-        var files = Directory.GetFiles(containingFolder, "*.exe");
+        var files = Directory.GetFiles(containingFolder, "*.exe", SearchOption.AllDirectories);
         foreach (var file in files)
         {
             if (_gameEngines.TryGetValue(Path.GetFileName(file).ToLowerInvariant(), out var gameEngine))
@@ -40,7 +40,7 @@ public class TombRaiderEngineDetector
 
     public string GetGameExecutablePath(string containingFolder)
     {
-        var executables = Directory.GetFiles(containingFolder, "*.exe");
+        var executables = Directory.GetFiles(containingFolder, "*.exe", SearchOption.AllDirectories);
         return _knownGameExecutables.Join(executables, knownExecutable => knownExecutable,
                 Path.GetFileName, (s, s1) => s1, StringComparer.InvariantCultureIgnoreCase)
             .FirstOrDefault();

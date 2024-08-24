@@ -14,25 +14,21 @@ namespace TombLauncher.ViewModels;
 public partial class GameListViewModel : PageViewModel
 {
     private readonly GamesUnitOfWork _gamesUnitOfWork;
-    [ObservableProperty] private ObservableCollection<GameDataGridRowViewModel> _games;
+    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games;
 
     public GameListViewModel(GamesUnitOfWork gamesUoW, NavigationManager navigationManager)
     {
         _gamesUnitOfWork = gamesUoW;
-        _navigationManager = navigationManager;
         AddGameCmd = new RelayCommand(AddGame);
-        Initialize += OnInit;
         navigationManager.OnNavigated += OnInit;
     }
-    
-    private readonly NavigationManager _navigationManager;
 
     private async void OnInit()
     {
         SetBusy(true, "Loading games...");
         Games =
             _gamesUnitOfWork.GetGamesWithStats().Select(dto =>
-                new GameDataGridRowViewModel(_navigationManager, _gamesUnitOfWork)
+                new GameWithStatsViewModel(_gamesUnitOfWork)
                 {
                     GameMetadata = dto.GameMetadata.ToViewModel(), 
                     LastPlayed = dto.LastPlayed,
@@ -45,6 +41,6 @@ public partial class GameListViewModel : PageViewModel
 
     private void AddGame()
     {
-        _navigationManager.NavigateTo(new NewGameViewModel(_gamesUnitOfWork, Ioc.Default.GetService<IDialogService>()));
+        Program.NavigationManager.NavigateTo(new NewGameViewModel(_gamesUnitOfWork, Ioc.Default.GetService<IDialogService>()));
     }
 }

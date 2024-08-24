@@ -47,6 +47,11 @@ public class NavigationManager
         NavigateTo(newPage);
     }
 
+    public void RequestRefresh()
+    {
+        InvokeOnNavigated();
+    }
+
     public void NavigateTo(PageViewModel newPage)
     {
         History.Push(newPage);
