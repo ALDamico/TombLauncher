@@ -44,6 +44,7 @@ public partial class NewGameViewModel : PageViewModel
         });
 
         PickZipArchiveCmd = new RelayCommand(PickZipArchive);
+        PickFolderCmd = new RelayCommand(PickFolder);
     }
 
     private void OnGameMetadataPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -79,6 +80,19 @@ public partial class NewGameViewModel : PageViewModel
         }
 
         Source = file;
+    }
+    
+    public ICommand PickFolderCmd { get; }
+
+    private async void PickFolder()
+    {
+        var folder = await _dialogService.OpenFolder("Select a folder");
+        if (string.IsNullOrEmpty(folder))
+        {
+            return;
+        }
+
+        Source = folder;
     }
 
     protected override async void SaveInner()

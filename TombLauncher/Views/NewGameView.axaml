@@ -42,7 +42,13 @@
         </TextBlock>
         <TextBlock Grid.Row="1" Grid.Column="0">ZIP archive or folder</TextBlock>
         <DockPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
-            <controls:IconButton Icon="Folder" Text="Open" DockPanel.Dock="Right" Command="{Binding PickZipArchiveCmd}" />
+            <controls:SplitIconButton Icon="Folder" Text="Open ZIP file" DockPanel.Dock="Right" Command="{Binding PickZipArchiveCmd}">
+                <controls:SplitIconButton.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuItem Header="Open folder" Command="{Binding PickFolderCmd}"></MenuItem>
+                    </MenuFlyout>
+                </controls:SplitIconButton.Flyout>
+            </controls:SplitIconButton>
             <TextBox Text="{Binding Source}"></TextBox>
         </DockPanel>
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Title"/>
