@@ -30,8 +30,14 @@ public partial class GameListViewModel : PageViewModel
     private async void OnInit()
     {
         SetBusy(true, "Loading games...");
-        Games = _gamesUnitOfWork.GetGames()
-            .ToViewModels().Select(vm => new GameDataGridRowViewModel(_navigationManager, _gamesUnitOfWork){GameMetadata = vm}).ToObservableCollection();
+        Games =
+            _gamesUnitOfWork.GetGamesWithStats().Select(dto =>
+                new GameDataGridRowViewModel(_navigationManager, _gamesUnitOfWork)
+                {
+                    GameMetadata = dto.GameMetadata.ToViewModel(), 
+                    LastPlayed = dto.LastPlayed,
+                    TotalPlayedTime = dto.TotalPlayTime
+                }).ToObservableCollection();
         ClearBusy();
     }
     

@@ -41,7 +41,6 @@ public partial class GameDataGridRowViewModel : ViewModelBase
         
         process.Exited += OnGameExited;
         process.Start();
-        Console.WriteLine($"Playing {_gameMetadata.Title}");
     }
 
     private void OnGameExited(object sender, EventArgs args)
@@ -52,6 +51,7 @@ public partial class GameDataGridRowViewModel : ViewModelBase
         var process = sender as Process;
         _gamesUnitOfWork.AddPlaySessionToGame(GameMetadata.ToDto(), process.StartTime, process.ExitTime);
         _gamesUnitOfWork.Save();
+        _navigationManager.StartNavigation(currentPage);
         currentPage.IsBusy = false;
         currentPage.BusyMessage = null;
         
@@ -59,6 +59,8 @@ public partial class GameDataGridRowViewModel : ViewModelBase
     }
 
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;
+    [ObservableProperty] private TimeSpan _totalPlayedTime;
+    [ObservableProperty] private DateTime? _lastPlayed;
     [ObservableProperty] private bool _areCommandsVisible;
     private NavigationManager _navigationManager;
     private readonly GamesUnitOfWork _gamesUnitOfWork;

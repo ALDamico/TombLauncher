@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
@@ -42,7 +43,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private void OnNavigated()
     {
         OnPropertyChanged(nameof(CurrentPage));
-        ((RelayCommand)GoBackCmd).NotifyCanExecuteChanged();
+        Dispatcher.UIThread.Invoke(() => ((RelayCommand)GoBackCmd).NotifyCanExecuteChanged());
     }
 
     private readonly NavigationManager _navigationManager;

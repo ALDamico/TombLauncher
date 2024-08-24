@@ -44,6 +44,8 @@
                 <DataGridTextColumn Header="Release date" Binding="{Binding GameMetadata.ReleaseDate}" />
                 <DataGridTextColumn Header="Install date" Binding="{Binding GameMetadata.InstallDate}" />
                 <DataGridTextColumn Header="Engine" Binding="{Binding GameMetadata.GameEngine}" />
+                <DataGridTextColumn Header="Time played" Binding="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"/>
+                <DataGridTextColumn Header="Last played" Binding="{Binding LastPlayed, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"/>
                 <DataGridTemplateColumn Header="Actions">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

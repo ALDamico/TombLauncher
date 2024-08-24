@@ -88,6 +88,34 @@ public class GamesUnitOfWork : IDisposable
         return Games.GetAll().AsEnumerable().ToDtos().ToList();
     }
 
+    public List<GameWithStatsDto> GetGamesWithStats()
+    {
+        var outputList = new List<GameWithStatsDto>();
+        var playSessions = PlaySessions.GetAll().ToLookup(ps => ps.GameId);
+
+        var games = Games.GetAll().ToList();
+        foreach (var game in games)
+        {
+            var thisGamePlaySessions = playSessions[game.Id].ToList();
+            var gameWithStatsDto = new GameWithStatsDto()
+            {
+                GameMetadata = game.ToDto(),
+                TotalPlayTime = TimeSpan.Zero
+            };
+
+            if (thisGamePlaySessions.Any())
+            {
+                gameWithStatsDto.LastPlayed = thisGamePlaySessions.Max(ps => ps.StartDate);
+                gameWithStatsDto.TotalPlayTime =
+                    TimeSpan.FromTicks(thisGamePlaySessions.Select(ps => (ps.EndDate - ps.StartDate).Ticks).Sum());
+            }
+            
+            outputList.Add(gameWithStatsDto);
+        }
+
+        return outputList;
+    }
+
     public List<PlaySessionDto> GetPlaySessionsByGameId(int gameId)
     {
         return PlaySessions.Get(ps => ps.Game.Id == gameId).AsEnumerable().ToDtos().ToList();
