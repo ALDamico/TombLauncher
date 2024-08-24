@@ -11,7 +11,7 @@ using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
-using TombLauncher.Models.Models;
+using TombLauncher.Models;
 using TombLauncher.Progress;
 using TombLauncher.Utils;
 
@@ -35,7 +35,7 @@ public partial class NewGameViewModel : PageViewModel
             {
                 PercentageComplete = copyProgressInfo.Percentage;
             }
-            CurrentFile = copyProgressInfo.CurrentFileName;
+            CurrentFileName = copyProgressInfo.CurrentFileName;
             if (copyProgressInfo.Message != null)
             {
                 BusyMessage = copyProgressInfo.Message;
@@ -57,8 +57,6 @@ public partial class NewGameViewModel : PageViewModel
     private readonly IDialogService _dialogService;
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;
     [ObservableProperty] private string _source;
-    [ObservableProperty] private string _currentFile;
-    [ObservableProperty] private double? _percentageComplete;
     public ObservableCollection<EnumViewModel<GameLength>> AvailableLengths { get; }
     public ObservableCollection<EnumViewModel<GameDifficulty>> AvailableDifficulties { get; }
     public IProgress<CopyProgressInfo> InstallProgress { get; }
@@ -100,7 +98,7 @@ public partial class NewGameViewModel : PageViewModel
             _gamesUoW.UpsertGame(GameMetadata.ToDto());
         });
 
-        IsBusy = false;
+        ClearBusy();
     }
 
     protected override bool CanSave()

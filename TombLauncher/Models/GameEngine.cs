@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace TombLauncher.Models.Models;
+namespace TombLauncher.Models;
 
 [Flags]
 public enum GameEngine

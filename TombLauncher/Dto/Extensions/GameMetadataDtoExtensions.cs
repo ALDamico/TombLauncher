@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TombLauncher.Models.Models;
+using TombLauncher.Models;
 
 namespace TombLauncher.Dto.Extensions;
 

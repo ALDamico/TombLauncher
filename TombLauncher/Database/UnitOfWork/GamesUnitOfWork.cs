@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TombLauncher.Database.Repositories;
 using TombLauncher.Dto;
 using TombLauncher.Dto.Extensions;
-using TombLauncher.Models.Models;
+using TombLauncher.Models;
 
 namespace TombLauncher.Database.UnitOfWork;
 
@@ -15,15 +15,18 @@ public class GamesUnitOfWork : IDisposable
     {
         _dbContext = new TombLauncherDbContext();
         _games = new Lazy<EfRepository<Game>>(() => new EfRepository<Game>(_dbContext));
+        _playSessions = new Lazy<EfRepository<PlaySession>>(() => new EfRepository<PlaySession>(_dbContext));
         _dbContext.Database.Migrate();
     }
 
     private readonly TombLauncherDbContext _dbContext;
     private Lazy<EfRepository<Game>> _games;
+    private Lazy<EfRepository<PlaySession>> _playSessions;
     private bool _disposed;
 
-    internal EfRepository<Game> Games
-        => _games.Value;
+    internal EfRepository<Game> Games => _games.Value;
+
+    internal EfRepository<PlaySession> PlaySessions => _playSessions.Value;
 
     public void Save()
     {
@@ -83,6 +86,32 @@ public class GamesUnitOfWork : IDisposable
     public List<GameMetadataDto> GetGames()
     {
         return Games.GetAll().AsEnumerable().ToDtos().ToList();
+    }
+
+    public List<PlaySessionDto> GetPlaySessionsByGameId(int gameId)
+    {
+        return PlaySessions.Get(ps => ps.Game.Id == gameId).AsEnumerable().ToDtos().ToList();
+    }
+
+    public void AddPlaySessionToGame(GameMetadataDto dto, DateTime startDate, DateTime endDate)
+    {
+        var gameId = dto.Id;
+        var playSession = new PlaySession()
+        {
+            GameId = gameId,
+            StartDate = startDate,
+            EndDate = endDate
+        };
+        PlaySessions.Insert(playSession);
+    }
+
+    public PlaySessionDto GetLastPlaySession(GameMetadataDto dto)
+    {
+        var gameId = dto.Id;
+        var lastPlaysession = PlaySessions
+            .Get(ps => ps.GameId == gameId, playSessions => playSessions.OrderByDescending(ps => ps.EndDate))
+            .FirstOrDefault();
+        return lastPlaysession.ToDto();
     }
 
     public void Dispose()

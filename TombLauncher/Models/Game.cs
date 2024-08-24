@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace TombLauncher.Models.Models;
+namespace TombLauncher.Models;
 
 public class Game
 {
@@ -16,4 +17,5 @@ public class Game
     public string InstallDirectory { get; set; }
     public string ExecutablePath { get; set; }
     public string Description { get; set; }
+    public List<PlaySession> PlaySessions { get; set; }
 }

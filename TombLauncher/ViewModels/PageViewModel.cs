@@ -13,6 +13,23 @@ public partial class PageViewModel : ViewModelBase
     }
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private string _busyMessage;
+    [ObservableProperty] private string _currentFileName;
+    [ObservableProperty] private double? _percentageComplete;
+
+    protected void SetBusy(bool isBusy, string busyMessage = null)
+    {
+        IsBusy = isBusy;
+        if (busyMessage != null)
+        {
+            BusyMessage = busyMessage;
+        }
+    }
+
+    protected void ClearBusy()
+    {
+        IsBusy = false;
+        BusyMessage = null;
+    }
 
     public RelayCommand SaveCmd { get; protected set; }
     protected virtual bool CanSave() => false;

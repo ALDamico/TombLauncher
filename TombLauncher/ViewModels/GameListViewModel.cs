@@ -29,10 +29,10 @@ public partial class GameListViewModel : PageViewModel
 
     private async void OnInit()
     {
-        IsBusy = true;
+        SetBusy(true, "Loading games...");
         Games = _gamesUnitOfWork.GetGames()
-            .ToViewModels().Select(vm => new GameDataGridRowViewModel(_navigationManager){GameMetadata = vm}).ToObservableCollection();
-        IsBusy = false;
+            .ToViewModels().Select(vm => new GameDataGridRowViewModel(_navigationManager, _gamesUnitOfWork){GameMetadata = vm}).ToObservableCollection();
+        ClearBusy();
     }
     
     public ICommand AddGameCmd { get; }

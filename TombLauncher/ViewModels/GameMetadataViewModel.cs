@@ -1,6 +1,6 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.Models.Models;
+using TombLauncher.Models;
 
 namespace TombLauncher.ViewModels;
 
