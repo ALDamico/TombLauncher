@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TombLauncher.Models.Models;
 
 namespace TombLauncher.Installers;
@@ -19,8 +20,10 @@ public class TombRaiderEngineDetector
             { "tomb4.exe", GameEngine.TombRaider4 },
             { "tomb5.exe", GameEngine.TombRaider5 }
         };
+        _knownGameExecutables = _gameEngines.Keys.ToHashSet();
     }
     private Dictionary<string, GameEngine> _gameEngines;
+    private HashSet<string> _knownGameExecutables;
     public GameEngine Detect(string containingFolder)
     {
         var files = Directory.GetFiles(containingFolder, "*.exe");
@@ -33,5 +36,13 @@ public class TombRaiderEngineDetector
         }
 
         throw new Exception("Not found :(");
+    }
+
+    public string GetGameExecutablePath(string containingFolder)
+    {
+        var executables = Directory.GetFiles(containingFolder, "*.exe");
+        return _knownGameExecutables.Join(executables, knownExecutable => knownExecutable,
+                Path.GetFileName, (s, s1) => s1, StringComparer.InvariantCultureIgnoreCase)
+            .FirstOrDefault();
     }
 }

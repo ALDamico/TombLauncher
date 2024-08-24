@@ -19,7 +19,10 @@ public static class GameExtensions
             Title = game.Title,
             Setting = game.Setting,
             Difficulty = game.Difficulty,
-            Length = game.Length
+            Length = game.Length,
+            Description = game.Description,
+            ExecutablePath = game.ExecutablePath,
+            InstallDirectory = game.InstallDirectory
         };
     }
 
@@ -42,7 +45,10 @@ public static class GameExtensions
             Title = game.Title,
             Setting = game.Setting,
             Difficulty = game.Difficulty,
-            Length = game.Length
+            Length = game.Length,
+            InstallDirectory = game.InstallDirectory,
+            Description = game.Description,
+            ExecutablePath = game.ExecutablePath
         };
     }
 }

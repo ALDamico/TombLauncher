@@ -96,6 +96,7 @@ public partial class NewGameViewModel : PageViewModel
             var engineDetector = new TombRaiderEngineDetector();
             var gameEngine = engineDetector.Detect(installLocation);
             GameMetadata.GameEngine = gameEngine;
+            GameMetadata.ExecutablePath = engineDetector.GetGameExecutablePath(installLocation);
             _gamesUoW.UpsertGame(GameMetadata.ToDto());
         });
 

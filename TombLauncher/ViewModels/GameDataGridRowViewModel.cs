@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -22,7 +23,30 @@ public partial class GameDataGridRowViewModel : ViewModelBase
 
     private void Play()
     {
+        var currentPage = _navigationManager.GetCurrentPage();
+        currentPage.IsBusy = true;
+        currentPage.BusyMessage = $"Starting {GameMetadata.Title}";
+        var process = new Process()
+        {
+            StartInfo = new ProcessStartInfo(GameMetadata.ExecutablePath)
+            {
+                WorkingDirectory = GameMetadata.InstallDirectory,
+                UseShellExecute = true,
+            },
+            EnableRaisingEvents = true
+        };
+        
+        process.Exited += OnGameExited;
+        process.Start();
         Console.WriteLine($"Playing {_gameMetadata.Title}");
+    }
+
+    private void OnGameExited(object sender, EventArgs args)
+    {
+        var currentPage = _navigationManager.GetCurrentPage();
+        currentPage.IsBusy = false;
+        currentPage.BusyMessage = null;
+        // TODO Save play session;
     }
 
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;

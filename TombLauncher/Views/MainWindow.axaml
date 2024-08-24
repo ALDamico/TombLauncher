@@ -1,10 +1,11 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:controls="clr-namespace:TombLauncher.Controls"
         xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+        xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
@@ -14,46 +15,59 @@
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <viewModels:MainWindowViewModel/>
+        <viewModels:MainWindowViewModel />
     </Design.DataContext>
     <SplitView IsPaneOpen="{Binding IsPaneOpen}" DisplayMode="CompactInline">
         <SplitView.Pane>
-            
+
             <StackPanel Orientation="Vertical">
                 <controls:IconButton ToolTip.Tip="Menu" Icon="Menu" Command="{Binding TogglePaneCmd}"></controls:IconButton>
-                
-                <ListBox Margin="2 0 -100 0" ItemsSource="{Binding MenuItems}" SelectionMode="Single" SelectedItem="{Binding SelectedMenuItem}">
+
+                <ListBox Margin="2 0 -100 0" ItemsSource="{Binding MenuItems}" SelectionMode="Single"
+                         SelectedItem="{Binding SelectedMenuItem}">
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
-                            <Setter Property="Padding" Value="12 8"/>
-                        </Style> 
+                            <Setter Property="Padding" Value="12 8" />
+                        </Style>
                     </ListBox.Styles>
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
-                            <StackPanel Spacing="20"  Orientation="Horizontal">
-                                <avalonia:MaterialIcon Kind="{Binding Icon}"/>
+                            <StackPanel Spacing="20" Orientation="Horizontal">
+                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
                                 <TextBlock Text="{Binding Text}"></TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-               <!-- <controls:IconButton ToolTip.Tip="Welcome" Icon="HomeOutline" IsTextVisible="{Binding IsPaneOpen}"/>
+                <!-- <controls:IconButton ToolTip.Tip="Welcome" Icon="HomeOutline" IsTextVisible="{Binding IsPaneOpen}"/>
                 <controls:IconButton ToolTip.Tip="Random" Icon="Dice5Outline" Text="Random" IsTextVisible="{Binding IsPaneOpen}"/>-->
             </StackPanel>
-            
+
         </SplitView.Pane>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0">
-                <controls:IconButton Command="{Binding GoBackCmd}" Icon="ArrowBack"/>
+                <controls:IconButton Command="{Binding GoBackCmd}" Icon="ArrowBack" />
             </DockPanel>
-            <TransitioningContentControl Margin="15" Grid.Row="1" Content="{Binding CurrentPage}" />
+            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <avaloniaProgressRing:ProgressRing IsActive="{Binding CurrentPage.IsBusy}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                       Width="100"
+                                                       Height="100" />
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Text="{Binding CurrentPage.BusyMessage}">
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+            <TransitioningContentControl Margin="15" Grid.Row="1" Content="{Binding CurrentPage}"
+                                         IsEnabled="{Binding CurrentPage.IsBusy, Converter={StaticResource NegatedBooleanConverter}}" />
         </Grid>
-        
+
     </SplitView>
-    
+
 
 </Window>
