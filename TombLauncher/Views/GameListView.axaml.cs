@@ -25,6 +25,12 @@ public partial class GameListView : UserControl
                 var dataContext = row.DataContext as GameWithStatsViewModel;
                 dataContext.AreCommandsVisible = false;
             };
+
+            row.DoubleTapped += (o, eventArgs) =>
+            {
+                var dataContext = row.DataContext as GameWithStatsViewModel;
+                dataContext.PlayCmd.Execute(null);
+            };
         };
     }
 }
