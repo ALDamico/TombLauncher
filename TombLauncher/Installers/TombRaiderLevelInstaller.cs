@@ -4,6 +4,7 @@ using System.Reflection;
 using Ionic.Zip;
 using TombLauncher.Dto;
 using TombLauncher.Progress;
+using TombLauncher.Utils;
 
 namespace TombLauncher.Installers;
 
@@ -16,50 +17,22 @@ public class TombRaiderLevelInstaller
         {
             throw new ArgumentException("The source folder does not exist!", nameof(containingFolder));
         }
-
-        var gameTitleNormalized = string.Empty;
-        if (gameDto.Author != null)
-        {
-            gameTitleNormalized = $"{gameDto.Author} - ";
-        }
-
-        gameTitleNormalized += gameDto.Title;
-
-        gameTitleNormalized = MakeValidFileName(gameTitleNormalized);
         var installFolder =
-            Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "Games", gameTitleNormalized);
+            Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "Games", gameDto.Guid.ToString());
         
         if (Directory.Exists(containingFolder))
         {
-
             CopyDirectory(containingFolder, installFolder, true);
         }
         else if (File.Exists(containingFolder) && ZipFile.IsZipFile(containingFolder))
         {
-            ExtractZip(containingFolder, installFolder, copyProgress);
+            ZipUtils.ExtractZip(containingFolder, installFolder, copyProgress);
         }
 
         return installFolder;
     }
 
-    private void ExtractZip(string zipPath, string targetPath, IProgress<CopyProgressInfo> progress = null)
-    {
-        var zipFile = new ZipFile(zipPath);
-        if (progress != null)
-        {
-            zipFile.ExtractProgress += (sender, args) =>
-            {
-                var copyProgress = new CopyProgressInfo()
-                {
-                    CurrentFileName = args.CurrentEntry?.FileName,
-                    TotalFiles = args.EntriesTotal,
-                    CurrentFile = args.EntriesExtracted
-                };
-                progress?.Report(copyProgress);
-            };
-        }
-        zipFile.ExtractAll(targetPath, ExtractExistingFileAction.OverwriteSilently);
-    }
+    
 
     private static string MakeValidFileName(string name)
     {

@@ -18,4 +18,5 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private string _installDirectory;
     [ObservableProperty] private string _executablePath;
     [ObservableProperty] private string _description;
+    public Guid Guid { get; set; }
 }

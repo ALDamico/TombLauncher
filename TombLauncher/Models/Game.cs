@@ -17,5 +17,7 @@ public class Game
     public string InstallDirectory { get; set; }
     public string ExecutablePath { get; set; }
     public string Description { get; set; }
+    public Guid Guid { get; set; }
     public List<PlaySession> PlaySessions { get; set; }
+    public List<GameHashes> Hashes { get; set; }
 }

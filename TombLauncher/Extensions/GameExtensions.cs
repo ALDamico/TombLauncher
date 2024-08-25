@@ -22,7 +22,8 @@ public static class GameExtensions
             Length = game.Length,
             Description = game.Description,
             ExecutablePath = game.ExecutablePath,
-            InstallDirectory = game.InstallDirectory
+            InstallDirectory = game.InstallDirectory,
+            Guid = game.Guid
         };
     }
 
@@ -48,7 +49,8 @@ public static class GameExtensions
             Length = game.Length,
             InstallDirectory = game.InstallDirectory,
             Description = game.Description,
-            ExecutablePath = game.ExecutablePath
+            ExecutablePath = game.ExecutablePath,
+            Guid = game.Guid
         };
     }
 }

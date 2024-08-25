@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Ionic.Zip;
 using JamSoft.AvaloniaUI.Dialogs;
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
@@ -19,10 +23,11 @@ namespace TombLauncher.ViewModels;
 
 public partial class NewGameViewModel : PageViewModel
 {
-    public NewGameViewModel(GamesUnitOfWork gamesUnitOfWork, IDialogService dialogService) 
+    public NewGameViewModel(GamesUnitOfWork gamesUnitOfWork, IDialogService dialogService, IMessageBoxService messageBoxService) 
     {
         _gamesUoW = gamesUnitOfWork;
         _dialogService = dialogService;
+        _messageBoxService = messageBoxService;
         _gameMetadata = new GameMetadataViewModel();
         _gameMetadata.PropertyChanged += OnGameMetadataPropertyChanged;
 
@@ -59,6 +64,7 @@ public partial class NewGameViewModel : PageViewModel
     private readonly IDialogService _dialogService;
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;
     [ObservableProperty] private string _source;
+    private readonly IMessageBoxService _messageBoxService;
     public ObservableCollection<EnumViewModel<GameLength>> AvailableLengths { get; }
     public ObservableCollection<EnumViewModel<GameDifficulty>> AvailableDifficulties { get; }
     public IProgress<CopyProgressInfo> InstallProgress { get; }
@@ -99,18 +105,52 @@ public partial class NewGameViewModel : PageViewModel
     {
         IsBusy = true;
         InstallProgress.Report(new CopyProgressInfo() { Message = $"Installing {_gameMetadata.Title}..." });
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
+            var tempPath = Source;
+            if (File.Exists(Source) && ZipFile.IsZipFile(Source))
+            {
+                tempPath = PathUtils.GetRandomTempDirectory();
+                ZipUtils.ExtractZip(Source, tempPath);
+            }
+            var hashCalculator = new GameFileHashCalculator(new HashSet<string>()
+            {
+                ".tr4",
+                ".pak",
+                ".tr2",
+                ".sfx",
+                ".dat",
+                ".phd"
+            });
+            var hashes = hashCalculator.CalculateHashes(tempPath);
+            if (_gamesUoW.ExistsHashes(hashes))
+            {
+                var messageboxResult = await Dispatcher.UIThread.InvokeAsync(() =>
+                    _messageBoxService.Show("The same mod is already installed",
+                        "The same mod seems to be already installed. Press OK to keep installing, or Cancel to abort",
+                        MsgBoxButton.OkCancel, MsgBoxImage.Error));
+                
+                if (messageboxResult.ButtonResult == MsgBoxButtonResult.Cancel)
+                {
+                    return;
+                }
+            }
             var installer = new TombRaiderLevelInstaller();
             GameMetadata.InstallDate = DateTime.Now;
+            var guid = Guid.NewGuid();
+            GameMetadata.Guid = guid;
             var installLocation = installer.Install(Source, GameMetadata.ToDto(), InstallProgress);
             InstallProgress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
+            
             GameMetadata.InstallDirectory = installLocation;
             var engineDetector = new TombRaiderEngineDetector();
             var gameEngine = engineDetector.Detect(installLocation);
             GameMetadata.GameEngine = gameEngine;
             GameMetadata.ExecutablePath = engineDetector.GetGameExecutablePath(installLocation);
-            _gamesUoW.UpsertGame(GameMetadata.ToDto());
+            var dto = GameMetadata.ToDto();
+            _gamesUoW.UpsertGame(dto);
+            hashes.ForEach(h => h.GameId = dto.Id);
+            _gamesUoW.SaveHashes(hashes);
         });
 
         ClearBusy();

@@ -16,17 +16,20 @@ public class GamesUnitOfWork : IDisposable
         _dbContext = new TombLauncherDbContext();
         _games = new Lazy<EfRepository<Game>>(() => new EfRepository<Game>(_dbContext));
         _playSessions = new Lazy<EfRepository<PlaySession>>(() => new EfRepository<PlaySession>(_dbContext));
+        _hashes = new Lazy<EfRepository<GameHashes>>(() => new EfRepository<GameHashes>(_dbContext));
         _dbContext.Database.Migrate();
     }
 
     private readonly TombLauncherDbContext _dbContext;
     private Lazy<EfRepository<Game>> _games;
     private Lazy<EfRepository<PlaySession>> _playSessions;
+    private Lazy<EfRepository<GameHashes>> _hashes;
     private bool _disposed;
 
     internal EfRepository<Game> Games => _games.Value;
 
     internal EfRepository<PlaySession> PlaySessions => _playSessions.Value;
+    internal EfRepository<GameHashes> Hashes => _hashes.Value;
 
     public void Save()
     {
@@ -44,8 +47,9 @@ public class GamesUnitOfWork : IDisposable
         {
             Games.Update(entity);
         }
-        
+
         Save();
+        game.Id = entity.Id;
     }
 
     private static Game ToGame(GameMetadataDto dto)
@@ -68,7 +72,24 @@ public class GamesUnitOfWork : IDisposable
             InstallDate = dto.InstallDate,
             InstallDirectory = dto.InstallDirectory,
             ReleaseDate = dto.ReleaseDate,
-            Description = dto.Description
+            Description = dto.Description,
+            Guid = dto.Guid
+        };
+    }
+
+    private static GameHashes ToGameHashes(GameHashDto dto)
+    {
+        if (dto == null)
+        {
+            throw new ArgumentException("Dto can't be null", nameof(dto));
+        }
+
+        return new GameHashes()
+        {
+            Id = dto.Id,
+            FileName = dto.FileName,
+            GameId = dto.GameId,
+            Md5Hash = dto.Md5Hash
         };
     }
     public void Dispose(bool disposing)
@@ -141,6 +162,42 @@ public class GamesUnitOfWork : IDisposable
             .Get(ps => ps.GameId == gameId, playSessions => playSessions.OrderByDescending(ps => ps.EndDate))
             .FirstOrDefault();
         return lastPlaysession.ToDto();
+    }
+
+    public List<GameHashDto> GetHashes(GameMetadataDto dto)
+    {
+        return Hashes.Get(h => h.GameId == dto.Id).AsEnumerable().ToDtos().ToList();
+    }
+
+    public bool ExistsHashes(List<GameHashDto> computedHashes)
+    {
+        var hashesRepo = Hashes.GetAll();
+        var tempQueryable = computedHashes.Select(ToGameHashes).AsQueryable();
+        var joined = hashesRepo.AsEnumerable().Join(tempQueryable, gh => gh.FileName + "#" + gh.Md5Hash,
+            tmp => tmp.FileName + "#" + tmp.Md5Hash,
+            (gh, tmp) => gh);
+        var matches = joined.GroupBy(m => m.GameId).Select(g => new {Id = g.Key, Count = g.Count()}).ToList();
+        if (matches.Count == 0)
+        {
+            return false;
+        }
+
+        if (matches.Any(m => m.Count == computedHashes.Count))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void SaveHashes(List<GameHashDto> hashes)
+    {
+        foreach (var hash in hashes)
+        {
+            Hashes.Insert(ToGameHashes(hash));
+        }
+        
+        Save();
     }
 
     public void Dispose()

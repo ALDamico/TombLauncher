@@ -17,4 +17,5 @@ public class GameMetadataDto
     public string InstallDirectory { get; set; }
     public string ExecutablePath { get; set; }
     public string Description { get; set; }
+    public Guid Guid { get; set; }
 }
