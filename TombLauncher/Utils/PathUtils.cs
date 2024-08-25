@@ -9,7 +9,7 @@ public class PathUtils
     {
         var tempPath = Path.GetTempPath();
         var dirname = Path.GetRandomFileName();
-        var fullPath = Path.Combine(tempPath, dirname);
+        var fullPath = Path.Combine(tempPath, "TombLauncher", dirname);
         EnsureFolderExists(fullPath);
         return fullPath;
     }
@@ -20,5 +20,10 @@ public class PathUtils
         {
             Directory.CreateDirectory(path);
         }
+    }
+
+    public static string NormalizePath(string path)
+    {
+        return path.Replace("\\", "/");
     }
 }

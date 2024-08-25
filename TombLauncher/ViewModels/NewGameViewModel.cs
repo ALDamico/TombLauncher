@@ -107,12 +107,6 @@ public partial class NewGameViewModel : PageViewModel
         InstallProgress.Report(new CopyProgressInfo() { Message = $"Installing {_gameMetadata.Title}..." });
         await Task.Run(async () =>
         {
-            var tempPath = Source;
-            if (File.Exists(Source) && ZipFile.IsZipFile(Source))
-            {
-                tempPath = PathUtils.GetRandomTempDirectory();
-                ZipUtils.ExtractZip(Source, tempPath);
-            }
             var hashCalculator = new GameFileHashCalculator(new HashSet<string>()
             {
                 ".tr4",
@@ -122,7 +116,7 @@ public partial class NewGameViewModel : PageViewModel
                 ".dat",
                 ".phd"
             });
-            var hashes = hashCalculator.CalculateHashes(tempPath);
+            var hashes = hashCalculator.CalculateHashes(Source);
             if (_gamesUoW.ExistsHashes(hashes))
             {
                 var messageboxResult = await Dispatcher.UIThread.InvokeAsync(() =>
