@@ -73,7 +73,8 @@ public class GamesUnitOfWork : IDisposable
             InstallDirectory = dto.InstallDirectory,
             ReleaseDate = dto.ReleaseDate,
             Description = dto.Description,
-            Guid = dto.Guid
+            Guid = dto.Guid,
+            TitlePic = dto.TitlePic
         };
     }
 

@@ -1,0 +1,33 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Controls.ImagePicker"
+             PointerEntered="ImagePicker_OnPointerEntered"
+             PointerExited="ImagePicker_OnPointerExited"
+             Tapped="ImagePicker_OnTapped">
+    <UserControl.Styles>
+        <Style Selector="Image:pointerover">
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <BlurEffect Radius="15"></BlurEffect>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
+    <Grid>
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" x:Name="Text"
+                   Text="Click to change" ZIndex="999" Background="Gray">
+        </TextBlock>
+        <Image x:Name="Image"
+               Source="{Binding Path=Source, RelativeSource={RelativeSource FindAncestor, AncestorType=controls:ImagePicker}, Mode=TwoWay}">
+            <Image.Transitions>
+                <Transitions>
+                    <EffectTransition Property="Effect" Duration="0:0:0.5"></EffectTransition>
+                </Transitions>
+            </Image.Transitions>
+        </Image>
+    </Grid>
+</UserControl>

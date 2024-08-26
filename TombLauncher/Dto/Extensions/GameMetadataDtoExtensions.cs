@@ -21,7 +21,8 @@ public static class GameMetadataDtoExtensions
             Title = game.Title,
             ExecutablePath = game.ExecutablePath,
             InstallDirectory = game.InstallDirectory,
-            Description = game.Description
+            Description = game.Description,
+            TitlePic = game.TitlePic
         };
     }
 

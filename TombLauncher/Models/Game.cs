@@ -20,4 +20,5 @@ public class Game
     public Guid Guid { get; set; }
     public List<PlaySession> PlaySessions { get; set; }
     public List<GameHashes> Hashes { get; set; }
+    public byte[] TitlePic { get; set; }
 }

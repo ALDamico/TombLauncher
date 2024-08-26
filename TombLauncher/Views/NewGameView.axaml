@@ -35,28 +35,46 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Center" FontWeight="DemiBold"
+                       FontSize="20">
+                Insert new game
+            </TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0">ZIP archive or folder</TextBlock>
+            <DockPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+                <controls:SplitIconButton Icon="Folder" Text="Open ZIP file" DockPanel.Dock="Right" Command="{Binding PickZipArchiveCmd}">
+                    <controls:SplitIconButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuItem Header="Open folder" Command="{Binding PickFolderCmd}"></MenuItem>
+                        </MenuFlyout>
+                    </controls:SplitIconButton.Flyout>
+                </controls:SplitIconButton>
+                <TextBox Text="{Binding Source}"></TextBox>
+            </DockPanel>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Title"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding GameMetadata.Title}"></TextBox>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Author"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding GameMetadata.Author}"/>
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="Release date"/>
+            <CalendarDatePicker Grid.Row="3" Grid.Column="3" SelectedDate="{Binding GameMetadata.ReleaseDate}"/>
+            <controls:ImagePicker Grid.Row="0" Grid.RowSpan="4" Grid.Column="4" Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static viewModels:NewGameViewModel.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" DialogService="{Binding DialogService}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MaxHeight="240" MaxWidth="320"></controls:ImagePicker>
+        </Grid>
         
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Center" FontWeight="DemiBold"
-                   FontSize="20">
-            Insert new game
-        </TextBlock>
-        <TextBlock Grid.Row="1" Grid.Column="0">ZIP archive or folder</TextBlock>
-        <DockPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
-            <controls:SplitIconButton Icon="Folder" Text="Open ZIP file" DockPanel.Dock="Right" Command="{Binding PickZipArchiveCmd}">
-                <controls:SplitIconButton.Flyout>
-                    <MenuFlyout Placement="Bottom">
-                        <MenuItem Header="Open folder" Command="{Binding PickFolderCmd}"></MenuItem>
-                    </MenuFlyout>
-                </controls:SplitIconButton.Flyout>
-            </controls:SplitIconButton>
-            <TextBox Text="{Binding Source}"></TextBox>
-        </DockPanel>
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Title"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding GameMetadata.Title}"></TextBox>
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Author"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding GameMetadata.Author}"/>
-        <TextBlock Grid.Row="3" Grid.Column="2" Text="Release date"/>
-        <CalendarDatePicker Grid.Row="3" Grid.Column="3" SelectedDate="{Binding GameMetadata.ReleaseDate}"/>
+        
+        
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Length"/>
         <ComboBox Grid.Row="4" Grid.Column="1" 
                   ItemsSource="{Binding AvailableLengths}" 

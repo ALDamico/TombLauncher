@@ -1,4 +1,5 @@
 ﻿using System;
+using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Models;
 
@@ -18,5 +19,6 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private string _installDirectory;
     [ObservableProperty] private string _executablePath;
     [ObservableProperty] private string _description;
+    [ObservableProperty] private Bitmap _titlePic;
     public Guid Guid { get; set; }
 }

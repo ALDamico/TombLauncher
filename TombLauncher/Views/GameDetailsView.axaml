@@ -35,6 +35,7 @@
         </DockPanel>
 
         <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Stretch">
+            <Image Source="{Binding Game.GameMetadata.TitlePic}" Width="320" Height="240"></Image>
             <Button Background="Green" Command="{Binding Game.PlayCmd}" HorizontalContentAlignment="Center"
                     HorizontalAlignment="Stretch">
                 <Button.Content>

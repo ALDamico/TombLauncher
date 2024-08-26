@@ -4,7 +4,8 @@
              xmlns:local="using:TombLauncher"
              RequestedThemeVariant="Default"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters">
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>

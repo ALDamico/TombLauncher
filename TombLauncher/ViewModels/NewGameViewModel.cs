@@ -5,6 +5,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -23,7 +26,8 @@ namespace TombLauncher.ViewModels;
 
 public partial class NewGameViewModel : PageViewModel
 {
-    public NewGameViewModel(GamesUnitOfWork gamesUnitOfWork, IDialogService dialogService, IMessageBoxService messageBoxService) 
+    public NewGameViewModel(GamesUnitOfWork gamesUnitOfWork, IDialogService dialogService,
+        IMessageBoxService messageBoxService)
     {
         _gamesUoW = gamesUnitOfWork;
         _dialogService = dialogService;
@@ -60,8 +64,11 @@ public partial class NewGameViewModel : PageViewModel
         }
     }
 
+    public static Bitmap NullBitmap =>
+        new Bitmap(AssetLoader.Open(new Uri("avares://TombLauncher/Assets/avalonia-logo.ico")));
+
     private GamesUnitOfWork _gamesUoW;
-    private readonly IDialogService _dialogService;
+    [ObservableProperty] private IDialogService _dialogService;
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;
     [ObservableProperty] private string _source;
     private readonly IMessageBoxService _messageBoxService;
@@ -87,7 +94,7 @@ public partial class NewGameViewModel : PageViewModel
 
         Source = file;
     }
-    
+
     public ICommand PickFolderCmd { get; }
 
     private async void PickFolder()
@@ -123,19 +130,20 @@ public partial class NewGameViewModel : PageViewModel
                     _messageBoxService.Show("The same mod is already installed",
                         "The same mod seems to be already installed. Press OK to keep installing, or Cancel to abort",
                         MsgBoxButton.OkCancel, MsgBoxImage.Error));
-                
+
                 if (messageboxResult.ButtonResult == MsgBoxButtonResult.Cancel)
                 {
                     return;
                 }
             }
+
             var installer = new TombRaiderLevelInstaller();
             GameMetadata.InstallDate = DateTime.Now;
             var guid = Guid.NewGuid();
             GameMetadata.Guid = guid;
             var installLocation = installer.Install(Source, GameMetadata.ToDto(), InstallProgress);
             InstallProgress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
-            
+
             GameMetadata.InstallDirectory = installLocation;
             var engineDetector = new TombRaiderEngineDetector();
             var gameEngine = engineDetector.Detect(installLocation);

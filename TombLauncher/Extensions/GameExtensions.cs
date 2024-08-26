@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Avalonia.Media.Imaging;
 using TombLauncher.Dto;
 using TombLauncher.ViewModels;
 
@@ -9,6 +11,13 @@ public static class GameExtensions
 {
     public static GameMetadataViewModel ToViewModel(this GameMetadataDto game)
     {
+        Bitmap bitmap = null;
+        if (game.TitlePic != null)
+        {
+            var imageMemoryStream = new MemoryStream(game.TitlePic);
+            bitmap = new Bitmap(imageMemoryStream);
+        }
+        
         return new GameMetadataViewModel()
         {
             Id = game.Id,
@@ -23,7 +32,8 @@ public static class GameExtensions
             Description = game.Description,
             ExecutablePath = game.ExecutablePath,
             InstallDirectory = game.InstallDirectory,
-            Guid = game.Guid
+            Guid = game.Guid,
+            TitlePic = bitmap
         };
     }
 
@@ -36,6 +46,13 @@ public static class GameExtensions
 
     public static GameMetadataDto ToDto(this GameMetadataViewModel game)
     {
+        byte[] titlePic = null;
+        if (game.TitlePic != null)
+        {
+            using var memoryStream = new MemoryStream();
+            game.TitlePic.Save(memoryStream);
+            titlePic = memoryStream.ToArray();
+        }
         return new GameMetadataDto()
         {
             Id = game.Id,
@@ -50,7 +67,8 @@ public static class GameExtensions
             InstallDirectory = game.InstallDirectory,
             Description = game.Description,
             ExecutablePath = game.ExecutablePath,
-            Guid = game.Guid
+            Guid = game.Guid,
+            TitlePic = titlePic
         };
     }
 }
