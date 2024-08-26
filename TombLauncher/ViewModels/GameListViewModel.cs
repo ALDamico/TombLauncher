@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Extensions;
+using TombLauncher.Localization;
 using TombLauncher.Navigation;
 
 namespace TombLauncher.ViewModels;
@@ -16,7 +17,7 @@ public partial class GameListViewModel : PageViewModel
     private readonly GamesUnitOfWork _gamesUnitOfWork;
     [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games;
 
-    public GameListViewModel(GamesUnitOfWork gamesUoW, NavigationManager navigationManager)
+    public GameListViewModel(GamesUnitOfWork gamesUoW, NavigationManager navigationManager, LocalizationManager localizationManager) : base(localizationManager)
     {
         _gamesUnitOfWork = gamesUoW;
         AddGameCmd = new RelayCommand(AddGame);
@@ -25,10 +26,10 @@ public partial class GameListViewModel : PageViewModel
 
     private async void OnInit()
     {
-        SetBusy(true, "Loading games...");
+        SetBusy(true,  LocalizationManager.GetLocalizedString("Loading games..."));
         Games =
             _gamesUnitOfWork.GetGamesWithStats().Select(dto =>
-                new GameWithStatsViewModel(_gamesUnitOfWork)
+                new GameWithStatsViewModel(_gamesUnitOfWork, LocalizationManager)
                 {
                     GameMetadata = dto.GameMetadata.ToViewModel(), 
                     LastPlayed = dto.LastPlayed,
@@ -41,6 +42,6 @@ public partial class GameListViewModel : PageViewModel
 
     private void AddGame()
     {
-        Program.NavigationManager.NavigateTo(new NewGameViewModel(_gamesUnitOfWork, Ioc.Default.GetService<IDialogService>(), Ioc.Default.GetService<IMessageBoxService>()));
+        Program.NavigationManager.NavigateTo(new NewGameViewModel(_gamesUnitOfWork, Ioc.Default.GetService<IDialogService>(), Ioc.Default.GetService<IMessageBoxService>(), LocalizationManager));
     }
 }

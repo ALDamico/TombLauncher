@@ -5,30 +5,31 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Extensions;
+using TombLauncher.Localization;
 using TombLauncher.Navigation;
 
 namespace TombLauncher.ViewModels;
 
 public partial class GameWithStatsViewModel : ViewModelBase
 {
-    public GameWithStatsViewModel( GamesUnitOfWork gamesUnitOfWork)
+    public GameWithStatsViewModel(GamesUnitOfWork gamesUnitOfWork, LocalizationManager localizationManager)
     {
         PlayCmd = new RelayCommand(Play);
         OpenCmd = new RelayCommand(Open);
         _gamesUnitOfWork = gamesUnitOfWork;
+        _localizationManager = localizationManager;
     }
 
     private void Open()
     {
-        Program.NavigationManager.NavigateTo(new GameDetailsViewModel(_gamesUnitOfWork, this));
-        Console.WriteLine($"Opening details for {_gameMetadata.Title}");
+        Program.NavigationManager.NavigateTo(new GameDetailsViewModel(_gamesUnitOfWork, this, _localizationManager));
     }
 
     private void Play()
     {
         var currentPage =  Program.NavigationManager.GetCurrentPage();
         currentPage.IsBusy = true;
-        currentPage.BusyMessage = $"Starting {GameMetadata.Title}";
+        currentPage.BusyMessage = _localizationManager.GetLocalizedString("Starting GAMENAME", GameMetadata.Title);
         var process = new Process()
         {
             StartInfo = new ProcessStartInfo(GameMetadata.ExecutablePath)
@@ -46,7 +47,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     private void OnGameExited(object sender, EventArgs args)
     {
         var currentPage = Program.NavigationManager.GetCurrentPage();
-        currentPage.BusyMessage = "Saving play session...";
+        currentPage.BusyMessage = _localizationManager["Saving play session..."];
 
         var process = sender as Process;
         _gamesUnitOfWork.AddPlaySessionToGame(GameMetadata.ToDto(), process.StartTime, process.ExitTime);
@@ -63,6 +64,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     [ObservableProperty] private DateTime? _lastPlayed;
     [ObservableProperty] private bool _areCommandsVisible;
     private readonly GamesUnitOfWork _gamesUnitOfWork;
+    private readonly LocalizationManager _localizationManager;
     public ICommand PlayCmd { get; }
     public ICommand OpenCmd { get; }
 }

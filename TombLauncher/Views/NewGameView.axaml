@@ -53,29 +53,40 @@
                        FontSize="20">
                 Insert new game
             </TextBlock>
-            <TextBlock Grid.Row="1" Grid.Column="0">ZIP archive or folder</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource ZIP archive or folder}"/>
             <DockPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
-                <controls:SplitIconButton Icon="Folder" Text="Open ZIP file" DockPanel.Dock="Right" Command="{Binding PickZipArchiveCmd}">
+                <controls:SplitIconButton Icon="Folder" Text="{DynamicResource Open ZIP file}" 
+                                          DockPanel.Dock="Right" Command="{Binding PickZipArchiveCmd}">
                     <controls:SplitIconButton.Flyout>
                         <MenuFlyout Placement="Bottom">
-                            <MenuItem Header="Open folder" Command="{Binding PickFolderCmd}"></MenuItem>
+                            <MenuItem Header="{DynamicResource Open folder}" Command="{Binding PickFolderCmd}"></MenuItem>
                         </MenuFlyout>
                     </controls:SplitIconButton.Flyout>
                 </controls:SplitIconButton>
                 <TextBox Text="{Binding Source}"></TextBox>
             </DockPanel>
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Title"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding GameMetadata.Title}"></TextBox>
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="Author"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Title}"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding GameMetadata.Title}"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Author}"/>
             <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding GameMetadata.Author}"/>
-            <TextBlock Grid.Row="3" Grid.Column="2" Text="Release date"/>
-            <CalendarDatePicker Grid.Row="3" Grid.Column="3" SelectedDate="{Binding GameMetadata.ReleaseDate}"/>
-            <controls:ImagePicker Grid.Row="0" Grid.RowSpan="4" Grid.Column="4" Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static viewModels:NewGameViewModel.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" DialogService="{Binding DialogService}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MaxHeight="240" MaxWidth="320"></controls:ImagePicker>
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource Release date}"/>
+            <CalendarDatePicker Grid.Row="3" 
+                                Grid.Column="3" 
+                                SelectedDate="{Binding GameMetadata.ReleaseDate}"/>
+            <controls:ImagePicker Grid.Row="0" 
+                                  Grid.RowSpan="4" 
+                                  Grid.Column="4" 
+                                  Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static viewModels:NewGameViewModel.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                  DialogService="{Binding DialogService}" 
+                                  HorizontalAlignment="Stretch" 
+                                  VerticalAlignment="Stretch" 
+                                  MaxHeight="240" 
+                                  MaxWidth="320"/>
         </Grid>
         
         
         
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="Length"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource Length}"/>
         <ComboBox Grid.Row="4" Grid.Column="1" 
                   ItemsSource="{Binding AvailableLengths}" 
                   SelectedValueBinding="{Binding Value}" 
@@ -86,7 +97,7 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <TextBlock Grid.Row="4" Grid.Column="2" Text="Difficulty"/>
+        <TextBlock Grid.Row="4" Grid.Column="2" Text="{DynamicResource Difficulty}"/>
         <ComboBox Grid.Row="4" Grid.Column="3" ItemsSource="{Binding AvailableDifficulties}"
                   SelectedValueBinding="{Binding Value}"
                   SelectedValue="{Binding GameMetadata.Difficulty}">
@@ -96,15 +107,15 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <TextBlock Grid.Row="5" Grid.Column="0" Text="Setting"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource Setting milieu}"/>
         <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding GameMetadata.Setting}"/>
         
-        <TextBlock Grid.Row="6" Grid.Column="0" Text="Synopsis"/>
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource Synopsis}"/>
         <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4" Text="{Binding GameMetadata.Description}" AcceptsReturn="True"/>
         <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4" 
                     HorizontalAlignment="Right" 
                     Orientation="Horizontal" >
-            <controls:IconButton Icon="FloppyDisc" Text="Install" Command="{Binding SaveCmd}"></controls:IconButton>
+            <controls:IconButton Icon="FloppyDisc" Text="{DynamicResource Install}" Command="{Binding SaveCmd}"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -11,13 +11,6 @@ public abstract class ViewModelBase : ObservableObject
     {
         InitCmd = new RelayCommand(Init);
     }
-    private string _title;
-
-    public string Title
-    {
-        get => _title;
-        set => SetProperty(ref _title, value);
-    }
     
     public ICommand InitCmd { get; set; }
 

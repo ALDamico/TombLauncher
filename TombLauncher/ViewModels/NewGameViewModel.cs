@@ -18,6 +18,7 @@ using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
+using TombLauncher.Localization;
 using TombLauncher.Models;
 using TombLauncher.Progress;
 using TombLauncher.Utils;
@@ -27,7 +28,7 @@ namespace TombLauncher.ViewModels;
 public partial class NewGameViewModel : PageViewModel
 {
     public NewGameViewModel(GamesUnitOfWork gamesUnitOfWork, IDialogService dialogService,
-        IMessageBoxService messageBoxService)
+        IMessageBoxService messageBoxService, LocalizationManager localizationManager) : base(localizationManager)
     {
         _gamesUoW = gamesUnitOfWork;
         _dialogService = dialogService;
@@ -80,9 +81,9 @@ public partial class NewGameViewModel : PageViewModel
 
     private async void PickZipArchive()
     {
-        var file = await _dialogService.OpenFile("Select a ZIP file", new List<FilePickerFileType>()
+        var file = await _dialogService.OpenFile(LocalizationManager["Select a ZIP file"], new List<FilePickerFileType>()
         {
-            new FilePickerFileType("ZIP files")
+            new FilePickerFileType(LocalizationManager["ZIP files"])
             {
                 Patterns = new List<string>() { "*.zip" }
             }
@@ -99,7 +100,7 @@ public partial class NewGameViewModel : PageViewModel
 
     private async void PickFolder()
     {
-        var folder = await _dialogService.OpenFolder("Select a folder");
+        var folder = await _dialogService.OpenFolder(LocalizationManager["Select a folder"]);
         if (string.IsNullOrEmpty(folder))
         {
             return;
@@ -111,7 +112,7 @@ public partial class NewGameViewModel : PageViewModel
     protected override async void SaveInner()
     {
         IsBusy = true;
-        InstallProgress.Report(new CopyProgressInfo() { Message = $"Installing {_gameMetadata.Title}..." });
+        InstallProgress.Report(new CopyProgressInfo() { Message = LocalizationManager.GetLocalizedString("Installing GAMENAME", GameMetadata.Title)});
         await Task.Run(async () =>
         {
             var hashCalculator = new GameFileHashCalculator(new HashSet<string>()
@@ -127,11 +128,14 @@ public partial class NewGameViewModel : PageViewModel
             if (_gamesUoW.ExistsHashes(hashes))
             {
                 var messageboxResult = await Dispatcher.UIThread.InvokeAsync(() =>
-                    _messageBoxService.Show("The same mod is already installed",
-                        "The same mod seems to be already installed. Press OK to keep installing, or Cancel to abort",
-                        MsgBoxButton.OkCancel, MsgBoxImage.Error));
+                    _messageBoxService.Show(LocalizationManager["The same mod is already installed"],
+                        LocalizationManager["The same mod is already installed TEXT"],
+                        MsgBoxButton.YesNo, 
+                        MsgBoxImage.Error, 
+                        noButtonText:LocalizationManager["Cancel"], 
+                        yesButtonText:LocalizationManager["Install anyway"]));
 
-                if (messageboxResult.ButtonResult == MsgBoxButtonResult.Cancel)
+                if (messageboxResult.ButtonResult == MsgBoxButtonResult.No)
                 {
                     return;
                 }

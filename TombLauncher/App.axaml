@@ -35,5 +35,7 @@
         <valueConverters:ObjectNotNullToBoolConverter x:Key="ObjectNotNullToBoolConverter"/>
         <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter"/>
         <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
+        <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter"/>
+        <valueConverters:LocalizedStringConverter x:Key="LocalizedStringConverter"/>
     </Application.Resources>
 </Application>

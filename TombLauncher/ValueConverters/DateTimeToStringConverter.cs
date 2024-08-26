@@ -1,59 +1,74 @@
 ﻿using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Extensions;
+using TombLauncher.Localization;
 
 namespace TombLauncher.ValueConverters;
 
 public class DateTimeToStringConverter : IValueConverter
 {
+    private Func<string, object[], string> StringGenerator(LocalizationManager localizationManager)
+    {
+        if (localizationManager != null)
+        {
+            return localizationManager.GetLocalizedString;
+        }
+
+        return string.Format;
+    }
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
+        var localizationManager = Ioc.Default.GetService<LocalizationManager>();
+        var func = StringGenerator(localizationManager);
         if (value == null)
         {
-            return "Never";
+            return func("Never", null);
         }
-        if (value is DateTime dateTime)
+
+        if (value is not DateTime dateTime) return string.Empty;
+        var dateTimeAtMidnight = dateTime.GetDateAtMidnight();
+        var today = DateTime.Today;
+        if (dateTimeAtMidnight == today)
         {
-            var dateTimeAtMidnight = dateTime.GetDateAtMidnight();
-            var today = DateTime.Today;
-            if (dateTimeAtMidnight == today)
-            {
-                return "Today";
-            }
-
-            if (dateTimeAtMidnight.IsYesterday())
-            {
-                return "Yesterday";
-            }
-
-            var differenceInDays = (today - dateTimeAtMidnight).Days;
-            if (differenceInDays > 1 && differenceInDays < 7)
-            {
-                return $"{differenceInDays} days ago";
-            }
-
-            var weeksElapsed = differenceInDays / 7;
-            if (weeksElapsed == 1)
-            {
-                return "Last week";
-            }
-
-            if (weeksElapsed < 4)
-            {
-                return $"{weeksElapsed} weeks ago";
-            }
-
-            var yearsElapsed = today.Year - dateTimeAtMidnight.Year;
-            if (yearsElapsed == 1)
-            {
-                return "Last year";
-            }
-
-            return $"{yearsElapsed} years ago";
+            return func("Today", null);
         }
 
-        return string.Empty;
+        if (dateTimeAtMidnight.IsYesterday())
+        {
+            return func("Yesterday", null);
+        }
+
+        var differenceInDays = (today - dateTimeAtMidnight).Days;
+        if (differenceInDays is > 1 and < 7)
+        {
+            return func("days ago", [differenceInDays]);
+        }
+
+        var weeksElapsed = differenceInDays / 7;
+        switch (weeksElapsed)
+        {
+            case 1:
+                return func("Last week", null);
+            case < 4:
+                return func("weeks ago", [weeksElapsed]);
+        }
+
+        switch (differenceInDays)
+        {
+            case <= 31:
+                return func("Last month", null);
+            case <= 365:
+            {
+                var monthsElapsed = differenceInDays % 365;
+                return func("months ago", [monthsElapsed]);
+            }
+        }
+
+        var yearsElapsed = today.Year - dateTimeAtMidnight.Year;
+        return yearsElapsed == 1 ? func("Last year", null) : func("years ago", [yearsElapsed]);
+
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

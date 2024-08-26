@@ -19,7 +19,7 @@
     </UserControl.Styles>
     <Grid>
         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" x:Name="Text"
-                   Text="Click to change" ZIndex="999" Background="Gray">
+                   Text="{DynamicResource 'Click to change'}" ZIndex="999" Background="Gray">
         </TextBlock>
         <Image x:Name="Image"
                Source="{Binding Path=Source, RelativeSource={RelativeSource FindAncestor, AncestorType=controls:ImagePicker}, Mode=TwoWay}">

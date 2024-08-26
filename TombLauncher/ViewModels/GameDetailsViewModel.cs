@@ -3,12 +3,13 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Database.UnitOfWork;
+using TombLauncher.Localization;
 
 namespace TombLauncher.ViewModels;
 
 public partial class GameDetailsViewModel : PageViewModel
 {
-    public GameDetailsViewModel(GamesUnitOfWork gamesUnitOfWork, GameWithStatsViewModel game)
+    public GameDetailsViewModel(GamesUnitOfWork gamesUnitOfWork, GameWithStatsViewModel game, LocalizationManager localizationManager) : base(localizationManager)
     {
         _gamesUnitOfWork = gamesUnitOfWork;
         _game = game;

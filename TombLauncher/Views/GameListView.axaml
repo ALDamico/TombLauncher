@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:controls="clr-namespace:TombLauncher.Controls"
-             xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              x:Class="TombLauncher.Views.GameListView"
@@ -24,7 +23,7 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="False">
-            <controls:IconButton DockPanel.Dock="Right" Icon="Plus" ToolTip.Tip="Add" Command="{Binding AddGameCmd}" />
+            <controls:IconButton DockPanel.Dock="Right" Icon="Plus" ToolTip.Tip="{DynamicResource Add}" Command="{Binding AddGameCmd}" />
         </DockPanel>
 
         <StackPanel Grid.Row="1" HorizontalAlignment="Center"
@@ -32,28 +31,28 @@
                     Orientation="Horizontal" VerticalAlignment="Center">
             <Image Source="/Assets/Lara_Croft_Flashlight.png" Height="320"/>
             <StackPanel Orientation="Vertical">
-                <TextBlock FontSize="20" FontWeight="DemiBold" HorizontalAlignment="Center" Text="No games" />
-                <TextBlock FontStyle="Italic" HorizontalAlignment="Center">Try adding one</TextBlock>
+                <TextBlock FontSize="20" FontWeight="DemiBold" TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource No games}" />
+                <TextBlock FontStyle="Italic" TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource 'Try adding one'}"/>
             </StackPanel>
         </StackPanel>
         <DataGrid Grid.Row="1" ItemsSource="{Binding Games}" IsReadOnly="True" x:Name="GamesDataGrid"
                   IsVisible="{Binding Games, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Title" Binding="{Binding GameMetadata.Title}" />
-                <DataGridTextColumn Header="Release date" Binding="{Binding GameMetadata.ReleaseDate}" />
-                <DataGridTextColumn Header="Install date" Binding="{Binding GameMetadata.InstallDate}" />
-                <DataGridTextColumn Header="Engine" Binding="{Binding GameMetadata.GameEngine}" />
-                <DataGridTextColumn Header="Time played" Binding="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"/>
-                <DataGridTextColumn Header="Last played" Binding="{Binding LastPlayed, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"/>
-                <DataGridTemplateColumn Header="Actions">
+                <DataGridTextColumn Header="{DynamicResource Title}" Binding="{Binding GameMetadata.Title}" />
+                <DataGridTextColumn Header="{DynamicResource Release date}" Binding="{Binding GameMetadata.ReleaseDate}" />
+                <DataGridTextColumn Header="{DynamicResource Install date}" Binding="{Binding GameMetadata.InstallDate}" />
+                <DataGridTextColumn Header="{DynamicResource Engine}" Binding="{Binding GameMetadata.GameEngine}" />
+                <DataGridTextColumn Header="{DynamicResource Time played}" Binding="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"/>
+                <DataGridTextColumn Header="{DynamicResource Last played}" Binding="{Binding LastPlayed, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"/>
+                <DataGridTemplateColumn Header="{DynamicResource Actions}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" IsVisible="{Binding AreCommandsVisible}">
                                 <controls:IconButton Icon="Play"
-                                                     ToolTip.Tip="{Binding GameMetadata.Title, StringFormat='Play {0}'}"
+                                                     ToolTip.Tip="{Binding GameMetadata.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Play GAMENAME'}"
                                                      Command="{Binding PlayCmd}" />
-                                <controls:IconButton Icon="Details" ToolTip.Tip="View details"
+                                <controls:IconButton Icon="Details" ToolTip.Tip="{DynamicResource View details}"
                                                      Command="{Binding OpenCmd}">
                                 </controls:IconButton>
                             </StackPanel>

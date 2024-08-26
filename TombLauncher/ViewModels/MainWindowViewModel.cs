@@ -6,32 +6,34 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 using TombLauncher.Database.UnitOfWork;
+using TombLauncher.Localization;
 using TombLauncher.Navigation;
 
 namespace TombLauncher.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : WindowViewModelBase
 {
-    public MainWindowViewModel(GamesUnitOfWork gamesUoW, NavigationManager navigationManager)
+    public MainWindowViewModel(GamesUnitOfWork gamesUoW, NavigationManager navigationManager, LocalizationManager localizationManager)
     {
         _navigationManager = navigationManager;
         _navigationManager.OnNavigated += OnNavigated;
+        _localizationManager = localizationManager;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
         MenuItems = new ObservableCollection<MainMenuItemViewModel>()
         {
             new MainMenuItemViewModel()
             {
-                ToolTip = "Welcome",
+                ToolTip = _localizationManager["Welcome"],
                 Icon = MaterialIconKind.HomeOutline,
-                Text = "Welcome",
+                Text = _localizationManager["Welcome"],
                 PageViewModelFactory = Ioc.Default.GetRequiredService<WelcomePageViewModel>()
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = "My mods",
+                ToolTip = _localizationManager["My mods"],
                 Icon = MaterialIconKind.Games,
-                Text = "My mods",
+                Text = _localizationManager["My mods"],
                 PageViewModelFactory = Ioc.Default.GetRequiredService<GameListViewModel>()
             }
         };
@@ -47,6 +49,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     private readonly NavigationManager _navigationManager;
+    private readonly LocalizationManager _localizationManager;
 
     private bool _isPaneOpen;
 

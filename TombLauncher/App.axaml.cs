@@ -1,14 +1,14 @@
-using System;
+using System.Globalization;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Database.UnitOfWork;
+using TombLauncher.Localization;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.Views;
@@ -17,6 +17,11 @@ namespace TombLauncher;
 
 public partial class App : Application
 {
+    public App()
+    {
+        Name = Assembly.GetExecutingAssembly().GetName().Name;
+    }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -31,8 +36,15 @@ public partial class App : Application
             BindingPlugins.DataValidators.RemoveAt(0);
 
             var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton(sp =>
+            {
+                var locManager = new LocalizationManager(Current);
+                locManager.ChangeLanguage(CultureInfo.CurrentUICulture);
+                return locManager;
+            });
             serviceCollection.AddEntityFrameworkSqlite();
-            serviceCollection.AddSingleton(sp => new WelcomePageViewModel(){ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md"});
+            serviceCollection.AddSingleton(sp => new WelcomePageViewModel(Ioc.Default.GetRequiredService<LocalizationManager>())
+                { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
             serviceCollection.AddScoped<GamesUnitOfWork>();
             serviceCollection.AddScoped<GameListViewModel>();
             serviceCollection.AddSingleton(sp =>
@@ -51,7 +63,9 @@ public partial class App : Application
             Ioc.Default.ConfigureServices(serviceProvider);
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(Ioc.Default.GetRequiredService<GamesUnitOfWork>(), Ioc.Default.GetRequiredService<NavigationManager>()),
+                DataContext = new MainWindowViewModel(Ioc.Default.GetRequiredService<GamesUnitOfWork>(),
+                    Ioc.Default.GetRequiredService<NavigationManager>(),
+                    Ioc.Default.GetRequiredService<LocalizationManager>()),
             };
         }
 

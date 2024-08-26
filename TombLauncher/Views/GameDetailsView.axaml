@@ -19,13 +19,13 @@
             <TextBlock DockPanel.Dock="Top" FontWeight="DemiBold" FontSize="20" Text="{Binding Game.GameMetadata.Title}" />
             <ScrollViewer VerticalScrollBarVisibility="Visible">
                 <TextBlock TextWrapping="Wrap">
-                    <Run Text="By" />
+                    <Run Text="{DynamicResource By}" />
                     <Run FontWeight="DemiBold" FontStyle="Italic"
-                         Text="{Binding Game.GameMetadata.Author, FallbackValue=Unknown}">
+                         Text="{Binding Game.GameMetadata.Author, Converter={StaticResource LocalizedFallbackValueConverter}, ConverterParameter=Unknown}">
                     </Run>
                     <LineBreak/>
 
-                    <Run Text="Released on " />
+                    <Run Text="{DynamicResource Released on}" />
                     <Run FontWeight="DemiBold" Text="{Binding Game.GameMetadata.ReleaseDate}" />
                     <LineBreak/>
                     <Run Text="{Binding Game.GameMetadata.Description}" />
@@ -41,7 +41,7 @@
                 <Button.Content>
                     <DockPanel>
                         <avalonia:MaterialIcon Kind="Play" />
-                        <TextBlock DockPanel.Dock="Right" Margin="10, 0" Text="Play" />
+                        <TextBlock DockPanel.Dock="Right" Margin="10, 0" Text="{DynamicResource Play}" />
                     </DockPanel>
                 </Button.Content>
             </Button>
@@ -50,7 +50,7 @@
                 <Button.Content>
                     <DockPanel>
                         <avalonia:MaterialIcon Kind="FolderOpen" />
-                        <TextBlock DockPanel.Dock="Right" Margin="10, 0" Text="Browse files" />
+                        <TextBlock DockPanel.Dock="Right" Margin="10, 0" Text="{DynamicResource Browse files}" />
                     </DockPanel>
                 </Button.Content>
             </Button>

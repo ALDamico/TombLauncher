@@ -3,14 +3,16 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using TombLauncher.Localization;
 using TombLauncher.Navigation;
 
 namespace TombLauncher.ViewModels;
 
 public partial class PageViewModel : ViewModelBase
 {
-    public PageViewModel()
+    public PageViewModel(LocalizationManager localizationManager)
     {
+        LocalizationManager = localizationManager;
         SaveCmd = new RelayCommand(Save, CanSave);
     }
     [ObservableProperty] private bool _isBusy;
@@ -44,4 +46,5 @@ public partial class PageViewModel : ViewModelBase
     protected virtual void SaveInner()
     {
     }
+    protected LocalizationManager LocalizationManager { get; private set; }
 }
