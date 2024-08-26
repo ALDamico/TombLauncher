@@ -27,7 +27,7 @@
     <system:String x:Key="Time played">Tempo di gioco</system:String>
     <system:String x:Key="Last played">Ultimo avvio</system:String>
     <system:String x:Key="Actions">Azioni</system:String>
-    <system:String x:Key="View details">View details</system:String>
+    <system:String x:Key="View details">Visualizza dettagli</system:String>
     <system:String x:Key="Play GAMENAME">Gioca a {0}</system:String>
     <system:String x:Key="ZIP archive or folder">Archivio ZIP o cartella</system:String>
     <system:String x:Key="Open ZIP file">Apri file ZIP</system:String>
