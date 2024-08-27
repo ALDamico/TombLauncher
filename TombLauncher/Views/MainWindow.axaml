@@ -51,6 +51,7 @@
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0">
                 <controls:IconButton Command="{Binding GoBackCmd}" Icon="ArrowBack" />
+                <Button Content="Try downloader" Command="{Binding TestCmd}"></Button>
             </DockPanel>
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">

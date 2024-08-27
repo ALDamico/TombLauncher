@@ -6,6 +6,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 using TombLauncher.Database.UnitOfWork;
+using TombLauncher.Installers.Downloaders;
+using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
 
@@ -20,6 +22,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
         _localizationManager = localizationManager;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
+        TestCmd = new RelayCommand(Test);
         MenuItems = new ObservableCollection<MainMenuItemViewModel>()
         {
             new MainMenuItemViewModel()
@@ -90,6 +93,13 @@ public partial class MainWindowViewModel : WindowViewModelBase
     {
         _navigationManager.GoBack();
         OnNavigated();
+    }
+    public ICommand TestCmd { get; }
+
+    private async void Test()
+    {
+        var downloader = new TrleGameDownloader();
+        await downloader.GetGames(new DownloaderSearchPayload() { LevelName = "hidden dagger" });
     }
 
     private bool CanGoBack() => _navigationManager.CanGoBack();
