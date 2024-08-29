@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using TombLauncher.Dto;
@@ -18,13 +20,29 @@ namespace TombLauncher.Installers.Downloaders.TRLE.net;
 
 public class TrleGameDownloader : IGameDownloader
 {
-    public TrleGameDownloader(TombRaiderLevelInstaller installer, TombRaiderEngineDetector detector)
+    public TrleGameDownloader(TombRaiderLevelInstaller installer, TombRaiderEngineDetector detector, CancellationTokenSource cancellationTokenSource)
     {
         _installer = installer;
         _engineDetector = detector;
+        _cancellationTokenSource = cancellationTokenSource;
         _httpClient = new HttpClient()
         {
-            BaseAddress = new Uri(BaseUrl)
+            BaseAddress = new Uri(BaseUrl),
+            DefaultRequestHeaders =
+            {
+                Accept =
+                {
+                    new MediaTypeWithQualityHeaderValue("text/html"),
+                    new MediaTypeWithQualityHeaderValue("application/xhtml+xml"),
+                    new MediaTypeWithQualityHeaderValue("application/xml"),
+                    new MediaTypeWithQualityHeaderValue("image/avif"),
+                    new MediaTypeWithQualityHeaderValue("image/webp"),
+                    new MediaTypeWithQualityHeaderValue("image/apng"),
+                    new MediaTypeWithQualityHeaderValue("application/signed-exchange"),
+                },
+                Host = "trle.net",
+                Referrer = new Uri("https://trle.net/pFind.php")
+            }
         };
         _gameEngineMapping = new Dictionary<GameEngine, string>()
         {
@@ -41,6 +59,9 @@ public class TrleGameDownloader : IGameDownloader
 
     private TombRaiderLevelInstaller _installer;
     private TombRaiderEngineDetector _engineDetector;
+    private CancellationTokenSource _cancellationTokenSource;
+    private const int RowsPerPage = 20;
+    
 
     public string BaseUrl => "https://trle.net";
     private HttpClient _httpClient;
@@ -67,35 +88,56 @@ public class TrleGameDownloader : IGameDownloader
 
     private readonly Dictionary<string, GameEngine> _inverseGameEngineMapping;
 
-    public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload)
+    private int GetTotalRows(HtmlDocument htmlDocument)
     {
+        var nodeWithTotal = htmlDocument.DocumentNode.SelectSingleNode("//span[@class='navText']");
+        if (nodeWithTotal == null)
+        {
+            return -1;
+        }
+
+        var nodeText = nodeWithTotal.InnerText;
+        var regex = new Regex(@"(\d+) record\(s\) found");
+        var match = regex.Match(nodeText);
+
+        if (int.TryParse(match.Groups[1].Value, out var result))
+        {
+            return result;
+        }
+
+        return -1;
+    }
+
+    public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         var result = new List<GameSearchResultMetadataViewModel>();
         var request = ConvertRequest(searchPayload);
-        var requestStrng = ConvertRequest(request);
-        var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
-        requestMessage.Content = urlEncodedContent;
-        requestMessage.Headers.Add("Referer", "https://trle.net/pFind.php");
-        requestMessage.Headers.Host = "trle.net";
-        requestMessage.Headers.Referrer = new Uri("https://trle.net/pFind.php");
-        requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
-        requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xhtml+xml"));
-        requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
-        requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("image/avif"));
-        requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("image/webp"));
-        requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("image/apng"));
-        requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/signed-exchange"));
-        var formData = new MultipartFormDataContent()
+        var totalCount = int.MaxValue;
+        do
         {
-            urlEncodedContent
-        };
-        requestMessage.Content = urlEncodedContent;
+            var requestStrng = ConvertRequest(request);
+            var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
+            requestMessage.Content = urlEncodedContent;
 
+            var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(content);
+            if (totalCount == int.MaxValue)
+                totalCount = GetTotalRows(htmlDocument);
+            ParseResultPage(htmlDocument, result, cancellationToken);
+            request.Idx += RowsPerPage;
+            Console.WriteLine($"Parsing page {(request.Idx / RowsPerPage)}");
+        } while (request.Idx < totalCount);
 
-        var response = await _httpClient.SendAsync(requestMessage);
-        var content = await response.Content.ReadAsStringAsync();
-        var htmlDocument = new HtmlDocument();
-        htmlDocument.LoadHtml(content);
+        return result;
+    }
+
+    private void ParseResultPage(HtmlDocument htmlDocument, List<GameSearchResultMetadataViewModel> result, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         var resultsTable = htmlDocument.DocumentNode.SelectSingleNode("//table[@class='FindTable']");
         var rows = resultsTable.SelectNodes("./tr");
         var headerRow = rows.FirstOrDefault().SelectNodes("./strong/td");
@@ -105,7 +147,10 @@ public class TrleGameDownloader : IGameDownloader
             var metadata = new GameSearchResultMetadataViewModel();
             var fields = row.SelectNodes("./td");
             var zipped = headerRow.Zip(fields,
-                (header, r) => new KeyValuePair<string, string>(header.InnerText.Trim(), string.IsNullOrEmpty(r.InnerText?.Trim()) ? r.SelectSingleNode("./a")?.Attributes["href"].Value : r.InnerText.Trim()));
+                (header, r) => new KeyValuePair<string, string>(header.InnerText.Trim(),
+                    string.IsNullOrEmpty(r.InnerText?.Trim())
+                        ? r.SelectSingleNode("./a")?.Attributes["href"].Value
+                        : r.InnerText.Trim()));
             foreach (var zip in zipped)
             {
                 var value = zip.Value;
@@ -122,38 +167,40 @@ public class TrleGameDownloader : IGameDownloader
                         metadata.Title = zip.Value;
                         break;
                     case "difficulty":
-                        metadata.Difficulty = Enum.TryParse<GameDifficulty>(zip.Value, out var actualDifficulty) ? actualDifficulty : GameDifficulty.Unknown;
+                        metadata.Difficulty = Enum.TryParse<GameDifficulty>(zip.Value, out var actualDifficulty)
+                            ? actualDifficulty
+                            : GameDifficulty.Unknown;
                         break;
                     case "duration":
                         metadata.Length = Enum.TryParse<GameLength>(zip.Value, out var actualLength)
                             ? actualLength
                             : GameLength.Unknown;
                         break;
-                        case "class":
+                    case "class":
                         metadata.Setting = zip.Value;
                         break;
-                        case "size (MB)":
-                        if(int.TryParse(zip.Value, out var size))
+                    case "size (MB)":
+                        if (int.TryParse(zip.Value, out var size))
                             metadata.SizeInMb = size;
                         break;
-                        case "type":
+                    case "type":
                         metadata.Engine = _inverseGameEngineMapping[zip.Value];
                         break;
-                        case "rating":
+                    case "rating":
                         if (double.TryParse(zip.Value, CultureInfo.InvariantCulture, out var rating))
                             metadata.Rating = rating;
                         break;
-                        case "reviews":
+                    case "reviews":
                         if (int.TryParse(zip.Value, out var reviewCount))
                             metadata.ReviewCount = reviewCount;
                         break;
-                        case "released":
+                    case "released":
                         if (DateTime.TryParse(zip.Value, CultureInfo.InvariantCulture, out var releasedDate))
                             metadata.ReleaseDate = releasedDate;
                         break;
                 }
 
-                
+
                 if (zip.Value.Contains("reviews.php"))
                 {
                     var actualValue = zip.Value;
@@ -161,6 +208,7 @@ public class TrleGameDownloader : IGameDownloader
                     {
                         actualValue = BaseUrl + actualValue;
                     }
+
                     metadata.ReviewsLink = actualValue;
                 }
 
@@ -171,6 +219,7 @@ public class TrleGameDownloader : IGameDownloader
                     {
                         actualValue = BaseUrl + actualValue;
                     }
+
                     metadata.DownloadLink = actualValue;
                 }
 
@@ -181,6 +230,7 @@ public class TrleGameDownloader : IGameDownloader
                     {
                         actualValue = BaseUrl + actualValue;
                     }
+
                     metadata.WalkthroughLink = actualValue;
                 }
             }
@@ -189,11 +239,10 @@ public class TrleGameDownloader : IGameDownloader
 
             //Console.WriteLine(row.InnerHtml);
         }
-
-        return result;
     }
 
-    public async Task<GameMetadataDto> DownloadGame(GameSearchResultMetadataViewModel metadata, IProgress<DownloadProgressInfo> downloadProgress)
+    public async Task<GameMetadataDto> DownloadGame(GameSearchResultMetadataViewModel metadata,
+        IProgress<DownloadProgressInfo> downloadProgress)
     {
         var downloadPath = PathUtils.GetRandomTempDirectory();
         var tempZipName = Path.GetRandomFileName();
@@ -247,7 +296,8 @@ public class TrleGameDownloader : IGameDownloader
             Sorttype = 2,
             Type = gameEngine,
             DurationClass = duration,
-            SortIdx = 8
+            SortIdx = 8,
+            Idx = 0
         };
     }
 

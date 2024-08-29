@@ -76,6 +76,8 @@
                         <Run Text="{Binding CurrentPage.PercentageComplete, StringFormat={}{0:0.00}}"/>
                         <Run Text="%"/>
                     </TextBlock>
+                    <Button Content="{DynamicResource 'Cancel'}" Command="{Binding CurrentPage.CancelCmd}" 
+                            IsVisible="{Binding CurrentPage.IsCancelable}"></Button>
                 </StackPanel>
             </Border>
             <TransitioningContentControl Margin="15" Grid.Row="1" Content="{Binding CurrentPage}"

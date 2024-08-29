@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Reflection;
+using System.Threading;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
@@ -65,13 +66,18 @@ public partial class App : Application
             serviceCollection.AddScoped<GameSearchViewModel>();
             serviceCollection.AddScoped<TombRaiderLevelInstaller>();
             serviceCollection.AddScoped<TombRaiderEngineDetector>();
-            serviceCollection.AddScoped(sp => new GameDownloadManager()
+            serviceCollection.AddScoped<CancellationTokenSource>();
+            serviceCollection.AddScoped(sp =>
             {
-                Downloaders =
+                var cts = sp.GetService<CancellationTokenSource>();
+                return new GameDownloadManager(cts)
                 {
-                    new TrleGameDownloader(sp.GetService<TombRaiderLevelInstaller>(),
-                        sp.GetService<TombRaiderEngineDetector>())
-                }
+                    Downloaders =
+                    {
+                        new TrleGameDownloader(sp.GetService<TombRaiderLevelInstaller>(),
+                            sp.GetService<TombRaiderEngineDetector>(), cts)
+                    }
+                };
             });
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);

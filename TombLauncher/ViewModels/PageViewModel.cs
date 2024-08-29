@@ -14,11 +14,20 @@ public partial class PageViewModel : ViewModelBase
     {
         LocalizationManager = localizationManager;
         SaveCmd = new RelayCommand(Save, CanSave);
+        CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
     }
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private string _busyMessage;
     [ObservableProperty] private string _currentFileName;
     [ObservableProperty] private double? _percentageComplete;
+    [ObservableProperty] private bool _isCancelable;
+    
+    public ICommand CancelCmd { get; }
+
+    protected virtual void Cancel()
+    {
+        
+    }
 
     protected void SetBusy(bool isBusy, string busyMessage = null)
     {

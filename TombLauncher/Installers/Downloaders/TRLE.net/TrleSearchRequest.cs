@@ -12,4 +12,5 @@ public class TrleSearchRequest
     public int Sorttype { get; set; }
     public int? Difficulty { get; set; }
     public int? DurationClass { get; set; }
+    public int? Idx { get; set; }
 }
