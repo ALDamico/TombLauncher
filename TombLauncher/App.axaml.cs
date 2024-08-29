@@ -8,6 +8,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Database.UnitOfWork;
+using TombLauncher.Installers;
+using TombLauncher.Installers.Downloaders;
+using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
@@ -59,6 +62,17 @@ public partial class App : Application
                 ViewsAssemblyName = Assembly.GetExecutingAssembly().GetName().Name
             }));
             serviceCollection.AddScoped(_ => DialogServiceFactory.CreateMessageBoxService());
+            serviceCollection.AddScoped<GameSearchViewModel>();
+            serviceCollection.AddScoped<TombRaiderLevelInstaller>();
+            serviceCollection.AddScoped<TombRaiderEngineDetector>();
+            serviceCollection.AddScoped(sp => new GameDownloadManager()
+            {
+                Downloaders =
+                {
+                    new TrleGameDownloader(sp.GetService<TombRaiderLevelInstaller>(),
+                        sp.GetService<TombRaiderEngineDetector>())
+                }
+            });
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);
             desktop.MainWindow = new MainWindow

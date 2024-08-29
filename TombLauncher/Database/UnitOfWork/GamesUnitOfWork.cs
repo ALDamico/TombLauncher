@@ -74,7 +74,8 @@ public class GamesUnitOfWork : IDisposable
             ReleaseDate = dto.ReleaseDate,
             Description = dto.Description,
             Guid = dto.Guid,
-            TitlePic = dto.TitlePic
+            TitlePic = dto.TitlePic,
+            AuthorFullName = dto.AuthorFullName
         };
     }
 

@@ -63,5 +63,7 @@
     <system:String x:Key="Released on">Released on </system:String>
     <system:String x:Key="Play">Play</system:String>
     <system:String x:Key="Browse files">Browse files</system:String>
+    <system:String x:Key="Search">Search</system:String>
+    <system:String x:Key="Rating">Rating</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

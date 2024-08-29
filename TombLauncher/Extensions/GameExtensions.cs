@@ -33,7 +33,8 @@ public static class GameExtensions
             ExecutablePath = game.ExecutablePath,
             InstallDirectory = game.InstallDirectory,
             Guid = game.Guid,
-            TitlePic = bitmap
+            TitlePic = bitmap,
+            AuthorFullName = game.AuthorFullName
         };
     }
 
@@ -68,7 +69,8 @@ public static class GameExtensions
             Description = game.Description,
             ExecutablePath = game.ExecutablePath,
             Guid = game.Guid,
-            TitlePic = titlePic
+            TitlePic = titlePic,
+            AuthorFullName = game.AuthorFullName
         };
     }
 }

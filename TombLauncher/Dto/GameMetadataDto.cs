@@ -19,4 +19,5 @@ public class GameMetadataDto
     public string Description { get; set; }
     public Guid Guid { get; set; }
     public byte[] TitlePic { get; set; }
+    public string AuthorFullName { get; set; }
 }

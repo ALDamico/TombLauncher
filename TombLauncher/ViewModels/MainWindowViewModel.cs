@@ -22,7 +22,6 @@ public partial class MainWindowViewModel : WindowViewModelBase
         _localizationManager = localizationManager;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
-        TestCmd = new RelayCommand(Test);
         MenuItems = new ObservableCollection<MainMenuItemViewModel>()
         {
             new MainMenuItemViewModel()
@@ -38,6 +37,13 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 Icon = MaterialIconKind.Games,
                 Text = _localizationManager["My mods"],
                 PageViewModelFactory = Ioc.Default.GetRequiredService<GameListViewModel>()
+            },
+            new MainMenuItemViewModel()
+            {
+                ToolTip = _localizationManager["Search"],
+                Icon = MaterialIconKind.Magnify,
+                Text = _localizationManager["Search"],
+                PageViewModelFactory = Ioc.Default.GetRequiredService<GameSearchViewModel>()
             }
         };
         
@@ -93,13 +99,6 @@ public partial class MainWindowViewModel : WindowViewModelBase
     {
         _navigationManager.GoBack();
         OnNavigated();
-    }
-    public ICommand TestCmd { get; }
-
-    private async void Test()
-    {
-        var downloader = new TrleGameDownloader();
-        await downloader.GetGames(new DownloaderSearchPayload() { LevelName = "hidden dagger" });
     }
 
     private bool CanGoBack() => _navigationManager.CanGoBack();

@@ -63,5 +63,7 @@
     <system:String x:Key="Released on">Pubblicato il </system:String>
     <system:String x:Key="Play">Gioca</system:String>
     <system:String x:Key="Browse files">Sfoglia i file</system:String>
+    <system:String x:Key="Search">Cerca</system:String>
+    <system:String x:Key="Rating">Valutazione</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

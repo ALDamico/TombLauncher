@@ -17,25 +17,31 @@
         <materialIcons:MaterialIconStyles />
         <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml" />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
-        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/MsgBoxStyles.axaml"/>
-        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ChildStyle.axaml"/>
-        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ModalStyle.axaml"/>
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/MsgBoxStyles.axaml" />
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ChildStyle.axaml" />
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ModalStyle.axaml" />
         <Style Selector="ComboBox">
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
         <Style Selector="CalendarDatePicker">
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
     </Application.Styles>
     <Application.Resources>
-        <valueConverters:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
-        <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter"/>
-        <valueConverters:NegatedBooleanConverter x:Key="NegatedBooleanConverter"/>
-        <valueConverters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter"/>
-        <valueConverters:ObjectNotNullToBoolConverter x:Key="ObjectNotNullToBoolConverter"/>
-        <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter"/>
-        <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
-        <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter"/>
-        <valueConverters:LocalizedStringConverter x:Key="LocalizedStringConverter"/>
+        <ResourceDictionary>
+            <valueConverters:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
+            <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" />
+            <valueConverters:NegatedBooleanConverter x:Key="NegatedBooleanConverter" />
+            <valueConverters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+            <valueConverters:ObjectNotNullToBoolConverter x:Key="ObjectNotNullToBoolConverter" />
+            <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />
+            <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+            <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter" />
+            <valueConverters:LocalizedStringConverter x:Key="LocalizedStringConverter" />
+            <valueConverters:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Assets/RatingStyles.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -21,4 +21,5 @@ public class Game
     public List<PlaySession> PlaySessions { get; set; }
     public List<GameHashes> Hashes { get; set; }
     public byte[] TitlePic { get; set; }
+    public string AuthorFullName { get; set; }
 }

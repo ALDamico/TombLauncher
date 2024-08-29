@@ -1,0 +1,47 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:controls="clr-namespace:TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.GameSearchView"
+             x:DataType="viewModels:GameSearchViewModel"
+             KeyUp="InputElement_OnKeyUp"
+             >
+    <Design.DataContext>
+        <viewModels:GameSearchViewModel/>
+    </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontWeight="DemiBold" FontSize="20" Text="{DynamicResource Search}">Search</TextBlock>
+        <views:GameSearchForm Grid.Row="1" Grid.Column="0" DataContext="{Binding SearchPayload}"/>
+        <controls:IconButton Grid.Row="1" Grid.Column="1" Text="{DynamicResource Search}" 
+                             Icon="Search" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Stretch" MinWidth="120" Background="MidnightBlue"
+                             Command="{Binding SearchCmd}"
+                             />
+        <ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+                      ItemsSource="{Binding FetchedResults}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Title}" FontSize="16" FontStyle="Italic"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>
