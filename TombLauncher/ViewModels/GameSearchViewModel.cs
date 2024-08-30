@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Avalonia.Threading;
+using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -21,6 +23,7 @@ public partial class GameSearchViewModel : PageViewModel
         _gameDownloadManager = gameDownloadManager;
         SearchCmd = new RelayCommand(Search);
         OpenCmd = new RelayCommand<GameSearchResultMetadataViewModel>(Open);
+        LoadMoreCmd = new RelayCommand(LoadMore, CanLoadMore);
         IsCancelable = true;
     }
 
@@ -29,6 +32,7 @@ public partial class GameSearchViewModel : PageViewModel
 
     [ObservableProperty] private DownloaderSearchPayloadViewModel _searchPayload;
     [ObservableProperty] private ObservableCollection<GameSearchResultMetadataViewModel> _fetchedResults;
+    [ObservableProperty] private bool _hasMoreResults;
     protected override void Cancel()
     {
         _gameDownloadManager.CancelCurrentAction();
@@ -40,16 +44,35 @@ public partial class GameSearchViewModel : PageViewModel
     {
         IsBusy = true;
         BusyMessage = "Avvio ricerca...";
+        FetchedResults = new ObservableCollection<GameSearchResultMetadataViewModel>();
         try
         {
             var games = await _gameDownloadManager.GetGames(SearchPayload.ToDto());
-            FetchedResults = games.ToObservableCollection();
+            Dispatcher.UIThread.Invoke(() => FetchedResults = games.ToObservableCollection());
+            HasMoreResults = _gameDownloadManager.HasMoreResults();
+//            FetchedResults = games.ToObservableCollection();
         }
         catch (OperationCanceledException)
         {
             FetchedResults = new ObservableCollection<GameSearchResultMetadataViewModel>();
         }
         IsBusy = false;
+    }
+    
+    public ICommand LoadMoreCmd { get; }
+
+    private async void LoadMore()
+    {
+        IsBusy = true;
+        BusyMessage = "Caricamento in corso...";
+        FetchedResults.AddRange(await _gameDownloadManager.FetchNextPage());
+        HasMoreResults = _gameDownloadManager.HasMoreResults();
+        IsBusy = false;
+    }
+
+    private bool CanLoadMore()
+    {
+        return _gameDownloadManager.HasMoreResults();
     }
     
     public ICommand OpenCmd { get; }

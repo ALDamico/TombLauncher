@@ -10,4 +10,5 @@ public class DownloaderSearchPayload
     public GameDifficulty? GameDifficulty { get; set; }
     public GameLength? Duration { get; set; }
     public int Rating { get; set; }
+    public string Setting { get; set; }
 }

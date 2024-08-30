@@ -18,6 +18,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -64,5 +65,9 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalContentAlignment="Center"
+                HorizontalAlignment="Center" 
+                Content="{DynamicResource 'Load more'}" 
+                Command="{Binding LoadMoreCmd}" IsVisible="{Binding HasMoreResults}"></Button>
     </Grid>
 </UserControl>

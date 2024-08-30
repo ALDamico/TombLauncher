@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Avalonia;
-using Avalonia.Animation;
-using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
@@ -72,6 +69,6 @@ public partial class ImagePicker : UserControl
 
     public static readonly StyledProperty<IDialogService> DialogServiceProperty =
         AvaloniaProperty.Register<ImagePicker, IDialogService>(nameof(DialogService));
-    public static readonly StyledProperty<IImage?> SourceProperty =
-        AvaloniaProperty.Register<Image, IImage?>(nameof(Source), default, true, BindingMode.TwoWay);
+    public static readonly StyledProperty<IImage> SourceProperty =
+        AvaloniaProperty.Register<Image, IImage>(nameof(Source), default, true, BindingMode.TwoWay);
 }

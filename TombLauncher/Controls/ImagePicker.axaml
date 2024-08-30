@@ -25,7 +25,7 @@
                Source="{Binding Path=Source, RelativeSource={RelativeSource FindAncestor, AncestorType=controls:ImagePicker}, Mode=TwoWay}">
             <Image.Transitions>
                 <Transitions>
-                    <EffectTransition Property="Effect" Duration="0:0:0.5"></EffectTransition>
+                    <EffectTransition Property="Effect" Duration="0:0:0.2"></EffectTransition>
                 </Transitions>
             </Image.Transitions>
         </Image>

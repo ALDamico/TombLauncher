@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using HarfBuzzSharp;
 using Ionic.Zip;
 using TombLauncher.Dto;
+using TombLauncher.Extensions;
 using TombLauncher.Utils;
 
 namespace TombLauncher.Installers;
@@ -92,7 +93,7 @@ public class GameFileHashCalculator
     private static GameHashDto GetGameHashDto(int gameId, MD5 md5, Stream stream, string relativePath)
     {
         var md5Hash = md5.ComputeHash(stream);
-        var md5String = BitConverter.ToString(md5Hash).Replace("-", "").ToLowerInvariant();
+        var md5String = BitConverter.ToString(md5Hash).Remove("-").ToLowerInvariant();
         var dto = new GameHashDto()
         {
             FileName = relativePath,

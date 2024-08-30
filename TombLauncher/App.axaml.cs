@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
+using TombLauncher.Installers.Downloaders.AspideTR.com;
 using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
@@ -70,12 +71,14 @@ public partial class App : Application
             serviceCollection.AddScoped(sp =>
             {
                 var cts = sp.GetService<CancellationTokenSource>();
+                var locMan = sp.GetService<LocalizationManager>();
                 return new GameDownloadManager(cts)
                 {
                     Downloaders =
                     {
                         new TrleGameDownloader(sp.GetService<TombRaiderLevelInstaller>(),
-                            sp.GetService<TombRaiderEngineDetector>(), cts)
+                            sp.GetService<TombRaiderEngineDetector>(), cts),
+                        new AspideTrGameDownloader(locMan.GetSubsetInvertedByPrefix("ATR"))
                     }
                 };
             });

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
+using TombLauncher.Extensions;
 
 namespace TombLauncher.Localization;
 
@@ -53,6 +55,12 @@ public class LocalizationManager
         
         _application.Resources.MergedDictionaries.Add(resultingDictionary);
         _localizedStrings = resultingDictionary;
+    }
+
+    public Dictionary<string, string> GetSubsetInvertedByPrefix(string prefix)
+    {
+        return _localizedStrings.Where(ls => (ls.Key as string)?.StartsWith(prefix + "_") == true)
+            .ToDictionary(pair => pair.Value.ToString().ToLowerInvariant(), pair => pair.Key.ToString().Remove(prefix).ToLowerInvariant());
     }
 
     public string GetLocalizedString(string key, params object[] parms)

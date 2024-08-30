@@ -21,11 +21,50 @@ public class GameDownloadManager
     public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload)
     {
         var outputList = new List<GameSearchResultMetadataViewModel>();
+        var tasks = new List<Task<List<GameSearchResultMetadataViewModel>>>();
         foreach (var downloader in Downloaders)
         {
-            var gamesByDownloader = await downloader.GetGames(searchPayload, _cancellationTokenSource.Token);
+            var gamesByDownloader = downloader.GetGames(searchPayload, _cancellationTokenSource.Token);
+            tasks.Add(gamesByDownloader);
             // TODO Merge games somehow
-            outputList.AddRange(gamesByDownloader);
+            //outputList.AddRange(gamesByDownloader);
+        }
+
+        await Task.WhenAll(tasks);
+        foreach (var completedTask in tasks)
+        {
+            if (!completedTask.IsCompleted)
+            {
+                continue;
+            }
+            
+            outputList.AddRange(completedTask.Result);
+        }
+
+        return outputList;
+    }
+
+    public async Task<List<GameSearchResultMetadataViewModel>> FetchNextPage()
+    {
+        var outputList = new List<GameSearchResultMetadataViewModel>();
+        var tasks = new List<Task<List<GameSearchResultMetadataViewModel>>>();
+        foreach (var downloader in Downloaders)
+        {
+            var gamesByDownloader = downloader.FetchNextPage(_cancellationTokenSource.Token);
+            tasks.Add(gamesByDownloader);
+            // TODO Merge games somehow
+            //outputList.AddRange(gamesByDownloader);
+        }
+
+        await Task.WhenAll(tasks);
+        foreach (var completedTask in tasks)
+        {
+            if (!completedTask.IsCompleted)
+            {
+                continue;
+            }
+            
+            outputList.AddRange(completedTask.Result);
         }
 
         return outputList;
@@ -46,5 +85,10 @@ public class GameDownloadManager
     {
         _cancellationTokenSource.Cancel();
         _cancellationTokenSource = new CancellationTokenSource();
+    }
+
+    public bool HasMoreResults()
+    {
+        return Downloaders.Any(d => d.HasMorePages());
     }
 }

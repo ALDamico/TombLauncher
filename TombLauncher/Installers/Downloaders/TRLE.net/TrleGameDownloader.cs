@@ -20,7 +20,8 @@ namespace TombLauncher.Installers.Downloaders.TRLE.net;
 
 public class TrleGameDownloader : IGameDownloader
 {
-    public TrleGameDownloader(TombRaiderLevelInstaller installer, TombRaiderEngineDetector detector, CancellationTokenSource cancellationTokenSource)
+    public TrleGameDownloader(TombRaiderLevelInstaller installer, TombRaiderEngineDetector detector,
+        CancellationTokenSource cancellationTokenSource)
     {
         _installer = installer;
         _engineDetector = detector;
@@ -61,9 +62,10 @@ public class TrleGameDownloader : IGameDownloader
     private TombRaiderEngineDetector _engineDetector;
     private CancellationTokenSource _cancellationTokenSource;
     private const int RowsPerPage = 20;
-    
+
 
     public string BaseUrl => "https://trle.net";
+    public DownloaderSearchPayload DownloaderSearchPayload { get; private set; }
     private HttpClient _httpClient;
 
     private readonly string[] _defaultHeaderOrder = new string[]
@@ -108,34 +110,42 @@ public class TrleGameDownloader : IGameDownloader
         return -1;
     }
 
-    public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload, CancellationToken cancellationToken = default)
+    public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload,
+        CancellationToken cancellationToken = default)
     {
+        DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
-        var result = new List<GameSearchResultMetadataViewModel>();
-        var request = ConvertRequest(searchPayload);
-        var totalCount = int.MaxValue;
-        do
-        {
-            var requestStrng = ConvertRequest(request);
-            var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
-            requestMessage.Content = urlEncodedContent;
 
-            var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
-            var content = await response.Content.ReadAsStringAsync(cancellationToken);
-            var htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(content);
-            if (totalCount == int.MaxValue)
-                totalCount = GetTotalRows(htmlDocument);
-            ParseResultPage(htmlDocument, result, cancellationToken);
-            request.Idx += RowsPerPage;
-            Console.WriteLine($"Parsing page {(request.Idx / RowsPerPage)}");
-        } while (request.Idx < totalCount);
-
+        var result = await FetchNextPage(cancellationToken);
+        
         return result;
     }
 
-    private void ParseResultPage(HtmlDocument htmlDocument, List<GameSearchResultMetadataViewModel> result, CancellationToken cancellationToken)
+    public async Task<List<GameSearchResultMetadataViewModel>> FetchNextPage(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (CurrentPage > TotalPages) return new List<GameSearchResultMetadataViewModel>();
+        CurrentPage++;
+        var result = new List<GameSearchResultMetadataViewModel>();
+        var request = ConvertRequest(DownloaderSearchPayload);
+        var requestStrng = ConvertRequest(request);
+        var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
+        requestMessage.Content = urlEncodedContent;
+
+        var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.LoadHtml(content);
+        if (TotalPages == 0)
+            TotalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
+        
+        ParseResultPage(htmlDocument, result, cancellationToken);
+        return result;
+    }
+
+    private void ParseResultPage(HtmlDocument htmlDocument, List<GameSearchResultMetadataViewModel> result,
+        CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var resultsTable = htmlDocument.DocumentNode.SelectSingleNode("//table[@class='FindTable']");
@@ -144,7 +154,7 @@ public class TrleGameDownloader : IGameDownloader
         var dataRows = rows.Skip(1);
         foreach (var row in dataRows)
         {
-            var metadata = new GameSearchResultMetadataViewModel(){BaseUrl = BaseUrl};
+            var metadata = new GameSearchResultMetadataViewModel() { BaseUrl = BaseUrl };
             var fields = row.SelectNodes("./td");
             var zipped = headerRow.Zip(fields,
                 (header, r) => new KeyValuePair<string, HtmlNode>(header.InnerText.Trim(),
@@ -153,7 +163,7 @@ public class TrleGameDownloader : IGameDownloader
             {
                 var value = zip.Value;
                 if (value == null) continue;
-                var v =string.IsNullOrEmpty(value.InnerText?.Trim())
+                var v = string.IsNullOrEmpty(value.InnerText?.Trim())
                     ? value.SelectSingleNode("./a")?.Attributes["href"].Value
                     : value.InnerText.Trim();
                 if (v == null) continue;
@@ -181,7 +191,7 @@ public class TrleGameDownloader : IGameDownloader
                             : GameLength.Unknown;
                         break;
                     case "class":
-                        metadata.Setting =v ;
+                        metadata.Setting = v;
                         break;
                     case "size (MB)":
                         if (int.TryParse(v, out var size))
@@ -274,7 +284,8 @@ public class TrleGameDownloader : IGameDownloader
         return dto;
     }
 
-    public async Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game, CancellationToken cancellationToken)
+    public async Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game,
+        CancellationToken cancellationToken)
     {
         var detailsUrl = game.DetailsLink;
         var text = await _httpClient.GetStringAsync(detailsUrl, cancellationToken);
@@ -312,6 +323,15 @@ public class TrleGameDownloader : IGameDownloader
         return metadata;
     }
 
+    public bool HasMorePages()
+    {
+        if (TotalPages == 0) return true;
+        return CurrentPage < TotalPages;
+    }
+
+    public int TotalPages { get; private set; }
+    public int CurrentPage { get; private set; }
+
     private TrleSearchRequest ConvertRequest(DownloaderSearchPayload searchPayload)
     {
         int? difficulty = null;
@@ -339,7 +359,7 @@ public class TrleGameDownloader : IGameDownloader
             Type = gameEngine,
             DurationClass = duration,
             SortIdx = 8,
-            Idx = 0
+            Idx = (CurrentPage - 1) * RowsPerPage
         };
     }
 
