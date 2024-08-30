@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Dto;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers.Downloaders;
@@ -27,6 +29,17 @@ public class GameDownloadManager
         }
 
         return outputList;
+    }
+
+    public async Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game)
+    {
+        var downloader = Downloaders.FirstOrDefault(d => d.BaseUrl == game.BaseUrl);
+        if (downloader != null)
+        {
+            return await downloader.FetchDetails(game, _cancellationTokenSource.Token);
+        }
+
+        return null;
     }
 
     public void CancelCurrentAction()

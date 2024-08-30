@@ -144,66 +144,70 @@ public class TrleGameDownloader : IGameDownloader
         var dataRows = rows.Skip(1);
         foreach (var row in dataRows)
         {
-            var metadata = new GameSearchResultMetadataViewModel();
+            var metadata = new GameSearchResultMetadataViewModel(){BaseUrl = BaseUrl};
             var fields = row.SelectNodes("./td");
             var zipped = headerRow.Zip(fields,
-                (header, r) => new KeyValuePair<string, string>(header.InnerText.Trim(),
-                    string.IsNullOrEmpty(r.InnerText?.Trim())
-                        ? r.SelectSingleNode("./a")?.Attributes["href"].Value
-                        : r.InnerText.Trim()));
+                (header, r) => new KeyValuePair<string, HtmlNode>(header.InnerText.Trim(),
+                    r));
             foreach (var zip in zipped)
             {
                 var value = zip.Value;
                 if (value == null) continue;
+                var v =string.IsNullOrEmpty(value.InnerText?.Trim())
+                    ? value.SelectSingleNode("./a")?.Attributes["href"].Value
+                    : value.InnerText.Trim();
+                if (v == null) continue;
                 switch (zip.Key)
                 {
                     case "nickname":
-                        metadata.Author = zip.Value;
+                        metadata.Author = v;
                         break;
                     case "author's name":
-                        metadata.AuthorFullName = zip.Value;
+                        metadata.AuthorFullName = v;
                         break;
                     case "levelname/info":
-                        metadata.Title = zip.Value;
+                        metadata.Title = v;
+                        var detailsLink = value.SelectSingleNode("./a")?.Attributes["href"]?.Value;
+                        metadata.DetailsLink = detailsLink;
                         break;
                     case "difficulty":
-                        metadata.Difficulty = Enum.TryParse<GameDifficulty>(zip.Value, out var actualDifficulty)
+                        metadata.Difficulty = Enum.TryParse<GameDifficulty>(v, out var actualDifficulty)
                             ? actualDifficulty
                             : GameDifficulty.Unknown;
                         break;
                     case "duration":
-                        metadata.Length = Enum.TryParse<GameLength>(zip.Value, out var actualLength)
+                        metadata.Length = Enum.TryParse<GameLength>(v, out var actualLength)
                             ? actualLength
                             : GameLength.Unknown;
                         break;
                     case "class":
-                        metadata.Setting = zip.Value;
+                        metadata.Setting =v ;
                         break;
                     case "size (MB)":
-                        if (int.TryParse(zip.Value, out var size))
+                        if (int.TryParse(v, out var size))
                             metadata.SizeInMb = size;
                         break;
                     case "type":
-                        metadata.Engine = _inverseGameEngineMapping[zip.Value];
+                        metadata.Engine = _inverseGameEngineMapping[v];
                         break;
                     case "rating":
-                        if (double.TryParse(zip.Value, CultureInfo.InvariantCulture, out var rating))
+                        if (double.TryParse(v, CultureInfo.InvariantCulture, out var rating))
                             metadata.Rating = rating;
                         break;
                     case "reviews":
-                        if (int.TryParse(zip.Value, out var reviewCount))
+                        if (int.TryParse(v, out var reviewCount))
                             metadata.ReviewCount = reviewCount;
                         break;
                     case "released":
-                        if (DateTime.TryParse(zip.Value, CultureInfo.InvariantCulture, out var releasedDate))
+                        if (DateTime.TryParse(v, CultureInfo.InvariantCulture, out var releasedDate))
                             metadata.ReleaseDate = releasedDate;
                         break;
                 }
 
 
-                if (zip.Value.Contains("reviews.php"))
+                if (v.Contains("reviews.php"))
                 {
-                    var actualValue = zip.Value;
+                    var actualValue = v;
                     if (actualValue.StartsWith("/"))
                     {
                         actualValue = BaseUrl + actualValue;
@@ -212,9 +216,9 @@ public class TrleGameDownloader : IGameDownloader
                     metadata.ReviewsLink = actualValue;
                 }
 
-                if (zip.Value.Contains("trle_dl.php"))
+                if (v.Contains("trle_dl.php"))
                 {
-                    var actualValue = zip.Value;
+                    var actualValue = v;
                     if (actualValue.StartsWith("/"))
                     {
                         actualValue = BaseUrl + actualValue;
@@ -223,9 +227,9 @@ public class TrleGameDownloader : IGameDownloader
                     metadata.DownloadLink = actualValue;
                 }
 
-                if (zip.Value.Contains("Levelwalk.php"))
+                if (v.Contains("Levelwalk.php"))
                 {
-                    var actualValue = zip.Value;
+                    var actualValue = v;
                     if (actualValue.StartsWith("/"))
                     {
                         actualValue = BaseUrl + actualValue;
@@ -268,6 +272,44 @@ public class TrleGameDownloader : IGameDownloader
         dto.ExecutablePath = exePath;
         dto.InstallDirectory = installLocation;
         return dto;
+    }
+
+    public async Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game, CancellationToken cancellationToken)
+    {
+        var detailsUrl = game.DetailsLink;
+        var text = await _httpClient.GetStringAsync(detailsUrl, cancellationToken);
+        var page = await _httpClient.GetStreamAsync(detailsUrl, cancellationToken);
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.Load(page);
+        var metadata = new GameMetadataDto
+        {
+            Author = game.Author,
+            Difficulty = game.Difficulty,
+            Length = game.Length,
+            Setting = game.Setting,
+            Title = game.Title,
+            GameEngine = game.Engine,
+            ReleaseDate = game.ReleaseDate,
+            AuthorFullName = game.AuthorFullName
+        };
+
+        // TODO Fetch title pic and description from page;
+        var imageNode = htmlDocument.DocumentNode.SelectSingleNode("//div[@align='center']/img[@class='border']");
+        if (imageNode != null)
+        {
+            var uri = imageNode.Attributes["src"].Value;
+            var byteArr = await _httpClient.GetByteArrayAsync(uri, cancellationToken);
+            metadata.TitlePic = byteArr;
+        }
+
+        var descriptionNode =
+            htmlDocument.DocumentNode.SelectNodes("//td[@class='medGText']").LastOrDefault();
+        if (descriptionNode != null)
+        {
+            metadata.Description = descriptionNode.InnerText;
+        }
+
+        return metadata;
     }
 
     private TrleSearchRequest ConvertRequest(DownloaderSearchPayload searchPayload)

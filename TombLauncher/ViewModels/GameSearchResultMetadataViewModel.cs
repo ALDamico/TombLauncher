@@ -13,6 +13,8 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase
     [ObservableProperty] private GameLength _length;
     [ObservableProperty] private string _setting;
     [ObservableProperty] private GameEngine _engine;
+    [ObservableProperty] private string _detailsLink;
+    [ObservableProperty] private string _baseUrl;
     private string _reviewsLink;
 
     public string ReviewsLink

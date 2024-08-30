@@ -13,4 +13,5 @@ public interface IGameDownloader
     string BaseUrl { get; }
     Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload, CancellationToken cancellationToken);
     Task<GameMetadataDto> DownloadGame(GameSearchResultMetadataViewModel metadata, IProgress<DownloadProgressInfo> downloadProgress);
+    Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game, CancellationToken cancellationToken);
 }
