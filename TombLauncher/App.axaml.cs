@@ -48,8 +48,11 @@ public partial class App : Application
                 return locManager;
             });
             serviceCollection.AddEntityFrameworkSqlite();
-            serviceCollection.AddSingleton(sp => new WelcomePageViewModel(Ioc.Default.GetRequiredService<LocalizationManager>())
-                { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
+            serviceCollection.AddSingleton(sp =>
+                new WelcomePageViewModel(sp.GetRequiredService<LocalizationManager>(),
+                        sp.GetRequiredService<AppCrashUnitOfWork>(),
+                        sp.GetRequiredService<IDialogService>())
+                    { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
             serviceCollection.AddScoped<GamesUnitOfWork>();
             serviceCollection.AddScoped<GameListViewModel>();
             serviceCollection.AddSingleton(sp =>
@@ -82,13 +85,12 @@ public partial class App : Application
                     }
                 };
             });
-            serviceCollection.AddTransient<AppCrashUnitOfWork>();
+            serviceCollection.AddScoped<AppCrashUnitOfWork>();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(Ioc.Default.GetRequiredService<GamesUnitOfWork>(),
-                    Ioc.Default.GetRequiredService<NavigationManager>(),
+                DataContext = new MainWindowViewModel(Ioc.Default.GetRequiredService<NavigationManager>(),
                     Ioc.Default.GetRequiredService<LocalizationManager>()),
             };
         }

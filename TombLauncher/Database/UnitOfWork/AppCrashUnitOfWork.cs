@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using TombLauncher.Database.Repositories;
+using TombLauncher.Dto;
 using TombLauncher.Dto.Extensions;
 using TombLauncher.Models;
 
@@ -11,10 +13,8 @@ public class AppCrashUnitOfWork : UnitOfWorkBase
 {
     public AppCrashUnitOfWork()
     {
-        _dbContext = new TombLauncherDbContext();
         _appCrashes = GetRepository<AppCrash>();
     }
-    private readonly TombLauncherDbContext _dbContext;
 
     private Lazy<EfRepository<AppCrash>> _appCrashes;
     public EfRepository<AppCrash> Crashes => _appCrashes.Value;
@@ -28,6 +28,31 @@ public class AppCrashUnitOfWork : UnitOfWorkBase
             DateTime = DateTime.Now
         };
         Crashes.Insert(crash);
+        Save();
+    }
+
+    public AppCrashDto GetNotNotifiedCrashes()
+    {
+        var unseenCrashes = Crashes.Get(c => !c.WasNotified).OrderByDescending(c => c.DateTime).FirstOrDefault();
+        if (unseenCrashes != null)
+        {
+            return new AppCrashDto()
+            {
+                Id = unseenCrashes.Id,
+                DateTime = unseenCrashes.DateTime,
+                ExceptionDto = JsonSerializer.Deserialize<ExceptionDto>(unseenCrashes.Exception)
+            };
+        }
+
+        return null;
+    }
+
+    public void MarkAsNotified(int id)
+    {
+        var entityToUpdate = Crashes.GetEntityById(id);
+        if (entityToUpdate == null) return;
+        entityToUpdate.WasNotified = true;
+        Crashes.Update(entityToUpdate);
         Save();
     }
 }

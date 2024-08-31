@@ -40,9 +40,6 @@ public class LocalizationManager
             _application.Resources.MergedDictionaries.Remove(currentTranslations);
         }
 
-        
-
-
         var resourceKey =
             $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/{_localizationRelativePath}/{cultureName}.axaml";
 

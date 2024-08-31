@@ -4,12 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.WelcomePageView"
              x:DataType="viewModels:WelcomePageViewModel">
     <Design.DataContext>
         <viewModels:WelcomePageViewModel/>
     </Design.DataContext>
+    <Interaction.Behaviors>
+        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />
+    </Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

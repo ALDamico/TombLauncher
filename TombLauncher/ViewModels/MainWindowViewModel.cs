@@ -15,7 +15,7 @@ namespace TombLauncher.ViewModels;
 
 public partial class MainWindowViewModel : WindowViewModelBase
 {
-    public MainWindowViewModel(GamesUnitOfWork gamesUoW, NavigationManager navigationManager, LocalizationManager localizationManager)
+    public MainWindowViewModel(NavigationManager navigationManager, LocalizationManager localizationManager)
     {
         _navigationManager = navigationManager;
         _navigationManager.OnNavigated += OnNavigated;
