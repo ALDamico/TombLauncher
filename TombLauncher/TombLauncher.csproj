@@ -15,6 +15,7 @@
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.1.3" />
         <PackageReference Include="Avalonia.Desktop" Version="11.1.3" />
+        <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.1.3" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.3" />
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.3" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
@@ -49,5 +50,16 @@
       <Resource Include="Data\Games\README.md">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaXaml Remove="Localization\en-US.axaml" />
+      <Content Include="Localization\en-US.axaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <AvaloniaXaml Remove="Localization\it-IT.axaml" />
+      <Content Include="Localization\it-IT.axaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 </Project>
