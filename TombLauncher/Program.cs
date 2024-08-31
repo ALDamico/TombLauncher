@@ -1,6 +1,11 @@
 ﻿using Avalonia;
 using System;
+using System.Threading.Tasks;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using JamSoft.AvaloniaUI.Dialogs;
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Navigation;
 
 namespace TombLauncher;
@@ -11,8 +16,23 @@ sealed class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static async Task Main(string[] args)
+    {
+#if !DEBUG
+        try
+        {
+#endif
+            BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+#if !DEBUG
+        }
+        catch (Exception e)
+        {
+            var appCrashUoW = Ioc.Default.GetService<AppCrashUnitOfWork>();
+            appCrashUoW.InsertAppCrash(e);
+        }
+#endif
+    }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()

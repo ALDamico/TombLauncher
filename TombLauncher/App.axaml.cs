@@ -82,6 +82,7 @@ public partial class App : Application
                     }
                 };
             });
+            serviceCollection.AddTransient<AppCrashUnitOfWork>();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);
             desktop.MainWindow = new MainWindow

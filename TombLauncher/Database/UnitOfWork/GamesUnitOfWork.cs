@@ -9,32 +9,26 @@ using TombLauncher.Models;
 
 namespace TombLauncher.Database.UnitOfWork;
 
-public class GamesUnitOfWork : IDisposable
+public class GamesUnitOfWork : UnitOfWorkBase
 {
     public GamesUnitOfWork()
     {
-        _dbContext = new TombLauncherDbContext();
-        _games = new Lazy<EfRepository<Game>>(() => new EfRepository<Game>(_dbContext));
-        _playSessions = new Lazy<EfRepository<PlaySession>>(() => new EfRepository<PlaySession>(_dbContext));
-        _hashes = new Lazy<EfRepository<GameHashes>>(() => new EfRepository<GameHashes>(_dbContext));
-        _dbContext.Database.Migrate();
+        _games = GetRepository<Game>();
+        _playSessions = GetRepository<PlaySession>();
+        _hashes = GetRepository<GameHashes>();
+        
     }
 
-    private readonly TombLauncherDbContext _dbContext;
     private Lazy<EfRepository<Game>> _games;
     private Lazy<EfRepository<PlaySession>> _playSessions;
     private Lazy<EfRepository<GameHashes>> _hashes;
-    private bool _disposed;
 
     internal EfRepository<Game> Games => _games.Value;
 
     internal EfRepository<PlaySession> PlaySessions => _playSessions.Value;
     internal EfRepository<GameHashes> Hashes => _hashes.Value;
 
-    public void Save()
-    {
-        _dbContext.SaveChanges();
-    }
+    
 
     public void UpsertGame(GameMetadataDto game)
     {
@@ -93,18 +87,6 @@ public class GamesUnitOfWork : IDisposable
             GameId = dto.GameId,
             Md5Hash = dto.Md5Hash
         };
-    }
-    public void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                _dbContext.Dispose();
-            }
-        }
-
-        _disposed = true;
     }
 
     public List<GameMetadataDto> GetGames()
