@@ -1,4 +1,5 @@
 ﻿using System;
+using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Models;
 
@@ -15,6 +16,7 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase
     [ObservableProperty] private GameEngine _engine;
     [ObservableProperty] private string _detailsLink;
     [ObservableProperty] private string _baseUrl;
+    [ObservableProperty] private Bitmap _titlePic;
     private string _reviewsLink;
 
     public string ReviewsLink

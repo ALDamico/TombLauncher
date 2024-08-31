@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -65,8 +66,20 @@ public partial class NewGameViewModel : PageViewModel
         }
     }
 
-    public static Bitmap NullBitmap =>
-        new Bitmap(AssetLoader.Open(new Uri("avares://TombLauncher/Assets/avalonia-logo.ico")));
+    // TODO Move somewhere more sensible
+    public static Bitmap NullBitmap
+    {
+        get
+        {
+            if (App.Current.ActualThemeVariant == ThemeVariant.Dark)
+            {
+                return new Bitmap(
+                    AssetLoader.Open(new Uri("avares://TombLauncher/Assets/unknown-title-pic-sm-light.png")));
+            }
+
+            return new Bitmap(AssetLoader.Open(new Uri("avares://TombLauncher/Assets/unknown-title-pic-sm.png")));
+        }
+    }
 
     private GamesUnitOfWork _gamesUoW;
     [ObservableProperty] private IDialogService _dialogService;

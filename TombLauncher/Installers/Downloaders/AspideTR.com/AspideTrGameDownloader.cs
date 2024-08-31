@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
 using HtmlAgilityPack;
 using TombLauncher.Dto;
 using TombLauncher.Extensions;
@@ -24,6 +27,7 @@ public class AspideTrGameDownloader : IGameDownloader
             BaseAddress = new Uri(BaseUrl),
         };
     }
+
     public string BaseUrl => "https://www.aspidetr.com/";
     public DownloaderSearchPayload DownloaderSearchPayload { get; private set; }
 
@@ -41,17 +45,19 @@ public class AspideTrGameDownloader : IGameDownloader
     };
 
     private readonly Dictionary<string, string> _classMappings;
-    public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload, CancellationToken cancellationToken)
+
+    public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload,
+        CancellationToken cancellationToken)
     {
         DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
 
         var result = await FetchNextPage(cancellationToken);
-        
+
         return result;
     }
 
-    private void ParsePage(HtmlDocument htmlDocument, List<GameSearchResultMetadataViewModel> result)
+    private async Task ParsePage(HtmlDocument htmlDocument, List<GameSearchResultMetadataViewModel> result)
     {
         var levelsList = htmlDocument.DocumentNode.SelectNodes("//div[@class='levels']/article");
         foreach (var level in levelsList)
@@ -88,6 +94,27 @@ public class AspideTrGameDownloader : IGameDownloader
                                       ratings.Count(n => n.HasClass("fa-star-half-o"));
             }
 
+            var featuredImage = level.SelectSingleNode("./div[@class='level-featured-image']/a/img");
+            if (featuredImage != null)
+            {
+                using var ms =
+                    new MemoryStream(await _httpClient.GetByteArrayAsync(featuredImage.Attributes["src"].Value));
+                searchResult.TitlePic = new Bitmap(ms);
+            }
+
+            var engineTypeNode = level.SelectSingleNode("./div[contains(@class,'level-content')]");
+            if (engineTypeNode != null)
+            {
+                var innerText = engineTypeNode.InnerText.Remove(" ");
+                var regex = new Regex(@"((TombRaider\d|TEN))");
+                var matches = regex.Match(innerText);
+                if (matches.Success)
+                {
+                    Enum.TryParse<GameEngine>(matches.Groups[1].Value, true, out var engine);
+                    searchResult.Engine = engine;
+                }
+            }
+
             result.Add(searchResult);
         }
     }
@@ -113,7 +140,8 @@ public class AspideTrGameDownloader : IGameDownloader
         {
             TotalPages = GetTotalPages(htmlDocument);
         }
-        ParsePage(htmlDocument, result);
+
+        await ParsePage(htmlDocument, result);
         return result;
     }
 
@@ -128,12 +156,14 @@ public class AspideTrGameDownloader : IGameDownloader
         return baseUrl + "?" + queryString;
     }
 
-    public Task<GameMetadataDto> DownloadGame(GameSearchResultMetadataViewModel metadata, IProgress<DownloadProgressInfo> downloadProgress)
+    public Task<GameMetadataDto> DownloadGame(GameSearchResultMetadataViewModel metadata,
+        IProgress<DownloadProgressInfo> downloadProgress)
     {
         throw new NotImplementedException();
     }
 
-    public Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game, CancellationToken cancellationToken)
+    public Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game,
+        CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
@@ -161,7 +191,8 @@ public class AspideTrGameDownloader : IGameDownloader
 
         if (request.Setting != null)
         {
-            var distinctSettings = request.Setting.Split(",").Select(s => s.Trim().ToLowerInvariant().RemoveDiacritics())
+            var distinctSettings = request.Setting.Split(",")
+                .Select(s => s.Trim().ToLowerInvariant().RemoveDiacritics())
                 .ToArray();
             foreach (var setting in distinctSettings)
             {
@@ -174,7 +205,7 @@ public class AspideTrGameDownloader : IGameDownloader
                 }
             }
         }
-        
+
 
         return flags;
     }
