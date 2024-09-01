@@ -65,7 +65,8 @@ public partial class GameSearchViewModel : PageViewModel
     {
         IsBusy = true;
         BusyMessage = "Caricamento in corso...";
-        FetchedResults.AddRange(await _gameDownloadManager.FetchNextPage());
+        var nextPage = await _gameDownloadManager.FetchNextPage();
+        _gameDownloadManager.Merge(FetchedResults, nextPage);
         HasMoreResults = _gameDownloadManager.HasMoreResults();
         IsBusy = false;
     }
@@ -83,9 +84,15 @@ public partial class GameSearchViewModel : PageViewModel
         var details = await _gameDownloadManager.FetchDetails(gameToOpen);
         if (details != null)
         {
+            var detailsViewModel = details.ToViewModel();
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (gameToOpen.TitlePic == null)
+            {
+                gameToOpen.TitlePic = detailsViewModel.TitlePic;
+            }
             var uow = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
             var vm = new GameDetailsViewModel(uow,
-                new GameWithStatsViewModel(uow, LocalizationManager) { GameMetadata = details.ToViewModel() },
+                new GameWithStatsViewModel(uow, LocalizationManager) { GameMetadata = detailsViewModel },
                 LocalizationManager);
             IsBusy = false;
             _navigationManager.NavigateTo(vm);

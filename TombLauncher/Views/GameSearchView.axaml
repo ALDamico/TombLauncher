@@ -48,7 +48,7 @@
                                     <ColumnDefinition Width="Auto" MaxWidth="480"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Image MaxWidth="480" Grid.Row="0" Grid.Column="0" Source="{Binding TitlePic, TargetNullValue={x:Static viewModels:NewGameViewModel.NullBitmap}}"></Image>
+                                <Image MaxWidth="360" Grid.Row="0" Grid.Column="0" Source="{Binding TitlePic, TargetNullValue={x:Static viewModels:NewGameViewModel.NullBitmap}}"></Image>
                                 <Grid Grid.Row="0" Grid.Column="1">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />

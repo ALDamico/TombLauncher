@@ -66,6 +66,17 @@
     <system:String x:Key="Search">Cerca</system:String>
     <system:String x:Key="Rating">Valutazione</system:String>
     <system:String x:Key="Load more">Carica altri</system:String>
+    <system:String x:Key="An error has occurred">Si è verificato un errore</system:String>
+    <system:String x:Key="Accept">Accetta</system:String>
+    <system:String x:Key="This application has encountered an unrecoverable error and has been automatically restarted">Si è verificato un errore irreversibile e l'applicazione è stata riavviata automaticamente.</system:String>
+    <system:String x:Key="Tomb Launcher is in active development and these kinds of errors could happen from time to time">Tomb Launcher è in fase di sviluppo attivo ed errori di questo tipo di tanto in tanto possono capitare.</system:String>
+    <system:String x:Key="If you think this requires the developer s attention please file a bug report on GitHub">Se pensi che questo problema richieda l'attenzione dello sviluppatore, segnalalo su GitHub</system:String>
+    <system:String x:Key="Type">Tipo</system:String>
+    <system:String x:Key="Message">Messaggio</system:String>
+    <system:String x:Key="Source">Fonte</system:String>
+    <system:String x:Key="Stacktrace">Stacktrace</system:String>
+    <system:String x:Key="Has inner exception">Ha eccezione interna?</system:String>
+    <system:String x:Key="Copy">Copia</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

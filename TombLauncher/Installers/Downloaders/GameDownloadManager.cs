@@ -10,13 +10,15 @@ namespace TombLauncher.Installers.Downloaders;
 
 public class GameDownloadManager
 {
-    public GameDownloadManager(CancellationTokenSource cancellationTokenSource)
+    public GameDownloadManager(CancellationTokenSource cancellationTokenSource, IGameMerger merger)
     {
         _cancellationTokenSource = cancellationTokenSource;
+        _merger = merger;
         Downloaders = new List<IGameDownloader>();
     }
     public List<IGameDownloader> Downloaders { get; }
     private CancellationTokenSource _cancellationTokenSource;
+    private readonly IGameMerger _merger;
 
     public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload)
     {
@@ -37,8 +39,9 @@ public class GameDownloadManager
             {
                 continue;
             }
-            
-            outputList.AddRange(completedTask.Result);
+
+            var fetchedResults = completedTask.Result;
+            _merger.Merge(outputList, fetchedResults);
         }
 
         return outputList;
@@ -48,7 +51,7 @@ public class GameDownloadManager
     {
         var outputList = new List<GameSearchResultMetadataViewModel>();
         var tasks = new List<Task<List<GameSearchResultMetadataViewModel>>>();
-        foreach (var downloader in Downloaders)
+        foreach (var downloader in Downloaders.Where(d => d.HasMorePages()))
         {
             var gamesByDownloader = downloader.FetchNextPage(_cancellationTokenSource.Token);
             tasks.Add(gamesByDownloader);
@@ -90,5 +93,11 @@ public class GameDownloadManager
     public bool HasMoreResults()
     {
         return Downloaders.Any(d => d.HasMorePages());
+    }
+
+    public void Merge(ICollection<GameSearchResultMetadataViewModel> fullList,
+        ICollection<GameSearchResultMetadataViewModel> newElements)
+    {
+        _merger.Merge(fullList, newElements);
     }
 }

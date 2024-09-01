@@ -71,11 +71,13 @@ public partial class App : Application
             serviceCollection.AddScoped<TombRaiderLevelInstaller>();
             serviceCollection.AddScoped<TombRaiderEngineDetector>();
             serviceCollection.AddScoped<CancellationTokenSource>();
+            serviceCollection.AddTransient<IGameMerger>(_ =>
+                new TombLauncherGameMerger(new GameSearchResultMetadataEqualityComparer(){UseAuthor = true, IgnoreSubTitle = true}));
             serviceCollection.AddScoped(sp =>
             {
                 var cts = sp.GetService<CancellationTokenSource>();
                 var locMan = sp.GetService<LocalizationManager>();
-                return new GameDownloadManager(cts)
+                return new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>())
                 {
                     Downloaders =
                     {

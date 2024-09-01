@@ -29,6 +29,8 @@ public class LocalizationManager
     private Application _application;
     private ResourceDictionary _localizedStrings;
 
+    public CultureInfo CurrentCulture => _currentCulture;
+
     public void ChangeLanguage(CultureInfo targetLanguage)
     {
         _currentCulture = targetLanguage;

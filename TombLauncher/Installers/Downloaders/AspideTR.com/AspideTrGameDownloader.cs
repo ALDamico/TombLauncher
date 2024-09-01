@@ -51,6 +51,8 @@ public class AspideTrGameDownloader : IGameDownloader
     {
         DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
+        CurrentPage = 0;
+        TotalPages = 1;
 
         var result = await FetchNextPage(cancellationToken);
 
@@ -136,7 +138,7 @@ public class AspideTrGameDownloader : IGameDownloader
 
         var htmlDocument = new HtmlDocument();
         htmlDocument.Load(content);
-        if (TotalPages == 0)
+        if (TotalPages == 1)
         {
             TotalPages = GetTotalPages(htmlDocument);
         }

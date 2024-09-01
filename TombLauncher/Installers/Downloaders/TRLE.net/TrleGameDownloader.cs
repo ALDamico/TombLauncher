@@ -68,24 +68,6 @@ public class TrleGameDownloader : IGameDownloader
     public DownloaderSearchPayload DownloaderSearchPayload { get; private set; }
     private HttpClient _httpClient;
 
-    private readonly string[] _defaultHeaderOrder = new string[]
-    {
-        "nickname",
-        "author's name",
-        "",
-        "",
-        "",
-        "levelname/info",
-        "difficulty",
-        "duration",
-        "class",
-        "size (MB)",
-        "type",
-        "rating",
-        "reviews",
-        "released"
-    };
-
     private readonly Dictionary<GameEngine, string> _gameEngineMapping;
 
     private readonly Dictionary<string, GameEngine> _inverseGameEngineMapping;
@@ -115,6 +97,8 @@ public class TrleGameDownloader : IGameDownloader
     {
         DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
+        CurrentPage = 0;
+        TotalPages = 0;
 
         var result = await FetchNextPage(cancellationToken);
         

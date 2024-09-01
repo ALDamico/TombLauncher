@@ -3,14 +3,79 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:controls="clr-namespace:TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.AppCrashHostView"
              x:DataType="viewModels:AppCrashHostViewModel">
     <Design.DataContext>
-        <viewModels:AppCrashHostViewModel/>
+        <viewModels:AppCrashHostViewModel />
     </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Margin" Value="5" />
+        </Style>
+    </UserControl.Styles>
+    <UserControl.Resources>
+        <valueConverters:ObjectNotNullToMaterialIconConverter x:Key="ObjectNotNullToMaterialIconConverter"
+                                                              TrueValue="Check" FalseValue="Close" />
+        <valueConverters:ObjectNotNullToBrushConverter x:Key="ObjectNotNullToBrushConverter" TrueValue="Green"
+                                                       FalseValue="Red" />
+    </UserControl.Resources>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="{DynamicResource An error has occurred}"/>
-        <TextBlock Text="{Binding Crash.ExceptionDto.Type}"></TextBlock>
+        <TextBlock Text="{DynamicResource An error has occurred}" FontWeight="DemiBold" FontSize="16" />
+        <TextBlock
+            Text="{DynamicResource This application has encountered an unrecoverable error and has been automatically restarted}" />
+        <TextBlock
+            Text="{DynamicResource Tomb Launcher is in active development and these kinds of errors could happen from time to time}" />
+        <TextBlock
+            Text="{DynamicResource If you think this requires the developer s attention please file a bug report on GitHub}" />
+        <!-- TODO Add instructions on how to file a bug report on GitHub once repo is available -->
+
+        <DockPanel>
+            <controls:IconButton DockPanel.Dock="Right" 
+                                 Icon="ContentCopy" 
+                                 ToolTip.Tip="{DynamicResource Copy}" 
+                                 Command="{Binding CopyCmd}"
+                                 CommandParameter="{Binding Crash}"
+                                 />
+            <controls:IconButton DockPanel.Dock="Right"
+                                 Icon="Floppy"
+                                 ToolTip.Tip="{DynamicResource Save}"
+                                 ></controls:IconButton>
+        </DockPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" MinHeight="60" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" MinHeight="200" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Type}" FontWeight="DemiBold" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Crash.ExceptionDto.Type}" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource Message}" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Crash.ExceptionDto.Message}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Source}" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Crash.ExceptionDto.Source}" />
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Stacktrace}" />
+            <TextBox Grid.Row="3" Grid.Column="1"
+                     IsReadOnly="True"
+                     MaxLines="15"
+                     Text="{Binding Crash.ExceptionDto.StackTrace}" />
+            <TextBlock Grid.Row="4" Grid.Column="0"
+                       Text="{DynamicResource Has inner exception}" />
+            <avalonia:MaterialIcon Grid.Row="4" Grid.Column="1"
+                                   HorizontalAlignment="Left"
+                                   FontSize="16"
+                                   Foreground="{Binding Crash.ExceptionDto.InnerException, Converter={StaticResource ObjectNotNullToBrushConverter}}"
+                                   Kind="{Binding Crash.ExceptionDto.InnerException, Converter={StaticResource ObjectNotNullToMaterialIconConverter}}" />
+        </Grid>
+
     </StackPanel>
 </UserControl>

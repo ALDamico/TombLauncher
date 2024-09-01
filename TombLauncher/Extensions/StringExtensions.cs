@@ -1,10 +1,24 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Localization;
 
 namespace TombLauncher.Extensions;
 
 public static class StringExtensions
 {
+    public static string GetLocalizedString(this string s)
+    {
+        return s.GetLocalizedString(null);
+    }
+
+    public static string GetLocalizedString(this string s, params object[] args)
+    {
+        var localizationManager = Ioc.Default.GetRequiredService<LocalizationManager>();
+        return localizationManager.GetLocalizedString(s, args);
+    }
     public static string Remove(this string s, string toRemove)
     {
         return s.Replace(toRemove, string.Empty);
@@ -28,5 +42,11 @@ public static class StringExtensions
         return stringBuilder
             .ToString()
             .Normalize(NormalizationForm.FormC);
+    }
+
+    public static string RemoveIncidentals(this string text)
+    {
+        var regex = new Regex(@"[\{\[\(].*[\}\]\)]");
+        return regex.Replace(text, String.Empty);
     }
 }
