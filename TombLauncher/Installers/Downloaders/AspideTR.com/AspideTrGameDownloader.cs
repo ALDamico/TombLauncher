@@ -158,10 +158,10 @@ public class AspideTrGameDownloader : IGameDownloader
         return baseUrl + "?" + queryString;
     }
 
-    public Task<GameMetadataDto> DownloadGame(IGameSearchResultMetadata metadata,
-        IProgress<DownloadProgressInfo> downloadProgress)
+    public Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
+        IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
     public Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game,

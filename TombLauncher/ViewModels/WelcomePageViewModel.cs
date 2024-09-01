@@ -9,10 +9,9 @@ namespace TombLauncher.ViewModels;
 public partial class WelcomePageViewModel : PageViewModel
 {
     public WelcomePageViewModel(LocalizationManager localizationManager, AppCrashUnitOfWork appCrashUoW,
-        IDialogService dialogService) : base(localizationManager)
+        IDialogService dialogService) : base(localizationManager, dialogService:dialogService)
     {
         _appCrashUoW = appCrashUoW;
-        _dialogService = dialogService;
         InitCmd = new RelayCommand(InitializeInner);
     }
 
@@ -20,12 +19,11 @@ public partial class WelcomePageViewModel : PageViewModel
     {
         var unnotifiedCrash = _appCrashUoW.GetNotNotifiedCrashes();
         if (unnotifiedCrash == null) return;
-        _dialogService.ShowDialog(new AppCrashHostViewModel(_dialogService) { Crash = unnotifiedCrash },
+        DialogService.ShowDialog(new AppCrashHostViewModel(DialogService) { Crash = unnotifiedCrash },
             model => { _appCrashUoW.MarkAsNotified(model.Crash.Id); });
     }
 
     private readonly AppCrashUnitOfWork _appCrashUoW;
-    private readonly IDialogService _dialogService;
 
     [ObservableProperty] private string _changeLogPath;
 }

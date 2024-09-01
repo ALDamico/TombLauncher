@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Threading;
@@ -87,6 +88,16 @@ public partial class App : Application
                     }
                 };
             });
+
+            serviceCollection.AddScoped(_ => new GameFileHashCalculator(new HashSet<string>()
+            {
+                ".tr4",
+                ".pak",
+                ".tr2",
+                ".sfx",
+                ".dat",
+                ".phd"
+            }));
             serviceCollection.AddScoped<AppCrashUnitOfWork>();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);

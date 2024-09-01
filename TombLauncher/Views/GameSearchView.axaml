@@ -6,6 +6,7 @@
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:controls="clr-namespace:TombLauncher.Controls"
              xmlns:utils="clr-namespace:TombLauncher.Utils"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameSearchView"
              x:DataType="viewModels:GameSearchViewModel"
@@ -25,83 +26,105 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontWeight="DemiBold"
-                   FontSize="20" Text="{DynamicResource Search}">
-            Search
-        </TextBlock>
-        <views:GameSearchForm Grid.Row="1" 
-                              Grid.Column="0" 
+        <TextBlock Grid.Row="0" 
+                   Grid.Column="0" 
+                   Grid.ColumnSpan="2" 
+                   HorizontalAlignment="Center" 
+                   FontWeight="DemiBold"
+                   FontSize="20" Text="{DynamicResource Search}"/>
+        
+        <views:GameSearchForm Grid.Row="1"
+                              Grid.Column="0"
                               DataContext="{Binding SearchPayload}" />
-        <controls:IconButton Grid.Row="1" Grid.Column="1" 
+        <controls:IconButton Grid.Row="1" Grid.Column="1"
                              Text="{DynamicResource Search}"
-                             Icon="Search" 
-                             HorizontalContentAlignment="Center" 
+                             Icon="Search"
+                             HorizontalContentAlignment="Center"
                              VerticalContentAlignment="Center"
-                             VerticalAlignment="Stretch" 
-                             MinWidth="120" 
+                             VerticalAlignment="Stretch"
+                             MinWidth="120"
                              Background="MidnightBlue"
                              Command="{Binding SearchCmd}" />
-        <ScrollViewer Grid.Row="2" 
-                      Grid.Column="0" 
+        <ScrollViewer Grid.Row="2"
+                      Grid.Column="0"
                       Grid.ColumnSpan="2">
             <ItemsControl
                 ItemsSource="{Binding FetchedResults}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border CornerRadius="3" 
-                                Padding="10" 
+                        <Border CornerRadius="3"
+                                Padding="10"
                                 Margin="5"
                                 Background="#3a3a3a">
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" 
-                                                      MaxWidth="480"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"
+                                                      MaxWidth="480" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Image Grid.Row="0" 
-                                       Grid.Column="0" 
-                                       MaxWidth="240" 
-                                       Source="{Binding TitlePic, TargetNullValue={x:Static utils:AppUtils.NullBitmap}}"/>
+                                <Image Grid.Row="0"
+                                       Grid.Column="0"
+                                       MaxWidth="240"
+                                       Source="{Binding TitlePic, TargetNullValue={x:Static utils:AppUtils.NullBitmap}}" />
                                 <Grid Grid.Row="0" Grid.Column="1">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <HyperlinkButton Grid.Row="0" 
-                                                 Content="{Binding Title}" 
-                                                 FontSize="16" 
-                                                 FontStyle="Italic" 
-                                                 Command="{Binding Path=((viewModels:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchView}}" 
-                                                 CommandParameter="{Binding Path=.}"/>
-                                <TextBlock Grid.Row="1"
-                                           IsVisible="{Binding Author, Converter={StaticResource ObjectNotNullToBoolConverter}}">
-                                    <Run Text="{DynamicResource By}" />
-                                    <Run Text="{Binding Author}"/>
-                                </TextBlock>
-                                <TextBlock Grid.Row="2"
-                                           IsVisible="{Binding ReleaseDate, Converter={StaticResource DateTimeFormatter}}">
-                                    <Run Text="{DynamicResource Release date}" />
-                                    <Run Text="{Binding ReleaseDate, Converter={StaticResource DateOnlyFormatter}}" />
-                                </TextBlock>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <HyperlinkButton Grid.Row="0"
+                                                     Content="{Binding Title}"
+                                                     FontSize="16"
+                                                     FontStyle="Italic"
+                                                     Command="{Binding Path=((viewModels:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchView}}"
+                                                     CommandParameter="{Binding Path=.}" />
+                                    <TextBlock Grid.Row="1"
+                                               IsVisible="{Binding Author, Converter={StaticResource ObjectNotNullToBoolConverter}}">
+                                        <Run Text="{DynamicResource By}" />
+                                        <Run Text="{Binding Author}" />
+                                    </TextBlock>
+                                    <TextBlock Grid.Row="2"
+                                               IsVisible="{Binding ReleaseDate, Converter={StaticResource DateTimeFormatter}}">
+                                        <Run Text="{DynamicResource Release date}" />
+                                        <Run Text="{Binding ReleaseDate, Converter={StaticResource DateOnlyFormatter}}" />
+                                    </TextBlock>
+                                    <ProgressBar Grid.Row="3" 
+                                                 IsVisible="{Binding TotalBytes, Converter={StaticResource GreaterThanZeroToBoolConverter}}" 
+                                                 Minimum="0" 
+                                                 Maximum="{Binding TotalBytes}" 
+                                                 Value="{Binding CurrentBytes}"
+                                                 ></ProgressBar>
+                                    <TextBlock Grid.Row="3" IsVisible="{Binding TotalBytes, Converter={StaticResource GreaterThanZeroToBoolConverter}}"
+                                               Text="{Binding DownloadSpeed, Converter={StaticResource TransferSpeedFormatter}}"
+                                               ></TextBlock>
+                                </Grid>
                                 
-                            </Grid>
+                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                                    <Button Command="{Binding ((viewModels:GameSearchViewModel)DataContext).InstallCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchView}}"
+                                            CommandParameter="{Binding .}"
+                                            ToolTip.Tip="{DynamicResource Download}"
+                                            >
+                                        <avalonia:MaterialIcon Kind="Download"/>
+                                    </Button>
+                                </StackPanel>
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-        <Button Grid.Row="3" 
-                Grid.Column="0" 
-                Grid.ColumnSpan="2" 
+        <Button Grid.Row="3"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
                 HorizontalContentAlignment="Center"
-                HorizontalAlignment="Center" 
-                Content="{DynamicResource 'Load more'}" 
-                Command="{Binding LoadMoreCmd}" 
-                IsVisible="{Binding HasMoreResults}"/>
+                HorizontalAlignment="Center"
+                Content="{DynamicResource 'Load more'}"
+                Command="{Binding LoadMoreCmd}"
+                IsVisible="{Binding HasMoreResults}" />
     </Grid>
 </UserControl>

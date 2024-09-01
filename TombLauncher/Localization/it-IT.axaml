@@ -84,6 +84,7 @@
     <system:String x:Key="Save error details">Salva i dettagli dell'errore</system:String>
     <system:String x:Key="Save">Salva</system:String>
     <system:String x:Key="JSON files">File JSON</system:String>
+    <system:String x:Key="Download">Scarica</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

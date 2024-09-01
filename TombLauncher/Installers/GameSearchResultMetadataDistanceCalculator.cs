@@ -41,9 +41,7 @@ public class GameSearchResultMetadataDistanceCalculator
                 return double.MaxValue;
             }
         }
-
-        Console.WriteLine($"Comparing {xKey} vs {yKey}: Threshold - {threshold} Equals? {dist <= threshold} Ratio: {(double)dist / Math.Abs(yKey.Length + xKey.Length)}");
-
+        
         return (double)dist / Math.Abs(yKey.Length + xKey.Length);
     }
 

@@ -89,4 +89,20 @@ public class EfRepository<T> : IRepository<T> where T : class
     {
         _dbContext.SaveChanges();
     }
+
+    public bool Upsert(T entity)
+    {
+        if (_dbContext.Entry(entity).State == EntityState.Modified)
+        {
+            return Update(entity);
+        }
+
+        if (_dbContext.Entry(entity).State == EntityState.Detached)
+        {
+            _dbSet.Add(entity);
+            return true;
+        }
+
+        return false;
+    }
 }

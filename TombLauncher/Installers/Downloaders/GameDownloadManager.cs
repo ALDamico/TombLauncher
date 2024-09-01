@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TombLauncher.Dto;
+using TombLauncher.Progress;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers.Downloaders;
@@ -96,5 +100,18 @@ public class GameDownloadManager
         ICollection<GameSearchResultMetadataViewModel> newElements)
     {
         _merger.Merge(fullList, newElements);
+    }
+
+    public async Task<string> DownloadGame(IGameSearchResultMetadata metadata, IProgress<DownloadProgressInfo> downloadProgress)
+    {
+        var baseUrl = metadata.BaseUrl;
+        var downloader = Downloaders.FirstOrDefault(d => d.BaseUrl == baseUrl);
+        var downloadPath = PathUtils.GetRandomTempDirectory();
+        var tempZipName = Path.GetRandomFileName();
+        var fullFilePath = Path.Combine(downloadPath, tempZipName);
+        await using var file = new FileStream(fullFilePath, FileMode.Create);
+        await downloader.DownloadGame(metadata, file, downloadProgress, _cancellationTokenSource.Token);
+        return fullFilePath;
+
     }
 }

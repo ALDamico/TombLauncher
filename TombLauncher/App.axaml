@@ -45,6 +45,9 @@
             <valueConverters:DateTimeFormatter x:Key="DateTimeFormatter">
                 <valueConverters:DateTimeFormatter.DesiredFormat>DateTimeFormat</valueConverters:DateTimeFormatter.DesiredFormat>
             </valueConverters:DateTimeFormatter>
+            <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter"/>
+            <valueConverters:TransferSpeedFormatter x:Key="TransferSpeedFormatter"/>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/Assets/RatingStyles.axaml" />
             </ResourceDictionary.MergedDictionaries>

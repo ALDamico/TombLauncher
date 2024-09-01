@@ -16,4 +16,5 @@ public interface IRepository<T> where T : class
     bool Delete(int id);
     bool Update(T entity);
     void Commit();
+    bool Upsert(T entity);
 }

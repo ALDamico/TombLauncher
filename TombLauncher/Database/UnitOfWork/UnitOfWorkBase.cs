@@ -12,7 +12,7 @@ public abstract class UnitOfWorkBase : IDisposable, IAsyncDisposable
         DbContext = new TombLauncherDbContext();
         DbContext.Database.Migrate();
     }
-    protected TombLauncherDbContext DbContext;
+    protected readonly TombLauncherDbContext DbContext;
     private bool _disposed;
     public void Dispose(bool disposing)
     {

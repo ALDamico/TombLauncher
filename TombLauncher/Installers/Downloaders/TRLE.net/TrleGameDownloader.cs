@@ -239,23 +239,18 @@ public class TrleGameDownloader : IGameDownloader
         }
     }
 
-    public async Task<GameMetadataDto> DownloadGame(IGameSearchResultMetadata metadata,
-        IProgress<DownloadProgressInfo> downloadProgress)
+    public async Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
+        IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
-        var downloadPath = PathUtils.GetRandomTempDirectory();
-        var tempZipName = Path.GetRandomFileName();
-        var fullFilePath = Path.Combine(downloadPath, tempZipName);
-        await using var file = new FileStream(fullFilePath, FileMode.Create);
-        await _httpClient.DownloadAsync(metadata.DownloadLink, file, downloadProgress);
+        await _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
 
-        var dto = new GameMetadataDto()
+        /*var dto = new GameMetadataDto()
         {
             Author = metadata.Author,
             AuthorFullName = metadata.AuthorFullName,
             Difficulty = metadata.Difficulty,
             Guid = Guid.NewGuid(),
             GameEngine = metadata.Engine,
-            InstallDate = DateTime.Now,
             ReleaseDate = metadata.ReleaseDate,
             Length = metadata.Length,
             Title = metadata.Title,
@@ -265,7 +260,8 @@ public class TrleGameDownloader : IGameDownloader
         var exePath = _engineDetector.GetGameExecutablePath(fullFilePath);
         dto.ExecutablePath = exePath;
         dto.InstallDirectory = installLocation;
-        return dto;
+        dto.InstallDate = DateTime.Now;
+        return dto;*/
     }
 
     public async Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game,

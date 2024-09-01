@@ -12,12 +12,13 @@ public class DownloadProgressInfo
     {
         get
         {
-            if ((DateTime.Now - StartDate).TotalSeconds == 0)
+            var totalSeconds = (DateTime.Now - StartDate).TotalSeconds;
+            if (totalSeconds == 0)
             {
                 return 0;
             }
 
-            return BytesDownloaded / (DateTime.Now - StartDate).TotalSeconds;
+            return BytesDownloaded / totalSeconds;
         }
     }
 }

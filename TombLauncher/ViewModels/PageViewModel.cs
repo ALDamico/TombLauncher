@@ -3,16 +3,19 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
 
 namespace TombLauncher.ViewModels;
 
-public partial class PageViewModel : ViewModelBase
+public abstract partial class PageViewModel : ViewModelBase
 {
-    public PageViewModel(LocalizationManager localizationManager)
+    public PageViewModel(LocalizationManager localizationManager, IMessageBoxService messageBoxService = null, IDialogService dialogService = null)
     {
         LocalizationManager = localizationManager;
+        MessageBoxService = messageBoxService;
+        DialogService = dialogService;
         SaveCmd = new RelayCommand(Save, CanSave);
         CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
     }
@@ -56,4 +59,6 @@ public partial class PageViewModel : ViewModelBase
     {
     }
     protected LocalizationManager LocalizationManager { get; private set; }
+    protected IMessageBoxService MessageBoxService { get; private set; }
+    protected IDialogService DialogService { get; private set; }
 }

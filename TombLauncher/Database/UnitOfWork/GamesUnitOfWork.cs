@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TombLauncher.Database.Repositories;
 using TombLauncher.Dto;
 using TombLauncher.Dto.Extensions;
+using TombLauncher.Extensions;
 using TombLauncher.Models;
 
 namespace TombLauncher.Database.UnitOfWork;
@@ -16,18 +17,19 @@ public class GamesUnitOfWork : UnitOfWorkBase
         _games = GetRepository<Game>();
         _playSessions = GetRepository<PlaySession>();
         _hashes = GetRepository<GameHashes>();
-        
+        _links = GetRepository<GameLink>();
     }
 
-    private Lazy<EfRepository<Game>> _games;
-    private Lazy<EfRepository<PlaySession>> _playSessions;
-    private Lazy<EfRepository<GameHashes>> _hashes;
+    private readonly Lazy<EfRepository<Game>> _games;
+    private readonly Lazy<EfRepository<PlaySession>> _playSessions;
+    private readonly Lazy<EfRepository<GameHashes>> _hashes;
+    private readonly Lazy<EfRepository<GameLink>> _links;
 
     internal EfRepository<Game> Games => _games.Value;
 
     internal EfRepository<PlaySession> PlaySessions => _playSessions.Value;
     internal EfRepository<GameHashes> Hashes => _hashes.Value;
-
+    internal EfRepository<GameLink> Links => _links.Value;
     
 
     public void UpsertGame(GameMetadataDto game)
@@ -182,5 +184,48 @@ public class GamesUnitOfWork : UnitOfWorkBase
         }
         
         Save();
+    }
+
+    public List<GameLinkDto> GetLinks(int gameId)
+    {
+        return Links.Get(l => l.GameId == gameId).AsEnumerable().ToDtos().ToList();
+    }
+
+    public void SaveLink(GameLinkDto dto)
+    {
+        if (dto.Id != default) return;
+
+        var entity = dto.ToGameLink();
+        Links.Upsert(entity);
+    }
+
+    public GameMetadataDto GetGameByLinks(LinkType linkType, List<string> links)
+    {
+        var gameIds = Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).Select(l => l.GameId).Distinct().ToList();
+        if (gameIds.Count == 1)
+        {
+            return Games.GetEntityById(gameIds.First()).ToDto();
+        }
+
+        return null;
+    }
+
+    public List<GameMetadataDto> GetGamesByLinks(LinkType linkType, List<string> links)
+    {
+        var games = Games.GetAll();
+        return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType)
+            .Select(l => l.GameId)
+            .Join(games, i => i, game => game.Id, (i, game) => game)
+            .AsEnumerable()
+            .ToDtos()
+            .ToList();
+    }
+
+    public Dictionary<string, GameMetadataDto> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
+    {
+        var games = Games.GetAll();
+        return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType)
+            .Join(games, l => l.GameId, game => game.Id, (i, game) => new { Link = i.Link, Game = game })
+            .ToDictionary(k => k.Link, g => g.Game.ToDto());
     }
 }

@@ -12,6 +12,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Ionic.Zip;
 using JamSoft.AvaloniaUI.Dialogs;
@@ -29,10 +30,9 @@ namespace TombLauncher.ViewModels;
 public partial class NewGameViewModel : PageViewModel
 {
     public NewGameViewModel(GamesUnitOfWork gamesUnitOfWork, IDialogService dialogService,
-        IMessageBoxService messageBoxService, LocalizationManager localizationManager) : base(localizationManager)
+        IMessageBoxService messageBoxService, LocalizationManager localizationManager) : base(localizationManager, messageBoxService, dialogService)
     {
         _gamesUoW = gamesUnitOfWork;
-        _dialogService = dialogService;
         _messageBoxService = messageBoxService;
         _gameMetadata = new GameMetadataViewModel();
         _gameMetadata.PropertyChanged += OnGameMetadataPropertyChanged;
@@ -69,7 +69,6 @@ public partial class NewGameViewModel : PageViewModel
     // TODO Move somewhere more sensible
 
     private GamesUnitOfWork _gamesUoW;
-    [ObservableProperty] private IDialogService _dialogService;
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;
     [ObservableProperty] private string _source;
     private readonly IMessageBoxService _messageBoxService;
@@ -81,7 +80,7 @@ public partial class NewGameViewModel : PageViewModel
 
     private async void PickZipArchive()
     {
-        var file = await _dialogService.OpenFile(LocalizationManager["Select a ZIP file"], new List<FilePickerFileType>()
+        var file = await DialogService.OpenFile(LocalizationManager["Select a ZIP file"], new List<FilePickerFileType>()
         {
             new FilePickerFileType(LocalizationManager["ZIP files"])
             {
@@ -100,7 +99,7 @@ public partial class NewGameViewModel : PageViewModel
 
     private async void PickFolder()
     {
-        var folder = await _dialogService.OpenFolder(LocalizationManager["Select a folder"]);
+        var folder = await DialogService.OpenFolder(LocalizationManager["Select a folder"]);
         if (string.IsNullOrEmpty(folder))
         {
             return;
@@ -115,15 +114,7 @@ public partial class NewGameViewModel : PageViewModel
         InstallProgress.Report(new CopyProgressInfo() { Message = LocalizationManager.GetLocalizedString("Installing GAMENAME", GameMetadata.Title)});
         await Task.Run(async () =>
         {
-            var hashCalculator = new GameFileHashCalculator(new HashSet<string>()
-            {
-                ".tr4",
-                ".pak",
-                ".tr2",
-                ".sfx",
-                ".dat",
-                ".phd"
-            });
+            var hashCalculator = Ioc.Default.GetRequiredService<GameFileHashCalculator>();
             var hashes = hashCalculator.CalculateHashes(Source);
             if (_gamesUoW.ExistsHashes(hashes))
             {

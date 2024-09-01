@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TombLauncher.Dto;
@@ -14,7 +15,7 @@ public interface IGameDownloader
     DownloaderSearchPayload DownloaderSearchPayload { get; }
     Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload, CancellationToken cancellationToken);
     Task<List<GameSearchResultMetadataViewModel>> FetchNextPage(CancellationToken cancellationToken);
-    Task<GameMetadataDto> DownloadGame(IGameSearchResultMetadata metadata, IProgress<DownloadProgressInfo> downloadProgress);
+    Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream, IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken);
     Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken);
     bool HasMorePages();
     int TotalPages { get; }
