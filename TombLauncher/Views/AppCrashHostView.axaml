@@ -33,17 +33,15 @@
             Text="{DynamicResource If you think this requires the developer s attention please file a bug report on GitHub}" />
         <!-- TODO Add instructions on how to file a bug report on GitHub once repo is available -->
 
-        <DockPanel>
-            <controls:IconButton DockPanel.Dock="Right" 
-                                 Icon="ContentCopy" 
-                                 ToolTip.Tip="{DynamicResource Copy}" 
-                                 Command="{Binding CopyCmd}"
-                                 CommandParameter="{Binding Crash}"
-                                 />
-            <controls:IconButton DockPanel.Dock="Right"
-                                 Icon="Floppy"
-                                 ToolTip.Tip="{DynamicResource Save}"
-                                 ></controls:IconButton>
+        <DockPanel HorizontalAlignment="Right">
+            <Button DockPanel.Dock="Right" ToolTip.Tip="{DynamicResource Copy}" 
+                    Command="{Binding CopyCmd}"
+                    CommandParameter="{Binding Crash}">
+                <avalonia:MaterialIcon Kind="ContentCopy"></avalonia:MaterialIcon>
+            </Button>
+            <Button DockPanel.Dock="Right" ToolTip.Tip="{DynamicResource Save}" Command="{Binding SaveCmd}">
+                <avalonia:MaterialIcon Kind="FloppyDisc"/>
+            </Button>
         </DockPanel>
         <Grid>
             <Grid.ColumnDefinitions>

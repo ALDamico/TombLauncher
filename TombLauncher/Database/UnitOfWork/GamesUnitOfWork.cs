@@ -183,10 +183,4 @@ public class GamesUnitOfWork : UnitOfWorkBase
         
         Save();
     }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
 }

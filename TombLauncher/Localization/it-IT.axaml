@@ -77,6 +77,9 @@
     <system:String x:Key="Stacktrace">Stacktrace</system:String>
     <system:String x:Key="Has inner exception">Ha eccezione interna?</system:String>
     <system:String x:Key="Copy">Copia</system:String>
+    <system:String x:Key="Save error details">Salva i dettagli dell'errore</system:String>
+    <system:String x:Key="Save">Salva</system:String>
+    <system:String x:Key="JSON files">File JSON</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

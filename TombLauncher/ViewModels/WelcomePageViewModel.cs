@@ -20,7 +20,7 @@ public partial class WelcomePageViewModel : PageViewModel
     {
         var unnotifiedCrash = _appCrashUoW.GetNotNotifiedCrashes();
         if (unnotifiedCrash == null) return;
-        _dialogService.ShowDialog(new AppCrashHostViewModel() { Crash = unnotifiedCrash },
+        _dialogService.ShowDialog(new AppCrashHostViewModel(_dialogService) { Crash = unnotifiedCrash },
             model => { _appCrashUoW.MarkAsNotified(model.Crash.Id); });
     }
 
