@@ -67,19 +67,6 @@ public partial class NewGameViewModel : PageViewModel
     }
 
     // TODO Move somewhere more sensible
-    public static Bitmap NullBitmap
-    {
-        get
-        {
-            if (App.Current.ActualThemeVariant == ThemeVariant.Dark)
-            {
-                return new Bitmap(
-                    AssetLoader.Open(new Uri("avares://TombLauncher/Assets/unknown-title-pic-sm-light.png")));
-            }
-
-            return new Bitmap(AssetLoader.Open(new Uri("avares://TombLauncher/Assets/unknown-title-pic-sm.png")));
-        }
-    }
 
     private GamesUnitOfWork _gamesUoW;
     [ObservableProperty] private IDialogService _dialogService;

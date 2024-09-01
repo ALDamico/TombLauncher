@@ -5,6 +5,7 @@
              xmlns:controls="clr-namespace:TombLauncher.Controls"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
+             xmlns:utils="clr-namespace:TombLauncher.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.NewGameView"
              x:DataType="viewModels:NewGameViewModel">
@@ -76,7 +77,7 @@
             <controls:ImagePicker Grid.Row="0" 
                                   Grid.RowSpan="4" 
                                   Grid.Column="4" 
-                                  Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static viewModels:NewGameViewModel.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                  Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static utils:AppUtils.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                                   DialogService="{Binding DialogService}" 
                                   HorizontalAlignment="Stretch" 
                                   VerticalAlignment="Stretch" 

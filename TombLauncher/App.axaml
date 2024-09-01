@@ -39,6 +39,12 @@
             <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter" />
             <valueConverters:LocalizedStringConverter x:Key="LocalizedStringConverter" />
             <valueConverters:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
+            <valueConverters:DateTimeFormatter x:Key="DateOnlyFormatter">
+                <valueConverters:DateTimeFormatter.DesiredFormat>DateOnlyFormat</valueConverters:DateTimeFormatter.DesiredFormat>
+            </valueConverters:DateTimeFormatter>
+            <valueConverters:DateTimeFormatter x:Key="DateTimeFormatter">
+                <valueConverters:DateTimeFormatter.DesiredFormat>DateTimeFormat</valueConverters:DateTimeFormatter.DesiredFormat>
+            </valueConverters:DateTimeFormatter>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/Assets/RatingStyles.axaml" />
             </ResourceDictionary.MergedDictionaries>

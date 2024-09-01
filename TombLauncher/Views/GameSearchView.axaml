@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:controls="clr-namespace:TombLauncher.Controls"
+             xmlns:utils="clr-namespace:TombLauncher.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameSearchView"
              x:DataType="viewModels:GameSearchViewModel"
@@ -28,34 +29,50 @@
                    FontSize="20" Text="{DynamicResource Search}">
             Search
         </TextBlock>
-        <views:GameSearchForm Grid.Row="1" Grid.Column="0" DataContext="{Binding SearchPayload}" />
-        <controls:IconButton Grid.Row="1" Grid.Column="1" Text="{DynamicResource Search}"
-                             Icon="Search" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                             VerticalAlignment="Stretch" MinWidth="120" Background="MidnightBlue"
+        <views:GameSearchForm Grid.Row="1" 
+                              Grid.Column="0" 
+                              DataContext="{Binding SearchPayload}" />
+        <controls:IconButton Grid.Row="1" Grid.Column="1" 
+                             Text="{DynamicResource Search}"
+                             Icon="Search" 
+                             HorizontalContentAlignment="Center" 
+                             VerticalContentAlignment="Center"
+                             VerticalAlignment="Stretch" 
+                             MinWidth="120" 
+                             Background="MidnightBlue"
                              Command="{Binding SearchCmd}" />
-        <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+        <ScrollViewer Grid.Row="2" 
+                      Grid.Column="0" 
+                      Grid.ColumnSpan="2">
             <ItemsControl
                 ItemsSource="{Binding FetchedResults}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border CornerRadius="3" Padding="10" Margin="5"
+                        <Border CornerRadius="3" 
+                                Padding="10" 
+                                Margin="5"
                                 Background="#3a3a3a">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" MaxWidth="480"/>
+                                    <ColumnDefinition Width="Auto" 
+                                                      MaxWidth="480"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Image MaxWidth="360" Grid.Row="0" Grid.Column="0" Source="{Binding TitlePic, TargetNullValue={x:Static viewModels:NewGameViewModel.NullBitmap}}"></Image>
+                                <Image Grid.Row="0" 
+                                       Grid.Column="0" 
+                                       MaxWidth="240" 
+                                       Source="{Binding TitlePic, TargetNullValue={x:Static utils:AppUtils.NullBitmap}}"/>
                                 <Grid Grid.Row="0" Grid.Column="1">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <HyperlinkButton Grid.Row="0" Content="{Binding Title}" 
+                                <HyperlinkButton Grid.Row="0" 
+                                                 Content="{Binding Title}" 
                                                  FontSize="16" 
                                                  FontStyle="Italic" 
                                                  Command="{Binding Path=((viewModels:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchView}}" 
@@ -63,12 +80,12 @@
                                 <TextBlock Grid.Row="1"
                                            IsVisible="{Binding Author, Converter={StaticResource ObjectNotNullToBoolConverter}}">
                                     <Run Text="{DynamicResource By}" />
-                                    <Run Text="{Binding Author}"></Run>
+                                    <Run Text="{Binding Author}"/>
                                 </TextBlock>
                                 <TextBlock Grid.Row="2"
-                                           IsVisible="{Binding ReleaseDate, Converter={StaticResource ObjectNotNullToBoolConverter}}">
+                                           IsVisible="{Binding ReleaseDate, Converter={StaticResource DateTimeFormatter}}">
                                     <Run Text="{DynamicResource Release date}" />
-                                    <Run Text="{Binding ReleaseDate}" />
+                                    <Run Text="{Binding ReleaseDate, Converter={StaticResource DateOnlyFormatter}}" />
                                 </TextBlock>
                                 
                             </Grid>
@@ -78,9 +95,13 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-        <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalContentAlignment="Center"
+        <Button Grid.Row="3" 
+                Grid.Column="0" 
+                Grid.ColumnSpan="2" 
+                HorizontalContentAlignment="Center"
                 HorizontalAlignment="Center" 
                 Content="{DynamicResource 'Load more'}" 
-                Command="{Binding LoadMoreCmd}" IsVisible="{Binding HasMoreResults}"></Button>
+                Command="{Binding LoadMoreCmd}" 
+                IsVisible="{Binding HasMoreResults}"/>
     </Grid>
 </UserControl>

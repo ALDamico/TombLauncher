@@ -102,4 +102,6 @@ public class LocalizationManager
     }
 
     public string this[string key] => GetLocalizedString(key);
+    public string DateOnlyFormat => GetLocalizedString(nameof(DateOnlyFormat));
+    public string DateTimeFormat => GetLocalizedString(nameof(DateTimeFormat));
 }

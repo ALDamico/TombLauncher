@@ -1,6 +1,10 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <!-- Miscellaneous -->
+    <!-- These strings SHOULD ALWAYS exist -->
+    <system:String x:Key="DateOnlyFormat">MM/dd/yyyy</system:String>
+    <system:String x:Key="DateTimeFormat">MM/dd/yyyy hh:mm</system:String>
     <!-- ReSharper disable InconsistentNaming -->
     <system:String x:Key="Click to change">Click to change</system:String>
     <system:String x:Key="Loading games...">Loading games...</system:String>
