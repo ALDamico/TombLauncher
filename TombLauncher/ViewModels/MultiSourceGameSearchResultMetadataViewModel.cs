@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Models;
 
 namespace TombLauncher.ViewModels;
 
-public partial class GameSearchResultMetadataViewModel : ViewModelBase, IGameSearchResultMetadata
+public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBase, IGameSearchResultMetadata
 {
+    public MultiSourceGameSearchResultMetadataViewModel()
+    {
+        Sources = new ObservableCollection<GameSearchResultMetadataViewModel>();
+    }
     [ObservableProperty] private string _author;
     [ObservableProperty] private string _authorFullName;
     [ObservableProperty] private string _title;
@@ -46,6 +52,7 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase, IGameSea
     public bool HasWalkthrough => !string.IsNullOrWhiteSpace(WalkthroughLink);
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
-    [ObservableProperty] private int _reviewCount;
+    public int ReviewCount => Sources.Sum(s => s.ReviewCount);
     [ObservableProperty] private DateTime _releaseDate;
+    [ObservableProperty] private ObservableCollection<GameSearchResultMetadataViewModel> _sources;
 }

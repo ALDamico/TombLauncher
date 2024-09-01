@@ -9,7 +9,7 @@ namespace TombLauncher.Installers;
 
 public class GameSearchResultMetadataDistanceCalculator 
 {
-    public double Calculate(GameSearchResultMetadataViewModel x, GameSearchResultMetadataViewModel y)
+    public double Calculate(IGameSearchResultMetadata x, IGameSearchResultMetadata y)
     {
         var xKey = GetKey(x);
         var yKey = GetKey(y);
@@ -47,7 +47,7 @@ public class GameSearchResultMetadataDistanceCalculator
         return (double)dist / Math.Abs(yKey.Length + xKey.Length);
     }
 
-    private string GetKey(GameSearchResultMetadataViewModel obj)
+    private string GetKey(IGameSearchResultMetadata obj)
     {
         if (obj == null) return String.Empty;
         var key = obj.Title.RemoveDiacritics().RemoveIncidentals();

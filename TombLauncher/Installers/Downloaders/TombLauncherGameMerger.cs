@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using TombLauncher.Models;
 using TombLauncher.ViewModels;
@@ -13,7 +14,7 @@ public class TombLauncherGameMerger : IGameMerger
     }
 
     public GameSearchResultMetadataDistanceCalculator Comparer { get; }
-    public int Merge(ICollection<GameSearchResultMetadataViewModel> fullList, ICollection<GameSearchResultMetadataViewModel> addedElements)
+    public int Merge(ICollection<MultiSourceGameSearchResultMetadataViewModel> fullList, ICollection<GameSearchResultMetadataViewModel> addedElements)
     {
         var unmatched = new List<GameSearchResultMetadataViewModel>(addedElements);
         var mergedCount = 0;
@@ -82,7 +83,26 @@ public class TombLauncherGameMerger : IGameMerger
 
         foreach (var element in unmatched)
         {
-            fullList.Add(element);
+            fullList.Add(new MultiSourceGameSearchResultMetadataViewModel()
+            {
+                Author = element.Author,
+                Difficulty = element.Difficulty,
+                Engine = element.Engine,
+                Length = element.Length,
+                Rating = element.Rating,
+                Setting = element.Setting,
+                Sources = new ObservableCollection<GameSearchResultMetadataViewModel>(){element},
+                Title = element.Title,
+                BaseUrl = element.BaseUrl,
+                DetailsLink = element.DetailsLink,
+                DownloadLink = element.DownloadLink,
+                ReleaseDate = element.ReleaseDate,
+                ReviewsLink = element.ReviewsLink,
+                TitlePic = element.TitlePic,
+                WalkthroughLink = element.WalkthroughLink,
+                AuthorFullName = element.AuthorFullName,
+                SizeInMb = element.SizeInMb
+            });
         }
 
         return mergedCount;

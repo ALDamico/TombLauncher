@@ -14,8 +14,8 @@ public interface IGameDownloader
     DownloaderSearchPayload DownloaderSearchPayload { get; }
     Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload, CancellationToken cancellationToken);
     Task<List<GameSearchResultMetadataViewModel>> FetchNextPage(CancellationToken cancellationToken);
-    Task<GameMetadataDto> DownloadGame(GameSearchResultMetadataViewModel metadata, IProgress<DownloadProgressInfo> downloadProgress);
-    Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game, CancellationToken cancellationToken);
+    Task<GameMetadataDto> DownloadGame(IGameSearchResultMetadata metadata, IProgress<DownloadProgressInfo> downloadProgress);
+    Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken);
     bool HasMorePages();
     int TotalPages { get; }
     int CurrentPage { get; }

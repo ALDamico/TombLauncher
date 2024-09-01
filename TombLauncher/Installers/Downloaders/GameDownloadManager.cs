@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Dto;
 using TombLauncher.ViewModels;
 
@@ -20,16 +19,14 @@ public class GameDownloadManager
     private CancellationTokenSource _cancellationTokenSource;
     private readonly IGameMerger _merger;
 
-    public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload)
+    public async Task<List<MultiSourceGameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload)
     {
-        var outputList = new List<GameSearchResultMetadataViewModel>();
+        var outputList = new List<MultiSourceGameSearchResultMetadataViewModel>();
         var tasks = new List<Task<List<GameSearchResultMetadataViewModel>>>();
         foreach (var downloader in Downloaders)
         {
             var gamesByDownloader = downloader.GetGames(searchPayload, _cancellationTokenSource.Token);
             tasks.Add(gamesByDownloader);
-            // TODO Merge games somehow
-            //outputList.AddRange(gamesByDownloader);
         }
 
         await Task.WhenAll(tasks);
@@ -73,7 +70,7 @@ public class GameDownloadManager
         return outputList;
     }
 
-    public async Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game)
+    public async Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game)
     {
         var downloader = Downloaders.FirstOrDefault(d => d.BaseUrl == game.BaseUrl);
         if (downloader != null)
@@ -95,7 +92,7 @@ public class GameDownloadManager
         return Downloaders.Any(d => d.HasMorePages());
     }
 
-    public void Merge(ICollection<GameSearchResultMetadataViewModel> fullList,
+    public void Merge(ICollection<MultiSourceGameSearchResultMetadataViewModel> fullList,
         ICollection<GameSearchResultMetadataViewModel> newElements)
     {
         _merger.Merge(fullList, newElements);

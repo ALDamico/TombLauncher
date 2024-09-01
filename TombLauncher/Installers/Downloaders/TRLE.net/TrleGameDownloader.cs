@@ -239,7 +239,7 @@ public class TrleGameDownloader : IGameDownloader
         }
     }
 
-    public async Task<GameMetadataDto> DownloadGame(GameSearchResultMetadataViewModel metadata,
+    public async Task<GameMetadataDto> DownloadGame(IGameSearchResultMetadata metadata,
         IProgress<DownloadProgressInfo> downloadProgress)
     {
         var downloadPath = PathUtils.GetRandomTempDirectory();
@@ -268,7 +268,7 @@ public class TrleGameDownloader : IGameDownloader
         return dto;
     }
 
-    public async Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game,
+    public async Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         var detailsUrl = game.DetailsLink;

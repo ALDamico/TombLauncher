@@ -55,8 +55,11 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <HyperlinkButton Grid.Row="0" Content="{Binding Title}" FontSize="16" FontStyle="Italic" Command="{Binding Path=((viewModels:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchView}}" 
-                                                 CommandParameter="{Binding}"/>
+                                <HyperlinkButton Grid.Row="0" Content="{Binding Title}" 
+                                                 FontSize="16" 
+                                                 FontStyle="Italic" 
+                                                 Command="{Binding Path=((viewModels:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchView}}" 
+                                                 CommandParameter="{Binding Path=.}"/>
                                 <TextBlock Grid.Row="1"
                                            IsVisible="{Binding Author, Converter={StaticResource ObjectNotNullToBoolConverter}}">
                                     <Run Text="{DynamicResource By}" />

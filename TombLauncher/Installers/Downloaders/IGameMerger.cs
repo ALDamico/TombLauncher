@@ -7,6 +7,6 @@ public interface IGameMerger
 {
     GameSearchResultMetadataDistanceCalculator Comparer { get; }
 
-    int Merge(ICollection<GameSearchResultMetadataViewModel> fullList, ICollection<GameSearchResultMetadataViewModel> addedElements);
+    int Merge(ICollection<MultiSourceGameSearchResultMetadataViewModel> fullList, ICollection<GameSearchResultMetadataViewModel> addedElements);
     //void Merge(List<GameSearchResultMetadataViewModel>)
 }

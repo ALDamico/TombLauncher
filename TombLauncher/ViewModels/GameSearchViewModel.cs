@@ -22,7 +22,7 @@ public partial class GameSearchViewModel : PageViewModel
         _navigationManager = navigationManager;
         _gameDownloadManager = gameDownloadManager;
         SearchCmd = new RelayCommand(Search);
-        OpenCmd = new RelayCommand<GameSearchResultMetadataViewModel>(Open);
+        OpenCmd = new RelayCommand<IGameSearchResultMetadata>(Open);
         LoadMoreCmd = new RelayCommand(LoadMore, CanLoadMore);
         IsCancelable = true;
     }
@@ -31,7 +31,7 @@ public partial class GameSearchViewModel : PageViewModel
     private readonly NavigationManager _navigationManager;
 
     [ObservableProperty] private DownloaderSearchPayloadViewModel _searchPayload;
-    [ObservableProperty] private ObservableCollection<GameSearchResultMetadataViewModel> _fetchedResults;
+    [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults;
     [ObservableProperty] private bool _hasMoreResults;
     protected override void Cancel()
     {
@@ -44,7 +44,7 @@ public partial class GameSearchViewModel : PageViewModel
     {
         IsBusy = true;
         BusyMessage = "Avvio ricerca...";
-        FetchedResults = new ObservableCollection<GameSearchResultMetadataViewModel>();
+        FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         try
         {
             var games = await _gameDownloadManager.GetGames(SearchPayload.ToDto());
@@ -54,7 +54,7 @@ public partial class GameSearchViewModel : PageViewModel
         }
         catch (OperationCanceledException)
         {
-            FetchedResults = new ObservableCollection<GameSearchResultMetadataViewModel>();
+            FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         }
         IsBusy = false;
     }
@@ -78,7 +78,7 @@ public partial class GameSearchViewModel : PageViewModel
     
     public ICommand OpenCmd { get; }
 
-    private async void Open(GameSearchResultMetadataViewModel gameToOpen)
+    private async void Open(IGameSearchResultMetadata gameToOpen)
     {
         IsBusy = true;
         var details = await _gameDownloadManager.FetchDetails(gameToOpen);

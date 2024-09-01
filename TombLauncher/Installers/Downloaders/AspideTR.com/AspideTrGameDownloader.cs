@@ -158,13 +158,13 @@ public class AspideTrGameDownloader : IGameDownloader
         return baseUrl + "?" + queryString;
     }
 
-    public Task<GameMetadataDto> DownloadGame(GameSearchResultMetadataViewModel metadata,
+    public Task<GameMetadataDto> DownloadGame(IGameSearchResultMetadata metadata,
         IProgress<DownloadProgressInfo> downloadProgress)
     {
         throw new NotImplementedException();
     }
 
-    public Task<GameMetadataDto> FetchDetails(GameSearchResultMetadataViewModel game,
+    public Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
