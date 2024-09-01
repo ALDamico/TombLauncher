@@ -72,7 +72,7 @@ public partial class App : Application
             serviceCollection.AddScoped<TombRaiderEngineDetector>();
             serviceCollection.AddScoped<CancellationTokenSource>();
             serviceCollection.AddTransient<IGameMerger>(_ =>
-                new TombLauncherGameMerger(new GameSearchResultMetadataEqualityComparer(){UseAuthor = true, IgnoreSubTitle = true}));
+                new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator(){UseAuthor = true, IgnoreSubTitle = true}));
             serviceCollection.AddScoped(sp =>
             {
                 var cts = sp.GetService<CancellationTokenSource>();

@@ -5,7 +5,7 @@ namespace TombLauncher.Installers.Downloaders;
 
 public interface IGameMerger
 {
-    IEqualityComparer<GameSearchResultMetadataViewModel> Comparer { get; }
+    GameSearchResultMetadataDistanceCalculator Comparer { get; }
 
     int Merge(ICollection<GameSearchResultMetadataViewModel> fullList, ICollection<GameSearchResultMetadataViewModel> addedElements);
     //void Merge(List<GameSearchResultMetadataViewModel>)

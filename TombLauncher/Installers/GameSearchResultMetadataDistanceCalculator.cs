@@ -1,31 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Fastenshtein;
 using TombLauncher.Extensions;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers;
 
-public class GameSearchResultMetadataEqualityComparer : EqualityComparer<GameSearchResultMetadataViewModel>
+public class GameSearchResultMetadataDistanceCalculator 
 {
-    public override bool Equals(GameSearchResultMetadataViewModel x, GameSearchResultMetadataViewModel y)
+    public double Calculate(GameSearchResultMetadataViewModel x, GameSearchResultMetadataViewModel y)
     {
         var xKey = GetKey(x);
         var yKey = GetKey(y);
+
+        ;
+        if (xKey.Contains(yKey) || yKey.Contains(xKey))
+            return 0;
+        
         var lev = new Levenshtein(xKey);
         var dist = lev.DistanceFrom(yKey);
-        var threshold = 5;
+        var threshold = 3;
         if (IgnoreSubTitle)
         {
-            threshold += 20;
+            threshold += 2;
+        }
+        
+        if (dist < 2)
+        {
+            var partRegex = new Regex(@"part(\d+)");
+            var xMatch = partRegex.Match(xKey);
+            var yMatch = partRegex.Match(yKey);
+            if (xMatch.Success && yMatch.Success)
+            {
+                if (xMatch.Groups[1].Value == yMatch.Groups[1].Value)
+                {
+                    return 0;
+                }
+
+                return double.MaxValue;
+            }
         }
 
-        return dist <= threshold;
-    }
+        Console.WriteLine($"Comparing {xKey} vs {yKey}: Threshold - {threshold} Equals? {dist <= threshold} Ratio: {(double)dist / Math.Abs(yKey.Length + xKey.Length)}");
 
-    public override int GetHashCode(GameSearchResultMetadataViewModel obj)
-    {
-        return obj.GetHashCode();
+        return (double)dist / Math.Abs(yKey.Length + xKey.Length);
     }
 
     private string GetKey(GameSearchResultMetadataViewModel obj)

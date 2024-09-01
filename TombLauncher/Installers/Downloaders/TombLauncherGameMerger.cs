@@ -7,19 +7,23 @@ namespace TombLauncher.Installers.Downloaders;
 
 public class TombLauncherGameMerger : IGameMerger
 {
-    public TombLauncherGameMerger(IEqualityComparer<GameSearchResultMetadataViewModel> comparer)
+    public TombLauncherGameMerger(GameSearchResultMetadataDistanceCalculator comparer)
     {
         Comparer = comparer;
     }
 
-    public IEqualityComparer<GameSearchResultMetadataViewModel> Comparer { get; }
+    public GameSearchResultMetadataDistanceCalculator Comparer { get; }
     public int Merge(ICollection<GameSearchResultMetadataViewModel> fullList, ICollection<GameSearchResultMetadataViewModel> addedElements)
     {
         var unmatched = new List<GameSearchResultMetadataViewModel>(addedElements);
         var mergedCount = 0;
         foreach (var element in fullList)
         {
-            var matching = addedElements.Where(e => Comparer.Equals(element, e)).ToList();
+            var matching = addedElements.Select(e => new { Score = Comparer.Calculate(element, e), Element = e })
+                .Where(e => e.Score <= 0.25)
+                .GroupBy(e => e.Score)
+                .MinBy(e => e.Key)?.Select(e => e.Element);
+            if (matching == null) continue;
             mergedCount++;
             foreach (var match in matching)
             {

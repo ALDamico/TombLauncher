@@ -1,18 +1,17 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Windows.Input;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
-using AvaloniaEdit;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
+using JamSoft.AvaloniaUI.Dialogs.ViewModels;
 using TombLauncher.Dto;
 using TombLauncher.Extensions;
+using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels;
 
-public partial class AppCrashHostViewModel : DialogViewModelBase
+public class AppCrashHostViewModel : DialogViewModel
 {
     public AppCrashHostViewModel(IDialogService dialogService)
     {
@@ -20,33 +19,24 @@ public partial class AppCrashHostViewModel : DialogViewModelBase
         AcceptCommandText = "Accept".GetLocalizedString();
         CopyCmd = new RelayCommand<object>(Copy, CanCopy);
         SaveCmd = new RelayCommand(Save);
-        //CancelCommandText = "Annulla";
+        // TODO Hide cancel button when functionality becomes available
     }
 
     private readonly IDialogService _dialogService;
 
     private bool CanCopy(object obj)
     {
-        var applicationLifetime = App.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-        var clipboard = applicationLifetime?.MainWindow?.Clipboard;
-        return clipboard != null;
+        return AppUtils.GetClipboard() != null;
     }
 
-    [ObservableProperty] private AppCrashDto _crash;
-    protected override void Accept()
-    {
-        base.Accept();
-    }
+    private AppCrashDto _crash;
 
-    protected override bool CanAcceptInner()
+    public AppCrashDto Crash
     {
-        return true;
+        get => _crash;
+        set => RaiseAndSetIfChanged(ref _crash, value);
     }
-
-    protected override void Cancel()
-    {
-        
-    }
+    public override bool CanCancel() => false;
 
     public ICommand SaveCmd
     {
@@ -75,8 +65,6 @@ public partial class AppCrashHostViewModel : DialogViewModelBase
             serialized = param?.ToString();
         }
 
-        var applicationLifetime = App.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-        var clipboard = applicationLifetime?.MainWindow?.Clipboard;
-        clipboard?.SetTextAsync(serialized);
+        AppUtils.SetClipboardTextAsync(serialized);
     }
 }
