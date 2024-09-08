@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using Microsoft.EntityFrameworkCore;
 using TombLauncher.Database.Repositories;
 using TombLauncher.Dto;
@@ -46,6 +47,12 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
         Save();
         game.Id = entity.Id;
+    }
+
+    public void DeleteGameById(int id)
+    {
+        Games.Delete(id);
+        Hashes.Get(h => h.GameId == id).ExecuteDelete();
     }
 
     private static Game ToGame(GameMetadataDto dto)

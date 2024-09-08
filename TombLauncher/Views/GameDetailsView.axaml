@@ -54,6 +54,12 @@
                     </DockPanel>
                 </Button.Content>
             </Button>
+            <Button Background="DarkRed" Command="{Binding UninstallCmd}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch">
+                <DockPanel>
+                    <avalonia:MaterialIcon Kind="TrashCan"/>
+                    <TextBlock DockPanel.Dock="Right" Margin="10, 0" Text="{DynamicResource Uninstall}"></TextBlock>
+                </DockPanel>
+            </Button>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,19 +9,25 @@ using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization;
+using TombLauncher.Models;
 using TombLauncher.Navigation;
+using TombLauncher.ViewModels.Dialogs;
 
 namespace TombLauncher.ViewModels;
 
 public partial class GameListViewModel : PageViewModel
 {
     private readonly GamesUnitOfWork _gamesUnitOfWork;
+    private readonly IDialogService _dialogService;
     [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games;
+    [ObservableProperty] private GameWithStatsViewModel _selectedGame;
 
-    public GameListViewModel(GamesUnitOfWork gamesUoW, NavigationManager navigationManager, LocalizationManager localizationManager) : base(localizationManager)
+    public GameListViewModel(GamesUnitOfWork gamesUoW, NavigationManager navigationManager, LocalizationManager localizationManager, IDialogService dialogService) : base(localizationManager)
     {
         _gamesUnitOfWork = gamesUoW;
+        _dialogService = dialogService;
         AddGameCmd = new RelayCommand(AddGame);
+        UninstallCmd = new RelayCommand<GameWithStatsViewModel>(Uninstall);
         navigationManager.OnNavigated += OnInit;
     }
 
@@ -43,5 +50,27 @@ public partial class GameListViewModel : PageViewModel
     private void AddGame()
     {
         Program.NavigationManager.NavigateTo(new NewGameViewModel(_gamesUnitOfWork, Ioc.Default.GetService<IDialogService>(), Ioc.Default.GetService<IMessageBoxService>(), LocalizationManager));
+    }
+    
+    public ICommand UninstallCmd { get; }
+
+    private async void Uninstall(GameWithStatsViewModel game)
+    {
+        var confirmDialogViewModel = new GameUninstallConfirmDialogViewModel(){Game = game.GameMetadata};
+
+        confirmDialogViewModel.RequestCloseDialog += async (sender, args) =>
+        {
+            if (!args.DialogResult) return;
+            IsBusy = true;
+            BusyMessage = LocalizationManager.GetLocalizedString("Uninstalling", game.GameMetadata.Title);
+            var installDir = game.GameMetadata.InstallDirectory;
+            Directory.Delete(installDir, true);
+            _gamesUnitOfWork.DeleteGameById(game.GameMetadata.Id);
+            _gamesUnitOfWork.Save();
+            IsBusy = false;
+            OnInit();
+        };
+        _dialogService.ShowDialog(confirmDialogViewModel, model => { });
+        
     }
 }

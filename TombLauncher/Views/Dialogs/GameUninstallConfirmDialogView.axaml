@@ -1,0 +1,18 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Dialogs.GameUninstallConfirmDialogView"
+             x:DataType="dialogs:GameUninstallConfirmDialogViewModel">
+    <Design.DataContext>
+        <dialogs:GameUninstallConfirmDialogViewModel/>
+    </Design.DataContext>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <TextBlock>
+            <Run Text="{Binding Game.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Are you sure you want to uninstall GAMENAME?', Mode=OneWay}"/>
+            <Run Text="{DynamicResource 'All associated data will be removed'}"/>
+        </TextBlock>
+    </StackPanel>
+</UserControl>
