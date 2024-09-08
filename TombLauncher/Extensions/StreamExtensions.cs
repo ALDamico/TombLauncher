@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,10 +23,23 @@ public static class StreamExtensions
         var buffer = new byte[bufferSize];
         long totalBytesRead = 0;
         int bytesRead;
+        var periodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
+        if (progress != null)
+            RunInBackground(periodicTimer, () => progress?.Report(totalBytesRead));
         while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) != 0) {
             await destination.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
             totalBytesRead += bytesRead;
-            progress?.Report(totalBytesRead);
+            //progress?.Report(totalBytesRead);
         }
+        
+        periodicTimer.Dispose();
+    }
+    
+    private static async Task RunInBackground(PeriodicTimer periodicTimer, Action action)
+    {
+        do
+        {
+            action();
+        } while (await periodicTimer.WaitForNextTickAsync());
     }
 }

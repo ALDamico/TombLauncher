@@ -23,18 +23,4 @@ public static class AppUtils
         if (clipboard == null) return Task.CompletedTask;
         return clipboard.SetTextAsync(text);
     }
-
-    public static Bitmap NullBitmap
-    {
-        get
-        {
-            if (App.Current.ActualThemeVariant == ThemeVariant.Dark)
-            {
-                return new Bitmap(
-                    AssetLoader.Open(new Uri("avares://TombLauncher/Assets/unknown-title-pic-sm-light.png")));
-            }
-
-            return new Bitmap(AssetLoader.Open(new Uri("avares://TombLauncher/Assets/unknown-title-pic-sm.png")));
-        }
-    }
 }

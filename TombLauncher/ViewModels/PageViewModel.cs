@@ -60,5 +60,5 @@ public abstract partial class PageViewModel : ViewModelBase
     }
     protected LocalizationManager LocalizationManager { get; private set; }
     protected IMessageBoxService MessageBoxService { get; private set; }
-    protected IDialogService DialogService { get; private set; }
+    public IDialogService DialogService { get; private set; }
 }

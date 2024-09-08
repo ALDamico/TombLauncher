@@ -69,7 +69,7 @@
                                 <Image Grid.Row="0"
                                        Grid.Column="0"
                                        MaxWidth="240"
-                                       Source="{Binding TitlePic, TargetNullValue={x:Static utils:AppUtils.NullBitmap}}" />
+                                       Source="{Binding TitlePic, TargetNullValue={x:Static utils:ImageUtils.NullBitmap}}" />
                                 <Grid Grid.Row="0" Grid.Column="1">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
@@ -96,9 +96,20 @@
                                     <ProgressBar Grid.Row="3" 
                                                  IsVisible="{Binding TotalBytes, Converter={StaticResource GreaterThanZeroToBoolConverter}}" 
                                                  Minimum="0" 
-                                                 Maximum="{Binding TotalBytes}" 
-                                                 Value="{Binding CurrentBytes}"
-                                                 ></ProgressBar>
+                                                 Maximum="{Binding TotalBytes, FallbackValue=100}" 
+                                                 Value="{Binding CurrentBytes, FallbackValue=0}"
+                                                 >
+                                        <ProgressBar.Styles>
+                                            <Style Selector="ProgressBar">
+                                                <Setter Property="Transitions">
+                                                    <Transitions>
+                                                        <DoubleTransition Property="Value" Duration="0:0:0.1"></DoubleTransition>
+                                                    </Transitions>
+                                                </Setter>
+                                            </Style>
+                                        </ProgressBar.Styles>
+                                        
+                                    </ProgressBar>
                                     <TextBlock Grid.Row="3" IsVisible="{Binding TotalBytes, Converter={StaticResource GreaterThanZeroToBoolConverter}}"
                                                Text="{Binding DownloadSpeed, Converter={StaticResource TransferSpeedFormatter}}"
                                                ></TextBlock>

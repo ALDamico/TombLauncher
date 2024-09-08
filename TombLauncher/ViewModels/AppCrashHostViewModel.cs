@@ -36,21 +36,29 @@ public class AppCrashHostViewModel : DialogViewModel
         get => _crash;
         set => RaiseAndSetIfChanged(ref _crash, value);
     }
+
     public override bool CanCancel() => false;
 
-    public ICommand SaveCmd
-    {
-        get;
-    }
+    public ICommand SaveCmd { get; }
 
     private async void Save()
     {
         var filePath = await _dialogService.SaveFile("Save error details".GetLocalizedString(),
-            new FilePickerFileType[] { new FilePickerFileType("JSON files".GetLocalizedString()){Patterns = ["*.json"]} }, "json");
+            new FilePickerFileType[]
+            {
+                new FilePickerFileType("JSON files".GetLocalizedString())
+                {
+                    Patterns = new string[]
+                    {
+                        "*.json"
+                    }
+                }
+            }, "json");
         if (string.IsNullOrWhiteSpace(filePath)) return;
-        await File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(Crash, new JsonSerializerOptions(){WriteIndented = true}));
+        await File.WriteAllTextAsync(filePath,
+            JsonSerializer.Serialize(Crash, new JsonSerializerOptions() { WriteIndented = true }));
     }
-    
+
     public ICommand CopyCmd { get; }
 
     private void Copy(object param)

@@ -185,7 +185,7 @@ public class TrleGameDownloader : IGameDownloader
                         metadata.Engine = _inverseGameEngineMapping[v];
                         break;
                     case "rating":
-                        if (double.TryParse(v, CultureInfo.InvariantCulture, out var rating))
+                        if (double.TryParse(v, NumberStyles.Any, CultureInfo.InvariantCulture, out var rating))
                             metadata.Rating = rating;
                         break;
                     case "reviews":
@@ -193,7 +193,7 @@ public class TrleGameDownloader : IGameDownloader
                             metadata.ReviewCount = reviewCount;
                         break;
                     case "released":
-                        if (DateTime.TryParse(v, CultureInfo.InvariantCulture, out var releasedDate))
+                        if (DateTime.TryParse(v, CultureInfo.InvariantCulture, DateTimeStyles.None,out var releasedDate))
                             metadata.ReleaseDate = releasedDate;
                         break;
                 }
@@ -268,7 +268,6 @@ public class TrleGameDownloader : IGameDownloader
         CancellationToken cancellationToken)
     {
         var detailsUrl = game.DetailsLink;
-        var text = await _httpClient.GetStringAsync(detailsUrl, cancellationToken);
         var page = await _httpClient.GetStreamAsync(detailsUrl, cancellationToken);
         var htmlDocument = new HtmlDocument();
         htmlDocument.Load(page);
@@ -284,7 +283,6 @@ public class TrleGameDownloader : IGameDownloader
             AuthorFullName = game.AuthorFullName
         };
 
-        // TODO Fetch title pic and description from page;
         var imageNode = htmlDocument.DocumentNode.SelectSingleNode("//div[@align='center']/img[@class='border']");
         if (imageNode != null)
         {

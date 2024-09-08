@@ -77,7 +77,7 @@
             <controls:ImagePicker Grid.Row="0" 
                                   Grid.RowSpan="4" 
                                   Grid.Column="4" 
-                                  Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static utils:AppUtils.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                  Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static utils:ImageUtils.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                                   DialogService="{Binding DialogService}" 
                                   HorizontalAlignment="Stretch" 
                                   VerticalAlignment="Stretch" 

@@ -99,9 +99,8 @@ public class AspideTrGameDownloader : IGameDownloader
             var featuredImage = level.SelectSingleNode("./div[@class='level-featured-image']/a/img");
             if (featuredImage != null)
             {
-                using var ms =
-                    new MemoryStream(await _httpClient.GetByteArrayAsync(featuredImage.Attributes["src"].Value));
-                searchResult.TitlePic = new Bitmap(ms);
+                searchResult.TitlePic =
+                    ImageUtils.ToBitmap(await _httpClient.GetByteArrayAsync(featuredImage.Attributes["src"].Value));
             }
 
             var engineTypeNode = level.SelectSingleNode("./div[contains(@class,'level-content')]");
@@ -114,6 +113,28 @@ public class AspideTrGameDownloader : IGameDownloader
                 {
                     Enum.TryParse<GameEngine>(matches.Groups[1].Value, true, out var engine);
                     searchResult.Engine = engine;
+                }
+            }
+
+            var buttonsLinks = level.SelectSingleNode("./div[contains(@class, 'infos-buttons')]").SelectNodes("./a");
+            foreach (var link in buttonsLinks)
+            {
+                var linkText = link.Attributes["href"].Value;
+                if (link.HasClass("info") && string.IsNullOrWhiteSpace(searchResult.DetailsLink))
+                {
+                    searchResult.DetailsLink = linkText;
+                }
+                else if (link.HasClass("reviews"))
+                {
+                    searchResult.ReviewsLink = linkText;
+                }
+                else if (link.HasClass("walkthroughs"))
+                {
+                    searchResult.WalkthroughLink = linkText;
+                }
+                else if (link.HasClass("download"))
+                {
+                    searchResult.DownloadLink = linkText;
                 }
             }
 
@@ -164,10 +185,37 @@ public class AspideTrGameDownloader : IGameDownloader
         return _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
-    public Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game,
+    public async Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var detailsLink = game.DetailsLink;
+        var page = await _httpClient.GetStreamAsync(detailsLink, cancellationToken);
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.Load(page);
+        var dto = new GameMetadataDto()
+        {
+            Author = game.Author,
+            Difficulty = game.Difficulty,
+            Length = game.Length,
+            Setting = game.Setting,
+            Title = game.Title,
+            ReleaseDate = game.ReleaseDate,
+            TitlePic = ImageUtils.ToByteArray(game.TitlePic),
+            GameEngine = game.Engine,
+            AuthorFullName = game.AuthorFullName
+        };
+
+        var detailsDiv = htmlDocument.DocumentNode.SelectSingleNode("//div[contains(@class, 'level-content')]");
+        if (detailsDiv != null)
+        {
+            var detailsText = detailsDiv.InnerText;
+            if (dto.Description == null || detailsText?.Length > dto.Description?.Length)
+            {
+                dto.Description = detailsText;
+            }
+        }
+
+        return dto;
     }
 
     public bool HasMorePages()
