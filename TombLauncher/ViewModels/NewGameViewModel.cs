@@ -2,19 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Controls;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using Avalonia.Platform.Storage;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Ionic.Zip;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Data.Database.UnitOfWork;
@@ -115,7 +109,7 @@ public partial class NewGameViewModel : PageViewModel
         await Task.Run(async () =>
         {
             var hashCalculator = Ioc.Default.GetRequiredService<GameFileHashCalculator>();
-            var hashes = hashCalculator.CalculateHashes(Source);
+            var hashes = await hashCalculator.CalculateHashes(Source);
             if (_gamesUoW.ExistsHashes(hashes))
             {
                 var messageboxResult = await Dispatcher.UIThread.InvokeAsync(() =>
@@ -136,7 +130,7 @@ public partial class NewGameViewModel : PageViewModel
             GameMetadata.InstallDate = DateTime.Now;
             var guid = Guid.NewGuid();
             GameMetadata.Guid = guid;
-            var installLocation = installer.Install(Source, GameMetadata.ToDto(), InstallProgress);
+            var installLocation = await installer.Install(Source, GameMetadata.ToDto(), InstallProgress);
             InstallProgress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
 
             GameMetadata.InstallDirectory = installLocation;

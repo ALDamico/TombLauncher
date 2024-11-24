@@ -9,16 +9,7 @@ namespace TombLauncher.Extensions;
 
 public static class StringExtensions
 {
-    public static string GetLocalizedString(this string s)
-    {
-        return s.GetLocalizedString(null);
-    }
-
-    public static string GetLocalizedString(this string s, params object[] args)
-    {
-        var localizationManager = Ioc.Default.GetRequiredService<LocalizationManager>();
-        return localizationManager.GetLocalizedString(s, args);
-    }
+    
     public static string Remove(this string s, string toRemove)
     {
         return s.Replace(toRemove, string.Empty);

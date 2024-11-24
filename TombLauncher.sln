@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher", "TombLaunche
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher.Data", "TombLauncher.Data\TombLauncher.Data.csproj", "{3E262B04-346C-4513-B56D-5663E389F0F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher.Localization", "TombLauncher.Localization\TombLauncher.Localization.csproj", "{F1AEEDF4-5D72-46F2-9BD6-1A3308E76C3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{3E262B04-346C-4513-B56D-5663E389F0F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E262B04-346C-4513-B56D-5663E389F0F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E262B04-346C-4513-B56D-5663E389F0F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1AEEDF4-5D72-46F2-9BD6-1A3308E76C3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1AEEDF4-5D72-46F2-9BD6-1A3308E76C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1AEEDF4-5D72-46F2-9BD6-1A3308E76C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1AEEDF4-5D72-46F2-9BD6-1A3308E76C3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

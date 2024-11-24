@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Threading;
 using AvaloniaEdit.Utils;
@@ -40,7 +41,7 @@ public partial class GameSearchViewModel : PageViewModel
         OpenCmd = new RelayCommand<IGameSearchResultMetadata>(Open);
         LoadMoreCmd = new RelayCommand(LoadMore, CanLoadMore);
         IsCancelable = true;
-        InstallCmd = new RelayCommand<MultiSourceGameSearchResultMetadataViewModel>(Install, CanInstall);
+        InstallCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel>(Install, CanInstall);
     }
 
     private bool CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
@@ -129,7 +130,7 @@ public partial class GameSearchViewModel : PageViewModel
 
     public ICommand InstallCmd { get; }
 
-    private async void Install(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
+    private async Task Install(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
     {
         /*IsBusy = true;
         BusyMessage = "Installing game...".GetLocalizedString();*/
@@ -147,7 +148,7 @@ public partial class GameSearchViewModel : PageViewModel
         });
         Console.WriteLine(downloadPath);
         var hashCalculator = Ioc.Default.GetRequiredService<GameFileHashCalculator>();
-        var hashes = hashCalculator.CalculateHashes(downloadPath);
+        var hashes = await hashCalculator.CalculateHashes(downloadPath);
         if (_gamesUoW.ExistsHashes(hashes))
         {
             var result = await MessageBoxService.Show("Game already installed",
@@ -162,7 +163,7 @@ public partial class GameSearchViewModel : PageViewModel
         //var engine = _engineDetector.Detect(downloadPath);
         var dto = await _gameDownloadManager.FetchDetails(gameToInstall);
         dto.Guid = Guid.NewGuid();
-        var installLocation = _levelInstaller.Install(downloadPath, dto, new Progress<CopyProgressInfo>(a =>
+        var installLocation = await _levelInstaller.Install(downloadPath, dto, new Progress<CopyProgressInfo>(a =>
         {
             gameToInstall.TotalBytes = 100;
             gameToInstall.CurrentBytes = a.Percentage.GetValueOrDefault();

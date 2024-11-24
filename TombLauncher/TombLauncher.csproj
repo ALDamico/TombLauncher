@@ -23,7 +23,6 @@
         <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.1.0" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.8" />
-        <PackageReference Include="DotNetZip" Version="1.16.0" />
         <PackageReference Include="Fastenshtein" Version="1.0.10" />
         <PackageReference Include="HtmlAgilityPack" Version="1.11.64" />
         <PackageReference Include="JamSoft.AvaloniaUI.Dialogs" Version="1.4.0" />
@@ -32,6 +31,7 @@
         <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+        <PackageReference Include="SharpZipLib" Version="1.4.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -41,23 +41,22 @@
 
     <ItemGroup>
       <None Remove="Data\Games\README.md" />
-      <Resource Include="Data\Games\README.md">
+      <Content Include="Data\Games\README.md">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Resource>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
       <AvaloniaXaml Remove="Localization\en-US.axaml" />
-      <Content Include="Localization\en-US.axaml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <AvaloniaXaml Remove="Localization\it-IT.axaml" />
-      <Content Include="Localization\it-IT.axaml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
+      <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Localization\" />
     </ItemGroup>
 </Project>

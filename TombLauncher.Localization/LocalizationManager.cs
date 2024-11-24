@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
+﻿using System.Globalization;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
-using TombLauncher.Extensions;
 
 namespace TombLauncher.Localization;
 
@@ -33,9 +28,11 @@ public class LocalizationManager
 
     public void ChangeLanguage(CultureInfo targetLanguage)
     {
+        var currentApp = Application.Current;
+        if (currentApp == null) return;
         _currentCulture = targetLanguage;
         var cultureName = _currentCulture.Name;
-        var currentTranslations = App.Current.Resources.MergedDictionaries.OfType<ResourceInclude>()
+        var currentTranslations = currentApp.Resources.MergedDictionaries.OfType<ResourceInclude>()
             .FirstOrDefault(dic => dic.Source?.OriginalString?.Contains(_localizationRelativePath) ?? false);
         if (currentTranslations != null)
         {
@@ -62,7 +59,7 @@ public class LocalizationManager
         
         var rd = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(xaml);
         var rdDefault = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(defaultKeyXaml);
-        var missingKeys = rdDefault.Keys.Except(rd.Keys);
+        var missingKeys = Enumerable.Except<object>(rdDefault.Keys, rd.Keys);
         var resultingDictionary = new ResourceDictionary();
         foreach (var key in missingKeys)
         {
@@ -85,7 +82,7 @@ public class LocalizationManager
         foreach (var element in elements)
         {
             dictionary.TryAdd(element.Value.ToString().ToLowerInvariant(),
-                element.Key.ToString().Remove(prefix).ToLowerInvariant());
+                element.Key.ToString().Replace(prefix, string.Empty).ToLowerInvariant());
         }
 
         return dictionary;

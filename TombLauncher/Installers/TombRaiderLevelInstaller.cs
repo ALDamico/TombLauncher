@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using Ionic.Zip;
+using System.Threading.Tasks;
+using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Data.Dto;
 using TombLauncher.Progress;
 using TombLauncher.Utils;
@@ -10,7 +11,7 @@ namespace TombLauncher.Installers;
 
 public class TombRaiderLevelInstaller
 {
-    public string Install(string containingFolder, GameMetadataDto gameDto,
+    public async Task<string> Install(string containingFolder, GameMetadataDto gameDto, 
         IProgress<CopyProgressInfo> copyProgress = null)
     {
         if (!Directory.Exists(containingFolder) && !File.Exists(containingFolder))
@@ -24,9 +25,18 @@ public class TombRaiderLevelInstaller
         {
             CopyDirectory(containingFolder, installFolder, true);
         }
-        else if (File.Exists(containingFolder) && ZipFile.IsZipFile(containingFolder))
+        else if (File.Exists(containingFolder))
         {
-            ZipUtils.ExtractZip(containingFolder, installFolder, copyProgress);
+            try
+            {
+                var zipManager = new ZipManager(containingFolder);
+                await zipManager.ExtractAll(installFolder, copyProgress);
+            }
+            catch (ZipException exception)
+            {
+                throw;
+                // ignore silently. File is not a valid zip
+            }
         }
 
         return installFolder;

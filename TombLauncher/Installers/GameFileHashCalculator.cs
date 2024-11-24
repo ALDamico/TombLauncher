@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using HarfBuzzSharp;
-using Ionic.Zip;
+using System.Threading.Tasks;
+using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Data.Dto;
 using TombLauncher.Extensions;
 using TombLauncher.Utils;
@@ -38,62 +38,57 @@ public class GameFileHashCalculator
             .Where(f => _extensions.Any(f.EndsWith)).ToList();
     }
 
-    public List<GameHashDto> CalculateHashes(string dataFolder, int gameId = default)
+    public async Task<List<GameHashDto>> CalculateHashes(string dataFolder, int gameId = default)
     {
         if (Directory.Exists(dataFolder))
         {
-            return ProcessFolder(dataFolder, gameId);
+            return await ProcessFolder(dataFolder, gameId);
         }
 
-        if (ZipFile.IsZipFile(dataFolder))
+        using (var zipManager = new ZipManager(dataFolder))
         {
-            return ProcessZipFile(dataFolder, gameId);
+            return await ProcessZipFile(zipManager, gameId);
         }
 
 
         throw new InvalidOperationException("Provided path isn't a directory or a zip file");
     }
 
-    private List<GameHashDto> ProcessZipFile(string dataFolder, int gameId)
+    private async Task<List<GameHashDto>> ProcessZipFile(ZipManager zipFile, int gameId)
     {
         var hashes = new List<GameHashDto>();
-        using var zipFile = new ZipFile(dataFolder);
-        var entriesToProcess = zipFile.Entries.Where(e => _extensions.Any(ex => e.FileName.EndsWith(ex))).ToList();
+        
+        var entriesToProcess = zipFile.GetEntries().Where(e => _extensions.Any(ex => e.Name.EndsWith(ex))).ToList();
         foreach (var entry in entriesToProcess)
         {
-            var relativePath = PathUtils.NormalizePath(entry.FileName);
-            var md5 = MD5.Create();
-
-            using var stream = entry.OpenReader();
-            var dto = GetGameHashDto(gameId, md5, stream, relativePath);
+            
+            var relativePath = PathUtils.NormalizePath(entry.Name);
+            var stream = zipFile.GetInputStream(entry);
+            var dto = await GetGameHashDto(gameId, stream, relativePath);
             hashes.Add(dto);
         }
 
         return hashes;
     }
 
-    private List<GameHashDto> ProcessFolder(string dataFolder, int gameId)
+    private async Task<List<GameHashDto>> ProcessFolder(string dataFolder, int gameId)
     {
         var hashes = new List<GameHashDto>();
         var files = GetFilesToProcess(dataFolder);
         foreach (var file in files)
         {
             var relativePath = PathUtils.NormalizePath(Path.GetRelativePath(dataFolder, file));
-            var md5 = MD5.Create();
-            using (var stream = File.OpenRead(file))
-            {
-                var dto = GetGameHashDto(gameId, md5, stream, relativePath);
-                hashes.Add(dto);
-            }
+            await using var stream = File.OpenRead(file);
+            var dto = await GetGameHashDto(gameId, stream, relativePath);
+            hashes.Add(dto);
         }
 
         return hashes;
     }
 
-    private static GameHashDto GetGameHashDto(int gameId, MD5 md5, Stream stream, string relativePath)
+    private static async Task<GameHashDto> GetGameHashDto(int gameId, Stream stream, string relativePath)
     {
-        var md5Hash = md5.ComputeHash(stream);
-        var md5String = BitConverter.ToString(md5Hash).Remove("-").ToLowerInvariant();
+        var md5String = await Md5Utils.ComputeMd5Hash(stream);
         var dto = new GameHashDto()
         {
             FileName = relativePath,
