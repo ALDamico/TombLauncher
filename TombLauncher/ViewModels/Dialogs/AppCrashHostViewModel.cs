@@ -9,7 +9,7 @@ using TombLauncher.Data.Dto;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Utils;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.Dialogs;
 
 public class AppCrashHostViewModel : DialogViewModel
 {

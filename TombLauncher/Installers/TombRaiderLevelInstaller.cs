@@ -34,7 +34,6 @@ public class TombRaiderLevelInstaller
             }
             catch (ZipException exception)
             {
-                throw;
                 // ignore silently. File is not a valid zip
             }
         }

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization;
+using TombLauncher.ViewModels.Dialogs;
 
 namespace TombLauncher.ViewModels;
 

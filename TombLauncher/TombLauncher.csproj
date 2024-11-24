@@ -55,8 +55,4 @@
       <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
       <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Localization\" />
-    </ItemGroup>
 </Project>
