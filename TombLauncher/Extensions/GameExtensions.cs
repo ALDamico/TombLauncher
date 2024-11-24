@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using Avalonia.Media.Imaging;
-using TombLauncher.Dto;
+using TombLauncher.Data.Dto;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 

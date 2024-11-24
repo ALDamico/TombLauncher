@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using TombLauncher.Models;
+using TombLauncher.Data.Models;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers.Downloaders;

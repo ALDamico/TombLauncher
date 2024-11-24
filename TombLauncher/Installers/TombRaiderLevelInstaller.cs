@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 using Ionic.Zip;
-using TombLauncher.Dto;
+using TombLauncher.Data.Dto;
 using TombLauncher.Progress;
 using TombLauncher.Utils;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.Models;
+using TombLauncher.Data.Models;
 
 namespace TombLauncher.ViewModels;
 

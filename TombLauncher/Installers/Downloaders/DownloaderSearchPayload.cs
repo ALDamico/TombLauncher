@@ -1,4 +1,4 @@
-﻿using TombLauncher.Models;
+﻿using TombLauncher.Data.Models;
 
 namespace TombLauncher.Installers.Downloaders;
 

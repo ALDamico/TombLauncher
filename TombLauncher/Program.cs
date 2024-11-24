@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Navigation;
 
 namespace TombLauncher;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using TombLauncher.Dto;
+using TombLauncher.Data.Dto;
 using TombLauncher.Progress;
 using TombLauncher.ViewModels;
 

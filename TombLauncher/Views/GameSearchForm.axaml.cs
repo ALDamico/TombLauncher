@@ -2,7 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using TombLauncher.Models;
+using TombLauncher.Data.Models;
 
 namespace TombLauncher.Views;
 

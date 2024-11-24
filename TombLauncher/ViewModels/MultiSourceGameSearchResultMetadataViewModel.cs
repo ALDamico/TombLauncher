@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.Models;
+using TombLauncher.Data.Models;
 
 namespace TombLauncher.ViewModels;
 

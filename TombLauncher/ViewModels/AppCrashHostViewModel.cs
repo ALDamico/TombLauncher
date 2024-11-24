@@ -5,7 +5,7 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.ViewModels;
-using TombLauncher.Dto;
+using TombLauncher.Data.Dto;
 using TombLauncher.Extensions;
 using TombLauncher.Utils;
 

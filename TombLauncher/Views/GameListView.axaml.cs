@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using TombLauncher.Dto;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Views;

@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher", "TombLauncher\TombLauncher.csproj", "{6ACEC6CE-C9DF-4C68-ACE8-38F58EAF4A33}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher.Data", "TombLauncher.Data\TombLauncher.Data.csproj", "{3E262B04-346C-4513-B56D-5663E389F0F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{6ACEC6CE-C9DF-4C68-ACE8-38F58EAF4A33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6ACEC6CE-C9DF-4C68-ACE8-38F58EAF4A33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6ACEC6CE-C9DF-4C68-ACE8-38F58EAF4A33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E262B04-346C-4513-B56D-5663E389F0F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E262B04-346C-4513-B56D-5663E389F0F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E262B04-346C-4513-B56D-5663E389F0F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E262B04-346C-4513-B56D-5663E389F0F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

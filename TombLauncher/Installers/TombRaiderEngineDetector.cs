@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TombLauncher.Models;
+using TombLauncher.Data.Models;
 
 namespace TombLauncher.Installers;
 

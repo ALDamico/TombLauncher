@@ -27,10 +27,10 @@ public interface IGameSearchResultMetadata
     }
 
     /// <inheritdoc cref="GameSearchResultMetadataViewModel._difficulty"/>
-    global::TombLauncher.Models.GameDifficulty Difficulty { get; set; }
+    global::TombLauncher.Data.Models.GameDifficulty Difficulty { get; set; }
 
     /// <inheritdoc cref="GameSearchResultMetadataViewModel._length"/>
-    global::TombLauncher.Models.GameLength Length { get; set; }
+    global::TombLauncher.Data.Models.GameLength Length { get; set; }
 
     /// <inheritdoc cref="GameSearchResultMetadataViewModel._setting"/>
     string Setting
@@ -41,7 +41,7 @@ public interface IGameSearchResultMetadata
     }
 
     /// <inheritdoc cref="GameSearchResultMetadataViewModel._engine"/>
-    global::TombLauncher.Models.GameEngine Engine { get; set; }
+    global::TombLauncher.Data.Models.GameEngine Engine { get; set; }
 
     /// <inheritdoc cref="GameSearchResultMetadataViewModel._detailsLink"/>
     string DetailsLink

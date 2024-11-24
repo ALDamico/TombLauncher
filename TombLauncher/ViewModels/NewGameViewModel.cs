@@ -17,11 +17,11 @@ using CommunityToolkit.Mvvm.Input;
 using Ionic.Zip;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
-using TombLauncher.Database.UnitOfWork;
+using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Data.Models;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Localization;
-using TombLauncher.Models;
 using TombLauncher.Progress;
 using TombLauncher.Utils;
 

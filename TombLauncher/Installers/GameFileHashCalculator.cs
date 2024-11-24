@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using HarfBuzzSharp;
 using Ionic.Zip;
-using TombLauncher.Dto;
+using TombLauncher.Data.Dto;
 using TombLauncher.Extensions;
 using TombLauncher.Utils;
 

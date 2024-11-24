@@ -5,7 +5,6 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
-using TombLauncher.Database.UnitOfWork;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
