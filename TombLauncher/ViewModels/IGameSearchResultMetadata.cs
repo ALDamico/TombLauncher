@@ -85,7 +85,7 @@ public interface IGameSearchResultMetadata
     int ReviewCount { get; }
 
     /// <inheritdoc cref="GameSearchResultMetadataViewModel._releaseDate"/>
-    global::System.DateTime ReleaseDate { get; set; }
+    global::System.DateTime? ReleaseDate { get; set; }
 
     string ReviewsLink { get; set; }
     bool HasReviews { get; }

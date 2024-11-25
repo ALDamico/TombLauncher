@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Threading;
-using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -20,7 +18,6 @@ using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
 using TombLauncher.Progress;
-using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels;
 

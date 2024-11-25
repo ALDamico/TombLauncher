@@ -42,15 +42,15 @@ public class GameDownloadManager
             }
 
             var fetchedResults = completedTask.Result;
-            _merger.Merge(outputList, fetchedResults);
+            _merger.Merge(outputList, fetchedResults.Cast<IGameSearchResultMetadata>().ToList());
         }
 
         return outputList;
     }
 
-    public async Task<List<GameSearchResultMetadataViewModel>> FetchNextPage()
+    public async Task<List<IGameSearchResultMetadata>> FetchNextPage()
     {
-        var outputList = new List<GameSearchResultMetadataViewModel>();
+        var outputList = new List<IGameSearchResultMetadata>();
         var tasks = new List<Task<List<GameSearchResultMetadataViewModel>>>();
         foreach (var downloader in Downloaders.Where(d => d.HasMorePages()))
         {
@@ -97,7 +97,7 @@ public class GameDownloadManager
     }
 
     public void Merge(ICollection<MultiSourceGameSearchResultMetadataViewModel> fullList,
-        ICollection<GameSearchResultMetadataViewModel> newElements)
+        ICollection<IGameSearchResultMetadata> newElements)
     {
         _merger.Merge(fullList, newElements);
     }

@@ -13,6 +13,8 @@ public class DateTimeFormatter : IValueConverter
         var localizationManager = Ioc.Default.GetRequiredService<LocalizationManager>();
         if (value is DateTime dateTime)
         {
+            if (dateTime == default)
+                return string.Empty;
             if (string.IsNullOrWhiteSpace(DesiredFormat))
             {
                 return dateTime.ToString(localizationManager.CurrentCulture.DateTimeFormat);

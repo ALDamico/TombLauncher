@@ -26,6 +26,13 @@ public class GameSearchResultMetadataDistanceCalculator
             threshold += 2;
         }
         
+        if (dist < 5)
+        {
+            if (xKey.Contains("demo", StringComparison.InvariantCultureIgnoreCase) && !yKey.Contains("demo", StringComparison.InvariantCultureIgnoreCase) 
+                || (!xKey.Contains("demo", StringComparison.InvariantCultureIgnoreCase) && yKey.Contains("demo", StringComparison.InvariantCultureIgnoreCase)))
+                return double.MaxValue;
+        }
+        
         if (dist < 2)
         {
             var partRegex = new Regex(@"part(\d+)");
@@ -33,6 +40,7 @@ public class GameSearchResultMetadataDistanceCalculator
             var yMatch = partRegex.Match(yKey);
             if (xMatch.Success && yMatch.Success)
             {
+                
                 if (xMatch.Groups[1].Value == yMatch.Groups[1].Value)
                 {
                     return 0;

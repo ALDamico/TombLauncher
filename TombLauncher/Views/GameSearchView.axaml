@@ -84,14 +84,14 @@
                                                      Command="{Binding Path=((viewModels:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchView}}"
                                                      CommandParameter="{Binding Path=.}" />
                                     <TextBlock Grid.Row="1"
-                                               IsVisible="{Binding Author, Converter={StaticResource ObjectNotNullToBoolConverter}}">
+                                               IsVisible="{Binding Author, Converter={x:Static ObjectConverters.IsNotNull}}">
                                         <Run Text="{DynamicResource By}" />
                                         <Run Text="{Binding Author}" />
                                     </TextBlock>
                                     <TextBlock Grid.Row="2"
-                                               IsVisible="{Binding ReleaseDate, Converter={StaticResource DateTimeFormatter}}">
+                                               IsVisible="{Binding ReleaseDate, Converter={x:Static ObjectConverters.IsNotNull}}">
                                         <Run Text="{DynamicResource Release date}" />
-                                        <Run Text="{Binding ReleaseDate, Converter={StaticResource DateOnlyFormatter}}" />
+                                        <Run Text="{Binding ReleaseDate, Mode=OneWay, Converter={StaticResource DateOnlyFormatter}}" />
                                     </TextBlock>
                                     <ProgressBar Grid.Row="3" 
                                                  IsVisible="{Binding TotalBytes, Converter={StaticResource GreaterThanZeroToBoolConverter}}" 

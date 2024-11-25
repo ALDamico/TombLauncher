@@ -14,9 +14,9 @@ public class TombLauncherGameMerger : IGameMerger
     }
 
     public GameSearchResultMetadataDistanceCalculator Comparer { get; }
-    public int Merge(ICollection<MultiSourceGameSearchResultMetadataViewModel> fullList, ICollection<GameSearchResultMetadataViewModel> addedElements)
+    public int Merge(ICollection<MultiSourceGameSearchResultMetadataViewModel> fullList, ICollection<IGameSearchResultMetadata> addedElements)
     {
-        var unmatched = new List<GameSearchResultMetadataViewModel>(addedElements);
+        var unmatched = new List<IGameSearchResultMetadata>(addedElements);
         var mergedCount = 0;
         foreach (var element in fullList)
         {
@@ -39,17 +39,17 @@ public class TombLauncherGameMerger : IGameMerger
                     element.AuthorFullName = match.AuthorFullName;
                 }
 
-                if (element.Difficulty == null || element.Difficulty == GameDifficulty.Unknown)
+                if (element.Difficulty == GameDifficulty.Unknown)
                 {
                     element.Difficulty = match.Difficulty;
                 }
 
-                if (element.Engine == null || element.Engine == GameEngine.Unknown)
+                if (element.Engine == GameEngine.Unknown)
                 {
                     element.Engine = match.Engine;
                 }
 
-                if (element.Length == null || element.Length == GameLength.Unknown)
+                if (element.Length == GameLength.Unknown)
                 {
                     element.Length = match.Length;
                 }
@@ -78,6 +78,8 @@ public class TombLauncherGameMerger : IGameMerger
                 {
                     element.ReleaseDate = match.ReleaseDate;
                 }
+                
+                element.Sources.Add(match);
             }
         }
 
@@ -91,7 +93,7 @@ public class TombLauncherGameMerger : IGameMerger
                 Length = element.Length,
                 Rating = element.Rating,
                 Setting = element.Setting,
-                Sources = new ObservableCollection<GameSearchResultMetadataViewModel>(){element},
+                Sources = new ObservableCollection<IGameSearchResultMetadata>(){element},
                 Title = element.Title,
                 BaseUrl = element.BaseUrl,
                 DetailsLink = element.DetailsLink,

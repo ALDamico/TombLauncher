@@ -33,7 +33,6 @@
             <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" />
             <valueConverters:NegatedBooleanConverter x:Key="NegatedBooleanConverter" />
             <valueConverters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
-            <valueConverters:ObjectNotNullToBoolConverter x:Key="ObjectNotNullToBoolConverter" />
             <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />
             <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
             <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter" />

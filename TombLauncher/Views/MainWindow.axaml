@@ -62,16 +62,16 @@
                     <TextBlock HorizontalAlignment="Center" 
                                VerticalAlignment="Center"
                                Text="{Binding CurrentPage.BusyMessage}"
-                               IsVisible="{Binding CurrentPage.BusyMessage, Converter={StaticResource ObjectNotNullToBoolConverter}}"
+                               IsVisible="{Binding CurrentPage.BusyMessage, Converter={x:Static ObjectConverters.IsNotNull}}"
                                />
                     <TextBlock HorizontalAlignment="Center" 
                                VerticalAlignment="Center" 
                                Text="{Binding CurrentPage.CurrentFileName}"
-                               IsVisible="{Binding CurrentPage.CurrentFileName, Converter={StaticResource ObjectNotNullToBoolConverter}}"
+                               IsVisible="{Binding CurrentPage.CurrentFileName, Converter={x:Static ObjectConverters.IsNotNull}}"
                                />
                     <TextBlock HorizontalAlignment="Center" 
                                VerticalAlignment="Center" 
-                               IsVisible="{Binding CurrentPage.PercentageComplete, Converter={StaticResource ObjectNotNullToBoolConverter}}"
+                               IsVisible="{Binding CurrentPage.PercentageComplete, Converter={x:Static ObjectConverters.IsNotNull}}"
                                >
                         <Run Text="{Binding CurrentPage.PercentageComplete, StringFormat={}{0:0.00}}"/>
                         <Run Text="%"/>

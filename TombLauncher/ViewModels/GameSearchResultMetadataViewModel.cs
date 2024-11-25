@@ -47,5 +47,5 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase, IGameSea
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
     [ObservableProperty] private int _reviewCount;
-    [ObservableProperty] private DateTime _releaseDate;
+    [ObservableProperty] private DateTime? _releaseDate;
 }

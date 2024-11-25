@@ -11,7 +11,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
 {
     public MultiSourceGameSearchResultMetadataViewModel()
     {
-        Sources = new ObservableCollection<GameSearchResultMetadataViewModel>();
+        Sources = new ObservableCollection<IGameSearchResultMetadata>();
     }
     [ObservableProperty] private string _author;
     [ObservableProperty] private string _authorFullName;
@@ -53,8 +53,8 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
     public int ReviewCount => Sources.Sum(s => s.ReviewCount);
-    [ObservableProperty] private DateTime _releaseDate;
-    [ObservableProperty] private ObservableCollection<GameSearchResultMetadataViewModel> _sources;
+    [ObservableProperty] private DateTime? _releaseDate;
+    [ObservableProperty] private ObservableCollection<IGameSearchResultMetadata> _sources;
     [ObservableProperty] private GameMetadataViewModel _installedGame;
     [ObservableProperty] private double _totalBytes;
     [ObservableProperty] private double _currentBytes;
