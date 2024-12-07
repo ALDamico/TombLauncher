@@ -3,7 +3,6 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
 
@@ -11,9 +10,8 @@ namespace TombLauncher.ViewModels;
 
 public abstract partial class PageViewModel : ViewModelBase
 {
-    public PageViewModel(IMessageBoxService messageBoxService = null)
+    public PageViewModel()
     {
-        MessageBoxService = messageBoxService;
         SaveCmd = new RelayCommand(Save, CanSave);
         CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
     }
@@ -56,5 +54,4 @@ public abstract partial class PageViewModel : ViewModelBase
     protected virtual void SaveInner()
     {
     }
-    protected IMessageBoxService MessageBoxService { get; private set; }
 }
