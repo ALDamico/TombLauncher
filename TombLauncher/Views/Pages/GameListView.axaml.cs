@@ -1,9 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 using TombLauncher.ViewModels;
 
-namespace TombLauncher.Views;
+namespace TombLauncher.Views.Pages;
 
 public partial class GameListView : UserControl
 {

@@ -5,11 +5,12 @@
              xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TombLauncher.Views.WelcomePageView"
-             x:DataType="viewModels:WelcomePageViewModel">
+             x:Class="TombLauncher.Views.Pages.WelcomePageView"
+             x:DataType="pages:WelcomePageViewModel">
     <Design.DataContext>
-        <viewModels:WelcomePageViewModel/>
+        <pages:WelcomePageViewModel/>
     </Design.DataContext>
     <Interaction.Behaviors>
         <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />

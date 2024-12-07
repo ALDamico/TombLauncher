@@ -7,12 +7,14 @@
              xmlns:controls="clr-namespace:TombLauncher.Controls"
              xmlns:utils="clr-namespace:TombLauncher.Utils"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TombLauncher.Views.GameSearchView"
-             x:DataType="viewModels:GameSearchViewModel"
+             x:Class="TombLauncher.Views.Pages.GameSearchView"
+             x:DataType="pages:GameSearchViewModel"
              KeyUp="InputElement_OnKeyUp">
     <Design.DataContext>
-        <viewModels:GameSearchViewModel />
+        <pages:GameSearchViewModel />
     </Design.DataContext>
     <Grid>
         <Grid.RowDefinitions>
@@ -81,7 +83,7 @@
                                                      Content="{Binding Title}"
                                                      FontSize="16"
                                                      FontStyle="Italic"
-                                                     Command="{Binding Path=((viewModels:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchView}}"
+                                                     Command="{Binding Path=((pages:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=pages1:GameSearchView}}"
                                                      CommandParameter="{Binding Path=.}" />
                                     <TextBlock Grid.Row="1"
                                                IsVisible="{Binding Author, Converter={x:Static ObjectConverters.IsNotNull}}">
@@ -116,7 +118,7 @@
                                 </Grid>
                                 
                                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-                                    <Button Command="{Binding ((viewModels:GameSearchViewModel)DataContext).InstallCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchView}}"
+                                    <Button Command="{Binding ((pages:GameSearchViewModel)DataContext).InstallCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=pages1:GameSearchView}}"
                                             CommandParameter="{Binding .}"
                                             ToolTip.Tip="{DynamicResource Download}"
                                             >

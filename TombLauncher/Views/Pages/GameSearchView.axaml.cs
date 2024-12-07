@@ -1,10 +1,9 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
 using TombLauncher.ViewModels;
+using GameSearchViewModel = TombLauncher.ViewModels.Pages.GameSearchViewModel;
 
-namespace TombLauncher.Views;
+namespace TombLauncher.Views.Pages;
 
 public partial class GameSearchView : UserControl
 {

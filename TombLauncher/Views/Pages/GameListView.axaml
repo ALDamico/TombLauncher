@@ -7,10 +7,11 @@
              xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="TombLauncher.Views.GameListView"
-             x:DataType="viewModels:GameListViewModel">
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             x:Class="TombLauncher.Views.Pages.GameListView"
+             x:DataType="pages:GameListViewModel">
     <Design.DataContext>
-        <viewModels:GameListViewModel />
+        <pages:GameListViewModel />
     </Design.DataContext>
 
     <Interaction.Behaviors>

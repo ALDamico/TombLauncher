@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Platform.Storage;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
-using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Data.Models;
 using TombLauncher.Extensions;
-using TombLauncher.Installers;
 using TombLauncher.Progress;
 using TombLauncher.Services;
 using TombLauncher.Utils;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.Pages;
 
 public partial class NewGameViewModel : PageViewModel
 {
@@ -53,7 +46,7 @@ public partial class NewGameViewModel : PageViewModel
 
     private void OnGameMetadataPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(GameMetadata.Title))
+        if (e.PropertyName == nameof(GameMetadataViewModel.Title))
         {
             SaveCmd.NotifyCanExecuteChanged();
         }
@@ -94,7 +87,7 @@ public partial class NewGameViewModel : PageViewModel
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(GameMetadata.Title) || e.PropertyName == nameof(Source))
+        if (e.PropertyName == nameof(GameMetadataViewModel.Title) || e.PropertyName == nameof(Source))
         {
             SaveCmd.NotifyCanExecuteChanged();
         }

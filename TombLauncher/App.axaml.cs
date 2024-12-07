@@ -18,6 +18,7 @@ using TombLauncher.Localization;
 using TombLauncher.Navigation;
 using TombLauncher.Services;
 using TombLauncher.ViewModels;
+using TombLauncher.ViewModels.Pages;
 using TombLauncher.Views;
 
 namespace TombLauncher;
@@ -43,14 +44,8 @@ public partial class App : Application
             BindingPlugins.DataValidators.RemoveAt(0);
 
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddScoped<GameDetailsService>();
-            serviceCollection.AddScoped<NewGameService>();
-            serviceCollection.AddScoped<NewGameViewModel>();
-            serviceCollection.AddScoped<GameListService>();
-            serviceCollection.AddScoped<GameWithStatsService>();
-            serviceCollection.AddScoped<AppCrashHostService>();
-            serviceCollection.AddSingleton<WelcomePageService>();
-            serviceCollection.AddSingleton(sp =>
+            ConfigurePageServices(serviceCollection);
+            serviceCollection.AddSingleton(_ =>
             {
                 var locManager = new LocalizationManager(Current);
                 locManager.ChangeLanguage(CultureInfo.CurrentUICulture);
@@ -62,7 +57,7 @@ public partial class App : Application
                     { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
             serviceCollection.AddScoped<GamesUnitOfWork>();
             serviceCollection.AddScoped<GameListViewModel>();
-            serviceCollection.AddSingleton(sp => new NavigationManager());
+            serviceCollection.AddSingleton(_ => new NavigationManager());
             serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
             {
                 ApplicationName = "Tomb Launcher",
@@ -108,11 +103,21 @@ public partial class App : Application
             navigationManager.SetDefaultPage(defaultPage);
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(navigationManager,
-                    Ioc.Default.GetRequiredService<LocalizationManager>()),
+                DataContext = new MainWindowViewModel(navigationManager),
             };
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void ConfigurePageServices(ServiceCollection serviceCollection)
+    {
+        serviceCollection.AddScoped<GameDetailsService>();
+        serviceCollection.AddScoped<NewGameService>();
+        serviceCollection.AddScoped<NewGameViewModel>();
+        serviceCollection.AddScoped<GameListService>();
+        serviceCollection.AddScoped<GameWithStatsService>();
+        serviceCollection.AddScoped<AppCrashHostService>();
+        serviceCollection.AddSingleton<WelcomePageService>();
     }
 }

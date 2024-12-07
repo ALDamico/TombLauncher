@@ -19,7 +19,7 @@ using TombLauncher.Navigation;
 using TombLauncher.Progress;
 using TombLauncher.Services;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameSearchViewModel : PageViewModel
 {
@@ -73,7 +73,7 @@ public partial class GameSearchViewModel : PageViewModel
         FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         try
         {
-            var games = await _gameDownloadManager.GetGames(SearchPayload.ToDto());
+            var games = await _gameDownloadManager.GetGames(SearchPayloadExtensions.ToDto(SearchPayload));
             var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink) /*TODO Remove this*/
                 .Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
             var installedGames = _gamesUoW.GetGamesByLinksDictionary(LinkType.Download, downloadLinks);
@@ -86,7 +86,7 @@ public partial class GameSearchViewModel : PageViewModel
                 }
             }
 
-            Dispatcher.UIThread.Invoke(() => FetchedResults = games.ToObservableCollection());
+            Dispatcher.UIThread.Invoke<ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>>(() => FetchedResults = games.ToObservableCollection());
             HasMoreResults = _gameDownloadManager.HasMoreResults();
 //            FetchedResults = games.ToObservableCollection();
         }
@@ -108,7 +108,7 @@ public partial class GameSearchViewModel : PageViewModel
         _gameDownloadManager.Merge(FetchedResults, nextPage);
         var gamesByLinks =
             _gamesUoW.GetGamesByLinksDictionary(LinkType.Download, nextPage.Select(p => p.DownloadLink).ToList());
-        foreach (var game in FetchedResults.Where(r => r.InstalledGame == null))
+        foreach (var game in Enumerable.Where<MultiSourceGameSearchResultMetadataViewModel>(FetchedResults, r => r.InstalledGame == null))
         {
             if (gamesByLinks.TryGetValue(game.DownloadLink, out var dto))
             {
@@ -210,7 +210,7 @@ public partial class GameSearchViewModel : PageViewModel
 
             var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
             var gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
-            var vm = new GameDetailsViewModel(gameDetailsService,
+            var vm = new Pages.GameDetailsViewModel(gameDetailsService,
                 new GameWithStatsViewModel(gameWithStatsService) { GameMetadata = detailsViewModel });
             IsBusy = false;
             _navigationManager.NavigateTo(vm);

@@ -1,12 +1,7 @@
-﻿using System;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Localization;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Services;
-using TombLauncher.ViewModels.Dialogs;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.Pages;
 
 public partial class WelcomePageViewModel : PageViewModel
 {

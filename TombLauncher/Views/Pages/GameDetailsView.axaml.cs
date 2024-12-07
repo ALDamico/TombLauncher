@@ -1,8 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
-namespace TombLauncher.Views;
+namespace TombLauncher.Views.Pages;
 
 public partial class GameDetailsView : UserControl
 {

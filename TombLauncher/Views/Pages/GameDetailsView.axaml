@@ -4,11 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TombLauncher.Views.GameDetailsView"
-             x:DataType="viewModels:GameDetailsViewModel">
+             x:Class="TombLauncher.Views.Pages.GameDetailsView"
+             x:DataType="pages:GameDetailsViewModel">
     <Design.DataContext>
-        <viewModels:GameDetailsViewModel />
+        <pages:GameDetailsViewModel />
     </Design.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>

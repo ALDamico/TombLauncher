@@ -61,5 +61,25 @@
         <DependentUpon>AppCrashHostView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Pages\GameDetailsView.axaml.cs">
+        <DependentUpon>GameDetailsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\GameListView.axaml.cs">
+        <DependentUpon>GameListView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\GameSearchView.axaml.cs">
+        <DependentUpon>GameSearchView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\NewGameView.axaml.cs">
+        <DependentUpon>NewGameView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePageView.axaml.cs">
+        <DependentUpon>WelcomePageView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

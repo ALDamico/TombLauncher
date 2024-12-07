@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 
-namespace TombLauncher.Views;
+namespace TombLauncher.Views.Pages;
 
 public partial class WelcomePageView : UserControl
 {

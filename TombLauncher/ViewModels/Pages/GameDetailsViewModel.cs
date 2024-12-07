@@ -1,10 +1,9 @@
 ﻿using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Localization;
 using TombLauncher.Services;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameDetailsViewModel : PageViewModel
 {

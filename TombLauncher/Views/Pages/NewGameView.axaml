@@ -6,16 +6,17 @@
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              xmlns:utils="clr-namespace:TombLauncher.Utils"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TombLauncher.Views.NewGameView"
-             x:DataType="viewModels:NewGameViewModel">
+             x:Class="TombLauncher.Views.Pages.NewGameView"
+             x:DataType="pages:NewGameViewModel">
     <UserControl.Styles>
         <Style Selector="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </UserControl.Styles>
     <Design.DataContext>
-        <viewModels:NewGameViewModel />
+        <pages:NewGameViewModel />
     </Design.DataContext>
     <Grid>
         <Grid.RowDefinitions>

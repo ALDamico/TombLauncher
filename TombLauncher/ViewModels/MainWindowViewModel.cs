@@ -5,43 +5,41 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
-using TombLauncher.Installers.Downloaders;
-using TombLauncher.Installers.Downloaders.TRLE.net;
-using TombLauncher.Localization;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
+using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;
 
 public partial class MainWindowViewModel : WindowViewModelBase
 {
-    public MainWindowViewModel(NavigationManager navigationManager, LocalizationManager localizationManager)
+    public MainWindowViewModel(NavigationManager navigationManager)
     {
         _navigationManager = navigationManager;
         _navigationManager.OnNavigated += OnNavigated;
-        _localizationManager = localizationManager;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
         MenuItems = new ObservableCollection<MainMenuItemViewModel>()
         {
             new MainMenuItemViewModel()
             {
-                ToolTip = _localizationManager["Welcome"],
+                ToolTip = "Welcome".GetLocalizedString(),
                 Icon = MaterialIconKind.HomeOutline,
-                Text = _localizationManager["Welcome"],
+                Text = "Welcome".GetLocalizedString(),
                 PageViewModelFactory = Ioc.Default.GetRequiredService<WelcomePageViewModel>()
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = _localizationManager["My mods"],
+                ToolTip = "My mods".GetLocalizedString(),
                 Icon = MaterialIconKind.Games,
-                Text = _localizationManager["My mods"],
+                Text = "My mods".GetLocalizedString(),
                 PageViewModelFactory = Ioc.Default.GetRequiredService<GameListViewModel>()
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = _localizationManager["Search"],
+                ToolTip = "Search".GetLocalizedString(),
                 Icon = MaterialIconKind.Magnify,
-                Text = _localizationManager["Search"],
+                Text = "Search".GetLocalizedString(),
                 PageViewModelFactory = Ioc.Default.GetRequiredService<GameSearchViewModel>()
             }
         };
@@ -57,7 +55,6 @@ public partial class MainWindowViewModel : WindowViewModelBase
     }
 
     private readonly NavigationManager _navigationManager;
-    private readonly LocalizationManager _localizationManager;
 
     private bool _isPaneOpen;
 

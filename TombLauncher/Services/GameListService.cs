@@ -11,12 +11,17 @@ using TombLauncher.Localization;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
+using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.Services;
 
 public class GameListService : IViewService
 {
-    public GameListService(GamesUnitOfWork gamesUnitOfWork, LocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService)
+    public GameListService(GamesUnitOfWork gamesUnitOfWork, 
+        LocalizationManager localizationManager,
+        NavigationManager navigationManager, 
+        IMessageBoxService messageBoxService, 
+        IDialogService dialogService)
     {
         GamesUnitOfWork = gamesUnitOfWork;
         LocalizationManager = localizationManager;
@@ -24,6 +29,7 @@ public class GameListService : IViewService
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
     }
+
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public LocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
@@ -55,8 +61,8 @@ public class GameListService : IViewService
 
     public async Task Uninstall(GameListViewModel target, GameWithStatsViewModel game)
     {
-        var confirmDialogViewModel = new GameUninstallConfirmDialogViewModel(){Game = game.GameMetadata};
-        confirmDialogViewModel.RequestCloseDialog += (sender, args) =>
+        var confirmDialogViewModel = new GameUninstallConfirmDialogViewModel() { Game = game.GameMetadata };
+        confirmDialogViewModel.RequestCloseDialog += (_, args) =>
         {
             if (!args.DialogResult) return;
             target.IsBusy = true;
@@ -68,8 +74,7 @@ public class GameListService : IViewService
             target.IsBusy = false;
             NavigationManager.NavigateTo(target);
         };
-        DialogService.ShowDialog(confirmDialogViewModel, model => {});
+        DialogService.ShowDialog(confirmDialogViewModel, _ => { });
+        await Task.CompletedTask;
     }
-    
-    
 }
