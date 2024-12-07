@@ -52,7 +52,7 @@
             <DockPanel Grid.Row="0">
                 <controls:IconButton Command="{Binding GoBackCmd}" Icon="ArrowBack" />
             </DockPanel>
-            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}" ZIndex="5000">
+            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}" ZIndex="5000" Background="#A0000000">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <avaloniaProgressRing:ProgressRing IsActive="{Binding CurrentPage.IsBusy}"
                                                        HorizontalAlignment="Center" VerticalAlignment="Center"

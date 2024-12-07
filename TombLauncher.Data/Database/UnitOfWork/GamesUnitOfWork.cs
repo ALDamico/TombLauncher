@@ -47,7 +47,6 @@ public class GamesUnitOfWork : UnitOfWorkBase
     public void DeleteGameById(int id)
     {
         Games.Delete(id);
-        Hashes.Get(h => h.GameId == id).ExecuteDelete();
     }
 
     private static Game ToGame(GameMetadataDto dto)
