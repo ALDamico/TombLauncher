@@ -43,6 +43,4 @@ sealed class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
-
-    public static NavigationManager NavigationManager => Ioc.Default.GetRequiredService<NavigationManager>();
 }

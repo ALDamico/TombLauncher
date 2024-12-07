@@ -52,7 +52,7 @@ public class GameWithStatsService : IViewService
     
     private void OnGameExited(GameWithStatsViewModel game, Process process)
     {
-        var currentPage = Program.NavigationManager.GetCurrentPage();
+        var currentPage = NavigationManager.GetCurrentPage();
         currentPage.BusyMessage = LocalizationManager["Saving play session..."];
         GamesUnitOfWork.AddPlaySessionToGame(game.GameMetadata.ToDto(), process.StartTime, process.ExitTime);
         GamesUnitOfWork.Save();
