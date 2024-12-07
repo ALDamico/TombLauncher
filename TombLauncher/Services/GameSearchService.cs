@@ -130,7 +130,7 @@ public class GameSearchService : IViewService
             }
         }
 
-        target.HasMoreResults = GameDownloadManager.HasMoreResults();
+        target.HasMoreResults = CanLoadMore();
         target.IsBusy = false;
     }
 
