@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Localization;
@@ -12,7 +13,7 @@ public partial class WelcomePageViewModel : PageViewModel
     public WelcomePageViewModel(WelcomePageService welcomePageService)
     {
         _welcomePageService = welcomePageService;
-        InitCmd = new RelayCommand(InitializeInner);
+        Initialize += InitializeInner;
     }
 
     private WelcomePageService _welcomePageService;

@@ -8,7 +8,7 @@
              xmlns:controls="clr-namespace:TombLauncher.Controls"
              xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TombLauncher.Views.AppCrashHostView"
+             x:Class="TombLauncher.Views.Dialogs.AppCrashHostView"
              x:DataType="dialogs:AppCrashHostViewModel">
     <Design.DataContext>
         <dialogs:AppCrashHostViewModel />

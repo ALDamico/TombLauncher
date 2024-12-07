@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Navigation;
 
 namespace TombLauncher;
@@ -16,12 +17,9 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-#if !DEBUG
         try
         {
-#endif
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-#if !DEBUG
         }
         catch (Exception e)
         {
@@ -34,7 +32,6 @@ sealed class Program
                 Process.Start(thisExecutable, args);
             }
         }
-#endif
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

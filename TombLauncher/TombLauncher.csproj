@@ -55,4 +55,11 @@
       <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
       <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\Dialogs\AppCrashHostView.axaml.cs">
+        <DependentUpon>AppCrashHostView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>
