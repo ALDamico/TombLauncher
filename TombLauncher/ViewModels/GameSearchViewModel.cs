@@ -15,7 +15,6 @@ using TombLauncher.Data.Models;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
-using TombLauncher.Localization;
 using TombLauncher.Navigation;
 using TombLauncher.Progress;
 using TombLauncher.Services;
@@ -24,10 +23,10 @@ namespace TombLauncher.ViewModels;
 
 public partial class GameSearchViewModel : PageViewModel
 {
-    public GameSearchViewModel(LocalizationManager localizationManager, GameDownloadManager gameDownloadManager,
+    public GameSearchViewModel(GameDownloadManager gameDownloadManager,
         NavigationManager navigationManager,
         GamesUnitOfWork gamesUoW, IMessageBoxService messageBoxService, TombRaiderLevelInstaller levelInstaller,
-        TombRaiderEngineDetector engineDetector) : base(localizationManager, messageBoxService)
+        TombRaiderEngineDetector engineDetector) : base(messageBoxService)
     {
         _searchPayload = new DownloaderSearchPayloadViewModel();
         _navigationManager = navigationManager;
@@ -209,12 +208,10 @@ public partial class GameSearchViewModel : PageViewModel
                 gameToOpen.TitlePic = detailsViewModel.TitlePic;
             }
 
-            var uow = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
             var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
             var gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
             var vm = new GameDetailsViewModel(gameDetailsService,
-                new GameWithStatsViewModel(gameWithStatsService) { GameMetadata = detailsViewModel },
-                LocalizationManager);
+                new GameWithStatsViewModel(gameWithStatsService) { GameMetadata = detailsViewModel });
             IsBusy = false;
             _navigationManager.NavigateTo(vm);
             return;

@@ -30,8 +30,10 @@ public class GameListService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
 
-    public Task<ObservableCollection<GameWithStatsViewModel>> FetchGames()
+    public Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
+        host.IsBusy = true;
+        host.BusyMessage = LocalizationManager.GetLocalizedString("Loading games...");
         return Task.FromResult(GamesUnitOfWork.GetGamesWithStats().Select(ConvertDto).ToObservableCollection());
     }
 

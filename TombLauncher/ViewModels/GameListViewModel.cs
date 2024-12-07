@@ -2,7 +2,6 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Localization;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
@@ -12,7 +11,7 @@ public partial class GameListViewModel : PageViewModel
     [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games;
     [ObservableProperty] private GameWithStatsViewModel _selectedGame;
 
-    public GameListViewModel(GameListService gameListService, LocalizationManager localizationManager) : base(localizationManager)
+    public GameListViewModel(GameListService gameListService) 
     {
         _gameListService = gameListService;
         AddGameCmd = new RelayCommand(AddGame);
@@ -24,8 +23,7 @@ public partial class GameListViewModel : PageViewModel
 
     private async void OnInit()
     {
-        SetBusy(true,  LocalizationManager.GetLocalizedString("Loading games..."));
-        Games = await _gameListService.FetchGames();
+        Games = await _gameListService.FetchGames(this);
         ClearBusy();
     }
     

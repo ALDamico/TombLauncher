@@ -8,7 +8,7 @@ namespace TombLauncher.ViewModels;
 
 public partial class GameDetailsViewModel : PageViewModel
 {
-    public GameDetailsViewModel(GameDetailsService gameDetailsService, GameWithStatsViewModel game, LocalizationManager localizationManager) : base(localizationManager)
+    public GameDetailsViewModel(GameDetailsService gameDetailsService, GameWithStatsViewModel game) 
     {
         _gameDetailsService = gameDetailsService;
         _game = game;

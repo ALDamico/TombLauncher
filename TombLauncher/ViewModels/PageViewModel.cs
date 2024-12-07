@@ -11,11 +11,9 @@ namespace TombLauncher.ViewModels;
 
 public abstract partial class PageViewModel : ViewModelBase
 {
-    public PageViewModel(LocalizationManager localizationManager = null, IMessageBoxService messageBoxService = null, IDialogService dialogService = null)
+    public PageViewModel(IMessageBoxService messageBoxService = null)
     {
-        LocalizationManager = localizationManager;
         MessageBoxService = messageBoxService;
-        DialogService = dialogService;
         SaveCmd = new RelayCommand(Save, CanSave);
         CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
     }
@@ -58,7 +56,5 @@ public abstract partial class PageViewModel : ViewModelBase
     protected virtual void SaveInner()
     {
     }
-    protected LocalizationManager LocalizationManager { get; private set; }
     protected IMessageBoxService MessageBoxService { get; private set; }
-    public IDialogService DialogService { get; private set; }
 }

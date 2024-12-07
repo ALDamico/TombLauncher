@@ -14,7 +14,6 @@ using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Data.Models;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
-using TombLauncher.Localization;
 using TombLauncher.Progress;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -23,8 +22,7 @@ namespace TombLauncher.ViewModels;
 
 public partial class NewGameViewModel : PageViewModel
 {
-    public NewGameViewModel(NewGameService newGameService, IDialogService dialogService,
-        IMessageBoxService messageBoxService, LocalizationManager localizationManager) : base(localizationManager, messageBoxService, dialogService)
+    public NewGameViewModel(NewGameService newGameService) 
     {
         _newGameService = newGameService;
         _gameMetadata = new GameMetadataViewModel();
@@ -91,6 +89,8 @@ public partial class NewGameViewModel : PageViewModel
     {
         return !string.IsNullOrWhiteSpace(GameMetadata.Title) && !string.IsNullOrWhiteSpace(Source);
     }
+
+    public IDialogService DialogService => _newGameService.DialogService;
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
