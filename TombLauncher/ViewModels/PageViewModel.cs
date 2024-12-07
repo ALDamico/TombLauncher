@@ -11,7 +11,7 @@ namespace TombLauncher.ViewModels;
 
 public abstract partial class PageViewModel : ViewModelBase
 {
-    public PageViewModel(LocalizationManager localizationManager, IMessageBoxService messageBoxService = null, IDialogService dialogService = null)
+    public PageViewModel(LocalizationManager localizationManager = null, IMessageBoxService messageBoxService = null, IDialogService dialogService = null)
     {
         LocalizationManager = localizationManager;
         MessageBoxService = messageBoxService;

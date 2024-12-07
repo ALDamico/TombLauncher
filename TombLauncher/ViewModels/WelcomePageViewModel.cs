@@ -1,30 +1,26 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using JamSoft.AvaloniaUI.Dialogs;
-using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization;
+using TombLauncher.Services;
 using TombLauncher.ViewModels.Dialogs;
 
 namespace TombLauncher.ViewModels;
 
 public partial class WelcomePageViewModel : PageViewModel
 {
-    public WelcomePageViewModel(LocalizationManager localizationManager, AppCrashUnitOfWork appCrashUoW,
-        IDialogService dialogService) : base(localizationManager, dialogService:dialogService)
+    public WelcomePageViewModel(WelcomePageService welcomePageService)
     {
-        _appCrashUoW = appCrashUoW;
+        _welcomePageService = welcomePageService;
         InitCmd = new RelayCommand(InitializeInner);
     }
 
+    private WelcomePageService _welcomePageService;
+
     private void InitializeInner()
     {
-        var unnotifiedCrash = _appCrashUoW.GetNotNotifiedCrashes();
-        if (unnotifiedCrash == null) return;
-        DialogService.ShowDialog(new AppCrashHostViewModel(DialogService) { Crash = unnotifiedCrash },
-            model => { _appCrashUoW.MarkAsNotified(model.Crash.Id); });
+        _welcomePageService.HandleNotNotifiedCrashes();
     }
-
-    private readonly AppCrashUnitOfWork _appCrashUoW;
 
     [ObservableProperty] private string _changeLogPath;
 }

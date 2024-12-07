@@ -2,27 +2,29 @@
 using System.Text.Json;
 using System.Windows.Input;
 using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.ViewModels;
 using TombLauncher.Data.Dto;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Services;
 using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels.Dialogs;
 
 public class AppCrashHostViewModel : DialogViewModel
 {
-    public AppCrashHostViewModel(IDialogService dialogService)
+    public AppCrashHostViewModel(AppCrashHostService appCrashHostService)
     {
-        _dialogService = dialogService;
+        _appCrashHostService = appCrashHostService;
         AcceptCommandText = "Accept".GetLocalizedString();
         CopyCmd = new RelayCommand<object>(Copy, CanCopy);
         SaveCmd = new RelayCommand(Save);
         // TODO Hide cancel button when functionality becomes available
     }
 
-    private readonly IDialogService _dialogService;
+    private AppCrashHostService _appCrashHostService;
 
     private bool CanCopy(object obj)
     {
@@ -43,36 +45,13 @@ public class AppCrashHostViewModel : DialogViewModel
 
     private async void Save()
     {
-        var filePath = await _dialogService.SaveFile("Save error details".GetLocalizedString(),
-            new FilePickerFileType[]
-            {
-                new FilePickerFileType("JSON files".GetLocalizedString())
-                {
-                    Patterns = new string[]
-                    {
-                        "*.json"
-                    }
-                }
-            }, "json");
-        if (string.IsNullOrWhiteSpace(filePath)) return;
-        await File.WriteAllTextAsync(filePath,
-            JsonSerializer.Serialize(Crash, new JsonSerializerOptions() { WriteIndented = true }));
+        await _appCrashHostService.Save(Crash);
     }
 
     public ICommand CopyCmd { get; }
 
     private void Copy(object param)
     {
-        string serialized;
-        try
-        {
-            serialized = JsonSerializer.Serialize(param);
-        }
-        catch (JsonException)
-        {
-            serialized = param?.ToString();
-        }
-
-        AppUtils.SetClipboardTextAsync(serialized);
+        _appCrashHostService.Copy(param);
     }
 }

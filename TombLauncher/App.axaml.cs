@@ -48,6 +48,8 @@ public partial class App : Application
             serviceCollection.AddScoped<NewGameViewModel>();
             serviceCollection.AddScoped<GameListService>();
             serviceCollection.AddScoped<GameWithStatsService>();
+            serviceCollection.AddScoped<AppCrashHostService>();
+            serviceCollection.AddSingleton<WelcomePageService>();
             serviceCollection.AddSingleton(sp =>
             {
                 var locManager = new LocalizationManager(Current);
@@ -56,17 +58,11 @@ public partial class App : Application
             });
             serviceCollection.AddEntityFrameworkSqlite();
             serviceCollection.AddSingleton(sp =>
-                new WelcomePageViewModel(sp.GetRequiredService<LocalizationManager>(),
-                        sp.GetRequiredService<AppCrashUnitOfWork>(),
-                        sp.GetRequiredService<IDialogService>())
+                new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>())
                     { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
             serviceCollection.AddScoped<GamesUnitOfWork>();
             serviceCollection.AddScoped<GameListViewModel>();
-            serviceCollection.AddSingleton(sp =>
-            {
-                var defaultPage = sp.GetRequiredService<WelcomePageViewModel>();
-                return new NavigationManager(defaultPage);
-            });
+            serviceCollection.AddSingleton(sp => new NavigationManager());
             serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
             {
                 ApplicationName = "Tomb Launcher",
@@ -107,9 +103,12 @@ public partial class App : Application
             serviceCollection.AddScoped<AppCrashUnitOfWork>();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);
+            var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
+            var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
+            navigationManager.SetDefaultPage(defaultPage);
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(Ioc.Default.GetRequiredService<NavigationManager>(),
+                DataContext = new MainWindowViewModel(navigationManager,
                     Ioc.Default.GetRequiredService<LocalizationManager>()),
             };
         }

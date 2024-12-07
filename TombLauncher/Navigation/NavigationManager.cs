@@ -6,12 +6,16 @@ namespace TombLauncher.Navigation;
 
 public class NavigationManager
 {
-    public NavigationManager(PageViewModel defaultPage)
+    public NavigationManager()
+    {
+    }
+
+    internal void SetDefaultPage(PageViewModel defaultPage)
     {
         _defaultPage = defaultPage;
     }
 
-    private readonly PageViewModel _defaultPage;
+    private PageViewModel _defaultPage;
     private PageViewModel _currentPage;
     
     public Stack<PageViewModel> History { get; set; } = new();
