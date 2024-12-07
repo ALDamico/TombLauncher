@@ -119,5 +119,6 @@ public partial class App : Application
         serviceCollection.AddScoped<GameWithStatsService>();
         serviceCollection.AddScoped<AppCrashHostService>();
         serviceCollection.AddSingleton<WelcomePageService>();
+        serviceCollection.AddScoped<GameSearchService>();
     }
 }

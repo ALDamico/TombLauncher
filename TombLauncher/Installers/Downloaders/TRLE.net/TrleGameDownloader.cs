@@ -98,7 +98,6 @@ public class TrleGameDownloader : IGameDownloader
         DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
         CurrentPage = 0;
-        TotalPages = 0;
 
         var result = await FetchNextPage(cancellationToken);
         
@@ -121,7 +120,7 @@ public class TrleGameDownloader : IGameDownloader
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
         var htmlDocument = new HtmlDocument();
         htmlDocument.LoadHtml(content);
-        if (TotalPages == 0)
+        if (TotalPages == null)
             TotalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
         
         ParseResultPage(htmlDocument, result, cancellationToken);
@@ -234,8 +233,6 @@ public class TrleGameDownloader : IGameDownloader
             }
 
             result.Add(metadata);
-
-            //Console.WriteLine(row.InnerHtml);
         }
     }
 
@@ -243,25 +240,6 @@ public class TrleGameDownloader : IGameDownloader
         IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
         await _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
-
-        /*var dto = new GameMetadataDto()
-        {
-            Author = metadata.Author,
-            AuthorFullName = metadata.AuthorFullName,
-            Difficulty = metadata.Difficulty,
-            Guid = Guid.NewGuid(),
-            GameEngine = metadata.Engine,
-            ReleaseDate = metadata.ReleaseDate,
-            Length = metadata.Length,
-            Title = metadata.Title,
-            Setting = metadata.Setting
-        };
-        var installLocation = _installer.Install(fullFilePath, dto);
-        var exePath = _engineDetector.GetGameExecutablePath(fullFilePath);
-        dto.ExecutablePath = exePath;
-        dto.InstallDirectory = installLocation;
-        dto.InstallDate = DateTime.Now;
-        return dto;*/
     }
 
     public async Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game,
@@ -303,11 +281,11 @@ public class TrleGameDownloader : IGameDownloader
 
     public bool HasMorePages()
     {
-        if (TotalPages == 0) return true;
+        if (TotalPages == null) return false;
         return CurrentPage < TotalPages;
     }
 
-    public int TotalPages { get; private set; }
+    public int? TotalPages { get; private set; }
     public int CurrentPage { get; private set; }
 
     private TrleSearchRequest ConvertRequest(DownloaderSearchPayload searchPayload)

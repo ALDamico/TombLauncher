@@ -52,7 +52,6 @@ public class AspideTrGameDownloader : IGameDownloader
         DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
         CurrentPage = 0;
-        TotalPages = 1;
 
         var result = await FetchNextPage(cancellationToken);
 
@@ -62,6 +61,8 @@ public class AspideTrGameDownloader : IGameDownloader
     private async Task ParsePage(HtmlDocument htmlDocument, List<GameSearchResultMetadataViewModel> result)
     {
         var levelsList = htmlDocument.DocumentNode.SelectNodes("//div[@class='levels']/article");
+        if (levelsList == null)
+            return;
         foreach (var level in levelsList)
         {
             var searchResult = new GameSearchResultMetadataViewModel();
@@ -159,7 +160,7 @@ public class AspideTrGameDownloader : IGameDownloader
 
         var htmlDocument = new HtmlDocument();
         htmlDocument.Load(content);
-        if (TotalPages == 1)
+        if (TotalPages == null)
         {
             TotalPages = GetTotalPages(htmlDocument);
         }
@@ -223,7 +224,7 @@ public class AspideTrGameDownloader : IGameDownloader
         return CurrentPage < TotalPages;
     }
 
-    public int TotalPages { get; private set; }
+    public int? TotalPages { get; private set; }
     public int CurrentPage { get; private set; }
 
     private int? ConvertEngine(GameEngine engine)
@@ -279,11 +280,9 @@ public class AspideTrGameDownloader : IGameDownloader
     private int GetTotalPages(HtmlDocument htmlDocument)
     {
         var paginationDiv = htmlDocument.DocumentNode.SelectSingleNode("//div[@class='pagination']");
-        if (paginationDiv == null) return 1;
 
-        var lastListItem = paginationDiv.SelectNodes("./ul/li").LastOrDefault();
+        var lastListItem = paginationDiv?.SelectNodes("./ul/li").LastOrDefault();
         if (lastListItem == null) return 1;
-        var parsed = int.TryParse(lastListItem.SelectSingleNode("./a").InnerText, out var val);
-        return val;
+        return int.TryParse(lastListItem.SelectSingleNode("./a").InnerText, out var val) ? val : 1;
     }
 }

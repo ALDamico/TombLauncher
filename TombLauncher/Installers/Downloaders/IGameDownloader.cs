@@ -18,6 +18,6 @@ public interface IGameDownloader
     Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream, IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken);
     Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken);
     bool HasMorePages();
-    int TotalPages { get; }
+    int? TotalPages { get; }
     int CurrentPage { get; }
 }
