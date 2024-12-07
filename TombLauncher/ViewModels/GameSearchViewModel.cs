@@ -211,8 +211,9 @@ public partial class GameSearchViewModel : PageViewModel
 
             var uow = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
             var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
+            var gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
             var vm = new GameDetailsViewModel(gameDetailsService,
-                new GameWithStatsViewModel(uow, LocalizationManager) { GameMetadata = detailsViewModel },
+                new GameWithStatsViewModel(gameWithStatsService) { GameMetadata = detailsViewModel },
                 LocalizationManager);
             IsBusy = false;
             _navigationManager.NavigateTo(vm);
