@@ -62,6 +62,8 @@ public class AspideTrGameDownloader : IGameDownloader
     private async Task ParsePage(HtmlDocument htmlDocument, List<GameSearchResultMetadataViewModel> result)
     {
         var levelsList = htmlDocument.DocumentNode.SelectNodes("//div[@class='levels']/article");
+        if (levelsList == null)
+            return;
         foreach (var level in levelsList)
         {
             var searchResult = new GameSearchResultMetadataViewModel();
