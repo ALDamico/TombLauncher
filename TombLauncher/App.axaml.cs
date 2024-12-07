@@ -46,6 +46,7 @@ public partial class App : Application
             serviceCollection.AddScoped<GameDetailsService>();
             serviceCollection.AddScoped<NewGameService>();
             serviceCollection.AddScoped<NewGameViewModel>();
+            serviceCollection.AddScoped<GameListService>();
             serviceCollection.AddSingleton(sp =>
             {
                 var locManager = new LocalizationManager(Current);
