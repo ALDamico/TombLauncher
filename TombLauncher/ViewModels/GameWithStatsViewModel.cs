@@ -2,11 +2,13 @@
 using System.Diagnostics;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
+using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
 
@@ -22,7 +24,8 @@ public partial class GameWithStatsViewModel : ViewModelBase
 
     private void Open()
     {
-        Program.NavigationManager.NavigateTo(new GameDetailsViewModel(_gamesUnitOfWork, this, _localizationManager));
+        var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
+        Program.NavigationManager.NavigateTo(new GameDetailsViewModel(gameDetailsService, this, _localizationManager));
     }
 
     private void Play()

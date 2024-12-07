@@ -16,6 +16,7 @@ using TombLauncher.Installers.Downloaders.AspideTR.com;
 using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
+using TombLauncher.Services;
 using TombLauncher.ViewModels;
 using TombLauncher.Views;
 
@@ -42,6 +43,7 @@ public partial class App : Application
             BindingPlugins.DataValidators.RemoveAt(0);
 
             var serviceCollection = new ServiceCollection();
+            serviceCollection.AddScoped<GameDetailsService>();
             serviceCollection.AddSingleton(sp =>
             {
                 var locManager = new LocalizationManager(Current);

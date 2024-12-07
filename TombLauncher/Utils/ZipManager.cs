@@ -52,6 +52,12 @@ public class ZipManager : IDisposable
                 continue;
             }
 
+            var relativePath = Path.GetDirectoryName(current.Name);
+            if (!string.IsNullOrWhiteSpace(relativePath))
+            {
+                PathUtils.EnsureFolderExists(Path.Combine(targetPath, relativePath));
+            }
+
             if (progress != null)
             {
                 var copyProgress = new CopyProgressInfo()

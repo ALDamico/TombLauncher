@@ -6,40 +6,38 @@ using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization;
+using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
 
 public partial class GameDetailsViewModel : PageViewModel
 {
-    public GameDetailsViewModel(GamesUnitOfWork gamesUnitOfWork, GameWithStatsViewModel game, LocalizationManager localizationManager) : base(localizationManager)
+    public GameDetailsViewModel(GameDetailsService gameDetailsService, GameWithStatsViewModel game, LocalizationManager localizationManager) : base(localizationManager)
     {
-        _gamesUnitOfWork = gamesUnitOfWork;
+        _gameDetailsService = gameDetailsService;
         _game = game;
         BrowseFolderCmd = new RelayCommand(BrowseFolder);
         UninstallCmd = new RelayCommand(Uninstall, CanUninstall);
     }
+
+    private readonly GameDetailsService _gameDetailsService;
     [ObservableProperty] private GameWithStatsViewModel _game;
-    private readonly GamesUnitOfWork _gamesUnitOfWork;
     public ICommand BrowseFolderCmd { get; }
 
     private void BrowseFolder()
     {
-        Process.Start("explorer", Game.GameMetadata.InstallDirectory);
+        _gameDetailsService.OpenGameFolder(Game.GameMetadata.InstallDirectory);
     }
     
     public ICommand UninstallCmd { get; }
 
     private void Uninstall()
     {
-        var installDir = Game.GameMetadata.InstallDirectory;
-        Directory.Delete(installDir, true);
-        _gamesUnitOfWork.DeleteGameById(Game.GameMetadata.Id);
-        _gamesUnitOfWork.Save();
-        Program.NavigationManager.GoBack();
+        _gameDetailsService.Uninstall(_game.GameMetadata.InstallDirectory, _game.GameMetadata.Id);
     }
 
     private bool CanUninstall()
     {
-        return !string.IsNullOrWhiteSpace(Game?.GameMetadata.InstallDirectory);
+        return _gameDetailsService.CanUninstall(_game.GameMetadata.InstallDirectory);
     }
 }

@@ -18,6 +18,7 @@ using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
 using TombLauncher.Progress;
+using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
 
@@ -209,7 +210,8 @@ public partial class GameSearchViewModel : PageViewModel
             }
 
             var uow = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
-            var vm = new GameDetailsViewModel(uow,
+            var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
+            var vm = new GameDetailsViewModel(gameDetailsService,
                 new GameWithStatsViewModel(uow, LocalizationManager) { GameMetadata = detailsViewModel },
                 LocalizationManager);
             IsBusy = false;
