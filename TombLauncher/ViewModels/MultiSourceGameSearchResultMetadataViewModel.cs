@@ -1,18 +1,27 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Data.Models;
+using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
 
 public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBase, IGameSearchResultMetadata
 {
-    public MultiSourceGameSearchResultMetadataViewModel()
+    public MultiSourceGameSearchResultMetadataViewModel(GameSearchResultService gameSearchResultService)
     {
+        _gameSearchResultService = gameSearchResultService;
         Sources = new ObservableCollection<IGameSearchResultMetadata>();
+        InstallCmd = new AsyncRelayCommand(Install, CanInstall);
     }
+
+    private GameSearchResultService _gameSearchResultService;
+    
     [ObservableProperty] private string _author;
     [ObservableProperty] private string _authorFullName;
     [ObservableProperty] private string _title;
@@ -59,5 +68,17 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private double _totalBytes;
     [ObservableProperty] private double _currentBytes;
     [ObservableProperty] private double _downloadSpeed;
+    
+    public ICommand InstallCmd { get; }
+
+    private async Task Install()
+    {
+        await _gameSearchResultService.Install(this);
+    }
+
+    private bool CanInstall()
+    {
+        return _gameSearchResultService.CanInstall(this);
+    }
 
 }

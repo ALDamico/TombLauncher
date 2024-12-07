@@ -102,15 +102,16 @@ public class GameDownloadManager
         _merger.Merge(fullList, newElements);
     }
 
-    public async Task<string> DownloadGame(IGameSearchResultMetadata metadata, IProgress<DownloadProgressInfo> downloadProgress)
+    public async Task<string> DownloadGame(IGameSearchResultMetadata metadata, IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var baseUrl = metadata.BaseUrl;
         var downloader = Downloaders.FirstOrDefault(d => d.BaseUrl == baseUrl);
         var downloadPath = PathUtils.GetRandomTempDirectory();
         var tempZipName = Path.GetRandomFileName();
         var fullFilePath = Path.Combine(downloadPath, tempZipName);
         await using var file = new FileStream(fullFilePath, FileMode.Create);
-        await downloader.DownloadGame(metadata, file, downloadProgress, _cancellationTokenSource.Token);
+        await downloader.DownloadGame(metadata, file, downloadProgress, cancellationToken);
         return fullFilePath;
 
     }

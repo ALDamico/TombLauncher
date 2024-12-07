@@ -17,15 +17,9 @@ public partial class GameSearchViewModel : PageViewModel
         OpenCmd = new AsyncRelayCommand<IGameSearchResultMetadata>(Open);
         LoadMoreCmd = new AsyncRelayCommand(LoadMore);
         IsCancelable = true;
-        InstallCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel>(Install, CanInstall);
     }
 
     private GameSearchService _gameSearchService;
-
-    private bool CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
-    {
-        return _gameSearchService.CanInstall(obj);
-    }
 
     [ObservableProperty] private DownloaderSearchPayloadViewModel _searchPayload;
     [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults;
@@ -48,13 +42,6 @@ public partial class GameSearchViewModel : PageViewModel
     private async Task LoadMore()
     {
         await _gameSearchService.LoadMore(this);
-    }
-
-    public ICommand InstallCmd { get; }
-
-    private async Task Install(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
-    {
-        await _gameSearchService.Install(gameToInstall);
     }
 
     public ICommand OpenCmd { get; }
