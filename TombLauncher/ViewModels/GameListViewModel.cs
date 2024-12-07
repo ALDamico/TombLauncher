@@ -48,7 +48,8 @@ public partial class GameListViewModel : PageViewModel
 
     private void AddGame()
     {
-        Program.NavigationManager.NavigateTo(new NewGameViewModel(_gamesUnitOfWork, Ioc.Default.GetService<IDialogService>(), Ioc.Default.GetService<IMessageBoxService>(), LocalizationManager));
+        var newGameViewModel = Ioc.Default.GetService<NewGameViewModel>();
+        Program.NavigationManager.NavigateTo(newGameViewModel);
     }
     
     public ICommand UninstallCmd { get; }

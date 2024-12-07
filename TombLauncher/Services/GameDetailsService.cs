@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
@@ -8,9 +9,19 @@ namespace TombLauncher.Services;
 
 public class GameDetailsService : IViewService
 {
+    public GameDetailsService(GamesUnitOfWork gamesUnitOfWork, LocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService)
+    {
+        GamesUnitOfWork = gamesUnitOfWork;
+        LocalizationManager = localizationManager;
+        NavigationManager = navigationManager;
+        MessageBoxService = messageBoxService;
+        DialogService = dialogService;
+    }
     public GamesUnitOfWork GamesUnitOfWork { get; set; }
     public LocalizationManager LocalizationManager { get; set; }
     public NavigationManager NavigationManager { get; set; }
+    public IMessageBoxService MessageBoxService { get; }
+    public IDialogService DialogService { get; }
 
     public void OpenGameFolder(string gameFolder)
     {
