@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization;
-using TombLauncher.Navigation;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
