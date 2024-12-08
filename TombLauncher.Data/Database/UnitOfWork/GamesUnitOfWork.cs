@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Dto;
 using TombLauncher.Data.Dto.Extensions;
@@ -8,13 +8,16 @@ namespace TombLauncher.Data.Database.UnitOfWork;
 
 public class GamesUnitOfWork : UnitOfWorkBase
 {
-    public GamesUnitOfWork()
+    public GamesUnitOfWork(MapperConfiguration mapperConfiguration)
     {
+        _mapper = mapperConfiguration.CreateMapper();
         _games = GetRepository<Game>();
         _playSessions = GetRepository<PlaySession>();
         _hashes = GetRepository<GameHashes>();
         _links = GetRepository<GameLink>();
     }
+
+    private IMapper _mapper;
 
     private readonly Lazy<EfRepository<Game>> _games;
     private readonly Lazy<EfRepository<PlaySession>> _playSessions;
@@ -26,7 +29,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
     internal EfRepository<PlaySession> PlaySessions => _playSessions.Value;
     internal EfRepository<GameHashes> Hashes => _hashes.Value;
     internal EfRepository<GameLink> Links => _links.Value;
-    
+
 
     public void UpsertGame(GameMetadataDto game)
     {
@@ -55,7 +58,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         {
             throw new ArgumentException("Dto can't be null", nameof(dto));
         }
-        
+
         return new Game()
         {
             Id = dto.Id,
@@ -76,25 +79,14 @@ public class GamesUnitOfWork : UnitOfWorkBase
         };
     }
 
-    private static GameHashes ToGameHashes(GameHashDto dto)
+    private GameHashes ToGameHashes(GameHashDto dto)
     {
-        if (dto == null)
-        {
-            throw new ArgumentException("Dto can't be null", nameof(dto));
-        }
-
-        return new GameHashes()
-        {
-            Id = dto.Id,
-            FileName = dto.FileName,
-            GameId = dto.GameId,
-            Md5Hash = dto.Md5Hash
-        };
+        return _mapper.Map<GameHashes>(dto);
     }
 
     public List<GameMetadataDto> GetGames()
     {
-        return Games.GetAll().AsEnumerable().ToDtos().ToList();
+        return _mapper.Map<List<GameMetadataDto>>(Games.GetAll());
     }
 
     public List<GameWithStatsDto> GetGamesWithStats()
@@ -108,7 +100,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
             var thisGamePlaySessions = playSessions[game.Id].ToList();
             var gameWithStatsDto = new GameWithStatsDto()
             {
-                GameMetadata = game.ToDto(),
+                GameMetadata = _mapper.Map<GameMetadataDto>(game),
                 TotalPlayTime = TimeSpan.Zero
             };
 
@@ -118,7 +110,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
                 gameWithStatsDto.TotalPlayTime =
                     TimeSpan.FromTicks(thisGamePlaySessions.Select(ps => (ps.EndDate - ps.StartDate).Ticks).Sum());
             }
-            
+
             outputList.Add(gameWithStatsDto);
         }
 
@@ -153,7 +145,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public List<GameHashDto> GetHashes(GameMetadataDto dto)
     {
-        return Hashes.Get(h => h.GameId == dto.Id).AsEnumerable().ToDtos().ToList();
+        var queryResult = Hashes.Get(h => h.GameId == dto.Id); //.AsEnumerable().ToDtos().ToList();
+        return _mapper.Map<List<GameHashDto>>(queryResult);
     }
 
     public bool ExistsHashes(List<GameHashDto> computedHashes)
@@ -163,7 +156,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var joined = hashesRepo.AsEnumerable().Join(tempQueryable, gh => gh.FileName + "#" + gh.Md5Hash,
             tmp => tmp.FileName + "#" + tmp.Md5Hash,
             (gh, tmp) => gh);
-        var matches = joined.GroupBy(m => m.GameId).Select(g => new {Id = g.Key, Count = g.Count()}).ToList();
+        var matches = joined.GroupBy(m => m.GameId).Select(g => new { Id = g.Key, Count = g.Count() }).ToList();
         if (matches.Count == 0)
         {
             return false;
@@ -183,29 +176,31 @@ public class GamesUnitOfWork : UnitOfWorkBase
         {
             Hashes.Insert(ToGameHashes(hash));
         }
-        
+
         Save();
     }
 
     public List<GameLinkDto> GetLinks(int gameId)
     {
-        return Links.Get(l => l.GameId == gameId).AsEnumerable().ToDtos().ToList();
+        var queryResult = Links.Get(l => l.GameId == gameId);
+        return _mapper.Map<List<GameLinkDto>>(queryResult);
     }
 
     public void SaveLink(GameLinkDto dto)
     {
         if (dto.Id != default) return;
 
-        var entity = dto.ToGameLink();
+        var entity = _mapper.Map<GameLink>(dto);
         Links.Upsert(entity);
     }
 
     public GameMetadataDto GetGameByLinks(LinkType linkType, List<string> links)
     {
-        var gameIds = Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).Select(l => l.GameId).Distinct().ToList();
+        var gameIds = Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).Select(l => l.GameId).Distinct()
+            .ToList();
         if (gameIds.Count == 1)
         {
-            return Games.GetEntityById(gameIds.First()).ToDto();
+            return _mapper.Map<GameMetadataDto>(Games.GetEntityById(gameIds.First()));
         }
 
         return null;
@@ -214,12 +209,11 @@ public class GamesUnitOfWork : UnitOfWorkBase
     public List<GameMetadataDto> GetGamesByLinks(LinkType linkType, List<string> links)
     {
         var games = Games.GetAll();
-        return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType)
+        var queryResult = Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType)
             .Select(l => l.GameId)
-            .Join(games, i => i, game => game.Id, (i, game) => game)
-            .AsEnumerable()
-            .ToDtos()
-            .ToList();
+            .Join(games, i => i, game => game.Id, (i, game) => game);
+
+        return _mapper.Map<List<GameMetadataDto>>(queryResult);
     }
 
     public Dictionary<string, GameMetadataDto> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
@@ -227,6 +221,6 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var games = Games.GetAll();
         return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType)
             .Join(games, l => l.GameId, game => game.Id, (i, game) => new { Link = i.Link, Game = game })
-            .ToDictionary(k => k.Link, g => g.Game.ToDto());
+            .ToDictionary(k => k.Link, g => _mapper.Map<GameMetadataDto>(g.Game));
     }
 }

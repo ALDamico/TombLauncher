@@ -149,7 +149,11 @@ public partial class App : Application
             cfg.CreateMap<AppCrash, AppCrashDto>()
                 .ForMember(dto => dto.ExceptionDto, opt => opt.MapFrom(s => JsonConvert.DeserializeObject<ExceptionDto>(s.Exception)));
             cfg.CreateMap<Exception, ExceptionDto>();
-            
+
+            cfg.CreateMap<GameHashes, GameHashDto>().ReverseMap();
+            cfg.CreateMap<GameLink, GameLinkDto>().ReverseMap();
+            cfg.CreateMap<Game, GameMetadataDto>().ReverseMap();
+
         });
 
         serviceCollection.AddSingleton(_ => mapperConfiguration);
