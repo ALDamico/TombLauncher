@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Data.Models;
+using TombLauncher.Services;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers.Downloaders;
@@ -85,7 +88,7 @@ public class TombLauncherGameMerger : IGameMerger
 
         foreach (var element in unmatched)
         {
-            fullList.Add(new MultiSourceGameSearchResultMetadataViewModel()
+            fullList.Add(new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default.GetRequiredService<GameSearchResultService>())
             {
                 Author = element.Author,
                 Difficulty = element.Difficulty,

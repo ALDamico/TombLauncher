@@ -1,18 +1,28 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Data.Models;
+using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
 
 public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBase, IGameSearchResultMetadata
 {
-    public MultiSourceGameSearchResultMetadataViewModel()
+    public MultiSourceGameSearchResultMetadataViewModel(GameSearchResultService gameSearchResultService)
     {
+        _gameSearchResultService = gameSearchResultService;
         Sources = new ObservableCollection<IGameSearchResultMetadata>();
+        InstallCmd = new AsyncRelayCommand(Install, CanInstall);
+        CancelInstallCmd = new AsyncRelayCommand(CancelInstall, CanCancelInstall);
     }
+
+    private GameSearchResultService _gameSearchResultService;
+    
     [ObservableProperty] private string _author;
     [ObservableProperty] private string _authorFullName;
     [ObservableProperty] private string _title;
@@ -59,5 +69,50 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private double _totalBytes;
     [ObservableProperty] private double _currentBytes;
     [ObservableProperty] private double _downloadSpeed;
+    private bool _isInstalling;
 
+    public bool IsInstalling
+    {
+        get => _isInstalling;
+        set
+        {
+            _isInstalling = value;
+            OnPropertyChanged();
+            ((AsyncRelayCommand)CancelInstallCmd).NotifyCanExecuteChanged();
+        }
+    }
+    
+    public ICommand InstallCmd { get; }
+
+    private async Task Install()
+    {
+        Console.WriteLine($"Attempting install {this.GetHashCode()}");
+        try
+        {
+            await _gameSearchResultService.Install(this);
+        }
+        catch (OperationCanceledException ex)
+        {
+            IsInstalling = false;
+            DownloadSpeed = 0;
+            CurrentBytes = 0;
+            TotalBytes = 0;
+        }
+    }
+
+    private bool CanInstall()
+    {
+        return _gameSearchResultService.CanInstall(this);
+    }
+    public ICommand CancelInstallCmd { get; }
+
+    private async Task CancelInstall()
+    {
+        await _gameSearchResultService.CancelInstall();
+    }
+
+    private bool CanCancelInstall()
+    {
+        return _gameSearchResultService.CanCancelInstall(this);
+    }
 }

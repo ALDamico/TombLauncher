@@ -118,11 +118,17 @@
                                 </Grid>
                                 
                                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-                                    <Button Command="{Binding ((pages:GameSearchViewModel)DataContext).InstallCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=pages1:GameSearchView}}"
+                                    <Button Command="{Binding InstallCmd}"
                                             CommandParameter="{Binding .}"
                                             ToolTip.Tip="{DynamicResource Download}"
                                             >
                                         <avalonia:MaterialIcon Kind="Download"/>
+                                    </Button>
+                                    <Button IsVisible="{Binding IsInstalling}" 
+                                            ToolTip.Tip="{DynamicResource Cancel}"
+                                            Background="DarkRed"
+                                            Command="{Binding CancelInstallCmd}">
+                                        <avalonia:MaterialIcon Kind="Cancel"/>
                                     </Button>
                                 </StackPanel>
                             </Grid>
