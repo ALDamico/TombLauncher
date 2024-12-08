@@ -26,6 +26,34 @@ public class LocalizationManager
 
     public CultureInfo CurrentCulture => _currentCulture;
 
+    public string GetLanguagesFolder()
+    {
+        return $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/{_localizationRelativePath}";
+    }
+
+    public List<CultureInfo> GetSupportedLanguages()
+    {
+        var cultureInfos = new List<CultureInfo>();
+        var languagesFolder = GetLanguagesFolder();
+        var dictionaryFiles = Directory.GetFiles(languagesFolder, "*.axaml");
+        foreach (var file in dictionaryFiles)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(file);
+            try
+            {
+                var cultureInfo = CultureInfo.GetCultureInfo(fileName);
+                cultureInfos.Add(cultureInfo);
+
+            }
+            catch (CultureNotFoundException)
+            {
+                // Ignored for now
+            }
+        }
+
+        return cultureInfos;
+    }
+
     public void ChangeLanguage(CultureInfo targetLanguage)
     {
         var currentApp = Application.Current;
@@ -40,10 +68,10 @@ public class LocalizationManager
         }
 
         var resourceKey =
-            $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/{_localizationRelativePath}/{cultureName}.axaml";
+            $"{GetLanguagesFolder()}/{cultureName}.axaml";
 
         var resourceKeyDefault =
-            $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/{_localizationRelativePath}/{_defaultCulture}.axaml";
+            $"{GetLanguagesFolder()}/{_defaultCulture}.axaml";
         var defaultKeyXaml = File.ReadAllText(resourceKeyDefault);
         string xaml;
 

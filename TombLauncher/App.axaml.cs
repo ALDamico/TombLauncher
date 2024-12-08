@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Threading;
+using AutoMapper;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
@@ -9,7 +11,10 @@ using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Data.Dto;
+using TombLauncher.Data.Models;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Installers.Downloaders.AspideTR.com;
@@ -88,6 +93,8 @@ public partial class App : Application
                 ".dat",
                 ".phd"
             }));
+            
+            ConfigureMappings(serviceCollection);
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);
             var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
@@ -112,6 +119,7 @@ public partial class App : Application
         serviceCollection.AddSingleton<WelcomePageService>();
         serviceCollection.AddScoped<GameSearchService>();
         serviceCollection.AddTransient<GameSearchResultService>();
+        serviceCollection.AddScoped<SettingsService>();
     }
 
     private static void ConfigureViewModels(ServiceCollection serviceCollection)
@@ -122,6 +130,7 @@ public partial class App : Application
         serviceCollection.AddScoped<GameListViewModel>();
         serviceCollection.AddScoped<GameSearchViewModel>();
         serviceCollection.AddScoped<NewGameViewModel>();
+        serviceCollection.AddTransient<SettingsPageViewModel>();
     }
 
     private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection)
@@ -129,5 +138,20 @@ public partial class App : Application
         serviceCollection.AddEntityFrameworkSqlite();
         serviceCollection.AddScoped<GamesUnitOfWork>();
         serviceCollection.AddScoped<AppCrashUnitOfWork>();
+    }
+
+    private static void ConfigureMappings(ServiceCollection serviceCollection)
+    {
+        var mapperConfiguration = new MapperConfiguration(cfg =>
+        {
+            cfg.AllowNullDestinationValues = true;
+            
+            cfg.CreateMap<AppCrash, AppCrashDto>()
+                .ForMember(dto => dto.ExceptionDto, opt => opt.MapFrom(s => JsonConvert.DeserializeObject<ExceptionDto>(s.Exception)));
+            cfg.CreateMap<Exception, ExceptionDto>();
+            
+        });
+
+        serviceCollection.AddSingleton(_ => mapperConfiguration);
     }
 }

@@ -1,0 +1,25 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.SettingsPageView"
+             x:DataType="pages:SettingsPageViewModel"
+             >
+    <Design.DataContext>
+        <pages:SettingsPageViewModel/>
+    </Design.DataContext>
+    <Interaction.Behaviors>
+        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />
+    </Interaction.Behaviors>
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="{DynamicResource 'Languages'}" FontSize="36"/>
+            <TextBlock Text="{DynamicResource 'Application language'}"></TextBlock>
+            <ComboBox ItemsSource="{Binding LanguageSettings.AvailableLanguages}" 
+                      SelectedItem="{Binding LanguageSettings.ApplicationLanguage}"></ComboBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
