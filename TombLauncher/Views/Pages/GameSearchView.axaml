@@ -124,6 +124,12 @@
                                             >
                                         <avalonia:MaterialIcon Kind="Download"/>
                                     </Button>
+                                    <Button IsVisible="{Binding IsInstalling}" 
+                                            ToolTip.Tip="{DynamicResource Cancel}"
+                                            Background="DarkRed"
+                                            Command="{Binding CancelInstallCmd}">
+                                        <avalonia:MaterialIcon Kind="Cancel"/>
+                                    </Button>
                                 </StackPanel>
                             </Grid>
                         </Border>

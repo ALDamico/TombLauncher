@@ -45,18 +45,14 @@ public partial class App : Application
 
             var serviceCollection = new ServiceCollection();
             ConfigurePageServices(serviceCollection);
+            ConfigureViewModels(serviceCollection);
             serviceCollection.AddSingleton(_ =>
             {
                 var locManager = new LocalizationManager(Current);
                 locManager.ChangeLanguage(CultureInfo.CurrentUICulture);
                 return locManager;
             });
-            serviceCollection.AddEntityFrameworkSqlite();
-            serviceCollection.AddSingleton(sp =>
-                new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>())
-                    { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
-            serviceCollection.AddScoped<GamesUnitOfWork>();
-            serviceCollection.AddScoped<GameListViewModel>();
+            ConfigureDatabaseAccess(serviceCollection);
             serviceCollection.AddSingleton(_ => new NavigationManager());
             serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
             {
@@ -65,15 +61,13 @@ public partial class App : Application
                 ViewsAssemblyName = Assembly.GetExecutingAssembly().GetName().Name
             }));
             serviceCollection.AddScoped(_ => DialogServiceFactory.CreateMessageBoxService());
-            serviceCollection.AddScoped<GameSearchViewModel>();
             serviceCollection.AddScoped<TombRaiderLevelInstaller>();
             serviceCollection.AddScoped<TombRaiderEngineDetector>();
-            serviceCollection.AddScoped<CancellationTokenSource>();
             serviceCollection.AddTransient<IGameMerger>(_ =>
                 new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator(){UseAuthor = true, IgnoreSubTitle = true}));
             serviceCollection.AddScoped(sp =>
             {
-                var cts = sp.GetService<CancellationTokenSource>();
+                var cts = new CancellationTokenSource();
                 var locMan = sp.GetService<LocalizationManager>();
                 return new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>())
                 {
@@ -85,7 +79,6 @@ public partial class App : Application
                     }
                 };
             });
-
             serviceCollection.AddScoped(_ => new GameFileHashCalculator(new HashSet<string>()
             {
                 ".tr4",
@@ -95,7 +88,6 @@ public partial class App : Application
                 ".dat",
                 ".phd"
             }));
-            serviceCollection.AddScoped<AppCrashUnitOfWork>();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);
             var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
@@ -114,12 +106,28 @@ public partial class App : Application
     {
         serviceCollection.AddScoped<GameDetailsService>();
         serviceCollection.AddScoped<NewGameService>();
-        serviceCollection.AddScoped<NewGameViewModel>();
         serviceCollection.AddScoped<GameListService>();
         serviceCollection.AddScoped<GameWithStatsService>();
         serviceCollection.AddScoped<AppCrashHostService>();
         serviceCollection.AddSingleton<WelcomePageService>();
         serviceCollection.AddScoped<GameSearchService>();
-        serviceCollection.AddScoped<GameSearchResultService>();
+        serviceCollection.AddTransient<GameSearchResultService>();
+    }
+
+    private static void ConfigureViewModels(ServiceCollection serviceCollection)
+    {
+        serviceCollection.AddSingleton(sp =>
+            new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>())
+                { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
+        serviceCollection.AddScoped<GameListViewModel>();
+        serviceCollection.AddScoped<GameSearchViewModel>();
+        serviceCollection.AddScoped<NewGameViewModel>();
+    }
+
+    private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection)
+    {
+        serviceCollection.AddEntityFrameworkSqlite();
+        serviceCollection.AddScoped<GamesUnitOfWork>();
+        serviceCollection.AddScoped<AppCrashUnitOfWork>();
     }
 }

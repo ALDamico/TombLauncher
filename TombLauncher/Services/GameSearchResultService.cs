@@ -22,7 +22,7 @@ public class GameSearchResultService : IViewService
 {
     public GameSearchResultService(GameDownloadManager downloadManager, GamesUnitOfWork gamesUnitOfWork, TombRaiderLevelInstaller levelInstaller,
         TombRaiderEngineDetector engineDetector, LocalizationManager localizationManager, NavigationManager navigationManager,
-        IMessageBoxService messageBoxService, IDialogService dialogService, CancellationTokenSource cancellationTokenSource)
+        IMessageBoxService messageBoxService, IDialogService dialogService)
     {
         GameDownloadManager = downloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
@@ -32,7 +32,7 @@ public class GameSearchResultService : IViewService
         NavigationManager = navigationManager;
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
-        _cancellationTokenSource = cancellationTokenSource;
+        _cancellationTokenSource = new CancellationTokenSource();
     }
     private CancellationTokenSource _cancellationTokenSource;
     public GameDownloadManager GameDownloadManager { get; }
@@ -54,6 +54,7 @@ public class GameSearchResultService : IViewService
 
     public async Task Install(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
     {
+        gameToInstall.IsInstalling = true;
         var downloadPath = await GameDownloadManager.DownloadGame(gameToInstall, new Progress<DownloadProgressInfo>(
             p =>
             {
@@ -112,4 +113,12 @@ public class GameSearchResultService : IViewService
 
         GamesUnitOfWork.Save();
     }
+
+    public async Task CancelInstall()
+    {
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource = new CancellationTokenSource();
+    }
+
+    public bool CanCancelInstall(MultiSourceGameSearchResultMetadataViewModel target) => target.IsInstalling;
 }
