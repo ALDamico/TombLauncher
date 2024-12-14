@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TombLauncher.Core.Progress;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Dto;
-using TombLauncher.Progress;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 

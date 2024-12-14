@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TombLauncher.Extensions;
+﻿namespace TombLauncher.Core.Extensions;
 
 public static class DateTimeExtensions
 {

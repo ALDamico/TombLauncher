@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
 
-namespace TombLauncher.Utils;
+namespace TombLauncher.Core.Utils;
 
 public class PathUtils
 {

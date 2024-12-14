@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
-namespace TombLauncher.Extensions;
+namespace TombLauncher.Core.Extensions;
 
 public static class ObservableCollectionExtensions
 {

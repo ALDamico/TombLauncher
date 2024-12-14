@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using TombLauncher.Core.Progress;
 using TombLauncher.Data.Dto;
-using TombLauncher.Progress;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers.Downloaders;

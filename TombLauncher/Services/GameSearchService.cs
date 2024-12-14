@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Dto;
 using TombLauncher.Data.Models;
@@ -15,7 +16,6 @@ using TombLauncher.Extensions;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
-using TombLauncher.Progress;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 

@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
 using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages.Settings;

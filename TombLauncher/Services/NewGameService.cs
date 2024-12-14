@@ -6,12 +6,12 @@ using Avalonia.Threading;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Progress;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
-using TombLauncher.Progress;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services;

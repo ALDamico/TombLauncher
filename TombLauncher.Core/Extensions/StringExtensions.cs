@@ -1,15 +1,11 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using TombLauncher.Localization;
 
-namespace TombLauncher.Extensions;
+namespace TombLauncher.Core.Extensions;
 
 public static class StringExtensions
 {
-    
     public static string Remove(this string s, string toRemove)
     {
         return s.Replace(toRemove, string.Empty);

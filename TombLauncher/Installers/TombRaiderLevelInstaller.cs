@@ -3,8 +3,9 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Zip;
+using TombLauncher.Core.Progress;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Dto;
-using TombLauncher.Progress;
 using TombLauncher.Utils;
 
 namespace TombLauncher.Installers;

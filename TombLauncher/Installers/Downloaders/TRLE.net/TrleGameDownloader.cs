@@ -9,10 +9,11 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using TombLauncher.Core.Progress;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Dto;
 using TombLauncher.Data.Models;
 using TombLauncher.Extensions;
-using TombLauncher.Progress;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 

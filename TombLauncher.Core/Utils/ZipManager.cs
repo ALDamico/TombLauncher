@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Collections;
 using ICSharpCode.SharpZipLib.Zip;
-using TombLauncher.Progress;
+using TombLauncher.Core.Progress;
 
-namespace TombLauncher.Utils;
+namespace TombLauncher.Core.Utils;
 
 public class ZipManager : IDisposable
 {
@@ -52,7 +48,7 @@ public class ZipManager : IDisposable
                 continue;
             }
 
-            var relativePath = Path.GetDirectoryName(current.Name);
+            var relativePath = Path.GetDirectoryName((string)current.Name);
             if (!string.IsNullOrWhiteSpace(relativePath))
             {
                 PathUtils.EnsureFolderExists(Path.Combine(targetPath, relativePath));

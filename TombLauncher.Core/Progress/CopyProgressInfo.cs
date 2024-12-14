@@ -1,4 +1,4 @@
-﻿namespace TombLauncher.Progress;
+﻿namespace TombLauncher.Core.Progress;
 
 public class CopyProgressInfo
 {

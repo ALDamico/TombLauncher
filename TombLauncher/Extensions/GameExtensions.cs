@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using Avalonia.Media.Imaging;
 using TombLauncher.Data.Dto;
 using TombLauncher.Utils;
@@ -32,12 +30,6 @@ public static class GameExtensions
         };
     }
 
-    
-
-    public static IEnumerable<GameMetadataViewModel> ToViewModels(this IEnumerable<GameMetadataDto> games)
-    {
-        return games.Select(ToViewModel);
-    }
 
     public static GameMetadataDto ToDto(this GameMetadataViewModel game)
     {

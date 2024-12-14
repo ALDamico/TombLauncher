@@ -8,10 +8,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using HtmlAgilityPack;
+using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Progress;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Dto;
 using TombLauncher.Data.Models;
 using TombLauncher.Extensions;
-using TombLauncher.Progress;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 
