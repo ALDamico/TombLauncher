@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace TombLauncher.ValueConverters;
+namespace TombLauncher.Core.ValueConverters;
 
 public class CollectionEmptyToVisibilityConverter : IValueConverter
 {

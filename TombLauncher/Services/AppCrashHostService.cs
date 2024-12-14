@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using JamSoft.AvaloniaUI.Dialogs;
+using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Dto;
 using TombLauncher.Localization;
@@ -14,7 +15,7 @@ namespace TombLauncher.Services;
 
 public class AppCrashHostService : IViewService
 {
-    public AppCrashHostService(AppCrashUnitOfWork appCrashUnitOfWork, LocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService)
+    public AppCrashHostService(AppCrashUnitOfWork appCrashUnitOfWork, ILocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService)
     {
         AppCrashUnitOfWork = appCrashUnitOfWork;
         LocalizationManager = localizationManager;
@@ -23,7 +24,7 @@ public class AppCrashHostService : IViewService
         DialogService = dialogService;
     }
     public AppCrashUnitOfWork AppCrashUnitOfWork { get; }
-    public LocalizationManager LocalizationManager { get; }
+    public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }

@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Dto;
 using TombLauncher.Data.Models;
@@ -23,7 +24,7 @@ namespace TombLauncher.Services;
 public class GameSearchService : IViewService
 {
     public GameSearchService(GameDownloadManager gameDownloadManager, GamesUnitOfWork gamesUnitOfWork,
-        LocalizationManager localizationManager, NavigationManager navigationManager,
+        ILocalizationManager localizationManager, NavigationManager navigationManager,
         IMessageBoxService messageBoxService, IDialogService dialogService)
     {
         GameDownloadManager = gameDownloadManager;
@@ -35,7 +36,7 @@ public class GameSearchService : IViewService
     }
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
-    public LocalizationManager LocalizationManager { get; }
+    public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }

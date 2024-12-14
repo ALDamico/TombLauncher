@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
+      <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
+      <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
+    </ItemGroup>
+
+</Project>

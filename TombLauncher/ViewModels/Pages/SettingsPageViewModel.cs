@@ -23,4 +23,14 @@ public partial class SettingsPageViewModel : PageViewModel
         LanguageSettings.AvailableLanguages = _settingsService.GetSupportedLanguages().ToObservableCollection();
         LanguageSettings.ApplicationLanguage = CultureInfo.CurrentUICulture;
     }
+
+    protected override async void SaveInner()
+    {
+        await _settingsService.Save(this);
+    }
+
+    protected override bool CanSave()
+    {
+        return true;
+    }
 }

@@ -4,12 +4,14 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Settings;
 
 namespace TombLauncher.Localization;
 
-public class LocalizationManager
+public class LocalizationManager: ILocalizationManager, ISettingsVisitable 
 {
-    public LocalizationManager(Application application)
+    public LocalizationManager(Application application) 
     {
         _currentCulture = CultureInfo.CurrentUICulture;
         _defaultCulture = CultureInfo.GetCultureInfo("en-US");
@@ -129,4 +131,8 @@ public class LocalizationManager
     public string this[string key] => GetLocalizedString(key);
     public string DateOnlyFormat => GetLocalizedString(nameof(DateOnlyFormat));
     public string DateTimeFormat => GetLocalizedString(nameof(DateTimeFormat));
+    public void Accept(ISettingsVisitor visitor)
+    {
+        visitor.Visit(this);
+    }
 }

@@ -9,6 +9,7 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
+             xmlns:controls1="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameSearchView"
              x:DataType="pages:GameSearchViewModel"
@@ -38,7 +39,7 @@
         <views:GameSearchForm Grid.Row="1"
                               Grid.Column="0"
                               DataContext="{Binding SearchPayload}" />
-        <controls:IconButton Grid.Row="1" Grid.Column="1"
+        <controls1:IconButton Grid.Row="1" Grid.Column="1"
                              Text="{DynamicResource Search}"
                              Icon="Search"
                              HorizontalContentAlignment="Center"

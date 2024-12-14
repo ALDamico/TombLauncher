@@ -1,8 +1,6 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
-using Avalonia.Markup.Xaml;
 using Material.Icons;
 
 namespace TombLauncher.Controls;

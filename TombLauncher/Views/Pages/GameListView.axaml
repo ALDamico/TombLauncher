@@ -8,6 +8,7 @@
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:controls1="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              x:Class="TombLauncher.Views.Pages.GameListView"
              x:DataType="pages:GameListViewModel">
     <Design.DataContext>
@@ -25,7 +26,7 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="False">
-            <controls:IconButton DockPanel.Dock="Right" Icon="Plus" ToolTip.Tip="{DynamicResource Add}" Command="{Binding AddGameCmd}" />
+            <controls1:IconButton DockPanel.Dock="Right" Icon="Plus" ToolTip.Tip="{DynamicResource Add}" Command="{Binding AddGameCmd}" />
         </DockPanel>
 
         <StackPanel Grid.Row="1" HorizontalAlignment="Center"
@@ -70,12 +71,12 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" IsVisible="{Binding AreCommandsVisible}">
-                                <controls:IconButton Icon="Play"
+                                <controls1:IconButton Icon="Play"
                                                      ToolTip.Tip="{Binding GameMetadata.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Play GAMENAME'}"
                                                      Command="{Binding PlayCmd}" />
-                                <controls:IconButton Icon="Details" ToolTip.Tip="{DynamicResource View details}"
+                                <controls1:IconButton Icon="Details" ToolTip.Tip="{DynamicResource View details}"
                                                      Command="{Binding OpenCmd}">
-                                </controls:IconButton>
+                                </controls1:IconButton>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

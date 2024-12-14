@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization;
@@ -13,7 +14,7 @@ namespace TombLauncher.Services;
 public class GameWithStatsService : IViewService
 {
     public GameWithStatsService(GamesUnitOfWork gamesUnitOfWork, 
-        LocalizationManager localizationManager, 
+        ILocalizationManager localizationManager, 
         NavigationManager navigationManager, 
         IMessageBoxService messageBoxService, 
         IDialogService dialogService)
@@ -25,7 +26,7 @@ public class GameWithStatsService : IViewService
         DialogService = dialogService;
     }
     public GamesUnitOfWork GamesUnitOfWork { get; }
-    public LocalizationManager LocalizationManager { get; }
+    public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }

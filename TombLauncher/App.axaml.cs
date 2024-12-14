@@ -12,6 +12,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Settings;
+using TombLauncher.Core.Settings;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Dto;
 using TombLauncher.Data.Models;
@@ -51,10 +54,13 @@ public partial class App : Application
             var serviceCollection = new ServiceCollection();
             ConfigurePageServices(serviceCollection);
             ConfigureViewModels(serviceCollection);
-            serviceCollection.AddSingleton(_ =>
+            serviceCollection.AddSingleton<ILocalizationManager>(sp =>
             {
+                var settingsVisitor = sp.GetRequiredService<ISettingsVisitor>();
                 var locManager = new LocalizationManager(Current);
-                locManager.ChangeLanguage(CultureInfo.CurrentUICulture);
+                //locManager.ChangeLanguage(CultureInfo.CurrentUICulture);
+                
+                locManager.Accept(settingsVisitor);
                 return locManager;
             });
             ConfigureDatabaseAccess(serviceCollection);
@@ -73,7 +79,7 @@ public partial class App : Application
             serviceCollection.AddScoped(sp =>
             {
                 var cts = new CancellationTokenSource();
-                var locMan = sp.GetService<LocalizationManager>();
+                var locMan = sp.GetService<ILocalizationManager>();
                 return new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>())
                 {
                     Downloaders =
@@ -95,6 +101,9 @@ public partial class App : Application
             }));
             
             ConfigureMappings(serviceCollection);
+
+            serviceCollection.AddSingleton<ISettingsVisitor>(sp => new SettingsVisitorImpl(sp.GetRequiredService<SettingsUnitOfWork>()));
+            
             var serviceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(serviceProvider);
             var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
@@ -138,6 +147,7 @@ public partial class App : Application
         serviceCollection.AddEntityFrameworkSqlite();
         serviceCollection.AddScoped<GamesUnitOfWork>();
         serviceCollection.AddScoped<AppCrashUnitOfWork>();
+        serviceCollection.AddScoped<SettingsUnitOfWork>();
     }
 
     private static void ConfigureMappings(ServiceCollection serviceCollection)

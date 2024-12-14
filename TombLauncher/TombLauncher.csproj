@@ -53,6 +53,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Controls\TombLauncher.Controls.csproj" />
+      <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
       <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
       <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
     </ItemGroup>

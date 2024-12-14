@@ -89,6 +89,7 @@
     <system:String x:Key="Are you sure you want to uninstall GAMENAME?">Are you sure you want to uninstall {0}?</system:String>
     <system:String x:Key="All associated data will be removed">All associated data will be removed.</system:String>
     <system:String x:Key="Uninstalling">Uninstalling {0}...</system:String>
+    <system:String x:Key="Saving application settings...">Saving application settings...</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

@@ -5,7 +5,8 @@
              RequestedThemeVariant="Default"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime">
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:valueConverters1="clr-namespace:TombLauncher.Core.ValueConverters;assembly=TombLauncher.Core">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
@@ -29,7 +30,7 @@
     </Application.Styles>
     <Application.Resources>
         <ResourceDictionary>
-            <valueConverters:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
+            <valueConverters1:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
             <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" />
             <valueConverters:NegatedBooleanConverter x:Key="NegatedBooleanConverter" />
             <valueConverters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
@@ -37,7 +38,7 @@
             <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
             <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter" />
             <valueConverters:LocalizedStringConverter x:Key="LocalizedStringConverter" />
-            <valueConverters:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
+            <valueConverters1:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
             <valueConverters:DateTimeFormatter x:Key="DateOnlyFormatter">
                 <valueConverters:DateTimeFormatter.DesiredFormat>DateOnlyFormat</valueConverters:DateTimeFormatter.DesiredFormat>
             </valueConverters:DateTimeFormatter>
@@ -48,7 +49,7 @@
             <valueConverters:TransferSpeedFormatter x:Key="TransferSpeedFormatter"/>
             
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Assets/RatingStyles.axaml" />
+                <ResourceInclude Source="/../TombLauncher.Controls/Assets/RatingStyles.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

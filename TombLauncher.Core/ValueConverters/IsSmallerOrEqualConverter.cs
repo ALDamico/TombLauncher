@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace TombLauncher.ValueConverters
+namespace TombLauncher.Core.ValueConverters
 {
     /// <summary>
     /// A converter that compares two integers and returns true if the first number is smaller or equal to the second number

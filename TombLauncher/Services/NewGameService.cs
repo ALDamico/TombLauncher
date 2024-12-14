@@ -5,6 +5,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
@@ -18,7 +19,7 @@ namespace TombLauncher.Services;
 public class NewGameService : IViewService
 {
     public NewGameService(GamesUnitOfWork gamesUnitOfWork, 
-        LocalizationManager localizationManager, 
+        ILocalizationManager localizationManager, 
         NavigationManager navigationManager, 
         IMessageBoxService messageBoxService, 
         IDialogService dialogService,
@@ -36,7 +37,7 @@ public class NewGameService : IViewService
         EngineDetector = engineDetector;
     }
     public GamesUnitOfWork GamesUnitOfWork { get; }
-    public LocalizationManager LocalizationManager { get; }
+    public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
