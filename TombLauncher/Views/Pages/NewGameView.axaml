@@ -2,12 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="clr-namespace:TombLauncher.Controls"
-             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
-             xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              xmlns:utils="clr-namespace:TombLauncher.Utils"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
-             xmlns:controls1="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.NewGameView"
              x:DataType="pages:NewGameViewModel">
@@ -58,14 +55,14 @@
             </TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource ZIP archive or folder}"/>
             <DockPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
-                <controls1:SplitIconButton Icon="Folder" Text="{DynamicResource Open ZIP file}" 
+                <controls:SplitIconButton Icon="Folder" Text="{DynamicResource Open ZIP file}" 
                                           DockPanel.Dock="Right" Command="{Binding PickZipArchiveCmd}">
-                    <controls1:SplitIconButton.Flyout>
+                    <controls:SplitIconButton.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuItem Header="{DynamicResource Open folder}" Command="{Binding PickFolderCmd}"></MenuItem>
                         </MenuFlyout>
-                    </controls1:SplitIconButton.Flyout>
-                </controls1:SplitIconButton>
+                    </controls:SplitIconButton.Flyout>
+                </controls:SplitIconButton>
                 <TextBox Text="{Binding Source}"></TextBox>
             </DockPanel>
             <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Title}"/>
@@ -76,7 +73,7 @@
             <CalendarDatePicker Grid.Row="3" 
                                 Grid.Column="3" 
                                 SelectedDate="{Binding GameMetadata.ReleaseDate}"/>
-            <controls1:ImagePicker Grid.Row="0" 
+            <controls:ImagePicker Grid.Row="0" 
                                   Grid.RowSpan="4" 
                                   Grid.Column="4" 
                                   Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static utils:ImageUtils.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
@@ -118,7 +115,7 @@
         <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4" 
                     HorizontalAlignment="Right" 
                     Orientation="Horizontal" >
-            <controls1:IconButton Icon="FloppyDisc" Text="{DynamicResource Install}" Command="{Binding SaveCmd}"/>
+            <controls:IconButton Icon="FloppyDisc" Text="{DynamicResource Install}" Command="{Binding SaveCmd}"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:views="clr-namespace:TombLauncher.Views"
-             xmlns:controls="clr-namespace:TombLauncher.Controls"
-             xmlns:controls1="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameSearchForm"
              x:DataType="viewModels:DownloaderSearchPayloadViewModel">
@@ -52,6 +51,6 @@
                   ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableDifficulties}" 
                   SelectedItem="{Binding GameDifficulty}"></ComboBox>
         <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource Rating}"/>
-        <controls1:RatingControl Grid.Row="3" Grid.Column="3" Value="{Binding Rating}" NumberOfStars="10"/>
+        <controls:RatingControl Grid.Row="3" Grid.Column="3" Value="{Binding Rating}" NumberOfStars="10"/>
     </Grid>
 </UserControl>

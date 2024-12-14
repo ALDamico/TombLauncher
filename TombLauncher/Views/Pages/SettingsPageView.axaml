@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
-             xmlns:controls="clr-namespace:TombLauncher.Controls"
-             xmlns:controls1="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.SettingsPageView"
              x:DataType="pages:SettingsPageViewModel"
@@ -31,7 +30,7 @@
         </ScrollViewer>
         
         <DockPanel Grid.Row="1">
-            <controls1:IconButton DockPanel.Dock="Right" 
+            <controls:IconButton DockPanel.Dock="Right" 
                                  Margin="10" 
                                  Icon="FloppyDisc" 
                                  Text="{DynamicResource Install}" 

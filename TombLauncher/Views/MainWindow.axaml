@@ -3,10 +3,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:controls="clr-namespace:TombLauncher.Controls"
         xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
         xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
-        xmlns:controls1="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
@@ -22,7 +21,7 @@
         <SplitView.Pane>
 
             <StackPanel Orientation="Vertical">
-                <controls1:IconButton ToolTip.Tip="Menu" Icon="Menu" Command="{Binding TogglePaneCmd}"></controls1:IconButton>
+                <controls:IconButton ToolTip.Tip="Menu" Icon="Menu" Command="{Binding TogglePaneCmd}"></controls:IconButton>
 
                 <ListBox Margin="2 0 -100 0" ItemsSource="{Binding MenuItems}" SelectionMode="Single"
                          SelectedItem="{Binding SelectedMenuItem}">
@@ -51,7 +50,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0">
-                <controls1:IconButton Command="{Binding GoBackCmd}" Icon="ArrowBack" />
+                <controls:IconButton Command="{Binding GoBackCmd}" Icon="ArrowBack" />
             </DockPanel>
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}" ZIndex="5000" Background="#A0000000">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">

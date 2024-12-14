@@ -3,12 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:controls="clr-namespace:TombLauncher.Controls"
              xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
-             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
-             xmlns:controls1="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              x:Class="TombLauncher.Views.Pages.GameListView"
              x:DataType="pages:GameListViewModel">
     <Design.DataContext>
@@ -26,7 +24,7 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="False">
-            <controls1:IconButton DockPanel.Dock="Right" Icon="Plus" ToolTip.Tip="{DynamicResource Add}" Command="{Binding AddGameCmd}" />
+            <controls:IconButton DockPanel.Dock="Right" Icon="Plus" ToolTip.Tip="{DynamicResource Add}" Command="{Binding AddGameCmd}" />
         </DockPanel>
 
         <StackPanel Grid.Row="1" HorizontalAlignment="Center"
@@ -71,12 +69,12 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" IsVisible="{Binding AreCommandsVisible}">
-                                <controls1:IconButton Icon="Play"
+                                <controls:IconButton Icon="Play"
                                                      ToolTip.Tip="{Binding GameMetadata.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Play GAMENAME'}"
                                                      Command="{Binding PlayCmd}" />
-                                <controls1:IconButton Icon="Details" ToolTip.Tip="{DynamicResource View details}"
+                                <controls:IconButton Icon="Details" ToolTip.Tip="{DynamicResource View details}"
                                                      Command="{Binding OpenCmd}">
-                                </controls1:IconButton>
+                                </controls:IconButton>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
