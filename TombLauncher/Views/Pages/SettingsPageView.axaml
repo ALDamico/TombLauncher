@@ -25,7 +25,9 @@
                 <TextBlock Text="{DynamicResource 'Languages'}" FontSize="36"/>
                 <TextBlock Text="{DynamicResource 'Application language'}"></TextBlock>
                 <ComboBox ItemsSource="{Binding LanguageSettings.AvailableLanguages}" 
-                          SelectedItem="{Binding LanguageSettings.ApplicationLanguage}"></ComboBox>
+                          SelectedItem="{Binding LanguageSettings.ApplicationLanguage}"
+                          DisplayMemberBinding="{Binding DisplayName}"
+                          ></ComboBox>
             </StackPanel>
         </ScrollViewer>
         
@@ -33,7 +35,7 @@
             <controls:IconButton DockPanel.Dock="Right" 
                                  Margin="10" 
                                  Icon="FloppyDisc" 
-                                 Text="{DynamicResource Install}" 
+                                 Text="{DynamicResource 'Save'}" 
                                  Command="{Binding SaveCmd}"/>
         </DockPanel>
     </Grid>
