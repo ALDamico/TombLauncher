@@ -1,6 +1,6 @@
-﻿using TombLauncher.Data.Models;
+﻿using TombLauncher.Contracts.Enums;
 
-namespace TombLauncher.Installers.Downloaders;
+namespace TombLauncher.Contracts.Downloaders;
 
 public class DownloaderSearchPayload
 {

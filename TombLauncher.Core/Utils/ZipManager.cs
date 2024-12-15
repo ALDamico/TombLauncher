@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using ICSharpCode.SharpZipLib.Zip;
-using TombLauncher.Core.Progress;
+using TombLauncher.Contracts.Progress;
 
 namespace TombLauncher.Core.Utils;
 

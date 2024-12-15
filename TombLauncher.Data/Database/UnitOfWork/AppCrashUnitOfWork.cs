@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using AutoMapper;
+using TombLauncher.Contracts.Dtos;
 using TombLauncher.Data.Database.Repositories;
-using TombLauncher.Data.Dto;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Data.Database.UnitOfWork;

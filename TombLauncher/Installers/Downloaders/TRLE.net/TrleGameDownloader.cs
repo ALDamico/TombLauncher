@@ -9,13 +9,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using TombLauncher.Core.Progress;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Utils;
-using TombLauncher.Data.Dto;
-using TombLauncher.Data.Models;
 using TombLauncher.Extensions;
-using TombLauncher.Utils;
-using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers.Downloaders.TRLE.net;
 
@@ -93,7 +92,7 @@ public class TrleGameDownloader : IGameDownloader
         return -1;
     }
 
-    public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload,
+    public async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
         CancellationToken cancellationToken = default)
     {
         DownloaderSearchPayload = searchPayload;
@@ -105,12 +104,12 @@ public class TrleGameDownloader : IGameDownloader
         return result;
     }
 
-    public async Task<List<GameSearchResultMetadataViewModel>> FetchNextPage(CancellationToken cancellationToken)
+    public async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (CurrentPage > TotalPages) return new List<GameSearchResultMetadataViewModel>();
+        if (CurrentPage > TotalPages) return new List<IGameSearchResultMetadata>();
         CurrentPage++;
-        var result = new List<GameSearchResultMetadataViewModel>();
+        var result = new List<IGameSearchResultMetadata>();
         var request = ConvertRequest(DownloaderSearchPayload);
         var requestStrng = ConvertRequest(request);
         var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
@@ -128,7 +127,7 @@ public class TrleGameDownloader : IGameDownloader
         return result;
     }
 
-    private void ParseResultPage(HtmlDocument htmlDocument, List<GameSearchResultMetadataViewModel> result,
+    private void ParseResultPage(HtmlDocument htmlDocument, List<IGameSearchResultMetadata> result,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -138,7 +137,7 @@ public class TrleGameDownloader : IGameDownloader
         var dataRows = rows.Skip(1);
         foreach (var row in dataRows)
         {
-            var metadata = new GameSearchResultMetadataViewModel() { BaseUrl = BaseUrl };
+            var metadata = new GameSearchResultMetadataDto() { BaseUrl = BaseUrl };
             var fields = row.SelectNodes("./td");
             var zipped = headerRow.Zip(fields,
                 (header, r) => new KeyValuePair<string, HtmlNode>(header.InnerText.Trim(),

@@ -1,11 +1,13 @@
 ﻿using System;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.ViewModels;
 
-public partial class GameSearchResultMetadataViewModel : ViewModelBase, IGameSearchResultMetadata
+public partial class GameSearchResultMetadataViewModel : ViewModelBase
 {
     [ObservableProperty] private string _author;
     [ObservableProperty] private string _authorFullName;

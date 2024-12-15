@@ -6,12 +6,13 @@ using System.Windows.Input;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Data.Models;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
 
-public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBase, IGameSearchResultMetadata
+public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBase
 {
     public MultiSourceGameSearchResultMetadataViewModel(GameSearchResultService gameSearchResultService)
     {

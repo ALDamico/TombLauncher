@@ -1,4 +1,4 @@
-﻿namespace TombLauncher.Data.Models;
+﻿namespace TombLauncher.Contracts.Enums;
 
 public enum LinkType
 {

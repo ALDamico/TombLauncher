@@ -1,6 +1,6 @@
-﻿using TombLauncher.Data.Models;
+﻿using TombLauncher.Contracts.Enums;
 
-namespace TombLauncher.Data.Dto;
+namespace TombLauncher.Contracts.Dtos;
 
 public class GameLinkDto
 {

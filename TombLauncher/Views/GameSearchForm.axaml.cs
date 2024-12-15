@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Views;

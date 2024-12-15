@@ -1,4 +1,5 @@
-﻿using TombLauncher.Contracts.Localization;
+﻿using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Settings;
 using TombLauncher.Data.Database.UnitOfWork;
 
@@ -15,5 +16,9 @@ public class SettingsVisitorImpl : ISettingsVisitor
     {
         localizationManager.ChangeLanguage(_settingsUnitOfWork.GetApplicationLanguage());
     }
-    
+
+    public void Visit(IGameDownloadManager downloadManager)
+    {
+        throw new NotImplementedException();
+    }
 }

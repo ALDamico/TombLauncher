@@ -1,4 +1,5 @@
-﻿using TombLauncher.Installers.Downloaders;
+﻿using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Installers.Downloaders;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Extensions;

@@ -1,4 +1,4 @@
-﻿namespace TombLauncher.Data.Dto;
+﻿namespace TombLauncher.Contracts.Dtos;
 
 public class AppCrashDto
 {

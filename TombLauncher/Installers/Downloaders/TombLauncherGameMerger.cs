@@ -3,6 +3,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Data.Models;
 using TombLauncher.Services;
 using TombLauncher.ViewModels;
@@ -17,7 +20,7 @@ public class TombLauncherGameMerger : IGameMerger
     }
 
     public GameSearchResultMetadataDistanceCalculator Comparer { get; }
-    public int Merge(ICollection<MultiSourceGameSearchResultMetadataViewModel> fullList, ICollection<IGameSearchResultMetadata> addedElements)
+    public int Merge(ICollection<IMultiSourceSearchResultMetadata> fullList, ICollection<IGameSearchResultMetadata> addedElements)
     {
         var unmatched = new List<IGameSearchResultMetadata>(addedElements);
         var mergedCount = 0;
@@ -88,7 +91,7 @@ public class TombLauncherGameMerger : IGameMerger
 
         foreach (var element in unmatched)
         {
-            fullList.Add(new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default.GetRequiredService<GameSearchResultService>())
+            fullList.Add(new MultiSourceSearchResultMetadataDto()
             {
                 Author = element.Author,
                 Difficulty = element.Difficulty,
@@ -96,7 +99,7 @@ public class TombLauncherGameMerger : IGameMerger
                 Length = element.Length,
                 Rating = element.Rating,
                 Setting = element.Setting,
-                Sources = new ObservableCollection<IGameSearchResultMetadata>(){element},
+                Sources = new List<IGameSearchResultMetadata>(){element},
                 Title = element.Title,
                 BaseUrl = element.BaseUrl,
                 DetailsLink = element.DetailsLink,

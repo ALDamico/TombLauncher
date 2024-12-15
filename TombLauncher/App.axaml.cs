@@ -12,12 +12,13 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Localization.Dtos;
 using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Settings;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Data.Dto;
 using TombLauncher.Data.Models;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
@@ -26,6 +27,7 @@ using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
 using TombLauncher.Services;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 using TombLauncher.Views;
@@ -168,7 +170,24 @@ public partial class App : Application
             cfg.CreateMap<Game, GameMetadataDto>().ReverseMap();
             cfg.CreateMap<AvailableLanguageDto, ApplicationLanguageViewModel>()
                 .ForMember(dto => dto.CultureInfo, opt => opt.MapFrom(culture => culture.Culture)).ReverseMap();
-
+            cfg.CreateMap<PlaySession, PlaySessionDto>().ReverseMap();
+            cfg.CreateMap<IGameSearchResultMetadata, GameSearchResultMetadataViewModel>()
+                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
+            cfg.CreateMap<GameSearchResultMetadataViewModel, IGameSearchResultMetadata>()
+                .ConstructUsing(vm => new GameSearchResultMetadataDto())
+                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
+            cfg.CreateMap<GameMetadataDto, GameMetadataViewModel>()
+                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
+            cfg.CreateMap<GameMetadataViewModel, GameMetadataDto>()
+                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
+            cfg.CreateMap<IMultiSourceSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
+                .ConstructUsing(vm => new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default.GetService<GameSearchResultService>()))
+                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
+            cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
+                .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto())
+                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
+            cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>()
+                .ForMember(vm => vm.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToByteArray(dto.TitlePic)));
         });
 
         serviceCollection.AddSingleton(_ => mapperConfiguration);

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Data.Database.Repositories;
-using TombLauncher.Data.Dto;
-using TombLauncher.Data.Dto.Extensions;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Data.Database.UnitOfWork;
@@ -119,7 +119,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public List<PlaySessionDto> GetPlaySessionsByGameId(int gameId)
     {
-        return PlaySessions.Get(ps => ps.Game.Id == gameId).AsEnumerable().ToDtos().ToList();
+        var playSessions = PlaySessions.Get(ps => ps.Game.Id == gameId).ToList();
+        return _mapper.Map<List<PlaySessionDto>>(playSessions);
     }
 
     public void AddPlaySessionToGame(GameMetadataDto dto, DateTime startDate, DateTime endDate)
@@ -140,7 +141,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var lastPlaysession = PlaySessions
             .Get(ps => ps.GameId == gameId, playSessions => playSessions.OrderByDescending(ps => ps.EndDate))
             .FirstOrDefault();
-        return lastPlaysession.ToDto();
+        return _mapper.Map<PlaySessionDto>(lastPlaysession);
     }
 
     public List<GameHashDto> GetHashes(GameMetadataDto dto)
