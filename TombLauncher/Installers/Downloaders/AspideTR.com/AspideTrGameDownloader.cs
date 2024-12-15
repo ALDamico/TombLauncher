@@ -11,23 +11,28 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
+using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Utils;
 using TombLauncher.Extensions;
 
 namespace TombLauncher.Installers.Downloaders.AspideTR.com;
 
 public class AspideTrGameDownloader : IGameDownloader
 {
-    public AspideTrGameDownloader(Dictionary<string, string> classMappings)
+    public AspideTrGameDownloader()
     {
-        _classMappings = classMappings;
         _httpClient = new HttpClient()
         {
             BaseAddress = new Uri(BaseUrl),
         };
+        _classMappings = new Dictionary<string, string>();
+    }
+    public AspideTrGameDownloader(Dictionary<string, string> classMappings) : this()
+    {
+        _classMappings = classMappings;
     }
 
+    public string DisplayName => "AspideTR";
     public string BaseUrl => "https://www.aspidetr.com/";
     public DownloaderSearchPayload DownloaderSearchPayload { get; private set; }
 

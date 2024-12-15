@@ -13,6 +13,7 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
+using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Utils;
 using TombLauncher.Extensions;
 
@@ -20,12 +21,8 @@ namespace TombLauncher.Installers.Downloaders.TRLE.net;
 
 public class TrleGameDownloader : IGameDownloader
 {
-    public TrleGameDownloader(TombRaiderLevelInstaller installer, TombRaiderEngineDetector detector,
-        CancellationTokenSource cancellationTokenSource)
+    public TrleGameDownloader()
     {
-        _installer = installer;
-        _engineDetector = detector;
-        _cancellationTokenSource = cancellationTokenSource;
         _httpClient = new HttpClient()
         {
             BaseAddress = new Uri(BaseUrl),
@@ -58,12 +55,10 @@ public class TrleGameDownloader : IGameDownloader
         _inverseGameEngineMapping = _gameEngineMapping.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
     }
 
-    private TombRaiderLevelInstaller _installer;
-    private TombRaiderEngineDetector _engineDetector;
-    private CancellationTokenSource _cancellationTokenSource;
     private const int RowsPerPage = 20;
 
 
+    public string DisplayName => "TRLE.net";
     public string BaseUrl => "https://trle.net";
     public DownloaderSearchPayload DownloaderSearchPayload { get; private set; }
     private HttpClient _httpClient;

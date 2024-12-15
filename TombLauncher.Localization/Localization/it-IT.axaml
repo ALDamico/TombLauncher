@@ -94,6 +94,9 @@
     <system:String x:Key="Want to localize Tomb Launcher?">Vuoi localizzare Tomb Launcher?</system:String>
     <system:String x:Key="Localization infotip content">Puoi aggiungere una nuova lingua a Tomb Launcher semplicemente traducendo uno dei file *.axaml presenti nella cartella Localization e rinominandolo col codice RFC4646 corretto (es. fr-FR per il francese).</system:String>
     <system:String x:Key="Application language">Lingua dell'applicazione</system:String>
+    <system:String x:Key="Downloaders">Downloader</system:String>
+    <system:String x:Key="Downloaders infotip content">Questa sezione ti consente di attivare/disattivare i downloader e di specificane la priorità.&#10;Se un downloader dà errore, puoi disattivarlo.&#10;&#10;Ulteriori downloader verranno aggiunti nelle prossime release.</system:String>
+    <system:String x:Key="Move up">Sposta su</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

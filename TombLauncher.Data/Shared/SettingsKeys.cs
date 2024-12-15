@@ -2,5 +2,8 @@
 
 public static class SettingsKeys
 {
-    public static string ApplicationLanguage => "Application.Language";
+    public const string ApplicationLanguage = "Application.Language";
+    public const string Downloader = "Downloader";
+    public const string IsEnabled = "IsEnabled";
+    public const string Priority = "Priority";
 }

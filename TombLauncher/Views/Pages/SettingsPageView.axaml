@@ -5,6 +5,7 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.SettingsPageView"
              x:DataType="pages:SettingsPageViewModel"
@@ -42,15 +43,42 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <DockPanel LastChildFill="True">
+                    <controls:Infotip DockPanel.Dock="Right" ToolTipContent="{DynamicResource Downloaders infotip content}"></controls:Infotip>
+                    <TextBlock Text="{DynamicResource 'Downloaders'}" FontSize="36"/>    
+                </DockPanel>
+                <DockPanel LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Vertical" HorizontalAlignment="Center">
+                        <controls:IconButton Icon="ArrowUp" ToolTip.Tip="{DynamicResource 'Move up'}" Command="{Binding DownloaderSettings.MoveUpCmd}" CommandParameter="{Binding DownloaderSettings.SelectedDownloader}"/>
+                        <Border Margin="20"/>
+                        <controls:IconButton Icon="ArrowDown" ToolTip.Tip="{DynamicResource 'Move down'}" Command="{Binding DownloaderSettings.MoveDownCmd}" CommandParameter="{Binding DownloaderSettings.SelectedDownloader}"/>
+                    </StackPanel>
+                    <ListBox ItemsSource="{Binding DownloaderSettings.AvailableDownloaders}" SelectedItem="{Binding DownloaderSettings.SelectedDownloader}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding IsEnabled}"/>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="DemiBold"></TextBlock>
+                                        <TextBlock Text="{Binding BaseUrl}" FontStyle="Italic"></TextBlock>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Priority}" HorizontalAlignment="Right"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+                
             </StackPanel>
         </ScrollViewer>
         
-        <DockPanel Grid.Row="1">
+        <DockPanel Grid.Row="1" LastChildFill="False">
             <controls:IconButton DockPanel.Dock="Right" 
                                  Margin="10" 
                                  Icon="FloppyDisc" 
                                  Text="{DynamicResource 'Save'}" 
                                  Command="{Binding SaveCmd}"/>
+            
         </DockPanel>
     </Grid>
     

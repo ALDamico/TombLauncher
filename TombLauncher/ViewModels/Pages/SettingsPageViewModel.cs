@@ -13,11 +13,13 @@ public partial class SettingsPageViewModel : PageViewModel
     {
         _settingsService = settingsService;
         LanguageSettings = new LanguageSettings();
+        DownloaderSettings = new DownloaderSettings();
         Initialize += InitializeSettings;
     }
 
     private SettingsService _settingsService;
     [ObservableProperty] private LanguageSettings _languageSettings;
+    [ObservableProperty] private DownloaderSettings _downloaderSettings;
 
     private void InitializeSettings()
     {
@@ -25,6 +27,9 @@ public partial class SettingsPageViewModel : PageViewModel
         LanguageSettings.AvailableLanguages = supportedLanguages.ToObservableCollection();
         LanguageSettings.ApplicationLanguage =
             supportedLanguages.FirstOrDefault(l => CultureInfo.CurrentUICulture.Equals(l.CultureInfo));
+
+        var downloaders = _settingsService.GetDownloaders();
+        DownloaderSettings.AvailableDownloaders = downloaders.ToObservableCollection();
     }
 
     protected override async void SaveInner()

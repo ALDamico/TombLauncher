@@ -5,6 +5,7 @@ namespace TombLauncher.Contracts.Downloaders;
 
 public interface IGameDownloader
 {
+    string DisplayName { get; }
     string BaseUrl { get; }
     DownloaderSearchPayload DownloaderSearchPayload { get; }
     Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload, CancellationToken cancellationToken);

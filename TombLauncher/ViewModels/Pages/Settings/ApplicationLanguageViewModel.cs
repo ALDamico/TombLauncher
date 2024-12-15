@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class ApplicationLanguageViewModel : ObservableObject
 {

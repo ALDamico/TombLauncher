@@ -11,6 +11,8 @@ using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
+using TombLauncher.ViewModels.Pages.Settings;
+using ApplicationLanguageViewModel = TombLauncher.ViewModels.Pages.Settings.ApplicationLanguageViewModel;
 
 namespace TombLauncher.Services;
 
@@ -50,5 +52,10 @@ public class SettingsService : IViewService
             .ContinueWith(t => Dispatcher.UIThread.Invoke(() =>  MessageBoxService.Show("Language changed", "The language has changed. Restart the application for this change to take effect properly.", MsgBoxButton.Ok, MsgBoxImage.Information)));
         viewModel.IsBusy = false;
         viewModel.BusyMessage = null;
+    }
+
+    public List<DownloaderViewModel> GetDownloaders()
+    {
+        return _mapper.Map<List<DownloaderViewModel>>(_settingsUnitOfWork.GetDownloaderConfigurations());
     }
 }

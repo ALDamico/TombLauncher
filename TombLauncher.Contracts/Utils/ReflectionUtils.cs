@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace TombLauncher.Core.Utils;
+namespace TombLauncher.Contracts.Utils;
 
 public class ReflectionUtils
 {
@@ -25,5 +25,19 @@ public class ReflectionUtils
         }
 
         return list;
+    }
+
+    public static IEnumerable<Type> GetImplementingTypes<T>()
+    {
+        var type = typeof(T);
+        return AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(s => s.GetTypes())
+            .Where(p => p != type)
+            .Where(p => type.IsAssignableFrom(p));
+    }
+
+    public static IEnumerable<T> GetImplementors<T>(BindingFlags bindingFlags = BindingFlags.Default)
+    {
+        return GetImplementingTypes<T>().Select(t => (T)Activator.CreateInstance(t));
     }
 }

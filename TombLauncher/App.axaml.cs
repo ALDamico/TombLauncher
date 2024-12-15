@@ -30,7 +30,9 @@ using TombLauncher.Services;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
+using TombLauncher.ViewModels.Pages.Settings;
 using TombLauncher.Views;
+using ApplicationLanguageViewModel = TombLauncher.ViewModels.Pages.Settings.ApplicationLanguageViewModel;
 
 namespace TombLauncher;
 
@@ -88,8 +90,7 @@ public partial class App : Application
                 {
                     Downloaders =
                     {
-                        new TrleGameDownloader(sp.GetService<TombRaiderLevelInstaller>(),
-                            sp.GetService<TombRaiderEngineDetector>(), cts),
+                        new TrleGameDownloader(),
                         new AspideTrGameDownloader(locMan.GetSubsetInvertedByPrefix("ATR"))
                     }
                 };
@@ -188,6 +189,8 @@ public partial class App : Application
                 .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
             cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>()
                 .ForMember(vm => vm.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToByteArray(dto.TitlePic)));
+            cfg.CreateMap<DownloaderConfigDto, DownloaderViewModel>()
+                .ReverseMap();
         });
 
         serviceCollection.AddSingleton(_ => mapperConfiguration);
