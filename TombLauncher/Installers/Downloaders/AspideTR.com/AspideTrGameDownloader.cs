@@ -6,28 +6,33 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
 using HtmlAgilityPack;
-using TombLauncher.Data.Dto;
-using TombLauncher.Data.Models;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Progress;
+using TombLauncher.Contracts.Utils;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
-using TombLauncher.Progress;
-using TombLauncher.Utils;
-using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers.Downloaders.AspideTR.com;
 
 public class AspideTrGameDownloader : IGameDownloader
 {
-    public AspideTrGameDownloader(Dictionary<string, string> classMappings)
+    public AspideTrGameDownloader()
     {
-        _classMappings = classMappings;
         _httpClient = new HttpClient()
         {
             BaseAddress = new Uri(BaseUrl),
         };
+        _classMappings = new Dictionary<string, string>();
+    }
+    public AspideTrGameDownloader(Dictionary<string, string> classMappings) : this()
+    {
+        _classMappings = classMappings;
     }
 
+    public string DisplayName => "AspideTR";
     public string BaseUrl => "https://www.aspidetr.com/";
     public DownloaderSearchPayload DownloaderSearchPayload { get; private set; }
 
@@ -46,7 +51,7 @@ public class AspideTrGameDownloader : IGameDownloader
 
     private readonly Dictionary<string, string> _classMappings;
 
-    public async Task<List<GameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload,
+    public async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
         CancellationToken cancellationToken)
     {
         DownloaderSearchPayload = searchPayload;
@@ -58,14 +63,14 @@ public class AspideTrGameDownloader : IGameDownloader
         return result;
     }
 
-    private async Task ParsePage(HtmlDocument htmlDocument, List<GameSearchResultMetadataViewModel> result)
+    private async Task ParsePage(HtmlDocument htmlDocument, List<IGameSearchResultMetadata> result)
     {
         var levelsList = htmlDocument.DocumentNode.SelectNodes("//div[@class='levels']/article");
         if (levelsList == null)
             return;
         foreach (var level in levelsList)
         {
-            var searchResult = new GameSearchResultMetadataViewModel();
+            var searchResult = new GameSearchResultMetadataDto();
             searchResult.BaseUrl = BaseUrl;
             var headerNode = level.SelectSingleNode("./div[@class='level-content-block']/header");
             var authorNode = headerNode.SelectSingleNode("./h2/em/a");
@@ -100,8 +105,7 @@ public class AspideTrGameDownloader : IGameDownloader
             var featuredImage = level.SelectSingleNode("./div[@class='level-featured-image']/a/img");
             if (featuredImage != null)
             {
-                searchResult.TitlePic =
-                    ImageUtils.ToBitmap(await _httpClient.GetByteArrayAsync(featuredImage.Attributes["src"].Value));
+                searchResult.TitlePic = await _httpClient.GetByteArrayAsync(featuredImage.Attributes["src"].Value);
             }
 
             var engineTypeNode = level.SelectSingleNode("./div[contains(@class,'level-content')]");
@@ -143,9 +147,9 @@ public class AspideTrGameDownloader : IGameDownloader
         }
     }
 
-    public async Task<List<GameSearchResultMetadataViewModel>> FetchNextPage(CancellationToken cancellationToken)
+    public async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
     {
-        var result = new List<GameSearchResultMetadataViewModel>();
+        var result = new List<IGameSearchResultMetadata>();
         if (CurrentPage > TotalPages) return result;
         CurrentPage++;
         var convertedRequest = ConvertRequest(DownloaderSearchPayload);
@@ -201,7 +205,7 @@ public class AspideTrGameDownloader : IGameDownloader
             Setting = game.Setting,
             Title = game.Title,
             ReleaseDate = game.ReleaseDate,
-            TitlePic = ImageUtils.ToByteArray(game.TitlePic),
+            TitlePic = game.TitlePic,
             GameEngine = game.Engine,
             AuthorFullName = game.AuthorFullName
         };

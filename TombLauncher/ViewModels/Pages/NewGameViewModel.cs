@@ -5,9 +5,11 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Progress;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Models;
 using TombLauncher.Extensions;
-using TombLauncher.Progress;
 using TombLauncher.Services;
 using TombLauncher.Utils;
 

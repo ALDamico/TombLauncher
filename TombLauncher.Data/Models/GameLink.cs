@@ -1,4 +1,6 @@
-﻿namespace TombLauncher.Data.Models;
+﻿using TombLauncher.Contracts.Enums;
+
+namespace TombLauncher.Data.Models;
 
 public class GameLink
 {

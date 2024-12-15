@@ -41,6 +41,13 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 Icon = MaterialIconKind.Magnify,
                 Text = "Search".GetLocalizedString(),
                 PageViewModelFactory = Ioc.Default.GetRequiredService<GameSearchViewModel>()
+            },
+            new MainMenuItemViewModel()
+            {
+                ToolTip = "Settings".GetLocalizedString(),
+                Icon = MaterialIconKind.Settings,
+                Text = "Settings".GetLocalizedString(),
+                PageViewModelFactory = Ioc.Default.GetRequiredService<SettingsPageViewModel>()
             }
         };
         

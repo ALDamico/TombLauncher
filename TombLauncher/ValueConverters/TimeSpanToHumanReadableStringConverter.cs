@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using TombLauncher.Localization;
+using TombLauncher.Contracts.Localization;
 
 namespace TombLauncher.ValueConverters;
 
 public class TimeSpanToHumanReadableStringConverter : IValueConverter
 {
-    private Func<string, object[], string> StringGenerator(LocalizationManager localizationManager)
+    private Func<string, object[], string> StringGenerator(ILocalizationManager localizationManager)
     {
         if (localizationManager != null)
         {
@@ -22,7 +22,7 @@ public class TimeSpanToHumanReadableStringConverter : IValueConverter
     }
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var localizationManager = Ioc.Default.GetService<LocalizationManager>();
+        var localizationManager = Ioc.Default.GetService<ILocalizationManager>();
         var func = StringGenerator(localizationManager);
         if (value is TimeSpan timeSpan)
         {

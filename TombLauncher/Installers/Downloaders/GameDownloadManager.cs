@@ -4,14 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TombLauncher.Data.Dto;
-using TombLauncher.Progress;
-using TombLauncher.Utils;
-using TombLauncher.ViewModels;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Progress;
+using TombLauncher.Contracts.Settings;
+using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Installers.Downloaders;
 
-public class GameDownloadManager
+public class GameDownloadManager : ISettingsVisitable, IGameDownloadManager
 {
     public GameDownloadManager(CancellationTokenSource cancellationTokenSource, IGameMerger merger)
     {
@@ -23,10 +24,10 @@ public class GameDownloadManager
     private CancellationTokenSource _cancellationTokenSource;
     private readonly IGameMerger _merger;
 
-    public async Task<List<MultiSourceGameSearchResultMetadataViewModel>> GetGames(DownloaderSearchPayload searchPayload)
+    public async Task<List<IMultiSourceSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload)
     {
-        var outputList = new List<MultiSourceGameSearchResultMetadataViewModel>();
-        var tasks = new List<Task<List<GameSearchResultMetadataViewModel>>>();
+        var outputList = new List<IMultiSourceSearchResultMetadata>();
+        var tasks = new List<Task<List<IGameSearchResultMetadata>>>();
         foreach (var downloader in Downloaders)
         {
             var gamesByDownloader = downloader.GetGames(searchPayload, _cancellationTokenSource.Token);
@@ -51,7 +52,7 @@ public class GameDownloadManager
     public async Task<List<IGameSearchResultMetadata>> FetchNextPage()
     {
         var outputList = new List<IGameSearchResultMetadata>();
-        var tasks = new List<Task<List<GameSearchResultMetadataViewModel>>>();
+        var tasks = new List<Task<List<IGameSearchResultMetadata>>>();
         foreach (var downloader in Downloaders.Where(d => d.HasMorePages()))
         {
             var gamesByDownloader = downloader.FetchNextPage(_cancellationTokenSource.Token);
@@ -96,7 +97,7 @@ public class GameDownloadManager
         return Downloaders.Any(d => d.HasMorePages());
     }
 
-    public void Merge(ICollection<MultiSourceGameSearchResultMetadataViewModel> fullList,
+    public void Merge(ICollection<IMultiSourceSearchResultMetadata> fullList,
         ICollection<IGameSearchResultMetadata> newElements)
     {
         _merger.Merge(fullList, newElements);
@@ -114,5 +115,10 @@ public class GameDownloadManager
         await downloader.DownloadGame(metadata, file, downloadProgress, cancellationToken);
         return fullFilePath;
 
+    }
+
+    public void Accept(ISettingsVisitor visitor)
+    {
+        visitor.Visit(this);
     }
 }

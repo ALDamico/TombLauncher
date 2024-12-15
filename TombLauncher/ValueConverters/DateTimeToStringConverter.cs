@@ -2,6 +2,8 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
 using TombLauncher.Localization;
 
@@ -9,7 +11,7 @@ namespace TombLauncher.ValueConverters;
 
 public class DateTimeToStringConverter : IValueConverter
 {
-    private Func<string, object[], string> StringGenerator(LocalizationManager localizationManager)
+    private Func<string, object[], string> StringGenerator(ILocalizationManager localizationManager)
     {
         if (localizationManager != null)
         {
@@ -20,7 +22,7 @@ public class DateTimeToStringConverter : IValueConverter
     }
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var localizationManager = Ioc.Default.GetService<LocalizationManager>();
+        var localizationManager = Ioc.Default.GetService<ILocalizationManager>();
         var func = StringGenerator(localizationManager);
         if (value == null)
         {

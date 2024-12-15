@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Data.Dto;
 using TombLauncher.Extensions;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
@@ -18,7 +20,7 @@ namespace TombLauncher.Services;
 public class GameListService : IViewService
 {
     public GameListService(GamesUnitOfWork gamesUnitOfWork, 
-        LocalizationManager localizationManager,
+        ILocalizationManager localizationManager,
         NavigationManager navigationManager, 
         IMessageBoxService messageBoxService, 
         IDialogService dialogService)
@@ -31,7 +33,7 @@ public class GameListService : IViewService
     }
 
     public GamesUnitOfWork GamesUnitOfWork { get; }
-    public LocalizationManager LocalizationManager { get; }
+    public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }

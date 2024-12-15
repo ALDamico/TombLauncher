@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Installers;

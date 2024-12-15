@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Fastenshtein;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
 using TombLauncher.ViewModels;
 

@@ -1,24 +1,29 @@
 ﻿using System.Text.Json;
+using AutoMapper;
+using TombLauncher.Contracts.Dtos;
 using TombLauncher.Data.Database.Repositories;
-using TombLauncher.Data.Dto;
-using TombLauncher.Data.Dto.Extensions;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Data.Database.UnitOfWork;
 
 public class AppCrashUnitOfWork : UnitOfWorkBase
 {
-    public AppCrashUnitOfWork()
+    public AppCrashUnitOfWork(MapperConfiguration mapperConfiguration)
     {
+        _mapper = mapperConfiguration.CreateMapper();
         _appCrashes = GetRepository<AppCrash>();
     }
+
+    private IMapper _mapper;
 
     private Lazy<EfRepository<AppCrash>> _appCrashes;
     public EfRepository<AppCrash> Crashes => _appCrashes.Value;
 
     public void InsertAppCrash(Exception exception)
     {
-        var serializedException = JsonSerializer.Serialize(exception.ToDto());
+        var exceptionDto = _mapper.Map<ExceptionDto>(exception);
+        
+        var serializedException = JsonSerializer.Serialize(exceptionDto);
         var crash = new AppCrash()
         {
             Exception = serializedException,
@@ -31,17 +36,8 @@ public class AppCrashUnitOfWork : UnitOfWorkBase
     public AppCrashDto GetNotNotifiedCrashes()
     {
         var unseenCrashes = Crashes.Get(c => !c.WasNotified).OrderByDescending(c => c.DateTime).FirstOrDefault();
-        if (unseenCrashes != null)
-        {
-            return new AppCrashDto()
-            {
-                Id = unseenCrashes.Id,
-                DateTime = unseenCrashes.DateTime,
-                ExceptionDto = JsonSerializer.Deserialize<ExceptionDto>(unseenCrashes.Exception)
-            };
-        }
-
-        return null;
+        var mapped = _mapper.Map<AppCrashDto>(unseenCrashes);
+        return mapped;
     }
 
     public void MarkAsNotified(int id)

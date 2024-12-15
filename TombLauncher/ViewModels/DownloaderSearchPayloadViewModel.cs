@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.ViewModels;

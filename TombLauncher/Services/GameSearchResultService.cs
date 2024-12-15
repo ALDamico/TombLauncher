@@ -2,18 +2,19 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Progress;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Data.Dto;
-using TombLauncher.Data.Models;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
-using TombLauncher.Localization;
 using TombLauncher.Navigation;
-using TombLauncher.Progress;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services;
@@ -21,8 +22,8 @@ namespace TombLauncher.Services;
 public class GameSearchResultService : IViewService
 {
     public GameSearchResultService(GameDownloadManager downloadManager, GamesUnitOfWork gamesUnitOfWork, TombRaiderLevelInstaller levelInstaller,
-        TombRaiderEngineDetector engineDetector, LocalizationManager localizationManager, NavigationManager navigationManager,
-        IMessageBoxService messageBoxService, IDialogService dialogService)
+        TombRaiderEngineDetector engineDetector, ILocalizationManager localizationManager, NavigationManager navigationManager,
+        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration)
     {
         GameDownloadManager = downloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
@@ -33,16 +34,18 @@ public class GameSearchResultService : IViewService
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
         _cancellationTokenSource = new CancellationTokenSource();
+        _mapper = mapperConfiguration.CreateMapper();
     }
     private CancellationTokenSource _cancellationTokenSource;
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public TombRaiderLevelInstaller LevelInstaller { get; }
     public TombRaiderEngineDetector EngineDetector { get; }
-    public LocalizationManager LocalizationManager { get; }
+    public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
+    private IMapper _mapper;
     
     public bool CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
     {
@@ -54,8 +57,9 @@ public class GameSearchResultService : IViewService
 
     public async Task Install(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
     {
+        var gameToInstallDto = _mapper.Map<MultiSourceSearchResultMetadataDto>(gameToInstall);
         gameToInstall.IsInstalling = true;
-        var downloadPath = await GameDownloadManager.DownloadGame(gameToInstall, new Progress<DownloadProgressInfo>(
+        var downloadPath = await GameDownloadManager.DownloadGame(gameToInstallDto, new Progress<DownloadProgressInfo>(
             p =>
             {
                 gameToInstall.TotalBytes = p.TotalBytes;
@@ -81,7 +85,7 @@ public class GameSearchResultService : IViewService
         }
 
         //var engine = _engineDetector.Detect(downloadPath);
-        var dto = await GameDownloadManager.FetchDetails(gameToInstall);
+        var dto = await GameDownloadManager.FetchDetails(gameToInstallDto);
         dto.Guid = Guid.NewGuid();
         var installLocation = await LevelInstaller.Install(downloadPath, dto, new Progress<CopyProgressInfo>(a =>
         {

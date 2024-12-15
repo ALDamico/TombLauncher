@@ -1,0 +1,85 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.SettingsPageView"
+             x:DataType="pages:SettingsPageViewModel"
+             >
+    <Design.DataContext>
+        <pages:SettingsPageViewModel/>
+    </Design.DataContext>
+    <Interaction.Behaviors>
+        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />
+    </Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0">
+            <StackPanel Orientation="Vertical">
+                <DockPanel LastChildFill="True">
+                    <controls:Infotip DockPanel.Dock="Right" Header="{DynamicResource Want to localize Tomb Launcher?}" 
+                                      ToolTipContent="{DynamicResource Localization infotip content}"></controls:Infotip>
+                    <TextBlock Text="{DynamicResource 'Languages'}" FontSize="36"/>    
+                </DockPanel>
+                
+                <TextBlock Text="{DynamicResource 'Application language'}"></TextBlock>
+                <ComboBox ItemsSource="{Binding LanguageSettings.AvailableLanguages}" 
+                          SelectedItem="{Binding LanguageSettings.ApplicationLanguage}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Svg Height="16" Width="24" 
+                                     Path="{Binding CountryIso2Code, Converter={StaticResource CountryToFlagConverter}}"></Svg>
+                                <Border Width="5"/>
+                                <TextBlock Text="{Binding DisplayName}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <DockPanel LastChildFill="True">
+                    <controls:Infotip DockPanel.Dock="Right" ToolTipContent="{DynamicResource Downloaders infotip content}"></controls:Infotip>
+                    <TextBlock Text="{DynamicResource 'Downloaders'}" FontSize="36"/>    
+                </DockPanel>
+                <DockPanel LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Vertical" HorizontalAlignment="Center">
+                        <controls:IconButton Icon="ArrowUp" ToolTip.Tip="{DynamicResource 'Move up'}" Command="{Binding DownloaderSettings.MoveUpCmd}" CommandParameter="{Binding DownloaderSettings.SelectedDownloader}"/>
+                        <Border Margin="20"/>
+                        <controls:IconButton Icon="ArrowDown" ToolTip.Tip="{DynamicResource 'Move down'}" Command="{Binding DownloaderSettings.MoveDownCmd}" CommandParameter="{Binding DownloaderSettings.SelectedDownloader}"/>
+                    </StackPanel>
+                    <ListBox ItemsSource="{Binding DownloaderSettings.AvailableDownloaders}" SelectedItem="{Binding DownloaderSettings.SelectedDownloader}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding IsEnabled}"/>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="DemiBold"></TextBlock>
+                                        <TextBlock Text="{Binding BaseUrl}" FontStyle="Italic"></TextBlock>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Priority}" HorizontalAlignment="Right"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+                
+            </StackPanel>
+        </ScrollViewer>
+        
+        <DockPanel Grid.Row="1" LastChildFill="False">
+            <controls:IconButton DockPanel.Dock="Right" 
+                                 Margin="10" 
+                                 Icon="FloppyDisc" 
+                                 Text="{DynamicResource 'Save'}" 
+                                 Command="{Binding SaveCmd}"/>
+            
+        </DockPanel>
+    </Grid>
+    
+</UserControl>

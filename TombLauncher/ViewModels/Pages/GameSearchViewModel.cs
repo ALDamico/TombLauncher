@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
@@ -14,7 +15,7 @@ public partial class GameSearchViewModel : PageViewModel
         _gameSearchService = searchService;
         _searchPayload = new DownloaderSearchPayloadViewModel();
         SearchCmd = new AsyncRelayCommand(Search);
-        OpenCmd = new AsyncRelayCommand<IGameSearchResultMetadata>(Open);
+        OpenCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel>(Open);
         LoadMoreCmd = new AsyncRelayCommand(LoadMore);
         IsCancelable = true;
     }
@@ -46,7 +47,7 @@ public partial class GameSearchViewModel : PageViewModel
 
     public ICommand OpenCmd { get; }
 
-    private async Task Open(IGameSearchResultMetadata gameToOpen)
+    private async Task Open(MultiSourceGameSearchResultMetadataViewModel gameToOpen)
     {
         await _gameSearchService.Open(this, gameToOpen);
     }

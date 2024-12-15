@@ -29,4 +29,14 @@ public abstract class ViewModelBase : ObservableObject
         var handler = Initialize;
         handler?.Invoke();
     }
+    
+    protected void RaiseCanExecuteChanged<T>(ICommand command)
+    {
+        ((RelayCommand<T>)command).NotifyCanExecuteChanged();
+    }
+
+    protected void RaiseCanExecuteChanged(ICommand command)
+    {
+        ((RelayCommand)command).NotifyCanExecuteChanged();
+    }
 }
