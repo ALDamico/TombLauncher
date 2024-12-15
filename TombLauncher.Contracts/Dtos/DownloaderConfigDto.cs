@@ -1,4 +1,6 @@
-﻿namespace TombLauncher.Contracts.Dtos;
+﻿using TombLauncher.Contracts.Downloaders;
+
+namespace TombLauncher.Contracts.Dtos;
 
 public class DownloaderConfigDto
 {

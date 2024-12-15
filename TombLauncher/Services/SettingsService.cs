@@ -4,6 +4,7 @@ using AutoMapper;
 using Avalonia.Threading;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Settings;
 using TombLauncher.Data.Database.UnitOfWork;
@@ -50,6 +51,9 @@ public class SettingsService : IViewService
         await tf.StartNew(() => _settingsUnitOfWork.UpdateApplicationLanguage(viewModel.LanguageSettings.ApplicationLanguage.CultureInfo))
             .ContinueWith(t => _settingsVisitor.Visit(LocalizationManager))
             .ContinueWith(t => Dispatcher.UIThread.Invoke(() =>  MessageBoxService.Show("Language changed", "The language has changed. Restart the application for this change to take effect properly.", MsgBoxButton.Ok, MsgBoxImage.Information)));
+        var mappedDownloaderConfigs =
+            _mapper.Map<List<DownloaderConfigDto>>(viewModel.DownloaderSettings.AvailableDownloaders);
+        await tf.StartNew(() => _settingsUnitOfWork.UpdateDownloaderConfigurations(mappedDownloaderConfigs));
         viewModel.IsBusy = false;
         viewModel.BusyMessage = null;
     }

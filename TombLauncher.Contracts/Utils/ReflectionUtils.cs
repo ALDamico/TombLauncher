@@ -40,4 +40,10 @@ public class ReflectionUtils
     {
         return GetImplementingTypes<T>().Select(t => (T)Activator.CreateInstance(t));
     }
+
+    public static Type GetTypeByName(string typeName)
+    {
+        return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
+            .FirstOrDefault(p => p.Name == typeName);
+    }
 }

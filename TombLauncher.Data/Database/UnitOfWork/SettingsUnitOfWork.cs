@@ -1,9 +1,7 @@
 ﻿using System.Globalization;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Dtos;
-using TombLauncher.Contracts.Settings;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
@@ -53,7 +51,89 @@ public class SettingsUnitOfWork: UnitOfWorkBase
         Settings.Commit();
     }
 
-    public List<DownloaderConfigDto> GetDownloaderConfigurations()
+    public void UpdateDownloaderConfigurations(IEnumerable<DownloaderConfigDto> dtos)
+    {
+        foreach (var dto in dtos)
+        {
+            var prioritySettingsKey = GetDownloaderSettingKey(dto.ClassName, SettingsKeys.Priority);
+            var targetEntity = Settings.Get(s => s.SettingName == prioritySettingsKey).SingleOrDefault();
+            if (targetEntity == null)
+            {
+                InsertSetting(prioritySettingsKey, dto.Priority);
+            }
+            else
+            {
+                targetEntity.IntValue = dto.Priority;
+                Settings.Update(targetEntity);
+            }
+
+            var isEnabledSettingsKey = GetDownloaderSettingKey(dto.ClassName, SettingsKeys.IsEnabled);
+            var targetEntityIsEnabled = Settings.Get(s => s.SettingName == isEnabledSettingsKey).SingleOrDefault();
+            if (targetEntityIsEnabled == null)
+            {
+                InsertSetting(isEnabledSettingsKey, dto.IsEnabled);
+            }
+            else
+            {
+                targetEntityIsEnabled.BoolValue = dto.IsEnabled;
+                Settings.Update(targetEntity);
+            }
+        }
+        
+        Settings.Commit();
+    }
+
+    private void InsertSetting(string settingName, int? targetValue)
+    {
+        var entity = new ApplicationSetting()
+        {
+            SettingName = settingName,
+            IntValue = targetValue
+        };
+        Settings.Insert(entity);
+    }
+
+    private void InsertSetting(string settingName, bool? targetValue)
+    {
+        var entity = new ApplicationSetting()
+        {
+            SettingName = settingName,
+            BoolValue = targetValue
+        };
+        Settings.Insert(entity);
+    }
+
+    private void InsertSetting(string settingName, string targetValue)
+    {
+        var entity = new ApplicationSetting()
+        {
+            SettingName = settingName,
+            StringValue = targetValue
+        };
+        Settings.Insert(entity);
+    }
+
+    private void InsertSetting(string settingName, double? targetValue)
+    {
+        var entity = new ApplicationSetting()
+        {
+            SettingName = settingName,
+            DoubleValue = targetValue
+        };
+        Settings.Insert(entity);
+    }
+
+    private void InsertSetting(string settingName, DateTime? targetValue)
+    {
+        var entity = new ApplicationSetting()
+        {
+            SettingName = settingName,
+            DateTimeValue = targetValue
+        };
+        Settings.Insert(entity);
+    }
+
+    public List<DownloaderConfigDto> GetDownloaderConfigurations(bool enabledOnly = false)
     {
         var dtos = new List<DownloaderConfigDto>();
         var downloaders = ReflectionUtils.GetImplementors<IGameDownloader>(BindingFlags.NonPublic);
@@ -76,7 +156,7 @@ public class SettingsUnitOfWork: UnitOfWorkBase
         {
             var split = setting.SettingName.Split("-").Take(3).ToArray();
             var className = split[0];
-            var settingName = split[1];
+            var settingName = split[2];
             var targetDto = dtos.SingleOrDefault(dto => dto.ClassName == className);
             if (targetDto == null)
                 continue;
@@ -89,6 +169,11 @@ public class SettingsUnitOfWork: UnitOfWorkBase
                     targetDto.Priority = setting.IntValue.GetValueOrDefault();
                     break;
             }
+        }
+
+        if (enabledOnly)
+        {
+            return dtos.Where(dto => dto.IsEnabled).OrderBy(dto => dto.Priority).ToList();
         }
 
         return dtos.OrderBy(dto => dto.Priority).ToList();

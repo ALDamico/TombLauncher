@@ -11,6 +11,7 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
@@ -25,7 +26,7 @@ public class GameSearchService : IViewService
 {
     public GameSearchService(GameDownloadManager gameDownloadManager, GamesUnitOfWork gamesUnitOfWork,
         ILocalizationManager localizationManager, NavigationManager navigationManager,
-        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration)
+        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration, ISettingsVisitor settingsVisitor)
     {
         GameDownloadManager = gameDownloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
@@ -34,6 +35,7 @@ public class GameSearchService : IViewService
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
         _mapper = mapperConfiguration.CreateMapper();
+        _settingsVisitor = settingsVisitor;
     }
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
@@ -42,6 +44,7 @@ public class GameSearchService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
     private IMapper _mapper;
+    private ISettingsVisitor _settingsVisitor;
 
     public async Task LoadMore(GameSearchViewModel target)
     {
@@ -92,6 +95,7 @@ public class GameSearchService : IViewService
     {
         target.IsBusy = true;
         target.BusyMessage = "Avvio ricerca...";
+        _settingsVisitor.Visit(GameDownloadManager);
         target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         try
         {

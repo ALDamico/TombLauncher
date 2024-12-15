@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using AutoMapper;
@@ -64,7 +63,6 @@ public partial class App : Application
             {
                 var settingsVisitor = sp.GetRequiredService<ISettingsVisitor>();
                 var locManager = new LocalizationManager(Current);
-                //locManager.ChangeLanguage(CultureInfo.CurrentUICulture);
                 
                 locManager.Accept(settingsVisitor);
                 return locManager;
@@ -82,18 +80,16 @@ public partial class App : Application
             serviceCollection.AddScoped<TombRaiderEngineDetector>();
             serviceCollection.AddTransient<IGameMerger>(_ =>
                 new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator(){UseAuthor = true, IgnoreSubTitle = true}));
-            serviceCollection.AddScoped(sp =>
+            ConfigureDownloaders(serviceCollection);
+            serviceCollection.AddTransient(sp =>
             {
                 var cts = new CancellationTokenSource();
-                var locMan = sp.GetService<ILocalizationManager>();
-                return new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>())
-                {
-                    Downloaders =
-                    {
-                        new TrleGameDownloader(),
-                        new AspideTrGameDownloader(locMan.GetSubsetInvertedByPrefix("ATR"))
-                    }
-                };
+                var settingsVisitor = sp.GetService<ISettingsVisitor>();
+                var downloadManager = new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>());
+                
+                downloadManager.Accept(settingsVisitor);
+
+                return downloadManager;
             });
             serviceCollection.AddScoped(_ => new GameFileHashCalculator(new HashSet<string>()
             {
@@ -105,8 +101,6 @@ public partial class App : Application
                 ".phd"
             }));
             
-            
-
             serviceCollection.AddSingleton<ISettingsVisitor>(sp => new SettingsVisitorImpl(sp.GetRequiredService<SettingsUnitOfWork>()));
             
             var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -123,6 +117,13 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
+    private static void ConfigureDownloaders(ServiceCollection serviceCollection)
+    {
+        serviceCollection.AddScoped<TrleGameDownloader>();
+        serviceCollection.AddScoped(sp => new AspideTrGameDownloader(sp.GetRequiredService<ILocalizationManager>()
+            .GetSubsetInvertedByPrefix("ATR")));
+    }
+
     private static void ConfigurePageServices(ServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<GameDetailsService>();
@@ -131,7 +132,7 @@ public partial class App : Application
         serviceCollection.AddScoped<GameWithStatsService>();
         serviceCollection.AddScoped<AppCrashHostService>();
         serviceCollection.AddSingleton<WelcomePageService>();
-        serviceCollection.AddScoped<GameSearchService>();
+        serviceCollection.AddTransient<GameSearchService>();
         serviceCollection.AddTransient<GameSearchResultService>();
         serviceCollection.AddScoped<SettingsService>();
     }
