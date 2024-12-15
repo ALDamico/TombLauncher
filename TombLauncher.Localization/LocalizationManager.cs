@@ -19,7 +19,6 @@ public class LocalizationManager : ILocalizationManager, ISettingsVisitable
         _defaultCulture = CultureInfo.GetCultureInfo("en-US");
         _application = application;
         _localizationRelativePath = "Localization";
-        ChangeLanguage(_defaultCulture);
     }
 
     private CultureInfo _currentCulture;

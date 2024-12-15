@@ -16,11 +16,11 @@
       </Content>
       <None Remove="Localization\en-US.axaml" />
       <Content Include="Localization\en-US.axaml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Localization\it-IT.axaml" />
       <Content Include="Localization\it-IT.axaml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 

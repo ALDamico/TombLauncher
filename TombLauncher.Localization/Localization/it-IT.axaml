@@ -91,6 +91,9 @@
     <system:String x:Key="Uninstalling">Disinstallazione di {0} in corso...</system:String>
     <system:String x:Key="Saving application settings...">Salvataggio impostazioni applicatione in corso...</system:String>
     <system:String x:Key="Languages">Lingue</system:String>
+    <system:String x:Key="Want to localize Tomb Launcher?">Vuoi localizzare Tomb Launcher?</system:String>
+    <system:String x:Key="Localization infotip content">Puoi aggiungere una nuova lingua a Tomb Launcher semplicemente traducendo uno dei file *.axaml presenti nella cartella Localization e rinominandolo col codice RFC4646 corretto (es. fr-FR per il francese).</system:String>
+    <system:String x:Key="Application language">Lingua dell'applicazione</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

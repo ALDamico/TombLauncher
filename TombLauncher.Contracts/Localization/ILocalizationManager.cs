@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using TombLauncher.Contracts.Localization.Dtos;
 
 namespace TombLauncher.Contracts.Localization;
