@@ -9,4 +9,5 @@ public partial class DownloaderViewModel : ObservableObject
     [ObservableProperty] private bool _isEnabled;
     [ObservableProperty] private int _priority;
     [ObservableProperty] private string _className;
+    [ObservableProperty] private string _supportedFeatures;
 }

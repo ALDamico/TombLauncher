@@ -16,7 +16,7 @@ namespace TombLauncher.Controls
     public class RatingControl : TemplatedControl 
     {
         // this field holds a reference to the part in the control template that holds the rating stars
-        private ItemsControl? _starsPresenter;
+        private ItemsControl _starsPresenter;
      
         public RatingControl() 
         { 
@@ -165,7 +165,7 @@ namespace TombLauncher.Controls
         /// <param name="property">The property.</param>
         /// <param name="state">The current data binding state.</param>
         /// <param name="error">The Exception that was passed</param>
-        protected override void UpdateDataValidation(AvaloniaProperty property, BindingValueType state, Exception? error)
+        protected override void UpdateDataValidation(AvaloniaProperty property, BindingValueType state, Exception error)
         {
             base.UpdateDataValidation(property, state, error);
             
@@ -175,7 +175,7 @@ namespace TombLauncher.Controls
             }
         }
 
-        private void StarsPresenter_PointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
+        private void StarsPresenter_PointerReleased(object sender, Avalonia.Input.PointerReleasedEventArgs e)
         {
             // e.Source is the original source of this event. In our case, if the user clicked on a star, the original source is a Path.
             if (e.Source is Path star)

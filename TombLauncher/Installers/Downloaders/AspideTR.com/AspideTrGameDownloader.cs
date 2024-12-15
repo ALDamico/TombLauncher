@@ -27,6 +27,7 @@ public class AspideTrGameDownloader : IGameDownloader
         };
         _classMappings = new Dictionary<string, string>();
     }
+
     public AspideTrGameDownloader(Dictionary<string, string> classMappings) : this()
     {
         _classMappings = classMappings;
@@ -230,6 +231,10 @@ public class AspideTrGameDownloader : IGameDownloader
 
     public int? TotalPages { get; private set; }
     public int CurrentPage { get; private set; }
+
+    public DownloaderFeatures SupportedFeatures => DownloaderFeatures.Author | DownloaderFeatures.LevelName |
+                                                   DownloaderFeatures.Setting | DownloaderFeatures.GameDifficulty |
+                                                   DownloaderFeatures.GameLength | DownloaderFeatures.GameEngine;
 
     private int? ConvertEngine(GameEngine engine)
     {

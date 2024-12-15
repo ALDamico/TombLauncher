@@ -283,6 +283,10 @@ public class TrleGameDownloader : IGameDownloader
     public int? TotalPages { get; private set; }
     public int CurrentPage { get; private set; }
 
+    public DownloaderFeatures SupportedFeatures => DownloaderFeatures.Author | DownloaderFeatures.LevelName |
+                                                   DownloaderFeatures.GameEngine | DownloaderFeatures.GameDifficulty |
+                                                   DownloaderFeatures.Rating | DownloaderFeatures.GameLength;
+
     private TrleSearchRequest ConvertRequest(DownloaderSearchPayload searchPayload)
     {
         int? difficulty = null;

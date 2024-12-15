@@ -8,7 +8,7 @@ namespace TombLauncher.Core.ValueConverters
     /// </summary>
     public class IsSmallerOrEqualConverter : IMultiValueConverter
     {
-        public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
+        public object Convert(IList<object> values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Count != 2)
             {

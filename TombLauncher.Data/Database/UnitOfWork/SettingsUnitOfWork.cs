@@ -2,6 +2,7 @@
 using System.Reflection;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
@@ -146,7 +147,8 @@ public class SettingsUnitOfWork: UnitOfWorkBase
                 ClassName = downloader.GetType().Name,
                 DisplayName = downloader.DisplayName,
                 IsEnabled = true,
-                Priority = priority++
+                Priority = priority++,
+                SupportedFeatures = downloader.SupportedFeatures.GetDescription()
             };
             dtos.Add(dto);
         }

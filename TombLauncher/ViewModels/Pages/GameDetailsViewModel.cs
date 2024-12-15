@@ -28,11 +28,11 @@ public partial class GameDetailsViewModel : PageViewModel
 
     private void Uninstall()
     {
-        _gameDetailsService.Uninstall(_game.GameMetadata.InstallDirectory, _game.GameMetadata.Id);
+        _gameDetailsService.Uninstall(Game.GameMetadata.InstallDirectory, Game.GameMetadata.Id);
     }
 
     private bool CanUninstall()
     {
-        return _gameDetailsService.CanUninstall(_game.GameMetadata.InstallDirectory);
+        return _gameDetailsService.CanUninstall(Game.GameMetadata.InstallDirectory);
     }
 }

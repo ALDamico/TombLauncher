@@ -1,4 +1,5 @@
 ﻿using System;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels;

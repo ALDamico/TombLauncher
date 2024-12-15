@@ -1,4 +1,5 @@
 ﻿using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 
 namespace TombLauncher.Contracts.Downloaders;
@@ -15,4 +16,5 @@ public interface IGameDownloader
     bool HasMorePages();
     int? TotalPages { get; }
     int CurrentPage { get; }
+    DownloaderFeatures SupportedFeatures { get; }
 }

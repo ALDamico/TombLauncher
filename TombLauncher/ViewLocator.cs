@@ -9,7 +9,7 @@ public class ViewLocator : IDataTemplate
 {
     private const string ViewModelsPrefix = "TombLauncher.ViewModels.ViewModels.";
     private const string ViewsPrefix = "TombLauncher.Views.";
-    public Control? Build(object? data)
+    public Control Build(object data)
     {
         if (data is null)
             return null;
@@ -57,7 +57,7 @@ public class ViewLocator : IDataTemplate
         return null;
     }
 
-    public bool Match(object? data)
+    public bool Match(object data)
     {
         return data is ViewModelBase;
     }

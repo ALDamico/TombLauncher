@@ -77,7 +77,7 @@ public partial class NewGameViewModel : PageViewModel
     {
         IsBusy = true;
         
-        await _newGameService.InstallGame(_gameMetadata, InstallProgress, _source);
+        await _newGameService.InstallGame(GameMetadata, InstallProgress, Source);
     }
 
     protected override bool CanSave()

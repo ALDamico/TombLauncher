@@ -33,7 +33,7 @@ public class TombRaiderLevelInstaller
                 var zipManager = new ZipManager(containingFolder);
                 await zipManager.ExtractAll(installFolder, copyProgress);
             }
-            catch (ZipException exception)
+            catch (ZipException)
             {
                 // ignore silently. File is not a valid zip
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Utils;
 
 namespace TombLauncher.ValueConverters;

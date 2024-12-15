@@ -61,6 +61,10 @@
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{Binding DisplayName}" FontWeight="DemiBold"></TextBlock>
                                         <TextBlock Text="{Binding BaseUrl}" FontStyle="Italic"></TextBlock>
+                                        <TextBlock>
+                                            <Run FontWeight="DemiBold" Text="{DynamicResource Supported features}"/>
+                                            <Run FontStyle="Italic" Text="{Binding SupportedFeatures}"/>
+                                        </TextBlock>
                                     </StackPanel>
                                     <TextBlock Text="{Binding Priority}" HorizontalAlignment="Right"></TextBlock>
                                 </StackPanel>

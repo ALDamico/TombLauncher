@@ -92,7 +92,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         {
             await _gameSearchResultService.Install(this);
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
             IsInstalling = false;
             DownloadSpeed = 0;

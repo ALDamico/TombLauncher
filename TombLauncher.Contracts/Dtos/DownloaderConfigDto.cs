@@ -9,4 +9,5 @@ public class DownloaderConfigDto
     public bool IsEnabled { get; set; }
     public int Priority { get; set; }
     public string ClassName { get; set; }
+    public string SupportedFeatures { get; set; }
 }
