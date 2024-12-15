@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Extensions;
 using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages.Settings;
 
@@ -21,8 +21,10 @@ public partial class SettingsPageViewModel : PageViewModel
 
     private void InitializeSettings()
     {
-        LanguageSettings.AvailableLanguages = _settingsService.GetSupportedLanguages().ToObservableCollection();
-        LanguageSettings.ApplicationLanguage = CultureInfo.CurrentUICulture;
+        var supportedLanguages = _settingsService.GetSupportedLanguages();
+        LanguageSettings.AvailableLanguages = supportedLanguages.ToObservableCollection();
+        LanguageSettings.ApplicationLanguage =
+            supportedLanguages.FirstOrDefault(l => CultureInfo.CurrentUICulture.Equals(l.CultureInfo));
     }
 
     protected override async void SaveInner()

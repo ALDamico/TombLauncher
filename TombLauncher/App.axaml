@@ -6,7 +6,8 @@
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
-             xmlns:valueConverters1="clr-namespace:TombLauncher.Core.ValueConverters;assembly=TombLauncher.Core">
+             xmlns:valueConverters1="clr-namespace:TombLauncher.Core.ValueConverters;assembly=TombLauncher.Core"
+             xmlns:valueConverters2="clr-namespace:TombLauncher.Controls.ValueConverters;assembly=TombLauncher.Controls">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
@@ -47,6 +48,7 @@
             </valueConverters:DateTimeFormatter>
             <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter"/>
             <valueConverters:TransferSpeedFormatter x:Key="TransferSpeedFormatter"/>
+            <valueConverters2:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>
             
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="../Assets/RatingStyles.axaml" />

@@ -25,9 +25,16 @@
                 <TextBlock Text="{DynamicResource 'Languages'}" FontSize="36"/>
                 <TextBlock Text="{DynamicResource 'Application language'}"></TextBlock>
                 <ComboBox ItemsSource="{Binding LanguageSettings.AvailableLanguages}" 
-                          SelectedItem="{Binding LanguageSettings.ApplicationLanguage}"
-                          DisplayMemberBinding="{Binding DisplayName}"
-                          ></ComboBox>
+                          SelectedItem="{Binding LanguageSettings.ApplicationLanguage}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Svg Height="16" Width="24" Path="{Binding CountryIso2Code, Converter={StaticResource CountryToFlagConverter}}"></Svg>
+                                <TextBlock Text="{Binding DisplayName}"></TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </StackPanel>
         </ScrollViewer>
         

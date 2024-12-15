@@ -1,24 +1,22 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
-using Avalonia;
+using AutoMapper;
 using Avalonia.Threading;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Settings;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Localization;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
+using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
-using TombLauncher.Views.Pages;
 
 namespace TombLauncher.Services;
 
 public class SettingsService : IViewService
 {
-    public SettingsService(ILocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService, SettingsUnitOfWork settingsUnitOfWork, ISettingsVisitor settingsVisitor)
+    public SettingsService(ILocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService, SettingsUnitOfWork settingsUnitOfWork, ISettingsVisitor settingsVisitor, MapperConfiguration mapperConfiguration)
     {
         LocalizationManager = localizationManager;
         NavigationManager = navigationManager;
@@ -26,6 +24,7 @@ public class SettingsService : IViewService
         DialogService = dialogService;
         _settingsUnitOfWork = settingsUnitOfWork;
         _settingsVisitor = settingsVisitor;
+        _mapper = mapperConfiguration.CreateMapper();
     }
     public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
@@ -33,10 +32,12 @@ public class SettingsService : IViewService
     public IDialogService DialogService { get; }
     private SettingsUnitOfWork _settingsUnitOfWork;
     private ISettingsVisitor _settingsVisitor;
+    private IMapper _mapper;
 
-    public List<CultureInfo> GetSupportedLanguages()
+    public List<ApplicationLanguageViewModel> GetSupportedLanguages()
     {
-        return LocalizationManager.GetSupportedLanguages();
+        var supportedLanguages = LocalizationManager.GetSupportedLanguages();
+        return _mapper.Map<List<ApplicationLanguageViewModel>>(supportedLanguages);
     }
 
     public async Task Save(SettingsPageViewModel viewModel)
@@ -44,7 +45,7 @@ public class SettingsService : IViewService
         viewModel.IsBusy = true;
         viewModel.BusyMessage = "Saving application settings...".GetLocalizedString();
         var tf = new TaskFactory();
-        await tf.StartNew(() => _settingsUnitOfWork.UpdateApplicationLanguage(viewModel.LanguageSettings.ApplicationLanguage))
+        await tf.StartNew(() => _settingsUnitOfWork.UpdateApplicationLanguage(viewModel.LanguageSettings.ApplicationLanguage.CultureInfo))
             .ContinueWith(t => _settingsVisitor.Visit(LocalizationManager))
             .ContinueWith(t => Dispatcher.UIThread.Invoke(() =>  MessageBoxService.Show("Language changed", "The language has changed. Restart the application for this change to take effect properly.", MsgBoxButton.Ok, MsgBoxImage.Information)));
         viewModel.IsBusy = false;

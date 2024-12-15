@@ -13,6 +13,7 @@ using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Localization.Dtos;
 using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Settings;
 using TombLauncher.Data.Database.UnitOfWork;
@@ -52,6 +53,7 @@ public partial class App : Application
             BindingPlugins.DataValidators.RemoveAt(0);
 
             var serviceCollection = new ServiceCollection();
+            ConfigureMappings(serviceCollection);
             ConfigurePageServices(serviceCollection);
             ConfigureViewModels(serviceCollection);
             serviceCollection.AddSingleton<ILocalizationManager>(sp =>
@@ -100,7 +102,7 @@ public partial class App : Application
                 ".phd"
             }));
             
-            ConfigureMappings(serviceCollection);
+            
 
             serviceCollection.AddSingleton<ISettingsVisitor>(sp => new SettingsVisitorImpl(sp.GetRequiredService<SettingsUnitOfWork>()));
             
@@ -157,12 +159,15 @@ public partial class App : Application
             cfg.AllowNullDestinationValues = true;
             
             cfg.CreateMap<AppCrash, AppCrashDto>()
-                .ForMember(dto => dto.ExceptionDto, opt => opt.MapFrom(s => JsonConvert.DeserializeObject<ExceptionDto>(s.Exception)));
+                .ForMember(dto => dto.ExceptionDto,
+                    opt => opt.MapFrom(s => JsonConvert.DeserializeObject<ExceptionDto>(s.Exception)));
             cfg.CreateMap<Exception, ExceptionDto>();
 
             cfg.CreateMap<GameHashes, GameHashDto>().ReverseMap();
             cfg.CreateMap<GameLink, GameLinkDto>().ReverseMap();
             cfg.CreateMap<Game, GameMetadataDto>().ReverseMap();
+            cfg.CreateMap<AvailableLanguageDto, ApplicationLanguageViewModel>()
+                .ForMember(dto => dto.CultureInfo, opt => opt.MapFrom(culture => culture.Culture)).ReverseMap();
 
         });
 

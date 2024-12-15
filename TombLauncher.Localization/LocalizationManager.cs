@@ -1,17 +1,19 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Localization.Dtos;
 using TombLauncher.Contracts.Settings;
 
 namespace TombLauncher.Localization;
 
-public class LocalizationManager: ILocalizationManager, ISettingsVisitable 
+public class LocalizationManager : ILocalizationManager, ISettingsVisitable
 {
-    public LocalizationManager(Application application) 
+    public LocalizationManager(Application application)
     {
         _currentCulture = CultureInfo.CurrentUICulture;
         _defaultCulture = CultureInfo.GetCultureInfo("en-US");
@@ -33,19 +35,27 @@ public class LocalizationManager: ILocalizationManager, ISettingsVisitable
         return $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/{_localizationRelativePath}";
     }
 
-    public List<CultureInfo> GetSupportedLanguages()
+    public List<AvailableLanguageDto> GetSupportedLanguages()
     {
-        var cultureInfos = new List<CultureInfo>();
+        var cultureInfos = new List<AvailableLanguageDto>();
         var languagesFolder = GetLanguagesFolder();
         var dictionaryFiles = Directory.GetFiles(languagesFolder, "*.axaml");
         foreach (var file in dictionaryFiles)
         {
-            var fileName = Path.GetFileNameWithoutExtension(file);
             try
             {
+                var fileName = Path.GetFileNameWithoutExtension(file);
                 var cultureInfo = CultureInfo.GetCultureInfo(fileName);
-                cultureInfos.Add(cultureInfo);
 
+                var countryCode = Regex.Match(fileName, @"-(\w{2})").Groups[1].Value;
+                var dto = new AvailableLanguageDto()
+                {
+                    Culture = cultureInfo,
+                    DictionaryName = fileName,
+                    DisplayName = cultureInfo.DisplayName,
+                    CountryIso2Code = countryCode
+                };
+                cultureInfos.Add(dto);
             }
             catch (CultureNotFoundException)
             {
@@ -64,6 +74,7 @@ public class LocalizationManager: ILocalizationManager, ISettingsVisitable
         var cultureName = _currentCulture.Name;
         var currentTranslations = currentApp.Resources.MergedDictionaries.OfType<ResourceInclude>()
             .FirstOrDefault(dic => dic.Source?.OriginalString?.Contains(_localizationRelativePath) ?? false);
+        CultureInfo.CurrentUICulture = _currentCulture;
         if (currentTranslations != null)
         {
             _application.Resources.MergedDictionaries.Remove(currentTranslations);
@@ -86,7 +97,7 @@ public class LocalizationManager: ILocalizationManager, ISettingsVisitable
         {
             xaml = defaultKeyXaml;
         }
-        
+
         var rd = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(xaml);
         var rdDefault = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(defaultKeyXaml);
         var missingKeys = Enumerable.Except<object>(rdDefault.Keys, rd.Keys);
@@ -131,6 +142,7 @@ public class LocalizationManager: ILocalizationManager, ISettingsVisitable
     public string this[string key] => GetLocalizedString(key);
     public string DateOnlyFormat => GetLocalizedString(nameof(DateOnlyFormat));
     public string DateTimeFormat => GetLocalizedString(nameof(DateTimeFormat));
+
     public void Accept(ISettingsVisitor visitor)
     {
         visitor.Visit(this);

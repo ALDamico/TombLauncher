@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using TombLauncher.Contracts.Localization.Dtos;
 
 namespace TombLauncher.Contracts.Localization;
 
@@ -8,7 +9,7 @@ public interface ILocalizationManager
     string DateOnlyFormat { get; }
     string DateTimeFormat { get; }
     string GetLanguagesFolder();
-    List<CultureInfo> GetSupportedLanguages();
+    List<AvailableLanguageDto> GetSupportedLanguages();
     void ChangeLanguage(CultureInfo targetLanguage);
     Dictionary<string, string> GetSubsetInvertedByPrefix(string prefix);
     string GetLocalizedString(string key, params object[] parms);
