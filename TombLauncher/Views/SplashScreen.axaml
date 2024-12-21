@@ -22,6 +22,6 @@
     </Window.Styles>
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock Classes="style" FontSize="48" FontFamily="{StaticResource TombRaiderFont}">TOMB LAUNCHER</TextBlock>
-        <TextBlock  Text="Loading..."></TextBlock>
+        <TextBlock Classes="style" Text="Loading..."></TextBlock>
     </StackPanel>
 </Window>

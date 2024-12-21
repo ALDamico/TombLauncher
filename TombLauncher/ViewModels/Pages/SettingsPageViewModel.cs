@@ -26,7 +26,7 @@ public partial class SettingsPageViewModel : PageViewModel
         var supportedLanguages = _settingsService.GetSupportedLanguages();
         LanguageSettings.AvailableLanguages = supportedLanguages.ToObservableCollection();
         LanguageSettings.ApplicationLanguage =
-            supportedLanguages.FirstOrDefault(l => CultureInfo.CurrentUICulture.Equals(l.CultureInfo));
+            supportedLanguages.FirstOrDefault(l => _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo));
 
         var downloaders = _settingsService.GetDownloaders();
         DownloaderSettings.AvailableDownloaders = downloaders.ToObservableCollection();
