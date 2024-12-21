@@ -49,6 +49,7 @@
             <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter"/>
             <valueConverters:TransferSpeedFormatter x:Key="TransferSpeedFormatter"/>
             <valueConverters2:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>
+            <FontFamily x:Key="TombRaiderFont">avares://TombLauncher/Assets#Tomb_Raider</FontFamily>
             
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="../Assets/RatingStyles.axaml" />

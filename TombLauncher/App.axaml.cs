@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -47,74 +48,94 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Line below is needed to remove Avalonia data validation.
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);
+            var splashScreen = new SplashScreen();
+            desktop.MainWindow = splashScreen;
+            splashScreen.Show();
 
-            var serviceCollection = new ServiceCollection();
-            ConfigureMappings(serviceCollection);
-            ConfigurePageServices(serviceCollection);
-            ConfigureViewModels(serviceCollection);
-            serviceCollection.AddSingleton<ILocalizationManager>(sp =>
-            {
-                var settingsVisitor = sp.GetRequiredService<ISettingsVisitor>();
-                var locManager = new LocalizationManager(Current);
-                
-                locManager.Accept(settingsVisitor);
-                return locManager;
-            });
-            ConfigureDatabaseAccess(serviceCollection);
-            serviceCollection.AddSingleton(_ => new NavigationManager());
-            serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
-            {
-                ApplicationName = "Tomb Launcher",
-                UseApplicationNameInTitle = true,
-                ViewsAssemblyName = Assembly.GetExecutingAssembly().GetName().Name
-            }));
-            serviceCollection.AddScoped(_ => DialogServiceFactory.CreateMessageBoxService());
-            serviceCollection.AddScoped<TombRaiderLevelInstaller>();
-            serviceCollection.AddScoped<TombRaiderEngineDetector>();
-            serviceCollection.AddTransient<IGameMerger>(_ =>
-                new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator(){UseAuthor = true, IgnoreSubTitle = true}));
-            ConfigureDownloaders(serviceCollection);
-            serviceCollection.AddTransient(sp =>
-            {
-                var cts = new CancellationTokenSource();
-                var settingsVisitor = sp.GetService<ISettingsVisitor>();
-                var downloadManager = new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>());
-                
-                downloadManager.Accept(settingsVisitor);
-
-                return downloadManager;
-            });
-            serviceCollection.AddScoped(_ => new GameFileHashCalculator(new HashSet<string>()
-            {
-                ".tr4",
-                ".pak",
-                ".tr2",
-                ".sfx",
-                ".dat",
-                ".phd"
-            }));
-            
-            serviceCollection.AddSingleton<ISettingsVisitor>(sp => new SettingsVisitorImpl(sp.GetRequiredService<SettingsUnitOfWork>()));
-            
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            Ioc.Default.ConfigureServices(serviceProvider);
-            var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
-            var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
-            navigationManager.SetDefaultPage(defaultPage);
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainWindowViewModel(navigationManager),
-            };
+            await InitializeServices();
+            await ShowMainWindow(desktop, splashScreen);
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private async Task ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop, SplashScreen splashScreen)
+    {
+        await Task.Delay(2000);
+        var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
+        var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
+        navigationManager.SetDefaultPage(defaultPage);
+        var mainWindow =  new MainWindow
+        {
+            DataContext = new MainWindowViewModel(navigationManager),
+        };
+
+        desktop.MainWindow = mainWindow;
+        mainWindow.Show();
+        splashScreen.Close();
+        await Task.CompletedTask;
+    }
+
+    private async Task InitializeServices()
+    {
+        var serviceCollection = new ServiceCollection();
+        ConfigureMappings(serviceCollection);
+        ConfigurePageServices(serviceCollection);
+        ConfigureViewModels(serviceCollection);
+        serviceCollection.AddSingleton<ILocalizationManager>(sp =>
+        {
+            var settingsVisitor = sp.GetRequiredService<ISettingsVisitor>();
+            var locManager = new LocalizationManager(Current);
+                
+            locManager.Accept(settingsVisitor);
+            return locManager;
+        });
+        ConfigureDatabaseAccess(serviceCollection);
+        serviceCollection.AddSingleton(_ => new NavigationManager());
+        serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
+        {
+            ApplicationName = "Tomb Launcher",
+            UseApplicationNameInTitle = true,
+            ViewsAssemblyName = Assembly.GetExecutingAssembly().GetName().Name
+        }));
+        serviceCollection.AddScoped(_ => DialogServiceFactory.CreateMessageBoxService());
+        serviceCollection.AddScoped<TombRaiderLevelInstaller>();
+        serviceCollection.AddScoped<TombRaiderEngineDetector>();
+        serviceCollection.AddTransient<IGameMerger>(_ =>
+            new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator(){UseAuthor = true, IgnoreSubTitle = true}));
+        ConfigureDownloaders(serviceCollection);
+        serviceCollection.AddTransient(sp =>
+        {
+            var cts = new CancellationTokenSource();
+            var settingsVisitor = sp.GetService<ISettingsVisitor>();
+            var downloadManager = new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>());
+                
+            downloadManager.Accept(settingsVisitor);
+
+            return downloadManager;
+        });
+        serviceCollection.AddScoped(_ => new GameFileHashCalculator(new HashSet<string>()
+        {
+            ".tr4",
+            ".pak",
+            ".tr2",
+            ".sfx",
+            ".dat",
+            ".phd"
+        }));
+            
+        serviceCollection.AddSingleton<ISettingsVisitor>(sp => new SettingsVisitorImpl(sp.GetRequiredService<SettingsUnitOfWork>()));
+            
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        Ioc.Default.ConfigureServices(serviceProvider);
+        await Task.CompletedTask;
     }
 
     private static void ConfigureDownloaders(ServiceCollection serviceCollection)
