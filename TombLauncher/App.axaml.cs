@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,8 +17,6 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Localization.Dtos;
-using TombLauncher.Contracts.Settings;
-using TombLauncher.Core.Settings;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Models;
 using TombLauncher.Installers;
@@ -69,6 +68,7 @@ public partial class App : Application
     private async Task ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop, SplashScreen splashScreen)
     {
         await Task.Delay(2000);
+        ApplyInitialSettings();
         var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
         var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         navigationManager.SetDefaultPage(defaultPage);
@@ -89,14 +89,7 @@ public partial class App : Application
         ConfigureMappings(serviceCollection);
         ConfigurePageServices(serviceCollection);
         ConfigureViewModels(serviceCollection);
-        serviceCollection.AddSingleton<ILocalizationManager>(sp =>
-        {
-            var settingsVisitor = sp.GetRequiredService<ISettingsVisitor>();
-            var locManager = new LocalizationManager(Current);
-                
-            locManager.Accept(settingsVisitor);
-            return locManager;
-        });
+        serviceCollection.AddSingleton<ILocalizationManager>(_ =>new LocalizationManager(Current));
         ConfigureDatabaseAccess(serviceCollection);
         serviceCollection.AddSingleton(_ => new NavigationManager());
         serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
@@ -114,10 +107,7 @@ public partial class App : Application
         serviceCollection.AddTransient(sp =>
         {
             var cts = new CancellationTokenSource();
-            var settingsVisitor = sp.GetService<ISettingsVisitor>();
             var downloadManager = new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>());
-                
-            downloadManager.Accept(settingsVisitor);
 
             return downloadManager;
         });
@@ -131,11 +121,19 @@ public partial class App : Application
             ".phd"
         }));
             
-        serviceCollection.AddSingleton<ISettingsVisitor>(sp => new SettingsVisitorImpl(sp.GetRequiredService<SettingsUnitOfWork>()));
-            
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
         await Task.CompletedTask;
+    }
+
+    private static void ApplyInitialSettings()
+    {
+        var settingsService= Ioc.Default.GetRequiredService<SettingsService>();
+        var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
+        var applicationLanguage = settingsService.GetApplicationLanguage();
+        localizationManager.ChangeLanguage(applicationLanguage);
+        var applicationTheme = settingsService.GetApplicationTheme();
+        Current.RequestedThemeVariant = applicationTheme;
     }
 
     private static void ConfigureDownloaders(ServiceCollection serviceCollection)

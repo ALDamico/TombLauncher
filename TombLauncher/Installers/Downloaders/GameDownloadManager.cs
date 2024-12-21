@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Progress;
-using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Installers.Downloaders;
 
-public class GameDownloadManager : ISettingsVisitable, IGameDownloadManager
+public class GameDownloadManager : IGameDownloadManager
 {
     public GameDownloadManager(CancellationTokenSource cancellationTokenSource, IGameMerger merger)
     {
@@ -115,10 +114,5 @@ public class GameDownloadManager : ISettingsVisitable, IGameDownloadManager
         await downloader.DownloadGame(metadata, file, downloadProgress, cancellationToken);
         return fullFilePath;
 
-    }
-
-    public void Accept(ISettingsVisitor visitor)
-    {
-        visitor.Visit(this);
     }
 }

@@ -10,6 +10,7 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
@@ -40,8 +41,7 @@ public class GameListService : IViewService
 
     public Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
-        host.IsBusy = true;
-        host.BusyMessage = LocalizationManager.GetLocalizedString("Loading games...");
+        host.SetBusy(true, "Loading games...".GetLocalizedString());
         return Task.FromResult(GamesUnitOfWork.GetGamesWithStats().Select(ConvertDto).ToObservableCollection());
     }
 
@@ -67,13 +67,12 @@ public class GameListService : IViewService
         confirmDialogViewModel.RequestCloseDialog += (_, args) =>
         {
             if (!args.DialogResult) return;
-            target.IsBusy = true;
-            target.BusyMessage = LocalizationManager.GetLocalizedString("Uninstalling", game.GameMetadata.Title);
+            target.SetBusy(true, "Uninstalling".GetLocalizedString(game.GameMetadata.Title));
             var installDir = game.GameMetadata.InstallDirectory;
             Directory.Delete(installDir, true);
             GamesUnitOfWork.DeleteGameById(game.GameMetadata.Id);
             GamesUnitOfWork.Save();
-            target.IsBusy = false;
+            target.ClearBusy();
             NavigationManager.NavigateTo(target);
         };
         DialogService.ShowDialog(confirmDialogViewModel, _ => { });

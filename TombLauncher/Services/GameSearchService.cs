@@ -11,11 +11,11 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers.Downloaders;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
@@ -26,7 +26,7 @@ public class GameSearchService : IViewService
 {
     public GameSearchService(GameDownloadManager gameDownloadManager, GamesUnitOfWork gamesUnitOfWork,
         ILocalizationManager localizationManager, NavigationManager navigationManager,
-        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration, ISettingsVisitor settingsVisitor)
+        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration)
     {
         GameDownloadManager = gameDownloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
@@ -35,7 +35,6 @@ public class GameSearchService : IViewService
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
         _mapper = mapperConfiguration.CreateMapper();
-        _settingsVisitor = settingsVisitor;
     }
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
@@ -44,12 +43,10 @@ public class GameSearchService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
     private IMapper _mapper;
-    private ISettingsVisitor _settingsVisitor;
 
     public async Task LoadMore(GameSearchViewModel target)
     {
-        target.IsBusy = true;
-        target.BusyMessage = "Caricamento in corso...";
+        target.SetBusy("Loading in progress".GetLocalizedString());
         var nextPage = await GameDownloadManager.FetchNextPage();
         var fetchedResults = _mapper.Map<List<IMultiSourceSearchResultMetadata>>(target.FetchedResults);
         GameDownloadManager.Merge(fetchedResults, nextPage);
@@ -64,14 +61,14 @@ public class GameSearchService : IViewService
         }
 
         target.HasMoreResults = CanLoadMore();
-        target.IsBusy = false;
+        target.ClearBusy();
     }
 
     public bool CanLoadMore() => GameDownloadManager.HasMoreResults();
 
     public async Task Open(GameSearchViewModel target, MultiSourceGameSearchResultMetadataViewModel gameToOpen)
     {
-        target.IsBusy = true;
+        target.SetBusy(true);
         var gameToOpenDto = _mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
         
         var details = await GameDownloadManager.FetchDetails(gameToOpenDto);
@@ -83,19 +80,17 @@ public class GameSearchService : IViewService
             var gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
             var vm = new GameDetailsViewModel(gameDetailsService,
                 new GameWithStatsViewModel(gameWithStatsService) { GameMetadata = detailsViewModel });
-            target.IsBusy = false;
+            target.ClearBusy();
             NavigationManager.NavigateTo(vm);
             return;
         }
 
-        target.IsBusy = false;
+        target.ClearBusy();
     }
 
     public async Task Search(GameSearchViewModel target)
     {
-        target.IsBusy = true;
-        target.BusyMessage = "Avvio ricerca...";
-        _settingsVisitor.Visit(GameDownloadManager);
+        target.SetBusy("Search starting...".GetLocalizedString());
         target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         try
         {
@@ -121,7 +116,7 @@ public class GameSearchService : IViewService
             target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         }
 
-        target.IsBusy = false;
+        target.ClearBusy();
     }
 
     public void Cancel()

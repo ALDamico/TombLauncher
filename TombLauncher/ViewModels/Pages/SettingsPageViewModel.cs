@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Services;
@@ -14,12 +15,14 @@ public partial class SettingsPageViewModel : PageViewModel
         _settingsService = settingsService;
         LanguageSettings = new LanguageSettings();
         DownloaderSettings = new DownloaderSettings();
+        AppearanceSettings = new AppearanceSettings();
         Initialize += InitializeSettings;
     }
 
     private SettingsService _settingsService;
     [ObservableProperty] private LanguageSettings _languageSettings;
     [ObservableProperty] private DownloaderSettings _downloaderSettings;
+    [ObservableProperty] private AppearanceSettings _appearanceSettings;
 
     private void InitializeSettings()
     {
@@ -32,7 +35,7 @@ public partial class SettingsPageViewModel : PageViewModel
         DownloaderSettings.AvailableDownloaders = downloaders.ToObservableCollection();
     }
 
-    protected override async void SaveInner()
+    protected override async Task SaveInner()
     {
         await _settingsService.Save(this);
     }

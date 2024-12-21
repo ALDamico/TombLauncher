@@ -1,22 +1,40 @@
-﻿using System.ComponentModel;
+﻿using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Localization;
-using TombLauncher.Navigation;
 
 namespace TombLauncher.ViewModels;
 
 public abstract partial class PageViewModel : ViewModelBase
 {
-    public PageViewModel()
+    protected PageViewModel()
     {
-        SaveCmd = new RelayCommand(Save, CanSave);
+        SaveCmd = new AsyncRelayCommand(Save, CanSave);
         CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
     }
-    [ObservableProperty] private bool _isBusy;
-    [ObservableProperty] private string _busyMessage;
+
+    public bool IsBusy
+    {
+        get => _isBusy;
+        protected set
+        {
+            _isBusy = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    private bool _isBusy;
+    private string _busyMessage;
+
+    public string BusyMessage
+    {
+        get => _busyMessage;
+        protected set
+        {
+            _busyMessage = value;
+            OnPropertyChanged();
+        }
+    }
     [ObservableProperty] private string _currentFileName;
     [ObservableProperty] private double? _percentageComplete;
     [ObservableProperty] private bool _isCancelable;
@@ -28,7 +46,7 @@ public abstract partial class PageViewModel : ViewModelBase
         
     }
 
-    protected void SetBusy(bool isBusy, string busyMessage = null)
+    public void SetBusy(bool isBusy, string busyMessage = null)
     {
         IsBusy = isBusy;
         if (busyMessage != null)
@@ -37,21 +55,28 @@ public abstract partial class PageViewModel : ViewModelBase
         }
     }
 
-    protected void ClearBusy()
+    public void SetBusy(string busyMessage)
+    {
+        IsBusy = true;
+        BusyMessage = busyMessage;
+    }
+
+    public void ClearBusy()
     {
         IsBusy = false;
         BusyMessage = null;
     }
 
-    public RelayCommand SaveCmd { get; protected set; }
+    public ICommand SaveCmd { get; protected set; }
     protected virtual bool CanSave() => false;
 
-    private async void Save()
+    private async Task Save()
     {
-        SaveInner();
+        await SaveInner();
     }
 
-    protected virtual void SaveInner()
+    protected virtual Task SaveInner()
     {
+        return Task.CompletedTask;
     }
 }

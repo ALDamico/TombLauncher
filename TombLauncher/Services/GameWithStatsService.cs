@@ -4,7 +4,7 @@ using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
-using TombLauncher.Localization;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
@@ -40,8 +40,7 @@ public class GameWithStatsService : IViewService
     public void PlayGame(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.GetCurrentPage();
-        currentPage.IsBusy = true;
-        currentPage.BusyMessage = LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title);
+        currentPage.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
         var process = new Process()
         {
             StartInfo = new ProcessStartInfo(game.GameMetadata.ExecutablePath)
@@ -51,18 +50,17 @@ public class GameWithStatsService : IViewService
             },
             EnableRaisingEvents = true
         };
-        process.Exited += (sender, args) => OnGameExited(game, sender as Process);
+        process.Exited += (sender, _) => OnGameExited(game, sender as Process);
         process.Start();
     }
     
     private void OnGameExited(GameWithStatsViewModel game, Process process)
     {
         var currentPage = NavigationManager.GetCurrentPage();
-        currentPage.BusyMessage = LocalizationManager["Saving play session..."];
+        currentPage.SetBusy(true, "Saving play session...".GetLocalizedString());
         GamesUnitOfWork.AddPlaySessionToGame(game.GameMetadata.ToDto(), process.StartTime, process.ExitTime);
         GamesUnitOfWork.Save();
         NavigationManager.RequestRefresh();
-        currentPage.IsBusy = false;
-        currentPage.BusyMessage = null;
+        currentPage.ClearBusy();
     }
 }

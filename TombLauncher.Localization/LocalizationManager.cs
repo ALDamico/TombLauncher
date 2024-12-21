@@ -7,11 +7,10 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Localization.Dtos;
-using TombLauncher.Contracts.Settings;
 
 namespace TombLauncher.Localization;
 
-public class LocalizationManager : ILocalizationManager, ISettingsVisitable
+public class LocalizationManager : ILocalizationManager
 {
     public LocalizationManager(Application application)
     {
@@ -67,13 +66,14 @@ public class LocalizationManager : ILocalizationManager, ISettingsVisitable
 
     public void ChangeLanguage(CultureInfo targetLanguage)
     {
-        var currentApp = Application.Current;
-        if (currentApp == null) return;
+        /*var currentApp = Application.Current;
+        if (currentApp == null) return;*/
         _currentCulture = targetLanguage;
         var cultureName = _currentCulture.Name;
-        var currentTranslations = currentApp.Resources.MergedDictionaries.OfType<ResourceInclude>()
+        var currentTranslations = /*currentApp*/_application.Resources.MergedDictionaries.OfType<ResourceInclude>()
             .FirstOrDefault(dic => dic.Source?.OriginalString?.Contains(_localizationRelativePath) ?? false);
         CultureInfo.CurrentUICulture = _currentCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = _currentCulture;
         if (currentTranslations != null)
         {
             _application.Resources.MergedDictionaries.Remove(currentTranslations);
@@ -141,9 +141,4 @@ public class LocalizationManager : ILocalizationManager, ISettingsVisitable
     public string this[string key] => GetLocalizedString(key);
     public string DateOnlyFormat => GetLocalizedString(nameof(DateOnlyFormat));
     public string DateTimeFormat => GetLocalizedString(nameof(DateTimeFormat));
-
-    public void Accept(ISettingsVisitor visitor)
-    {
-        visitor.Visit(this);
-    }
 }

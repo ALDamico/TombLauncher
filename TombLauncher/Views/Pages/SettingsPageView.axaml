@@ -23,6 +23,11 @@
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0">
             <StackPanel Orientation="Vertical">
+                <TextBlock Text="{DynamicResource 'Appearance'}"></TextBlock>
+                <TextBlock Text="{DynamicResource 'App theme'}"></TextBlock>
+                <ComboBox SelectedItem="{Binding AppearanceSettings.SelectedTheme}" 
+                          ItemsSource="{Binding AppearanceSettings.AvailableThemes}"></ComboBox>
+                
                 <DockPanel LastChildFill="True">
                     <controls:Infotip DockPanel.Dock="Right" Header="{DynamicResource Want to localize Tomb Launcher?}" 
                                       ToolTipContent="{DynamicResource Localization infotip content}"></controls:Infotip>

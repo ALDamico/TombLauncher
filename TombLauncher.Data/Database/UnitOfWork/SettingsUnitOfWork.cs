@@ -31,6 +31,18 @@ public class SettingsUnitOfWork: UnitOfWorkBase
         return CultureInfo.GetCultureInfo(setting.StringValue);
     }
 
+    public string GetThemeName()
+    {
+        var key = SettingsKeys.ApplicationTheme;
+        var setting = Settings.Get(s => s.SettingName == key).FirstOrDefault();
+        if (setting == null)
+        {
+            return "Default";
+        }
+
+        return setting.StringValue;
+    }
+
     public void UpdateApplicationLanguage(CultureInfo cultureInfo)
     {
         var languageName = cultureInfo.IetfLanguageTag;
@@ -48,6 +60,20 @@ public class SettingsUnitOfWork: UnitOfWorkBase
         }
 
         setting.StringValue = languageName;
+        Settings.Update(setting);
+        Settings.Commit();
+    }
+
+    public void UpdateAppTheme(string themeVariant)
+    {
+        var setting = Settings.Get(s => s.SettingName == SettingsKeys.ApplicationTheme).FirstOrDefault();
+        if (setting == null)
+        {
+            InsertSetting(SettingsKeys.ApplicationTheme, themeVariant);
+            Settings.Commit();
+        }
+
+        setting.StringValue = themeVariant;
         Settings.Update(setting);
         Settings.Commit();
     }

@@ -46,4 +46,16 @@ public class ReflectionUtils
         return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
             .FirstOrDefault(p => p.Name == typeName);
     }
+
+    public static ILookup<string, T> GetStaticInstances<T>()
+    {
+        return typeof(T).GetProperties(BindingFlags.Static | BindingFlags.Public).Where(t => t.PropertyType == typeof(T))
+            .ToLookup(prop => prop.Name, prop => (T)prop.GetValue(null));
+    }
+
+    public static T GetStaticInstanceByName<T>(string instanceName)
+    {
+        var staticInstances = GetStaticInstances<T>();
+        return GetStaticInstances<T>()[instanceName].FirstOrDefault();
+    }
 }

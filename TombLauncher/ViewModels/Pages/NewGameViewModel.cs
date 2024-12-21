@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,8 +9,6 @@ using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Data.Models;
-using TombLauncher.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
 
@@ -21,7 +20,7 @@ public partial class NewGameViewModel : PageViewModel
     {
         _newGameService = newGameService;
         _gameMetadata = new GameMetadataViewModel();
-        _gameMetadata.PropertyChanged += OnGameMetadataPropertyChanged;
+        //_gameMetadata.PropertyChanged += OnGameMetadataPropertyChanged;
 
         AvailableLengths = EnumUtils.GetEnumViewModels<GameLength>().ToObservableCollection();
         AvailableDifficulties = EnumUtils.GetEnumViewModels<GameDifficulty>().ToObservableCollection();
@@ -40,19 +39,19 @@ public partial class NewGameViewModel : PageViewModel
             }
         });
 
-        PickZipArchiveCmd = new RelayCommand(PickZipArchive);
-        PickFolderCmd = new RelayCommand(PickFolder);
+        PickZipArchiveCmd = new AsyncRelayCommand(PickZipArchive);
+        PickFolderCmd = new AsyncRelayCommand(PickFolder);
     }
 
     private readonly NewGameService _newGameService;
 
-    private void OnGameMetadataPropertyChanged(object sender, PropertyChangedEventArgs e)
+   /* private void OnGameMetadataPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(GameMetadataViewModel.Title))
         {
             SaveCmd.NotifyCanExecuteChanged();
         }
-    }
+    }*/
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;
     [ObservableProperty] private string _source;
     public ObservableCollection<EnumViewModel<GameLength>> AvailableLengths { get; }
@@ -61,19 +60,19 @@ public partial class NewGameViewModel : PageViewModel
 
     public ICommand PickZipArchiveCmd { get; }
 
-    private async void PickZipArchive()
+    private async Task PickZipArchive()
     {
         Source = await _newGameService.PickZipArchive();
     }
 
     public ICommand PickFolderCmd { get; }
 
-    private async void PickFolder()
+    private async Task PickFolder()
     {
         Source = await _newGameService.PickFolder();
     }
 
-    protected override async void SaveInner()
+    protected override async Task SaveInner()
     {
         IsBusy = true;
         
@@ -87,7 +86,7 @@ public partial class NewGameViewModel : PageViewModel
 
     public IDialogService DialogService => _newGameService.DialogService;
 
-    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    /*protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(GameMetadataViewModel.Title) || e.PropertyName == nameof(Source))
         {
@@ -95,5 +94,5 @@ public partial class NewGameViewModel : PageViewModel
         }
 
         base.OnPropertyChanged(e);
-    }
+    }*/
 }
