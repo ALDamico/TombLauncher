@@ -78,9 +78,9 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{DynamicResource Title}" Binding="{Binding GameMetadata.Title}" />
-                <DataGridTextColumn Header="{DynamicResource Release date}" Binding="{Binding GameMetadata.ReleaseDate}" />
-                <DataGridTextColumn Header="{DynamicResource Install date}" Binding="{Binding GameMetadata.InstallDate}" />
-                <DataGridTextColumn Header="{DynamicResource Engine}" Binding="{Binding GameMetadata.GameEngine}" />
+                <DataGridTextColumn Header="{DynamicResource Release date}" Binding="{Binding GameMetadata.ReleaseDate, StringFormat=d}" />
+                <DataGridTextColumn Header="{DynamicResource Install date}" Binding="{Binding GameMetadata.InstallDate, StringFormat=d}" />
+                <DataGridTextColumn Header="{DynamicResource Engine}" Binding="{Binding GameMetadata.GameEngine, Converter={StaticResource EnumToDescriptionConverter}}" />
                 <DataGridTextColumn Header="{DynamicResource Time played}" Binding="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"/>
                 <DataGridTextColumn Header="{DynamicResource Last played}" Binding="{Binding LastPlayed, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"/>
                 
