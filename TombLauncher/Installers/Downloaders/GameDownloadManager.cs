@@ -19,7 +19,7 @@ public class GameDownloadManager : IGameDownloadManager
         _merger = merger;
         Downloaders = new List<IGameDownloader>();
     }
-    public List<IGameDownloader> Downloaders { get; }
+    public List<IGameDownloader> Downloaders { get; init; }
     private CancellationTokenSource _cancellationTokenSource;
     private readonly IGameMerger _merger;
 

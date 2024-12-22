@@ -108,7 +108,11 @@ public partial class App : Application
         serviceCollection.AddTransient(sp =>
         {
             var cts = new CancellationTokenSource();
-            var downloadManager = new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>());
+            var downloadManager = new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>())
+            {
+                Downloaders = Ioc.Default.GetRequiredService<SettingsService>().GetActiveDownloaders()
+            };
+            
 
             return downloadManager;
         });

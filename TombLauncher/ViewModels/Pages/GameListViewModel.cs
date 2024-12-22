@@ -16,6 +16,7 @@ public partial class GameListViewModel : PageViewModel
         _gameListService = gameListService;
         AddGameCmd = new RelayCommand(AddGame);
         UninstallCmd = new RelayCommand<GameWithStatsViewModel>(Uninstall);
+        OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
         _gameListService.NavigationManager.OnNavigated += OnInit;
     }
 
@@ -32,6 +33,13 @@ public partial class GameListViewModel : PageViewModel
     private void AddGame()
     {
         _gameListService.AddGame();
+    }
+    
+    public ICommand OpenCmd { get; }
+
+    private void Open(GameWithStatsViewModel game)
+    {
+        game.OpenCmd.Execute(null);
     }
     
     public ICommand UninstallCmd { get; }

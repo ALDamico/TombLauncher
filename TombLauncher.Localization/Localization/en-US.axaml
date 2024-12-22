@@ -102,6 +102,7 @@
     <system:String x:Key="App theme">App theme</system:String>
     <system:String x:Key="Loading in progress">Loading in progress</system:String>
     <system:String x:Key="Search starting...">Search starting...</system:String>
+    <system:String x:Key="SEARCH">SEARCH</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

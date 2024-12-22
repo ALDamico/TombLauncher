@@ -29,10 +29,9 @@
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" 
                    Grid.Column="0" 
-                   Grid.ColumnSpan="2" 
-                   HorizontalAlignment="Center" 
-                   FontWeight="DemiBold"
-                   FontSize="20" Text="{DynamicResource Search}"/>
+                   Grid.ColumnSpan="2"
+                   Classes="h1" 
+                   Text="{DynamicResource SEARCH}"/>
         
         <views:GameSearchForm Grid.Row="1"
                               Grid.Column="0"

@@ -17,5 +17,14 @@
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
     </Style>
+    <Style Selector="TextBlock.paragraph">
+        <Setter Property="Margin" Value="0, 5"></Setter>
+    </Style>
+    
+    <Style Selector="TextBlock.h1">
+        <Setter Property="FontFamily" Value="{StaticResource TombRaiderFont}"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="36"/>
+    </Style>
     <!-- Add Styles Here -->
 </Styles>

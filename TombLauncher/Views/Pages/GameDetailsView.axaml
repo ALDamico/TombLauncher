@@ -21,7 +21,7 @@
                        FontSize="20" 
                        Text="{Binding Game.GameMetadata.Title}" />
             <ScrollViewer VerticalScrollBarVisibility="Visible">
-                <TextBlock TextWrapping="Wrap">
+                <TextBlock TextWrapping="Wrap" Classes="paragraph">
                     <Run Text="{DynamicResource By}" />
                     <Run Classes="italicsLabel"
                          Text="{Binding Game.GameMetadata.Author, Converter={StaticResource LocalizedFallbackValueConverter}, ConverterParameter=Unknown}">
