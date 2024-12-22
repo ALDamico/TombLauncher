@@ -11,7 +11,7 @@ public partial class GameDetailsViewModel : PageViewModel
     {
         _gameDetailsService = gameDetailsService;
         _game = game;
-        BrowseFolderCmd = new RelayCommand(BrowseFolder);
+        BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
         UninstallCmd = new RelayCommand(Uninstall, CanUninstall);
     }
 
@@ -22,6 +22,11 @@ public partial class GameDetailsViewModel : PageViewModel
     private void BrowseFolder()
     {
         _gameDetailsService.OpenGameFolder(Game.GameMetadata.InstallDirectory);
+    }
+
+    private bool CanBrowseFolder()
+    {
+        return _gameDetailsService.CanUninstall(Game.GameMetadata.InstallDirectory);
     }
     
     public ICommand UninstallCmd { get; }

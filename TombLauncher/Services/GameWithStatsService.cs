@@ -53,6 +53,11 @@ public class GameWithStatsService : IViewService
         process.Exited += (sender, _) => OnGameExited(game, sender as Process);
         process.Start();
     }
+
+    public bool CanPlayGame(GameWithStatsViewModel game)
+    {
+        return !string.IsNullOrWhiteSpace(game.GameMetadata.InstallDirectory);
+    }
     
     private void OnGameExited(GameWithStatsViewModel game, Process process)
     {

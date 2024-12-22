@@ -11,7 +11,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     public GameWithStatsViewModel(GameWithStatsService gameWithStatsService)
     {
         _gameWithStatsService = gameWithStatsService;
-        PlayCmd = new RelayCommand(Play);
+        PlayCmd = new RelayCommand(Play, CanPlay);
         OpenCmd = new RelayCommand(Open);
     }
 
@@ -26,6 +26,8 @@ public partial class GameWithStatsViewModel : ViewModelBase
     {
         _gameWithStatsService.PlayGame(this);
     }
+
+    private bool CanPlay() => _gameWithStatsService.CanPlayGame(this);
     public ICommand OpenCmd { get; }
     private void Open()
     {
