@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
+using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Downloaders;
@@ -118,7 +119,13 @@ public class GameSearchService : IViewService
                 }
             }
 
-            Dispatcher.UIThread.Invoke(() => target.FetchedResults = mappedGames.ToObservableCollection());
+            var observableCollection = mappedGames.ToObservableCollection();
+
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                target.FetchedResults.Clear();
+                target.FetchedResults.AddRange(observableCollection);
+            });
             target.HasMoreResults = GameDownloadManager.HasMoreResults();
         }
         catch (OperationCanceledException)
