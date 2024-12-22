@@ -28,6 +28,7 @@
         <Style Selector="CalendarDatePicker">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
+        <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
     </Application.Styles>
     <Application.Resources>
         <ResourceDictionary>

@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -17,17 +16,21 @@
             <ColumnDefinition Width="Auto" MinWidth="200" />
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Column="0">
-            <TextBlock DockPanel.Dock="Top" FontWeight="DemiBold" FontSize="20" Text="{Binding Game.GameMetadata.Title}" />
+            <TextBlock DockPanel.Dock="Top" 
+                       FontWeight="DemiBold" 
+                       FontSize="20" 
+                       Text="{Binding Game.GameMetadata.Title}" />
             <ScrollViewer VerticalScrollBarVisibility="Visible">
                 <TextBlock TextWrapping="Wrap">
                     <Run Text="{DynamicResource By}" />
-                    <Run FontWeight="DemiBold" FontStyle="Italic"
+                    <Run Classes="italicsLabel"
                          Text="{Binding Game.GameMetadata.Author, Converter={StaticResource LocalizedFallbackValueConverter}, ConverterParameter=Unknown}">
                     </Run>
                     <LineBreak/>
 
                     <Run Text="{DynamicResource Released on}" />
-                    <Run FontWeight="DemiBold" Text="{Binding Game.GameMetadata.ReleaseDate}" />
+                    <Run FontWeight="DemiBold" 
+                         Text="{Binding Game.GameMetadata.ReleaseDate}" />
                     <LineBreak/>
                     <Run Text="{Binding Game.GameMetadata.Description}" />
                 </TextBlock>
@@ -35,30 +38,38 @@
             </ScrollViewer>
         </DockPanel>
 
-        <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Stretch">
-            <Image Source="{Binding Game.GameMetadata.TitlePic}" Width="320" Height="240"></Image>
-            <Button Background="Green" Command="{Binding Game.PlayCmd}" HorizontalContentAlignment="Center"
-                    HorizontalAlignment="Stretch">
+        <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Stretch" Classes="stackedButtons">
+            <Image Source="{Binding Game.GameMetadata.TitlePic}" 
+                   Width="320" 
+                   Height="240"/>
+            <Button Background="Green" 
+                    Command="{Binding Game.PlayCmd}" >
                 <Button.Content>
                     <DockPanel>
                         <avalonia:MaterialIcon Kind="Play" />
-                        <TextBlock DockPanel.Dock="Right" Margin="10, 0" Text="{DynamicResource Play}" />
+                        <TextBlock DockPanel.Dock="Right" 
+                                   Margin="10, 0" 
+                                   Text="{DynamicResource Play}" />
                     </DockPanel>
                 </Button.Content>
             </Button>
-            <Button Command="{Binding BrowseFolderCmd}" HorizontalContentAlignment="Center"
+            <Button Command="{Binding BrowseFolderCmd}" 
+                    HorizontalContentAlignment="Center"
                     HorizontalAlignment="Stretch">
                 <Button.Content>
                     <DockPanel>
                         <avalonia:MaterialIcon Kind="FolderOpen" />
-                        <TextBlock DockPanel.Dock="Right" Margin="10, 0" Text="{DynamicResource Browse files}" />
+                        <TextBlock DockPanel.Dock="Right" Margin="10, 0" 
+                                   Text="{DynamicResource Browse files}" />
                     </DockPanel>
                 </Button.Content>
             </Button>
-            <Button Background="DarkRed" Command="{Binding UninstallCmd}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch">
+            <Button Background="DarkRed" 
+                    Command="{Binding UninstallCmd}">
                 <DockPanel>
                     <avalonia:MaterialIcon Kind="TrashCan"/>
-                    <TextBlock DockPanel.Dock="Right" Margin="10, 0" Text="{DynamicResource Uninstall}"></TextBlock>
+                    <TextBlock DockPanel.Dock="Right" Margin="10, 0" 
+                               Text="{DynamicResource Uninstall}"></TextBlock>
                 </DockPanel>
             </Button>
         </StackPanel>

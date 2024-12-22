@@ -1,0 +1,21 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+    
+    
+    <Style Selector="Run.italicsLabel">
+        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="FontStyle" Value="Italic"/>
+    </Style>
+    
+    <Style Selector="StackPanel.stackedButtons > Button" >
+        <Setter Property="Margin" Value="0, 5"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+    </Style>
+    <!-- Add Styles Here -->
+</Styles>
