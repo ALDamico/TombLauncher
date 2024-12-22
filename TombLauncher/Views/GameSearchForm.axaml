@@ -45,11 +45,15 @@
         <ComboBox Grid.Row="2" 
                   Grid.Column="1" 
                   ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableEngines}" 
-                  SelectedItem="{Binding GameEngine}"/>
+                  SelectedValue="{Binding GameEngine}"
+                  DisplayMemberBinding="{Binding Description}"
+                  SelectedValueBinding="{Binding Value}"/>
         <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource Difficulty}"/>
         <ComboBox Grid.Row="2" Grid.Column="3"
                   ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableDifficulties}" 
-                  SelectedItem="{Binding GameDifficulty}"></ComboBox>
+                  SelectedValue="{Binding GameDifficulty}" 
+                  DisplayMemberBinding="{Binding Description}" 
+                  SelectedValueBinding="{Binding Value}"></ComboBox>
         <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource Rating}"/>
         <controls:RatingControl Grid.Row="3" Grid.Column="3" Value="{Binding Rating}" NumberOfStars="10"/>
     </Grid>

@@ -35,7 +35,10 @@
         
         <views:GameSearchForm Grid.Row="1"
                               Grid.Column="0"
-                              DataContext="{Binding SearchPayload}" />
+                              DataContext="{Binding SearchPayload}" 
+                              AvailableDifficulties="{Binding AvailableDifficulties}"
+                              AvailableEngines="{Binding AvailableEngines}"
+                              />
         <controls:IconButton Grid.Row="1" Grid.Column="1"
                              Text="{DynamicResource Search}"
                              Icon="Search"

@@ -1,9 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
@@ -13,11 +16,12 @@ public partial class GameSearchViewModel : PageViewModel
     public GameSearchViewModel(GameSearchService searchService)
     {
         _gameSearchService = searchService;
-        _searchPayload = new DownloaderSearchPayloadViewModel();
+        SearchPayload = new DownloaderSearchPayloadViewModel();
         SearchCmd = new AsyncRelayCommand(Search);
         OpenCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel>(Open);
         LoadMoreCmd = new AsyncRelayCommand(LoadMore);
         IsCancelable = true;
+        
     }
 
     private GameSearchService _gameSearchService;
@@ -25,6 +29,7 @@ public partial class GameSearchViewModel : PageViewModel
     [ObservableProperty] private DownloaderSearchPayloadViewModel _searchPayload;
     [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults;
     [ObservableProperty] private bool _hasMoreResults;
+    
 
     protected override void Cancel()
     {
