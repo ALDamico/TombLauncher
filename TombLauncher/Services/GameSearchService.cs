@@ -91,6 +91,10 @@ public class GameSearchService : IViewService
     public async Task Search(GameSearchViewModel target)
     {
         target.SetBusy("Search starting...".GetLocalizedString());
+        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        var downloaders = settingsService.GetActiveDownloaders();
+        GameDownloadManager.Downloaders.Clear();
+        GameDownloadManager.Downloaders.AddRange(downloaders);
         target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         try
         {

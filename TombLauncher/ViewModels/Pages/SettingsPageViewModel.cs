@@ -31,7 +31,7 @@ public partial class SettingsPageViewModel : PageViewModel
         LanguageSettings.ApplicationLanguage =
             supportedLanguages.FirstOrDefault(l => _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo));
 
-        var downloaders = _settingsService.GetDownloaders();
+        var downloaders = _settingsService.GetDownloaderViewModels();
         DownloaderSettings.AvailableDownloaders = downloaders.ToObservableCollection();
     }
 

@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using Microsoft.Extensions.DependencyInjection;
+using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
@@ -69,8 +73,27 @@ public class SettingsService : IViewService
         viewModel.ClearBusy();
     }
 
-    public List<DownloaderViewModel> GetDownloaders()
+    public List<DownloaderViewModel> GetDownloaderViewModels()
     {
         return _mapper.Map<List<DownloaderViewModel>>(_settingsUnitOfWork.GetDownloaderConfigurations());
+    }
+
+    public List<IGameDownloader> GetActiveDownloaders()
+    {
+        var downloaderConfigs = _settingsUnitOfWork.GetDownloaderConfigurations(true);
+        var output = new List<IGameDownloader>();
+        foreach (var config in downloaderConfigs)
+        {
+            var downloaderImpl = ReflectionUtils.GetTypeByName(config.ClassName);
+            if (downloaderImpl == null)
+            {
+                continue;
+            }
+
+            var downloader = (IGameDownloader)Ioc.Default.GetRequiredService(downloaderImpl);
+            output.Add(downloader);
+        }
+
+        return output;
     }
 }
