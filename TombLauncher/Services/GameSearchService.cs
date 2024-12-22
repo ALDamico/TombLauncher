@@ -17,6 +17,7 @@ using TombLauncher.Extensions;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 
@@ -80,6 +81,11 @@ public class GameSearchService : IViewService
             var gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
             var vm = new GameDetailsViewModel(gameDetailsService,
                 new GameWithStatsViewModel(gameWithStatsService) { GameMetadata = detailsViewModel });
+
+            if (details.TitlePic is { Length: > 0 } && gameToOpen.TitlePic == null)
+            {
+                gameToOpen.TitlePic = ImageUtils.ToBitmap(details.TitlePic);
+            }
             target.ClearBusy();
             NavigationManager.NavigateTo(vm);
             return;
