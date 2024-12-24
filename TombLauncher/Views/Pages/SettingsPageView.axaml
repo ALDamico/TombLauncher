@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="{DynamicResource 'Appearance'}"></TextBlock>
+                <TextBlock Classes="settings-h1" Text="{DynamicResource 'APPEARANCE'}"></TextBlock>
                 <TextBlock Text="{DynamicResource 'App theme'}"></TextBlock>
                 <ComboBox SelectedItem="{Binding AppearanceSettings.SelectedTheme}" 
                           ItemsSource="{Binding AppearanceSettings.AvailableThemes}"></ComboBox>
@@ -31,7 +31,7 @@
                 <DockPanel LastChildFill="True">
                     <controls:Infotip DockPanel.Dock="Right" Header="{DynamicResource Want to localize Tomb Launcher?}" 
                                       ToolTipContent="{DynamicResource Localization infotip content}"></controls:Infotip>
-                    <TextBlock Text="{DynamicResource 'Languages'}" FontSize="36"/>    
+                    <TextBlock Classes="settings-h1" Text="{DynamicResource 'LANGUAGES'}"/>    
                 </DockPanel>
                 
                 <TextBlock Text="{DynamicResource 'Application language'}"></TextBlock>
@@ -50,7 +50,7 @@
                 </ComboBox>
                 <DockPanel LastChildFill="True">
                     <controls:Infotip DockPanel.Dock="Right" ToolTipContent="{DynamicResource Downloaders infotip content}"></controls:Infotip>
-                    <TextBlock Text="{DynamicResource 'Downloaders'}" FontSize="36"/>    
+                    <TextBlock Classes="settings-h1" Text="{DynamicResource 'DOWNLOADERS'}"/>    
                 </DockPanel>
                 <DockPanel LastChildFill="True">
                     <StackPanel DockPanel.Dock="Right" Orientation="Vertical" HorizontalAlignment="Center">

@@ -26,6 +26,11 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="FontSize" Value="36"/>
     </Style>
+    <Style Selector="TextBlock.settings-h1">
+        <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+        <Setter Property="FontFamily" Value="{StaticResource TombRaiderFont}"/>
+        <Setter Property="FontSize" Value="36"/>
+    </Style>
     <Style Selector="TextBlock.label">
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Margin" Value="5, 0"></Setter>

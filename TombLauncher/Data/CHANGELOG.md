@@ -1,2 +1,17 @@
-﻿# What's new in version 0.1
- - First ever release of Tomb Launcher!
+﻿# Tomb Launcher
+## What is Tomb Launcher?
+Tomb Launcher is a mod manager for the original Tomb Raider games. It is heavily inspired by Doom Launcher, a similar application for managing Doom WADs.
+
+It allows you to discover new custom levels, keep them organized in one place, keep track of your play time, and much more.
+
+This project is still under active development, and as such some things may not work perfectly yet or may straight up be broken.
+
+# What's new in version 0.1
+ - Adds downloaders for TRLE.net and ApideTR
+ - Keep track of your play time
+ - 
+
+# Credits
+ - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22
+ - Flag icons by [Lipis Flag Icons](https://github.com/lipis/flag-icons)
+ - Tomb Raider Font by [Navin_Ad](https://www.dafont.com/navin-adchariyavanich.d5775)

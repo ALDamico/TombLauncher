@@ -32,11 +32,21 @@ public abstract class ViewModelBase : ObservableObject
     
     protected void RaiseCanExecuteChanged<T>(ICommand command)
     {
-        ((RelayCommand<T>)command).NotifyCanExecuteChanged();
+        if (command is RelayCommand<T> relayCommand)
+            relayCommand.NotifyCanExecuteChanged();
+        else if (command is AsyncRelayCommand<T> asyncRelayCommand)
+            asyncRelayCommand.NotifyCanExecuteChanged();
     }
 
     protected void RaiseCanExecuteChanged(ICommand command)
     {
-        ((RelayCommand)command).NotifyCanExecuteChanged();
+        if (command is RelayCommand relayCommand)
+        {
+            relayCommand.NotifyCanExecuteChanged();
+        }
+        else if (command is AsyncRelayCommand asyncRelayCommand)
+        {
+            asyncRelayCommand.NotifyCanExecuteChanged();
+        }
     }
 }
