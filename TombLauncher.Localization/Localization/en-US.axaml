@@ -103,6 +103,8 @@
     <system:String x:Key="Loading in progress">Loading in progress</system:String>
     <system:String x:Key="Search starting...">Search starting...</system:String>
     <system:String x:Key="SEARCH">SEARCH</system:String>
+    <system:String x:Key="Setup">Setup</system:String>
+    <system:String x:Key="Launching setup for GAMENAME">Launching setup for {0}</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

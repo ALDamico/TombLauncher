@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameDetailsView"
              x:DataType="pages:GameDetailsViewModel">
@@ -16,9 +17,9 @@
             <ColumnDefinition Width="Auto" MinWidth="200" />
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Column="0">
-            <TextBlock DockPanel.Dock="Top" 
-                       FontWeight="DemiBold" 
-                       FontSize="20" 
+            <TextBlock DockPanel.Dock="Top"
+                       FontWeight="DemiBold"
+                       FontSize="20"
                        Text="{Binding Game.GameMetadata.Title}" />
             <ScrollViewer VerticalScrollBarVisibility="Visible">
                 <TextBlock TextWrapping="Wrap" Classes="paragraph">
@@ -26,12 +27,12 @@
                     <Run Classes="italicsLabel"
                          Text="{Binding Game.GameMetadata.Author, Converter={StaticResource LocalizedFallbackValueConverter}, ConverterParameter=Unknown}">
                     </Run>
-                    <LineBreak/>
+                    <LineBreak />
 
                     <Run Text="{DynamicResource Released on}" />
-                    <Run FontWeight="DemiBold" 
+                    <Run FontWeight="DemiBold"
                          Text="{Binding Game.GameMetadata.ReleaseDate}" />
-                    <LineBreak/>
+                    <LineBreak />
                     <Run Text="{Binding Game.GameMetadata.Description}" />
                 </TextBlock>
 
@@ -39,39 +40,32 @@
         </DockPanel>
 
         <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Stretch" Classes="stackedButtons">
-            <Image Source="{Binding Game.GameMetadata.TitlePic}" 
-                   Width="320" 
-                   Height="240"/>
-            <Button Background="Green" 
-                    Command="{Binding Game.PlayCmd}" >
-                <Button.Content>
-                    <DockPanel>
-                        <avalonia:MaterialIcon Kind="Play" />
-                        <TextBlock DockPanel.Dock="Right" 
-                                   Margin="10, 0" 
-                                   Text="{DynamicResource Play}" />
-                    </DockPanel>
-                </Button.Content>
-            </Button>
-            <Button Command="{Binding BrowseFolderCmd}" 
-                    HorizontalContentAlignment="Center"
-                    HorizontalAlignment="Stretch">
-                <Button.Content>
-                    <DockPanel>
-                        <avalonia:MaterialIcon Kind="FolderOpen" />
-                        <TextBlock DockPanel.Dock="Right" Margin="10, 0" 
-                                   Text="{DynamicResource Browse files}" />
-                    </DockPanel>
-                </Button.Content>
-            </Button>
-            <Button Background="DarkRed" 
-                    Command="{Binding UninstallCmd}">
-                <DockPanel>
-                    <avalonia:MaterialIcon Kind="TrashCan"/>
-                    <TextBlock DockPanel.Dock="Right" Margin="10, 0" 
-                               Text="{DynamicResource Uninstall}"></TextBlock>
-                </DockPanel>
-            </Button>
+            <Image Source="{Binding Game.GameMetadata.TitlePic}"
+                   Width="320"
+                   Height="240" />
+            <controls:SplitIconButton Background="Green"
+                                      Classes="stretched"
+                                      Icon="Play"
+                                      Text="{DynamicResource 'Play'}"
+                                      Command="{Binding Game.PlayCmd}">
+                <controls:SplitIconButton.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Header="{DynamicResource Setup}" 
+                                  Command="{Binding Game.LaunchSetupCmd}">
+                            <MenuItem.Icon>
+                                <avalonia:MaterialIcon Kind="Settings"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuFlyout>
+                </controls:SplitIconButton.Flyout>
+            </controls:SplitIconButton>
+            <controls:IconButton Command="{Binding BrowseFolderCmd}"
+                    Classes="stretched" Icon="FolderOpen" Text="{DynamicResource Browse files}"/>
+            <controls:IconButton Background="DarkRed"
+                    Classes="stretched"
+                    Icon="Delete"
+                    Text="{DynamicResource Uninstall}"
+                    Command="{Binding UninstallCmd}"/>
         </StackPanel>
     </Grid>
 </UserControl>

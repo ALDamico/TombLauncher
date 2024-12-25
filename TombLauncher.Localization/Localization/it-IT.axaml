@@ -103,6 +103,8 @@
     <system:String x:Key="Loading in progress">Caricamento in corso</system:String>
     <system:String x:Key="Search starting...">Avvio ricerca...</system:String>
     <system:String x:Key="SEARCH">CERCA</system:String>
+    <system:String x:Key="Setup">Configura</system:String>
+    <system:String x:Key="Launching setup for GAMENAME">Avvio dell'utility di configurazione per {0}</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

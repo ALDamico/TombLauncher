@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
@@ -41,22 +42,18 @@ public class GameWithStatsService : IViewService
     {
         var currentPage = NavigationManager.GetCurrentPage();
         currentPage.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
-        var process = new Process()
-        {
-            StartInfo = new ProcessStartInfo(game.GameMetadata.ExecutablePath)
-            {
-                WorkingDirectory = game.GameMetadata.InstallDirectory,
-                UseShellExecute = true,
-            },
-            EnableRaisingEvents = true
-        };
-        process.Exited += (sender, _) => OnGameExited(game, sender as Process);
-        process.Start();
+        LaunchProcess(game, true);
     }
 
     public bool CanPlayGame(GameWithStatsViewModel game)
     {
         return !string.IsNullOrWhiteSpace(game.GameMetadata.InstallDirectory);
+    }
+
+    private void OnSetupExited()
+    {
+        var currentPage = NavigationManager.GetCurrentPage();
+        currentPage.ClearBusy();
     }
     
     private void OnGameExited(GameWithStatsViewModel game, Process process)
@@ -67,5 +64,35 @@ public class GameWithStatsService : IViewService
         GamesUnitOfWork.Save();
         NavigationManager.RequestRefresh();
         currentPage.ClearBusy();
+    }
+
+    public void LaunchSetup(GameWithStatsViewModel game)
+    {
+        var currentPage = NavigationManager.GetCurrentPage();
+        currentPage.SetBusy(LocalizationManager.GetLocalizedString("Launching setup for GAMENAME", game.GameMetadata.Title));
+        LaunchProcess(game, false, new List<string>(){"-setup"});
+    }
+
+    private void LaunchProcess(GameWithStatsViewModel game, bool trackPlayTime = false, List<string> arguments = null)
+    {
+        var process = new Process()
+        {
+            StartInfo = new ProcessStartInfo(game.GameMetadata.ExecutablePath)
+            {
+                Arguments = string.Join(" ", arguments ?? new List<string>()),
+                WorkingDirectory = game.GameMetadata.InstallDirectory,
+                UseShellExecute = true,
+            },
+            EnableRaisingEvents = true
+        };
+        if (trackPlayTime)
+        {
+            process.Exited += (sender, _) => OnGameExited(game, sender as Process);
+        }
+        else
+        {
+            process.Exited += (sender, _) => OnSetupExited();
+        }
+        process.Start();
     }
 }

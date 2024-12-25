@@ -13,6 +13,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
         _gameWithStatsService = gameWithStatsService;
         PlayCmd = new RelayCommand(Play, CanPlay);
         OpenCmd = new RelayCommand(Open);
+        LaunchSetupCmd = new RelayCommand(LaunchSetup, CanPlay);
     }
 
     private GameWithStatsService _gameWithStatsService;
@@ -32,5 +33,12 @@ public partial class GameWithStatsViewModel : ViewModelBase
     private void Open()
     {
         _gameWithStatsService.OpenGame(this);
+    }
+    
+    public ICommand LaunchSetupCmd { get; }
+
+    private void LaunchSetup()
+    {
+        _gameWithStatsService.LaunchSetup(this);
     }
 }
