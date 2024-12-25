@@ -22,4 +22,5 @@ public class Game
     public List<GameLink> Links { get; set; }
     public byte[] TitlePic { get; set; }
     public string AuthorFullName { get; set; }
+    public List<GameDocs> Documents { get; set; }
 }
