@@ -14,6 +14,13 @@ public partial class GameWithStatsViewModel : ViewModelBase
         PlayCmd = new RelayCommand(Play, CanPlay);
         OpenCmd = new RelayCommand(Open);
         LaunchSetupCmd = new RelayCommand(LaunchSetup, CanPlay);
+        Initialize += OnInitialize;
+    }
+
+    private async void OnInitialize()
+    {
+        _gameWithStatsService.FetchLinks(this);
+        throw new NotImplementedException();
     }
 
     private GameWithStatsService _gameWithStatsService;
@@ -22,6 +29,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     [ObservableProperty] private TimeSpan _totalPlayedTime;
     [ObservableProperty] private DateTime? _lastPlayed;
     [ObservableProperty] private bool _areCommandsVisible;
+    public ICommand OpenDocsCmd { get; }
     public ICommand PlayCmd { get; }
     private void Play()
     {

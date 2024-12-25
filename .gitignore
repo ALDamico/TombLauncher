@@ -6,3 +6,4 @@ riderModule.iml
 .idea
 *.DotSettings.user
 .vs
+TombLauncher.Data/TombLauncher.db

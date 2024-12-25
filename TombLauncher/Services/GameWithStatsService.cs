@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
@@ -94,5 +95,11 @@ public class GameWithStatsService : IViewService
             process.Exited += (sender, _) => OnSetupExited();
         }
         process.Start();
+    }
+
+    public void FetchLinks(GameWithStatsViewModel gameWithStatsViewModel)
+    {
+        var walkthroughLinks = GamesUnitOfWork.GetLinks(gameWithStatsViewModel.GameMetadata.Id, LinkType.Walkthrough);
+        var docs = GamesUnitOfWork.GetLinks()
     }
 }

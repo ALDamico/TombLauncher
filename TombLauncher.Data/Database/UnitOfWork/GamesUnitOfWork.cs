@@ -181,11 +181,17 @@ public class GamesUnitOfWork : UnitOfWorkBase
         Save();
     }
 
-    public List<GameLinkDto> GetLinks(int gameId)
+    public List<GameLinkDto> GetLinks(int gameId, LinkType? linkType = null)
     {
         var queryResult = Links.Get(l => l.GameId == gameId);
+        if (linkType != null)
+        {
+            queryResult = queryResult.Where(q => q.LinkType == linkType);
+        }
         return _mapper.Map<List<GameLinkDto>>(queryResult);
     }
+    
+    public List<>
 
     public void SaveLink(GameLinkDto dto)
     {
