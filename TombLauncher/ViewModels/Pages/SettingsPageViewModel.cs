@@ -23,6 +23,7 @@ public partial class SettingsPageViewModel : PageViewModel
     [ObservableProperty] private LanguageSettings _languageSettings;
     [ObservableProperty] private DownloaderSettings _downloaderSettings;
     [ObservableProperty] private AppearanceSettings _appearanceSettings;
+    [ObservableProperty] private GameDetailsSettings _gameDetailsSettings;
 
     private void InitializeSettings()
     {
@@ -33,6 +34,7 @@ public partial class SettingsPageViewModel : PageViewModel
 
         var downloaders = _settingsService.GetDownloaderViewModels();
         DownloaderSettings.AvailableDownloaders = downloaders.ToObservableCollection();
+        GameDetailsSettings = _settingsService.GetGameDetailsSettings();
     }
 
     protected override async Task SaveInner()

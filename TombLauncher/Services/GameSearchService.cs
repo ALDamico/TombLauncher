@@ -38,6 +38,7 @@ public class GameSearchService : IViewService
         DialogService = dialogService;
         _mapper = mapperConfiguration.CreateMapper();
     }
+
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public ILocalizationManager LocalizationManager { get; }
@@ -72,7 +73,7 @@ public class GameSearchService : IViewService
     {
         target.SetBusy(true);
         var gameToOpenDto = _mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
-        
+
         var details = await GameDownloadManager.FetchDetails(gameToOpenDto);
         if (details != null)
         {
@@ -80,13 +81,15 @@ public class GameSearchService : IViewService
 
             var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
             var gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
+            var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
             var vm = new GameDetailsViewModel(gameDetailsService,
-                new GameWithStatsViewModel(gameWithStatsService) { GameMetadata = detailsViewModel });
+                new GameWithStatsViewModel(gameWithStatsService) { GameMetadata = detailsViewModel }, settingsService);
 
             if (details.TitlePic is { Length: > 0 } && gameToOpen.TitlePic == null)
             {
                 gameToOpen.TitlePic = ImageUtils.ToBitmap(details.TitlePic);
             }
+
             target.ClearBusy();
             NavigationManager.NavigateTo(vm);
             return;

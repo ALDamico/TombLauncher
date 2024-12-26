@@ -105,6 +105,17 @@
     <system:String x:Key="SEARCH">CERCA</system:String>
     <system:String x:Key="Setup">Configura</system:String>
     <system:String x:Key="Launching setup for GAMENAME">Avvio dell'utility di configurazione per {0}</system:String>
+    <system:String x:Key="Read walkthrough">Leggi la soluzione</system:String>
+    <system:String x:Key="From SITENAME">Da {0}</system:String>
+    <system:String x:Key="An error occurred while trying to open the walkthrough at WALKTHROUGH_URL. Would you like to copy this URL to the clipboard?">Si è verificato un errore nel tentativo di aprire la soluzione all'indirizzo "{0}". Vuoi copiare il link negli appunti?</system:String>
+    <system:String x:Key="Error">Errore</system:String>
+    <system:String x:Key="Yes">Sì</system:String>
+    <system:String x:Key="No">No</system:String>
+    <system:String x:Key="GAME DETAILS">DETTAGLI DI GIOCO</system:String>
+    <system:String x:Key="Ask for confirmation before opening a walkthrough">Chiedi conferma prima di aprire una soluzione</system:String>
+    <system:String x:Key="Use internal viewer if available">Utilizza il visualizzatore interno se disponibile</system:String>
+    <system:String x:Key="Are you sure you want to read the walkthrough?">Sei sicuro di voler leggere la soluzione?</system:String>
+    <system:String x:Key="Confirm">Conferma</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

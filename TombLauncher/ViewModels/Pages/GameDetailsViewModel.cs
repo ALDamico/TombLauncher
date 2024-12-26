@@ -1,22 +1,39 @@
-﻿using System.Windows.Input;
+﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameDetailsViewModel : PageViewModel
 {
-    public GameDetailsViewModel(GameDetailsService gameDetailsService, GameWithStatsViewModel game) 
+    public GameDetailsViewModel(GameDetailsService gameDetailsService, GameWithStatsViewModel game, SettingsService settingsService) 
     {
         _gameDetailsService = gameDetailsService;
         _game = game;
         BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
         UninstallCmd = new RelayCommand(Uninstall, CanUninstall);
+        ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
+        Initialize += OnInitialize;
+        var gameDetailsSettings = settingsService.GetGameDetailsSettings();
+        _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
+        _useInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
+    }
+
+    private bool _askForConfirmationBeforeOpeningWalkthrough;
+    private bool _useInternalViewerIfAvailable;
+
+    private async void OnInitialize()
+    {
+        await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
     }
 
     private readonly GameDetailsService _gameDetailsService;
     [ObservableProperty] private GameWithStatsViewModel _game;
+    [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks;
     public ICommand BrowseFolderCmd { get; }
 
     private void BrowseFolder()
@@ -27,6 +44,13 @@ public partial class GameDetailsViewModel : PageViewModel
     private bool CanBrowseFolder()
     {
         return _gameDetailsService.CanUninstall(Game.GameMetadata.InstallDirectory);
+    }
+    
+    public ICommand ReadWalkthroughCmd { get; }
+
+    private async Task ReadWalkthrough(GameLinkViewModel link)
+    {
+        await _gameDetailsService.OpenWalkthrough(link.Link, _askForConfirmationBeforeOpeningWalkthrough);
     }
     
     public ICommand UninstallCmd { get; }

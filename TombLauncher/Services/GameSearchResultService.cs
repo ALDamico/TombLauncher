@@ -73,13 +73,29 @@ public class GameSearchResultService : IViewService
         });
         var hashCalculator = Ioc.Default.GetRequiredService<GameFileHashCalculator>();
         var hashes = await hashCalculator.CalculateHashes(downloadPath);
-        if (GamesUnitOfWork.ExistsHashes(hashes))
+        if (GamesUnitOfWork.ExistsHashes(hashes, out var foundGameId))
         {
+            var gameId = foundGameId.GetValueOrDefault();
             var result = await MessageBoxService.Show("Game already installed",
                 "This game is already installed. Do you want to install anyway?", MsgBoxButton.YesNo,
                 MsgBoxImage.Question);
             if (result.ButtonResult == MsgBoxButtonResult.No)
             {
+                GamesUnitOfWork.SaveLink(new GameLinkDto()
+                    { Link = gameToInstall.DownloadLink, LinkType = LinkType.Download, GameId = gameId, BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName});
+                GamesUnitOfWork.SaveLink(new GameLinkDto()
+                    { Link = gameToInstall.DetailsLink, LinkType = LinkType.Details, GameId = gameId, BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
+                if (gameToInstall.HasReviews)
+                {
+                    GamesUnitOfWork.SaveLink(new GameLinkDto()
+                        { Link = gameToInstall.ReviewsLink, LinkType = LinkType.Reviews, GameId = gameId, BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
+                }
+
+                if (gameToInstall.HasWalkthrough)
+                {
+                    GamesUnitOfWork.SaveLink(new GameLinkDto()
+                        { Link = gameToInstall.WalkthroughLink, LinkType = LinkType.Walkthrough, GameId = gameId, BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
+                }
                 return;
             }
         }
@@ -100,19 +116,19 @@ public class GameSearchResultService : IViewService
         hashes.ForEach(h => h.GameId = dto.Id);
         GamesUnitOfWork.SaveHashes(hashes);
         GamesUnitOfWork.SaveLink(new GameLinkDto()
-            { Link = gameToInstall.DownloadLink, LinkType = LinkType.Download, GameId = dto.Id });
+            { Link = gameToInstall.DownloadLink, LinkType = LinkType.Download, GameId = dto.Id, BaseUrl = gameToInstallDto.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
         GamesUnitOfWork.SaveLink(new GameLinkDto()
-            { Link = gameToInstall.DetailsLink, LinkType = LinkType.Details, GameId = dto.Id });
+            { Link = gameToInstall.DetailsLink, LinkType = LinkType.Details, GameId = dto.Id, BaseUrl = gameToInstallDto.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName});
         if (gameToInstall.HasReviews)
         {
             GamesUnitOfWork.SaveLink(new GameLinkDto()
-                { Link = gameToInstall.ReviewsLink, LinkType = LinkType.Reviews, GameId = dto.Id });
+                { Link = gameToInstall.ReviewsLink, LinkType = LinkType.Reviews, GameId = dto.Id, BaseUrl = gameToInstallDto.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName});
         }
 
         if (gameToInstall.HasWalkthrough)
         {
             GamesUnitOfWork.SaveLink(new GameLinkDto()
-                { Link = gameToInstall.WalkthroughLink, LinkType = LinkType.Walkthrough, GameId = dto.Id });
+                { Link = gameToInstall.WalkthroughLink, LinkType = LinkType.Walkthrough, GameId = dto.Id, BaseUrl = gameToInstallDto.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
         }
 
         GamesUnitOfWork.Save();

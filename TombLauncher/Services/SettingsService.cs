@@ -70,12 +70,26 @@ public class SettingsService : IViewService
         await tf.StartNew(() => _settingsUnitOfWork.UpdateDownloaderConfigurations(mappedDownloaderConfigs));
         await tf.StartNew(() =>
             _settingsUnitOfWork.UpdateAppTheme(viewModel.AppearanceSettings.SelectedTheme.Key.ToString()));
+
+        await tf.StartNew(() =>
+            _settingsUnitOfWork.UpdateDetailsSettings(viewModel.GameDetailsSettings.AskForConfirmationBeforeWalkthrough,
+                viewModel.GameDetailsSettings.UseInternalViewerIfAvailable));
         viewModel.ClearBusy();
     }
 
     public List<DownloaderViewModel> GetDownloaderViewModels()
     {
         return _mapper.Map<List<DownloaderViewModel>>(_settingsUnitOfWork.GetDownloaderConfigurations());
+    }
+
+    public GameDetailsSettings GetGameDetailsSettings()
+    {
+        var (askForConfirmation, useInternalViewer) = _settingsUnitOfWork.GetGameDetailsSettings();
+        return new GameDetailsSettings()
+        {
+            AskForConfirmationBeforeWalkthrough = askForConfirmation,
+            UseInternalViewerIfAvailable = useInternalViewer
+        };
     }
 
     public List<IGameDownloader> GetActiveDownloaders()

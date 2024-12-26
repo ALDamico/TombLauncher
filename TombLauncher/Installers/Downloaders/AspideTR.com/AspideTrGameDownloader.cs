@@ -73,6 +73,7 @@ public class AspideTrGameDownloader : IGameDownloader
         {
             var searchResult = new GameSearchResultMetadataDto();
             searchResult.BaseUrl = BaseUrl;
+            searchResult.SourceSiteDisplayName = DisplayName;
             var headerNode = level.SelectSingleNode("./div[@class='level-content-block']/header");
             var authorNode = headerNode.SelectSingleNode("./h2/em/a");
             if (authorNode != null)
@@ -130,11 +131,11 @@ public class AspideTrGameDownloader : IGameDownloader
                 {
                     searchResult.DetailsLink = linkText;
                 }
-                else if (link.HasClass("reviews"))
+                else if (link.HasClass("reviews") && linkText != "#")
                 {
                     searchResult.ReviewsLink = linkText;
                 }
-                else if (link.HasClass("walkthroughs"))
+                else if (link.HasClass("walkthroughs") && linkText != "#")
                 {
                     searchResult.WalkthroughLink = linkText;
                 }

@@ -110,6 +110,70 @@ public class SettingsUnitOfWork: UnitOfWorkBase
         Settings.Commit();
     }
 
+    public void UpdateDetailsSettings(bool askForConfirmationBeforeWalkthrough, bool useInternalViewer)
+    {
+        var askForConfirmationSetting = new ApplicationSetting()
+        {
+            SettingName = SettingsKeys.AskForConfirmationBeforeWalkthrough,
+            BoolValue = askForConfirmationBeforeWalkthrough
+        };
+        UpsertSetting(askForConfirmationSetting);
+
+        var useInternalViewerSetting = new ApplicationSetting()
+        {
+            SettingName = SettingsKeys.UseInternalViewer,
+            BoolValue = useInternalViewer
+        };
+        UpsertSetting(useInternalViewerSetting);
+        
+        Settings.Commit();
+    }
+
+    public (bool askConfirmationBeforeWalkthrough, bool useInternalViewer) GetGameDetailsSettings()
+    {
+        (bool askForConfirmation, bool useInternalViewer) = (true, true);
+        var settingsToSearch = new List<string>()
+        {
+            SettingsKeys.AskForConfirmationBeforeWalkthrough,
+            SettingsKeys.UseInternalViewer
+        };
+        var settingsInDb = Settings.Get(s => settingsToSearch.Contains(s.SettingName)).ToList();
+        foreach (var setting in settingsInDb)
+        {
+            var settingName = setting.SettingName;
+            if (settingName == SettingsKeys.AskForConfirmationBeforeWalkthrough)
+            {
+                askForConfirmation = setting.BoolValue.GetValueOrDefault();
+            }
+            else if (settingName == SettingsKeys.UseInternalViewer)
+            {
+                useInternalViewer = setting.BoolValue.GetValueOrDefault();
+            }
+        }
+
+        return (askForConfirmation, useInternalViewer);
+    }
+
+    private void UpsertSetting(ApplicationSetting applicationSetting)
+    {
+        var existingSetting = Settings.Get(s =>
+            s.Id == applicationSetting.Id || s.SettingName == applicationSetting.SettingName)
+            .FirstOrDefault();
+        if (existingSetting != null)
+        {
+            existingSetting.BoolValue = applicationSetting.BoolValue;
+            existingSetting.DoubleValue = applicationSetting.DoubleValue;
+            existingSetting.IntValue = applicationSetting.IntValue;
+            existingSetting.StringValue = applicationSetting.StringValue;
+            existingSetting.DateTimeValue = applicationSetting.DateTimeValue;
+            Settings.Update(existingSetting);
+        }
+        else
+        {
+            Settings.Insert(applicationSetting);
+        }
+    }
+
     private void InsertSetting(string settingName, int? targetValue)
     {
         var entity = new ApplicationSetting()

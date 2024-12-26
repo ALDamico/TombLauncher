@@ -34,6 +34,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private string _detailsLink;
     [ObservableProperty] private string _baseUrl;
     [ObservableProperty] private Bitmap _titlePic;
+    [ObservableProperty] private string _sourceSiteDisplayName;
     private string _reviewsLink;
 
     public string ReviewsLink

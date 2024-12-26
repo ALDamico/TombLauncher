@@ -35,7 +35,8 @@ public class GameWithStatsService : IViewService
     public void OpenGame(GameWithStatsViewModel game)
     {
         var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
-        NavigationManager.NavigateTo(new GameDetailsViewModel(gameDetailsService, game));
+        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        NavigationManager.NavigateTo(new GameDetailsViewModel(gameDetailsService, game, settingsService));
     }
 
     public void PlayGame(GameWithStatsViewModel game)

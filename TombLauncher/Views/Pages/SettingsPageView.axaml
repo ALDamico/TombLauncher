@@ -77,6 +77,11 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </DockPanel>
+                <TextBlock Text="{DynamicResource 'GAME DETAILS'}" Classes="settings-h1"/>
+                <CheckBox IsChecked="{Binding GameDetailsSettings.AskForConfirmationBeforeWalkthrough}" 
+                          Content="{DynamicResource 'Ask for confirmation before opening a walkthrough'}"/>
+                <CheckBox IsChecked="{Binding GameDetailsSettings.UseInternalViewerIfAvailable}" 
+                          Content="{DynamicResource 'Use internal viewer if available'}"/>
                 
             </StackPanel>
         </ScrollViewer>

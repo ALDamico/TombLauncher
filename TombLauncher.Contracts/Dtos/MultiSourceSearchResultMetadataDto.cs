@@ -14,6 +14,7 @@ public class MultiSourceSearchResultMetadataDto : IMultiSourceSearchResultMetada
     public GameEngine Engine { get; set; }
     public string DetailsLink { get; set; }
     public string BaseUrl { get; set; }
+    public string SourceSiteDisplayName { get; set; }
     public byte[] TitlePic { get; set; }
     public string ReviewsLink { get; set; }
     public bool HasReviews => !string.IsNullOrWhiteSpace(ReviewsLink);

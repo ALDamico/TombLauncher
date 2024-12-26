@@ -132,7 +132,7 @@ public class TrleGameDownloader : IGameDownloader
         var dataRows = rows.Skip(1);
         foreach (var row in dataRows)
         {
-            var metadata = new GameSearchResultMetadataDto() { BaseUrl = BaseUrl };
+            var metadata = new GameSearchResultMetadataDto() { BaseUrl = BaseUrl, SourceSiteDisplayName = DisplayName };
             var fields = row.SelectNodes("./td");
             var zipped = headerRow.Zip(fields,
                 (header, r) => new KeyValuePair<string, HtmlNode>(header.InnerText.Trim(),

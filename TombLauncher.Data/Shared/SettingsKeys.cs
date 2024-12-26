@@ -7,4 +7,6 @@ public static class SettingsKeys
     public const string IsEnabled = "IsEnabled";
     public const string Priority = "Priority";
     public const string ApplicationTheme = "Application.Theme";
+    public const string AskForConfirmationBeforeWalkthrough = "Details.AskForConfirmationBeforeWalkthrough";
+    public const string UseInternalViewer = "Details.UseInternalViewer";
 }

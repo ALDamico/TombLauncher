@@ -102,6 +102,7 @@ public class TombLauncherGameMerger : IGameMerger
                 Sources = new List<IGameSearchResultMetadata>(){element},
                 Title = element.Title,
                 BaseUrl = element.BaseUrl,
+                SourceSiteDisplayName = element.SourceSiteDisplayName,
                 DetailsLink = element.DetailsLink,
                 DownloadLink = element.DownloadLink,
                 ReleaseDate = element.ReleaseDate,

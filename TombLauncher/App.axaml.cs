@@ -216,6 +216,7 @@ public partial class App : Application
                 .ForMember(vm => vm.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToByteArray(dto.TitlePic)));
             cfg.CreateMap<DownloaderConfigDto, DownloaderViewModel>()
                 .ReverseMap();
+            cfg.CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
         });
 
         serviceCollection.AddSingleton(_ => mapperConfiguration);

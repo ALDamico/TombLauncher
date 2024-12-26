@@ -13,6 +13,7 @@ public interface IGameSearchResultMetadata
     GameEngine Engine { get; set; }
     string DetailsLink { get; set; }
     string BaseUrl { get; set; }
+    string SourceSiteDisplayName { get; set; }
     public byte[] TitlePic { get; set; }
     string DownloadLink { get; set; }
     int? SizeInMb { get; set; }

@@ -85,6 +85,16 @@ public class GameDownloadManager : IGameDownloadManager
         return null;
     }
 
+    public async Task<MultiSourceSearchResultMetadataDto> FetchAllDetails()
+    {
+        foreach (var downloader in Downloaders)
+        {
+            
+        }
+
+        return null;
+    }
+
     public void CancelCurrentAction()
     {
         _cancellationTokenSource.Cancel();

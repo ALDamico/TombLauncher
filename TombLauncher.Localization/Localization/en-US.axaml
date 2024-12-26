@@ -105,6 +105,17 @@
     <system:String x:Key="SEARCH">SEARCH</system:String>
     <system:String x:Key="Setup">Setup</system:String>
     <system:String x:Key="Launching setup for GAMENAME">Launching setup for {0}</system:String>
+    <system:String x:Key="Read walkthrough">Read walkthrough</system:String>
+    <system:String x:Key="From SITENAME">From {0}</system:String>
+    <system:String x:Key="An error occurred while trying to open the walkthrough at WALKTHROUGH_URL. Would you like to copy this URL to the clipboard?">An error occurred while trying to open the walkthrough at "{0}". Would you like to copy this URL to the clipboard?</system:String>
+    <system:String x:Key="Error">Error</system:String>
+    <system:String x:Key="Yes">Yes</system:String>
+    <system:String x:Key="No">No</system:String>
+    <system:String x:Key="GAME DETAILS">GAME DETAILS</system:String>
+    <system:String x:Key="Ask for confirmation before opening a walkthrough">Ask for confirmation before opening a walkthrough</system:String>
+    <system:String x:Key="Use internal viewer if available">Use internal viewer if available</system:String>
+    <system:String x:Key="Are you sure you want to read the walkthrough?">Are you sure you want to read the walkthrough?</system:String>
+    <system:String x:Key="Confirm">Confirm</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

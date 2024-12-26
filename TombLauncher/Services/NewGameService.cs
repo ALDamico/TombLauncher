@@ -67,7 +67,7 @@ public class NewGameService : IViewService
     {
         progress.Report(new CopyProgressInfo() { Message = LocalizationManager.GetLocalizedString("Installing GAMENAME", gameMetadata.Title)});
         var hashes = await GameFileHashCalculator.CalculateHashes(source);
-        if (GamesUnitOfWork.ExistsHashes(hashes))
+        if (GamesUnitOfWork.ExistsHashes(hashes, out _))
         {
             var messageBoxResult = await Dispatcher.UIThread.InvokeAsync(() =>
                 MessageBoxService.Show(LocalizationManager["The same mod is already installed"],

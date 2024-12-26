@@ -150,8 +150,9 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameHashDto>>(queryResult);
     }
 
-    public bool ExistsHashes(List<GameHashDto> computedHashes)
+    public bool ExistsHashes(List<GameHashDto> computedHashes, out int? foundId)
     {
+        foundId = null;
         var hashesRepo = Hashes.GetAll();
         var tempQueryable = computedHashes.Select(ToGameHashes).AsQueryable();
         var joined = hashesRepo.AsEnumerable().Join(tempQueryable, gh => gh.FileName + "#" + gh.Md5Hash,
@@ -165,6 +166,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
         if (matches.Any(m => m.Count == computedHashes.Count))
         {
+            var idToReturn = matches.FirstOrDefault()?.Id;
             return true;
         }
 
@@ -181,9 +183,11 @@ public class GamesUnitOfWork : UnitOfWorkBase
         Save();
     }
 
-    public List<GameLinkDto> GetLinks(int gameId)
+    public List<GameLinkDto> GetLinks(int gameId, LinkType? linkType = null)
     {
         var queryResult = Links.Get(l => l.GameId == gameId);
+        if (linkType != null)
+            queryResult = queryResult.Where(g => g.LinkType == linkType);
         return _mapper.Map<List<GameLinkDto>>(queryResult);
     }
 
