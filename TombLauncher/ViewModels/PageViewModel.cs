@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,6 +12,7 @@ public abstract partial class PageViewModel : ViewModelBase
     {
         SaveCmd = new AsyncRelayCommand(Save, CanSave);
         CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
+        TopBarCommands = new ObservableCollection<CommandViewModel>();
     }
 
     public bool IsBusy
@@ -38,6 +40,7 @@ public abstract partial class PageViewModel : ViewModelBase
     [ObservableProperty] private string _currentFileName;
     [ObservableProperty] private double? _percentageComplete;
     [ObservableProperty] private bool _isCancelable;
+    [ObservableProperty] private ObservableCollection<CommandViewModel> _topBarCommands;
     
     public ICommand CancelCmd { get; }
 

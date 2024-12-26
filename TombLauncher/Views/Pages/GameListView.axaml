@@ -23,10 +23,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0" LastChildFill="False">
-            <controls:IconButton DockPanel.Dock="Right" Icon="Plus" ToolTip.Tip="{DynamicResource Add}" Command="{Binding AddGameCmd}" />
-        </DockPanel>
-
         <StackPanel Grid.Row="1" HorizontalAlignment="Center"
                     IsVisible="{Binding Games, Converter={StaticResource CollectionEmptyToVisibilityConverter}}"
                     Orientation="Horizontal" VerticalAlignment="Center">

@@ -2,6 +2,8 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Material.Icons;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
@@ -18,6 +20,7 @@ public partial class GameListViewModel : PageViewModel
         UninstallCmd = new RelayCommand<GameWithStatsViewModel>(Uninstall);
         OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
         _gameListService.NavigationManager.OnNavigated += OnInit;
+        TopBarCommands.Add(new CommandViewModel(){Command = AddGameCmd, Icon = MaterialIconKind.Plus, Tooltip = "Add".GetLocalizedString()});
     }
 
     private GameListService _gameListService;
