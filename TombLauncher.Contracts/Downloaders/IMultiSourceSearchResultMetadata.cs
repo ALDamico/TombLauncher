@@ -2,5 +2,5 @@
 
 public interface IMultiSourceSearchResultMetadata : IGameSearchResultMetadata
 {
-    public List<IGameSearchResultMetadata> Sources { get; set; }
+    public HashSet<IGameSearchResultMetadata> Sources { get; set; }
 }

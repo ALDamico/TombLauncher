@@ -99,7 +99,7 @@ public class TombLauncherGameMerger : IGameMerger
                 Length = element.Length,
                 Rating = element.Rating,
                 Setting = element.Setting,
-                Sources = new List<IGameSearchResultMetadata>(){element},
+                Sources = new HashSet<IGameSearchResultMetadata>(){element},
                 Title = element.Title,
                 BaseUrl = element.BaseUrl,
                 SourceSiteDisplayName = element.SourceSiteDisplayName,

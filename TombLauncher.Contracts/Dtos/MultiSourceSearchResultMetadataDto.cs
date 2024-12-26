@@ -24,6 +24,6 @@ public class MultiSourceSearchResultMetadataDto : IMultiSourceSearchResultMetada
     public int? SizeInMb { get; set; }
     public double? Rating { get; set; }
     public DateTime? ReleaseDate { get; set; }
-    public List<IGameSearchResultMetadata> Sources { get; set; }
+    public HashSet<IGameSearchResultMetadata> Sources { get; set; }
     public int ReviewCount => Sources.Sum(s => s.ReviewCount);
 }

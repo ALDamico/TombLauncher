@@ -37,7 +37,7 @@
 
                     <Run Text="{DynamicResource Released on}" />
                     <Run FontWeight="DemiBold"
-                         Text="{Binding Game.GameMetadata.ReleaseDate}" />
+                         Text="{Binding Game.GameMetadata.ReleaseDate, StringFormat=d}" />
                     <LineBreak />
                     <Run Text="{Binding Game.GameMetadata.Description}" />
                 </TextBlock>

@@ -100,6 +100,8 @@ public class GameSearchResultService : IViewService
             }
         }
 
+        var allDetails = await GameDownloadManager.FetchAllDetails(gameToInstallDto);
+
         //var engine = _engineDetector.Detect(downloadPath);
         var dto = await GameDownloadManager.FetchDetails(gameToInstallDto);
         dto.Guid = Guid.NewGuid();
@@ -115,20 +117,35 @@ public class GameSearchResultService : IViewService
         GamesUnitOfWork.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
         GamesUnitOfWork.SaveHashes(hashes);
-        GamesUnitOfWork.SaveLink(new GameLinkDto()
-            { Link = gameToInstall.DownloadLink, LinkType = LinkType.Download, GameId = dto.Id, BaseUrl = gameToInstallDto.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
-        GamesUnitOfWork.SaveLink(new GameLinkDto()
-            { Link = gameToInstall.DetailsLink, LinkType = LinkType.Details, GameId = dto.Id, BaseUrl = gameToInstallDto.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName});
-        if (gameToInstall.HasReviews)
+        foreach (var detail in allDetails.Sources)
         {
             GamesUnitOfWork.SaveLink(new GameLinkDto()
-                { Link = gameToInstall.ReviewsLink, LinkType = LinkType.Reviews, GameId = dto.Id, BaseUrl = gameToInstallDto.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName});
-        }
+            {
+                Link = detail.DownloadLink, LinkType = LinkType.Download, GameId = dto.Id,
+                BaseUrl = detail.BaseUrl, DisplayName = detail.SourceSiteDisplayName
+            });
+            GamesUnitOfWork.SaveLink(new GameLinkDto()
+            {
+                Link = detail.DetailsLink, LinkType = LinkType.Details, GameId = dto.Id,
+                BaseUrl = detail.BaseUrl, DisplayName = detail.SourceSiteDisplayName
+            });
+            if (detail.HasReviews)
+            {
+                GamesUnitOfWork.SaveLink(new GameLinkDto()
+                {
+                    Link = detail.ReviewsLink, LinkType = LinkType.Reviews, GameId = dto.Id,
+                    BaseUrl = detail.BaseUrl, DisplayName = detail.SourceSiteDisplayName
+                });
+            }
 
-        if (gameToInstall.HasWalkthrough)
-        {
-            GamesUnitOfWork.SaveLink(new GameLinkDto()
-                { Link = gameToInstall.WalkthroughLink, LinkType = LinkType.Walkthrough, GameId = dto.Id, BaseUrl = gameToInstallDto.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
+            if (detail.HasWalkthrough)
+            {
+                GamesUnitOfWork.SaveLink(new GameLinkDto()
+                {
+                    Link = detail.WalkthroughLink, LinkType = LinkType.Walkthrough, GameId = dto.Id,
+                    BaseUrl = detail.BaseUrl, DisplayName = detail.SourceSiteDisplayName
+                });
+            }
         }
 
         GamesUnitOfWork.Save();

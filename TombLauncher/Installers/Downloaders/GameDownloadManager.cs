@@ -85,14 +85,47 @@ public class GameDownloadManager : IGameDownloadManager
         return null;
     }
 
-    public async Task<MultiSourceSearchResultMetadataDto> FetchAllDetails()
+    public async Task<IMultiSourceSearchResultMetadata> FetchAllDetails(IMultiSourceSearchResultMetadata game)
     {
+        var searchPayload = new DownloaderSearchPayload()
+        {
+            LevelName = game.Title
+        };
+        var tasks = new List<Task<List<IGameSearchResultMetadata>>>();
         foreach (var downloader in Downloaders)
         {
-            
+            var searchResult = downloader.GetGames(searchPayload, CancellationToken.None);
+            tasks.Add(searchResult);
         }
 
-        return null;
+        await Task.WhenAll(tasks);
+        var allResults = tasks.SelectMany(t => t.Result).ToList();
+
+        var gameClone = new MultiSourceSearchResultMetadataDto()
+        {
+            Author = game.Author,
+            Difficulty = game.Difficulty,
+            Engine = game.Engine,
+            Length = game.Length,
+            Rating = game.Rating,
+            Setting = game.Setting,
+            Sources = new HashSet<IGameSearchResultMetadata>(),
+            Title = game.Title,
+            BaseUrl = game.BaseUrl,
+            DetailsLink = game.DetailsLink,
+            DownloadLink = game.DownloadLink,
+            ReleaseDate = game.ReleaseDate,
+            ReviewsLink = game.ReviewsLink,
+            TitlePic = game.TitlePic,
+            WalkthroughLink = game.WalkthroughLink,
+            AuthorFullName = game.AuthorFullName,
+            SizeInMb = game.SizeInMb,
+            SourceSiteDisplayName = game.SourceSiteDisplayName
+        };
+        
+        Merge(new List<IMultiSourceSearchResultMetadata>(){gameClone}, allResults);
+
+        return gameClone;
     }
 
     public void CancelCurrentAction()
