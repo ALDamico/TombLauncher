@@ -1,6 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace TombLauncher.ViewModels;
 
@@ -10,6 +13,7 @@ public partial class NotificationListViewModel : ViewModelBase
     {
         Notifications = new ObservableCollection<NotificationViewModel>();
         Notifications.CollectionChanged += OnNotificationsChanged;
+        ClearAllCmd = new RelayCommand(() => Notifications.Clear(), () => Notifications.Any());
     }
 
     private void OnNotificationsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -18,8 +22,10 @@ public partial class NotificationListViewModel : ViewModelBase
         {
             HasNewItems = true;
         }
+        RaiseCanExecuteChanged(ClearAllCmd);
     }
 
     [ObservableProperty] private ObservableCollection<NotificationViewModel> _notifications;
     [ObservableProperty] private bool _hasNewItems;
+    public ICommand ClearAllCmd { get; }
 }

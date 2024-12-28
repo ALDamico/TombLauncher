@@ -50,35 +50,45 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0" LastChildFill="False">
-                <controls:IconButton Command="{Binding GoBackCmd}" 
+                <controls:IconButton Command="{Binding GoBackCmd}"
                                      Icon="ArrowBack" />
-                <controls:BadgedIconButton DockPanel.Dock="Right" Icon="Notifications" 
+                <controls:BadgedIconButton DockPanel.Dock="Right" Icon="Notifications"
                                            IsBadgeVisible="{Binding NotificationListViewModel.HasNewItems}"
                                            Click="Button_OnClick"
-                                     ToolTip.Tip="{DynamicResource Notifications}">
+                                           ToolTip.Tip="{DynamicResource Notifications}">
                     <controls:IconButton.Flyout>
                         <Flyout>
-                            <ScrollViewer Height="350">
-                                <ItemsControl ItemsSource="{Binding NotificationListViewModel.Notifications}">
-                                    
-                                </ItemsControl>
-                            </ScrollViewer>
+                            <StackPanel Height="350" MinWidth="350">
+                                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" FontSize="20"
+                                           Text="{DynamicResource Notifications}">
+                                </TextBlock>
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontStyle="Italic"
+                                           FontSize="20"
+                                           IsVisible="{Binding NotificationListViewModel.Notifications, Converter={StaticResource CollectionEmptyToVisibilityConverter }}"
+                                           Text="No notifications">
+                                </TextBlock>
+                                <ScrollViewer>
+                                    <ItemsControl ItemsSource="{Binding NotificationListViewModel.Notifications}">
+
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </StackPanel>
                         </Flyout>
                     </controls:IconButton.Flyout>
                 </controls:BadgedIconButton>
                 <ItemsControl DockPanel.Dock="Right"
-                              HorizontalAlignment="Right" 
-                              ItemsSource="{Binding CurrentPage.TopBarCommands}" 
+                              HorizontalAlignment="Right"
+                              ItemsSource="{Binding CurrentPage.TopBarCommands}"
                               Margin="0,0,15,0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:IconButton Icon="{Binding Icon}" 
-                                                 Command="{Binding Command}" 
-                                                 ToolTip.Tip="{Binding Tooltip}"/>
+                            <controls:IconButton Icon="{Binding Icon}"
+                                                 Command="{Binding Command}"
+                                                 ToolTip.Tip="{Binding Tooltip}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                
+
             </DockPanel>
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}"
                     ZIndex="5000" Background="#A0000000">

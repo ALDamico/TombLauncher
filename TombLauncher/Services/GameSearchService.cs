@@ -143,7 +143,7 @@ public class GameSearchService : IViewService
 
         if (NavigationManager.GetCurrentPage() != target)
         {
-            await _notificationService.AddNotification(new NotificationViewModel() { IsDismissable = true });
+            await _notificationService.AddNotification(new NotificationViewModel() { Content = new StringNotificationViewModel(){Text = "Search completed"}, IsDismissable = true });
         }
     }
 
