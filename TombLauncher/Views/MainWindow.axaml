@@ -68,8 +68,10 @@
                                 </TextBlock>
                                 <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontStyle="Italic"
                                            FontSize="20"
-                                           IsVisible="{Binding NotificationListViewModel.Notifications, Converter={StaticResource CollectionEmptyToVisibilityConverter }}"
-                                           Text="No notifications">
+                                           Classes="text-muted"
+                                           IsVisible="{Binding NotificationListViewModel.Notifications, Converter={StaticResource CollectionEmptyToVisibilityConverter }}">
+                                    <avalonia:MaterialIcon Kind="NotificationsOff"/>
+                                    <Run Text="{DynamicResource 'No notifications'}"></Run>
                                 </TextBlock>
                                 <ScrollViewer Grid.Row="1">
                                     <ItemsControl ItemsSource="{Binding NotificationListViewModel.Notifications}">

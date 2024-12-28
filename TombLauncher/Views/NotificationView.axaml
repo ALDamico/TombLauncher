@@ -11,10 +11,12 @@
     <Design.DataContext>
         <viewModels:NotificationViewModel/>
     </Design.DataContext>
-    <DockPanel>
-        <ContentControl Content="{Binding Content}" DockPanel.Dock="Left"/>
+    <DockPanel LastChildFill="True">
         <controls:IconButton Icon="Close" Command="{Binding DismissCmd}" 
                              CommandParameter="{Binding .}" 
-                             IsVisible="{Binding IsDismissable}"/>
+                             IsVisible="{Binding IsDismissable}"
+                             DockPanel.Dock="Right"
+                             />
+        <ContentControl Content="{Binding Content}" DockPanel.Dock="Left"/>
     </DockPanel>
 </UserControl>
