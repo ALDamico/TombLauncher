@@ -60,5 +60,20 @@
     <Style Selector="avalonia|MaterialIcon.text-muted">
         <Setter Property="Foreground" Value="#6c757d"></Setter>
     </Style>
+    
+    <Style Selector="Button.round-button">
+        <Setter Property="Margin" Value="9,3,9,3"/>
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="6"/>
+    </Style>
+    <Style Selector="Button.round-button /template/ ContentPresenter">
+        <Setter Property="CornerRadius" Value="20"/>
+    </Style>
+    <Style Selector="Button:pointerover.round-button /template/ ContentPresenter">
+        <Setter Property="Background" Value="#80e0e0e0"/>
+    </Style>
     <!-- Add Styles Here -->
 </Styles>

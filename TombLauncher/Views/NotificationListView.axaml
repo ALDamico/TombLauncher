@@ -36,7 +36,7 @@
                     </TextBlock>
                     <controls:IconButton Width="32" Height="32" Grid.Row="0" HorizontalAlignment="Right" Icon="Close"
                                          ToolTip.Tip="{DynamicResource 'Clear all'}"
-                                         Command="{Binding ClearAllCmd}">
+                                         Command="{Binding ClearAllCmd}" Classes="round-button">
                     </controls:IconButton>
                     <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontStyle="Italic"
                                FontSize="20"

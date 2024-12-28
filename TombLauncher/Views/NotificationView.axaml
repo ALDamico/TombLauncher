@@ -15,7 +15,7 @@
         <controls:IconButton Icon="Close" Command="{Binding DismissCmd}" 
                              CommandParameter="{Binding .}" 
                              IsVisible="{Binding IsDismissable}"
-                             DockPanel.Dock="Right"
+                             DockPanel.Dock="Right" Classes="round-button"
                              />
         <ContentControl Content="{Binding Content}" DockPanel.Dock="Left"/>
     </DockPanel>
