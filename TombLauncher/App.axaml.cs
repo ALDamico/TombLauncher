@@ -75,7 +75,7 @@ public partial class App : Application
         navigationManager.SetDefaultPage(defaultPage);
         var mainWindow =  new MainWindow
         {
-            DataContext = new MainWindowViewModel(navigationManager),
+            DataContext = new MainWindowViewModel(navigationManager, Ioc.Default.GetRequiredService<NotificationListViewModel>()),
         };
 
         desktop.MainWindow = mainWindow;
@@ -125,6 +125,9 @@ public partial class App : Application
             ".dat",
             ".phd"
         }));
+
+        
+        serviceCollection.AddSingleton<NotificationService>();
             
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
@@ -170,6 +173,7 @@ public partial class App : Application
         serviceCollection.AddScoped<GameSearchViewModel>();
         serviceCollection.AddScoped<NewGameViewModel>();
         serviceCollection.AddTransient<SettingsPageViewModel>();
+        serviceCollection.AddSingleton<NotificationListViewModel>();
     }
 
     private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection)

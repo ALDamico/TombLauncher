@@ -1,0 +1,24 @@
+<Button xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:controls="clr-namespace:TombLauncher.Controls"
+        mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="40"
+        x:Class="TombLauncher.Controls.BadgedIconButton"
+        Command="{Binding RelativeSource={RelativeSource Self}, Path=Command}"
+>
+    <Button.Content>
+        <StackPanel Orientation="Horizontal">
+            <avalonia:MaterialIcon Kind="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:IconButton}, Path=Icon}"/>
+            <TextBlock Margin="4, 0, 0, 0"
+                       VerticalAlignment="Center" 
+                       Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:IconButton}, Path=Text}" 
+                       IsVisible="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=controls:IconButton}, Path=IsTextVisible}"/>
+            <Ellipse Width="5" Height="5" Fill="Red"  Margin="0, 0, -5, 0" ZIndex="999"
+                     VerticalAlignment="Bottom"
+                     HorizontalAlignment="Right"
+                     IsVisible="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=controls:BadgedIconButton}, Path=IsBadgeVisible}"></Ellipse>
+        </StackPanel>
+    </Button.Content>
+</Button>

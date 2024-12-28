@@ -28,7 +28,7 @@ public class GameSearchService : IViewService
 {
     public GameSearchService(GameDownloadManager gameDownloadManager, GamesUnitOfWork gamesUnitOfWork,
         ILocalizationManager localizationManager, NavigationManager navigationManager,
-        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration)
+        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration, NotificationService notificationService)
     {
         GameDownloadManager = gameDownloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
@@ -37,7 +37,10 @@ public class GameSearchService : IViewService
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
         _mapper = mapperConfiguration.CreateMapper();
+        _notificationService = notificationService;
     }
+
+    private NotificationService _notificationService;
 
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
@@ -137,6 +140,11 @@ public class GameSearchService : IViewService
         }
 
         target.ClearBusy();
+
+        if (NavigationManager.GetCurrentPage() != target)
+        {
+            await _notificationService.AddNotification(new NotificationViewModel() { IsDismissable = true });
+        }
     }
 
     public void Cancel()

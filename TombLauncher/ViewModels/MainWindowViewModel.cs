@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Input;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
@@ -13,10 +14,11 @@ namespace TombLauncher.ViewModels;
 
 public partial class MainWindowViewModel : WindowViewModelBase
 {
-    public MainWindowViewModel(NavigationManager navigationManager)
+    public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel)
     {
         _navigationManager = navigationManager;
         _navigationManager.OnNavigated += OnNavigated;
+        NotificationListViewModel = notificationListViewModel;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
         MenuItems = new ObservableCollection<MainMenuItemViewModel>()
@@ -62,6 +64,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
     }
 
     private readonly NavigationManager _navigationManager;
+    [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
 
     private bool _isPaneOpen;
 

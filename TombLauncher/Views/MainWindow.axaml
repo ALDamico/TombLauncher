@@ -49,10 +49,24 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <DockPanel Grid.Row="0" LastChildFill="True">
+            <DockPanel Grid.Row="0" LastChildFill="False">
                 <controls:IconButton Command="{Binding GoBackCmd}" 
                                      Icon="ArrowBack" />
-                <ItemsControl DockPanel.Dock="Right" 
+                <controls:BadgedIconButton DockPanel.Dock="Right" Icon="Notifications" 
+                                           IsBadgeVisible="{Binding NotificationListViewModel.HasNewItems}"
+                                           Click="Button_OnClick"
+                                     ToolTip.Tip="{DynamicResource Notifications}">
+                    <controls:IconButton.Flyout>
+                        <Flyout>
+                            <ScrollViewer Height="350">
+                                <ItemsControl ItemsSource="{Binding NotificationListViewModel.Notifications}">
+                                    
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Flyout>
+                    </controls:IconButton.Flyout>
+                </controls:BadgedIconButton>
+                <ItemsControl DockPanel.Dock="Right"
                               HorizontalAlignment="Right" 
                               ItemsSource="{Binding CurrentPage.TopBarCommands}" 
                               Margin="0,0,15,0">
@@ -64,6 +78,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                
             </DockPanel>
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}"
                     ZIndex="5000" Background="#A0000000">
