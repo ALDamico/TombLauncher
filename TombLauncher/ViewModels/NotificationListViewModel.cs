@@ -22,6 +22,7 @@ public partial class NotificationListViewModel : ViewModelBase
         {
             HasNewItems = true;
         }
+        OnPropertyChanged(nameof(Notifications));
         RaiseCanExecuteChanged(ClearAllCmd);
     }
 

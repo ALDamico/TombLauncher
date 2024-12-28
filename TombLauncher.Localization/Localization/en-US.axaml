@@ -117,6 +117,7 @@
     <system:String x:Key="Are you sure you want to read the walkthrough?">Are you sure you want to read the walkthrough?</system:String>
     <system:String x:Key="Confirm">Confirm</system:String>
     <system:String x:Key="Notifications">Notifications</system:String>
+    <system:String x:Key="No notifications">No notifications</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>
