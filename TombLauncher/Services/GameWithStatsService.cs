@@ -76,9 +76,14 @@ public class GameWithStatsService : IViewService
 
     private void LaunchProcess(GameWithStatsViewModel game, bool trackPlayTime = false, List<string> arguments = null)
     {
+        var executable = game.GameMetadata.ExecutablePath;
+        if (!string.IsNullOrWhiteSpace(game.GameMetadata.UniversalLauncherPath))
+        {
+            executable = game.GameMetadata.UniversalLauncherPath;
+        }
         var process = new Process()
         {
-            StartInfo = new ProcessStartInfo(game.GameMetadata.ExecutablePath)
+            StartInfo = new ProcessStartInfo(executable)
             {
                 Arguments = string.Join(" ", arguments ?? new List<string>()),
                 WorkingDirectory = game.GameMetadata.InstallDirectory,
@@ -92,7 +97,7 @@ public class GameWithStatsService : IViewService
         }
         else
         {
-            process.Exited += (sender, _) => OnSetupExited();
+            process.Exited += (_, _) => OnSetupExited();
         }
         process.Start();
     }

@@ -112,8 +112,10 @@ public class GameSearchResultService : IViewService
         }));
         dto.InstallDate = DateTime.Now;
         dto.InstallDirectory = installLocation;
-        var exePath = EngineDetector.GetGameExecutablePath(installLocation);
-        dto.ExecutablePath = exePath;
+        var detectionResult = EngineDetector.Detect(installLocation);
+        dto.ExecutablePath = detectionResult.ExecutablePath;
+        dto.UniversalLauncherPath = detectionResult.UniversalLauncherPath;
+        dto.GameEngine = detectionResult.GameEngine;
         GamesUnitOfWork.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
         GamesUnitOfWork.SaveHashes(hashes);

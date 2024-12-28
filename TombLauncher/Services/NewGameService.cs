@@ -89,9 +89,10 @@ public class NewGameService : IViewService
         var installLocation = await LevelInstaller.Install(source, gameMetadata.ToDto(), progress);
         progress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
         gameMetadata.InstallDirectory = installLocation;
-        var gameEngine = EngineDetector.Detect(installLocation);
-        gameMetadata.GameEngine = gameEngine;
-        gameMetadata.ExecutablePath = EngineDetector.GetGameExecutablePath(installLocation);
+        var gameEngineResult = EngineDetector.Detect(installLocation);
+        gameMetadata.GameEngine = gameEngineResult.GameEngine;
+        gameMetadata.ExecutablePath = gameEngineResult.ExecutablePath;
+        gameMetadata.UniversalLauncherPath = gameEngineResult.UniversalLauncherPath;
 
         var dto = gameMetadata.ToDto();
         GamesUnitOfWork.UpsertGame(dto);

@@ -26,7 +26,8 @@ public static class GameExtensions
             InstallDirectory = game.InstallDirectory,
             Guid = game.Guid,
             TitlePic = ImageUtils.ToBitmap(game.TitlePic),
-            AuthorFullName = game.AuthorFullName
+            AuthorFullName = game.AuthorFullName,
+            UniversalLauncherPath = game.UniversalLauncherPath
         };
     }
 

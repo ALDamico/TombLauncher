@@ -19,4 +19,5 @@ public class GameMetadataDto
     public Guid Guid { get; set; }
     public byte[] TitlePic { get; set; }
     public string AuthorFullName { get; set; }
+    public string UniversalLauncherPath { get; set; }
 }

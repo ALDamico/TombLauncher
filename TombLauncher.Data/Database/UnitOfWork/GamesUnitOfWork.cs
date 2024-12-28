@@ -33,7 +33,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public void UpsertGame(GameMetadataDto game)
     {
-        var entity = ToGame(game);
+        var entity = _mapper.Map<Game>(game);
         if (entity.Id == default)
         {
             Games.Insert(entity);
@@ -50,33 +50,6 @@ public class GamesUnitOfWork : UnitOfWorkBase
     public void DeleteGameById(int id)
     {
         Games.Delete(id);
-    }
-
-    private static Game ToGame(GameMetadataDto dto)
-    {
-        if (dto == null)
-        {
-            throw new ArgumentException("Dto can't be null", nameof(dto));
-        }
-
-        return new Game()
-        {
-            Id = dto.Id,
-            Author = dto.Author,
-            Length = dto.Length,
-            Difficulty = dto.Difficulty,
-            Setting = dto.Setting,
-            Title = dto.Title,
-            ExecutablePath = dto.ExecutablePath,
-            GameEngine = dto.GameEngine,
-            InstallDate = dto.InstallDate,
-            InstallDirectory = dto.InstallDirectory,
-            ReleaseDate = dto.ReleaseDate,
-            Description = dto.Description,
-            Guid = dto.Guid,
-            TitlePic = dto.TitlePic,
-            AuthorFullName = dto.AuthorFullName
-        };
     }
 
     private GameHashes ToGameHashes(GameHashDto dto)
@@ -167,6 +140,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         if (matches.Any(m => m.Count == computedHashes.Count))
         {
             var idToReturn = matches.FirstOrDefault()?.Id;
+            foundId = idToReturn;
             return true;
         }
 

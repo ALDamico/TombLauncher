@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Data.Models;
+using TombLauncher.Installers.Models;
 
 namespace TombLauncher.Installers;
 
@@ -25,25 +25,43 @@ public class TombRaiderEngineDetector
     }
     private Dictionary<string, GameEngine> _gameEngines;
     private HashSet<string> _knownGameExecutables;
-    public GameEngine Detect(string containingFolder)
+    public EngineDetectorResult Detect(string containingFolder)
     {
         var files = Directory.GetFiles(containingFolder, "*.exe", SearchOption.AllDirectories);
         foreach (var file in files)
         {
             if (_gameEngines.TryGetValue(Path.GetFileName(file).ToLowerInvariant(), out var gameEngine))
             {
-                return gameEngine;
+                var result = new EngineDetectorResult()
+                {
+                    GameEngine = gameEngine,
+                    InstallFolder = containingFolder,
+                    ExecutablePath = GetGameExecutablePath(containingFolder),
+                    UniversalLauncherPath = GetUniversalLauncherPath(containingFolder)
+                };
+                return result;
             }
         }
 
         throw new Exception("Not found :(");
     }
 
-    public string GetGameExecutablePath(string containingFolder)
+    private string GetUniversalLauncherPath(string containingFolder)
+    {
+        var universalLauncher = Directory.GetFiles(containingFolder, "play.exe", SearchOption.AllDirectories);
+        if (universalLauncher.Length > 0)
+            return Path.GetRelativePath(containingFolder, universalLauncher[0]);
+
+        return null;
+    }
+
+    private string GetGameExecutablePath(string containingFolder)
     {
         var executables = Directory.GetFiles(containingFolder, "*.exe", SearchOption.AllDirectories);
-        return _knownGameExecutables.Join(executables, knownExecutable => knownExecutable,
+        var fullPath = _knownGameExecutables.Join(executables, knownExecutable => knownExecutable,
                 Path.GetFileName, (s, s1) => s1, StringComparer.InvariantCultureIgnoreCase)
             .FirstOrDefault();
+
+        return Path.GetRelativePath(containingFolder, fullPath);
     }
 }
