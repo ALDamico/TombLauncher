@@ -52,36 +52,7 @@
             <DockPanel Grid.Row="0" LastChildFill="False">
                 <controls:IconButton Command="{Binding GoBackCmd}"
                                      Icon="ArrowBack" />
-                <controls:BadgedIconButton DockPanel.Dock="Right" Icon="Notifications"
-                                           IsBadgeVisible="{Binding NotificationListViewModel.HasNewItems}"
-                                           Click="Button_OnClick"
-                                           ToolTip.Tip="{DynamicResource Notifications}">
-                    <controls:IconButton.Flyout>
-                        <Flyout>
-                            <Grid Height="350" MinWidth="350">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" HorizontalAlignment="Center" TextAlignment="Center" FontSize="20"
-                                           Text="{DynamicResource Notifications}">
-                                </TextBlock>
-                                <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontStyle="Italic"
-                                           FontSize="20"
-                                           Classes="text-muted"
-                                           IsVisible="{Binding NotificationListViewModel.Notifications, Converter={StaticResource CollectionEmptyToVisibilityConverter }}">
-                                    <avalonia:MaterialIcon Kind="NotificationsOff"/>
-                                    <Run Text="{DynamicResource 'No notifications'}"></Run>
-                                </TextBlock>
-                                <ScrollViewer Grid.Row="1">
-                                    <ItemsControl ItemsSource="{Binding NotificationListViewModel.Notifications}">
-
-                                    </ItemsControl>
-                                </ScrollViewer>
-                            </Grid>
-                        </Flyout>
-                    </controls:IconButton.Flyout>
-                </controls:BadgedIconButton>
+                <ContentControl Content="{Binding NotificationListViewModel}" DockPanel.Dock="Right"></ContentControl>
                 <ItemsControl DockPanel.Dock="Right"
                               HorizontalAlignment="Right"
                               ItemsSource="{Binding CurrentPage.TopBarCommands}"

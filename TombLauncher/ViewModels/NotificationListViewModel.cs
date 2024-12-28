@@ -14,6 +14,7 @@ public partial class NotificationListViewModel : ViewModelBase
         Notifications = new ObservableCollection<NotificationViewModel>();
         Notifications.CollectionChanged += OnNotificationsChanged;
         ClearAllCmd = new RelayCommand(() => Notifications.Clear(), () => Notifications.Any());
+        MarkNoNewElementsCmd = new RelayCommand(MarkNoNewElements);
     }
 
     private void OnNotificationsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -29,4 +30,10 @@ public partial class NotificationListViewModel : ViewModelBase
     [ObservableProperty] private ObservableCollection<NotificationViewModel> _notifications;
     [ObservableProperty] private bool _hasNewItems;
     public ICommand ClearAllCmd { get; }
+    public ICommand MarkNoNewElementsCmd { get; }
+
+    private void MarkNoNewElements()
+    {
+        HasNewItems = false;
+    }
 }
