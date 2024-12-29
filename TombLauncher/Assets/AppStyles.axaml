@@ -75,5 +75,12 @@
     <Style Selector="Button:pointerover.round-button /template/ ContentPresenter">
         <Setter Property="Background" Value="#80e0e0e0"/>
     </Style>
+    <Style Selector="ProgressBar">
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Value" Duration="0:0:0.1"></DoubleTransition>
+            </Transitions>
+        </Setter>
+    </Style>
     <!-- Add Styles Here -->
 </Styles>

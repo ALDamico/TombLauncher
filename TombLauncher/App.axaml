@@ -33,6 +33,7 @@
             </valueConverters:DateTimeFormatter>
             <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter"/>
             <valueConverters:TransferSpeedFormatter x:Key="TransferSpeedFormatter"/>
+            <valueConverters:FileSizeFormatter x:Key="FileSizeFormatter"/>
             <valueConverters2:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>
             <FontFamily x:Key="TombRaiderFont">avares://TombLauncher/Assets#Tomb_Raider</FontFamily>
             

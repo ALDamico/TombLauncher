@@ -35,6 +35,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private string _baseUrl;
     [ObservableProperty] private Bitmap _titlePic;
     [ObservableProperty] private string _sourceSiteDisplayName;
+    [ObservableProperty] private InstallProgressViewModel _installProgress;
     private string _reviewsLink;
 
     public string ReviewsLink
@@ -68,9 +69,6 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private DateTime? _releaseDate;
     [ObservableProperty] private ObservableCollection<IGameSearchResultMetadata> _sources;
     [ObservableProperty] private GameMetadataViewModel _installedGame;
-    [ObservableProperty] private double _totalBytes;
-    [ObservableProperty] private double _currentBytes;
-    [ObservableProperty] private double _downloadSpeed;
     private bool _isInstalling;
 
     public bool IsInstalling
@@ -96,9 +94,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         catch (OperationCanceledException)
         {
             IsInstalling = false;
-            DownloadSpeed = 0;
-            CurrentBytes = 0;
-            TotalBytes = 0;
+            InstallProgress = null;
         }
     }
 

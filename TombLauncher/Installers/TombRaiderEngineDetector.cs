@@ -19,12 +19,15 @@ public class TombRaiderEngineDetector
             { "tomb2.exe", GameEngine.TombRaider2 },
             { "tomb2main.exe", GameEngine.TombRaider2 },
             { "tomb4.exe", GameEngine.TombRaider4 },
-            { "tomb5.exe", GameEngine.TombRaider5 }
+            { "tomb5.exe", GameEngine.TombRaider5 },
+            { "tombengine.exe", GameEngine.Ten }
         };
         _knownGameExecutables = _gameEngines.Keys.ToHashSet();
     }
+
     private Dictionary<string, GameEngine> _gameEngines;
     private HashSet<string> _knownGameExecutables;
+
     public EngineDetectorResult Detect(string containingFolder)
     {
         var files = Directory.GetFiles(containingFolder, "*.exe", SearchOption.AllDirectories);

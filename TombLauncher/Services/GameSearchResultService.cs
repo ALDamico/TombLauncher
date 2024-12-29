@@ -23,7 +23,7 @@ public class GameSearchResultService : IViewService
 {
     public GameSearchResultService(GameDownloadManager downloadManager, GamesUnitOfWork gamesUnitOfWork, TombRaiderLevelInstaller levelInstaller,
         TombRaiderEngineDetector engineDetector, ILocalizationManager localizationManager, NavigationManager navigationManager,
-        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration)
+        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration, NotificationService notificationService)
     {
         GameDownloadManager = downloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
@@ -35,7 +35,10 @@ public class GameSearchResultService : IViewService
         DialogService = dialogService;
         _cancellationTokenSource = new CancellationTokenSource();
         _mapper = mapperConfiguration.CreateMapper();
+        _notificationService = notificationService;
     }
+
+    private NotificationService _notificationService;
     private CancellationTokenSource _cancellationTokenSource;
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
@@ -57,19 +60,26 @@ public class GameSearchResultService : IViewService
 
     public async Task Install(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
     {
+        var installProgress = new InstallProgressViewModel();
+        await _notificationService.AddNotification(new NotificationViewModel() { Content = installProgress });
+        gameToInstall.InstallProgress = installProgress;
         var gameToInstallDto = _mapper.Map<MultiSourceSearchResultMetadataDto>(gameToInstall);
         gameToInstall.IsInstalling = true;
+        
         var downloadPath = await GameDownloadManager.DownloadGame(gameToInstallDto, new Progress<DownloadProgressInfo>(
             p =>
             {
-                gameToInstall.TotalBytes = p.TotalBytes;
-                gameToInstall.CurrentBytes = p.BytesDownloaded;
-                gameToInstall.DownloadSpeed = p.DownloadSpeed;
+                installProgress.IsDownloading = true;
+                installProgress.IsInstalling = false;
+                installProgress.Message = "Downloading...";
+                installProgress.TotalBytes = p.TotalBytes;
+                installProgress.CurrentBytes = p.BytesDownloaded;
+                installProgress.DownloadSpeed = p.DownloadSpeed;
             }), _cancellationTokenSource.Token);
         Dispatcher.UIThread.Invoke(() =>
         {
-            gameToInstall.TotalBytes = 0;
-            gameToInstall.DownloadSpeed = 0;
+            gameToInstall.InstallProgress.TotalBytes = 0;
+            gameToInstall.InstallProgress.DownloadSpeed = 0;
         });
         var hashCalculator = Ioc.Default.GetRequiredService<GameFileHashCalculator>();
         var hashes = await hashCalculator.CalculateHashes(downloadPath);
@@ -107,8 +117,11 @@ public class GameSearchResultService : IViewService
         dto.Guid = Guid.NewGuid();
         var installLocation = await LevelInstaller.Install(downloadPath, dto, new Progress<CopyProgressInfo>(a =>
         {
-            gameToInstall.TotalBytes = 100;
-            gameToInstall.CurrentBytes = a.Percentage.GetValueOrDefault();
+            installProgress.IsDownloading = false;
+            installProgress.IsInstalling = true;
+            installProgress.Message = "Installing...";
+            installProgress.InstallPercentage = a.Percentage.GetValueOrDefault();
+            installProgress.CurrentFileName = a.CurrentFileName;
         }));
         dto.InstallDate = DateTime.Now;
         dto.InstallDirectory = installLocation;
