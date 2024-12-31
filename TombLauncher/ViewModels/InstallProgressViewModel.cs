@@ -12,4 +12,5 @@ public partial class InstallProgressViewModel: ViewModelBase
     [ObservableProperty] private string _message;
     [ObservableProperty] private bool _isDownloading;
     [ObservableProperty] private bool _isInstalling;
+    [ObservableProperty] private bool _installCompleted;
 }

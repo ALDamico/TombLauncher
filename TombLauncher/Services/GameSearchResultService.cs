@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using Material.Icons;
 using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
@@ -23,7 +25,7 @@ public class GameSearchResultService : IViewService
 {
     public GameSearchResultService(GameDownloadManager downloadManager, GamesUnitOfWork gamesUnitOfWork, TombRaiderLevelInstaller levelInstaller,
         TombRaiderEngineDetector engineDetector, ILocalizationManager localizationManager, NavigationManager navigationManager,
-        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration, NotificationService notificationService)
+        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration, NotificationService notificationService, GameWithStatsService gameWithStatsService)
     {
         GameDownloadManager = downloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
@@ -36,9 +38,11 @@ public class GameSearchResultService : IViewService
         _cancellationTokenSource = new CancellationTokenSource();
         _mapper = mapperConfiguration.CreateMapper();
         _notificationService = notificationService;
+        _gameWithStatsService = gameWithStatsService;
     }
 
     private NotificationService _notificationService;
+    private readonly GameWithStatsService _gameWithStatsService;
     private CancellationTokenSource _cancellationTokenSource;
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
@@ -61,7 +65,30 @@ public class GameSearchResultService : IViewService
     public async Task Install(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
     {
         var installProgress = new InstallProgressViewModel();
-        await _notificationService.AddNotification(new NotificationViewModel() { Content = installProgress });
+        var notificationViewModel = new NotificationViewModel()
+        {
+            Title = gameToInstall.Title,
+            Content = installProgress,
+            OpenIcon = MaterialIconKind.Play,
+            CancelCommand = new AsyncRelayCommand(async () =>
+            {
+                await CancelInstall();
+                installProgress.Message = $"Download cancelled";
+                installProgress.IsDownloading = false;
+                installProgress.IsInstalling = false;
+                _cancellationTokenSource = new CancellationTokenSource();
+            }),
+            IsCancelable = true,
+            IsOpenable = true,
+            OpenCommand = new AsyncRelayCommand<GameMetadataDto>((dto) =>
+                {
+                    if (dto == null)
+                        return Task.CompletedTask;
+                    return _gameWithStatsService.PlayGame(dto.Id);
+                },
+                (dto) => dto?.Id != default)
+        };
+        await _notificationService.AddNotification(notificationViewModel);
         gameToInstall.InstallProgress = installProgress;
         var gameToInstallDto = _mapper.Map<MultiSourceSearchResultMetadataDto>(gameToInstall);
         gameToInstall.IsInstalling = true;
@@ -115,6 +142,7 @@ public class GameSearchResultService : IViewService
         //var engine = _engineDetector.Detect(downloadPath);
         var dto = await GameDownloadManager.FetchDetails(gameToInstallDto);
         dto.Guid = Guid.NewGuid();
+        notificationViewModel.OpenCmdParam = dto;
         var installLocation = await LevelInstaller.Install(downloadPath, dto, new Progress<CopyProgressInfo>(a =>
         {
             installProgress.IsDownloading = false;
@@ -162,6 +190,11 @@ public class GameSearchResultService : IViewService
                 });
             }
         }
+
+        installProgress.IsInstalling = false;
+        installProgress.IsDownloading = false;
+        installProgress.Message = "Install complete";
+        notificationViewModel.IsCancelable = false;
 
         GamesUnitOfWork.Save();
     }

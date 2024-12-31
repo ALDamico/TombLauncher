@@ -30,6 +30,12 @@ public class GamesUnitOfWork : UnitOfWorkBase
     internal EfRepository<GameHashes> Hashes => _hashes.Value;
     internal EfRepository<GameLink> Links => _links.Value;
 
+    public GameMetadataDto GetGameById(int id)
+    {
+        var entity = Games.GetEntityById(id);
+        return _mapper.Map<GameMetadataDto>(entity);
+    }
+
 
     public void UpsertGame(GameMetadataDto game)
     {
@@ -88,6 +94,25 @@ public class GamesUnitOfWork : UnitOfWorkBase
         }
 
         return outputList;
+    }
+
+    public GameWithStatsDto GetGameWithStats(int id)
+    {
+        var playSessions = PlaySessions.Get(ps => ps.GameId == id);
+        var game = Games.GetEntityById(id);
+        var gameWithStatsDto = new GameWithStatsDto()
+        {
+            GameMetadata = _mapper.Map<GameMetadataDto>(game),
+            TotalPlayTime = TimeSpan.Zero
+        };
+        if (playSessions.Any())
+        {
+            gameWithStatsDto.LastPlayed = playSessions.Max(ps => ps.StartDate);
+            gameWithStatsDto.TotalPlayTime =
+                TimeSpan.FromTicks(playSessions.Select(ps => (ps.EndDate - ps.StartDate).Ticks).Sum());
+        }
+
+        return gameWithStatsDto;
     }
 
     public List<PlaySessionDto> GetPlaySessionsByGameId(int gameId)

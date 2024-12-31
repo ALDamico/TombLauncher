@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
@@ -14,12 +16,15 @@ namespace TombLauncher.Services;
 
 public class GameWithStatsService : IViewService
 {
+    private readonly IMapper _mapper;
+
     public GameWithStatsService(GamesUnitOfWork gamesUnitOfWork, 
         ILocalizationManager localizationManager, 
         NavigationManager navigationManager, 
         IMessageBoxService messageBoxService, 
-        IDialogService dialogService)
+        IDialogService dialogService, MapperConfiguration mapperConfiguration)
     {
+        _mapper = mapperConfiguration.CreateMapper();
         GamesUnitOfWork = gamesUnitOfWork;
         LocalizationManager = localizationManager;
         NavigationManager = navigationManager;
@@ -44,6 +49,19 @@ public class GameWithStatsService : IViewService
         var currentPage = NavigationManager.GetCurrentPage();
         currentPage.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
         LaunchProcess(game, true);
+    }
+
+    public async Task PlayGame(int gameId)
+    {
+        var game = await Task.Factory.StartNew(() => GamesUnitOfWork.GetGameWithStats(gameId));
+        var gameViewModel = new GameWithStatsViewModel(Ioc.Default.GetRequiredService<GameWithStatsService>())
+        {
+            GameMetadata = game.GameMetadata.ToViewModel(),
+            LastPlayed = game.LastPlayed,
+            TotalPlayedTime = game.TotalPlayTime
+        };
+        OpenGame(gameViewModel);
+        PlayGame(gameViewModel);
     }
 
     public bool CanPlayGame(GameWithStatsViewModel game)

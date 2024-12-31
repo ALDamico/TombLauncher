@@ -25,7 +25,7 @@
         </Interaction.Behaviors>
         <controls:IconButton.Flyout>
             <Flyout>
-                <Grid Height="350" MinWidth="350">
+                <Grid Height="350" Width="350">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
