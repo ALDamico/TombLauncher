@@ -1,0 +1,16 @@
+﻿<Button xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:controls="clr-namespace:TombLauncher.Controls"
+        mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="40"
+        x:Class="TombLauncher.Controls.RoundIconButton"
+        Command="{Binding RelativeSource={RelativeSource Self}, Path=Command}"
+        Classes="round-button">
+    <Button.Content>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <avalonia:MaterialIcon Width="12" Height="12" Kind="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:RoundIconButton}, Path=Icon}"/>
+        </StackPanel>
+    </Button.Content>
+</Button>

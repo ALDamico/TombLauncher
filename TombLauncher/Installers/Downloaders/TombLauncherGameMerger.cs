@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Models;
 using TombLauncher.Services;
 using TombLauncher.ViewModels;
@@ -65,7 +66,7 @@ public class TombLauncherGameMerger : IGameMerger
                     element.Rating = match.Rating;
                 }
 
-                if (string.IsNullOrWhiteSpace(element.Setting))
+                if (element.Setting.IsNullOrWhiteSpace())
                 {
                     element.Setting = match.Setting;
                 }

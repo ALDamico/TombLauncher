@@ -1,5 +1,4 @@
-﻿using TombLauncher.Contracts.Dtos;
-using TombLauncher.Contracts.Enums;
+﻿using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 
 namespace TombLauncher.Contracts.Downloaders;
@@ -12,7 +11,7 @@ public interface IGameDownloader
     Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload, CancellationToken cancellationToken);
     Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken);
     Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream, IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken);
-    Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken);
+    Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken);
     bool HasMorePages();
     int? TotalPages { get; }
     int CurrentPage { get; }

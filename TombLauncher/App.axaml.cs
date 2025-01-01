@@ -15,9 +15,9 @@ using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Localization.Dtos;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Models;
 using TombLauncher.Installers;
@@ -75,7 +75,7 @@ public partial class App : Application
         navigationManager.SetDefaultPage(defaultPage);
         var mainWindow =  new MainWindow
         {
-            DataContext = new MainWindowViewModel(navigationManager),
+            DataContext = new MainWindowViewModel(navigationManager, Ioc.Default.GetRequiredService<NotificationListViewModel>()),
         };
 
         desktop.MainWindow = mainWindow;
@@ -125,6 +125,9 @@ public partial class App : Application
             ".dat",
             ".phd"
         }));
+
+        
+        serviceCollection.AddSingleton<NotificationService>();
             
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
@@ -143,8 +146,8 @@ public partial class App : Application
 
     private static void ConfigureDownloaders(ServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<TrleGameDownloader>();
-        serviceCollection.AddScoped(sp => new AspideTrGameDownloader(sp.GetRequiredService<ILocalizationManager>()
+        serviceCollection.AddTransient<TrleGameDownloader>();
+        serviceCollection.AddTransient(sp => new AspideTrGameDownloader(sp.GetRequiredService<ILocalizationManager>()
             .GetSubsetInvertedByPrefix("ATR")));
     }
 
@@ -170,6 +173,7 @@ public partial class App : Application
         serviceCollection.AddScoped<GameSearchViewModel>();
         serviceCollection.AddScoped<NewGameViewModel>();
         serviceCollection.AddTransient<SettingsPageViewModel>();
+        serviceCollection.AddSingleton<NotificationListViewModel>();
     }
 
     private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection)
@@ -197,8 +201,8 @@ public partial class App : Application
             cfg.CreateMap<AvailableLanguageDto, ApplicationLanguageViewModel>()
                 .ForMember(dto => dto.CultureInfo, opt => opt.MapFrom(culture => culture.Culture)).ReverseMap();
             cfg.CreateMap<PlaySession, PlaySessionDto>().ReverseMap();
-            cfg.CreateMap<IGameSearchResultMetadata, GameSearchResultMetadataViewModel>()
-                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
+            cfg.CreateMap<IGameSearchResultMetadata, GameSearchResultMetadataViewModel>();
+//                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
             cfg.CreateMap<GameSearchResultMetadataViewModel, IGameSearchResultMetadata>()
                 .ConstructUsing(vm => new GameSearchResultMetadataDto())
                 .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
@@ -207,16 +211,19 @@ public partial class App : Application
             cfg.CreateMap<GameMetadataViewModel, GameMetadataDto>()
                 .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
             cfg.CreateMap<IMultiSourceSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
-                .ConstructUsing(vm => new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default.GetService<GameSearchResultService>()))
-                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
+                .ConstructUsing(vm =>
+                    new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default.GetService<GameSearchResultService>()));
+//                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
             cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
-                .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto())
-                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
-            cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>()
-                .ForMember(vm => vm.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToByteArray(dto.TitlePic)));
+                .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto());
+//                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
+            cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>();
+//                .ForMember(vm => vm.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToByteArray(dto.TitlePic)));
             cfg.CreateMap<DownloaderConfigDto, DownloaderViewModel>()
                 .ReverseMap();
             cfg.CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
+            cfg.CreateMap<GameWithStatsDto, GameWithStatsViewModel>().ConstructUsing(dto =>
+                new GameWithStatsViewModel(Ioc.Default.GetService<GameWithStatsService>()));
         });
 
         serviceCollection.AddSingleton(_ => mapperConfiguration);

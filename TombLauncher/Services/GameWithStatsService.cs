@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
@@ -14,12 +17,15 @@ namespace TombLauncher.Services;
 
 public class GameWithStatsService : IViewService
 {
+    private readonly IMapper _mapper;
+
     public GameWithStatsService(GamesUnitOfWork gamesUnitOfWork, 
         ILocalizationManager localizationManager, 
         NavigationManager navigationManager, 
         IMessageBoxService messageBoxService, 
-        IDialogService dialogService)
+        IDialogService dialogService, MapperConfiguration mapperConfiguration)
     {
+        _mapper = mapperConfiguration.CreateMapper();
         GamesUnitOfWork = gamesUnitOfWork;
         LocalizationManager = localizationManager;
         NavigationManager = navigationManager;
@@ -46,9 +52,22 @@ public class GameWithStatsService : IViewService
         LaunchProcess(game, true);
     }
 
+    public async Task PlayGame(int gameId)
+    {
+        var game = await Task.Factory.StartNew(() => GamesUnitOfWork.GetGameWithStats(gameId));
+        var gameViewModel = new GameWithStatsViewModel(Ioc.Default.GetRequiredService<GameWithStatsService>())
+        {
+            GameMetadata = game.GameMetadata.ToViewModel(),
+            LastPlayed = game.LastPlayed,
+            TotalPlayedTime = game.TotalPlayTime
+        };
+        OpenGame(gameViewModel);
+        PlayGame(gameViewModel);
+    }
+
     public bool CanPlayGame(GameWithStatsViewModel game)
     {
-        return !string.IsNullOrWhiteSpace(game.GameMetadata.InstallDirectory);
+        return game.GameMetadata.InstallDirectory.IsNotNullOrWhiteSpace();
     }
 
     private void OnSetupExited()
@@ -77,7 +96,7 @@ public class GameWithStatsService : IViewService
     private void LaunchProcess(GameWithStatsViewModel game, bool trackPlayTime = false, List<string> arguments = null)
     {
         var executable = game.GameMetadata.ExecutablePath;
-        if (!string.IsNullOrWhiteSpace(game.GameMetadata.UniversalLauncherPath))
+        if (game.GameMetadata.UniversalLauncherPath.IsNotNullOrWhiteSpace())
         {
             executable = game.GameMetadata.UniversalLauncherPath;
         }

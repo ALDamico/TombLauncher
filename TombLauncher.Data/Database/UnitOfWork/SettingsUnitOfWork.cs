@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
 using System.Reflection;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Utils;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
 using TombLauncher.Data.Shared;

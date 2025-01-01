@@ -3,6 +3,7 @@ using System.Globalization;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Localization;
 
 namespace TombLauncher.ValueConverters;
@@ -16,7 +17,7 @@ public class DateTimeFormatter : IValueConverter
         {
             if (dateTime == default)
                 return string.Empty;
-            if (string.IsNullOrWhiteSpace(DesiredFormat))
+            if (DesiredFormat.IsNullOrWhiteSpace())
             {
                 return dateTime.ToString(localizationManager.CurrentCulture.DateTimeFormat);
             }

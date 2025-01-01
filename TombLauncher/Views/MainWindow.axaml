@@ -49,21 +49,23 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <DockPanel Grid.Row="0" LastChildFill="True">
-                <controls:IconButton Command="{Binding GoBackCmd}" 
+            <DockPanel Grid.Row="0" LastChildFill="False">
+                <controls:IconOnlyButton Command="{Binding GoBackCmd}"
                                      Icon="ArrowBack" />
-                <ItemsControl DockPanel.Dock="Right" 
-                              HorizontalAlignment="Right" 
-                              ItemsSource="{Binding CurrentPage.TopBarCommands}" 
+                <ContentControl Content="{Binding NotificationListViewModel}" DockPanel.Dock="Right"></ContentControl>
+                <ItemsControl DockPanel.Dock="Right"
+                              HorizontalAlignment="Right"
+                              ItemsSource="{Binding CurrentPage.TopBarCommands}"
                               Margin="0,0,15,0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:IconButton Icon="{Binding Icon}" 
-                                                 Command="{Binding Command}" 
-                                                 ToolTip.Tip="{Binding Tooltip}"/>
+                            <controls:IconButton Icon="{Binding Icon}"
+                                                 Command="{Binding Command}"
+                                                 ToolTip.Tip="{Binding Tooltip}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
             </DockPanel>
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}"
                     ZIndex="5000" Background="#A0000000">
