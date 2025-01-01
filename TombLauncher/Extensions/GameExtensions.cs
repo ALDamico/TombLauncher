@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using Avalonia.Media.Imaging;
-using TombLauncher.Contracts.Dtos;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 

@@ -8,6 +8,8 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:pagesViews="clr-namespace:TombLauncher.Views.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameSearchView"
              x:DataType="pages:GameSearchViewModel"
@@ -50,7 +52,9 @@
                              Command="{Binding SearchCmd}" />
         <ScrollViewer Grid.Row="2"
                       Grid.Column="0"
-                      Grid.ColumnSpan="2">
+                      Grid.ColumnSpan="2"
+                      Offset="{Binding ScrollViewerOffset, Mode=TwoWay}"
+                      >
             <ItemsControl
                 ItemsSource="{Binding FetchedResults}">
                 <ItemsControl.ItemTemplate>
@@ -69,10 +73,10 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Image Grid.Row="0"
+                                <asyncImageLoader:AdvancedImage Grid.Row="0"
                                        Grid.Column="0"
                                        MaxWidth="240"
-                                       Source="{Binding TitlePic, TargetNullValue={x:Static utils:ImageUtils.NullBitmap}}" />
+                                       Source="{Binding TitlePic, Converter={StaticResource StringNullToNullBitmap}}" />
                                 <Grid Grid.Row="0" Grid.Column="1">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />

@@ -20,11 +20,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Dto\Extensions\" />
-      <Folder Include="Dto\GameSearch\" />
+      <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
     </ItemGroup>
 
 </Project>

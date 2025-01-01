@@ -1,8 +1,9 @@
-﻿using TombLauncher.Contracts.Enums;
+﻿using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
 
-namespace TombLauncher.Contracts.Dtos;
+namespace TombLauncher.Core.Dtos;
 
-public class GameMetadataDto
+public class GameMetadataDto : IGameMetadata
 {
     public int Id { get; set; }
     public string Title { get; set; }

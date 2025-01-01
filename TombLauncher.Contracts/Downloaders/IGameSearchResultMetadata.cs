@@ -14,7 +14,7 @@ public interface IGameSearchResultMetadata
     string DetailsLink { get; set; }
     string BaseUrl { get; set; }
     string SourceSiteDisplayName { get; set; }
-    public byte[] TitlePic { get; set; }
+    public string TitlePic { get; set; }
     string DownloadLink { get; set; }
     int? SizeInMb { get; set; }
     double? Rating { get; set; }

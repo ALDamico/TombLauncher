@@ -8,10 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Contracts.Utils;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
 
@@ -71,9 +71,11 @@ public class AspideTrGameDownloader : IGameDownloader
             return;
         foreach (var level in levelsList)
         {
-            var searchResult = new GameSearchResultMetadataDto();
-            searchResult.BaseUrl = BaseUrl;
-            searchResult.SourceSiteDisplayName = DisplayName;
+            var searchResult = new GameSearchResultMetadataDto
+            {
+                BaseUrl = BaseUrl,
+                SourceSiteDisplayName = DisplayName
+            };
             var headerNode = level.SelectSingleNode("./div[@class='level-content-block']/header");
             var authorNode = headerNode.SelectSingleNode("./h2/em/a");
             if (authorNode != null)
@@ -107,7 +109,7 @@ public class AspideTrGameDownloader : IGameDownloader
             var featuredImage = level.SelectSingleNode("./div[@class='level-featured-image']/a/img");
             if (featuredImage != null)
             {
-                searchResult.TitlePic = await _httpClient.GetByteArrayAsync(featuredImage.Attributes["src"].Value);
+                searchResult.TitlePic = featuredImage.Attributes["src"].Value;// await _httpClient.GetByteArrayAsync(featuredImage.Attributes["src"].Value);
             }
 
             var engineTypeNode = level.SelectSingleNode("./div[contains(@class,'level-content')]");
@@ -147,6 +149,8 @@ public class AspideTrGameDownloader : IGameDownloader
 
             result.Add(searchResult);
         }
+
+        await Task.CompletedTask;
     }
 
     public async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
@@ -158,7 +162,7 @@ public class AspideTrGameDownloader : IGameDownloader
         var kvpList = ConvertRequest(convertedRequest);
 
         var urlEncodedContent = new FormUrlEncodedContent(kvpList);
-        var queryString = await urlEncodedContent.ReadAsStringAsync();
+        var queryString = await urlEncodedContent.ReadAsStringAsync(cancellationToken);
         var url = GetPageUrl(CurrentPage, queryString);
         var requestMessage = new HttpRequestMessage(HttpMethod.Get, url) { Content = urlEncodedContent };
         var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
@@ -192,7 +196,7 @@ public class AspideTrGameDownloader : IGameDownloader
         return _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
-    public async Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game,
+    public async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         var detailsLink = game.DetailsLink;
@@ -207,7 +211,7 @@ public class AspideTrGameDownloader : IGameDownloader
             Setting = game.Setting,
             Title = game.Title,
             ReleaseDate = game.ReleaseDate,
-            TitlePic = game.TitlePic,
+            TitlePic = await _httpClient.GetByteArrayAsync(game.TitlePic, cancellationToken),
             GameEngine = game.Engine,
             AuthorFullName = game.AuthorFullName
         };

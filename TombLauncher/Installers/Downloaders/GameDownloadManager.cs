@@ -5,13 +5,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Progress;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Installers.Downloaders;
 
-public class GameDownloadManager : IGameDownloadManager
+public class GameDownloadManager
 {
     public GameDownloadManager(CancellationTokenSource cancellationTokenSource, IGameMerger merger)
     {
@@ -42,7 +42,7 @@ public class GameDownloadManager : IGameDownloadManager
             }
 
             var fetchedResults = completedTask.Result;
-            _merger.Merge(outputList, fetchedResults.Cast<IGameSearchResultMetadata>().ToList());
+            _merger.Merge(outputList, fetchedResults.ToList());
         }
 
         return outputList;
@@ -74,7 +74,7 @@ public class GameDownloadManager : IGameDownloadManager
         return outputList;
     }
 
-    public async Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game)
+    public async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game)
     {
         var downloader = Downloaders.FirstOrDefault(d => d.BaseUrl == game.BaseUrl);
         if (downloader != null)

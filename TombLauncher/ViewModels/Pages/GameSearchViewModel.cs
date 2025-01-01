@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Services;
@@ -25,6 +26,7 @@ public partial class GameSearchViewModel : PageViewModel
     [ObservableProperty] private DownloaderSearchPayloadViewModel _searchPayload;
     [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults;
     [ObservableProperty] private bool _hasMoreResults;
+    [ObservableProperty] private Vector _scrollViewerOffset;
     
 
     protected override void Cancel()

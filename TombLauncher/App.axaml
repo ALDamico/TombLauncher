@@ -37,6 +37,14 @@
             <valueConverters:FileSizeFormatter x:Key="FileSizeFormatter"/>
             <valueConverters2:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>
             <FontFamily x:Key="TombRaiderFont">avares://TombLauncher/Assets#Tomb_Raider</FontFamily>
+            <valueConverters:StringNullToNullBitmapConverter x:Key="StringNullToNullBitmap">
+                <valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
+                    <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm-light.png</system:String>
+                </valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
+                <valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
+                    <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm.png</system:String>
+                </valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
+            </valueConverters:StringNullToNullBitmapConverter>
             
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="../Assets/RatingStyles.axaml" />
@@ -58,5 +66,6 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
         <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
+        <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
     </Application.Styles>
 </Application>

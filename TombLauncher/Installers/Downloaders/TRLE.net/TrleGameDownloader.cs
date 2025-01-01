@@ -10,10 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Contracts.Utils;
+using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
 
 namespace TombLauncher.Installers.Downloaders.TRLE.net;
@@ -243,7 +244,7 @@ public class TrleGameDownloader : IGameDownloader
         await _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
-    public async Task<GameMetadataDto> FetchDetails(IGameSearchResultMetadata game,
+    public async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         var detailsUrl = game.DetailsLink;
@@ -267,6 +268,10 @@ public class TrleGameDownloader : IGameDownloader
         {
             var uri = imageNode.Attributes["src"].Value;
             var byteArr = await _httpClient.GetByteArrayAsync(uri, cancellationToken);
+            if (game.TitlePic.IsNullOrWhiteSpace())
+            {
+                game.TitlePic = new Uri(new Uri(game.BaseUrl), uri).ToString();
+            }
             metadata.TitlePic = byteArr;
         }
 

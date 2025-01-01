@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.ViewModels;
-using TombLauncher.Contracts.Dtos;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;

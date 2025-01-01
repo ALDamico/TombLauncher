@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
 
@@ -37,7 +38,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
     }
 
 
-    public void UpsertGame(GameMetadataDto game)
+    public void UpsertGame(IGameMetadata game)
     {
         var entity = _mapper.Map<Game>(game);
         if (entity.Id == default)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -10,9 +11,9 @@ using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
@@ -126,7 +127,9 @@ public class GameSearchService : IViewService
 
             if (details.TitlePic is { Length: > 0 } && gameToOpen.TitlePic == null)
             {
-                gameToOpen.TitlePic = ImageUtils.ToBitmap(details.TitlePic);
+                gameToOpen.TitlePic = gameToOpenDto.TitlePic;
+                // TODO Reimplement this
+                //gameToOpen.TitlePic =  ImageUtils.ToBitmap(details.TitlePic);
             }
 
             target.ClearBusy();
