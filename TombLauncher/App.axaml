@@ -16,6 +16,7 @@
     
     <Application.Resources>
         <ResourceDictionary>
+            
             <valueConverters1:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
             <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" />
             <valueConverters:NegatedBooleanConverter x:Key="NegatedBooleanConverter" />

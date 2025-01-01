@@ -49,8 +49,7 @@
             <Image Source="{Binding Game.GameMetadata.TitlePic}"
                    Width="320"
                    Height="240" />
-            <controls:SplitIconButton Background="Green"
-                                      Classes="stretched"
+            <controls:SplitIconButton Classes="stretched btn-success"
                                       Icon="Play"
                                       Text="{DynamicResource 'Play'}"
                                       Command="{Binding Game.PlayCmd}">
@@ -90,8 +89,7 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <controls:IconButton Background="DarkRed"
-                                 Classes="stretched"
+            <controls:IconButton Classes="stretched btn-danger"
                                  Icon="Delete"
                                  Text="{DynamicResource Uninstall}"
                                  Command="{Binding UninstallCmd}" />
