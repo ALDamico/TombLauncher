@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
 
@@ -30,8 +31,14 @@ public class GamesUnitOfWork : UnitOfWorkBase
     internal EfRepository<GameHashes> Hashes => _hashes.Value;
     internal EfRepository<GameLink> Links => _links.Value;
 
+    public GameMetadataDto GetGameById(int id)
+    {
+        var entity = Games.GetEntityById(id);
+        return _mapper.Map<GameMetadataDto>(entity);
+    }
 
-    public void UpsertGame(GameMetadataDto game)
+
+    public void UpsertGame(IGameMetadata game)
     {
         var entity = _mapper.Map<Game>(game);
         if (entity.Id == default)
@@ -88,6 +95,25 @@ public class GamesUnitOfWork : UnitOfWorkBase
         }
 
         return outputList;
+    }
+
+    public GameWithStatsDto GetGameWithStats(int id)
+    {
+        var playSessions = PlaySessions.Get(ps => ps.GameId == id);
+        var game = Games.GetEntityById(id);
+        var gameWithStatsDto = new GameWithStatsDto()
+        {
+            GameMetadata = _mapper.Map<GameMetadataDto>(game),
+            TotalPlayTime = TimeSpan.Zero
+        };
+        if (playSessions.Any())
+        {
+            gameWithStatsDto.LastPlayed = playSessions.Max(ps => ps.StartDate);
+            gameWithStatsDto.TotalPlayTime =
+                TimeSpan.FromTicks(playSessions.Select(ps => (ps.EndDate - ps.StartDate).Ticks).Sum());
+        }
+
+        return gameWithStatsDto;
     }
 
     public List<PlaySessionDto> GetPlaySessionsByGameId(int gameId)
@@ -195,11 +221,11 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameMetadataDto>>(queryResult);
     }
 
-    public Dictionary<string, GameMetadataDto> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
+    public Dictionary<string, GameWithStatsDto> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
     {
-        var games = Games.GetAll();
-        return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType)
-            .Join(games, l => l.GameId, game => game.Id, (i, game) => new { Link = i.Link, Game = game })
-            .ToDictionary(k => k.Link, g => _mapper.Map<GameMetadataDto>(g.Game));
+        var stats = GetGamesWithStats();
+        return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).ToList()
+            .Join(stats, l => l.GameId, game => game.GameMetadata.Id, (i, game) => new { Link = i.Link, Game = game })
+            .ToDictionary(k => k.Link, g => g.Game);
     }
 }

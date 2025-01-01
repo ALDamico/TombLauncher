@@ -3,8 +3,9 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Zip;
-using TombLauncher.Contracts.Dtos;
+using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Progress;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 using TombLauncher.Utils;
 
@@ -12,7 +13,7 @@ namespace TombLauncher.Installers;
 
 public class TombRaiderLevelInstaller
 {
-    public async Task<string> Install(string containingFolder, GameMetadataDto gameDto, 
+    public async Task<string> Install(string containingFolder, IGameMetadata gameDto, 
         IProgress<CopyProgressInfo> copyProgress = null)
     {
         if (!Directory.Exists(containingFolder) && !File.Exists(containingFolder))

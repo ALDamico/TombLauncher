@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
@@ -33,8 +34,9 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private GameEngine _engine;
     [ObservableProperty] private string _detailsLink;
     [ObservableProperty] private string _baseUrl;
-    [ObservableProperty] private Bitmap _titlePic;
+    [ObservableProperty] private string _titlePic;
     [ObservableProperty] private string _sourceSiteDisplayName;
+    [ObservableProperty] private InstallProgressViewModel _installProgress;
     private string _reviewsLink;
 
     public string ReviewsLink
@@ -47,7 +49,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         }
     }
 
-    public bool HasReviews => !string.IsNullOrWhiteSpace(ReviewsLink);
+    public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private string _downloadLink;
     private string _walkthroughLink;
 
@@ -61,16 +63,13 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         }
     }
 
-    public bool HasWalkthrough => !string.IsNullOrWhiteSpace(WalkthroughLink);
+    public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
     public int ReviewCount => Sources.Sum(s => s.ReviewCount);
     [ObservableProperty] private DateTime? _releaseDate;
     [ObservableProperty] private ObservableCollection<IGameSearchResultMetadata> _sources;
-    [ObservableProperty] private GameMetadataViewModel _installedGame;
-    [ObservableProperty] private double _totalBytes;
-    [ObservableProperty] private double _currentBytes;
-    [ObservableProperty] private double _downloadSpeed;
+    [ObservableProperty] private GameWithStatsViewModel _installedGame;
     private bool _isInstalling;
 
     public bool IsInstalling
@@ -96,9 +95,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         catch (OperationCanceledException)
         {
             IsInstalling = false;
-            DownloadSpeed = 0;
-            CurrentBytes = 0;
-            TotalBytes = 0;
+            InstallProgress = null;
         }
     }
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Zip;
-using TombLauncher.Contracts.Dtos;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 using TombLauncher.Extensions;
 using TombLauncher.Utils;

@@ -45,7 +45,7 @@ public class GameDetailsService : IViewService
 
     public bool CanUninstall(string gameFolder)
     {
-        return !string.IsNullOrWhiteSpace(gameFolder);
+        return gameFolder.IsNotNullOrWhiteSpace();
     }
 
     public void Uninstall(string installDir, int gameId)

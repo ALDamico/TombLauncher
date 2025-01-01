@@ -36,4 +36,31 @@ public static class StringExtensions
         var regex = new Regex(@"[\{\[\(].*[\}\]\)]");
         return regex.Replace(text, String.Empty);
     }
+    
+    public static string NullIfEmpty(this string s)
+    {
+        return string.IsNullOrWhiteSpace(s) ? null : s;
+    }
+    
+    
+
+    public static bool IsNullOrEmpty(this string s)
+    {
+        return string.IsNullOrEmpty(s);
+    }
+    
+    public static bool IsNotNullOrEmpty(this string s)
+    {
+        return !s.IsNullOrEmpty();
+    }
+
+    public static bool IsNullOrWhiteSpace(this string s)
+    {
+        return string.IsNullOrWhiteSpace(s);
+    }
+
+    public static bool IsNotNullOrWhiteSpace(this string s)
+    {
+        return !s.IsNullOrWhiteSpace();
+    }
 }

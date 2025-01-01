@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Xaml.Interactivity;
+using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.Behaviors;
 
@@ -77,7 +78,7 @@ public class EventToCommand : Behavior<StyledElement>
             _oldEvent.RemoveEventHandler(AssociatedObject, _handler);
 
         // attach new event
-        if (!string.IsNullOrEmpty(eventName))
+        if (eventName.IsNotNullOrWhiteSpace())
         {
             var ei = AssociatedObject.GetType().GetEvent(eventName);
             if (ei != null)
