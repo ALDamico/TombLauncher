@@ -15,7 +15,8 @@
 
     <controls:BadgedIconButton DockPanel.Dock="Right" Icon="Notifications"
                                IsBadgeVisible="{Binding HasNewItems}"
-                               ToolTip.Tip="{DynamicResource Notifications}" x:Name="NotificationButtonFlyout">
+                               ToolTip.Tip="{DynamicResource Notifications}" 
+                               x:Name="NotificationButtonFlyout">
         <Interaction.Behaviors>
             <EventTriggerBehavior EventName="Click" SourceObject="NotificationButtonFlyout">
                 <EventTriggerBehavior.Actions>
@@ -23,7 +24,7 @@
                 </EventTriggerBehavior.Actions>
             </EventTriggerBehavior>
         </Interaction.Behaviors>
-        <controls:IconButton.Flyout>
+        <controls:BadgedIconButton.Flyout>
             <Flyout>
                 <Grid Height="350" Width="350">
                     <Grid.RowDefinitions>
@@ -53,6 +54,6 @@
                     </ScrollViewer>
                 </Grid>
             </Flyout>
-        </controls:IconButton.Flyout>
+        </controls:BadgedIconButton.Flyout>
     </controls:BadgedIconButton>
 </UserControl>
