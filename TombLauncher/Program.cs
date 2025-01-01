@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Serilog;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Navigation;
 
@@ -23,6 +24,8 @@ sealed class Program
         }
         catch (Exception e)
         {
+            var logger = Ioc.Default.GetRequiredService<ILogger>();
+            logger.Fatal(e, "Fatal exception requiring restart");
             var appCrashUoW = Ioc.Default.GetService<AppCrashUnitOfWork>();
             appCrashUoW.InsertAppCrash(e);
 

@@ -14,6 +14,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Serilog;
+using Serilog.Events;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Localization.Dtos;
@@ -73,9 +75,10 @@ public partial class App : Application
         var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
         var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         navigationManager.SetDefaultPage(defaultPage);
-        var mainWindow =  new MainWindow
+        var mainWindow = new MainWindow
         {
-            DataContext = new MainWindowViewModel(navigationManager, Ioc.Default.GetRequiredService<NotificationListViewModel>()),
+            DataContext = new MainWindowViewModel(navigationManager,
+                Ioc.Default.GetRequiredService<NotificationListViewModel>()),
         };
 
         desktop.MainWindow = mainWindow;
@@ -87,10 +90,11 @@ public partial class App : Application
     private async Task InitializeServices()
     {
         var serviceCollection = new ServiceCollection();
+        ConfigureLogging(serviceCollection);
         ConfigureMappings(serviceCollection);
         ConfigurePageServices(serviceCollection);
         ConfigureViewModels(serviceCollection);
-        serviceCollection.AddSingleton<ILocalizationManager>(_ =>new LocalizationManager(Current));
+        serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current));
         ConfigureDatabaseAccess(serviceCollection);
         serviceCollection.AddSingleton(_ => new NavigationManager());
         serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
@@ -103,7 +107,8 @@ public partial class App : Application
         serviceCollection.AddScoped<TombRaiderLevelInstaller>();
         serviceCollection.AddScoped<TombRaiderEngineDetector>();
         serviceCollection.AddTransient<IGameMerger>(_ =>
-            new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator(){UseAuthor = true, IgnoreSubTitle = true}));
+            new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator()
+                { UseAuthor = true, IgnoreSubTitle = true }));
         ConfigureDownloaders(serviceCollection);
         serviceCollection.AddTransient(sp =>
         {
@@ -112,7 +117,7 @@ public partial class App : Application
             {
                 Downloaders = Ioc.Default.GetRequiredService<SettingsService>().GetActiveDownloaders()
             };
-            
+
 
             return downloadManager;
         });
@@ -126,9 +131,9 @@ public partial class App : Application
             ".phd"
         }));
 
-        
+
         serviceCollection.AddSingleton<NotificationService>();
-            
+
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
         await Task.CompletedTask;
@@ -136,7 +141,7 @@ public partial class App : Application
 
     private static void ApplyInitialSettings()
     {
-        var settingsService= Ioc.Default.GetRequiredService<SettingsService>();
+        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
         var applicationLanguage = settingsService.GetApplicationLanguage();
         localizationManager.ChangeLanguage(applicationLanguage);
@@ -184,12 +189,26 @@ public partial class App : Application
         serviceCollection.AddScoped<SettingsUnitOfWork>();
     }
 
+    private static void ConfigureLogging(ServiceCollection serviceCollection)
+    {
+        serviceCollection.AddScoped<ILogger>(_ =>
+        {
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.File("TombLauncher_App.log", LogEventLevel.Information, buffered: false)
+                .CreateLogger();
+
+            return logger;
+        });
+        
+    }
+
     private static void ConfigureMappings(ServiceCollection serviceCollection)
     {
         var mapperConfiguration = new MapperConfiguration(cfg =>
         {
             cfg.AllowNullDestinationValues = true;
-            
+
             cfg.CreateMap<AppCrash, AppCrashDto>()
                 .ForMember(dto => dto.ExceptionDto,
                     opt => opt.MapFrom(s => JsonConvert.DeserializeObject<ExceptionDto>(s.Exception)));
@@ -212,7 +231,8 @@ public partial class App : Application
                 .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
             cfg.CreateMap<IMultiSourceSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
                 .ConstructUsing(vm =>
-                    new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default.GetService<GameSearchResultService>()));
+                    new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default
+                        .GetService<GameSearchResultService>()));
 //                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
             cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
                 .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto());

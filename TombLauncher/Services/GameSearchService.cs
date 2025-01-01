@@ -10,6 +10,8 @@ using Avalonia.Threading;
 using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
@@ -23,6 +25,7 @@ using TombLauncher.Navigation;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
+using ILogger = Serilog.ILogger;
 
 namespace TombLauncher.Services;
 
@@ -42,10 +45,12 @@ public class GameSearchService : IViewService
         _mapper = mapperConfiguration.CreateMapper();
         _notificationService = notificationService;
         _gameListService = gameListService;
+        _logger = Ioc.Default.GetRequiredService<ILogger>();
     }
 
     private NotificationService _notificationService;
     private GameListService _gameListService;
+    private ILogger _logger;
 
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
@@ -64,6 +69,7 @@ public class GameSearchService : IViewService
 
     public async Task LoadMore(GameSearchViewModel target)
     {
+        _logger.Information("Loading more results");
         target.SetBusy("Loading in progress".GetLocalizedString());
         var nextPage = await GameDownloadManager.FetchNextPage();
 
@@ -100,11 +106,10 @@ public class GameSearchService : IViewService
             await Task.Delay(1);
         }
 
-        await new TaskFactory().StartNew(() => { return Task.CompletedTask; });
-
-
         target.HasMoreResults = CanLoadMore();
+        _logger.Information("Loading finished. Has more results: {MoreResults}", target.HasMoreResults);
         target.ClearBusy();
+        
     }
 
     public bool CanLoadMore() => GameDownloadManager.HasMoreResults();
@@ -112,6 +117,7 @@ public class GameSearchService : IViewService
     public async Task Open(GameSearchViewModel target, MultiSourceGameSearchResultMetadataViewModel gameToOpen)
     {
         target.SetBusy(true);
+        _logger.Information("Opening game {GameName}", gameToOpen.Title);
         var gameToOpenDto = _mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
 
         var details = await GameDownloadManager.FetchDetails(gameToOpenDto);
@@ -127,9 +133,8 @@ public class GameSearchService : IViewService
 
             if (details.TitlePic is { Length: > 0 } && gameToOpen.TitlePic == null)
             {
+                _logger.Debug("Game {GameName} has no title pic. Updating from fetched details", gameToOpen.Title);
                 gameToOpen.TitlePic = gameToOpenDto.TitlePic;
-                // TODO Reimplement this
-                //gameToOpen.TitlePic =  ImageUtils.ToBitmap(details.TitlePic);
             }
 
             target.ClearBusy();
@@ -143,6 +148,7 @@ public class GameSearchService : IViewService
     public async Task Search(GameSearchViewModel target)
     {
         target.SetBusy("Search starting...".GetLocalizedString());
+        _logger.Information("Started search with parameters: {Target}", target);
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var downloaders = settingsService.GetActiveDownloaders();
         GameDownloadManager.Downloaders.Clear();
@@ -173,8 +179,9 @@ public class GameSearchService : IViewService
             });
             target.HasMoreResults = GameDownloadManager.HasMoreResults();
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
+            _logger.Warning(ex, "Search canceled");
             target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         }
 
@@ -185,6 +192,7 @@ public class GameSearchService : IViewService
             await _notificationService.AddNotification(new NotificationViewModel()
                 { Content = new StringNotificationViewModel() { Text = "Search completed" }, IsDismissable = true });
         }
+        _logger.Information("Search completed");
     }
 
     public void Cancel()
