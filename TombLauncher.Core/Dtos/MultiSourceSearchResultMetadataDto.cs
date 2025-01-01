@@ -1,5 +1,6 @@
 ﻿using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.Core.Dtos;
 
@@ -17,10 +18,10 @@ public class MultiSourceSearchResultMetadataDto : IMultiSourceSearchResultMetada
     public string SourceSiteDisplayName { get; set; }
     public string TitlePic { get; set; }
     public string ReviewsLink { get; set; }
-    public bool HasReviews => !string.IsNullOrWhiteSpace(ReviewsLink);
+    public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
     public string DownloadLink { get; set; }
     public string WalkthroughLink { get; set; }
-    public bool HasWalkthrough => !string.IsNullOrWhiteSpace(WalkthroughLink);
+    public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     public int? SizeInMb { get; set; }
     public double? Rating { get; set; }
     public DateTime? ReleaseDate { get; set; }

@@ -153,7 +153,7 @@ public class GameSearchService : IViewService
             var games = await GameDownloadManager.GetGames(target.SearchPayload.ToDto());
             var mappedGames = _mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);
             var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink) /*TODO Remove this*/
-                .Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                .Where(s => s.IsNotNullOrWhiteSpace()).ToList();
             var installedGames = GamesUnitOfWork.GetGamesByLinksDictionary(LinkType.Download, downloadLinks);
             foreach (var game in mappedGames)
             {

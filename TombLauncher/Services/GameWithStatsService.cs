@@ -5,6 +5,7 @@ using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
@@ -66,7 +67,7 @@ public class GameWithStatsService : IViewService
 
     public bool CanPlayGame(GameWithStatsViewModel game)
     {
-        return !string.IsNullOrWhiteSpace(game.GameMetadata.InstallDirectory);
+        return game.GameMetadata.InstallDirectory.IsNotNullOrWhiteSpace();
     }
 
     private void OnSetupExited()
@@ -95,7 +96,7 @@ public class GameWithStatsService : IViewService
     private void LaunchProcess(GameWithStatsViewModel game, bool trackPlayTime = false, List<string> arguments = null)
     {
         var executable = game.GameMetadata.ExecutablePath;
-        if (!string.IsNullOrWhiteSpace(game.GameMetadata.UniversalLauncherPath))
+        if (game.GameMetadata.UniversalLauncherPath.IsNotNullOrWhiteSpace())
         {
             executable = game.GameMetadata.UniversalLauncherPath;
         }

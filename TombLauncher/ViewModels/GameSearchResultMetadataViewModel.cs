@@ -3,6 +3,7 @@ using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.ViewModels;
@@ -31,7 +32,8 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase
         }
     }
 
-    public bool HasReviews => !string.IsNullOrWhiteSpace(ReviewsLink);
+    public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
+    
     [ObservableProperty] private string _downloadLink;
     private string _walkthroughLink;
 
@@ -45,7 +47,7 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase
         }
     }
 
-    public bool HasWalkthrough => !string.IsNullOrWhiteSpace(WalkthroughLink);
+    public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
     [ObservableProperty] private int _reviewCount;

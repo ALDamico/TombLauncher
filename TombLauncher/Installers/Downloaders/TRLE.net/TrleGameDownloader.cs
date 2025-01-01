@@ -148,7 +148,7 @@ public class TrleGameDownloader : IGameDownloader
             {
                 var value = zip.Value;
                 if (value == null) continue;
-                var v = string.IsNullOrEmpty(value.InnerText?.Trim())
+                var v = value.InnerText?.Trim().IsNullOrEmpty() == true
                     ? value.SelectSingleNode("./a")?.Attributes["href"].Value
                     : value.InnerText.Trim();
                 if (v == null) continue;

@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
@@ -48,7 +49,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         }
     }
 
-    public bool HasReviews => !string.IsNullOrWhiteSpace(ReviewsLink);
+    public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private string _downloadLink;
     private string _walkthroughLink;
 
@@ -62,7 +63,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         }
     }
 
-    public bool HasWalkthrough => !string.IsNullOrWhiteSpace(WalkthroughLink);
+    public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
     public int ReviewCount => Sources.Sum(s => s.ReviewCount);

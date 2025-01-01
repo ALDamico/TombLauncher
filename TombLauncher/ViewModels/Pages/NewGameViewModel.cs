@@ -20,7 +20,6 @@ public partial class NewGameViewModel : PageViewModel
     {
         _newGameService = newGameService;
         _gameMetadata = new GameMetadataViewModel();
-        //_gameMetadata.PropertyChanged += OnGameMetadataPropertyChanged;
 
         AvailableLengths = EnumUtils.GetEnumViewModels<GameLength>().ToObservableCollection();
         AvailableDifficulties = EnumUtils.GetEnumViewModels<GameDifficulty>().ToObservableCollection();
@@ -44,14 +43,6 @@ public partial class NewGameViewModel : PageViewModel
     }
 
     private readonly NewGameService _newGameService;
-
-   /* private void OnGameMetadataPropertyChanged(object sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(GameMetadataViewModel.Title))
-        {
-            SaveCmd.NotifyCanExecuteChanged();
-        }
-    }*/
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;
     [ObservableProperty] private string _source;
     public ObservableCollection<EnumViewModel<GameLength>> AvailableLengths { get; }
@@ -81,18 +72,8 @@ public partial class NewGameViewModel : PageViewModel
 
     protected override bool CanSave()
     {
-        return !string.IsNullOrWhiteSpace(GameMetadata.Title) && !string.IsNullOrWhiteSpace(Source);
+        return GameMetadata.Title.IsNotNullOrWhiteSpace() && Source.IsNotNullOrWhiteSpace();
     }
 
     public IDialogService DialogService => _newGameService.DialogService;
-
-    /*protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(GameMetadataViewModel.Title) || e.PropertyName == nameof(Source))
-        {
-            SaveCmd.NotifyCanExecuteChanged();
-        }
-
-        base.OnPropertyChanged(e);
-    }*/
 }

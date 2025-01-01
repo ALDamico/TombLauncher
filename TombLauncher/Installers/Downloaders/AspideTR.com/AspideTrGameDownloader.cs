@@ -129,7 +129,7 @@ public class AspideTrGameDownloader : IGameDownloader
             foreach (var link in buttonsLinks)
             {
                 var linkText = link.Attributes["href"].Value;
-                if (link.HasClass("info") && string.IsNullOrWhiteSpace(searchResult.DetailsLink))
+                if (link.HasClass("info") && searchResult.DetailsLink.IsNullOrWhiteSpace())
                 {
                     searchResult.DetailsLink = linkText;
                 }

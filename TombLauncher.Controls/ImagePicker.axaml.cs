@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using JamSoft.AvaloniaUI.Dialogs;
+using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.Controls;
 
@@ -44,13 +45,13 @@ public partial class ImagePicker : UserControl
                 }
             }
         }); // TODO Make this a prop
-        if (!string.IsNullOrWhiteSpace(selectedFile))
+        if (selectedFile.IsNotNullOrWhiteSpace())
         {
             var newValue = new Bitmap(selectedFile);
             var oldValue = Source;
             Source = newValue;
             
-            this.OnPropertyChanged(new AvaloniaPropertyChangedEventArgs<IImage>(this, SourceProperty, new Optional<IImage>(oldValue), new BindingValue<IImage>(newValue), BindingPriority.Inherited));
+            OnPropertyChanged(new AvaloniaPropertyChangedEventArgs<IImage>(this, SourceProperty, new Optional<IImage>(oldValue), new BindingValue<IImage>(newValue), BindingPriority.Inherited));
         }
     }
     

@@ -5,6 +5,7 @@ using Avalonia.Platform.Storage;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization;
 using TombLauncher.Localization.Extensions;
@@ -42,7 +43,7 @@ public class AppCrashHostService : IViewService
                     }
                 }
             }, "json");
-        if (string.IsNullOrWhiteSpace(filePath)) return;
+        if (filePath.IsNullOrWhiteSpace()) return;
         await File.WriteAllTextAsync(filePath,
             JsonSerializer.Serialize(crash, new JsonSerializerOptions() { WriteIndented = true }));
     }
