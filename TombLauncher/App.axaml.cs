@@ -211,7 +211,8 @@ public partial class App : Application
             cfg.CreateMap<GameMetadataViewModel, GameMetadataDto>()
                 .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
             cfg.CreateMap<IMultiSourceSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
-                .ConstructUsing(vm => new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default.GetService<GameSearchResultService>()))
+                .ConstructUsing(vm =>
+                    new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default.GetService<GameSearchResultService>()))
                 .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
             cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
                 .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto())
@@ -221,6 +222,8 @@ public partial class App : Application
             cfg.CreateMap<DownloaderConfigDto, DownloaderViewModel>()
                 .ReverseMap();
             cfg.CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
+            cfg.CreateMap<GameWithStatsDto, GameWithStatsViewModel>().ConstructUsing(dto =>
+                new GameWithStatsViewModel(Ioc.Default.GetService<GameWithStatsService>()));
         });
 
         serviceCollection.AddSingleton(_ => mapperConfiguration);

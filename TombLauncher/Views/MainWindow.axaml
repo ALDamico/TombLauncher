@@ -50,7 +50,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0" LastChildFill="False">
-                <controls:IconButton Command="{Binding GoBackCmd}"
+                <controls:IconOnlyButton Command="{Binding GoBackCmd}"
                                      Icon="ArrowBack" />
                 <ContentControl Content="{Binding NotificationListViewModel}" DockPanel.Dock="Right"></ContentControl>
                 <ItemsControl DockPanel.Dock="Right"

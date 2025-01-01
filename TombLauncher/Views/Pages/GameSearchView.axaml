@@ -100,18 +100,20 @@
                                 </Grid>
                                 
                                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                                    <controls:IconOnlyButton Icon="Play" Classes="btn-success" 
+                                                             Command="{Binding InstalledGame.PlayCmd}" 
+                                                             IsVisible="{Binding InstalledGame, Converter={x:Static ObjectConverters.IsNotNull}}"/>
                                     <Button Command="{Binding InstallCmd}"
                                             CommandParameter="{Binding .}"
                                             ToolTip.Tip="{DynamicResource Download}"
-                                            >
+                                    >
                                         <avalonia:MaterialIcon Kind="Download"/>
                                     </Button>
-                                    <Button IsVisible="{Binding IsInstalling}" 
-                                            ToolTip.Tip="{DynamicResource Cancel}"
-                                            Background="DarkRed"
-                                            Command="{Binding CancelInstallCmd}">
-                                        <avalonia:MaterialIcon Kind="Cancel"/>
-                                    </Button>
+                                    <controls:IconOnlyButton Icon="Cancel" 
+                                                             Classes="btn-danger" 
+                                                             ToolTip.Tip="{DynamicResource Cancel}" 
+                                                             IsVisible="{Binding IsInstalling}" 
+                                                             Command="{Binding CancelInstallCmd}"/>
                                 </StackPanel>
                             </Grid>
                         </Border>

@@ -68,7 +68,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     public int ReviewCount => Sources.Sum(s => s.ReviewCount);
     [ObservableProperty] private DateTime? _releaseDate;
     [ObservableProperty] private ObservableCollection<IGameSearchResultMetadata> _sources;
-    [ObservableProperty] private GameMetadataViewModel _installedGame;
+    [ObservableProperty] private GameWithStatsViewModel _installedGame;
     private bool _isInstalling;
 
     public bool IsInstalling

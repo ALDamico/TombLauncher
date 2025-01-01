@@ -57,6 +57,7 @@ public class GameSearchResultService : IViewService
     public bool CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
     {
         if (obj == null) return false;
+        if (obj.InstalledGame != null) return false;
         var links = obj.Sources.Select(s => s.DownloadLink).ToList();
         var gameDto = GamesUnitOfWork.GetGameByLinks(LinkType.Download, links);
         return gameDto == null;

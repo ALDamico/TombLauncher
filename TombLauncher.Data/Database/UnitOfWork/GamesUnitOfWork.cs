@@ -220,11 +220,11 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameMetadataDto>>(queryResult);
     }
 
-    public Dictionary<string, GameMetadataDto> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
+    public Dictionary<string, GameWithStatsDto> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
     {
-        var games = Games.GetAll();
-        return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType)
-            .Join(games, l => l.GameId, game => game.Id, (i, game) => new { Link = i.Link, Game = game })
-            .ToDictionary(k => k.Link, g => _mapper.Map<GameMetadataDto>(g.Game));
+        var stats = GetGamesWithStats();
+        return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).ToList()
+            .Join(stats, l => l.GameId, game => game.GameMetadata.Id, (i, game) => new { Link = i.Link, Game = game })
+            .ToDictionary(k => k.Link, g => g.Game);
     }
 }

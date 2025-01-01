@@ -14,7 +14,6 @@ using TombLauncher.Contracts.Dtos;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Contracts.Utils;
-using TombLauncher.Core.Utils;
 using TombLauncher.Extensions;
 
 namespace TombLauncher.Installers.Downloaders.TRLE.net;
@@ -111,14 +110,21 @@ public class TrleGameDownloader : IGameDownloader
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
         requestMessage.Content = urlEncodedContent;
 
-        var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
-        var content = await response.Content.ReadAsStringAsync(cancellationToken);
-        var htmlDocument = new HtmlDocument();
-        htmlDocument.LoadHtml(content);
-        if (TotalPages == null)
-            TotalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
-        
-        ParseResultPage(htmlDocument, result, cancellationToken);
+        try
+        {
+            var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(content);
+            if (TotalPages == null)
+                TotalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
+
+            ParseResultPage(htmlDocument, result, cancellationToken);
+        }
+        catch (HttpRequestException)
+        {
+            CurrentPage--;
+        }
         return result;
     }
 
