@@ -50,6 +50,8 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
+    private ILogger _logger;
+
     public override async void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -57,6 +59,11 @@ public partial class App : Application
             // Line below is needed to remove Avalonia data validation.
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);
+            desktop.ShutdownRequested += (sender, args) =>
+            {
+                _logger.Information("Application is shutting down");
+                ((IDisposable)_logger).Dispose();
+            };
             var splashScreen = new SplashScreen();
             desktop.MainWindow = splashScreen;
             splashScreen.Show();
@@ -136,10 +143,13 @@ public partial class App : Application
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
+        var logger = Ioc.Default.GetRequiredService<ILogger>();
+        _logger = logger;
+        _logger.Information("Service initialization complete");
         await Task.CompletedTask;
     }
 
-    private static void ApplyInitialSettings()
+    private void ApplyInitialSettings()
     {
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
@@ -149,7 +159,7 @@ public partial class App : Application
         Current.RequestedThemeVariant = applicationTheme;
     }
 
-    private static void ConfigureDownloaders(ServiceCollection serviceCollection)
+    private void ConfigureDownloaders(ServiceCollection serviceCollection)
     {
         serviceCollection.AddTransient<TrleGameDownloader>();
         serviceCollection.AddTransient(sp => new AspideTrGameDownloader(sp.GetRequiredService<ILocalizationManager>()
@@ -191,12 +201,13 @@ public partial class App : Application
 
     private static void ConfigureLogging(ServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<ILogger>(_ =>
+        serviceCollection.AddSingleton<ILogger>(_ =>
         {
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
-                .WriteTo.File("TombLauncher_App.log", LogEventLevel.Information, buffered: false)
+                .WriteTo.File("TombLauncher_App.log", LogEventLevel.Information, buffered: true)
                 .CreateLogger();
+            logger.Information("Application logging started");
 
             return logger;
         });

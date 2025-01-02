@@ -172,10 +172,10 @@ public class GameSearchService : IViewService
 
             var observableCollection = mappedGames.ToObservableCollection();
 
-            Dispatcher.UIThread.Invoke(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 target.FetchedResults.Clear();
-                target.FetchedResults.AddRange(observableCollection);
+                target.FetchedResults.AddRange(mappedGames);
             });
             target.HasMoreResults = GameDownloadManager.HasMoreResults();
         }

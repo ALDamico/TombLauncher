@@ -35,6 +35,12 @@ sealed class Program
                 Process.Start(thisExecutable, args);
             }
         }
+        finally
+        {
+            var logger = Ioc.Default.GetRequiredService<ILogger>();
+            logger.Error("Application closing due to fatal exception");
+            ((IDisposable)logger).Dispose();
+        }
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

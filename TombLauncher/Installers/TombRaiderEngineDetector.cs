@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Installers.Models;
 
 namespace TombLauncher.Installers;
@@ -15,12 +16,15 @@ public class TombRaiderEngineDetector
         {
             { "tomb3.exe", GameEngine.TombRaider3 },
             { "tomb1main.exe", GameEngine.TombRaider1 },
+            { "tombati.exe", GameEngine.TombRaider1 },
             { "tomb.exe", GameEngine.TombRaider1 },
             { "tomb2.exe", GameEngine.TombRaider2 },
             { "tomb2main.exe", GameEngine.TombRaider2 },
             { "tomb4.exe", GameEngine.TombRaider4 },
             { "tomb5.exe", GameEngine.TombRaider5 },
-            { "tombengine.exe", GameEngine.Ten }
+            { "tombengine.exe", GameEngine.Ten },
+            { "tr1x.exe", GameEngine.Tr1x },
+            { "tr2x.exe", GameEngine.Tr2x }
         };
         _knownGameExecutables = _gameEngines.Keys.ToHashSet();
     }
@@ -31,22 +35,22 @@ public class TombRaiderEngineDetector
     public EngineDetectorResult Detect(string containingFolder)
     {
         var files = Directory.GetFiles(containingFolder, "*.exe", SearchOption.AllDirectories);
+        var result = new EngineDetectorResult()
+        {
+            GameEngine = GameEngine.Unknown,
+            InstallFolder = containingFolder,
+            ExecutablePath = GetGameExecutablePath(containingFolder),
+            UniversalLauncherPath = GetUniversalLauncherPath(containingFolder)
+        };
         foreach (var file in files)
         {
             if (_gameEngines.TryGetValue(Path.GetFileName(file).ToLowerInvariant(), out var gameEngine))
             {
-                var result = new EngineDetectorResult()
-                {
-                    GameEngine = gameEngine,
-                    InstallFolder = containingFolder,
-                    ExecutablePath = GetGameExecutablePath(containingFolder),
-                    UniversalLauncherPath = GetUniversalLauncherPath(containingFolder)
-                };
-                return result;
+                result.GameEngine = gameEngine;
             }
         }
 
-        throw new Exception("Not found :(");
+        return result;
     }
 
     private string GetUniversalLauncherPath(string containingFolder)
@@ -64,6 +68,9 @@ public class TombRaiderEngineDetector
         var fullPath = _knownGameExecutables.Join(executables, knownExecutable => knownExecutable,
                 Path.GetFileName, (s, s1) => s1, StringComparer.InvariantCultureIgnoreCase)
             .FirstOrDefault();
+
+        if (fullPath.IsNullOrWhiteSpace())
+            return null;
 
         return Path.GetRelativePath(containingFolder, fullPath);
     }

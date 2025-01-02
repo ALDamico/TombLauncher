@@ -10,6 +10,7 @@
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameSearchView"
              x:DataType="pages:GameSearchViewModel"
@@ -55,10 +56,9 @@
                       Grid.ColumnSpan="2"
                       Offset="{Binding ScrollViewerOffset, Mode=TwoWay}"
                       >
-            <ItemsControl
-                ItemsSource="{Binding FetchedResults}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
+            <ItemsRepeater ItemsSource="{Binding FetchedResults}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
                         <Border CornerRadius="3"
                                 Padding="10"
                                 Margin="5"
@@ -122,8 +122,9 @@
                             </Grid>
                         </Border>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
         </ScrollViewer>
         <Button Grid.Row="3"
                 Grid.Column="0"

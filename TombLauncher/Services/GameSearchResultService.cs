@@ -13,6 +13,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
@@ -60,7 +61,7 @@ public class GameSearchResultService : IViewService
         if (obj.InstalledGame != null) return false;
         var links = obj.Sources.Select(s => s.DownloadLink).ToList();
         var gameDto = GamesUnitOfWork.GetGameByLinks(LinkType.Download, links);
-        return gameDto == null;
+        return gameDto == null || gameDto.ExecutablePath.IsNotNullOrWhiteSpace();
     }
 
     public async Task Install(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
@@ -87,7 +88,7 @@ public class GameSearchResultService : IViewService
                         return Task.CompletedTask;
                     return _gameWithStatsService.PlayGame(dto.Id);
                 },
-                (dto) => dto?.Id != default)
+                (dto) => dto?.Id != default && installProgress.InstallCompleted)
         };
         await _notificationService.AddNotification(notificationViewModel);
         gameToInstall.InstallProgress = installProgress;
