@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Downloaders;
@@ -70,31 +69,18 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private DateTime? _releaseDate;
     [ObservableProperty] private ObservableCollection<IGameSearchResultMetadata> _sources;
     [ObservableProperty] private GameWithStatsViewModel _installedGame;
-    private bool _isInstalling;
-
-    public bool IsInstalling
-    {
-        get => _isInstalling;
-        set
-        {
-            _isInstalling = value;
-            OnPropertyChanged();
-            ((AsyncRelayCommand)CancelInstallCmd).NotifyCanExecuteChanged();
-        }
-    }
     
     public ICommand InstallCmd { get; }
 
     private async Task Install()
     {
-        Console.WriteLine($"Attempting install {this.GetHashCode()}");
+        
         try
         {
             await _gameSearchResultService.Install(this);
         }
         catch (OperationCanceledException)
         {
-            IsInstalling = false;
             InstallProgress = null;
         }
     }

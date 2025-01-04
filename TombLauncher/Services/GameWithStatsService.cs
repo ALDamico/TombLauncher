@@ -59,7 +59,7 @@ public class GameWithStatsService : IViewService
         {
             GameMetadata = game.GameMetadata.ToViewModel(),
             LastPlayed = game.LastPlayed,
-            TotalPlayedTime = game.TotalPlayTime
+            TotalPlayedTime = game.TotalPlayedTime
         };
         OpenGame(gameViewModel);
         PlayGame(gameViewModel);
@@ -67,7 +67,7 @@ public class GameWithStatsService : IViewService
 
     public bool CanPlayGame(GameWithStatsViewModel game)
     {
-        return game.GameMetadata.InstallDirectory.IsNotNullOrWhiteSpace();
+        return game.GameMetadata.InstallDirectory.IsNotNullOrWhiteSpace() && game.GameMetadata.ExecutablePath.IsNotNullOrWhiteSpace();
     }
 
     private void OnSetupExited()

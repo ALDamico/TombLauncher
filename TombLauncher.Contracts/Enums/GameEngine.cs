@@ -18,5 +18,9 @@ public enum GameEngine
     [Description("Tomb Raider Chronicles")]
     TombRaider5 = 5,
     [Description("TEN")]
-    Ten = 6
+    Ten = 6,
+    [Description("TR1X")]
+    Tr1x = 1 << 8 | TombRaider1,
+    [Description("TR2X")]
+    Tr2x = 2 << 8 | TombRaider2
 }

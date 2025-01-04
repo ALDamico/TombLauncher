@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Serilog;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Navigation;
 
@@ -23,6 +24,7 @@ sealed class Program
         }
         catch (Exception e)
         {
+            Log.Logger.Fatal(e, "Fatal exception requiring restart");
             var appCrashUoW = Ioc.Default.GetService<AppCrashUnitOfWork>();
             appCrashUoW.InsertAppCrash(e);
 
@@ -31,6 +33,11 @@ sealed class Program
             {
                 Process.Start(thisExecutable, args);
             }
+        }
+        finally
+        {
+            Log.Logger.Error("Application closing due to fatal exception");
+            ((IDisposable)Log.Logger).Dispose();
         }
     }
 

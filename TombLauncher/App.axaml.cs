@@ -13,13 +13,17 @@ using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog;
+using Serilog.Events;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Localization.Dtos;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Models;
+using TombLauncher.Factories;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Installers.Downloaders.AspideTR.com;
@@ -33,6 +37,7 @@ using TombLauncher.ViewModels.Pages;
 using TombLauncher.ViewModels.Pages.Settings;
 using TombLauncher.Views;
 using ApplicationLanguageViewModel = TombLauncher.ViewModels.Pages.Settings.ApplicationLanguageViewModel;
+using ILogger = Serilog.ILogger;
 
 namespace TombLauncher;
 
@@ -55,6 +60,11 @@ public partial class App : Application
             // Line below is needed to remove Avalonia data validation.
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);
+            desktop.ShutdownRequested += (sender, args) =>
+            {
+                Log.Logger.Information("Application is shutting down");
+                ((IDisposable)Log.Logger).Dispose();
+            };
             var splashScreen = new SplashScreen();
             desktop.MainWindow = splashScreen;
             splashScreen.Show();
@@ -73,9 +83,10 @@ public partial class App : Application
         var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
         var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         navigationManager.SetDefaultPage(defaultPage);
-        var mainWindow =  new MainWindow
+        var mainWindow = new MainWindow
         {
-            DataContext = new MainWindowViewModel(navigationManager, Ioc.Default.GetRequiredService<NotificationListViewModel>()),
+            DataContext = new MainWindowViewModel(navigationManager,
+                Ioc.Default.GetRequiredService<NotificationListViewModel>()),
         };
 
         desktop.MainWindow = mainWindow;
@@ -87,10 +98,11 @@ public partial class App : Application
     private async Task InitializeServices()
     {
         var serviceCollection = new ServiceCollection();
+        ConfigureLogging(serviceCollection);
         ConfigureMappings(serviceCollection);
         ConfigurePageServices(serviceCollection);
         ConfigureViewModels(serviceCollection);
-        serviceCollection.AddSingleton<ILocalizationManager>(_ =>new LocalizationManager(Current));
+        serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current));
         ConfigureDatabaseAccess(serviceCollection);
         serviceCollection.AddSingleton(_ => new NavigationManager());
         serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
@@ -103,7 +115,8 @@ public partial class App : Application
         serviceCollection.AddScoped<TombRaiderLevelInstaller>();
         serviceCollection.AddScoped<TombRaiderEngineDetector>();
         serviceCollection.AddTransient<IGameMerger>(_ =>
-            new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator(){UseAuthor = true, IgnoreSubTitle = true}));
+            new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator()
+                { UseAuthor = true, IgnoreSubTitle = true }));
         ConfigureDownloaders(serviceCollection);
         serviceCollection.AddTransient(sp =>
         {
@@ -112,7 +125,7 @@ public partial class App : Application
             {
                 Downloaders = Ioc.Default.GetRequiredService<SettingsService>().GetActiveDownloaders()
             };
-            
+
 
             return downloadManager;
         });
@@ -126,17 +139,18 @@ public partial class App : Application
             ".phd"
         }));
 
-        
+
         serviceCollection.AddSingleton<NotificationService>();
-            
+
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
+        Log.Logger.Information("Service initialization complete");
         await Task.CompletedTask;
     }
 
-    private static void ApplyInitialSettings()
+    private void ApplyInitialSettings()
     {
-        var settingsService= Ioc.Default.GetRequiredService<SettingsService>();
+        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
         var applicationLanguage = settingsService.GetApplicationLanguage();
         localizationManager.ChangeLanguage(applicationLanguage);
@@ -144,7 +158,7 @@ public partial class App : Application
         Current.RequestedThemeVariant = applicationTheme;
     }
 
-    private static void ConfigureDownloaders(ServiceCollection serviceCollection)
+    private void ConfigureDownloaders(ServiceCollection serviceCollection)
     {
         serviceCollection.AddTransient<TrleGameDownloader>();
         serviceCollection.AddTransient(sp => new AspideTrGameDownloader(sp.GetRequiredService<ILocalizationManager>()
@@ -171,7 +185,7 @@ public partial class App : Application
                 { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
         serviceCollection.AddScoped<GameListViewModel>();
         serviceCollection.AddScoped<GameSearchViewModel>();
-        serviceCollection.AddScoped<NewGameViewModel>();
+        serviceCollection.AddTransient<NewGameViewModel>();
         serviceCollection.AddTransient<SettingsPageViewModel>();
         serviceCollection.AddSingleton<NotificationListViewModel>();
     }
@@ -184,48 +198,23 @@ public partial class App : Application
         serviceCollection.AddScoped<SettingsUnitOfWork>();
     }
 
+    private static void ConfigureLogging(ServiceCollection serviceCollection)
+    {
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo
+            .File("TombLauncher_App.log", LogEventLevel.Information)
+            .CreateLogger();
+        serviceCollection.AddLogging(opts =>
+        {
+            opts.ClearProviders();
+            opts.SetMinimumLevel(LogLevel.Information);
+            opts.AddSerilog();
+        });
+    }
+
     private static void ConfigureMappings(ServiceCollection serviceCollection)
     {
-        var mapperConfiguration = new MapperConfiguration(cfg =>
-        {
-            cfg.AllowNullDestinationValues = true;
-            
-            cfg.CreateMap<AppCrash, AppCrashDto>()
-                .ForMember(dto => dto.ExceptionDto,
-                    opt => opt.MapFrom(s => JsonConvert.DeserializeObject<ExceptionDto>(s.Exception)));
-            cfg.CreateMap<Exception, ExceptionDto>();
-
-            cfg.CreateMap<GameHashes, GameHashDto>().ReverseMap();
-            cfg.CreateMap<GameLink, GameLinkDto>().ReverseMap();
-            cfg.CreateMap<Game, GameMetadataDto>().ReverseMap();
-            cfg.CreateMap<AvailableLanguageDto, ApplicationLanguageViewModel>()
-                .ForMember(dto => dto.CultureInfo, opt => opt.MapFrom(culture => culture.Culture)).ReverseMap();
-            cfg.CreateMap<PlaySession, PlaySessionDto>().ReverseMap();
-            cfg.CreateMap<IGameSearchResultMetadata, GameSearchResultMetadataViewModel>();
-//                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
-            cfg.CreateMap<GameSearchResultMetadataViewModel, IGameSearchResultMetadata>()
-                .ConstructUsing(vm => new GameSearchResultMetadataDto())
-                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
-            cfg.CreateMap<GameMetadataDto, GameMetadataViewModel>()
-                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
-            cfg.CreateMap<GameMetadataViewModel, GameMetadataDto>()
-                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
-            cfg.CreateMap<IMultiSourceSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
-                .ConstructUsing(vm =>
-                    new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default.GetService<GameSearchResultService>()));
-//                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
-            cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
-                .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto());
-//                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
-            cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>();
-//                .ForMember(vm => vm.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToByteArray(dto.TitlePic)));
-            cfg.CreateMap<DownloaderConfigDto, DownloaderViewModel>()
-                .ReverseMap();
-            cfg.CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
-            cfg.CreateMap<GameWithStatsDto, GameWithStatsViewModel>().ConstructUsing(dto =>
-                new GameWithStatsViewModel(Ioc.Default.GetService<GameWithStatsService>()));
-        });
-
-        serviceCollection.AddSingleton(_ => mapperConfiguration);
+        serviceCollection.AddSingleton(_ => MapperConfigurationFactory.GetMapperConfiguration());
     }
 }

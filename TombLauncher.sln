@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher.Contracts", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher.Controls", "TombLauncher.Controls\TombLauncher.Controls.csproj", "{0C219351-0DFD-4F52-A4FA-2D19FF5E276E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher.Tests", "TombLauncher.Tests\TombLauncher.Tests.csproj", "{F38AB636-CF12-408D-80F9-804287D6A61C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{0C219351-0DFD-4F52-A4FA-2D19FF5E276E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C219351-0DFD-4F52-A4FA-2D19FF5E276E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C219351-0DFD-4F52-A4FA-2D19FF5E276E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F38AB636-CF12-408D-80F9-804287D6A61C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F38AB636-CF12-408D-80F9-804287D6A61C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F38AB636-CF12-408D-80F9-804287D6A61C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F38AB636-CF12-408D-80F9-804287D6A61C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
