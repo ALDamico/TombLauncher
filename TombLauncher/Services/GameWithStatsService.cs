@@ -59,7 +59,7 @@ public class GameWithStatsService : IViewService
         {
             GameMetadata = game.GameMetadata.ToViewModel(),
             LastPlayed = game.LastPlayed,
-            TotalPlayedTime = game.TotalPlayTime
+            TotalPlayedTime = game.TotalPlayedTime
         };
         OpenGame(gameViewModel);
         PlayGame(gameViewModel);

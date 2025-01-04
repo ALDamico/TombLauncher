@@ -116,7 +116,7 @@
                                     <controls:IconOnlyButton Icon="Cancel" 
                                                              Classes="btn-danger" 
                                                              ToolTip.Tip="{DynamicResource Cancel}" 
-                                                             IsVisible="{Binding IsInstalling}" 
+                                                             IsVisible="{Binding InstallProgress.IsInstalling}" 
                                                              Command="{Binding CancelInstallCmd}"/>
                                 </StackPanel>
                             </Grid>

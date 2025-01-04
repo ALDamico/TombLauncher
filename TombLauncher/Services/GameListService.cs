@@ -51,7 +51,7 @@ public class GameListService : IViewService
         {
             GameMetadata = dto.GameMetadata.ToViewModel(),
             LastPlayed = dto.LastPlayed,
-            TotalPlayedTime = dto.TotalPlayTime
+            TotalPlayedTime = dto.TotalPlayedTime
         };
     }
 

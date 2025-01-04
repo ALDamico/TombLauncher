@@ -13,6 +13,7 @@ using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
@@ -22,6 +23,7 @@ using TombLauncher.Contracts.Localization.Dtos;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Models;
+using TombLauncher.Factories;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Installers.Downloaders.AspideTR.com;
@@ -35,6 +37,7 @@ using TombLauncher.ViewModels.Pages;
 using TombLauncher.ViewModels.Pages.Settings;
 using TombLauncher.Views;
 using ApplicationLanguageViewModel = TombLauncher.ViewModels.Pages.Settings.ApplicationLanguageViewModel;
+using ILogger = Serilog.ILogger;
 
 namespace TombLauncher;
 
@@ -50,8 +53,6 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    private ILogger _logger;
-
     public override async void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -61,8 +62,8 @@ public partial class App : Application
             BindingPlugins.DataValidators.RemoveAt(0);
             desktop.ShutdownRequested += (sender, args) =>
             {
-                _logger.Information("Application is shutting down");
-                ((IDisposable)_logger).Dispose();
+                Log.Logger.Information("Application is shutting down");
+                ((IDisposable)Log.Logger).Dispose();
             };
             var splashScreen = new SplashScreen();
             desktop.MainWindow = splashScreen;
@@ -143,9 +144,7 @@ public partial class App : Application
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
-        var logger = Ioc.Default.GetRequiredService<ILogger>();
-        _logger = logger;
-        _logger.Information("Service initialization complete");
+        Log.Logger.Information("Service initialization complete");
         await Task.CompletedTask;
     }
 
@@ -201,62 +200,21 @@ public partial class App : Application
 
     private static void ConfigureLogging(ServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<ILogger>(_ =>
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo
+            .File("TombLauncher_App.log", LogEventLevel.Information)
+            .CreateLogger();
+        serviceCollection.AddLogging(opts =>
         {
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .WriteTo.File("TombLauncher_App.log", LogEventLevel.Information, buffered: true)
-                .CreateLogger();
-            logger.Information("Application logging started");
-
-            return logger;
+            opts.ClearProviders();
+            opts.SetMinimumLevel(LogLevel.Information);
+            opts.AddSerilog();
         });
-        
     }
 
     private static void ConfigureMappings(ServiceCollection serviceCollection)
     {
-        var mapperConfiguration = new MapperConfiguration(cfg =>
-        {
-            cfg.AllowNullDestinationValues = true;
-
-            cfg.CreateMap<AppCrash, AppCrashDto>()
-                .ForMember(dto => dto.ExceptionDto,
-                    opt => opt.MapFrom(s => JsonConvert.DeserializeObject<ExceptionDto>(s.Exception)));
-            cfg.CreateMap<Exception, ExceptionDto>();
-
-            cfg.CreateMap<GameHashes, GameHashDto>().ReverseMap();
-            cfg.CreateMap<GameLink, GameLinkDto>().ReverseMap();
-            cfg.CreateMap<Game, GameMetadataDto>().ReverseMap();
-            cfg.CreateMap<AvailableLanguageDto, ApplicationLanguageViewModel>()
-                .ForMember(dto => dto.CultureInfo, opt => opt.MapFrom(culture => culture.Culture)).ReverseMap();
-            cfg.CreateMap<PlaySession, PlaySessionDto>().ReverseMap();
-            cfg.CreateMap<IGameSearchResultMetadata, GameSearchResultMetadataViewModel>();
-//                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
-            cfg.CreateMap<GameSearchResultMetadataViewModel, IGameSearchResultMetadata>()
-                .ConstructUsing(vm => new GameSearchResultMetadataDto())
-                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
-            cfg.CreateMap<GameMetadataDto, GameMetadataViewModel>()
-                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
-            cfg.CreateMap<GameMetadataViewModel, GameMetadataDto>()
-                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
-            cfg.CreateMap<IMultiSourceSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
-                .ConstructUsing(vm =>
-                    new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default
-                        .GetService<GameSearchResultService>()));
-//                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
-            cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
-                .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto());
-//                .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
-            cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>();
-//                .ForMember(vm => vm.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToByteArray(dto.TitlePic)));
-            cfg.CreateMap<DownloaderConfigDto, DownloaderViewModel>()
-                .ReverseMap();
-            cfg.CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
-            cfg.CreateMap<GameWithStatsDto, GameWithStatsViewModel>().ConstructUsing(dto =>
-                new GameWithStatsViewModel(Ioc.Default.GetService<GameWithStatsService>()));
-        });
-
-        serviceCollection.AddSingleton(_ => mapperConfiguration);
+        serviceCollection.AddSingleton(_ => MapperConfigurationFactory.GetMapperConfiguration());
     }
 }

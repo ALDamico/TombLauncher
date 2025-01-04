@@ -81,13 +81,13 @@ public class GamesUnitOfWork : UnitOfWorkBase
             var gameWithStatsDto = new GameWithStatsDto()
             {
                 GameMetadata = _mapper.Map<GameMetadataDto>(game),
-                TotalPlayTime = TimeSpan.Zero
+                TotalPlayedTime = TimeSpan.Zero
             };
 
             if (thisGamePlaySessions.Any())
             {
                 gameWithStatsDto.LastPlayed = thisGamePlaySessions.Max(ps => ps.StartDate);
-                gameWithStatsDto.TotalPlayTime =
+                gameWithStatsDto.TotalPlayedTime =
                     TimeSpan.FromTicks(thisGamePlaySessions.Select(ps => (ps.EndDate - ps.StartDate).Ticks).Sum());
             }
 
@@ -104,12 +104,12 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var gameWithStatsDto = new GameWithStatsDto()
         {
             GameMetadata = _mapper.Map<GameMetadataDto>(game),
-            TotalPlayTime = TimeSpan.Zero
+            TotalPlayedTime = TimeSpan.Zero
         };
         if (playSessions.Any())
         {
             gameWithStatsDto.LastPlayed = playSessions.Max(ps => ps.StartDate);
-            gameWithStatsDto.TotalPlayTime =
+            gameWithStatsDto.TotalPlayedTime =
                 TimeSpan.FromTicks(playSessions.Select(ps => (ps.EndDate - ps.StartDate).Ticks).Sum());
         }
 

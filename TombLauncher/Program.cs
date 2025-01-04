@@ -24,8 +24,7 @@ sealed class Program
         }
         catch (Exception e)
         {
-            var logger = Ioc.Default.GetRequiredService<ILogger>();
-            logger.Fatal(e, "Fatal exception requiring restart");
+            Log.Logger.Fatal(e, "Fatal exception requiring restart");
             var appCrashUoW = Ioc.Default.GetService<AppCrashUnitOfWork>();
             appCrashUoW.InsertAppCrash(e);
 
@@ -37,9 +36,8 @@ sealed class Program
         }
         finally
         {
-            var logger = Ioc.Default.GetRequiredService<ILogger>();
-            logger.Error("Application closing due to fatal exception");
-            ((IDisposable)logger).Dispose();
+            Log.Logger.Error("Application closing due to fatal exception");
+            ((IDisposable)Log.Logger).Dispose();
         }
     }
 

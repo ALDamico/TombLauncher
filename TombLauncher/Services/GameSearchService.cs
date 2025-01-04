@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
@@ -11,7 +9,6 @@ using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.Logging;
-using Serilog;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
@@ -22,10 +19,8 @@ using TombLauncher.Extensions;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
-using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
-using ILogger = Serilog.ILogger;
 
 namespace TombLauncher.Services;
 
@@ -45,12 +40,12 @@ public class GameSearchService : IViewService
         _mapper = mapperConfiguration.CreateMapper();
         _notificationService = notificationService;
         _gameListService = gameListService;
-        _logger = Ioc.Default.GetRequiredService<ILogger>();
+        _logger = Ioc.Default.GetRequiredService<ILogger<GameSearchService>>();
     }
 
     private NotificationService _notificationService;
     private GameListService _gameListService;
-    private ILogger _logger;
+    private ILogger<GameSearchService> _logger;
 
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
@@ -69,7 +64,7 @@ public class GameSearchService : IViewService
 
     public async Task LoadMore(GameSearchViewModel target)
     {
-        _logger.Information("Loading more results");
+        _logger.LogInformation("Loading more results");
         target.SetBusy("Loading in progress".GetLocalizedString());
         var nextPage = await GameDownloadManager.FetchNextPage();
 
@@ -107,7 +102,7 @@ public class GameSearchService : IViewService
         }
 
         target.HasMoreResults = CanLoadMore();
-        _logger.Information("Loading finished. Has more results: {MoreResults}", target.HasMoreResults);
+        _logger.LogInformation("Loading finished. Has more results: {MoreResults}", target.HasMoreResults);
         target.ClearBusy();
         
     }
@@ -117,7 +112,7 @@ public class GameSearchService : IViewService
     public async Task Open(GameSearchViewModel target, MultiSourceGameSearchResultMetadataViewModel gameToOpen)
     {
         target.SetBusy(true);
-        _logger.Information("Opening game {GameName}", gameToOpen.Title);
+        _logger.LogInformation("Opening game {GameName}", gameToOpen.Title);
         var gameToOpenDto = _mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
 
         var details = await GameDownloadManager.FetchDetails(gameToOpenDto);
@@ -133,7 +128,7 @@ public class GameSearchService : IViewService
 
             if (details.TitlePic is { Length: > 0 } && gameToOpen.TitlePic == null)
             {
-                _logger.Debug("Game {GameName} has no title pic. Updating from fetched details", gameToOpen.Title);
+                _logger.LogDebug("Game {GameName} has no title pic. Updating from fetched details", gameToOpen.Title);
                 gameToOpen.TitlePic = gameToOpenDto.TitlePic;
             }
 
@@ -148,7 +143,7 @@ public class GameSearchService : IViewService
     public async Task Search(GameSearchViewModel target)
     {
         target.SetBusy("Search starting...".GetLocalizedString());
-        _logger.Information("Started search with parameters: {Target}", target);
+        _logger.LogInformation("Started search with parameters: {Target}", target);
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var downloaders = settingsService.GetActiveDownloaders();
         GameDownloadManager.Downloaders.Clear();
@@ -181,7 +176,7 @@ public class GameSearchService : IViewService
         }
         catch (OperationCanceledException ex)
         {
-            _logger.Warning(ex, "Search canceled");
+            _logger.LogWarning(ex, "Search canceled");
             target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         }
 
@@ -192,7 +187,7 @@ public class GameSearchService : IViewService
             await _notificationService.AddNotification(new NotificationViewModel()
                 { Content = new StringNotificationViewModel() { Text = "Search completed" }, IsDismissable = true });
         }
-        _logger.Information("Search completed");
+        _logger.LogInformation("Search completed");
     }
 
     public void Cancel()
