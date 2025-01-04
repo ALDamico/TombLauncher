@@ -19,4 +19,29 @@ public static class GenericUtils
 
         return enumerable.ToList();
     }
+
+    public static T Coalesce<T>(this T first, params T[] elements)
+    {
+        var enumerator = elements.GetEnumerator();
+        if (!first?.Equals(default) == true)
+        {
+            return first;
+        }
+
+        while (enumerator.MoveNext())
+        {
+            var current = (T)enumerator.Current;
+            if (!current?.Equals(default) == true)
+                return current;
+        }
+
+        return default;
+    }
+
+    public static T NullIfEquals<T>(this T first, T second)
+    {
+        if (first?.Equals(second) == true)
+            return default;
+        return first;
+    }
 }

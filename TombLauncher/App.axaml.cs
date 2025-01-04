@@ -12,15 +12,19 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
+using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Localization.Dtos;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Models;
 using TombLauncher.Factories;
@@ -60,15 +64,16 @@ public partial class App : Application
             // Line below is needed to remove Avalonia data validation.
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);
+            var splashScreen = new SplashScreen();
+            desktop.MainWindow = splashScreen;
+            splashScreen.Show();
             desktop.ShutdownRequested += (sender, args) =>
             {
                 Log.Logger.Information("Application is shutting down");
                 ((IDisposable)Log.Logger).Dispose();
             };
-            var splashScreen = new SplashScreen();
-            desktop.MainWindow = splashScreen;
-            splashScreen.Show();
-
+            
+            await Task.Delay(1);
             await InitializeServices();
             await ShowMainWindow(desktop, splashScreen);
         }
@@ -78,7 +83,6 @@ public partial class App : Application
 
     private async Task ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop, SplashScreen splashScreen)
     {
-        await Task.Delay(2000);
         ApplyInitialSettings();
         var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
         var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
@@ -97,13 +101,23 @@ public partial class App : Application
 
     private async Task InitializeServices()
     {
+        var appConfiguration = new AppConfigurationWrapper();
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false)
+            .Build();
+        configuration.Bind(appConfiguration.Defaults);
+        IConfiguration userConfiguration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.user.json", optional: true)
+            .Build();
+        userConfiguration.Bind(appConfiguration.User);
         var serviceCollection = new ServiceCollection();
+        serviceCollection.AddSingleton<IAppConfigurationWrapper>(appConfiguration);
         ConfigureLogging(serviceCollection);
         ConfigureMappings(serviceCollection);
         ConfigurePageServices(serviceCollection);
         ConfigureViewModels(serviceCollection);
         serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current));
-        ConfigureDatabaseAccess(serviceCollection);
+        ConfigureDatabaseAccess(serviceCollection, appConfiguration);
         serviceCollection.AddSingleton(_ => new NavigationManager());
         serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
         {
@@ -190,9 +204,14 @@ public partial class App : Application
         serviceCollection.AddSingleton<NotificationListViewModel>();
     }
 
-    private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection)
+    private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection, IAppConfiguration appConfiguration)
     {
-        serviceCollection.AddEntityFrameworkSqlite();
+        serviceCollection.AddDbContext<TombLauncherDbContext>(opts =>
+        {
+            var databasePath = appConfiguration.DatabasePath;
+            var connectionString = $"Data Source={databasePath}";
+            opts.UseSqlite(connectionString);
+        });
         serviceCollection.AddScoped<GamesUnitOfWork>();
         serviceCollection.AddScoped<AppCrashUnitOfWork>();
         serviceCollection.AddScoped<SettingsUnitOfWork>();

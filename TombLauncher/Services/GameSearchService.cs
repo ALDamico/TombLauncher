@@ -97,8 +97,6 @@ public class GameSearchService : IViewService
                 await Dispatcher.UIThread.InvokeAsync(() => target.FetchedResults.Add(result),
                     DispatcherPriority.Default);
             }
-
-            await Task.Delay(1);
         }
 
         target.HasMoreResults = CanLoadMore();
