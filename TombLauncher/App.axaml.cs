@@ -185,7 +185,7 @@ public partial class App : Application
                 { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
         serviceCollection.AddScoped<GameListViewModel>();
         serviceCollection.AddScoped<GameSearchViewModel>();
-        serviceCollection.AddScoped<NewGameViewModel>();
+        serviceCollection.AddTransient<NewGameViewModel>();
         serviceCollection.AddTransient<SettingsPageViewModel>();
         serviceCollection.AddSingleton<NotificationListViewModel>();
     }

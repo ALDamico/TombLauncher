@@ -19,7 +19,8 @@ public partial class NewGameViewModel : PageViewModel
     public NewGameViewModel(NewGameService newGameService) 
     {
         _newGameService = newGameService;
-        _gameMetadata = new GameMetadataViewModel();
+        GameMetadata = new GameMetadataViewModel();
+        GameMetadata.PropertyChanged += (sender, args) => RaiseCanExecuteChanged(SaveCmd);
 
         AvailableLengths = EnumUtils.GetEnumViewModels<GameLength>().ToObservableCollection();
         AvailableDifficulties = EnumUtils.GetEnumViewModels<GameDifficulty>().ToObservableCollection();

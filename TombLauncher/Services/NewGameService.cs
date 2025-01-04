@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Data.Database.UnitOfWork;
@@ -35,7 +37,10 @@ public class NewGameService : IViewService
         GameFileHashCalculator = hashCalculator;
         LevelInstaller = levelInstaller;
         EngineDetector = engineDetector;
+        _logger = Ioc.Default.GetRequiredService<ILogger<NewGameService>>();
     }
+
+    private readonly ILogger<NewGameService> _logger;
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
@@ -65,10 +70,12 @@ public class NewGameService : IViewService
 
     public async Task InstallGame(GameMetadataViewModel gameMetadata, IProgress<CopyProgressInfo> progress, string source)
     {
+        _logger.LogInformation("Installing game {GameTitle}", gameMetadata.Title);
         progress.Report(new CopyProgressInfo() { Message = LocalizationManager.GetLocalizedString("Installing GAMENAME", gameMetadata.Title)});
         var hashes = await GameFileHashCalculator.CalculateHashes(source);
         if (GamesUnitOfWork.ExistsHashes(hashes, out _))
         {
+            _logger.LogWarning("Game {GameTitle} is already installed", gameMetadata.Title);
             var messageBoxResult = await Dispatcher.UIThread.InvokeAsync(() =>
                 MessageBoxService.Show(LocalizationManager["The same mod is already installed"],
                     LocalizationManager["The same mod is already installed TEXT"],
@@ -78,7 +85,12 @@ public class NewGameService : IViewService
                     yesButtonText:LocalizationManager["Install anyway"]));
             if (messageBoxResult.ButtonResult == MsgBoxButtonResult.No)
             {
+                _logger.LogInformation("Will not install");
                 return;
+            }
+            else
+            {
+                _logger.LogWarning("Will install anyway");
             }
         }
         
@@ -98,6 +110,7 @@ public class NewGameService : IViewService
         GamesUnitOfWork.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
         GamesUnitOfWork.SaveHashes(hashes);
+        _logger.LogInformation("Game {GameTitle} installed successfully", gameMetadata.Title);
         
         NavigationManager.GoBack();
     }
