@@ -29,13 +29,12 @@ namespace TombLauncher.Services;
 public class SettingsService : IViewService
 {
     public SettingsService(ILocalizationManager localizationManager, 
-        NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService, SettingsUnitOfWork settingsUnitOfWork, MapperConfiguration mapperConfiguration)
+        NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration)
     {
         LocalizationManager = localizationManager;
         NavigationManager = navigationManager;
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
-        _settingsUnitOfWork = settingsUnitOfWork;
         _mapper = mapperConfiguration.CreateMapper();
         _appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
     }
@@ -45,7 +44,6 @@ public class SettingsService : IViewService
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
-    private SettingsUnitOfWork _settingsUnitOfWork;
     private IMapper _mapper;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
@@ -127,11 +125,10 @@ public class SettingsService : IViewService
 
     public GameDetailsSettings GetGameDetailsSettings()
     {
-        var (askForConfirmation, useInternalViewer) = _settingsUnitOfWork.GetGameDetailsSettings();
         return new GameDetailsSettings()
         {
-            AskForConfirmationBeforeWalkthrough = askForConfirmation,
-            UseInternalViewerIfAvailable = useInternalViewer
+            AskForConfirmationBeforeWalkthrough = _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
+            UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault()
         };
     }
 

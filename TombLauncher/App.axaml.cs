@@ -214,7 +214,6 @@ public partial class App : Application
         });
         serviceCollection.AddScoped<GamesUnitOfWork>();
         serviceCollection.AddScoped<AppCrashUnitOfWork>();
-        serviceCollection.AddScoped<SettingsUnitOfWork>();
     }
 
     private static void ConfigureLogging(ServiceCollection serviceCollection)
