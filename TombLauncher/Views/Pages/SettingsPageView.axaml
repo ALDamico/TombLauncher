@@ -24,41 +24,8 @@
             <StackPanel Orientation="Vertical">
                 <ContentControl Content="{Binding AppearanceSettings}"/>
                 <ContentControl Content="{Binding LanguageSettings}"/>
-                
-                <DockPanel LastChildFill="True">
-                    <controls:Infotip DockPanel.Dock="Right" ToolTipContent="{DynamicResource Downloaders infotip content}"></controls:Infotip>
-                    <TextBlock Classes="settings-h1" Text="{DynamicResource 'DOWNLOADERS'}"/>    
-                </DockPanel>
-                <DockPanel LastChildFill="True">
-                    <StackPanel DockPanel.Dock="Right" Orientation="Vertical" HorizontalAlignment="Center">
-                        <controls:IconButton Icon="ArrowUp" ToolTip.Tip="{DynamicResource 'Move up'}" Command="{Binding DownloaderSettings.MoveUpCmd}" CommandParameter="{Binding DownloaderSettings.SelectedDownloader}"/>
-                        <Border Margin="20"/>
-                        <controls:IconButton Icon="ArrowDown" ToolTip.Tip="{DynamicResource 'Move down'}" Command="{Binding DownloaderSettings.MoveDownCmd}" CommandParameter="{Binding DownloaderSettings.SelectedDownloader}"/>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding DownloaderSettings.AvailableDownloaders}" SelectedItem="{Binding DownloaderSettings.SelectedDownloader}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding IsEnabled}"/>
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding DisplayName}" FontWeight="DemiBold"></TextBlock>
-                                        <TextBlock Text="{Binding BaseUrl}" FontStyle="Italic"></TextBlock>
-                                        <TextBlock>
-                                            <Run FontWeight="DemiBold" Text="{DynamicResource Supported features}"/>
-                                            <Run FontStyle="Italic" Text="{Binding SupportedFeatures}"/>
-                                        </TextBlock>
-                                    </StackPanel>
-                                    <TextBlock Text="{Binding Priority}" HorizontalAlignment="Right"></TextBlock>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </DockPanel>
-                <TextBlock Text="{DynamicResource 'GAME DETAILS'}" Classes="settings-h1"/>
-                <CheckBox IsChecked="{Binding GameDetailsSettings.AskForConfirmationBeforeWalkthrough}" 
-                          Content="{DynamicResource 'Ask for confirmation before opening a walkthrough'}"/>
-                <CheckBox IsChecked="{Binding GameDetailsSettings.UseInternalViewerIfAvailable}" 
-                          Content="{DynamicResource 'Use internal viewer if available'}"/>
+                <ContentControl Content="{Binding DownloaderSettings}"/>
+                <ContentControl Content="{Binding GameDetailsSettings}"/>
                 
             </StackPanel>
         </ScrollViewer>

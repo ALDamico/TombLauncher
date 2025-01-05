@@ -121,9 +121,9 @@ public class SettingsService : IViewService
         return dtos;
     }
 
-    public GameDetailsSettings GetGameDetailsSettings()
+    public GameDetailsSettingsViewModel GetGameDetailsSettings()
     {
-        return new GameDetailsSettings()
+        return new GameDetailsSettingsViewModel()
         {
             AskForConfirmationBeforeWalkthrough = _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
             UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault()
