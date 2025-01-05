@@ -5,7 +5,6 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.SettingsPageView"
              x:DataType="pages:SettingsPageViewModel"
@@ -23,10 +22,7 @@
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0">
             <StackPanel Orientation="Vertical">
-                <TextBlock Classes="settings-h1" Text="{DynamicResource 'APPEARANCE'}"></TextBlock>
-                <TextBlock Text="{DynamicResource 'App theme'}"></TextBlock>
-                <ComboBox SelectedItem="{Binding AppearanceSettings.SelectedTheme}" 
-                          ItemsSource="{Binding AppearanceSettings.AvailableThemes}"></ComboBox>
+                <ContentControl Content="{Binding AppearanceSettings}"/>
                 
                 <DockPanel LastChildFill="True">
                     <controls:Infotip DockPanel.Dock="Right" Header="{DynamicResource Want to localize Tomb Launcher?}" 
