@@ -7,6 +7,12 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <ApplicationIcon>Assets\tomb-launcher-icon.ico</ApplicationIcon>
+        <Title>Tomb Launcher</Title>
+        <Authors>Tomb Launcher developers</Authors>
+        <Description>Tomb Launcher is a Tomb Raider custom level manager.</Description>
+        <Copyright>2025 Tomb Launcher developers</Copyright>
+        <PackageProjectUrl>https://tomblauncher.app</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/ALDamico/TombLauncher</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
