@@ -14,6 +14,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher.Controls", "To
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TombLauncher.Tests", "TombLauncher.Tests\TombLauncher.Tests.csproj", "{F38AB636-CF12-408D-80F9-804287D6A61C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{5D025DB8-4D4E-47B1-B50C-6286868791BA}"
+	ProjectSection(SolutionItems) = preProject
+		installer-script.iss = installer-script.iss
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
