@@ -41,8 +41,6 @@ public static class StringExtensions
     {
         return string.IsNullOrWhiteSpace(s) ? null : s;
     }
-    
-    
 
     public static bool IsNullOrEmpty(this string s)
     {

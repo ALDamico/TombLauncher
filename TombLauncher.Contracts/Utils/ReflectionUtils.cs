@@ -44,7 +44,7 @@ public class ReflectionUtils
     public static Type GetTypeByName(string typeName)
     {
         return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
-            .FirstOrDefault(p => p.Name == typeName);
+            .FirstOrDefault(p => p.Name == typeName || p.FullName == typeName);
     }
 
     public static ILookup<string, T> GetStaticInstances<T>()

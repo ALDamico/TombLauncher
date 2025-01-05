@@ -51,7 +51,7 @@ public static class MapperConfigurationFactory
             cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
                 .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto());
             cfg.CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>();
-            cfg.CreateMap<DownloaderConfigDto, DownloaderViewModel>()
+            cfg.CreateMap<DownloaderConfiguration, DownloaderViewModel>()
                 .ReverseMap();
             cfg.CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
             cfg.CreateMap<GameWithStatsDto, GameWithStatsViewModel>().ConstructUsing(dto =>

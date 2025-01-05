@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using TombLauncher.Data.Database.Repositories;
 
 namespace TombLauncher.Data.Database.UnitOfWork;
@@ -7,7 +8,7 @@ public abstract class UnitOfWorkBase : IDisposable, IAsyncDisposable
 {
     public UnitOfWorkBase()
     {
-        DbContext = new TombLauncherDbContext();
+        DbContext = Ioc.Default.GetRequiredService<TombLauncherDbContext>();
         DbContext.Database.Migrate();
     }
     protected readonly TombLauncherDbContext DbContext;
