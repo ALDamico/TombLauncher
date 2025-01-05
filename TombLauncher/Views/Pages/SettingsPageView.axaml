@@ -23,27 +23,8 @@
         <ScrollViewer Grid.Row="0">
             <StackPanel Orientation="Vertical">
                 <ContentControl Content="{Binding AppearanceSettings}"/>
+                <ContentControl Content="{Binding LanguageSettings}"/>
                 
-                <DockPanel LastChildFill="True">
-                    <controls:Infotip DockPanel.Dock="Right" Header="{DynamicResource Want to localize Tomb Launcher?}" 
-                                      ToolTipContent="{DynamicResource Localization infotip content}"></controls:Infotip>
-                    <TextBlock Classes="settings-h1" Text="{DynamicResource 'LANGUAGES'}"/>    
-                </DockPanel>
-                
-                <TextBlock Text="{DynamicResource 'Application language'}"></TextBlock>
-                <ComboBox ItemsSource="{Binding LanguageSettings.AvailableLanguages}" 
-                          SelectedItem="{Binding LanguageSettings.ApplicationLanguage}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Svg Height="16" Width="24" 
-                                     Path="{Binding CountryIso2Code, Converter={StaticResource CountryToFlagConverter}}"></Svg>
-                                <Border Width="5"/>
-                                <TextBlock Text="{Binding DisplayName}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
                 <DockPanel LastChildFill="True">
                     <controls:Infotip DockPanel.Dock="Right" ToolTipContent="{DynamicResource Downloaders infotip content}"></controls:Infotip>
                     <TextBlock Classes="settings-h1" Text="{DynamicResource 'DOWNLOADERS'}"/>    
