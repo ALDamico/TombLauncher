@@ -6,13 +6,14 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
-public partial class DownloaderSettings : ViewModelBase
+public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 {
-    public DownloaderSettings()
+    public DownloaderSettingsViewModel() : base("DOWNLOADERS")
     {
         MoveUpCmd = new RelayCommand<DownloaderViewModel>(MoveUp, CanMoveUp);
         MoveDownCmd = new RelayCommand<DownloaderViewModel>(MoveDown, CanMoveDown);
     }
+
     [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders;
     [ObservableProperty] private DownloaderViewModel _selectedDownloader;
 
@@ -29,7 +30,7 @@ public partial class DownloaderSettings : ViewModelBase
         {
             downloader.Priority++;
         }
-        
+
 
         downloaderViewModel.Priority = targetPriority;
         RaiseCanExecuteChanged<DownloaderViewModel>(MoveUpCmd);
@@ -41,7 +42,7 @@ public partial class DownloaderSettings : ViewModelBase
         if (downloaderViewModel == null) return false;
         return downloaderViewModel.Priority > 1;
     }
-    
+
     public ICommand MoveDownCmd { get; }
 
     private void MoveDown(DownloaderViewModel downloaderViewModel)

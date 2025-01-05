@@ -5,9 +5,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
-public partial class AppearanceSettings : ViewModelBase
+public partial class AppearanceSettingsViewModel : SettingsSectionViewModelBase
 {
-    public AppearanceSettings()
+    public AppearanceSettingsViewModel() : base("APPEARANCE")
     {
         SelectedTheme = Application.Current.ActualThemeVariant;
         AvailableThemes = new ObservableCollection<ThemeVariant>()
@@ -17,17 +17,7 @@ public partial class AppearanceSettings : ViewModelBase
             ThemeVariant.Dark
         };
     }
-    private ThemeVariant _selectedTheme;
-
-    public ThemeVariant SelectedTheme
-    {
-        get => _selectedTheme;
-        set
-        {
-            _selectedTheme = value;
-            //Application.Current.RequestedThemeVariant = SelectedTheme;
-            OnPropertyChanged();
-        }
-    }
+    
+    [ObservableProperty] private ThemeVariant _selectedTheme;
     [ObservableProperty] private ObservableCollection<ThemeVariant> _availableThemes;
 }

@@ -2,8 +2,12 @@
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
-public partial class GameDetailsSettings : ViewModelBase
+public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 {
+    public GameDetailsSettingsViewModel() : base("GAME DETAILS")
+    {
+    }
+
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
     [ObservableProperty] private bool _useInternalViewerIfAvailable;
 }

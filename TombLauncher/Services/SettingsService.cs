@@ -17,24 +17,22 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
-using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels.Pages;
 using TombLauncher.ViewModels.Pages.Settings;
-using ApplicationLanguageViewModel = TombLauncher.ViewModels.Pages.Settings.ApplicationLanguageViewModel;
 
 namespace TombLauncher.Services;
 
 public class SettingsService : IViewService
 {
-    public SettingsService(ILocalizationManager localizationManager, 
-        NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration)
+    public SettingsService()
     {
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
+        LocalizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
+        NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
+        MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
+        DialogService = Ioc.Default.GetRequiredService<IDialogService>();
+        var mapperConfiguration = Ioc.Default.GetRequiredService<MapperConfiguration>();
         _mapper = mapperConfiguration.CreateMapper();
         _appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
     }
@@ -44,7 +42,7 @@ public class SettingsService : IViewService
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
-    private IMapper _mapper;
+    private readonly IMapper _mapper;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
     {
@@ -123,9 +121,9 @@ public class SettingsService : IViewService
         return dtos;
     }
 
-    public GameDetailsSettings GetGameDetailsSettings()
+    public GameDetailsSettingsViewModel GetGameDetailsSettings()
     {
-        return new GameDetailsSettings()
+        return new GameDetailsSettingsViewModel()
         {
             AskForConfirmationBeforeWalkthrough = _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
             UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault()

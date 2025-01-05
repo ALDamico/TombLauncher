@@ -13,17 +13,17 @@ public partial class SettingsPageViewModel : PageViewModel
     public SettingsPageViewModel(SettingsService settingsService)
     {
         _settingsService = settingsService;
-        LanguageSettings = new LanguageSettings();
-        DownloaderSettings = new DownloaderSettings();
-        AppearanceSettings = new AppearanceSettings();
+        LanguageSettings = new LanguageSettingsViewModel();
+        DownloaderSettings = new DownloaderSettingsViewModel();
+        AppearanceSettings = new AppearanceSettingsViewModel();
         Initialize += InitializeSettings;
     }
 
     private SettingsService _settingsService;
-    [ObservableProperty] private LanguageSettings _languageSettings;
-    [ObservableProperty] private DownloaderSettings _downloaderSettings;
-    [ObservableProperty] private AppearanceSettings _appearanceSettings;
-    [ObservableProperty] private GameDetailsSettings _gameDetailsSettings;
+    [ObservableProperty] private LanguageSettingsViewModel _languageSettings;
+    [ObservableProperty] private DownloaderSettingsViewModel _downloaderSettings;
+    [ObservableProperty] private AppearanceSettingsViewModel _appearanceSettings;
+    [ObservableProperty] private GameDetailsSettingsViewModel _gameDetailsSettings;
 
     private void InitializeSettings()
     {
