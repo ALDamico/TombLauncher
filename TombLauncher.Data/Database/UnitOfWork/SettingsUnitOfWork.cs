@@ -78,7 +78,7 @@ public class SettingsUnitOfWork: UnitOfWorkBase
         Settings.Commit();
     }
 
-    public void UpdateDownloaderConfigurations(IEnumerable<DownloaderConfigDto> dtos)
+    public void UpdateDownloaderConfigurations(IEnumerable<DownloaderConfiguration> dtos)
     {
         foreach (var dto in dtos)
         {
@@ -224,14 +224,14 @@ public class SettingsUnitOfWork: UnitOfWorkBase
         Settings.Insert(entity);
     }
 
-    public List<DownloaderConfigDto> GetDownloaderConfigurations(bool enabledOnly = false)
+    public List<DownloaderConfiguration> GetDownloaderConfigurations(bool enabledOnly = false)
     {
-        var dtos = new List<DownloaderConfigDto>();
+        var dtos = new List<DownloaderConfiguration>();
         var downloaders = ReflectionUtils.GetImplementors<IGameDownloader>(BindingFlags.NonPublic);
         var priority = 1;
         foreach (var downloader in downloaders)
         {
-            var dto = new DownloaderConfigDto()
+            var dto = new DownloaderConfiguration()
             {
                 BaseUrl = downloader.BaseUrl,
                 ClassName = downloader.GetType().Name,

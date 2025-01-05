@@ -11,6 +11,6 @@ public interface IAppConfiguration
     string ApplicationTheme { get; set; }
     bool? UseInternalViewer { get; set; }
     bool? AskForConfirmationBeforeWalkthrough { get; set; }
-    List<DownloaderConfigDto> Downloaders { get; set; }
+    List<DownloaderConfiguration> Downloaders { get; set; }
     LogLevel? MinimumLogLevel { get; set; }
 }

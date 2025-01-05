@@ -38,14 +38,16 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         get => User.AskForConfirmationBeforeWalkthrough.Coalesce(Defaults.AskForConfirmationBeforeWalkthrough);
         set => User.AskForConfirmationBeforeWalkthrough = value.NullIfEquals(Defaults.AskForConfirmationBeforeWalkthrough);
     }
-    public List<DownloaderConfigDto> Downloaders
+    public List<DownloaderConfiguration> Downloaders
     {
         get => User.Downloaders.Coalesce(Defaults.Downloaders);
         set
         {
-            if (value.SequenceEqual(Defaults.Downloaders))
+            if (value.SequenceEqual(Defaults.Downloaders, new DownloaderConfiguration()))
+            {
                 User.Downloaders = null;
                 return;
+            }
             User.Downloaders = value;
         }
     }

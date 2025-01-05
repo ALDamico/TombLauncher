@@ -76,7 +76,7 @@ public class SettingsService : IViewService
         _appConfiguration.ApplicationTheme = viewModel.AppearanceSettings.SelectedTheme.Key.ToString();
         Application.Current.RequestedThemeVariant = viewModel.AppearanceSettings.SelectedTheme;
         var mappedDownloaderConfigs =
-            _mapper.Map<List<DownloaderConfigDto>>(viewModel.DownloaderSettings.AvailableDownloaders);
+            _mapper.Map<List<DownloaderConfiguration>>(viewModel.DownloaderSettings.AvailableDownloaders);
         _appConfiguration.Downloaders = mappedDownloaderConfigs;
         _appConfiguration.AskForConfirmationBeforeWalkthrough =
             viewModel.GameDetailsSettings.AskForConfirmationBeforeWalkthrough;
@@ -90,9 +90,9 @@ public class SettingsService : IViewService
         return _mapper.Map<List<DownloaderViewModel>>(GetDownloaderConfigurations());
     }
 
-    private List<DownloaderConfigDto> GetDownloaderConfigurations()
+    private List<DownloaderConfiguration> GetDownloaderConfigurations()
     {
-        var dtos = new List<DownloaderConfigDto>();
+        var dtos = new List<DownloaderConfiguration>();
         var downloaders = ReflectionUtils.GetImplementors<IGameDownloader>(BindingFlags.NonPublic).ToList();
         var priority = downloaders.Count();
 
@@ -103,14 +103,14 @@ public class SettingsService : IViewService
             configCustomizations.TryGetValue(className, out var config);
             if (config == null)
             {
-                config = new DownloaderConfigDto()
+                config = new DownloaderConfiguration()
                 {
                     ClassName = className,
                     IsEnabled = true,
                     Priority = --priority
                 };
             }
-            var dto = new DownloaderConfigDto()
+            var dto = new DownloaderConfiguration()
             {
                 BaseUrl = downloader.BaseUrl,
                 ClassName = className,
