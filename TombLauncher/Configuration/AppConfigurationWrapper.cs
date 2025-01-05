@@ -26,17 +26,17 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
     public string ApplicationTheme
     {
         get => User.ApplicationTheme.Coalesce(Defaults.ApplicationLanguage);
-        set => User.ApplicationTheme = value;
+        set => User.ApplicationTheme = value.NullIfEquals(Defaults.ApplicationLanguage);
     }
     public bool? UseInternalViewer
     {
         get => User.UseInternalViewer.Coalesce(Defaults.UseInternalViewer);
-        set => User.UseInternalViewer = value;
+        set => User.UseInternalViewer = value.NullIfEquals(Defaults.UseInternalViewer);
     }
     public bool? AskForConfirmationBeforeWalkthrough
     {
         get => User.AskForConfirmationBeforeWalkthrough.Coalesce(Defaults.AskForConfirmationBeforeWalkthrough);
-        set => User.AskForConfirmationBeforeWalkthrough = value;
+        set => User.AskForConfirmationBeforeWalkthrough = value.NullIfEquals(Defaults.AskForConfirmationBeforeWalkthrough);
     }
     public List<DownloaderConfigDto> Downloaders
     {
@@ -44,6 +44,7 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set
         {
             if (value.SequenceEqual(Defaults.Downloaders))
+                User.Downloaders = null;
                 return;
             User.Downloaders = value;
         }
@@ -51,6 +52,6 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
     public LogLevel? MinimumLogLevel
     {
         get => User.MinimumLogLevel.Coalesce(Defaults.MinimumLogLevel);
-        set => User.MinimumLogLevel = value;
+        set => User.MinimumLogLevel = value.NullIfEquals(Defaults.MinimumLogLevel);
     }
 }
