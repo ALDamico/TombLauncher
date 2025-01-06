@@ -102,7 +102,6 @@ public class GameSearchService : IViewService
         target.HasMoreResults = CanLoadMore();
         _logger.LogInformation("Loading finished. Has more results: {MoreResults}", target.HasMoreResults);
         target.ClearBusy();
-        
     }
 
     public bool CanLoadMore() => GameDownloadManager.HasMoreResults();
@@ -128,11 +127,9 @@ public class GameSearchService : IViewService
                 detailsViewModel.Id = installedGame.Id;
             }
 
-            var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
             var gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
-            var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-            var vm = new GameDetailsViewModel(gameDetailsService,
-                new GameWithStatsViewModel(gameWithStatsService) { GameMetadata = detailsViewModel }, settingsService);
+            var vm = new GameDetailsViewModel(new GameWithStatsViewModel()
+                { GameMetadata = detailsViewModel }) { InstallCmd = gameToOpen.InstallCmd };
 
             if (details.TitlePic is { Length: > 0 } && gameToOpen.TitlePic == null)
             {

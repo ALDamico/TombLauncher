@@ -47,7 +47,7 @@ public class GameListService : IViewService
 
     private GameWithStatsViewModel ConvertDto(GameWithStatsDto dto)
     {
-        return new GameWithStatsViewModel(Ioc.Default.GetService<GameWithStatsService>())
+        return new GameWithStatsViewModel()
         {
             GameMetadata = dto.GameMetadata.ToViewModel(),
             LastPlayed = dto.LastPlayed,

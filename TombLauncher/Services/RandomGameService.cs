@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
@@ -31,6 +32,7 @@ public class RandomGameService
     private GameDownloadManager _gameDownloadManager;
     private NavigationManager _navigationManager;
     private IMapper _mapper;
+
     public async Task PickRandomGame()
     {
         for (var i = 0; i < 10; i++)
@@ -48,17 +50,44 @@ public class RandomGameService
             var pickedGame = gamePage.PickOneAtRandom();
 
             var allGamesResult = await _gameDownloadManager.GetGames(new DownloaderSearchPayload()
-                { LevelName = pickedGame.Title })
+                    { LevelName = pickedGame.Title })
                 ;
 
             var details = await _gameDownloadManager.FetchDetails(pickedGame);
 
+            var candidate = allGamesResult.FirstOrDefault();
+            if (candidate == null)
+            {
+                continue;
+            }
+
             var installedGame = _gamesUnitOfWork.GetGameByLinks(LinkType.Download,
-                allGamesResult.FirstOrDefault().Sources.Select(s => s.DownloadLink).ToList());
+                candidate.Sources.Select(s => s.DownloadLink).ToList());
             if (installedGame == null)
             {
-                var vm = new GameDetailsViewModel(Ioc.Default.GetRequiredService<GameDetailsService>(),
-                    new GameWithStatsViewModel(Ioc.Default.GetRequiredService<GameWithStatsService>()) { GameMetadata = _mapper.Map<GameMetadataViewModel>(details) }, _settingsService);
+                var searchResultService = Ioc.Default.GetRequiredService<GameSearchResultService>();
+                var mapped = _mapper.Map<MultiSourceGameSearchResultMetadataViewModel>(candidate);
+                var vm = new GameDetailsViewModel(
+                    new GameWithStatsViewModel()
+                        { GameMetadata = _mapper.Map<GameMetadataViewModel>(details) });
+                vm.InstallCmd = new AsyncRelayCommand(async () =>
+                    {
+                        vm.SetBusy(true, $"Installing {mapped.Title}");
+                        await searchResultService.Install(
+                            mapped);
+
+                        vm.Game.GameMetadata.InstallDirectory = mapped.InstalledGame.GameMetadata.InstallDirectory;
+                        vm.Game.GameMetadata.ExecutablePath = mapped.InstalledGame.GameMetadata.ExecutablePath;
+                        vm.Game.GameMetadata.UniversalLauncherPath =
+                            mapped.InstalledGame.GameMetadata.UniversalLauncherPath;
+                        vm.Game.GameMetadata.Id = mapped.InstalledGame.GameMetadata.Id;
+                        vm.Game.RaiseCanExecuteChanged(vm.Game.PlayCmd);
+                        vm.Game.RaiseCanExecuteChanged(vm.Game.LaunchSetupCmd);
+                        vm.Game.RaiseCanExecuteChanged(vm.Game.OpenCmd);
+                        vm.InstallCmd = null;
+                        vm.SetBusy(false);
+                    }, () => mapped.InstalledGame == null)
+                ;
                 _navigationManager.StartNavigation(vm);
                 return;
             }

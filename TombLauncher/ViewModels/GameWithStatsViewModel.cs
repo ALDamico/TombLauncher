@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Services;
 
@@ -8,15 +9,15 @@ namespace TombLauncher.ViewModels;
 
 public partial class GameWithStatsViewModel : ViewModelBase
 {
-    public GameWithStatsViewModel(GameWithStatsService gameWithStatsService)
+    public GameWithStatsViewModel()
     {
-        _gameWithStatsService = gameWithStatsService;
+        _gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
         PlayCmd = new RelayCommand(Play, CanPlay);
         OpenCmd = new RelayCommand(Open);
         LaunchSetupCmd = new RelayCommand(LaunchSetup, CanPlay);
     }
 
-    private GameWithStatsService _gameWithStatsService;
+    private readonly GameWithStatsService _gameWithStatsService;
     
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;
     [ObservableProperty] private TimeSpan _totalPlayedTime;

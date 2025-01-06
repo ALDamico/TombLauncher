@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
@@ -17,20 +16,13 @@ namespace TombLauncher.Services;
 
 public class GameWithStatsService : IViewService
 {
-    private readonly IMapper _mapper;
-
-    public GameWithStatsService(GamesUnitOfWork gamesUnitOfWork, 
-        ILocalizationManager localizationManager, 
-        NavigationManager navigationManager, 
-        IMessageBoxService messageBoxService, 
-        IDialogService dialogService, MapperConfiguration mapperConfiguration)
+    public GameWithStatsService()
     {
-        _mapper = mapperConfiguration.CreateMapper();
-        GamesUnitOfWork = gamesUnitOfWork;
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
+        GamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
+        LocalizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
+        NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
+        MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
+        DialogService = Ioc.Default.GetRequiredService<IDialogService>();
     }
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public ILocalizationManager LocalizationManager { get; }
@@ -40,9 +32,7 @@ public class GameWithStatsService : IViewService
 
     public void OpenGame(GameWithStatsViewModel game)
     {
-        var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
-        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-        NavigationManager.NavigateTo(new GameDetailsViewModel(gameDetailsService, game, settingsService));
+        NavigationManager.NavigateTo(new GameDetailsViewModel(game));
     }
 
     public void PlayGame(GameWithStatsViewModel game)
@@ -55,7 +45,7 @@ public class GameWithStatsService : IViewService
     public async Task PlayGame(int gameId)
     {
         var game = await Task.Factory.StartNew(() => GamesUnitOfWork.GetGameWithStats(gameId));
-        var gameViewModel = new GameWithStatsViewModel(Ioc.Default.GetRequiredService<GameWithStatsService>())
+        var gameViewModel = new GameWithStatsViewModel()
         {
             GameMetadata = game.GameMetadata.ToViewModel(),
             LastPlayed = game.LastPlayed,

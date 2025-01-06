@@ -1,17 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
 
 public partial class WelcomePageViewModel : PageViewModel
 {
-    public WelcomePageViewModel(WelcomePageService welcomePageService)
+    public WelcomePageViewModel()
     {
-        _welcomePageService = welcomePageService;
+        _welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
         Initialize += InitializeInner;
     }
 
-    private WelcomePageService _welcomePageService;
+    private readonly WelcomePageService _welcomePageService;
 
     private void InitializeInner()
     {

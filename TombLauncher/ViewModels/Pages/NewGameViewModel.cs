@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Enums;
@@ -16,9 +16,9 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class NewGameViewModel : PageViewModel
 {
-    public NewGameViewModel(NewGameService newGameService) 
+    public NewGameViewModel() 
     {
-        _newGameService = newGameService;
+        _newGameService = Ioc.Default.GetRequiredService<NewGameService>();
         GameMetadata = new GameMetadataViewModel();
         GameMetadata.PropertyChanged += (sender, args) => RaiseCanExecuteChanged(SaveCmd);
 

@@ -251,7 +251,7 @@ public partial class App : Application
     private static void ConfigureViewModels(ServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton(sp =>
-            new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>())
+            new WelcomePageViewModel()
                 { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
         serviceCollection.AddScoped<GameListViewModel>();
         serviceCollection.AddScoped<GameSearchViewModel>();

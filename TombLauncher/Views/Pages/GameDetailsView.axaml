@@ -52,6 +52,11 @@
             <Image Source="{Binding Game.GameMetadata.TitlePic}"
                    Width="320"
                    Height="240" />
+            <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNull}}"
+                                 Command="{Binding InstallCmd}" 
+                                 Icon="Download" 
+                                 Text="{DynamicResource 'Download'}" 
+                                 Classes="stretched btn-success"/>
             <controls:SplitIconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
                                       Classes="stretched btn-success"
                                       Icon="Play"

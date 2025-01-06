@@ -1,9 +1,4 @@
-﻿using System;
-using System.Threading;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Core.Extensions;
-using TombLauncher.Installers.Downloaders;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;

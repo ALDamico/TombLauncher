@@ -30,7 +30,7 @@ public abstract class ViewModelBase : ObservableObject
         handler?.Invoke();
     }
     
-    protected void RaiseCanExecuteChanged<T>(ICommand command)
+    internal void RaiseCanExecuteChanged<T>(ICommand command)
     {
         if (command is RelayCommand<T> relayCommand)
             relayCommand.NotifyCanExecuteChanged();
@@ -38,7 +38,7 @@ public abstract class ViewModelBase : ObservableObject
             asyncRelayCommand.NotifyCanExecuteChanged();
     }
 
-    protected void RaiseCanExecuteChanged(ICommand command)
+    internal void RaiseCanExecuteChanged(ICommand command)
     {
         if (command is RelayCommand relayCommand)
         {

@@ -1,7 +1,7 @@
-﻿using System.Globalization;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages.Settings;
@@ -10,9 +10,9 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class SettingsPageViewModel : PageViewModel
 {
-    public SettingsPageViewModel(SettingsService settingsService)
+    public SettingsPageViewModel()
     {
-        _settingsService = settingsService;
+        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         LanguageSettings = new LanguageSettingsViewModel();
         DownloaderSettings = new DownloaderSettingsViewModel();
         AppearanceSettings = new AppearanceSettingsViewModel();

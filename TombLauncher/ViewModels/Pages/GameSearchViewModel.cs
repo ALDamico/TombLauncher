@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Services;
 
@@ -10,18 +11,17 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameSearchViewModel : PageViewModel
 {
-    public GameSearchViewModel(GameSearchService searchService)
+    public GameSearchViewModel()
     {
-        _gameSearchService = searchService;
+        _gameSearchService = Ioc.Default.GetRequiredService<GameSearchService>();
         SearchPayload = new DownloaderSearchPayloadViewModel();
         SearchCmd = new AsyncRelayCommand(Search);
         OpenCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel>(Open);
         LoadMoreCmd = new AsyncRelayCommand(LoadMore);
         IsCancelable = true;
-        
     }
 
-    private GameSearchService _gameSearchService;
+    private readonly GameSearchService _gameSearchService;
 
     [ObservableProperty] private DownloaderSearchPayloadViewModel _searchPayload;
     [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults;
