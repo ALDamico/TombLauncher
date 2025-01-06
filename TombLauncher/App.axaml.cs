@@ -245,6 +245,7 @@ public partial class App : Application
         serviceCollection.AddTransient<GameSearchService>();
         serviceCollection.AddTransient<GameSearchResultService>();
         serviceCollection.AddScoped<SettingsService>();
+        serviceCollection.AddTransient<RandomGameService>();
     }
 
     private static void ConfigureViewModels(ServiceCollection serviceCollection)
@@ -257,6 +258,7 @@ public partial class App : Application
         serviceCollection.AddTransient<NewGameViewModel>();
         serviceCollection.AddTransient<SettingsPageViewModel>();
         serviceCollection.AddSingleton<NotificationListViewModel>();
+        serviceCollection.AddTransient<RandomGameViewModel>();
     }
 
     private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection, IAppConfiguration appConfiguration)

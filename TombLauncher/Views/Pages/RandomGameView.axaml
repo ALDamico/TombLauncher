@@ -1,0 +1,17 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.RandomGameView"
+             x:DataType="pages:RandomGameViewModel"
+             >
+    <Design.DataContext>
+        <pages:RandomGameViewModel/>
+    </Design.DataContext>
+    <Interaction.Behaviors>
+        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />
+    </Interaction.Behaviors>
+</UserControl>
