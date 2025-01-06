@@ -95,7 +95,7 @@ public class GameSearchResultService : IViewService
                 },
                 (dto) => dto?.Id != default && installProgress.InstallCompleted)
         };
-        await _notificationService.AddNotification(notificationViewModel);
+        await _notificationService.AddNotificationAsync(notificationViewModel);
         gameToInstall.InstallProgress = installProgress;
         var gameToInstallDto = _mapper.Map<MultiSourceSearchResultMetadataDto>(gameToInstall);
         

@@ -182,7 +182,7 @@ public class GameSearchService : IViewService
 
         if (NavigationManager.GetCurrentPage() != target)
         {
-            await _notificationService.AddNotification(new NotificationViewModel()
+            await _notificationService.AddNotificationAsync(new NotificationViewModel()
                 { Content = new StringNotificationViewModel() { Text = "Search completed" }, IsDismissable = true });
         }
         _logger.LogInformation("Search completed");

@@ -13,4 +13,7 @@ public class AppConfiguration : IAppConfiguration
     public bool? AskForConfirmationBeforeWalkthrough { get; set; }
     public List<DownloaderConfiguration> Downloaders { get; set; }
     public LogLevel? MinimumLogLevel { get; set; }
+    public string AppCastUrl { get; set; }
+    public string AppCastPublicKey { get; set; }
+    public bool UpdaterUseLocalPaths { get; set; }
 }
