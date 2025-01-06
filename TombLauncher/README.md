@@ -35,3 +35,8 @@ directory named **Output** (it will be created if it doesn't exist).
 When InnoSetup has finished generating the installer, use the following command to generate the appcast:
 
 `netsparkle-generate-appcast -b .\Output\ -p .\TombLauncher\Data -u "YOUR_APPCASTS_PATH" -l "YOUR_CHANGELOGS_PATH" -a "YOUR_DESTINATION_APPCAST_PATH" -n "Tomb Launcher"`
+
+> **Note**
+> 
+> The FTP transfer to the website **MUST** be in binary mode. Otherwise, the carriage returns may get stripped, causing 
+> the signature verification to fail for apparently no reason.
