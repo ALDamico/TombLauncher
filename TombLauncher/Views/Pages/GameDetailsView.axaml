@@ -5,7 +5,6 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameDetailsView"
@@ -15,7 +14,11 @@
         <pages:GameDetailsViewModel />
     </Design.DataContext>
     <Interaction.Behaviors>
-        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCmd}" />
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
     </Interaction.Behaviors>
     <Grid>
         <Grid.ColumnDefinitions>

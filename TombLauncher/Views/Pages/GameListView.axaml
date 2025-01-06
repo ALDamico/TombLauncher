@@ -14,7 +14,11 @@
     </Design.DataContext>
 
     <Interaction.Behaviors>
-        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCmd}"/>
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
     </Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>

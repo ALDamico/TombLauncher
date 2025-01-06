@@ -125,7 +125,7 @@ public class GameSearchService : IViewService
                 detailsViewModel.InstallDirectory = installedGame.InstallDirectory;
                 detailsViewModel.ExecutablePath = installedGame.ExecutablePath;
                 detailsViewModel.UniversalLauncherPath = installedGame.UniversalLauncherPath;
-                details.Id = installedGame.Id;
+                detailsViewModel.Id = installedGame.Id;
             }
 
             var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
