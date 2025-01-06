@@ -90,11 +90,18 @@
                               HorizontalAlignment="Right"
                               ItemsSource="{Binding CurrentPage.TopBarCommands}"
                               Margin="0,0,15,0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:IconButton Icon="{Binding Icon}"
                                                  Command="{Binding Command}"
-                                                 ToolTip.Tip="{Binding Tooltip}" />
+                                                 ToolTip.Tip="{Binding Tooltip}" 
+                                                 Margin="5, 0"
+                                                 />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

@@ -49,7 +49,8 @@
             <Image Source="{Binding Game.GameMetadata.TitlePic}"
                    Width="320"
                    Height="240" />
-            <controls:SplitIconButton Classes="stretched btn-success"
+            <controls:SplitIconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                                      Classes="stretched btn-success"
                                       Icon="Play"
                                       Text="{DynamicResource 'Play'}"
                                       Command="{Binding Game.PlayCmd}">
@@ -64,10 +65,12 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <controls:IconButton Command="{Binding BrowseFolderCmd}"
+            <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                                 Command="{Binding BrowseFolderCmd}"
                                  Classes="stretched" Icon="FolderOpen"
                                  Text="{DynamicResource Browse files}" />
-            <controls:SplitIconButton Command="{Binding ReadWalkthroughCmd}"
+            <controls:SplitIconButton IsVisible="{Binding WalkthroughLinks, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}" 
+                                      Command="{Binding ReadWalkthroughCmd}"
                                       CommandParameter="{Binding WalkthroughLinks[0]}"
                                       Icon="Map"
                                       Classes="stretched"
@@ -89,7 +92,8 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <controls:IconButton Classes="stretched btn-danger"
+            <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                                 Classes="stretched btn-danger"
                                  Icon="Delete"
                                  Text="{DynamicResource Uninstall}"
                                  Command="{Binding UninstallCmd}" />

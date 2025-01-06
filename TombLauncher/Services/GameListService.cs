@@ -78,4 +78,9 @@ public class GameListService : IViewService
         DialogService.ShowDialog(confirmDialogViewModel, _ => { });
         await Task.CompletedTask;
     }
+
+    public void OpenSearch()
+    {
+        NavigationManager.StartNavigation(Ioc.Default.GetRequiredService<GameSearchViewModel>());
+    }
 }

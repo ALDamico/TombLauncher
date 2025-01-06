@@ -114,9 +114,19 @@ public class GameSearchService : IViewService
         var gameToOpenDto = _mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
 
         var details = await GameDownloadManager.FetchDetails(gameToOpenDto);
+        
         if (details != null)
         {
             var detailsViewModel = _mapper.Map<GameMetadataViewModel>(details);
+            var installedGame =
+                GamesUnitOfWork.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink).ToList());
+            if (installedGame != null)
+            {
+                detailsViewModel.InstallDirectory = installedGame.InstallDirectory;
+                detailsViewModel.ExecutablePath = installedGame.ExecutablePath;
+                detailsViewModel.UniversalLauncherPath = installedGame.UniversalLauncherPath;
+                details.Id = installedGame.Id;
+            }
 
             var gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
             var gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
