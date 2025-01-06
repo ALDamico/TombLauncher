@@ -8,3 +8,4 @@ riderModule.iml
 .vs
 TombLauncher.Data/TombLauncher.db
 Output
+TombLauncher/appsettings.Development.json

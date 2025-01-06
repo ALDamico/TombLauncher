@@ -119,6 +119,7 @@
     <system:String x:Key="Notifications">Notifiche</system:String>
     <system:String x:Key="No notifications">Nessuna notifica</system:String>
     <system:String x:Key="Clear all">Cancella tutto</system:String>
+    <system:String x:Key="Update available notification">È disponibile un aggiornamento alla versione {0}</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

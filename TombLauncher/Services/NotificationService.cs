@@ -13,10 +13,16 @@ public class NotificationService
 
     private NotificationListViewModel _notificationListViewModel;
 
-    public async Task AddNotification(NotificationViewModel notificationViewModel)
+    public async Task AddNotificationAsync(NotificationViewModel notificationViewModel)
     {
         notificationViewModel.DismissCmd = new RelayCommand<NotificationViewModel>((thisNotification) =>
             _notificationListViewModel.Notifications.Remove(thisNotification));
         _notificationListViewModel.Notifications.Add(notificationViewModel);
+        await Task.CompletedTask;
+    }
+
+    public void AddNotification(NotificationViewModel notificationViewModel)
+    {
+        AddNotificationAsync(notificationViewModel).GetAwaiter().GetResult();
     }
 }

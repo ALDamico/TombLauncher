@@ -1,47 +1,44 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
+using Material.Icons;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using NetSparkleUpdater;
+using NetSparkleUpdater.Downloaders;
+using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.SignatureVerifiers;
+using NetSparkleUpdater.UI.Avalonia;
 using Serilog;
 using Serilog.Events;
 using TombLauncher.Configuration;
-using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Contracts.Localization.Dtos;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Data.Models;
 using TombLauncher.Factories;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Installers.Downloaders.AspideTR.com;
 using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Services;
-using TombLauncher.Utils;
+using TombLauncher.Updater;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
-using TombLauncher.ViewModels.Pages.Settings;
 using TombLauncher.Views;
-using ApplicationLanguageViewModel = TombLauncher.ViewModels.Pages.Settings.ApplicationLanguageViewModel;
-using ILogger = Serilog.ILogger;
 
 namespace TombLauncher;
 
@@ -56,6 +53,8 @@ public partial class App : Application
     {
         AvaloniaXamlLoader.Load(this);
     }
+
+    private SparkleUpdater _sparkle;
 
     public override async void OnFrameworkInitializationCompleted()
     {
@@ -96,6 +95,9 @@ public partial class App : Application
         desktop.MainWindow = mainWindow;
         mainWindow.Show();
         splashScreen.Close();
+        var appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
+        await InitNetSparkle(appConfiguration);
+        await _sparkle.CheckForUpdatesQuietly();
         await Task.CompletedTask;
     }
 
@@ -104,12 +106,14 @@ public partial class App : Application
         var appConfiguration = new AppConfigurationWrapper();
         IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false)
+            .AddJsonFile("appsettings.Development.json", optional: true)
             .Build();
         configuration.Bind(appConfiguration.Defaults);
         IConfiguration userConfiguration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.user.json", optional: true)
             .Build();
         userConfiguration.Bind(appConfiguration.User);
+
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton<IAppConfigurationWrapper>(appConfiguration);
         ConfigureLogging(serviceCollection);
@@ -159,7 +163,58 @@ public partial class App : Application
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
         Log.Logger.Information("Service initialization complete");
+        
         await Task.CompletedTask;
+    }
+
+    private async Task InitNetSparkle(IAppConfigurationWrapper appConfiguration)
+    {
+        var updateWorkers = AppCastWorkersFactory(appConfiguration);
+
+        _sparkle = new SparkleUpdater(appConfiguration.AppCastUrl,
+            new Ed25519Checker(SecurityMode.Strict, appConfiguration.AppCastPublicKey))
+        {
+            UIFactory = new UIFactory(),
+            AppCastDataDownloader = updateWorkers.AppCastDataDownloader,
+            UpdateDownloader = updateWorkers.UpdateDownloader,
+            LogWriter = updateWorkers.LoggerToUse,
+            UserInteractionMode = UserInteractionMode.NotSilent,
+        };
+        _sparkle.UpdateDetected += (sender, args) =>
+        {
+            var notificationService = Ioc.Default.GetRequiredService<NotificationService>();
+            var localizationService = Ioc.Default.GetRequiredService<ILocalizationManager>();
+            notificationService.AddNotification(new NotificationViewModel()
+            {
+                Content = new StringNotificationViewModel()
+                    { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion.Version) },
+                IsDismissable = true, IsCancelable = false, IsOpenable = true,
+                OpenCommand =
+                    new RelayCommand( () =>  _sparkle.ShowUpdateNeededUI(args.AppCastItems)),
+                OpenIcon = MaterialIconKind.Download
+            });
+        };
+        await _sparkle.StartLoop(true);
+    }
+
+    private static UpdaterWorkersPayload AppCastWorkersFactory(IAppConfigurationWrapper appConfiguration)
+    {
+        UpdaterWorkersPayload updateWorkers = new UpdaterWorkersPayload()
+        {
+            LoggerToUse = new SerilogLogWriter()
+        };
+        if (appConfiguration.UpdaterUseLocalPaths)
+        {
+            updateWorkers.AppCastDataDownloader = new LocalFileAppCastDownloader() { UseLocalUriPath = true };
+            updateWorkers.UpdateDownloader = new LocalFileDownloader(updateWorkers.LoggerToUse) { UseLocalUriPath = true };
+        }
+        else
+        {
+            updateWorkers.AppCastDataDownloader = new WebRequestAppCastDataDownloader(updateWorkers.LoggerToUse);
+            updateWorkers.UpdateDownloader = new WebFileDownloader(updateWorkers.LoggerToUse);
+        }
+
+        return updateWorkers;
     }
 
     private void ApplyInitialSettings()

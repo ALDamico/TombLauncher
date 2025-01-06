@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Tomb Launcher"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "Tomb Launcher developers"
 #define MyAppURL "https://www.tomblauncher.app"
 #define MyAppExeName "TombLauncher.exe"
@@ -13,7 +13,7 @@
 AppId={{C8E9E14B-1A87-422B-82EB-15C6F28229E7}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
+AppVerName={#MyAppName}{#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -32,7 +32,7 @@ LicenseFile=LICENSE.md
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=TombLauncher-setup
+OutputBaseFilename={#AppVerName}-setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
