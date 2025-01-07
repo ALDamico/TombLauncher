@@ -12,12 +12,6 @@
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <DockPanel LastChildFill="True">
-            <controls:Infotip DockPanel.Dock="Right"
-                              ToolTipContent="{DynamicResource Downloaders infotip content}" />
-            <TextBlock Classes="settings-h1"
-                       Text="{Binding SectionTitle}" />
-        </DockPanel>
-        <DockPanel LastChildFill="True">
             <StackPanel DockPanel.Dock="Right"
                         Orientation="Vertical"
                         HorizontalAlignment="Center">

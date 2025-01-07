@@ -120,6 +120,8 @@
     <system:String x:Key="No notifications">No notifications</system:String>
     <system:String x:Key="Clear all">Clear all</system:String>
     <system:String x:Key="Update available notification">An update to version {0} is available</system:String>
+    <system:String x:Key="Max retries">Max retries</system:String>
+    <system:String x:Key="Allowed values: 1-15">Allowed values: 1-15</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

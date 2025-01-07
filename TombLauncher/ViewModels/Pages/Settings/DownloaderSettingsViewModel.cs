@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TombLauncher.Localization.Extensions;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
@@ -12,6 +13,7 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
     {
         MoveUpCmd = new RelayCommand<DownloaderViewModel>(MoveUp, CanMoveUp);
         MoveDownCmd = new RelayCommand<DownloaderViewModel>(MoveDown, CanMoveDown);
+        InfoTipContent = "Downloaders infotip content".GetLocalizedString();
     }
 
     [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders;

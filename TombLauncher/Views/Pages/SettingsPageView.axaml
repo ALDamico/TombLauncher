@@ -4,43 +4,55 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:views="clr-namespace:TombLauncher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.SettingsPageView"
-             x:DataType="pages:SettingsPageViewModel"
-             >
+             x:DataType="pages:SettingsPageViewModel">
     <Design.DataContext>
-        <pages:SettingsPageViewModel/>
+        <pages:SettingsPageViewModel />
     </Design.DataContext>
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
-                <InvokeCommandAction Command="{Binding InitCmd}"/>
+                <InvokeCommandAction Command="{Binding InitCmd}" />
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
     </Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0">
-            <StackPanel Orientation="Vertical">
-                <ContentControl Content="{Binding AppearanceSettings}"/>
-                <ContentControl Content="{Binding LanguageSettings}"/>
-                <ContentControl Content="{Binding DownloaderSettings}"/>
-                <ContentControl Content="{Binding GameDetailsSettings}"/>
+            <ItemsControl ItemsSource="{Binding Sections}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <views:SettingsSectionViewBase Margin="0, 0, 30, 0" DataContext="{Binding .}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <!--
+            <StackPanel Orientation="Vertical" Margin="0, 0, 10, 0">
+                <ContentControl Content="{Binding AppearanceSettings}"></ContentControl>
+                <views:AppearanceSettingsView DataContext="{Binding AppearanceSettings}"/>
+                <views:LanguageSettingsView DataContext="{Binding LanguageSettings}"/>
+                <views:DownloaderSettingsView DataContext="{Binding DownloaderSettings}"/>
+                
+                <views:GameDetailsSettingsView DataContext="{Binding GameDetailsSettings}"/>
+                <views:RandomGameSettingsView DataContext="{Binding RandomGameSettings}"></views:RandomGameSettingsView>
                 
             </StackPanel>
+            -->
         </ScrollViewer>
-        
+
         <DockPanel Grid.Row="1" LastChildFill="False">
-            <controls:IconButton DockPanel.Dock="Right" 
-                                 Margin="10" 
-                                 Icon="FloppyDisc" 
-                                 Text="{DynamicResource 'Save'}" 
-                                 Command="{Binding SaveCmd}"/>
-            
+            <controls:IconButton DockPanel.Dock="Right"
+                                 Margin="10"
+                                 Icon="FloppyDisc"
+                                 Text="{DynamicResource 'Save'}"
+                                 Command="{Binding SaveCmd}" />
+
         </DockPanel>
     </Grid>
-    
+
 </UserControl>
