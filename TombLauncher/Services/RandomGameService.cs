@@ -10,6 +10,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Installers.Downloaders;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
@@ -33,14 +34,22 @@ public class RandomGameService
     private NavigationManager _navigationManager;
     private IMapper _mapper;
 
-    public async Task PickRandomGame()
+    public async Task PickRandomGame(int maxRerolls)
     {
-        for (var i = 0; i < 10; i++)
+        var currentPage = _navigationManager.GetCurrentPage();
+        for (var i = 0; i < maxRerolls; i++)
         {
+            if (i > 0)
+            {
+                currentPage.SetBusy(true,
+                    "Picking a random game for you... (Attempt NR of TOT)".GetLocalizedString(i + 1, maxRerolls));
+            }
+
             var downloaders = _settingsService.GetActiveDownloaders();
             var downloaderToUse = downloaders.PickOneAtRandom();
 
-            var games = await downloaderToUse.GetGames(new DownloaderSearchPayload(), CancellationToken.None);
+            // Initialization call to discover the total number of pages
+            await downloaderToUse.GetGames(new DownloaderSearchPayload(), CancellationToken.None);
 
             var random = new Random();
             var pageToFetch = random.Next(downloaderToUse.TotalPages.GetValueOrDefault() - 1);
@@ -87,10 +96,12 @@ public class RandomGameService
                         vm.InstallCmd = null;
                         vm.SetBusy(false);
                     }, () => mapped.InstalledGame == null)
-                ;
+                    ;
                 _navigationManager.StartNavigation(vm);
                 return;
             }
         }
+
+        currentPage.SetBusy(false);
     }
 }

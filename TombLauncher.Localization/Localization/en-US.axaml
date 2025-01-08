@@ -122,6 +122,12 @@
     <system:String x:Key="Update available notification">An update to version {0} is available</system:String>
     <system:String x:Key="Max retries">Max retries</system:String>
     <system:String x:Key="Allowed values: 1-15">Allowed values: 1-15</system:String>
+    <system:String x:Key="Picking a random game for you...">Picking a random game for you...</system:String>
+    <system:String x:Key="Picking a random game for you... (Attempt NR of TOT)">Picking a random game for you (Attempt {0} of {1})...</system:String>
+    <system:String x:Key="Maximum attempts reached line 1">Tomb Launcher tried to pick a game</system:String>
+    <system:String x:Key="Maximum attempts reached line 2">that's not installed for you {0} times, </system:String>
+    <system:String x:Key="Maximum attempts reached line 3">but failed.</system:String>
+    <system:String x:Key="Try again">Try again</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>
