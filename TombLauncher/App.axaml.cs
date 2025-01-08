@@ -244,7 +244,7 @@ public partial class App : Application
         serviceCollection.AddSingleton<WelcomePageService>();
         serviceCollection.AddTransient<GameSearchService>();
         serviceCollection.AddTransient<GameSearchResultService>();
-        serviceCollection.AddScoped<SettingsService>();
+        serviceCollection.AddSingleton<SettingsService>();
         serviceCollection.AddTransient<RandomGameService>();
     }
 
@@ -256,7 +256,7 @@ public partial class App : Application
         serviceCollection.AddScoped<GameListViewModel>();
         serviceCollection.AddScoped<GameSearchViewModel>();
         serviceCollection.AddTransient<NewGameViewModel>();
-        serviceCollection.AddTransient<SettingsPageViewModel>();
+        serviceCollection.AddSingleton<SettingsPageViewModel>();
         serviceCollection.AddSingleton<NotificationListViewModel>();
         serviceCollection.AddTransient<RandomGameViewModel>();
     }

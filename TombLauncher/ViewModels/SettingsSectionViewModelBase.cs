@@ -15,8 +15,10 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        base.OnPropertyChanged(e);
+        if (e.PropertyName is nameof(IsChanged) or nameof(SectionTitle) or nameof(InfoTipContent) or nameof(InfoTipHeader))
+            return;
         IsChanged = true;
+        base.OnPropertyChanged(e);
     }
 
     [ObservableProperty] private string _sectionTitle;
@@ -49,5 +51,5 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
         IsChanged = false;
     }
 
-    public bool IsChanged { get; internal set; }
+    public bool IsChanged { get; protected set; }
 }

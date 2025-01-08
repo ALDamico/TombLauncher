@@ -25,7 +25,12 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
         foreach (var section in Sections)
         {
-            section.PropertyChanged += (sender, args) => RaiseCanExecuteChanged(SaveCmd);
+            section.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(IsChanged))
+                    return;
+                RaiseCanExecuteChanged(SaveCmd);
+            };
             section.ErrorsChanged += (sender, args) =>
             {
                 OnPropertyChanged(nameof(IsChanged));
@@ -33,7 +38,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             };
         }
         Initialize += InitializeSettings;
-        AcceptChanges();
     }
 
     private SettingsService _settingsService;
@@ -55,6 +59,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         DownloaderSettings.AvailableDownloaders = downloaders.ToObservableCollection();
         GameDetailsSettings = _settingsService.GetGameDetailsSettings();
         RandomGameSettings.MaxRerolls = _settingsService.GetRandomGameMaxRerolls();
+        AcceptChanges();
     }
 
     protected override async Task SaveInner()
@@ -74,6 +79,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         {
             section.AcceptChanges();
         }
+        OnPropertyChanged(nameof(IsChanged));
+        RaiseCanExecuteChanged(SaveCmd);
     }
 
     public bool IsChanged
