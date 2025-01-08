@@ -244,19 +244,21 @@ public partial class App : Application
         serviceCollection.AddSingleton<WelcomePageService>();
         serviceCollection.AddTransient<GameSearchService>();
         serviceCollection.AddTransient<GameSearchResultService>();
-        serviceCollection.AddScoped<SettingsService>();
+        serviceCollection.AddSingleton<SettingsService>();
+        serviceCollection.AddTransient<RandomGameService>();
     }
 
     private static void ConfigureViewModels(ServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton(sp =>
-            new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>())
+            new WelcomePageViewModel()
                 { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
         serviceCollection.AddScoped<GameListViewModel>();
         serviceCollection.AddScoped<GameSearchViewModel>();
         serviceCollection.AddTransient<NewGameViewModel>();
-        serviceCollection.AddTransient<SettingsPageViewModel>();
+        serviceCollection.AddSingleton<SettingsPageViewModel>();
         serviceCollection.AddSingleton<NotificationListViewModel>();
+        serviceCollection.AddTransient<RandomGameViewModel>();
     }
 
     private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection, IAppConfiguration appConfiguration)

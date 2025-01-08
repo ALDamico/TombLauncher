@@ -4,15 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TombLauncher.Views.GameDetailsSettingsView"
-             x:DataType="settings:GameDetailsSettingsViewModel">
+             x:Class="TombLauncher.Views.RandomGameSettingsView"
+             x:DataType="settings:RandomGameSettingsViewModel"
+             >
     <Design.DataContext>
-        <settings:GameDetailsSettingsViewModel />
+        <settings:RandomGameSettingsViewModel/>
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <CheckBox IsChecked="{Binding AskForConfirmationBeforeWalkthrough}"
-                  Content="{DynamicResource 'Ask for confirmation before opening a walkthrough'}" />
-        <CheckBox IsChecked="{Binding UseInternalViewerIfAvailable}"
-                  Content="{DynamicResource 'Use internal viewer if available'}" />
+        <TextBlock Text="{DynamicResource 'Max retries'}"/>
+        <TextBox Text="{Binding MaxRerolls}"/>
     </StackPanel>
 </UserControl>

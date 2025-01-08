@@ -211,6 +211,7 @@ public class GameSearchResultService : IViewService
         notificationViewModel.IsCancelable = false;
 
         GamesUnitOfWork.Save();
+        gameToInstall.InstalledGame = _mapper.Map<GameWithStatsViewModel>(GamesUnitOfWork.GetGameWithStats(dto.Id));
         _logger.LogInformation("Installation for {GameTitle} complete",gameToInstall.Title);
     }
 
@@ -222,5 +223,5 @@ public class GameSearchResultService : IViewService
         _logger.LogInformation("Installation canceled");
     }
 
-    public bool CanCancelInstall(MultiSourceGameSearchResultMetadataViewModel target) => target.InstallProgress?.IsInstalling == true;
+    public bool CanCancelInstall(MultiSourceGameSearchResultMetadataViewModel target) => target.InstallProgress.IsInstalling == true;
 }

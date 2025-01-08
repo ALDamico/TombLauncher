@@ -13,7 +13,8 @@ public interface IAppConfiguration
     bool? AskForConfirmationBeforeWalkthrough { get; set; }
     List<DownloaderConfiguration> Downloaders { get; set; }
     LogLevel? MinimumLogLevel { get; set; }
-    public string AppCastUrl { get; set; }
-    public string AppCastPublicKey { get; set; }
-    public bool UpdaterUseLocalPaths { get; set; }
+    string AppCastUrl { get; set; }
+    string AppCastPublicKey { get; set; }
+    bool UpdaterUseLocalPaths { get; set; }
+    int? RandomGameMaxRerolls { get; set; }
 }

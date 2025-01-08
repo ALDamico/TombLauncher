@@ -5,7 +5,6 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameDetailsView"
@@ -15,7 +14,11 @@
         <pages:GameDetailsViewModel />
     </Design.DataContext>
     <Interaction.Behaviors>
-        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCmd}" />
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
     </Interaction.Behaviors>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -49,7 +52,13 @@
             <Image Source="{Binding Game.GameMetadata.TitlePic}"
                    Width="320"
                    Height="240" />
-            <controls:SplitIconButton Classes="stretched btn-success"
+            <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNull}}"
+                                 Command="{Binding InstallCmd}" 
+                                 Icon="Download" 
+                                 Text="{DynamicResource 'Download'}" 
+                                 Classes="stretched btn-success"/>
+            <controls:SplitIconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                                      Classes="stretched btn-success"
                                       Icon="Play"
                                       Text="{DynamicResource 'Play'}"
                                       Command="{Binding Game.PlayCmd}">
@@ -64,10 +73,12 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <controls:IconButton Command="{Binding BrowseFolderCmd}"
+            <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                                 Command="{Binding BrowseFolderCmd}"
                                  Classes="stretched" Icon="FolderOpen"
                                  Text="{DynamicResource Browse files}" />
-            <controls:SplitIconButton Command="{Binding ReadWalkthroughCmd}"
+            <controls:SplitIconButton IsVisible="{Binding WalkthroughLinks, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}" 
+                                      Command="{Binding ReadWalkthroughCmd}"
                                       CommandParameter="{Binding WalkthroughLinks[0]}"
                                       Icon="Map"
                                       Classes="stretched"
@@ -89,7 +100,8 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <controls:IconButton Classes="stretched btn-danger"
+            <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                                 Classes="stretched btn-danger"
                                  Icon="Delete"
                                  Text="{DynamicResource Uninstall}"
                                  Command="{Binding UninstallCmd}" />

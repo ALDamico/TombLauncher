@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Material.Icons;
 
@@ -12,11 +13,5 @@ public partial class MainMenuItemViewModel : ViewModelBase
 
     [ObservableProperty] private string _toolTip;
 
-    private Lazy<PageViewModel> _pageViewModelFactory;
-
-    public PageViewModel PageViewModelFactory
-    {
-        get => _pageViewModelFactory.Value;
-        set => _pageViewModelFactory = new Lazy<PageViewModel>(() => value);
-    }
+    [ObservableProperty] private Func<Task<PageViewModel>> _pageViewModelFactory;
 }

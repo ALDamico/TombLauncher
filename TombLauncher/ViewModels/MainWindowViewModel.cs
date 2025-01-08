@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -21,6 +22,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
         NotificationListViewModel = notificationListViewModel;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
+        OpenSettingsCmd = new AsyncRelayCommand(OpenSettings);
         MenuItems = new ObservableCollection<MainMenuItemViewModel>()
         {
             new MainMenuItemViewModel()
@@ -28,32 +30,46 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 ToolTip = "Welcome".GetLocalizedString(),
                 Icon = MaterialIconKind.HomeOutline,
                 Text = "Welcome".GetLocalizedString(),
-                PageViewModelFactory = Ioc.Default.GetRequiredService<WelcomePageViewModel>()
+                PageViewModelFactory = async () =>
+                    await Task.FromResult(Ioc.Default.GetRequiredService<WelcomePageViewModel>())
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "My mods".GetLocalizedString(),
                 Icon = MaterialIconKind.Games,
                 Text = "My mods".GetLocalizedString(),
-                PageViewModelFactory = Ioc.Default.GetRequiredService<GameListViewModel>()
+                PageViewModelFactory = async () =>
+                    await Task.FromResult(Ioc.Default.GetRequiredService<GameListViewModel>())
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "Search".GetLocalizedString(),
                 Icon = MaterialIconKind.Magnify,
                 Text = "Search".GetLocalizedString(),
-                PageViewModelFactory = Ioc.Default.GetRequiredService<GameSearchViewModel>()
+                PageViewModelFactory = async () =>
+                    await Task.FromResult(Ioc.Default.GetRequiredService<GameSearchViewModel>())
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = "Settings".GetLocalizedString(),
-                Icon = MaterialIconKind.Settings,
-                Text = "Settings".GetLocalizedString(),
-                PageViewModelFactory = Ioc.Default.GetRequiredService<SettingsPageViewModel>()
-            }
+                ToolTip = "Random".GetLocalizedString(),
+                Icon = MaterialIconKind.Gambling,
+                Text = "Random game".GetLocalizedString(),
+                PageViewModelFactory = async () =>
+                    await Task.FromResult(Ioc.Default.GetRequiredService<RandomGameViewModel>())
+            },
+            
         };
-        
-        _navigationManager.StartNavigation(MenuItems.First().PageViewModelFactory);
+
+        SettingsItem = new MainMenuItemViewModel()
+        {
+            ToolTip = "Settings".GetLocalizedString(),
+            Icon = MaterialIconKind.Settings,
+            Text = "Settings".GetLocalizedString(),
+            PageViewModelFactory = async () =>
+                await Task.FromResult(Ioc.Default.GetRequiredService<SettingsPageViewModel>())
+        };
+
+        _navigationManager.StartNavigation(MenuItems.First().PageViewModelFactory.Invoke().GetAwaiter().GetResult());
         Title = "Tomb Launcher";
     }
 
@@ -65,6 +81,8 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
     private readonly NavigationManager _navigationManager;
     [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
+    [ObservableProperty] private MainMenuItemViewModel _settingsItem;
+    [ObservableProperty] private bool _isSettingsOpen;
 
     private bool _isPaneOpen;
 
@@ -89,10 +107,12 @@ public partial class MainWindowViewModel : WindowViewModelBase
         get => _selectedMenuItem;
         set
         {
+            if (value != SettingsItem)
+                IsSettingsOpen = false;
             SetProperty(ref _selectedMenuItem, value);
             if (value != null)
             {
-                _navigationManager.StartNavigation(value.PageViewModelFactory);
+                _navigationManager.StartNavigation(value.PageViewModelFactory.Invoke().GetAwaiter().GetResult());
                 OnNavigated();
             }
         }
@@ -100,6 +120,14 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
     public PageViewModel CurrentPage => _navigationManager.GetCurrentPage();
     public ICommand GoBackCmd { get; }
+    public ICommand OpenSettingsCmd { get; }
+
+    private async Task OpenSettings()
+    {
+        await SettingsItem.PageViewModelFactory();
+        SelectedMenuItem = SettingsItem;
+        IsSettingsOpen = true;
+    }
 
     private void GoBack()
     {
@@ -108,6 +136,4 @@ public partial class MainWindowViewModel : WindowViewModelBase
     }
 
     private bool CanGoBack() => _navigationManager.CanGoBack();
-    
-    
 }

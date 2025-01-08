@@ -1,12 +1,10 @@
 ﻿using System;
 using AutoMapper;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Newtonsoft.Json;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Localization.Dtos;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Models;
-using TombLauncher.Services;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages.Settings;
@@ -43,8 +41,7 @@ public static class MapperConfigurationFactory
                 .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
             cfg.CreateMap<IMultiSourceSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
                 .ConstructUsing(vm =>
-                    new MultiSourceGameSearchResultMetadataViewModel(Ioc.Default
-                        .GetService<GameSearchResultService>()))
+                    new MultiSourceGameSearchResultMetadataViewModel())
                 .ForMember(vm => vm.InstallProgress, m => m.Ignore())
                 .ForMember(vm => vm.InstalledGame, m => m.Ignore())
                 ;
@@ -55,7 +52,7 @@ public static class MapperConfigurationFactory
                 .ReverseMap();
             cfg.CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
             cfg.CreateMap<GameWithStatsDto, GameWithStatsViewModel>().ConstructUsing(dto =>
-                    new GameWithStatsViewModel(Ioc.Default.GetService<GameWithStatsService>())
+                    new GameWithStatsViewModel()
                     {
                         AreCommandsVisible = false
                     }

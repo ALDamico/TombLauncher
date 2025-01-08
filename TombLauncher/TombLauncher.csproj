@@ -112,8 +112,4 @@
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Views\MessageBoxes\" />
-    </ItemGroup>
 </Project>

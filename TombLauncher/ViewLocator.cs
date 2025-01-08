@@ -1,6 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher;
@@ -14,8 +15,6 @@ public class ViewLocator : IDataTemplate
         if (data is null)
             return null;
         
-        
-
         var pageControl = GetControl(data, "Page");
         if (pageControl != null)
         {
@@ -59,6 +58,6 @@ public class ViewLocator : IDataTemplate
 
     public bool Match(object data)
     {
-        return data is ViewModelBase;
+        return data is ViewModelBase or ObservableValidator or ObservableObject;
     }
 }

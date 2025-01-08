@@ -179,6 +179,31 @@ public class AspideTrGameDownloader : IGameDownloader
         return result;
     }
 
+    public async Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
+    {
+        var result = new List<IGameSearchResultMetadata>();
+        if (pageNumber > TotalPages) return result;
+        var convertedRequest = ConvertRequest(DownloaderSearchPayload);
+        var kvpList = ConvertRequest(convertedRequest);
+
+        var urlEncodedContent = new FormUrlEncodedContent(kvpList);
+        var queryString = await urlEncodedContent.ReadAsStringAsync(cancellationToken);
+        var url = GetPageUrl(pageNumber, queryString);
+        var requestMessage = new HttpRequestMessage(HttpMethod.Get, url) { Content = urlEncodedContent };
+        var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
+        var content = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.Load(content);
+        if (TotalPages == null)
+        {
+            TotalPages = GetTotalPages(htmlDocument);
+        }
+
+        await ParsePage(htmlDocument, result);
+        return result;
+    }
+
     private string GetPageUrl(int pageNumber, string queryString)
     {
         var baseUrl = "/trle/levels/";

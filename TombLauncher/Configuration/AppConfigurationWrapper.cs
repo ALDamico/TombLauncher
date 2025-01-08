@@ -80,4 +80,10 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         get => Defaults.UpdaterUseLocalPaths;
         set => Defaults.UpdaterUseLocalPaths = value;
     }
+
+    public int? RandomGameMaxRerolls
+    {
+        get => User.RandomGameMaxRerolls.Coalesce(Defaults.RandomGameMaxRerolls);
+        set => User.RandomGameMaxRerolls = value.NullIfEquals(Defaults.RandomGameMaxRerolls);
+    }
 }

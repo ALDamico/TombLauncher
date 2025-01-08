@@ -105,7 +105,7 @@ public class TrleGameDownloader : IGameDownloader
         if (CurrentPage > TotalPages) return new List<IGameSearchResultMetadata>();
         CurrentPage++;
         var result = new List<IGameSearchResultMetadata>();
-        var request = ConvertRequest(DownloaderSearchPayload);
+        var request = ConvertRequest(DownloaderSearchPayload, CurrentPage);
         var requestStrng = ConvertRequest(request);
         var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
@@ -125,6 +125,34 @@ public class TrleGameDownloader : IGameDownloader
         catch (HttpRequestException)
         {
             CurrentPage--;
+        }
+        return result;
+    }
+
+    public async Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (pageNumber > TotalPages) return new List<IGameSearchResultMetadata>();
+        var result = new List<IGameSearchResultMetadata>();
+        var request = ConvertRequest(DownloaderSearchPayload, pageNumber);
+        var requestStrng = ConvertRequest(request);
+        var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
+        requestMessage.Content = urlEncodedContent;
+
+        try
+        {
+            var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(content);
+            if (TotalPages == null)
+                TotalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
+
+            ParseResultPage(htmlDocument, result, cancellationToken);
+        }
+        catch (HttpRequestException)
+        {
         }
         return result;
     }
@@ -298,7 +326,7 @@ public class TrleGameDownloader : IGameDownloader
                                                    DownloaderFeatures.GameEngine | DownloaderFeatures.GameDifficulty |
                                                    DownloaderFeatures.Rating | DownloaderFeatures.GameLength;
 
-    private TrleSearchRequest ConvertRequest(DownloaderSearchPayload searchPayload)
+    private TrleSearchRequest ConvertRequest(DownloaderSearchPayload searchPayload, int pageNumber)
     {
         int? difficulty = null;
         if (searchPayload.GameDifficulty != null && searchPayload.GameDifficulty != GameDifficulty.Unknown)
@@ -325,7 +353,7 @@ public class TrleGameDownloader : IGameDownloader
             Type = gameEngine,
             DurationClass = duration,
             SortIdx = 8,
-            Idx = (CurrentPage - 1) * RowsPerPage
+            Idx = (pageNumber - 1) * RowsPerPage
         };
     }
 

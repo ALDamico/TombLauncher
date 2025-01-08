@@ -47,7 +47,7 @@ public class GameListService : IViewService
 
     private GameWithStatsViewModel ConvertDto(GameWithStatsDto dto)
     {
-        return new GameWithStatsViewModel(Ioc.Default.GetService<GameWithStatsService>())
+        return new GameWithStatsViewModel()
         {
             GameMetadata = dto.GameMetadata.ToViewModel(),
             LastPlayed = dto.LastPlayed,
@@ -77,5 +77,10 @@ public class GameListService : IViewService
         };
         DialogService.ShowDialog(confirmDialogViewModel, _ => { });
         await Task.CompletedTask;
+    }
+
+    public void OpenSearch()
+    {
+        NavigationManager.StartNavigation(Ioc.Default.GetRequiredService<GameSearchViewModel>());
     }
 }

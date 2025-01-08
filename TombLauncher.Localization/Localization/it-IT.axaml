@@ -120,6 +120,14 @@
     <system:String x:Key="No notifications">Nessuna notifica</system:String>
     <system:String x:Key="Clear all">Cancella tutto</system:String>
     <system:String x:Key="Update available notification">È disponibile un aggiornamento alla versione {0}</system:String>
+    <system:String x:Key="Max retries">Tentativi massimi</system:String>
+    <system:String x:Key="Allowed values: 1-15">Valori ammessi: 1-15</system:String>
+    <system:String x:Key="Picking a random game for you...">Selezione di un livello a caso...</system:String>
+    <system:String x:Key="Picking a random game for you... (Attempt NR of TOT)">Selezione di un livello a caso (Tentativo {0} di {1})...</system:String>
+    <system:String x:Key="Maximum attempts reached line 1">Tomb Launcher ha cercato di scegliere</system:String>
+    <system:String x:Key="Maximum attempts reached line 2">un gioco non installato {0} volte,.</system:String>
+    <system:String x:Key="Maximum attempts reached line 3">ma non ci è riuscito.</system:String>
+    <system:String x:Key="Try again">Riprova</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

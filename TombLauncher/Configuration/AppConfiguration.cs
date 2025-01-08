@@ -16,4 +16,5 @@ public class AppConfiguration : IAppConfiguration
     public string AppCastUrl { get; set; }
     public string AppCastPublicKey { get; set; }
     public bool UpdaterUseLocalPaths { get; set; }
+    public int? RandomGameMaxRerolls { get; set; }
 }

@@ -77,6 +77,7 @@ public class SettingsService : IViewService
         _appConfiguration.AskForConfirmationBeforeWalkthrough =
             viewModel.GameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _appConfiguration.UseInternalViewer = viewModel.GameDetailsSettings.UseInternalViewerIfAvailable;
+        _appConfiguration.RandomGameMaxRerolls = viewModel.RandomGameSettings.MaxRerolls;
         await File.WriteAllTextAsync("appsettings.user.json", JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented, new JsonSerializerSettings(){NullValueHandling = NullValueHandling.Ignore}));
         viewModel.ClearBusy();
     }
@@ -148,4 +149,6 @@ public class SettingsService : IViewService
 
         return output;
     }
+
+    public int GetRandomGameMaxRerolls() => _appConfiguration.RandomGameMaxRerolls.GetValueOrDefault();
 }

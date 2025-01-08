@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
-             xmlns:behaviors="clr-namespace:TombLauncher.Behaviors"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.WelcomePageView"
@@ -12,7 +11,11 @@
         <pages:WelcomePageViewModel/>
     </Design.DataContext>
     <Interaction.Behaviors>
-        <behaviors:EventToCommand Event="Loaded" Command="{Binding InitCmd}" />
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCmd}"/>
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
     </Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
