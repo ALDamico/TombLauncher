@@ -66,18 +66,24 @@ public class SettingsService : IViewService
     {
         viewModel.SetBusy(true, "Saving application settings...".GetLocalizedString());
 
+        var languageSettings = viewModel.Sections.OfType<LanguageSettingsViewModel>().First();
+        var appearanceSettings = viewModel.Sections.OfType<AppearanceSettingsViewModel>().First();
+        var downloaderSettings = viewModel.Sections.OfType<DownloaderSettingsViewModel>().First();
+        var gameDetailsSettings = viewModel.Sections.OfType<GameDetailsSettingsViewModel>().First();
+        var randomGameSettings = viewModel.Sections.OfType<RandomGameSettingsViewModel>().First();
+
         _appConfiguration.ApplicationLanguage =
-            viewModel.LanguageSettings.ApplicationLanguage.CultureInfo.IetfLanguageTag;
-        LocalizationManager.ChangeLanguage(viewModel.LanguageSettings.ApplicationLanguage.CultureInfo);
-        _appConfiguration.ApplicationTheme = viewModel.AppearanceSettings.SelectedTheme.Key.ToString();
-        Application.Current.RequestedThemeVariant = viewModel.AppearanceSettings.SelectedTheme;
+            languageSettings.ApplicationLanguage.CultureInfo.IetfLanguageTag;
+        LocalizationManager.ChangeLanguage(languageSettings.ApplicationLanguage.CultureInfo);
+        _appConfiguration.ApplicationTheme = appearanceSettings.SelectedTheme.Key.ToString();
+        Application.Current.RequestedThemeVariant = appearanceSettings.SelectedTheme;
         var mappedDownloaderConfigs =
-            _mapper.Map<List<DownloaderConfiguration>>(viewModel.DownloaderSettings.AvailableDownloaders);
+            _mapper.Map<List<DownloaderConfiguration>>(downloaderSettings.AvailableDownloaders);
         _appConfiguration.Downloaders = mappedDownloaderConfigs;
         _appConfiguration.AskForConfirmationBeforeWalkthrough =
-            viewModel.GameDetailsSettings.AskForConfirmationBeforeWalkthrough;
-        _appConfiguration.UseInternalViewer = viewModel.GameDetailsSettings.UseInternalViewerIfAvailable;
-        _appConfiguration.RandomGameMaxRerolls = viewModel.RandomGameSettings.MaxRerolls;
+            gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
+        _appConfiguration.UseInternalViewer = gameDetailsSettings.UseInternalViewerIfAvailable;
+        _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
         await File.WriteAllTextAsync("appsettings.user.json", JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented, new JsonSerializerSettings(){NullValueHandling = NullValueHandling.Ignore}));
         viewModel.ClearBusy();
     }

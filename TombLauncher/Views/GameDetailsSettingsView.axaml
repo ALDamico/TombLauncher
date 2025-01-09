@@ -10,9 +10,9 @@
         <settings:GameDetailsSettingsViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <CheckBox IsChecked="{Binding AskForConfirmationBeforeWalkthrough}"
+        <ToggleSwitch IsChecked="{Binding AskForConfirmationBeforeWalkthrough}"
                   Content="{DynamicResource 'Ask for confirmation before opening a walkthrough'}" />
-        <CheckBox IsChecked="{Binding UseInternalViewerIfAvailable}"
-                  Content="{DynamicResource 'Use internal viewer if available'}" />
+        <ToggleSwitch IsChecked="{Binding UseInternalViewerIfAvailable}"
+                      Content="{DynamicResource 'Use internal viewer if available'}" />
     </StackPanel>
 </UserControl>

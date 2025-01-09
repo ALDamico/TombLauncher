@@ -34,9 +34,10 @@ public class RandomGameService
     private NavigationManager _navigationManager;
     private IMapper _mapper;
 
-    public async Task PickRandomGame(int maxRerolls)
+    public async Task PickRandomGame(RandomGameViewModel target)
     {
         var currentPage = _navigationManager.GetCurrentPage();
+        var maxRerolls = target.MaxRetries;
         for (var i = 0; i < maxRerolls; i++)
         {
             if (i > 0)
@@ -102,6 +103,6 @@ public class RandomGameService
             }
         }
 
-        currentPage.SetBusy(false);
+        target.AttemptsExpired = true;
     }
 }
