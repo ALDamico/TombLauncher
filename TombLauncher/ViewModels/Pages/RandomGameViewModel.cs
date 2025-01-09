@@ -36,7 +36,6 @@ public partial class RandomGameViewModel : PageViewModel
         IsBusy = true;
         BusyMessage = "Picking a random game for you...".GetLocalizedString();
         MaxRetries = _settingsService.GetRandomGameMaxRerolls();
-        await _randomGameService.PickRandomGame(MaxRetries);
-        AttemptsExpired = true;
+        await _randomGameService.PickRandomGame(this);
     }
 }

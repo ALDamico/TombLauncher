@@ -15,50 +15,75 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     public SettingsPageViewModel()
     {
         _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-        LanguageSettings = new LanguageSettingsViewModel();
-        DownloaderSettings = new DownloaderSettingsViewModel();
-        AppearanceSettings = new AppearanceSettingsViewModel();
-        RandomGameSettings = new RandomGameSettingsViewModel();
-        Sections = new ObservableCollection<SettingsSectionViewModelBase>()
+        Sections = new ObservableCollection<SettingsSectionViewModelBase>();
+
+        Sections.CollectionChanged += (sender, args) =>
         {
-            LanguageSettings, DownloaderSettings, AppearanceSettings, RandomGameSettings
+            if (args.NewItems != null)
+            {
+                foreach (var item in args.NewItems)
+                {
+                    var section = (item as SettingsSectionViewModelBase)!;
+                    section.PropertyChanged += SectionPropertyChanged;
+                    section.ErrorsChanged += SectionErrorChanged;
+                }
+            }
+
+            if (args.OldItems != null)
+            {
+                foreach (var item in args.OldItems)
+                {
+                    var section = (item as SettingsSectionViewModelBase)!;
+                    section.PropertyChanged -= SectionPropertyChanged;
+                    section.ErrorsChanged -= SectionErrorChanged;
+                }
+            }
         };
-        foreach (var section in Sections)
-        {
-            section.PropertyChanged += (sender, args) =>
-            {
-                if (args.PropertyName == nameof(IsChanged))
-                    return;
-                RaiseCanExecuteChanged(SaveCmd);
-            };
-            section.ErrorsChanged += (sender, args) =>
-            {
-                OnPropertyChanged(nameof(IsChanged));
-                RaiseCanExecuteChanged(SaveCmd);
-            };
-        }
         Initialize += InitializeSettings;
     }
 
-    private SettingsService _settingsService;
-    [ObservableProperty] private LanguageSettingsViewModel _languageSettings;
-    [ObservableProperty] private DownloaderSettingsViewModel _downloaderSettings;
-    [ObservableProperty] private AppearanceSettingsViewModel _appearanceSettings;
-    [ObservableProperty] private GameDetailsSettingsViewModel _gameDetailsSettings;
-    [ObservableProperty] private RandomGameSettingsViewModel _randomGameSettings;
+    private readonly SettingsService _settingsService;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
+
+    private void SectionPropertyChanged(object sender, PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName == nameof(IsChanged))
+            return;
+        RaiseCanExecuteChanged(SaveCmd);
+    }
+
+    private void SectionErrorChanged(object sender, DataErrorsChangedEventArgs args)
+    {
+        OnPropertyChanged(nameof(IsChanged));
+        RaiseCanExecuteChanged(SaveCmd);
+    }
 
     private void InitializeSettings()
     {
+        var currentTheme = _settingsService.GetApplicationTheme();
+        var appearanceSettings = new AppearanceSettingsViewModel()
+        {
+            SelectedTheme = currentTheme
+        };
         var supportedLanguages = _settingsService.GetSupportedLanguages();
-        LanguageSettings.AvailableLanguages = supportedLanguages.ToObservableCollection();
-        LanguageSettings.ApplicationLanguage =
-            supportedLanguages.FirstOrDefault(l => _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo));
+        var languageSettings = new LanguageSettingsViewModel();
+        languageSettings.AvailableLanguages = supportedLanguages.ToObservableCollection();
+        languageSettings.ApplicationLanguage =
+            supportedLanguages.FirstOrDefault(l =>
+                _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo));
 
         var downloaders = _settingsService.GetDownloaderViewModels();
-        DownloaderSettings.AvailableDownloaders = downloaders.ToObservableCollection();
-        GameDetailsSettings = _settingsService.GetGameDetailsSettings();
-        RandomGameSettings.MaxRerolls = _settingsService.GetRandomGameMaxRerolls();
+        var downloaderSettings = new DownloaderSettingsViewModel();
+        downloaderSettings.AvailableDownloaders = downloaders.ToObservableCollection();
+        var gameDetailsSettings = _settingsService.GetGameDetailsSettings();
+        var randomGameSettings = new RandomGameSettingsViewModel();
+        randomGameSettings.MaxRerolls = _settingsService.GetRandomGameMaxRerolls();
+
+        Sections.Add(appearanceSettings);
+        Sections.Add(languageSettings);
+        Sections.Add(downloaderSettings);
+        Sections.Add(gameDetailsSettings);
+        Sections.Add(randomGameSettings);
         AcceptChanges();
     }
 
@@ -79,6 +104,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         {
             section.AcceptChanges();
         }
+
         OnPropertyChanged(nameof(IsChanged));
         RaiseCanExecuteChanged(SaveCmd);
     }
