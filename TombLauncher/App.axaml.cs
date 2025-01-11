@@ -10,6 +10,8 @@ using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
+using LiveChartsCore;
+using LiveChartsCore.Defaults;
 using Material.Icons;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

@@ -1,4 +1,7 @@
-﻿namespace TombLauncher.Core.Extensions;
+﻿using System.Globalization;
+using TombLauncher.Core.Utils;
+
+namespace TombLauncher.Core.Extensions;
 
 public static class DateTimeExtensions
 {
@@ -38,5 +41,26 @@ public static class DateTimeExtensions
             return TimeSpan.Zero;
 
         return TimeSpan.FromTicks(ticks.Sum());
+    }
+
+    public static string[] GetDayNamesOrdered(CultureInfo cultureInfo)
+    {
+        var daysOrdered = Enum.GetValues<DayOfWeek>()
+            .OrderBy(d => d, new DayOfWeekCultureSensitiveComparer(cultureInfo));
+        return daysOrdered.Select(d => cultureInfo.DateTimeFormat.GetDayName(d)).ToArray();
+    }
+
+    public static string[] GetAbbreviatedDayNamesOrdered(CultureInfo cultureInfo)
+    {
+        var daysOrdered = Enum.GetValues<DayOfWeek>()
+            .OrderBy(d => d, new DayOfWeekCultureSensitiveComparer(cultureInfo));
+        return daysOrdered.Select(d => cultureInfo.DateTimeFormat.GetAbbreviatedDayName(d)).ToArray();
+    }
+
+    public static int GetCultureSensitiveOrder(this DayOfWeek dayOfWeek, CultureInfo cultureInfo)
+    {
+        var daysOrdered = Enum.GetValues<DayOfWeek>()
+            .OrderBy(d => d, new DayOfWeekCultureSensitiveComparer(cultureInfo)).ToList();
+        return daysOrdered.IndexOf(dayOfWeek);
     }
 }

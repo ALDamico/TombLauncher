@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+using Material.Icons;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
@@ -12,7 +15,14 @@ public partial class StatisticsPageViewModel : PageViewModel
     public StatisticsPageViewModel()
     {
         _statisticsService = Ioc.Default.GetRequiredService<StatisticsService>();
-        Initialize+= OnInitialize;
+        Initialize += FetchStatistics;
+        TopBarCommands = new ObservableCollection<CommandViewModel>()
+        {
+            new()
+            {
+                Command = new RelayCommand(FetchStatistics), Icon = MaterialIconKind.Reload, Tooltip = "Reload".GetLocalizedString()
+            }
+        };
     }
 
     private readonly StatisticsService _statisticsService;
@@ -23,7 +33,7 @@ public partial class StatisticsPageViewModel : PageViewModel
     [ObservableProperty] private Version _netVersion;
     [ObservableProperty] private StatisticsViewModel _statistics;
 
-    private async void OnInitialize()
+    private async void FetchStatistics()
     {
         IsBusy = true;
         BusyMessage = "Gathering statistics...".GetLocalizedString();

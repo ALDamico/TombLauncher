@@ -3,18 +3,58 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:avalonia="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.StatisticsPageView"
-             x:DataType="pages:StatisticsPageViewModel"
-             >
+             x:DataType="pages:StatisticsPageViewModel">
     <Design.DataContext>
-        <pages:StatisticsPageViewModel/>
+        <pages:StatisticsPageViewModel />
     </Design.DataContext>
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
-                <InvokeCommandAction Command="{Binding InitCmd}"/>
+                <InvokeCommandAction Command="{Binding InitCmd}" />
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
     </Interaction.Behaviors>
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="{DynamicResource 'STATISTICS'}" Classes="settings-h1" />
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="32"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="160"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource 'Application version'}"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ApplicationVersion}"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 'Dotnet version'}"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding NetVersion}"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Database size}"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding DatabaseSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Games size}"></TextBlock>
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GamesSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"/>
+            </Grid>
+            <TextBlock Text="{DynamicResource Average playtime by day of week}" />
+            <avalonia:CartesianChart Series="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.Series}"
+                                     XAxes="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.XAxis}"
+                                     YAxes="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.YAxis}"
+                                     Height="600">
+            </avalonia:CartesianChart>
+            <TextBlock Text="{DynamicResource Total games played by day of week}" />
+            <avalonia:CartesianChart Series="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.Series}"
+                                     XAxes="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.XAxis}"
+                                     YAxes="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.YAxis}" 
+                                     Height="600"
+                                     />
+        </StackPanel>
+    </ScrollViewer>
+
+
 </UserControl>
