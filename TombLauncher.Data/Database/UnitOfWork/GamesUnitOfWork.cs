@@ -1,7 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Globalization;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
 
@@ -227,5 +232,109 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).ToList()
             .Join(stats, l => l.GameId, game => game.GameMetadata.Id, (i, game) => new { Link = i.Link, Game = game })
             .ToDictionary(k => k.Link, g => g.Game);
+    }
+
+    public StatisticsDto GetStatistics()
+    {
+        var output = new StatisticsDto();
+
+        var playSessionsRepo = PlaySessions.GetAll().Include(ps => ps.Game);
+        var gamesRepo = Games.GetAll();
+
+        var groupedByGame = playSessionsRepo.ToLookup(ps => ps.GameId);
+        var latestPayedGame = GetLatestPlayedGame(playSessionsRepo);
+        output.LatestPlayedGame = latestPayedGame;
+        var longestPlaySession = GetLongestPlaySession(playSessionsRepo);
+        output.LongestPlaySession = longestPlaySession;
+
+        var mostPlayed = GetMostPlayedByLaunches(groupedByGame);
+
+        output.MostLaunches = mostPlayed;
+
+        var byDayOfWeek = playSessionsRepo.ToLookup(ps => ps.StartDate.DayOfWeek);
+        foreach (var dayOfWeek in Enum.GetValues<DayOfWeek>())
+        {
+            var averageTimePlayed = byDayOfWeek[dayOfWeek].Select(ps => ps.EndDate - ps.StartDate).Average();
+            var playsByThatDay = byDayOfWeek[dayOfWeek].Count();
+            var dto = new DayOfWeekStatisticsDto()
+            {
+                DayOfWeek = dayOfWeek,
+                AverageTimePlayed = averageTimePlayed,
+                PlaySessionsCount = playsByThatDay
+            };
+            output.DayOfWeekStatistics.Add(dto);
+        }
+
+        output.DayOfWeekStatistics = output.DayOfWeekStatistics.OrderBy(d => d.DayOfWeek,
+            new DayOfWeekCultureSensitiveComparer(CultureInfo.CurrentUICulture)).ToList();
+
+        var todayMinus30Days = DateTime.Now.GetOneSecondToMidnight() - TimeSpan.FromDays(29);
+
+        var last30Days = playSessionsRepo.Where(s => s.StartDate > todayMinus30Days).OrderBy(s => s.StartDate)
+            .ToLookup(d => DateOnly.FromDateTime(d.StartDate));
+
+        var dailyStats = new List<DailyStatisticsDto>();
+
+        var dateTimeIterator = DateOnly.FromDateTime(todayMinus30Days);
+        while (dateTimeIterator <= DateOnly.FromDateTime(DateTime.Now))
+        {
+            var dailyStatistics = last30Days[dateTimeIterator].ToList();
+            var distinctGamesPlayed = dailyStatistics.Select(ds => ds.GameId).Distinct().Count();
+
+            var playTimes = dailyStatistics.Select(ds => ds.EndDate - ds.StartDate).ToList();
+            var averagePlayTime = playTimes.Average();
+            var totalPlayTime = playTimes.Sum();
+            var dto = new DailyStatisticsDto()
+            {
+                Date = dateTimeIterator.ToDateTime(new TimeOnly()),
+                AverageGameDuration = averagePlayTime,
+                DifferentGamesPlayed = distinctGamesPlayed,
+                TotalPlayTime = totalPlayTime
+            };
+            
+            dailyStats.Add(dto);
+
+            dateTimeIterator = dateTimeIterator.AddDays(1);
+        }
+
+        output.DailyStatistics = dailyStats;
+
+        return output;
+    }
+
+    private static GameStatisticsDto GetMostPlayedByLaunches(ILookup<int, PlaySession> groupedByGame)
+    {
+        var mostPlaySessions = groupedByGame.MaxBy(g => g.Count());
+        var mostPlayed = new GameStatisticsDto()
+        {
+            Title = mostPlaySessions.First().Game.Title,
+            TotalSessions = (uint)mostPlaySessions.Count()
+        };
+        return mostPlayed;
+    }
+
+    private GameStatisticsDto GetLongestPlaySession(IIncludableQueryable<PlaySession, Game> repo)
+    {
+        var listified = repo.ToList();
+        var maxDuration = listified.Max(s => s.EndDate - s.StartDate);
+
+        var longest = listified.FirstOrDefault(r => r.EndDate - r.StartDate == maxDuration);
+        return new GameStatisticsDto()
+        {
+            Title = longest.Game.Title,
+            LastPlayed = longest.StartDate,
+            LastPlayedEnd = longest.EndDate
+        };
+    }
+
+    private GameStatisticsDto GetLatestPlayedGame(IIncludableQueryable<PlaySession, Game> repo)
+    {
+        var latestSession = repo.FirstOrDefault(ps => ps.StartDate == repo.Max(p => p.StartDate));
+
+        return new GameStatisticsDto()
+        {
+            Title = latestSession.Game.Title,
+            LastPlayed = latestSession.StartDate
+        };
     }
 }

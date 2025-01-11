@@ -57,6 +57,13 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 PageViewModelFactory = async () =>
                     await Task.FromResult(Ioc.Default.GetRequiredService<RandomGameViewModel>())
             },
+            new MainMenuItemViewModel()
+            {
+                ToolTip = "Statistics".GetLocalizedString(),
+                Icon = MaterialIconKind.ChartBar,
+                Text = "Statistics".GetLocalizedString(),
+                PageViewModelFactory = async () => await Task.FromResult(Ioc.Default.GetRequiredService<StatisticsPageViewModel>())
+            }
             
         };
 
@@ -120,6 +127,13 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
     public PageViewModel CurrentPage => _navigationManager.GetCurrentPage();
     public ICommand GoBackCmd { get; }
+    private void GoBack()
+    {
+        _navigationManager.GoBack();
+        OnNavigated();
+    }
+
+    private bool CanGoBack() => _navigationManager.CanGoBack();
     public ICommand OpenSettingsCmd { get; }
 
     private async Task OpenSettings()
@@ -129,11 +143,5 @@ public partial class MainWindowViewModel : WindowViewModelBase
         IsSettingsOpen = true;
     }
 
-    private void GoBack()
-    {
-        _navigationManager.GoBack();
-        OnNavigated();
-    }
-
-    private bool CanGoBack() => _navigationManager.CanGoBack();
+    
 }

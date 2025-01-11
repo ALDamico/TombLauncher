@@ -157,4 +157,9 @@ public class SettingsService : IViewService
     }
 
     public int GetRandomGameMaxRerolls() => _appConfiguration.RandomGameMaxRerolls.GetValueOrDefault();
+
+    public string GetDatabasePath()
+    {
+        return _appConfiguration.DatabasePath;
+    }
 }

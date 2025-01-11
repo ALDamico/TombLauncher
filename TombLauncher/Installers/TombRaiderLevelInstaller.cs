@@ -1,13 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Progress;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
-using TombLauncher.Utils;
 
 namespace TombLauncher.Installers;
 
@@ -21,7 +18,7 @@ public class TombRaiderLevelInstaller
             throw new ArgumentException("The source folder does not exist!", nameof(containingFolder));
         }
         var installFolder =
-            Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "Games", gameDto.Guid.ToString());
+            Path.Combine(PathUtils.GetGamesFolder(), gameDto.Guid.ToString());
         
         if (Directory.Exists(containingFolder))
         {
