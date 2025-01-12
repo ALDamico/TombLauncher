@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.Notifications;
 
 public partial class StringNotificationViewModel : ViewModelBase
 {

@@ -39,6 +39,7 @@ using TombLauncher.Updater;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 using TombLauncher.Views;
+using StringNotificationViewModel = TombLauncher.ViewModels.Notifications.StringNotificationViewModel;
 
 namespace TombLauncher;
 

@@ -3,12 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:notifications="clr-namespace:TombLauncher.ViewModels.Notifications"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TombLauncher.Views.StringNotificationView"
-             x:DataType="viewModels:StringNotificationViewModel"
+             x:Class="TombLauncher.Views.Notifications.StringNotificationView"
+             x:DataType="notifications:StringNotificationViewModel"
              >
     <Design.DataContext>
-        <viewModels:StringNotificationViewModel/>
+        <notifications:StringNotificationViewModel/>
     </Design.DataContext>
-    <TextBlock Text="{Binding Text}"></TextBlock>
+    <TextBlock Text="{Binding Text}"/>
 </UserControl>

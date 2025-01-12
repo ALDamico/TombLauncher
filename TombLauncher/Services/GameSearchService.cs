@@ -21,6 +21,7 @@ using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
+using StringNotificationViewModel = TombLauncher.ViewModels.Notifications.StringNotificationViewModel;
 
 namespace TombLauncher.Services;
 
