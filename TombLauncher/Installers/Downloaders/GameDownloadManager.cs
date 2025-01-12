@@ -156,6 +156,5 @@ public class GameDownloadManager
         await using var file = new FileStream(fullFilePath, FileMode.Create);
         await downloader.DownloadGame(metadata, file, downloadProgress, cancellationToken);
         return fullFilePath;
-
     }
 }

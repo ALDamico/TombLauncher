@@ -59,6 +59,10 @@ public static class MapperConfigurationFactory
                 )
                 .ForMember(vm => vm.AreCommandsVisible, exp => exp.Ignore());
 
+            cfg.CreateMap<DayOfWeekStatisticsDto, DayOfWeekAverageTimeStatisticsViewModel>();
+            cfg.CreateMap<DailyStatisticsDto, DailyStatisticsViewModel>();
+            cfg.CreateMap<GameStatisticsDto, GameStatisticsViewModel>();
+
             cfg.AddGlobalIgnore("InitCmd");
         });
 

@@ -7,9 +7,13 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
+using LiveChartsCore;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView;
 using Material.Icons;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +40,7 @@ using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Services;
 using TombLauncher.Updater;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 using TombLauncher.Views;
@@ -225,7 +230,7 @@ public partial class App : Application
         var applicationLanguage = settingsService.GetApplicationLanguage();
         localizationManager.ChangeLanguage(applicationLanguage);
         var applicationTheme = settingsService.GetApplicationTheme();
-        Current.RequestedThemeVariant = applicationTheme;
+        AppUtils.ChangeTheme(applicationTheme);
     }
 
     private void ConfigureDownloaders(ServiceCollection serviceCollection)
@@ -247,6 +252,7 @@ public partial class App : Application
         serviceCollection.AddTransient<GameSearchResultService>();
         serviceCollection.AddSingleton<SettingsService>();
         serviceCollection.AddTransient<RandomGameService>();
+        serviceCollection.AddScoped<StatisticsService>();
     }
 
     private static void ConfigureViewModels(ServiceCollection serviceCollection)
@@ -260,6 +266,7 @@ public partial class App : Application
         serviceCollection.AddSingleton<SettingsPageViewModel>();
         serviceCollection.AddSingleton<NotificationListViewModel>();
         serviceCollection.AddTransient<RandomGameViewModel>();
+        serviceCollection.AddScoped<StatisticsPageViewModel>();
     }
 
     private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection, IAppConfiguration appConfiguration)

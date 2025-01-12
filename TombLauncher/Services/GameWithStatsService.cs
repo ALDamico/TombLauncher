@@ -35,6 +35,12 @@ public class GameWithStatsService : IViewService
         NavigationManager.NavigateTo(new GameDetailsViewModel(game));
     }
 
+    public async Task OpenGame(int gameId)
+    {
+        var game = await  GetGameById(gameId);
+        OpenGame(game);
+    }
+
     public void PlayGame(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.GetCurrentPage();
@@ -44,6 +50,13 @@ public class GameWithStatsService : IViewService
 
     public async Task PlayGame(int gameId)
     {
+        var gameViewModel = await GetGameById(gameId);
+        OpenGame(gameViewModel);
+        PlayGame(gameViewModel);
+    }
+
+    private async Task<GameWithStatsViewModel> GetGameById(int gameId)
+    {
         var game = await Task.Factory.StartNew(() => GamesUnitOfWork.GetGameWithStats(gameId));
         var gameViewModel = new GameWithStatsViewModel()
         {
@@ -51,8 +64,7 @@ public class GameWithStatsService : IViewService
             LastPlayed = game.LastPlayed,
             TotalPlayedTime = game.TotalPlayedTime
         };
-        OpenGame(gameViewModel);
-        PlayGame(gameViewModel);
+        return gameViewModel;
     }
 
     public bool CanPlayGame(GameWithStatsViewModel game)

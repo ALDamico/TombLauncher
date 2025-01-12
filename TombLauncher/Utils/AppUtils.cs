@@ -2,6 +2,9 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input.Platform;
+using Avalonia.Styling;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 
 namespace TombLauncher.Utils;
 
@@ -18,5 +21,18 @@ public static class AppUtils
         var clipboard = GetClipboard();
         if (clipboard == null) return Task.CompletedTask;
         return clipboard.SetTextAsync(text);
+    }
+
+    public static void ChangeTheme(ThemeVariant themeVariant)
+    {
+        Application.Current.RequestedThemeVariant = themeVariant;
+        if (themeVariant == ThemeVariant.Dark)
+        {
+            LiveCharts.Configure(config => config.AddDarkTheme());
+        }
+        else
+        {
+            LiveCharts.Configure(config => config.AddLightTheme());
+        }
     }
 }
