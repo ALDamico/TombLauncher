@@ -78,7 +78,7 @@ public class StatisticsService
                         Values = statistics.DayOfWeekStatistics.Select(s =>
                             new DayOfWeekAverageTimeStatisticsViewModel()
                             {
-                                AverageTimePlayed = s.AverageTimePlayed, 
+                                AverageTimePlayed = s.AverageTimePlayed,
                                 DayOfWeek = s.DayOfWeek,
                                 Index = s.DayOfWeek.GetCultureSensitiveOrder(CultureInfo.CurrentUICulture)
                             }).ToList(),
@@ -118,7 +118,10 @@ public class StatisticsService
                     {
                         Values = statistics.DayOfWeekStatistics.Select(s =>
                             new DayOfWeekPlaySessionCountStatisticsViewModel()
-                                { PlayCount = s.PlaySessionsCount, DayOfWeek = s.DayOfWeek, Index = s.DayOfWeek.GetCultureSensitiveOrder(CultureInfo.CurrentUICulture)}).ToList(),
+                            {
+                                PlayCount = s.PlaySessionsCount, DayOfWeek = s.DayOfWeek,
+                                Index = s.DayOfWeek.GetCultureSensitiveOrder(CultureInfo.CurrentUICulture)
+                            }).ToList(),
                         ScalesYAt = 0
                     }
                 },
@@ -140,9 +143,44 @@ public class StatisticsService
                     }
                 }
             },
+            DailyAverageGameLengthStatistics = new ChartViewModel()
+            {
+                Series = new[]
+                {
+                    new LineSeries<DailyStatisticsAverageGameDurationViewModel>()
+                    {
+                        Values = statistics.DailyStatistics.Select(s =>
+                            new DailyStatisticsAverageGameDurationViewModel()
+                                { Date = s.Date, AverageGameDuration = s.AverageGameDuration }).ToList(),
+                        ScalesYAt = 0,
+                        Name = "Average play time".GetLocalizedString()
+                    }, new LineSeries<DailyStatisticsAverageGameDurationViewModel>()
+                    {
+                        Values = statistics.DailyStatistics.Select(s =>
+                            new DailyStatisticsAverageGameDurationViewModel()
+                                { Date = s.Date, AverageGameDuration = s.TotalPlayTime }).ToList(),
+                        ScalesYAt = 0,
+                        Name = "Total play time"
+                    }
+                },
+                XAxis = new []
+                {
+                    new DateTimeAxis(TimeSpan.FromDays(1), v => v.ToString("d"))
+                    {
+                        Name = "Day".GetLocalizedString()
+                    }
+                },
+                YAxis = new []
+                {
+                    new TimeSpanAxis(TimeSpan.FromMinutes(15), v => string.Format("{0:%h} h {0:%m} min" , v))
+                    {
+                        Name = "Time played".GetLocalizedString(),
+                    }
+                }
+            }
             /*MonthlyDailyStatistics = new ChartViewModel()
             {
-                Series = 
+                Series =
             }*/
         };
     }

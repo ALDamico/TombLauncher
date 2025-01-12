@@ -53,6 +53,14 @@
                                      YAxes="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.YAxis}" 
                                      Height="600"
                                      />
+            
+            <TextBlock Text="{DynamicResource Daily statistics}" />
+            <avalonia:CartesianChart Series="{Binding Statistics.DailyAverageGameLengthStatistics.Series}"
+                                     XAxes="{Binding Statistics.DailyAverageGameLengthStatistics.XAxis}"
+                                     YAxes="{Binding Statistics.DailyAverageGameLengthStatistics.YAxis}" 
+                                     LegendPosition="Left"
+                                     Height="600"
+            />
         </StackPanel>
     </ScrollViewer>
 

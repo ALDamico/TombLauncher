@@ -17,5 +17,5 @@ public partial class StatisticsViewModel: ObservableObject
     [ObservableProperty] private ObservableCollection<DailyStatisticsViewModel> _dailyStatistics;
     [ObservableProperty] private ChartViewModel _dayOfWeekAveragePlayTimeStatistics;
     [ObservableProperty] private ChartViewModel _dayOfWeekTotalGamesPlayedStatistics;
-    [ObservableProperty] private ChartViewModel _monthlyDailyStatistics;
+    [ObservableProperty] private ChartViewModel _dailyAverageGameLengthStatistics;
 }

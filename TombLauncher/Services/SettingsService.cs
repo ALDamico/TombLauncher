@@ -19,6 +19,7 @@ using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels.Pages;
 using TombLauncher.ViewModels.Pages.Settings;
 
@@ -76,7 +77,7 @@ public class SettingsService : IViewService
             languageSettings.ApplicationLanguage.CultureInfo.IetfLanguageTag;
         LocalizationManager.ChangeLanguage(languageSettings.ApplicationLanguage.CultureInfo);
         _appConfiguration.ApplicationTheme = appearanceSettings.SelectedTheme.Key.ToString();
-        Application.Current.RequestedThemeVariant = appearanceSettings.SelectedTheme;
+        AppUtils.ChangeTheme(appearanceSettings.SelectedTheme);
         var mappedDownloaderConfigs =
             _mapper.Map<List<DownloaderConfiguration>>(downloaderSettings.AvailableDownloaders);
         _appConfiguration.Downloaders = mappedDownloaderConfigs;
