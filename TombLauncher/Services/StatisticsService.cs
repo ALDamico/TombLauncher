@@ -83,14 +83,7 @@ public class StatisticsService
                                 Index = s.DayOfWeek.GetCultureSensitiveOrder(CultureInfo.CurrentUICulture)
                             }).ToList(),
                         ScalesYAt = 0,
-                    } /*,
-                    new ColumnSeries<DayOfWeekPlaySessionCountStatisticsViewModel>()
-                    {
-                        Values = statistics.DayOfWeekStatistics.Select(s =>
-                            new DayOfWeekPlaySessionCountStatisticsViewModel()
-                                { PlayCount = s.PlaySessionsCount, DayOfWeek = s.DayOfWeek }).ToList(),
-                        ScalesYAt = 1
-                    }*/
+                    }
                 },
                 XAxis = new[]
                 {
@@ -160,7 +153,7 @@ public class StatisticsService
                             new DailyStatisticsAverageGameDurationViewModel()
                                 { Date = s.Date, AverageGameDuration = s.TotalPlayTime }).ToList(),
                         ScalesYAt = 0,
-                        Name = "Total play time"
+                        Name = "Total play time".GetLocalizedString()
                     }
                 },
                 XAxis = new []
@@ -178,10 +171,6 @@ public class StatisticsService
                     }
                 }
             }
-            /*MonthlyDailyStatistics = new ChartViewModel()
-            {
-                Series =
-            }*/
         };
     }
 }

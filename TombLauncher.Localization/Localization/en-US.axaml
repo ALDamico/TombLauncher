@@ -128,6 +128,7 @@
     <system:String x:Key="Maximum attempts reached line 2">that's not installed for you {0} times, </system:String>
     <system:String x:Key="Maximum attempts reached line 3">but failed.</system:String>
     <system:String x:Key="Try again">Try again</system:String>
+    <system:String x:Key="RANDOM GAME">RANDOM GAME</system:String>
     <system:String x:Key="STATISTICS">STATISTICS</system:String>
     <system:String x:Key="Average playtime by day of week">Average playtime by day of week</system:String>
     <system:String x:Key="Total games played by day of week">Total games played by day of week</system:String>
@@ -135,6 +136,17 @@
     <system:String x:Key="Dotnet version">.NET version</system:String>
     <system:String x:Key="Database size">Database size</system:String>
     <system:String x:Key="Games size">Games size</system:String>
+    <system:String x:Key="Average time played">Average time played</system:String>
+    <system:String x:Key="Total games played">Total games played</system:String>
+    <system:String x:Key="Day of week">Day of week</system:String>
+    <system:String x:Key="Day">Day</system:String>
+    <system:String x:Key="Average play time">Average play time</system:String>
+    <system:String x:Key="Total play time">Total play time</system:String>
+    <system:String x:Key="Last played game">Last played game</system:String>
+    <system:String x:Key="Longest play session">Longest play session</system:String>
+    <system:String x:Key="Most played game">Most played game</system:String>
+    <system:String x:Key="Played NUMBER times">Played {0} times</system:String>
+    <system:String x:Key="games played">games played</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

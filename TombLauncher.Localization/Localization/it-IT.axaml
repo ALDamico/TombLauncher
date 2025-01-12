@@ -128,6 +128,25 @@
     <system:String x:Key="Maximum attempts reached line 2">un gioco non installato {0} volte,.</system:String>
     <system:String x:Key="Maximum attempts reached line 3">ma non ci è riuscito.</system:String>
     <system:String x:Key="Try again">Riprova</system:String>
+    <system:String x:Key="RANDOM GAME">GIOCO CASUALE</system:String>
+    <system:String x:Key="STATISTICS">STATISTICHE</system:String>
+    <system:String x:Key="Average playtime by day of week">Tempo di gioco medio per giorno della settimana</system:String>
+    <system:String x:Key="Total games played by day of week">Partite giocate per giorno della settimana</system:String>
+    <system:String x:Key="Application version">Versione dell'applicazione</system:String>
+    <system:String x:Key="Dotnet version">Versione .NET</system:String>
+    <system:String x:Key="Database size">Spazio su disco del database</system:String>
+    <system:String x:Key="Games size">Spazio su disco dei giochi</system:String>
+    <system:String x:Key="Average time played">Tempo di gioco medio</system:String>
+    <system:String x:Key="Total games played">Partite giocate in totale</system:String>
+    <system:String x:Key="Day of week">Giorno della settimana</system:String>
+    <system:String x:Key="Day">Giorno</system:String>
+    <system:String x:Key="Average play time">Tempo di gioco medio</system:String>
+    <system:String x:Key="Total play time">Tempo di gioco totale</system:String>
+    <system:String x:Key="Last played game">Ultimo gioco avviato</system:String>
+    <system:String x:Key="Longest play session">Partita più lunga</system:String>
+    <system:String x:Key="Most played game">Gioco avviato più volte</system:String>
+    <system:String x:Key="Played NUMBER times">{0} partite giocate</system:String>
+    <system:String x:Key="games played">partite giocate</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

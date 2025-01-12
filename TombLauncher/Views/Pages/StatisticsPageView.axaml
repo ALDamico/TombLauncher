@@ -4,12 +4,29 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:avalonia="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:avalonia1="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.StatisticsPageView"
              x:DataType="pages:StatisticsPageViewModel">
     <Design.DataContext>
         <pages:StatisticsPageViewModel />
     </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="Button.hyperlink">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <TextBlock Text="{TemplateBinding Content}" Foreground="{StaticResource SystemAccentColor}" TextDecorations="Underline">
+                    </TextBlock>
+                </ControlTemplate>
+            </Setter>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"></Setter>
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Styles>
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
@@ -17,52 +34,109 @@
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
     </Interaction.Behaviors>
-    <ScrollViewer>
-        <StackPanel Orientation="Vertical">
-            <TextBlock Text="{DynamicResource 'STATISTICS'}" Classes="settings-h1" />
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="32"/>
-                    <RowDefinition Height="32"/>
-                    <RowDefinition Height="32"/>
-                    <RowDefinition Height="32"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="160"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource 'Application version'}"/>
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ApplicationVersion}"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 'Dotnet version'}"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding NetVersion}"/>
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Database size}"/>
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding DatabaseSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"/>
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Games size}"></TextBlock>
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding GamesSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"/>
-            </Grid>
-            <TextBlock Text="{DynamicResource Average playtime by day of week}" />
-            <avalonia:CartesianChart Series="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.Series}"
-                                     XAxes="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.XAxis}"
-                                     YAxes="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.YAxis}"
-                                     Height="600">
-            </avalonia:CartesianChart>
-            <TextBlock Text="{DynamicResource Total games played by day of week}" />
-            <avalonia:CartesianChart Series="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.Series}"
-                                     XAxes="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.XAxis}"
-                                     YAxes="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.YAxis}" 
-                                     Height="600"
-                                     />
-            
-            <TextBlock Text="{DynamicResource Daily statistics}" />
-            <avalonia:CartesianChart Series="{Binding Statistics.DailyAverageGameLengthStatistics.Series}"
-                                     XAxes="{Binding Statistics.DailyAverageGameLengthStatistics.XAxis}"
-                                     YAxes="{Binding Statistics.DailyAverageGameLengthStatistics.YAxis}" 
-                                     LegendPosition="Left"
-                                     Height="600"
-            />
-        </StackPanel>
-    </ScrollViewer>
+    <Grid RowDefinitions="Auto, *">
+        <TextBlock Grid.Row="0" Text="{DynamicResource 'STATISTICS'}" Classes="h1" />
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Orientation="Vertical">
+
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" MinWidth="160" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{DynamicResource 'Application version'}" />
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ApplicationVersion}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{DynamicResource 'Dotnet version'}" />
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NetVersion}" />
+                    <avalonia1:MaterialIcon Height="24" Width="24" HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Kind="Database"
+                                            Classes="text-muted" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" 
+                               Text="{DynamicResource Database size}" />
+                    <TextBlock Grid.Row="2" Grid.Column="2" 
+                               Text="{Binding DatabaseSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}" />
+                    <avalonia1:MaterialIcon Height="24" Width="24" HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" Grid.Row="3" Grid.Column="0" Kind="Harddisk"
+                                            Classes="text-muted" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" 
+                               Text="{DynamicResource Games size}">
+                    </TextBlock>
+                    <TextBlock Grid.Row="3" Grid.Column="2" 
+                               Text="{Binding GamesSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{DynamicResource Last played game}"></TextBlock>
+                    <StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal">
+                        <Button Classes="hyperlink" 
+                                VerticalAlignment="Center"
+                                Content="{Binding Statistics.LatestPlayedGame.Title}" 
+                                Command="{Binding OpenGameCmd}" 
+                                CommandParameter="{Binding Statistics.LatestPlayedGame.Id}"/>
+                        <TextBlock Margin="10, 0">
+                            <Run Text="("></Run>
+                            <Run Text="{Binding Statistics.LatestPlayedGame.LastPlayed, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}"></Run>
+                            <Run Text=")"></Run>
+                        </TextBlock>
+                    </StackPanel>
+                    
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{DynamicResource Longest play session}"></TextBlock>
+                    <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="2">
+                        <Button Classes="hyperlink" 
+                                VerticalAlignment="Center"
+                                Content="{Binding Statistics.LongestPlaySession.Title}" 
+                                Command="{Binding OpenGameCmd}" 
+                                CommandParameter="{Binding Statistics.LongestPlaySession.Id}"/>
+                        <TextBlock Margin="10, 0">
+                            <Run Text="("></Run>
+                            <Run Text="{Binding Statistics.LongestPlaySession.Duration, Converter={StaticResource TimeSpanToHumanReadableStringConverter}, Mode=OneWay}"></Run>
+                            <Run Text=")"></Run>
+                        </TextBlock>
+                    </StackPanel>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{DynamicResource Most played game}"></TextBlock>
+                    <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="2">
+                        <Button Classes="hyperlink" 
+                                VerticalAlignment="Center"
+                                Content="{Binding Statistics.MostLaunches.Title}" 
+                                Command="{Binding OpenGameCmd}" 
+                                CommandParameter="{Binding Statistics.MostLaunches.Id}"/>
+                        <TextBlock Margin="10, 0">
+                            <Run Text="("/>
+                            <Run Text="{Binding Statistics.MostLaunches.TotalSessions, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Played NUMBER times', Mode=OneWay}"/>
+                            <Run Text=")"></Run>
+                        </TextBlock>
+                    </StackPanel>
+                    
+                </Grid>
+                <TextBlock Text="{DynamicResource Average playtime by day of week}" />
+                <avalonia:CartesianChart Series="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.Series}"
+                                         XAxes="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.XAxis}"
+                                         YAxes="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.YAxis}"
+                                         Height="600">
+                </avalonia:CartesianChart>
+                <TextBlock Text="{DynamicResource Total games played by day of week}" />
+                <avalonia:CartesianChart Series="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.Series}"
+                                         XAxes="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.XAxis}"
+                                         YAxes="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.YAxis}"
+                                         Height="600" />
+
+                <TextBlock Text="{DynamicResource Daily statistics}" />
+                <avalonia:CartesianChart Series="{Binding Statistics.DailyAverageGameLengthStatistics.Series}"
+                                         XAxes="{Binding Statistics.DailyAverageGameLengthStatistics.XAxis}"
+                                         YAxes="{Binding Statistics.DailyAverageGameLengthStatistics.YAxis}"
+                                         LegendPosition="Left"
+                                         Height="600" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 
 
 </UserControl>

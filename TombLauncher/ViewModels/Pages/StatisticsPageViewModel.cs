@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -15,6 +16,7 @@ public partial class StatisticsPageViewModel : PageViewModel
     public StatisticsPageViewModel()
     {
         _statisticsService = Ioc.Default.GetRequiredService<StatisticsService>();
+        _gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
         Initialize += FetchStatistics;
         TopBarCommands = new ObservableCollection<CommandViewModel>()
         {
@@ -23,9 +25,11 @@ public partial class StatisticsPageViewModel : PageViewModel
                 Command = new RelayCommand(FetchStatistics), Icon = MaterialIconKind.Reload, Tooltip = "Reload".GetLocalizedString()
             }
         };
+        OpenGameCmd = new AsyncRelayCommand<int>(OpenGame);
     }
 
     private readonly StatisticsService _statisticsService;
+    private readonly GameWithStatsService _gameWithStatsService;
 
     [ObservableProperty] private Version _applicationVersion;
     [ObservableProperty] private long _databaseSize;
@@ -45,5 +49,12 @@ public partial class StatisticsPageViewModel : PageViewModel
 
         await Task.WhenAll(t1, t2, t3, t4, t5);
         SetBusy(false);
+    }
+    
+    public ICommand OpenGameCmd { get; }
+
+    private async Task OpenGame(int gameId)
+    {
+        await _gameWithStatsService.OpenGame(gameId);
     }
 }

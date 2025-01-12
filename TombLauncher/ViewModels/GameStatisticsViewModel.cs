@@ -15,4 +15,5 @@ public partial class GameStatisticsViewModel : ObservableObject
 
     public TimeSpan Duration => LastPlayedEnd.GetValueOrDefault() - LastPlayed.GetValueOrDefault();
     [ObservableProperty] private uint _totalSessions;
+    [ObservableProperty] private int _id;
 }

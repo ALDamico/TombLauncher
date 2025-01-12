@@ -104,7 +104,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public GameWithStatsDto GetGameWithStats(int id)
     {
-        var playSessions = PlaySessions.Get(ps => ps.GameId == id);
+        var playSessions = PlaySessions.Get(ps => ps.GameId == id).ToList();
         var game = Games.GetEntityById(id);
         var gameWithStatsDto = new GameWithStatsDto()
         {
@@ -308,7 +308,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var mostPlayed = new GameStatisticsDto()
         {
             Title = mostPlaySessions.First().Game.Title,
-            TotalSessions = (uint)mostPlaySessions.Count()
+            TotalSessions = (uint)mostPlaySessions.Count(),
+            Id = mostPlaySessions.First().GameId
         };
         return mostPlayed;
     }
@@ -323,7 +324,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
         {
             Title = longest.Game.Title,
             LastPlayed = longest.StartDate,
-            LastPlayedEnd = longest.EndDate
+            LastPlayedEnd = longest.EndDate,
+            Id = longest.GameId
         };
     }
 
@@ -334,7 +336,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return new GameStatisticsDto()
         {
             Title = latestSession.Game.Title,
-            LastPlayed = latestSession.StartDate
+            LastPlayed = latestSession.StartDate,
+            Id = latestSession.GameId
         };
     }
 }
