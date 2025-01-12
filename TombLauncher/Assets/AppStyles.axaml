@@ -111,6 +111,9 @@
     <Style Selector="avalonia|MaterialIcon.text-muted">
         <Setter Property="Foreground" Value="#6c757d"></Setter>
     </Style>
+    <Style Selector="avalonia|MaterialIcon.warning">
+        <Setter Property="Foreground" Value="#ffc107"></Setter>
+    </Style>
 
     
     <Style Selector="ProgressBar">

@@ -111,5 +111,17 @@
         <DependentUpon>WelcomePageView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Pages\StatisticsPageView.axaml.cs">
+        <DependentUpon>StatisticsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Notifications\StringIconNotificationView.axaml.cs">
+        <DependentUpon>StringIconNotificationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Notifications\StringNotificationView.axaml.cs">
+        <DependentUpon>StringNotificationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

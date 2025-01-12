@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -100,21 +101,48 @@ public class GameSearchResultService : IViewService
         var gameToInstallDto = _mapper.Map<MultiSourceSearchResultMetadataDto>(gameToInstall);
         
         _logger.LogInformation("Started downloading {GameTitle} from {DownloadUrl}", gameToInstall.Title, gameToInstall.DownloadLink);
-        var downloadPath = await GameDownloadManager.DownloadGame(gameToInstallDto, new Progress<DownloadProgressInfo>(
-            p =>
-            {
-                installProgress.IsDownloading = true;
-                installProgress.IsInstalling = false;
-                installProgress.Message = "Downloading...";
-                installProgress.TotalBytes = p.TotalBytes;
-                installProgress.CurrentBytes = p.BytesDownloaded;
-                installProgress.DownloadSpeed = p.DownloadSpeed;
-            }), _cancellationTokenSource.Token);
-        Dispatcher.UIThread.Invoke(() =>
+        string downloadPath = null;
+        foreach (var source in gameToInstallDto.Sources)
         {
-            gameToInstall.InstallProgress.TotalBytes = 0;
-            gameToInstall.InstallProgress.DownloadSpeed = 0;
-        });
+            try
+            {
+                downloadPath = await GameDownloadManager.DownloadGame(source,
+                    new Progress<DownloadProgressInfo>(
+                        p =>
+                        {
+                            installProgress.IsDownloading = true;
+                            installProgress.IsInstalling = false;
+                            installProgress.Message = "Downloading...";
+                            installProgress.TotalBytes = p.TotalBytes;
+                            installProgress.CurrentBytes = p.BytesDownloaded;
+                            installProgress.DownloadSpeed = p.DownloadSpeed;
+                        }), _cancellationTokenSource.Token);
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    gameToInstall.InstallProgress.TotalBytes = 0;
+                    gameToInstall.InstallProgress.DownloadSpeed = 0;
+                });
+                break;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                if (httpEx.HttpRequestError == HttpRequestError.SecureConnectionError &&
+                    httpEx.InnerException?.Message.Contains("RemoteCertificateNameMismatch",
+                        StringComparison.InvariantCultureIgnoreCase) == true)
+                {
+                    _logger.LogError(httpEx, "Error downloading game. This is potentially due to the download link redirecting to an external website.");
+                    continue;
+                }
+            }
+        }
+
+        if (downloadPath == null)
+        {
+            _logger.LogError("Download failed from all sources.");
+            _notificationService.RemoveNotification(notificationViewModel);
+            await _notificationService.AddErrorNotificationAsync(gameToInstall.Title, "Download failed from all sources. This is likely due to a download link redirecting to an external website.", MaterialIconKind.Warning);
+            return;
+        }
         _logger.LogInformation("Calculating hashes for {GameTitle}", gameToInstall.Title);
         var hashCalculator = Ioc.Default.GetRequiredService<GameFileHashCalculator>();
         var hashes = await hashCalculator.CalculateHashes(downloadPath);
@@ -223,5 +251,5 @@ public class GameSearchResultService : IViewService
         _logger.LogInformation("Installation canceled");
     }
 
-    public bool CanCancelInstall(MultiSourceGameSearchResultMetadataViewModel target) => target.InstallProgress.IsInstalling == true;
+    public bool CanCancelInstall(MultiSourceGameSearchResultMetadataViewModel target) => target.InstallProgress?.IsInstalling == true;
 }
