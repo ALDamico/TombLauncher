@@ -21,7 +21,15 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Patchers\TombLauncher.Patchers.csproj" />
       <ProjectReference Include="..\TombLauncher\TombLauncher.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="TestAssets\tomb4.exe" />
+      <Content Include="TestAssets\tomb4.exe">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

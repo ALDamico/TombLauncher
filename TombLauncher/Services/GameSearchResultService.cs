@@ -11,6 +11,7 @@ using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Material.Icons;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;

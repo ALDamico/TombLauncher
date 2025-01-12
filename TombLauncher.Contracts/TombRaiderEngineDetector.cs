@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using TombLauncher.Contracts.Enums;
-using TombLauncher.Core.Extensions;
-using TombLauncher.Installers.Models;
+﻿using TombLauncher.Contracts.Enums;
 
-namespace TombLauncher.Installers;
+namespace TombLauncher.Contracts;
 
 public class TombRaiderEngineDetector
 {
@@ -69,7 +63,7 @@ public class TombRaiderEngineDetector
                 Path.GetFileName, (s, s1) => s1, StringComparer.InvariantCultureIgnoreCase)
             .FirstOrDefault();
 
-        if (fullPath.IsNullOrWhiteSpace())
+        if (string.IsNullOrWhiteSpace(fullPath))
             return null;
 
         return Path.GetRelativePath(containingFolder, fullPath);

@@ -2,21 +2,13 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>12</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
-      <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="SharpZipLib" Version="1.4.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="EngineDetector\" />
     </ItemGroup>
 
 </Project>

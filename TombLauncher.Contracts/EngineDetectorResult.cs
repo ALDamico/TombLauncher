@@ -1,6 +1,6 @@
-using TombLauncher.Contracts.Enums;
+﻿using TombLauncher.Contracts.Enums;
 
-namespace TombLauncher.Installers.Models;
+namespace TombLauncher.Contracts;
 
 public class EngineDetectorResult
 {

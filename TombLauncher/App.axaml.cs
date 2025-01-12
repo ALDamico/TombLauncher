@@ -27,6 +27,7 @@ using NetSparkleUpdater.UI.Avalonia;
 using Serilog;
 using Serilog.Events;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;

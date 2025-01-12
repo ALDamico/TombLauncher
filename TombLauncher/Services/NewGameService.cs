@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Data.Database.UnitOfWork;

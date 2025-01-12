@@ -48,7 +48,7 @@ public abstract partial class PageViewModel : ViewModelBase
     {
         
     }
-
+    
     public void SetBusy(bool isBusy, string busyMessage = null)
     {
         IsBusy = isBusy;
