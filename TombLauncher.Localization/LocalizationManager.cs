@@ -78,39 +78,39 @@ public class LocalizationManager : ILocalizationManager
         {
             _application.Resources.MergedDictionaries.Remove(currentTranslations);
         }
-
-        var resourceKey =
-            $"{GetLanguagesFolder()}/{cultureName}.axaml";
-
-        var resourceKeyDefault =
-            $"{GetLanguagesFolder()}/{_defaultCulture}.axaml";
-        var defaultKeyXaml = File.ReadAllText(resourceKeyDefault);
-        string xaml;
-
-        try
-        {
-            xaml = File.ReadAllText(
-                resourceKey);
-        }
-        catch (FileNotFoundException)
-        {
-            xaml = defaultKeyXaml;
-        }
-
-        var rd = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(xaml);
-        var rdDefault = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(defaultKeyXaml);
-        var missingKeys = Enumerable.Except<object>(rdDefault.Keys, rd.Keys);
         var resultingDictionary = new ResourceDictionary();
-        foreach (var key in missingKeys)
+        var localizationFiles = Directory.EnumerateFiles(GetLanguagesFolder(), $"*{cultureName}.axaml").ToList();
+        foreach (var file in localizationFiles)
         {
-            resultingDictionary.Add(key, rdDefault[key]);
-        }
+            var resourceKey = file;
+            var resourceKeyDefault = file.Replace($"{cultureName}.axaml", $"{_defaultCulture}.axaml");
+            var defaultKeyXaml = File.ReadAllText(resourceKeyDefault);
+            string xaml;
 
-        foreach (var key in rd.Keys)
-        {
-            resultingDictionary.TryAdd(key, rd[key]);
-        }
+            try
+            {
+                xaml = File.ReadAllText(resourceKey);
+            }
+            catch (FileNotFoundException)
+            {
+                xaml = defaultKeyXaml;
+            }
 
+            var rd = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(xaml);
+            var rdDefault = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(defaultKeyXaml);
+            var missingKeys = rdDefault.Keys.Except(rd.Keys);
+            
+            foreach (var key in missingKeys)
+            {
+                resultingDictionary.Add(key, rdDefault[key]);
+            }
+
+            foreach (var key in rd.Keys)
+            {
+                resultingDictionary.TryAdd(key, rd[key]);
+            }
+
+        }
         _application.Resources.MergedDictionaries.Add(resultingDictionary);
         _localizedStrings = resultingDictionary;
     }
@@ -122,7 +122,7 @@ public class LocalizationManager : ILocalizationManager
         foreach (var element in elements)
         {
             dictionary.TryAdd(element.Value.ToString().ToLowerInvariant(),
-                element.Key.ToString().Replace(prefix, string.Empty).ToLowerInvariant());
+                element.Key.ToString().Replace(prefix  + "_", string.Empty).ToLowerInvariant());
         }
 
         return dictionary;

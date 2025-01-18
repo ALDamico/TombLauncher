@@ -29,6 +29,6 @@ public class PathUtils
 
     public static string GetGamesFolder()
     {
-        return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Data", "Games");
+        return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)!, "Data", "Games");
     }
 }

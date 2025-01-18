@@ -99,7 +99,9 @@
                         </MenuFlyout.ItemContainerTheme>
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
+                
             </controls:SplitIconButton>
+            <controls:SplitIconButton Icon="Plaster" Text="Patchers" Command="{Binding RunPatcherCommand}"></controls:SplitIconButton>
             <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
                                  Classes="stretched btn-danger"
                                  Icon="Delete"

@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Patchers.Widescreen;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
@@ -22,6 +23,7 @@ public partial class GameDetailsViewModel : PageViewModel
         var gameDetailsSettings = settingsService.GetGameDetailsSettings();
         _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _useInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
+        RunPatcherCommand = new RelayCommand(RunPatcher);
         Initialize += OnInitialize;
     }
 
@@ -68,4 +70,13 @@ public partial class GameDetailsViewModel : PageViewModel
     }
 
     [ObservableProperty] private ICommand _installCmd;
+    
+    public ICommand RunPatcherCommand { get; }
+
+    private void RunPatcher()
+    {
+        var patcher = new WidescreenPatcher();
+        var ui = patcher.GetUi();
+        _gameDetailsService.DialogService.ShowDialog(ui.Control, ui.ViewModel, vm => {});
+    }
 }

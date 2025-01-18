@@ -41,6 +41,6 @@ public class TestWidescreenPatcher
         };
         var successful = await patcher.ApplyPatch("TestAssets", parameters);
         Assert.True(successful.IsSuccessful);
-        Assert.True(successful.AffectedFiles.FirstOrDefault()?.Offset == 0xa73d0);
+        Assert.True(successful.AffectedFiles.FirstOrDefault()?.StartOffset == 0xa73d0);
     }
 }

@@ -11,4 +11,27 @@
       <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Avalonia" Version="11.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Widescreen\Ui\View\WidescreenPatcherUi.axaml.cs">
+        <DependentUpon>WidescreenPatcherUi.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaXaml Remove="Widescreen\Ui\View\WidescreenPatcher.en-US.axaml" />
+      <Content Include="Widescreen\Ui\View\WidescreenPatcher.en-US.axaml" />
+    </ItemGroup>
+
+    <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+        <Copy SourceFiles="Widescreen/Ui/View/WidescreenPatcher.en-US.axaml" DestinationFolder="$(OutDir)..\..\..\..\TombLauncher\bin\$(Configuration)\net8.0\Localization" />
+    </Target>
+    <Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">
+        <Copy SourceFiles="Widescreen/Ui/View/WidescreenPatcher.en-US.axaml" DestinationFolder="$(OutDir)\Localization" />
+    </Target>
+
 </Project>

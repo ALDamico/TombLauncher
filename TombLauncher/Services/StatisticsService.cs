@@ -6,7 +6,6 @@ using System.Reflection;
 using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using LiveChartsCore;
-using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;

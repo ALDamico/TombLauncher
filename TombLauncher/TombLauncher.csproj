@@ -73,6 +73,14 @@
       <Content Include="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <AvaloniaXaml Remove="Installers\Downloaders\AspideTR.com\AspideTR.en-US.axaml" />
+      <Content Include="Installers\Downloaders\AspideTR.com\AspideTR.en-US.axaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <AvaloniaXaml Remove="Installers\Downloaders\AspideTR.com\AspideTR.it-IT.axaml" />
+      <Content Include="Installers\Downloaders\AspideTR.com\AspideTR.it-IT.axaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -85,6 +93,7 @@
       <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
       <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
       <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
+      <ProjectReference Include="..\TombLauncher.Patchers\TombLauncher.Patchers.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -125,8 +134,12 @@
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Installers\Models\" />
-    </ItemGroup>
+    <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+        <Copy SourceFiles="Installers/Downloaders/AspideTR.com/AspideTR.en-US.axaml" DestinationFolder="$(OutDir)\Localization" />
+        <Copy SourceFiles="Installers/Downloaders/AspideTR.com/AspideTR.it-IT.axaml" DestinationFolder="$(OutDir)\Localization" />
+    </Target>
+    <Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">
+        <Copy SourceFiles="Installers/Downloaders/AspideTR.com/AspideTR.en-US.axaml" DestinationFolder="$(OutDir)\Localization" />
+        <Copy SourceFiles="Installers/Downloaders/AspideTR.com/AspideTR.it-IT.axaml" DestinationFolder="$(OutDir)\Localization" />
+    </Target>
 </Project>

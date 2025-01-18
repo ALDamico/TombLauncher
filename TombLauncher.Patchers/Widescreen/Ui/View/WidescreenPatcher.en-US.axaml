@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <system:String x:Key="Apply aspect ratio correction">Apply aspect ratio correction</system:String>
+    <system:String x:Key="Aspect ratio">Aspect ratio</system:String>
+    <system:String x:Key="Apply camera distance correction">Apply camera distance correction</system:String>
+    <system:String x:Key="Camera distance">Camera distance</system:String>
+    <system:String x:Key="Apply FOV correction">Apply FOV correction</system:String>
+</ResourceDictionary>

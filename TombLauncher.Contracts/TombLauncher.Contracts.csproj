@@ -6,4 +6,9 @@
         <Nullable>disable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="JamSoft.AvaloniaUI.Dialogs" Version="1.4.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+    </ItemGroup>
+
 </Project>
