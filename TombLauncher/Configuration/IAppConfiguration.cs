@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Configuration;
@@ -17,4 +18,5 @@ public interface IAppConfiguration
     string AppCastPublicKey { get; set; }
     bool UpdaterUseLocalPaths { get; set; }
     int? RandomGameMaxRerolls { get; set; }
+    SaveGameBackupMode SaveGameBackupMode { get; set; }
 }

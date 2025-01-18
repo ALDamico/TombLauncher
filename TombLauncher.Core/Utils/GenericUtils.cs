@@ -38,7 +38,7 @@ public static class GenericUtils
         return default;
     }
 
-    public static T NullIfEquals<T>(this T first, T second)
+    public static T DefaultIfEquals<T>(this T first, T second)
     {
         if (first?.Equals(second) == true)
             return default;
