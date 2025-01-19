@@ -9,5 +9,6 @@ public class FileBackup
     public byte[] Data { get; set; }
     public DateTime BackedUpOn { get; set; }
     public FileType FileType { get; set; }
-    public Game Game { get; set; }
+    public int GameId { get; set; }
+    public string Md5 { get; set; }
 }

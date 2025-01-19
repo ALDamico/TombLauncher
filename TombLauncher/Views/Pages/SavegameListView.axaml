@@ -1,0 +1,70 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.SavegameListView"
+             x:DataType="pages:SavegameListViewModel">
+    <Design.DataContext>
+        <pages:SavegameListViewModel />
+    </Design.DataContext>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCmd}" />
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    <UserControl.Resources>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
+                                                        TrueValue="FlagOutline"
+                                                        FalseValue="FlagOffOutline" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Classes="h1" Text="{Binding GameTitle, Converter={StaticResource UppercaseConverter}}" />
+        <ScrollViewer Grid.Row="1">
+            <ItemsRepeater ItemsSource="{Binding Savegames}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate DataType="viewModels:SavegameViewModel">
+                        <Border CornerRadius="3" Padding="10" Margin="10"
+                                Background="{StaticResource ThemeBackgroundBrush}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding LevelName}" />
+                                <ToggleButton Grid.Row="0" Grid.Column="2" IsChecked="{Binding IsStartOfLevel}">
+                                    <ToggleButton.Content>
+                                        <avalonia:MaterialIcon
+                                            Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToMaterialIconConverter}}">
+                                        </avalonia:MaterialIcon>
+                                    </ToggleButton.Content>
+                                </ToggleButton>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Filename}"></TextBlock>
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SaveNumber}"></TextBlock>
+
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

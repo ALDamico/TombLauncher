@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TombLauncher.Data.Database;
 
@@ -10,9 +11,11 @@ using TombLauncher.Data.Database;
 namespace TombLauncher.Data.Database.Migrations
 {
     [DbContext(typeof(TombLauncherDbContext))]
-    partial class TombLauncherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250119110222_Add FileBackup List")]
+    partial class AddFileBackupList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -57,9 +60,6 @@ namespace TombLauncher.Data.Database.Migrations
 
                     b.Property<int>("GameId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Md5")
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

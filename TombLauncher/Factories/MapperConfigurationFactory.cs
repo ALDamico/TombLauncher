@@ -62,6 +62,7 @@ public static class MapperConfigurationFactory
             cfg.CreateMap<DayOfWeekStatisticsDto, DayOfWeekAverageTimeStatisticsViewModel>();
             cfg.CreateMap<DailyStatisticsDto, DailyStatisticsViewModel>();
             cfg.CreateMap<GameStatisticsDto, GameStatisticsViewModel>();
+            cfg.CreateMap<FileBackup, FileBackupDto>().ReverseMap();
 
             cfg.AddGlobalIgnore("InitCmd");
         });

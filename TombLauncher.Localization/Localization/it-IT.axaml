@@ -147,6 +147,8 @@
     <system:String x:Key="Most played game">Gioco avviato più volte</system:String>
     <system:String x:Key="Played NUMBER times">{0} partite giocate</system:String>
     <system:String x:Key="games played">partite giocate</system:String>
+    <system:String x:Key="Savegames">Partite salvate</system:String>
+    <system:String x:Key="Fetching savegames for GAMETITLE">Recupero partite salvate di {0}</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

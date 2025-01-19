@@ -21,6 +21,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         _playSessions = GetRepository<PlaySession>();
         _hashes = GetRepository<GameHashes>();
         _links = GetRepository<GameLink>();
+        _backups = GetRepository<FileBackup>();
     }
 
     private IMapper _mapper;
@@ -29,12 +30,14 @@ public class GamesUnitOfWork : UnitOfWorkBase
     private readonly Lazy<EfRepository<PlaySession>> _playSessions;
     private readonly Lazy<EfRepository<GameHashes>> _hashes;
     private readonly Lazy<EfRepository<GameLink>> _links;
+    private readonly Lazy<EfRepository<FileBackup>> _backups;
 
     internal EfRepository<Game> Games => _games.Value;
 
     internal EfRepository<PlaySession> PlaySessions => _playSessions.Value;
     internal EfRepository<GameHashes> Hashes => _hashes.Value;
     internal EfRepository<GameLink> Links => _links.Value;
+    internal EfRepository<FileBackup> Backups => _backups.Value;
 
     public GameMetadataDto GetGameById(int id)
     {
@@ -291,7 +294,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
                 DifferentGamesPlayed = distinctGamesPlayed,
                 TotalPlayTime = totalPlayTime
             };
-            
+
             dailyStats.Add(dto);
 
             dateTimeIterator = dateTimeIterator.AddDays(1);
@@ -339,5 +342,23 @@ public class GamesUnitOfWork : UnitOfWorkBase
             LastPlayed = latestSession.StartDate,
             Id = latestSession.GameId
         };
+    }
+
+    public void BackupSavegames(int gameId, List<FileBackupDto> dtos)
+    {
+        dtos.ForEach(f => f.GameId = gameId);
+        var entitiesToPersist = _mapper.Map<List<FileBackup>>(dtos);
+        foreach (var entity in entitiesToPersist)
+        {
+            Backups.Insert(entity);
+        }
+    }
+
+    public List<FileBackupDto> GetSavegamesByGameId(int gameId)
+    {
+        var backups = Backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
+            .Where(f => f.GameId == gameId);
+
+        return _mapper.Map<List<FileBackupDto>>(backups);
     }
 }

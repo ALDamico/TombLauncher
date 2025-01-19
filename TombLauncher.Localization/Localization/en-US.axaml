@@ -147,6 +147,8 @@
     <system:String x:Key="Most played game">Most played game</system:String>
     <system:String x:Key="Played NUMBER times">Played {0} times</system:String>
     <system:String x:Key="games played">games played</system:String>
+    <system:String x:Key="Savegames">Savegames</system:String>
+    <system:String x:Key="Fetching savegames for GAMETITLE">Fetching savegames for {0}</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

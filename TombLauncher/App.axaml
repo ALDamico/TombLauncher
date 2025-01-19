@@ -45,6 +45,7 @@
                     <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm.png</system:String>
                 </valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
             </valueConverters:StringNullToNullBitmapConverter>
+            <valueConverters:UppercaseConverter x:Key="UppercaseConverter"/>
             
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="../Assets/RatingStyles.axaml" />
@@ -67,5 +68,6 @@
         </Style>
         <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
         <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
+        
     </Application.Styles>
 </Application>

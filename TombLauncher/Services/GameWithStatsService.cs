@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Savegames;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
@@ -23,12 +27,17 @@ public class GameWithStatsService : IViewService
         NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
         DialogService = Ioc.Default.GetRequiredService<IDialogService>();
+        _headerProcessor = new SavegameHeaderProcessor();
     }
+
+    private readonly SavegameHeaderProcessor _headerProcessor;
+
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
+    private FileSystemWatcher _watcher;
 
     public void OpenGame(GameWithStatsViewModel game)
     {
@@ -37,7 +46,7 @@ public class GameWithStatsService : IViewService
 
     public async Task OpenGame(int gameId)
     {
-        var game = await  GetGameById(gameId);
+        var game = await GetGameById(gameId);
         OpenGame(game);
     }
 
@@ -45,7 +54,40 @@ public class GameWithStatsService : IViewService
     {
         var currentPage = NavigationManager.GetCurrentPage();
         currentPage.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
+        InitFileSystemWatcher(game);
+        //watcher.Created += WatcherOnCreated;
+
         LaunchProcess(game, true);
+        
+    }
+
+    private void InitFileSystemWatcher(GameWithStatsViewModel game)
+    {
+        if (_watcher != null)
+        {
+            _watcher.Changed -= WatcherOnCreated;
+        }
+        try
+        {
+            _watcher = new FileSystemWatcher(game.GameMetadata.InstallDirectory, "save*")
+            {
+                IncludeSubdirectories = true,
+                EnableRaisingEvents = true,
+                InternalBufferSize = 8192 * 32,
+                NotifyFilter = NotifyFilters.LastWrite
+            };
+            _watcher.Changed += WatcherOnCreated;
+        }
+        catch
+        {
+            _watcher?.Dispose();
+            throw;
+        }
+    }
+
+    private void WatcherOnCreated(object sender, FileSystemEventArgs e)
+    {
+        _headerProcessor.EnqueueFileName(e.FullPath);
     }
 
     public async Task PlayGame(int gameId)
@@ -69,7 +111,8 @@ public class GameWithStatsService : IViewService
 
     public bool CanPlayGame(GameWithStatsViewModel game)
     {
-        return game.GameMetadata.InstallDirectory.IsNotNullOrWhiteSpace() && game.GameMetadata.ExecutablePath.IsNotNullOrWhiteSpace();
+        return game.GameMetadata.InstallDirectory.IsNotNullOrWhiteSpace() &&
+               game.GameMetadata.ExecutablePath.IsNotNullOrWhiteSpace();
     }
 
     private void OnSetupExited()
@@ -77,13 +120,24 @@ public class GameWithStatsService : IViewService
         var currentPage = NavigationManager.GetCurrentPage();
         currentPage.ClearBusy();
     }
-    
+
     private void OnGameExited(GameWithStatsViewModel game, Process process)
     {
         var currentPage = NavigationManager.GetCurrentPage();
         currentPage.SetBusy(true, "Saving play session...".GetLocalizedString());
         GamesUnitOfWork.AddPlaySessionToGame(game.GameMetadata.ToDto(), process.StartTime, process.ExitTime);
+        currentPage.SetBusy("Backing up savegames...".GetLocalizedString());
+        var filesToProcess = _headerProcessor.ProcessedFiles;
+        foreach (var file in filesToProcess)
+        {
+            file.Md5 = Md5Utils.ComputeMd5Hash(file.Data).GetAwaiter().GetResult();
+        }
+
+        filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
+        GamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, filesToProcess);
         GamesUnitOfWork.Save();
+
+        _headerProcessor.ClearProcessedFiles();
         NavigationManager.RequestRefresh();
         currentPage.ClearBusy();
     }
@@ -91,8 +145,9 @@ public class GameWithStatsService : IViewService
     public void LaunchSetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.GetCurrentPage();
-        currentPage.SetBusy(LocalizationManager.GetLocalizedString("Launching setup for GAMENAME", game.GameMetadata.Title));
-        LaunchProcess(game, false, new List<string>(){"-setup"});
+        currentPage.SetBusy(
+            LocalizationManager.GetLocalizedString("Launching setup for GAMENAME", game.GameMetadata.Title));
+        LaunchProcess(game, false, ["-setup"]);
     }
 
     private void LaunchProcess(GameWithStatsViewModel game, bool trackPlayTime = false, List<string> arguments = null)
@@ -102,6 +157,7 @@ public class GameWithStatsService : IViewService
         {
             executable = game.GameMetadata.UniversalLauncherPath;
         }
+
         var process = new Process()
         {
             StartInfo = new ProcessStartInfo(executable)
@@ -120,6 +176,7 @@ public class GameWithStatsService : IViewService
         {
             process.Exited += (_, _) => OnSetupExited();
         }
+
         process.Start();
     }
 }

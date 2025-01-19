@@ -95,4 +95,14 @@ public class GameDetailsService : IViewService
             });
         }
     }
+
+    public Task OpenSavegameList(GameDetailsViewModel game)
+    {
+        game.SetBusy("Getting savegames...");
+        var savegameListView = new SavegameListViewModel()
+            { GameId = game.Game.GameMetadata.Id, GameTitle = game.Game.GameMetadata.Title };
+        game.SetBusy(false);
+        NavigationManager.NavigateTo(savegameListView);
+        return Task.CompletedTask;
+    }
 }

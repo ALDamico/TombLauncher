@@ -18,6 +18,7 @@ public partial class GameDetailsViewModel : PageViewModel
         BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
         UninstallCmd = new RelayCommand(Uninstall, CanUninstall);
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
+        ManageSaveGamesCmd = new AsyncRelayCommand(ManageSavegames);
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var gameDetailsSettings = settingsService.GetGameDetailsSettings();
         _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
@@ -46,6 +47,13 @@ public partial class GameDetailsViewModel : PageViewModel
     private bool CanBrowseFolder()
     {
         return _gameDetailsService.CanUninstall(Game.GameMetadata.InstallDirectory);
+    }
+    
+    public ICommand ManageSaveGamesCmd { get; }
+
+    private async Task ManageSavegames()
+    {
+        await _gameDetailsService.OpenSavegameList(this);
     }
     
     public ICommand ReadWalkthroughCmd { get; }

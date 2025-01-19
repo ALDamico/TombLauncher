@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TombLauncher.Data.Database;
 
@@ -10,9 +11,11 @@ using TombLauncher.Data.Database;
 namespace TombLauncher.Data.Database.Migrations
 {
     [DbContext(typeof(TombLauncherDbContext))]
-    partial class TombLauncherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250119105447_Fix FileBackup")]
+    partial class FixFileBackup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -58,12 +61,7 @@ namespace TombLauncher.Data.Database.Migrations
                     b.Property<int>("GameId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Md5")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("GameId");
 
                     b.ToTable("FileBackups");
                 });
@@ -196,15 +194,6 @@ namespace TombLauncher.Data.Database.Migrations
                     b.ToTable("PlaySession");
                 });
 
-            modelBuilder.Entity("TombLauncher.Data.Models.FileBackup", b =>
-                {
-                    b.HasOne("TombLauncher.Data.Models.Game", null)
-                        .WithMany("FileBackups")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("TombLauncher.Data.Models.GameHashes", b =>
                 {
                     b.HasOne("TombLauncher.Data.Models.Game", null)
@@ -236,8 +225,6 @@ namespace TombLauncher.Data.Database.Migrations
 
             modelBuilder.Entity("TombLauncher.Data.Models.Game", b =>
                 {
-                    b.Navigation("FileBackups");
-
                     b.Navigation("Hashes");
 
                     b.Navigation("Links");

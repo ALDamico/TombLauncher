@@ -10,4 +10,5 @@ public class FileBackupDto
     public DateTime BackedUpOn { get; set; }
     public FileType FileType { get; set; }
     public int GameId { get; set; }
+    public string Md5 { get; set; }
 }
