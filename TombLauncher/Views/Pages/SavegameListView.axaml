@@ -27,11 +27,41 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Classes="h1" Text="{Binding GameTitle, Converter={StaticResource UppercaseConverter}}" />
-        <ScrollViewer Grid.Row="1">
-            <ItemsRepeater ItemsSource="{Binding Savegames}">
+        <DockPanel Grid.Row="1" LastChildFill="true">
+            <TextBlock DockPanel.Dock="Left"></TextBlock>
+            <ComboBox ItemsSource="{Binding Slots}" SelectedItem="{Binding SelectedSlot}">
+                <ComboBox.Styles>
+                    <Style Selector="ComboBoxItem">
+                        <Setter Property="IsEnabled" Value="{Binding IsEnabled, DataType=viewModels:SavegameSlotViewModel}"></Setter>
+                    </Style>
+                </ComboBox.Styles>
+                <ComboBox.SelectionBoxItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Header}" 
+                                   IsEnabled="{Binding IsEnabled}"></TextBlock>
+                    </DataTemplate>
+                </ComboBox.SelectionBoxItemTemplate>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Header}" 
+                                      IsEnabled="{Binding IsEnabled}"></TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="SelectionChanged" SourceObject="{Binding SelectedSlot}">
+                        <EventTriggerBehavior.Actions>
+                            <InvokeCommandAction Command="{Binding SelectedSlot.FilterCmd}" CommandParameter="{Binding SelectedSlot.SaveSlot}"/>
+                        </EventTriggerBehavior.Actions>
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </ComboBox>
+        </DockPanel>
+        <ScrollViewer Grid.Row="2">
+            <ItemsRepeater ItemsSource="{Binding FilteredSaves}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate DataType="viewModels:SavegameViewModel">
                         <Border CornerRadius="3" Padding="10" Margin="10"
@@ -57,9 +87,10 @@
                                         </avalonia:MaterialIcon>
                                     </ToggleButton.Content>
                                 </ToggleButton>
-                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Filename}"></TextBlock>
-                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SaveNumber}"></TextBlock>
-
+                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                           Text="{Binding Filename, Converter={StaticResource FilenameConverter}}"/>
+                                <TextBlock Grid.Row="1" Grid.Column="2" 
+                                           Text="{Binding SaveNumber}"></TextBlock>
                             </Grid>
                         </Border>
                     </DataTemplate>

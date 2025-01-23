@@ -46,6 +46,7 @@
                 </valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
             </valueConverters:StringNullToNullBitmapConverter>
             <valueConverters:UppercaseConverter x:Key="UppercaseConverter"/>
+            <valueConverters:FilenameConverter x:Key="FilenameConverter"/>
             
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="../Assets/RatingStyles.axaml" />

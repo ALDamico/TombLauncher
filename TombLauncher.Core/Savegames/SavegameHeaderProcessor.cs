@@ -1,15 +1,16 @@
-﻿using TombLauncher.Contracts.Enums;
+﻿using System.Collections.Concurrent;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Core.Savegames;
 
-public class SavegameHeaderProcessor
+public class SavegameHeaderProcessor : IDisposable
 {
     // Create an AutoResetEvent EventWaitHandle
         private EventWaitHandle eventWaitHandle = new AutoResetEvent(false);
         private Thread worker;
         private readonly object locker = new();
-        private Queue<string> fileNamesQueue = new();
+        private ConcurrentQueue<string> fileNamesQueue = new();
         private SavegameHeaderReader _savegameHeaderReader;
         public List<FileBackupDto> ProcessedFiles { get; }
 
@@ -30,7 +31,7 @@ public class SavegameHeaderProcessor
             // Enqueue the file name
             // This statement is secured by lock to prevent other thread to mess with queue while enqueuing file name
             Console.WriteLine($"Enqueueing {FileName}");
-            lock (locker) fileNamesQueue.Enqueue(FileName);
+            fileNamesQueue.Enqueue(FileName);
             // Signal worker that file name is enqueued and that it can be processed
             eventWaitHandle.Set();
         }
@@ -42,10 +43,10 @@ public class SavegameHeaderProcessor
                 string fileName = null;
 
                 // Dequeue the file name
-                lock (locker)
+                //lock (locker)
                     if (fileNamesQueue.Count > 0)
                     {
-                        fileName = fileNamesQueue.Dequeue();
+                        fileNamesQueue.TryDequeue(out fileName);
                         // If file name is null then stop worker thread
                         if (fileName == null) return;
                     }
@@ -66,6 +67,7 @@ public class SavegameHeaderProcessor
         private void ProcessFile(string e)
         {
             Console.WriteLine($"{DateTime.Now} Processing {e}");
+            Task.Delay(100);
             var header = _savegameHeaderReader.ReadHeader(e);
             if (header == null)
                 return;

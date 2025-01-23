@@ -27,10 +27,9 @@ public class GameWithStatsService : IViewService
         NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
         DialogService = Ioc.Default.GetRequiredService<IDialogService>();
-        _headerProcessor = new SavegameHeaderProcessor();
     }
 
-    private readonly SavegameHeaderProcessor _headerProcessor;
+    private SavegameHeaderProcessor _headerProcessor;
 
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public ILocalizationManager LocalizationManager { get; }
@@ -76,6 +75,7 @@ public class GameWithStatsService : IViewService
                 InternalBufferSize = 8192 * 32,
                 NotifyFilter = NotifyFilters.LastWrite
             };
+            _headerProcessor = new SavegameHeaderProcessor();
             _watcher.Changed += WatcherOnCreated;
         }
         catch
@@ -138,6 +138,10 @@ public class GameWithStatsService : IViewService
         GamesUnitOfWork.Save();
 
         _headerProcessor.ClearProcessedFiles();
+        _headerProcessor?.Dispose();
+        _headerProcessor = null;
+        _watcher?.Dispose();
+        _watcher = null;
         NavigationManager.RequestRefresh();
         currentPage.ClearBusy();
     }

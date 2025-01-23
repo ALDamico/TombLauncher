@@ -361,4 +361,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
         return _mapper.Map<List<FileBackupDto>>(backups);
     }
+
+    public List<string> GetSavegameMd5sByGameId(int gameId)
+    {
+        return Backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
+            .Where(f => f.GameId == gameId).Select(sg => sg.Md5).ToList();
+    }
 }
