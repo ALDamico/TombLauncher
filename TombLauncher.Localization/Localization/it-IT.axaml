@@ -152,6 +152,9 @@
     <system:String x:Key="Slot">Slot</system:String>
     <system:String x:Key="Only start of level">Solo di inizio livello</system:String>
     <system:String x:Key="Update in progress...">Aggiornamento in corso...</system:String>
+    <system:String x:Key="Confirm delete">Conferma eliminazione</system:String>
+    <system:String x:Key="Are you sure you want to delete this savegame? This action cannot be undone.">Sei sicuro di voler eliminare questo salvataggio? Questa azione non può essere annullata.</system:String>
+    <system:String x:Key="Deleting savegame...">Eliminazione salvataggio in corso...</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

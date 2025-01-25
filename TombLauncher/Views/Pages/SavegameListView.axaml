@@ -6,6 +6,7 @@
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.SavegameListView"
              x:DataType="pages:SavegameListViewModel">
@@ -94,16 +95,24 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding LevelName}" />
-                                <ToggleButton Grid.Row="0" Grid.Column="2" IsChecked="{Binding IsStartOfLevel}" 
-                                              Command="{Binding UpdateStartOfLevelStateCmd}"
-                                              CommandParameter="{Binding .}"
-                                              ToolTip.Tip="{DynamicResource 'Mark/unmark as start of level save'}">
-                                    <ToggleButton.Content>
-                                        <avalonia:MaterialIcon
-                                            Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToMaterialIconConverter}}">
-                                        </avalonia:MaterialIcon>
-                                    </ToggleButton.Content>
-                                </ToggleButton>
+                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                                    <ToggleButton IsChecked="{Binding IsStartOfLevel}" 
+                                                  Command="{Binding UpdateStartOfLevelStateCmd}"
+                                                  CommandParameter="{Binding .}"
+                                                  ToolTip.Tip="{DynamicResource 'Mark/unmark as start of level save'}">
+                                        <ToggleButton.Content>
+                                            <avalonia:MaterialIcon
+                                                Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToMaterialIconConverter}}">
+                                            </avalonia:MaterialIcon>
+                                        </ToggleButton.Content>
+                                    </ToggleButton>
+                                    <controls:IconOnlyButton Icon="Delete" 
+                                                         Command="{Binding DeleteSavegameCmd}" 
+                                                         CommandParameter="{Binding .}"
+                                                         IsVisible="{Binding !IsStartOfLevel}"
+                                                         Classes="btn-danger"/>
+                                </StackPanel>
+                                
                                 <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                            Text="{Binding Filename, Converter={StaticResource FilenameConverter}}" />
                                 <TextBlock Grid.Row="1" Grid.Column="2"

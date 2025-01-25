@@ -61,7 +61,8 @@ public class SavegameService
                 SaveNumber = savegameHeader.SaveNumber,
                 IsStartOfLevel = savegame.FileType == FileType.SavegameStartOfLevel,
                 SlotNumber = int.Parse(Path.GetExtension(savegame.FileName).TrimStart('.')) + 1,
-                UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd
+                UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd,
+                DeleteSavegameCmd = targetViewModel.DeleteSaveCmd
             };
             observableCollection.Add(viewModel);
         }
@@ -192,6 +193,25 @@ public class SavegameService
         savegameListViewModel.SetBusy("Update in progress...");
         var dto = _mapper.Map<FileBackupDto>(targetSaveGame);
         _gamesUnitOfWork.UpdateSavegameStartOfLevel(dto);
+        savegameListViewModel.SetBusy(false);
+    }
+
+    public async Task DeleteSavegame(SavegameListViewModel savegameListViewModel, SavegameViewModel savegameViewModel)
+    {
+        var userIsSure = await _messageBoxService.Show("Confirm delete".GetLocalizedString(),
+            "Are you sure you want to delete this savegame? This action cannot be undone.".GetLocalizedString(),
+            MsgBoxButton.YesNo,
+            MsgBoxImage.Question);
+        if (userIsSure.ButtonResult == MsgBoxButtonResult.No)
+        {
+            return;
+        }
+
+        savegameListViewModel.SetBusy("Deleting savegame...");
+
+        _gamesUnitOfWork.DeleteFileBackupById(savegameViewModel.Id);
+        savegameListViewModel.FilteredSaves.Remove(savegameViewModel);
+        savegameListViewModel.Savegames.Remove(savegameViewModel);
         savegameListViewModel.SetBusy(false);
     }
 }

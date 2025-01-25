@@ -12,4 +12,5 @@ public partial class SavegameViewModel : ViewModelBase
     [ObservableProperty] private string _levelName;
     [ObservableProperty] private bool _isStartOfLevel;
     public ICommand UpdateStartOfLevelStateCmd { get; set; }
+    public ICommand DeleteSavegameCmd { get; set; }
 }

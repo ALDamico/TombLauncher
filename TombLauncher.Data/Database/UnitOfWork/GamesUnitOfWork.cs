@@ -377,4 +377,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
         Backups.Update(entityToUpdate);
         Backups.Commit();
     }
+
+    public void DeleteFileBackupById(int id)
+    {
+        if (Backups.Delete(id))
+            Backups.Commit();
+    }
 }

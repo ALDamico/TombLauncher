@@ -16,9 +16,10 @@ public partial class SavegameListViewModel : PageViewModel
         SavegameFilter = new SaveGameListFilter();
         FilterCmd = new AsyncRelayCommand<SaveGameListFilter>(Filter);
         UpdateStartOfLevelStateCmd = new AsyncRelayCommand<SavegameViewModel>(UpdateStartOfLevelState);
+        DeleteSaveCmd = new AsyncRelayCommand<SavegameViewModel>(DeleteSave, CanDelete);
         Initialize += OnInitialize;
     }
-
+    
     private async void OnInitialize()
     {
         SetBusy("Loading savegames");
@@ -53,5 +54,18 @@ public partial class SavegameListViewModel : PageViewModel
     private async Task UpdateStartOfLevelState(SavegameViewModel targetSaveGame)
     {
         await _savegameService.UpdateStartOfLevelState(this, targetSaveGame);
+    }
+    
+    public ICommand DeleteSaveCmd { get; set; }
+
+    private async Task DeleteSave(SavegameViewModel target)
+    {
+        await _savegameService.DeleteSavegame(this, target);
+    }
+    
+    private bool CanDelete(SavegameViewModel obj)
+    {
+        if (obj == null) return false;
+        return !obj.IsStartOfLevel;
     }
 }
