@@ -13,7 +13,9 @@ public partial class SavegameListViewModel : PageViewModel
     public SavegameListViewModel()
     {
         _savegameService = Ioc.Default.GetRequiredService<SavegameService>();
-        FilterCmd = new AsyncRelayCommand<int?>(Filter);
+        SavegameFilter = new SaveGameListFilter();
+        FilterCmd = new AsyncRelayCommand<SaveGameListFilter>(Filter);
+        UpdateStartOfLevelStateCmd = new AsyncRelayCommand<SavegameViewModel>(UpdateStartOfLevelState);
         Initialize += OnInitialize;
     }
 
@@ -36,12 +38,20 @@ public partial class SavegameListViewModel : PageViewModel
     [ObservableProperty] private ObservableCollection<SavegameViewModel> _filteredSaves;
     [ObservableProperty] private ObservableCollection<SavegameSlotViewModel> _slots;
     [ObservableProperty] private SavegameSlotViewModel _selectedSlot;
+    [ObservableProperty] private SaveGameListFilter _savegameFilter;
     private SavegameService _savegameService;
 
     public ICommand FilterCmd { get; }
 
-    private async Task Filter(int? slotNumber)
+    private async Task Filter(SaveGameListFilter slotNumber)
     {
         await _savegameService.ApplyFilter(this, slotNumber);
+    }
+    
+    public ICommand UpdateStartOfLevelStateCmd { get; }
+
+    private async Task UpdateStartOfLevelState(SavegameViewModel targetSaveGame)
+    {
+        await _savegameService.UpdateStartOfLevelState(this, targetSaveGame);
     }
 }

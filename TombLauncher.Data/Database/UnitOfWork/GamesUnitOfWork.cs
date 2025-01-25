@@ -367,4 +367,14 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return Backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
             .Where(f => f.GameId == gameId).Select(sg => sg.Md5).ToList();
     }
+
+    public void UpdateSavegameStartOfLevel(FileBackupDto targetSaveGame)
+    {
+        var entityToUpdate = Backups.GetEntityById(targetSaveGame.Id);
+        if (entityToUpdate == null)
+            throw new InvalidOperationException();
+        entityToUpdate.FileType = targetSaveGame.FileType;
+        Backups.Update(entityToUpdate);
+        Backups.Commit();
+    }
 }

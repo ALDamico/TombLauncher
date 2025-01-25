@@ -149,6 +149,10 @@
     <system:String x:Key="games played">games played</system:String>
     <system:String x:Key="Savegames">Savegames</system:String>
     <system:String x:Key="Fetching savegames for GAMETITLE">Fetching savegames for {0}</system:String>
+    <system:String x:Key="Slot">Slot</system:String>
+    <system:String x:Key="Only start of level">Only start of level</system:String>
+    <system:String x:Key="Mark/unmark as start of level save">Mark/unmark as start of level save</system:String>
+    <system:String x:Key="Update in progress...">Update in progress...</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

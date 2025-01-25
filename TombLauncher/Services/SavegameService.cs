@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia.Controls.Shapes;
+using AutoMapper;
 using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
@@ -28,10 +28,12 @@ public class SavegameService
     {
         _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
         _messageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
+        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
     }
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
     private readonly IMessageBoxService _messageBoxService;
+    private readonly IMapper _mapper;
 
     public Task InitGameTitle(SavegameListViewModel targetViewModel)
     {
@@ -53,11 +55,13 @@ public class SavegameService
             var savegameHeader = headerParser.ReadHeader(savegame.FileName, savegame.Data);
             var viewModel = new SavegameViewModel()
             {
+                Id = savegame.Id,
                 Filename = savegame.FileName,
                 LevelName = savegameHeader.LevelName,
                 SaveNumber = savegameHeader.SaveNumber,
                 IsStartOfLevel = savegame.FileType == FileType.SavegameStartOfLevel,
-                SlotNumber = int.Parse(Path.GetExtension(savegame.FileName).TrimStart('.')) + 1
+                SlotNumber = int.Parse(Path.GetExtension(savegame.FileName).TrimStart('.')) + 1,
+                UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd
             };
             observableCollection.Add(viewModel);
         }
@@ -101,17 +105,25 @@ public class SavegameService
         return Task.CompletedTask;
     }
 
-    public Task ApplyFilter(SavegameListViewModel savegameListViewModel, int? slotNumber)
+    public Task ApplyFilter(SavegameListViewModel savegameListViewModel, SaveGameListFilter filter)
     {
         savegameListViewModel.SetBusy("Filtering savegames...".GetLocalizedString());
+        var slotNumber = filter.SlotNumber;
+        var startOfLevelOnly = filter.StartOfLevelOnly;
+        var savegameEnumerable = savegameListViewModel.Savegames.AsEnumerable();
+        if (startOfLevelOnly)
+        {
+            savegameEnumerable = savegameEnumerable.Where(sg => sg.IsStartOfLevel);
+        }
+        
         if (slotNumber == null)
         {
-            savegameListViewModel.FilteredSaves = savegameListViewModel.Savegames;
+            savegameListViewModel.FilteredSaves = savegameEnumerable.ToObservableCollection();
             savegameListViewModel.SetBusy(false);
             return Task.CompletedTask;
         }
 
-        var savegamesBySlot = savegameListViewModel.Savegames.Where(sg => sg.SlotNumber == slotNumber)
+        var savegamesBySlot = savegameEnumerable.Where(sg => sg.SlotNumber == slotNumber)
             .ToObservableCollection();
         savegameListViewModel.FilteredSaves = savegamesBySlot;
         savegameListViewModel.SetBusy(false);
@@ -172,5 +184,14 @@ public class SavegameService
                 return;
             }
         }
+    }
+
+    public async Task UpdateStartOfLevelState(SavegameListViewModel savegameListViewModel,
+        SavegameViewModel targetSaveGame)
+    {
+        savegameListViewModel.SetBusy("Update in progress...");
+        var dto = _mapper.Map<FileBackupDto>(targetSaveGame);
+        _gamesUnitOfWork.UpdateSavegameStartOfLevel(dto);
+        savegameListViewModel.SetBusy(false);
     }
 }

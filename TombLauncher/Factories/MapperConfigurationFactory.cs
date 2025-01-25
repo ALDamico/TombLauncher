@@ -2,6 +2,7 @@
 using AutoMapper;
 using Newtonsoft.Json;
 using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization.Dtos;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Models;
@@ -63,6 +64,18 @@ public static class MapperConfigurationFactory
             cfg.CreateMap<DailyStatisticsDto, DailyStatisticsViewModel>();
             cfg.CreateMap<GameStatisticsDto, GameStatisticsViewModel>();
             cfg.CreateMap<FileBackup, FileBackupDto>().ReverseMap();
+            cfg.CreateMap<SavegameViewModel, FileBackupDto>()
+                .ConstructUsingServiceLocator()
+                .ForMember(m => m.FileType,
+                    opt => opt.MapFrom(vm => vm.IsStartOfLevel ? FileType.SavegameStartOfLevel : FileType.Savegame));
+            
+            cfg.CreateMap<FileBackupDto, SavegameViewModel>()
+                .ForMember(m => m.IsStartOfLevel, opt => opt.MapFrom(dto => dto.FileType == FileType.SavegameStartOfLevel))
+                .ForMember(m => m.SaveNumber, opt => opt.Ignore())
+                .ForMember(m => m.SlotNumber, opt => opt.Ignore())
+                .ForMember(m => m.LevelName, opt => opt.Ignore())
+                .ForMember(m => m.UpdateStartOfLevelStateCmd, opt => opt.Ignore())
+                ;
 
             cfg.AddGlobalIgnore("InitCmd");
         });

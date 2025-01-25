@@ -32,29 +32,43 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Classes="h1" Text="{Binding GameTitle, Converter={StaticResource UppercaseConverter}}" />
         <DockPanel Grid.Row="1" LastChildFill="true">
-            <TextBlock DockPanel.Dock="Left"></TextBlock>
-            <ComboBox ItemsSource="{Binding Slots}" SelectedItem="{Binding SelectedSlot}">
+            <TextBlock DockPanel.Dock="Left" Text="{DynamicResource 'Slot'}"></TextBlock>
+            <CheckBox IsChecked="{Binding SavegameFilter.StartOfLevelOnly}"
+                      Margin="2, 0, 0, 0"
+                      DockPanel.Dock="Right"
+                      Content="{DynamicResource 'Only start of level'}">
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="PropertyChanged" 
+                                          SourceObject="{Binding SavegameFilter}">
+                        <EventTriggerBehavior.Actions>
+                            <InvokeCommandAction Command="{Binding FilterCmd}"
+                                                 CommandParameter="{Binding SavegameFilter}" />
+                        </EventTriggerBehavior.Actions>
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </CheckBox>
+            <ComboBox ItemsSource="{Binding Slots}"
+                      SelectedItem="{Binding SelectedSlot}"
+                      SelectedValue="{Binding SavegameFilter.SlotNumber}"
+                      SelectedValueBinding="{Binding  SaveSlot}">
                 <ComboBox.Styles>
                     <Style Selector="ComboBoxItem">
-                        <Setter Property="IsEnabled" Value="{Binding IsEnabled, DataType=viewModels:SavegameSlotViewModel}"></Setter>
+                        <Setter Property="IsEnabled"
+                                Value="{Binding IsEnabled, DataType=viewModels:SavegameSlotViewModel}" />
                     </Style>
                 </ComboBox.Styles>
-                <ComboBox.SelectionBoxItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Header}" 
-                                   IsEnabled="{Binding IsEnabled}"></TextBlock>
-                    </DataTemplate>
-                </ComboBox.SelectionBoxItemTemplate>
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Header}" 
-                                      IsEnabled="{Binding IsEnabled}"></TextBlock>
+                        <TextBlock Text="{Binding Header}"
+                                   IsEnabled="{Binding IsEnabled}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
                 <Interaction.Behaviors>
-                    <EventTriggerBehavior EventName="SelectionChanged" SourceObject="{Binding SelectedSlot}">
+                    <EventTriggerBehavior EventName="SelectionChanged" 
+                                          SourceObject="{Binding SelectedSlot}">
                         <EventTriggerBehavior.Actions>
-                            <InvokeCommandAction Command="{Binding SelectedSlot.FilterCmd}" CommandParameter="{Binding SelectedSlot.SaveSlot}"/>
+                            <InvokeCommandAction Command="{Binding SelectedSlot.FilterCmd}"
+                                                 CommandParameter="{Binding SavegameFilter}" />
                         </EventTriggerBehavior.Actions>
                     </EventTriggerBehavior>
                 </Interaction.Behaviors>
@@ -65,7 +79,7 @@
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate DataType="viewModels:SavegameViewModel">
                         <Border CornerRadius="3" Padding="10" Margin="10"
-                                Background="{StaticResource ThemeBackgroundBrush}">
+                                Background="{StaticResource ButtonBackground}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -80,17 +94,21 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding LevelName}" />
-                                <ToggleButton Grid.Row="0" Grid.Column="2" IsChecked="{Binding IsStartOfLevel}">
+                                <ToggleButton Grid.Row="0" Grid.Column="2" IsChecked="{Binding IsStartOfLevel}" 
+                                              Command="{Binding UpdateStartOfLevelStateCmd}"
+                                              CommandParameter="{Binding .}"
+                                              ToolTip.Tip="{DynamicResource 'Mark/unmark as start of level save'}">
                                     <ToggleButton.Content>
                                         <avalonia:MaterialIcon
                                             Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToMaterialIconConverter}}">
                                         </avalonia:MaterialIcon>
                                     </ToggleButton.Content>
                                 </ToggleButton>
-                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                                           Text="{Binding Filename, Converter={StaticResource FilenameConverter}}"/>
-                                <TextBlock Grid.Row="1" Grid.Column="2" 
-                                           Text="{Binding SaveNumber}"></TextBlock>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                           Text="{Binding Filename, Converter={StaticResource FilenameConverter}}" />
+                                <TextBlock Grid.Row="1" Grid.Column="2"
+                                           Text="{Binding SaveNumber}">
+                                </TextBlock>
                             </Grid>
                         </Border>
                     </DataTemplate>
