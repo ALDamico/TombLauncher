@@ -67,7 +67,7 @@ public class SavegameHeaderProcessor : IDisposable
         private void ProcessFile(string e)
         {
             Console.WriteLine($"{DateTime.Now} Processing {e}");
-            Task.Delay(100);
+            Task.Delay(500).GetAwaiter().GetResult();
             var header = _savegameHeaderReader.ReadHeader(e);
             if (header == null)
                 return;
