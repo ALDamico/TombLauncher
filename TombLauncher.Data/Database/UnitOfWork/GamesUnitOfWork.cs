@@ -383,7 +383,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
     public List<FileBackupDto> GetSavegamesByGameId(int gameId)
     {
         var backups = Backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
-            .Where(f => f.GameId == gameId);
+            .Where(f => f.GameId == gameId)
+            .OrderByDescending(f => f.BackedUpOn);
 
         return _mapper.Map<List<FileBackupDto>>(backups);
     }

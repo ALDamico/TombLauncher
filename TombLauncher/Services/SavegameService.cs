@@ -70,6 +70,10 @@ public class SavegameService
             observableCollection.Add(viewModel);
         }
 
+        observableCollection = observableCollection.OrderBy(f => f.SlotNumber)
+            .ThenBy(f => f.BackedUpOn)
+            .ToObservableCollection();
+
         targetViewModel.Savegames = observableCollection;
         targetViewModel.FilteredSaves = observableCollection;
     }
@@ -128,6 +132,7 @@ public class SavegameService
         }
 
         var savegamesBySlot = savegameEnumerable.Where(sg => sg.SlotNumber == slotNumber)
+            .OrderBy(sg => sg.BackedUpOn)
             .ToObservableCollection();
         savegameListViewModel.FilteredSaves = savegamesBySlot;
         savegameListViewModel.SetBusy(false);

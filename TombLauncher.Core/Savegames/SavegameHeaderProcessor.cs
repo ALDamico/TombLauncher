@@ -9,7 +9,6 @@ public class SavegameHeaderProcessor : IDisposable
     // Create an AutoResetEvent EventWaitHandle
         private EventWaitHandle eventWaitHandle = new AutoResetEvent(false);
         private Thread worker;
-        private readonly object locker = new();
         private ConcurrentQueue<string> fileNamesQueue = new();
         private SavegameHeaderReader _savegameHeaderReader;
         public List<FileBackupDto> ProcessedFiles { get; }
@@ -30,7 +29,6 @@ public class SavegameHeaderProcessor : IDisposable
                 return;
             // Enqueue the file name
             // This statement is secured by lock to prevent other thread to mess with queue while enqueuing file name
-            Console.WriteLine($"Enqueueing {FileName}");
             fileNamesQueue.Enqueue(FileName);
             // Signal worker that file name is enqueued and that it can be processed
             eventWaitHandle.Set();
@@ -66,7 +64,6 @@ public class SavegameHeaderProcessor : IDisposable
 
         private void ProcessFile(string e)
         {
-            Console.WriteLine($"{DateTime.Now} Processing {e}");
             Task.Delay(500).GetAwaiter().GetResult();
             var header = _savegameHeaderReader.ReadHeader(e);
             if (header == null)
@@ -80,7 +77,6 @@ public class SavegameHeaderProcessor : IDisposable
                 BackedUpOn = DateTime.Now
             };
             ProcessedFiles.Add(dto);
-            Console.WriteLine($"{DateTime.Now} Done processing {e}");
         }
 
         public void ClearProcessedFiles()
