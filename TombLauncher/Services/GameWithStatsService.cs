@@ -3,9 +3,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
@@ -27,9 +29,18 @@ public class GameWithStatsService : IViewService
         NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
         DialogService = Ioc.Default.GetRequiredService<IDialogService>();
+        var savegameSettings = Ioc.Default.GetRequiredService<SettingsService>().GetSavegameSettings();
+        _backupEnabled = savegameSettings.SavegameBackupEnabled;
+        if (_backupEnabled)
+        {
+            _numberOfSavesToKeep = savegameSettings.NumberOfVersionsToKeep;
+        }
+
+        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
     }
 
     private SavegameHeaderProcessor _headerProcessor;
+    private IMapper _mapper;
 
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public ILocalizationManager LocalizationManager { get; }
@@ -37,6 +48,9 @@ public class GameWithStatsService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
     private FileSystemWatcher _watcher;
+    private SettingsService _settingsService;
+    private bool _backupEnabled;
+    private int? _numberOfSavesToKeep;
 
     public void OpenGame(GameWithStatsViewModel game)
     {
@@ -128,20 +142,27 @@ public class GameWithStatsService : IViewService
         GamesUnitOfWork.AddPlaySessionToGame(game.GameMetadata.ToDto(), process.StartTime, process.ExitTime);
         currentPage.SetBusy("Backing up savegames...".GetLocalizedString());
         var filesToProcess = _headerProcessor.ProcessedFiles;
+        
         foreach (var file in filesToProcess)
         {
+            
             file.Md5 = Md5Utils.ComputeMd5Hash(file.Data).GetAwaiter().GetResult();
         }
 
         filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
-        GamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, filesToProcess);
-        GamesUnitOfWork.Save();
+        var savegameDtos = _mapper.Map<List<SavegameBackupDto>>(filesToProcess);
 
-        _headerProcessor.ClearProcessedFiles();
-        _headerProcessor?.Dispose();
-        _headerProcessor = null;
-        _watcher?.Dispose();
-        _watcher = null;
+        if (_backupEnabled)
+        {
+            GamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, savegameDtos, _numberOfSavesToKeep);
+            _headerProcessor.ClearProcessedFiles();
+            _headerProcessor?.Dispose();
+            _headerProcessor = null;
+            _watcher?.Dispose();
+            _watcher = null;
+        }
+        GamesUnitOfWork.Save();
+        
         NavigationManager.RequestRefresh();
         currentPage.ClearBusy();
     }

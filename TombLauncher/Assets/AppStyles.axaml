@@ -108,6 +108,9 @@
     <Style Selector="TextBlock.text-muted">
         <Setter Property="Foreground" Value="#6c757d"></Setter>
     </Style>
+    <Style Selector="TextBlock:disabled">
+        <Setter Property="Foreground" Value="#6c757d"></Setter>
+    </Style>
     <Style Selector="avalonia|MaterialIcon.text-muted">
         <Setter Property="Foreground" Value="#6c757d"></Setter>
     </Style>

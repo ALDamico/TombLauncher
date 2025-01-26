@@ -88,9 +88,15 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set => User.RandomGameMaxRerolls = value.DefaultIfEquals(Defaults.RandomGameMaxRerolls);
     }
 
-    public SaveGameBackupMode SaveGameBackupMode
+    public bool BackupSavegamesEnabled
     {
-        get => User.SaveGameBackupMode.Coalesce(Defaults.SaveGameBackupMode);
-        set => User.SaveGameBackupMode = value.DefaultIfEquals(Defaults.SaveGameBackupMode);
+        get => User.BackupSavegamesEnabled.Coalesce(Defaults.BackupSavegamesEnabled);
+        set => User.BackupSavegamesEnabled = value.DefaultIfEquals(Defaults.BackupSavegamesEnabled);
+    }
+
+    public int? NumberOfVersionsToKeep
+    {
+        get => User.NumberOfVersionsToKeep.Coalesce(Defaults.NumberOfVersionsToKeep);
+        set => User.NumberOfVersionsToKeep = value.DefaultIfEquals(Defaults.NumberOfVersionsToKeep);
     }
 }

@@ -156,6 +156,10 @@
     <system:String x:Key="Confirm delete">Confirm delete</system:String>
     <system:String x:Key="Are you sure you want to delete this savegame? This action cannot be undone.">Are you sure you want to delete this savegame? This action cannot be undone.</system:String>
     <system:String x:Key="Deleting savegame...">Deleting savegame...</system:String>
+    <system:String x:Key="SAVEGAMES">SAVEGAMES</system:String>
+    <system:String x:Key="Allow Tomb Launcher to backup your saved games">Allow Tomb Launcher to backup your saved games</system:String>
+    <system:String x:Key="Limit the number of versions to keep">Limit the number of versions to keep</system:String>
+    <system:String x:Key="Number of versions to keep">Number of versions to keep</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

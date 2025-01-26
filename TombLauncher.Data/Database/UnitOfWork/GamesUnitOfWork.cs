@@ -6,6 +6,7 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
@@ -22,6 +23,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         _hashes = GetRepository<GameHashes>();
         _links = GetRepository<GameLink>();
         _backups = GetRepository<FileBackup>();
+        _savegameMetadata = GetRepository<SavegameMetadata>();
     }
 
     private IMapper _mapper;
@@ -31,6 +33,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
     private readonly Lazy<EfRepository<GameHashes>> _hashes;
     private readonly Lazy<EfRepository<GameLink>> _links;
     private readonly Lazy<EfRepository<FileBackup>> _backups;
+    private readonly Lazy<EfRepository<SavegameMetadata>> _savegameMetadata;
 
     internal EfRepository<Game> Games => _games.Value;
 
@@ -38,6 +41,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
     internal EfRepository<GameHashes> Hashes => _hashes.Value;
     internal EfRepository<GameLink> Links => _links.Value;
     internal EfRepository<FileBackup> Backups => _backups.Value;
+
+    internal EfRepository<SavegameMetadata> SavegameMetadata => _savegameMetadata.Value;
 
     public GameMetadataDto GetGameById(int id)
     {
@@ -344,13 +349,34 @@ public class GamesUnitOfWork : UnitOfWorkBase
         };
     }
 
-    public void BackupSavegames(int gameId, List<FileBackupDto> dtos)
+    public void BackupSavegames(int gameId, List<SavegameBackupDto> dtos, int? numberOfVersionsToKeep)
     {
         dtos.ForEach(f => f.GameId = gameId);
         var entitiesToPersist = _mapper.Map<List<FileBackup>>(dtos);
         foreach (var entity in entitiesToPersist)
         {
             Backups.Insert(entity);
+            SavegameMetadata.Upsert(entity.SavegameMetadata);
+        }
+        
+        var metadataToPersist = _mapper.Map<List<SavegameMetadata>>(dtos);
+/*
+        foreach (var metadata in metadataToPersist)
+        {
+            SavegameMetadata.Upsert(metadata);
+        }*/
+
+        if (numberOfVersionsToKeep.HasValue)
+        {
+            var groups = Backups.GetAll().Include(b => b.SavegameMetadata).Where(b => b.GameId == gameId)
+                .OrderByDescending(b => b.BackedUpOn)
+                .GroupBy(b => b.SavegameMetadata.SlotNumber);
+            foreach (var group in groups)
+            {
+                var lastDate = group.Select(g => g).Take(numberOfVersionsToKeep.Value).LastOrDefault()?.BackedUpOn;
+                Backups.GetAll().Where(b => b.GameId == gameId).Include(b => b.SavegameMetadata)
+                    .Where(b => b.BackedUpOn < lastDate).ExecuteDelete();
+            }
         }
     }
 

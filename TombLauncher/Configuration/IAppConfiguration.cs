@@ -18,5 +18,6 @@ public interface IAppConfiguration
     string AppCastPublicKey { get; set; }
     bool UpdaterUseLocalPaths { get; set; }
     int? RandomGameMaxRerolls { get; set; }
-    SaveGameBackupMode SaveGameBackupMode { get; set; }
+    bool BackupSavegamesEnabled { get; set; }
+    int? NumberOfVersionsToKeep { get; set; }
 }

@@ -72,6 +72,7 @@ public class SettingsService : IViewService
         var downloaderSettings = viewModel.Sections.OfType<DownloaderSettingsViewModel>().First();
         var gameDetailsSettings = viewModel.Sections.OfType<GameDetailsSettingsViewModel>().First();
         var randomGameSettings = viewModel.Sections.OfType<RandomGameSettingsViewModel>().First();
+        var backupSettings = viewModel.Sections.OfType<SavegameSettingsViewModel>().First();
 
         _appConfiguration.ApplicationLanguage =
             languageSettings.ApplicationLanguage.CultureInfo.IetfLanguageTag;
@@ -85,7 +86,12 @@ public class SettingsService : IViewService
             gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _appConfiguration.UseInternalViewer = gameDetailsSettings.UseInternalViewerIfAvailable;
         _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
-        await File.WriteAllTextAsync("appsettings.user.json", JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented, new JsonSerializerSettings(){NullValueHandling = NullValueHandling.Ignore}));
+        _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
+        _appConfiguration.NumberOfVersionsToKeep =
+            backupSettings.LimitNumberOfVersions ? backupSettings.NumberOfVersionsToKeep : null;
+        await File.WriteAllTextAsync("appsettings.user.json",
+            JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
+                new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
         viewModel.ClearBusy();
     }
 
@@ -114,6 +120,7 @@ public class SettingsService : IViewService
                     Priority = --priority
                 };
             }
+
             var dto = new DownloaderConfiguration()
             {
                 BaseUrl = downloader.BaseUrl,
@@ -133,8 +140,19 @@ public class SettingsService : IViewService
     {
         return new GameDetailsSettingsViewModel()
         {
-            AskForConfirmationBeforeWalkthrough = _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
+            AskForConfirmationBeforeWalkthrough =
+                _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
             UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault()
+        };
+    }
+
+    public SavegameSettingsViewModel GetSavegameSettings()
+    {
+        return new SavegameSettingsViewModel()
+        {
+            SavegameBackupEnabled = _appConfiguration.BackupSavegamesEnabled,
+            LimitNumberOfVersions = _appConfiguration.NumberOfVersionsToKeep != null,
+            NumberOfVersionsToKeep = _appConfiguration.NumberOfVersionsToKeep
         };
     }
 

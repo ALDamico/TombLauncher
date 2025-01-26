@@ -29,11 +29,14 @@ public class SavegameService
         _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
         _messageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
         _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
+        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        _numberOfVersionsToKeep = settingsService.GetSavegameSettings().NumberOfVersionsToKeep;
     }
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
     private readonly IMessageBoxService _messageBoxService;
     private readonly IMapper _mapper;
+    private int? _numberOfVersionsToKeep;
 
     public Task InitGameTitle(SavegameListViewModel targetViewModel)
     {
@@ -60,7 +63,7 @@ public class SavegameService
                 LevelName = savegameHeader.LevelName,
                 SaveNumber = savegameHeader.SaveNumber,
                 IsStartOfLevel = savegame.FileType == FileType.SavegameStartOfLevel,
-                SlotNumber = int.Parse(Path.GetExtension(savegame.FileName).TrimStart('.')) + 1,
+                SlotNumber = savegameHeader.SlotNumber,
                 UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd,
                 DeleteSavegameCmd = targetViewModel.DeleteSaveCmd
             };
@@ -158,24 +161,29 @@ public class SavegameService
             {
                 savegameListView.SetBusy("Importing your saved games...");
                 var headerReader = new SavegameHeaderReader();
-                var dataToBackup = new List<FileBackupDto>();
+                var dataToBackup = new List<SavegameBackupDto>();
                 foreach (var file in savegames)
                 {
                     var data = headerReader.ReadHeader(file);
                     if (data != null)
                     {
-                        var dto = new FileBackupDto()
+                        var savegameBytes = await File.ReadAllBytesAsync(file);
+                        var dto = new SavegameBackupDto()
                         {
-                            Data = File.ReadAllBytes(file),
+                            Data = savegameBytes,
                             FileName = file,
                             FileType = FileType.Savegame,
-                            BackedUpOn = DateTime.Now
+                            BackedUpOn = DateTime.Now,
+                            Md5 = await Md5Utils.ComputeMd5Hash(savegameBytes),
+                            LevelName = data.LevelName,
+                            SaveNumber = data.SaveNumber,
+                            SlotNumber = data.SlotNumber
                         };
                         dataToBackup.Add(dto);
                     }
                 }
 
-                _gamesUnitOfWork.BackupSavegames(savegameListView.GameId, dataToBackup);
+                _gamesUnitOfWork.BackupSavegames(savegameListView.GameId, dataToBackup, _numberOfVersionsToKeep);
                 _gamesUnitOfWork.Save();
                 savegameListView.SetBusy(false);
             }

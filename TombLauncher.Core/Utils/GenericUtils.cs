@@ -23,7 +23,7 @@ public static class GenericUtils
     public static T Coalesce<T>(this T first, params T[] elements)
     {
         var enumerator = elements.GetEnumerator();
-        if (!first?.Equals(default) == true)
+        if (!first?.Equals((T)default) == true)
         {
             return first;
         }

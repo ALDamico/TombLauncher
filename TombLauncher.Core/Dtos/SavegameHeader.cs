@@ -2,7 +2,8 @@
 
 public class SavegameHeader
 {
-    public string LevelName { get; set; }
-    public string Filepath { get; set; }
-    public int SaveNumber { get; set; }
+    public virtual string LevelName { get; set; }
+    public virtual string Filepath { get; set; }
+    public virtual int SaveNumber { get; set; }
+    public virtual int SlotNumber { get; set; }
 }
