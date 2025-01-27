@@ -159,6 +159,9 @@
     <system:String x:Key="Allow Tomb Launcher to backup your saved games">Consenti a Tomb Launcher di eseguire un backup dei tuoi salvataggi</system:String>
     <system:String x:Key="Limit the number of versions to keep">Limita il numero di versioni da mantenere</system:String>
     <system:String x:Key="Number of versions to keep">Numero di versioni da mantenere</system:String>
+    <system:String x:Key="Potentially dangerous setting">Impostazione potenzialmente pericolosa</system:String>
+    <system:String x:Key="Savegame backup millisecond delay warning">Tomb Launcher attende per un po' di tempo prima di effettuare il backup dei salvataggi, per assicurarsi che il gioco abbia finito di scrivere il file di salvataggio. Se ti accorgi che l'applicazione sta corrompendo alcuni salvataggi (cioè, se una partita precedentemente salvata appare come 'Empty Slot' all'interno del menu), puoi provare a impostare questo valore a uno più alto</system:String>
+    <system:String x:Key="Savegame backup delay (ms)">Ritardo backup salvataggi (ms)</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

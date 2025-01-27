@@ -160,6 +160,9 @@
     <system:String x:Key="Allow Tomb Launcher to backup your saved games">Allow Tomb Launcher to backup your saved games</system:String>
     <system:String x:Key="Limit the number of versions to keep">Limit the number of versions to keep</system:String>
     <system:String x:Key="Number of versions to keep">Number of versions to keep</system:String>
+    <system:String x:Key="Potentially dangerous setting">Potentially dangerous setting</system:String>
+    <system:String x:Key="Savegame backup millisecond delay warning">Tomb Launcher waits for some time before backing up your savegames in order to make sure the game has finished writing the save file. If you notice the application is corrupting some of your save files (i.e., if a previously saved game shows up as 'Empty slot' in the menu) you can try and set this to a higher value.</system:String>
+    <system:String x:Key="Savegame backup delay (ms)">Savegame backup delay (ms)</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>
