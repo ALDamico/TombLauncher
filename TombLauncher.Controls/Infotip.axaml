@@ -7,20 +7,9 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Controls.Infotip"
              x:Name="InfotipRoot">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key='Light'>
-                    <SolidColorBrush x:Key='IconForeground'>Black</SolidColorBrush>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key='Dark'>
-                    <SolidColorBrush x:Key='IconForeground'>White</SolidColorBrush>
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
+    
     <avalonia:MaterialIcon Height="24" Width="24" Kind="{Binding ElementName=InfotipRoot, Path=Icon}" 
-                           Foreground="{Binding ElementName=InfotipRoot, Path=IconForeground}">
+                           Foreground="{Binding ElementName=InfotipRoot, Path=Foreground, TargetNullValue={StaticResource SystemControlForegroundBaseHighBrush}}">
         <ToolTip.Tip>
             <StackPanel Orientation="Vertical">
                 <TextBlock

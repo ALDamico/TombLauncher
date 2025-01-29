@@ -152,7 +152,8 @@ public class SettingsService : IViewService
         {
             SavegameBackupEnabled = _appConfiguration.BackupSavegamesEnabled,
             LimitNumberOfVersions = _appConfiguration.NumberOfVersionsToKeep != null,
-            NumberOfVersionsToKeep = _appConfiguration.NumberOfVersionsToKeep
+            NumberOfVersionsToKeep = _appConfiguration.NumberOfVersionsToKeep,
+            SavegameProcessingDelay = _appConfiguration.SavegameProcessingDelay
         };
     }
 

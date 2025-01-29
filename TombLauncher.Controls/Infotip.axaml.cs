@@ -42,13 +42,4 @@ public partial class Infotip : UserControl
     public static readonly StyledProperty<MaterialIconKind> IconProperty =
         AvaloniaProperty.Register<Infotip, MaterialIconKind>(nameof(Icon), MaterialIconKind.QuestionMarkCircle, false,
             BindingMode.TwoWay);
-
-    public static readonly StyledProperty<IBrush> IconForegroundProperty = AvaloniaProperty.Register<Infotip, IBrush>(
-        nameof(IconForeground), default, false, BindingMode.Default);
-
-    public IBrush IconForeground
-    {
-        get => GetValue(IconForegroundProperty);
-        set => SetValue(IconForegroundProperty, value);
-    }
 }
