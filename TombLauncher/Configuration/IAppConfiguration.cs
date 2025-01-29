@@ -20,4 +20,5 @@ public interface IAppConfiguration
     int? RandomGameMaxRerolls { get; set; }
     bool BackupSavegamesEnabled { get; set; }
     int? NumberOfVersionsToKeep { get; set; }
+    public int SavegameProcessingDelay { get; set; }
 }

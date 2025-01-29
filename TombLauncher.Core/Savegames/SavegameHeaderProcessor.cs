@@ -12,6 +12,7 @@ public class SavegameHeaderProcessor : IDisposable
         private ConcurrentQueue<string> fileNamesQueue = new();
         private SavegameHeaderReader _savegameHeaderReader;
         public List<FileBackupDto> ProcessedFiles { get; }
+        public int Delay { get; set; } = 500;
 
         public SavegameHeaderProcessor()
         {
@@ -64,7 +65,7 @@ public class SavegameHeaderProcessor : IDisposable
 
         private void ProcessFile(string e)
         {
-            Task.Delay(500).GetAwaiter().GetResult();
+            Task.Delay(Delay).GetAwaiter().GetResult();
             var header = _savegameHeaderReader.ReadHeader(e);
             if (header == null)
                 return;

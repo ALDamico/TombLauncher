@@ -89,7 +89,7 @@ public class GameWithStatsService : IViewService
                 InternalBufferSize = 8192 * 32,
                 NotifyFilter = NotifyFilters.LastWrite
             };
-            _headerProcessor = new SavegameHeaderProcessor();
+            _headerProcessor = Ioc.Default.GetRequiredService<SavegameHeaderProcessor>();
             _watcher.Changed += WatcherOnCreated;
         }
         catch

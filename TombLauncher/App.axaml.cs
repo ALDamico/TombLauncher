@@ -24,6 +24,7 @@ using Serilog;
 using Serilog.Events;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Factories;
@@ -160,6 +161,15 @@ public partial class App : Application
 
 
         serviceCollection.AddSingleton<NotificationService>();
+        serviceCollection.AddScoped(sp =>
+        {
+            var settingsService = sp.GetRequiredService<SettingsService>();
+            var delay = settingsService.GetSavegameSettings().SavegameProcessingDelay;
+            return new SavegameHeaderProcessor()
+            {
+                Delay = delay
+            };
+        });
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);

@@ -99,4 +99,10 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         get => User.NumberOfVersionsToKeep.Coalesce(Defaults.NumberOfVersionsToKeep);
         set => User.NumberOfVersionsToKeep = value.DefaultIfEquals(Defaults.NumberOfVersionsToKeep);
     }
+
+    public int SavegameProcessingDelay
+    {
+        get => User.SavegameProcessingDelay.Coalesce(Defaults.SavegameProcessingDelay);
+        set => User.SavegameProcessingDelay = value.DefaultIfEquals(Defaults.SavegameProcessingDelay);
+    }
 }
