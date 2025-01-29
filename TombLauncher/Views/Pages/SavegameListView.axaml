@@ -96,6 +96,11 @@
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding LevelName}" />
                                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                                    <controls:IconOnlyButton Icon="Restore"
+                                                             ToolTip.Tip="{DynamicResource 'Restore'}"
+                                                             Command="{Binding RestoreSavegameCmd}" 
+                                                             CommandParameter="{Binding Id}"/>
+                                    
                                     <ToggleButton IsChecked="{Binding IsStartOfLevel}" 
                                                   Command="{Binding UpdateStartOfLevelStateCmd}"
                                                   CommandParameter="{Binding .}"
@@ -116,8 +121,9 @@
                                 <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                            Text="{Binding Filename, Converter={StaticResource FilenameConverter}}" />
                                 <TextBlock Grid.Row="1" Grid.Column="2"
-                                           Text="{Binding SaveNumber}">
-                                </TextBlock>
+                                           Text="{Binding SaveNumber}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Size}"></TextBlock>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Length, Converter={StaticResource FileSizeFormatter}}"/>
                             </Grid>
                         </Border>
                     </DataTemplate>

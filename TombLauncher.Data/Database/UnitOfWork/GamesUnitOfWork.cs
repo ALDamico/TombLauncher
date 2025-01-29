@@ -410,4 +410,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
         if (Backups.Delete(id))
             Backups.Commit();
     }
+
+    public SavegameBackupDto GetSavegameById(int id)
+    {
+        var entity = Backups.GetEntityById(id);
+        return _mapper.Map<SavegameBackupDto>(entity);
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -17,6 +18,7 @@ public partial class SavegameListViewModel : PageViewModel
         FilterCmd = new AsyncRelayCommand<SaveGameListFilter>(Filter);
         UpdateStartOfLevelStateCmd = new AsyncRelayCommand<SavegameViewModel>(UpdateStartOfLevelState);
         DeleteSaveCmd = new AsyncRelayCommand<SavegameViewModel>(DeleteSave, CanDelete);
+        RestoreSavegameCmd = new AsyncRelayCommand<int>(RestoreSavegame);
         Initialize += OnInitialize;
     }
     
@@ -67,5 +69,12 @@ public partial class SavegameListViewModel : PageViewModel
     {
         if (obj == null) return false;
         return !obj.IsStartOfLevel;
+    }
+    
+    public ICommand RestoreSavegameCmd { get; }
+
+    private async Task RestoreSavegame(int savegameId)
+    {
+        await _savegameService.Restore(savegameId, Slots.Max(s => s.SaveSlot).GetValueOrDefault());
     }
 }

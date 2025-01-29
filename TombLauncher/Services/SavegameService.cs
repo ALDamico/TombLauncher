@@ -16,7 +16,9 @@ using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
+using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.Pages;
 using Path = System.IO.Path;
 
@@ -31,12 +33,16 @@ public class SavegameService
         _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         _numberOfVersionsToKeep = settingsService.GetSavegameSettings().NumberOfVersionsToKeep;
+        _dialogService = Ioc.Default.GetRequiredService<IDialogService>();
+        _navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
     }
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
     private readonly IMessageBoxService _messageBoxService;
     private readonly IMapper _mapper;
     private int? _numberOfVersionsToKeep;
+    private IDialogService _dialogService;
+    private NavigationManager _navigationManager;
 
     public Task InitGameTitle(SavegameListViewModel targetViewModel)
     {
@@ -64,8 +70,10 @@ public class SavegameService
                 SaveNumber = savegameHeader.SaveNumber,
                 IsStartOfLevel = savegame.FileType == FileType.SavegameStartOfLevel,
                 SlotNumber = savegameHeader.SlotNumber,
+                Length = savegame.Data.LongLength,
                 UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd,
-                DeleteSavegameCmd = targetViewModel.DeleteSaveCmd
+                DeleteSavegameCmd = targetViewModel.DeleteSaveCmd,
+                RestoreSavegameCmd = targetViewModel.RestoreSavegameCmd
             };
             observableCollection.Add(viewModel);
         }
@@ -226,5 +234,41 @@ public class SavegameService
         savegameListViewModel.FilteredSaves.Remove(savegameViewModel);
         savegameListViewModel.Savegames.Remove(savegameViewModel);
         savegameListViewModel.SetBusy(false);
+    }
+
+    public async Task Restore(int savegameId, int max)
+    {
+        var currentPage = _navigationManager.GetCurrentPage();
+        currentPage.SetBusy("Restoring savegame...");
+        var savegame = _gamesUnitOfWork.GetSavegameById(savegameId);
+        var availableSlots = new ObservableCollection<SavegameSlotViewModel>();
+        for (var i = 0; i < max; i++)
+        {
+            var slotViewModel = new SavegameSlotViewModel()
+            {
+                Header = "Slot #" + (i + 1),
+                SaveSlot = i
+            };
+            availableSlots.Add(slotViewModel);
+        }
+
+        var dialogViewModel = new RestoreSavegameDialogViewModel()
+        {
+            Slots = availableSlots, 
+            SelectedSlot = availableSlots.FirstOrDefault(s => s.SaveSlot == savegame.SlotNumber),
+            Data = savegame.Data,
+            TargetDirectory = Path.GetDirectoryName(savegame.FileName),
+            BaseFileName = Path.GetFileNameWithoutExtension(savegame.FileName)
+        };
+        _dialogService.ShowDialog(dialogViewModel, ExecuteRestore);
+        currentPage.SetBusy(false);
+        await Task.CompletedTask;
+    }
+
+    private void ExecuteRestore(RestoreSavegameDialogViewModel vm)
+    {
+        var selectedSlot = vm.SelectedSlot.SaveSlot;
+        var fileName = Path.Combine(vm.TargetDirectory, string.Join(".", vm.BaseFileName, selectedSlot));
+        File.WriteAllBytes(fileName, vm.Data);
     }
 }

@@ -162,6 +162,8 @@
     <system:String x:Key="Potentially dangerous setting">Impostazione potenzialmente pericolosa</system:String>
     <system:String x:Key="Savegame backup millisecond delay warning">Tomb Launcher attende per un po' di tempo prima di effettuare il backup dei salvataggi, per assicurarsi che il gioco abbia finito di scrivere il file di salvataggio. Se ti accorgi che l'applicazione sta corrompendo alcuni salvataggi (cioè, se una partita precedentemente salvata appare come 'Empty Slot' all'interno del menu), puoi provare a impostare questo valore a uno più alto</system:String>
     <system:String x:Key="Savegame backup delay (ms)">Ritardo backup salvataggi (ms)</system:String>
+    <system:String x:Key="Restore">Ripristina</system:String>
+    <system:String x:Key="Size">Dimensioni</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>
