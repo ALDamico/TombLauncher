@@ -164,6 +164,10 @@
     <system:String x:Key="Savegame backup delay (ms)">Ritardo backup salvataggi (ms)</system:String>
     <system:String x:Key="Restore">Ripristina</system:String>
     <system:String x:Key="Size">Dimensioni</system:String>
+    <system:String x:Key="Delete all">Elimina tutti</system:String>
+    <system:String x:Key="Delete all savegames">Delete all savegames</system:String>
+    <system:String x:Key="Are you sure you want to delete all savegames? This action cannot be undone.">Sei sicuro di voler eliminare tutti i salvataggi? Questa azione è irreversibile.</system:String>
+    <system:String x:Key="Delete savegames marked as start of level">Elimina anche i salvataggi contrassegnati come Inizio di livello</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

@@ -165,6 +165,10 @@
     <system:String x:Key="Savegame backup delay (ms)">Savegame backup delay (ms)</system:String>
     <system:String x:Key="Restore">Restore</system:String>
     <system:String x:Key="Size">Size</system:String>
+    <system:String x:Key="Delete all">Delete all</system:String>
+    <system:String x:Key="Delete all savegames">Delete all savegames</system:String>
+    <system:String x:Key="Are you sure you want to delete all savegames? This action cannot be undone.">Are you sure you want to delete all savegames? This action cannot be undone.</system:String>
+    <system:String x:Key="Delete savegames marked as start of level">Delete savegames marked as start of level</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

@@ -411,6 +411,17 @@ public class GamesUnitOfWork : UnitOfWorkBase
             Backups.Commit();
     }
 
+    public void DeleteFileBackupsByGameId(int gameId, IEnumerable<FileType> fileTypes = null)
+    {
+        var byGameId = Backups.Get(b => b.GameId == gameId);
+        if (fileTypes != null)
+        {
+            byGameId = byGameId.Where(b => fileTypes.Contains(b.FileType));
+        }
+
+        byGameId.ExecuteDelete();
+    }
+
     public SavegameBackupDto GetSavegameById(int id)
     {
         var entity = Backups.GetEntityById(id);

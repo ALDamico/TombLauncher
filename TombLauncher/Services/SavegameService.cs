@@ -34,7 +34,7 @@ public class SavegameService
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         _numberOfVersionsToKeep = settingsService.GetSavegameSettings().NumberOfVersionsToKeep;
         _dialogService = Ioc.Default.GetRequiredService<IDialogService>();
-        _navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
+        NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
     }
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
@@ -42,7 +42,7 @@ public class SavegameService
     private readonly IMapper _mapper;
     private int? _numberOfVersionsToKeep;
     private IDialogService _dialogService;
-    private NavigationManager _navigationManager;
+    public  NavigationManager NavigationManager { get; }
 
     public Task InitGameTitle(SavegameListViewModel targetViewModel)
     {
@@ -238,7 +238,7 @@ public class SavegameService
 
     public async Task Restore(int savegameId, int max)
     {
-        var currentPage = _navigationManager.GetCurrentPage();
+        var currentPage = NavigationManager.GetCurrentPage();
         currentPage.SetBusy("Restoring savegame...");
         var savegame = _gamesUnitOfWork.GetSavegameById(savegameId);
         var availableSlots = new ObservableCollection<SavegameSlotViewModel>();
@@ -270,5 +270,27 @@ public class SavegameService
         var selectedSlot = vm.SelectedSlot.SaveSlot;
         var fileName = Path.Combine(vm.TargetDirectory, string.Join(".", vm.BaseFileName, selectedSlot));
         File.WriteAllBytes(fileName, vm.Data);
+    }
+
+    public async Task DeleteAllSavegamesByGameId(int gameId)
+    {
+        var result = await _messageBoxService.Show("Delete all savegames".GetLocalizedString(),
+            "Are you sure you want to delete all savegames? This action cannot be undone.".GetLocalizedString(),
+            MsgBoxButton.OkCancel, MsgBoxImage.Warning, checkBoxText: "Delete savegames marked as start of level".GetLocalizedString());
+
+        if (result.ButtonResult == MsgBoxButtonResult.Ok)
+        {
+            var currentPage = NavigationManager.GetCurrentPage();
+            currentPage.SetBusy("Deleting savegames...");
+            var deleteStartOfLevel = result.CheckBoxResult;
+            var targetTypes = new List<FileType>() { FileType.Savegame };
+            if (deleteStartOfLevel)
+            {
+                targetTypes.Add(FileType.SavegameStartOfLevel);
+            }
+            _gamesUnitOfWork.DeleteFileBackupsByGameId(gameId, targetTypes);
+            currentPage.SetBusy(false);
+            NavigationManager.RequestRefresh();
+        }
     }
 }

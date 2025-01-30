@@ -5,6 +5,8 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Material.Icons;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
@@ -19,13 +21,18 @@ public partial class SavegameListViewModel : PageViewModel
         UpdateStartOfLevelStateCmd = new AsyncRelayCommand<SavegameViewModel>(UpdateStartOfLevelState);
         DeleteSaveCmd = new AsyncRelayCommand<SavegameViewModel>(DeleteSave, CanDelete);
         RestoreSavegameCmd = new AsyncRelayCommand<int>(RestoreSavegame);
-        Initialize += OnInitialize;
+        //Initialize += OnInitialize;
+        _savegameService.NavigationManager.OnNavigated += OnInitialize;
+        DeleteAllCmd = new AsyncRelayCommand(DeleteAll);
+        TopBarCommands.Add(new CommandViewModel(){Command = DeleteAllCmd, Icon = MaterialIconKind.Delete, Tooltip = "Delete all".GetLocalizedString()});
     }
     
     private async void OnInitialize()
     {
         SetBusy("Loading savegames");
-        await _savegameService.CheckSavegamesNotBackedUp(this);
+        if (!_savegamesChecked)
+            await _savegameService.CheckSavegamesNotBackedUp(this);
+        _savegamesChecked = true;
         await _savegameService.LoadSaveGames(this);
         await _savegameService.InitSlots(this);
         SetBusy(false);
@@ -34,6 +41,7 @@ public partial class SavegameListViewModel : PageViewModel
     [ObservableProperty] private string _gameTitle;
     [ObservableProperty] private int _gameId;
     [ObservableProperty] private string _installLocation;
+    private bool _savegamesChecked;
 
     [ObservableProperty]
     private ObservableCollection<SavegameViewModel> _savegames = new ObservableCollection<SavegameViewModel>();
@@ -76,5 +84,12 @@ public partial class SavegameListViewModel : PageViewModel
     private async Task RestoreSavegame(int savegameId)
     {
         await _savegameService.Restore(savegameId, Slots.Max(s => s.SaveSlot).GetValueOrDefault());
+    }
+    
+    public ICommand DeleteAllCmd { get; }
+
+    private async Task DeleteAll()
+    {
+        await _savegameService.DeleteAllSavegamesByGameId(GameId);
     }
 }
