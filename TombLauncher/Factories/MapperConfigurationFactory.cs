@@ -87,7 +87,7 @@ public static class MapperConfigurationFactory
             var saveNumberResolver = new SaveNumberResolver(headerProxy);
 
             cfg.CreateMap<FileBackupDto, SavegameBackupDto>()
-                .ForMember(m => m.Md5, opt => opt.MapFrom(file => Md5Utils.ComputeMd5Hash(file.Data)))
+                .ForMember(m => m.Md5, opt => opt.MapFrom(file => Md5Utils.ComputeMd5Hash(file.Data).GetAwaiter().GetResult()))
                 .ForMember(m => m.LevelName, opt => opt.MapFrom(levelNameResolver))
                 .ForMember(m => m.SlotNumber, opt => opt.MapFrom(slotNumberResolver))
                 .ForMember(m => m.SaveNumber, opt => opt.MapFrom(saveNumberResolver));

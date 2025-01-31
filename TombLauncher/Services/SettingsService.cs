@@ -9,6 +9,7 @@ using Avalonia;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TombLauncher.Configuration;
@@ -17,6 +18,8 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Savegames;
+using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Utils;
@@ -36,6 +39,7 @@ public class SettingsService : IViewService
         var mapperConfiguration = Ioc.Default.GetRequiredService<MapperConfiguration>();
         _mapper = mapperConfiguration.CreateMapper();
         _appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
+        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
     }
 
     private readonly IAppConfigurationWrapper _appConfiguration;
@@ -43,6 +47,7 @@ public class SettingsService : IViewService
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
+    private GamesUnitOfWork _gamesUnitOfWork;
     private readonly IMapper _mapper;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
@@ -181,5 +186,33 @@ public class SettingsService : IViewService
     public string GetDatabasePath()
     {
         return _appConfiguration.DatabasePath;
+    }
+
+    public async Task SyncSavegames()
+    {
+        var currentPage = NavigationManager.GetCurrentPage();
+        try
+        {
+            currentPage.SetBusy("Syncing savegames...");
+            var allGamesWithSaves = _gamesUnitOfWork.GetSavegameBackups();
+            var headerReader = new SavegameHeaderReader();
+            foreach (var savegame in allGamesWithSaves)
+            {
+                var headerData = headerReader.ReadHeader(savegame.FileName, savegame.Data);
+                savegame.LevelName = headerData.LevelName;
+                savegame.SlotNumber = headerData.SlotNumber;
+                savegame.SaveNumber = headerData.SaveNumber;
+            }
+
+            _gamesUnitOfWork.SyncSavegameMetadata(allGamesWithSaves);
+            await MessageBoxService.Show("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
+                MsgBoxImage.Success);
+        }
+        finally
+        {
+            currentPage.SetBusy(false);    
+        }
+        
+        await Task.CompletedTask;
     }
 }

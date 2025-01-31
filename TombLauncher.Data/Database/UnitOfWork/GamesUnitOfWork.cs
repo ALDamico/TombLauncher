@@ -358,13 +358,6 @@ public class GamesUnitOfWork : UnitOfWorkBase
             Backups.Insert(entity);
             SavegameMetadata.Upsert(entity.SavegameMetadata);
         }
-        
-        var metadataToPersist = _mapper.Map<List<SavegameMetadata>>(dtos);
-/*
-        foreach (var metadata in metadataToPersist)
-        {
-            SavegameMetadata.Upsert(metadata);
-        }*/
 
         if (numberOfVersionsToKeep.HasValue)
         {
@@ -426,5 +419,21 @@ public class GamesUnitOfWork : UnitOfWorkBase
     {
         var entity = Backups.GetEntityById(id);
         return _mapper.Map<SavegameBackupDto>(entity);
+    }
+
+    public List<SavegameBackupDto> GetSavegameBackups()
+    {
+        var entities = Backups.Get().Include(b => b.SavegameMetadata);
+        return _mapper.Map<List<SavegameBackupDto>>(entities);
+    }
+
+    public void SyncSavegameMetadata(IEnumerable<SavegameBackupDto> dtos)
+    {
+        var mappedEntities = _mapper.Map<List<FileBackup>>(dtos).Select(m => m.SavegameMetadata);
+        foreach (var metadata in mappedEntities)
+        {
+            SavegameMetadata.Upsert(metadata);
+        }
+        SavegameMetadata.Commit();
     }
 }

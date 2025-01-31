@@ -168,6 +168,9 @@
     <system:String x:Key="Delete all savegames">Delete all savegames</system:String>
     <system:String x:Key="Are you sure you want to delete all savegames? This action cannot be undone.">Sei sicuro di voler eliminare tutti i salvataggi? Questa azione è irreversibile.</system:String>
     <system:String x:Key="Delete savegames marked as start of level">Elimina anche i salvataggi contrassegnati come Inizio di livello</system:String>
+    <system:String x:Key="Rescans your backed up savegames and syncs their content with Tomb Launchers database">Scansiona i salvataggi noti a Tomb Launcher e ne sincronizza il contenuto col database.</system:String>
+    <system:String x:Key="Sync savegame metadata">Sincronizza i metadati dei salvataggi</system:String>
+    <system:String x:Key="Sync now">Esegui ora</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

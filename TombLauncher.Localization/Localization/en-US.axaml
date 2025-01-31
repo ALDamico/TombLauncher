@@ -169,6 +169,9 @@
     <system:String x:Key="Delete all savegames">Delete all savegames</system:String>
     <system:String x:Key="Are you sure you want to delete all savegames? This action cannot be undone.">Are you sure you want to delete all savegames? This action cannot be undone.</system:String>
     <system:String x:Key="Delete savegames marked as start of level">Delete savegames marked as start of level</system:String>
+    <system:String x:Key="Rescans your backed up savegames and syncs their content with Tomb Launchers database">Rescans your backed up savegames and syncs their content with Tomb Launcher's database</system:String>
+    <system:String x:Key="Sync savegame metadata">Sync savegame metadata</system:String>
+    <system:String x:Key="Sync now">Sync now</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

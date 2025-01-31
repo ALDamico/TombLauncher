@@ -28,5 +28,13 @@
             <TextBlock Text="{DynamicResource 'Savegame backup delay (ms)'}"></TextBlock>
         </DockPanel>
         <NumericUpDown Minimum="1" Maximum="800" Value="{Binding SavegameProcessingDelay}"></NumericUpDown>
+        <DockPanel LastChildFill="True">
+            <controls:Infotip DockPanel.Dock="Right" 
+                              ToolTipContent="{DynamicResource 'Rescans your backed up savegames and syncs their content with Tomb Launchers database'}"/>
+            <TextBlock Text="{DynamicResource Sync savegame metadata}"/>    
+        </DockPanel>
+        <controls:IconButton Icon="Sync" 
+                             Text="{DynamicResource Sync now}" Command="{Binding SyncSavegamesInfoCmd}"/>
+        
     </StackPanel>
 </UserControl>
