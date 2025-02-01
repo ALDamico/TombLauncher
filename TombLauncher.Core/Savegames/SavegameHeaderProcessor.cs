@@ -7,10 +7,10 @@ namespace TombLauncher.Core.Savegames;
 public class SavegameHeaderProcessor : IDisposable
 {
     // Create an AutoResetEvent EventWaitHandle
-    private EventWaitHandle eventWaitHandle = new AutoResetEvent(false);
-    private Thread worker;
-    private ConcurrentQueue<string> fileNamesQueue = new();
-    private SavegameHeaderReader _savegameHeaderReader;
+    private readonly EventWaitHandle _eventWaitHandle = new AutoResetEvent(false);
+    private readonly Thread _worker;
+    private readonly ConcurrentQueue<string> fileNamesQueue = new();
+    private readonly SavegameHeaderReader _savegameHeaderReader;
     public List<FileBackupDto> ProcessedFiles { get; }
     public int Delay { get; set; } = 500;
 
@@ -19,20 +19,20 @@ public class SavegameHeaderProcessor : IDisposable
         _savegameHeaderReader = new SavegameHeaderReader();
         ProcessedFiles = new List<FileBackupDto>();
         // Create worker thread
-        worker = new Thread(Work);
+        _worker = new Thread(Work);
         // Start worker thread
-        worker.Start();
+        _worker.Start();
     }
 
-    public void EnqueueFileName(string FileName)
+    public void EnqueueFileName(string fileName)
     {
-        if (Directory.Exists(FileName))
+        if (Directory.Exists(fileName))
             return;
         // Enqueue the file name
         // This statement is secured by lock to prevent other thread to mess with queue while enqueuing file name
-        fileNamesQueue.Enqueue(FileName);
+        fileNamesQueue.Enqueue(fileName);
         // Signal worker that file name is enqueued and that it can be processed
-        eventWaitHandle.Set();
+        _eventWaitHandle.Set();
     }
 
     private void Work()
@@ -58,7 +58,7 @@ public class SavegameHeaderProcessor : IDisposable
             else
             {
                 // No more file names - wait for a signal
-                eventWaitHandle.WaitOne();
+                _eventWaitHandle.WaitOne();
             }
         }
     }
@@ -93,9 +93,9 @@ public class SavegameHeaderProcessor : IDisposable
         // Signal the FileProcessor to exit
         EnqueueFileName(null);
         // Wait for the FileProcessor's thread to finish
-        worker.Join();
+        _worker.Join();
         // Release any OS resources
-        eventWaitHandle.Close();
+        _eventWaitHandle.Close();
     }
 
     #endregion

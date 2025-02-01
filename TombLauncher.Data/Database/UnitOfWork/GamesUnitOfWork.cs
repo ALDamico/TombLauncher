@@ -51,7 +51,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
     }
 
 
-    public void UpsertGame(IGameMetadata game)
+    public async Task UpsertGame(IGameMetadata game)
     {
         var entity = _mapper.Map<Game>(game);
         if (entity.Id == default)
@@ -63,7 +63,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
             Games.Update(entity);
         }
 
-        Save();
+        await Save();
         game.Id = entity.Id;
     }
 
@@ -186,14 +186,14 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return false;
     }
 
-    public void SaveHashes(List<GameHashDto> hashes)
+    public async Task SaveHashes(List<GameHashDto> hashes)
     {
         foreach (var hash in hashes)
         {
             Hashes.Insert(ToGameHashes(hash));
         }
 
-        Save();
+        await Save();
     }
 
     public List<GameLinkDto> GetLinks(int gameId, LinkType? linkType = null)
@@ -382,26 +382,26 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<FileBackupDto>>(backups);
     }
 
-    public List<string> GetSavegameMd5sByGameId(int gameId)
+    public async Task<List<string>> GetSavegameMd5sByGameId(int gameId)
     {
-        return Backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
-            .Where(f => f.GameId == gameId).Select(sg => sg.Md5).ToList();
+        return await Backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
+            .Where(f => f.GameId == gameId).Select(sg => sg.Md5).ToListAsync();
     }
 
-    public void UpdateSavegameStartOfLevel(FileBackupDto targetSaveGame)
+    public async Task UpdateSavegameStartOfLevel(FileBackupDto targetSaveGame)
     {
         var entityToUpdate = Backups.GetEntityById(targetSaveGame.Id);
         if (entityToUpdate == null)
             throw new InvalidOperationException();
         entityToUpdate.FileType = targetSaveGame.FileType;
         Backups.Update(entityToUpdate);
-        Backups.Commit();
+        await Backups.Commit();
     }
 
-    public void DeleteFileBackupById(int id)
+    public async Task DeleteFileBackupById(int id)
     {
         if (Backups.Delete(id))
-            Backups.Commit();
+            await Backups.Commit();
     }
 
     public void DeleteFileBackupsByGameId(int gameId, IEnumerable<FileType> fileTypes = null)
@@ -427,13 +427,24 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<SavegameBackupDto>>(entities);
     }
 
-    public void SyncSavegameMetadata(IEnumerable<SavegameBackupDto> dtos)
+    public async Task SyncSavegameMetadata(IEnumerable<SavegameBackupDto> dtos)
     {
-        var mappedEntities = _mapper.Map<List<FileBackup>>(dtos).Select(m => m.SavegameMetadata);
-        foreach (var metadata in mappedEntities)
+        var idsToFind = dtos.Select(dto => dto.Id);
+        var mappedEntities = Backups.GetAll().Include(b => b.SavegameMetadata)
+            .Join(idsToFind, b => b.Id, i => i, (backup, i) => backup).ToList();
+        var lookup = dtos.ToDictionary(dto => dto.Id);
+        
+        foreach (var entity in mappedEntities)
         {
-            SavegameMetadata.Upsert(metadata);
+            var backup = lookup[entity.Id];
+            entity.SavegameMetadata.LevelName = backup.LevelName;
+            entity.SavegameMetadata.SlotNumber = backup.SlotNumber;
+            entity.SavegameMetadata.SaveNumber = backup.SaveNumber;
+            entity.Md5 = backup.Md5;
+            entity.BackedUpOn = DateTime.Now;
+            
+            Backups.Update(entity);
         }
-        SavegameMetadata.Commit();
+        await Backups.Commit();
     }
 }

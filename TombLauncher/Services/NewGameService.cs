@@ -107,9 +107,9 @@ public class NewGameService : IViewService
         gameMetadata.UniversalLauncherPath = gameEngineResult.UniversalLauncherPath;
 
         var dto = gameMetadata.ToDto();
-        GamesUnitOfWork.UpsertGame(dto);
+        await GamesUnitOfWork.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
-        GamesUnitOfWork.SaveHashes(hashes);
+        await GamesUnitOfWork.SaveHashes(hashes);
         _logger.LogInformation("Game {GameTitle} installed successfully", gameMetadata.Title);
         
         NavigationManager.GoBack();

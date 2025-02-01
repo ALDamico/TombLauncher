@@ -19,6 +19,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Savegames;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
@@ -202,9 +203,14 @@ public class SettingsService : IViewService
                 savegame.LevelName = headerData.LevelName;
                 savegame.SlotNumber = headerData.SlotNumber;
                 savegame.SaveNumber = headerData.SaveNumber;
+                var md5 = await Md5Utils.ComputeMd5Hash(savegame.Data);
+                if (savegame.Md5 != md5)
+                {
+                    savegame.Md5 = md5;
+                }
             }
 
-            _gamesUnitOfWork.SyncSavegameMetadata(allGamesWithSaves);
+            await _gamesUnitOfWork.SyncSavegameMetadata(allGamesWithSaves);
             await MessageBoxService.Show("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
                 MsgBoxImage.Success);
         }

@@ -24,15 +24,15 @@ public partial class SavegameListViewModel : PageViewModel
         //Initialize += OnInitialize;
         _savegameService.NavigationManager.OnNavigated += OnInitialize;
         DeleteAllCmd = new AsyncRelayCommand(DeleteAll);
+        CheckNonBackedUpSavegamesCmd = new AsyncRelayCommand(() => _savegameService.CheckSavegamesNotBackedUp(this));
         TopBarCommands.Add(new CommandViewModel(){Command = DeleteAllCmd, Icon = MaterialIconKind.Delete, Tooltip = "Delete all".GetLocalizedString()});
+        TopBarCommands.Add(new CommandViewModel(){Command = CheckNonBackedUpSavegamesCmd, Icon = MaterialIconKind.Import, Tooltip = "Import missing savegames"});
     }
     
     private async void OnInitialize()
     {
         SetBusy("Loading savegames");
-        if (!_savegamesChecked)
-            await _savegameService.CheckSavegamesNotBackedUp(this);
-        _savegamesChecked = true;
+//            await _savegameService.CheckSavegamesNotBackedUp(this);
         await _savegameService.LoadSaveGames(this);
         await _savegameService.InitSlots(this);
         SetBusy(false);
@@ -41,7 +41,6 @@ public partial class SavegameListViewModel : PageViewModel
     [ObservableProperty] private string _gameTitle;
     [ObservableProperty] private int _gameId;
     [ObservableProperty] private string _installLocation;
-    private bool _savegamesChecked;
 
     [ObservableProperty]
     private ObservableCollection<SavegameViewModel> _savegames = new ObservableCollection<SavegameViewModel>();
@@ -92,4 +91,6 @@ public partial class SavegameListViewModel : PageViewModel
     {
         await _savegameService.DeleteAllSavegamesByGameId(GameId);
     }
+    
+    public ICommand CheckNonBackedUpSavegamesCmd { get; }
 }

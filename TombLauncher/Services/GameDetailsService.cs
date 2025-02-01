@@ -52,11 +52,11 @@ public class GameDetailsService : IViewService
         return gameFolder.IsNotNullOrWhiteSpace();
     }
 
-    public void Uninstall(string installDir, int gameId)
+    public async Task Uninstall(string installDir, int gameId)
     {
         Directory.Delete(installDir, true);
         GamesUnitOfWork.DeleteGameById(gameId);
-        GamesUnitOfWork.Save();
+        await GamesUnitOfWork.Save();
         NavigationManager.GoBack();
     }
 

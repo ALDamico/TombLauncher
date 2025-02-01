@@ -135,36 +135,43 @@ public class GameWithStatsService : IViewService
         currentPage.ClearBusy();
     }
 
-    private void OnGameExited(GameWithStatsViewModel game, Process process)
+    private async Task OnGameExited(GameWithStatsViewModel game, Process process)
     {
         var currentPage = NavigationManager.GetCurrentPage();
-        currentPage.SetBusy(true, "Saving play session...".GetLocalizedString());
-        GamesUnitOfWork.AddPlaySessionToGame(game.GameMetadata.ToDto(), process.StartTime, process.ExitTime);
-        currentPage.SetBusy("Backing up savegames...".GetLocalizedString());
-        var filesToProcess = _headerProcessor.ProcessedFiles;
-        
-        foreach (var file in filesToProcess)
+        try
         {
-            
-            file.Md5 = Md5Utils.ComputeMd5Hash(file.Data).GetAwaiter().GetResult();
+            currentPage.SetBusy(true, "Saving play session...".GetLocalizedString());
+            GamesUnitOfWork.AddPlaySessionToGame(game.GameMetadata.ToDto(), process.StartTime, process.ExitTime);
+            currentPage.SetBusy("Backing up savegames...".GetLocalizedString());
+            var filesToProcess = _headerProcessor.ProcessedFiles;
+
+            foreach (var file in filesToProcess)
+            {
+
+                file.Md5 = Md5Utils.ComputeMd5Hash(file.Data).GetAwaiter().GetResult();
+            }
+
+            filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
+            var savegameDtos = _mapper.Map<List<SavegameBackupDto>>(filesToProcess);
+
+            if (_backupEnabled)
+            {
+                GamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, savegameDtos, _numberOfSavesToKeep);
+                _headerProcessor.ClearProcessedFiles();
+                _headerProcessor?.Dispose();
+                _headerProcessor = null;
+                _watcher?.Dispose();
+                _watcher = null;
+            }
+
+            await GamesUnitOfWork.Save();
+
+            NavigationManager.RequestRefresh();
         }
-
-        filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
-        var savegameDtos = _mapper.Map<List<SavegameBackupDto>>(filesToProcess);
-
-        if (_backupEnabled)
+        finally
         {
-            GamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, savegameDtos, _numberOfSavesToKeep);
-            _headerProcessor.ClearProcessedFiles();
-            _headerProcessor?.Dispose();
-            _headerProcessor = null;
-            _watcher?.Dispose();
-            _watcher = null;
+            currentPage.ClearBusy();
         }
-        GamesUnitOfWork.Save();
-        
-        NavigationManager.RequestRefresh();
-        currentPage.ClearBusy();
     }
 
     public void LaunchSetup(GameWithStatsViewModel game)
@@ -195,7 +202,7 @@ public class GameWithStatsService : IViewService
         };
         if (trackPlayTime)
         {
-            process.Exited += (sender, _) => OnGameExited(game, sender as Process);
+            process.Exited += async (sender, _) => await OnGameExited(game, sender as Process);
         }
         else
         {

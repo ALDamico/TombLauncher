@@ -199,9 +199,9 @@ public class GameSearchResultService : IViewService
         dto.UniversalLauncherPath = detectionResult.UniversalLauncherPath;
         dto.GameEngine = detectionResult.GameEngine;
         _logger.LogInformation("Saving data for {GameTitle} to database", gameToInstall.Title);
-        GamesUnitOfWork.UpsertGame(dto);
+        await GamesUnitOfWork.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
-        GamesUnitOfWork.SaveHashes(hashes);
+        await GamesUnitOfWork.SaveHashes(hashes);
         foreach (var detail in allDetails.Sources)
         {
             GamesUnitOfWork.SaveLink(new GameLinkDto()
@@ -238,7 +238,7 @@ public class GameSearchResultService : IViewService
         installProgress.Message = "Install complete";
         notificationViewModel.IsCancelable = false;
 
-        GamesUnitOfWork.Save();
+        await GamesUnitOfWork.Save();
         gameToInstall.InstalledGame = _mapper.Map<GameWithStatsViewModel>(GamesUnitOfWork.GetGameWithStats(dto.Id));
         _logger.LogInformation("Installation for {GameTitle} complete",gameToInstall.Title);
     }

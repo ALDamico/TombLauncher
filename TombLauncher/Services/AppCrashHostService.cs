@@ -63,8 +63,8 @@ public class AppCrashHostService : IViewService
         AppUtils.SetClipboardTextAsync(serialized);
     }
 
-    public void MarkAsNotified(AppCrashDto crash)
+    public async Task MarkAsNotified(AppCrashDto crash)
     {
-        AppCrashUnitOfWork.MarkAsNotified(crash.Id);
+        await AppCrashUnitOfWork.MarkAsNotified(crash.Id);
     }
 }

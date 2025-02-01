@@ -42,7 +42,7 @@ public class SavegameService
     private readonly IMapper _mapper;
     private int? _numberOfVersionsToKeep;
     private IDialogService _dialogService;
-    public  NavigationManager NavigationManager { get; }
+    public NavigationManager NavigationManager { get; }
 
     public Task InitGameTitle(SavegameListViewModel targetViewModel)
     {
@@ -56,8 +56,7 @@ public class SavegameService
     {
         targetViewModel.SetBusy("Fetching savegames for GAMETITLE".GetLocalizedString(targetViewModel.GameTitle));
         var observableCollection = new ObservableCollection<SavegameViewModel>();
-        var knownSavegames =
-            await Task.Factory.StartNew(() => _gamesUnitOfWork.GetSavegamesByGameId(targetViewModel.GameId));
+        var knownSavegames = _gamesUnitOfWork.GetSavegamesByGameId(targetViewModel.GameId);
         var headerParser = new SavegameHeaderReader();
         foreach (var savegame in knownSavegames)
         {
@@ -131,7 +130,7 @@ public class SavegameService
         {
             savegameEnumerable = savegameEnumerable.Where(sg => sg.IsStartOfLevel);
         }
-        
+
         if (slotNumber == null)
         {
             savegameListViewModel.FilteredSaves = savegameEnumerable.ToObservableCollection();
@@ -149,62 +148,59 @@ public class SavegameService
 
     public async Task CheckSavegamesNotBackedUp(SavegameListViewModel savegameListView)
     {
-        if (savegameListView.Savegames.Count == 0)
+        var installDir = savegameListView.InstallLocation;
+
+        var savegames = Directory.GetFiles(installDir, "save*.*", SearchOption.AllDirectories)
+            .Where(f => Path.GetExtension(f).TrimStart('.').All(char.IsDigit))
+            .ToList();
+        var existingGamesDict = new Dictionary<string, string>();
+        foreach (var savegameFile in savegames)
         {
-            var installDir = savegameListView.InstallLocation;
+            var fileContent = await File.ReadAllBytesAsync(savegameFile);
+            var md5 = await Md5Utils.ComputeMd5Hash(fileContent);
+            existingGamesDict[md5] = savegameFile;
+        }
 
-            var savegames = Directory.GetFiles(installDir, "save*.*", SearchOption.AllDirectories)
-                .Where(f => Path.GetExtension(f).TrimStart('.').All(char.IsDigit))
-                .ToList();
-            var existingGamesDict = new Dictionary<string, string>();
-            foreach (var savegameFile in savegames)
+        var backedUpSaves = await _gamesUnitOfWork.GetSavegameMd5sByGameId(savegameListView.GameId);
+        var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys);
+
+        var userResponse = await _messageBoxService.Show("No savegame backups found",
+            $"There were no savegame backups in Tomb Launcher's database, but we found {missingSaveGames.Count()} savegame files. Would you like to import them?",
+            MsgBoxButton.YesNo, MsgBoxImage.Folder, "No".GetLocalizedString(), "Yes".GetLocalizedString());
+        if (userResponse.ButtonResult == MsgBoxButtonResult.Yes)
+        {
+            savegameListView.SetBusy("Importing your saved games...");
+            var headerReader = new SavegameHeaderReader();
+            var dataToBackup = new List<SavegameBackupDto>();
+            foreach (var file in savegames)
             {
-                var fileContent = await File.ReadAllBytesAsync(savegameFile);
-                var md5 = await Md5Utils.ComputeMd5Hash(fileContent);
-                existingGamesDict[md5] = savegameFile;
-            }
-
-            var backedUpSaves = _gamesUnitOfWork.GetSavegameMd5sByGameId(savegameListView.GameId);
-            var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys);
-
-            var userResponse = await _messageBoxService.Show("No savegame backups found",
-                $"There were no savegame backups in Tomb Launcher's database, but we found {savegames.Count} savegame files. Would you like to import them?",
-                MsgBoxButton.YesNo, MsgBoxImage.Folder, "No".GetLocalizedString(), "Yes".GetLocalizedString());
-            if (userResponse.ButtonResult == MsgBoxButtonResult.Yes)
-            {
-                savegameListView.SetBusy("Importing your saved games...");
-                var headerReader = new SavegameHeaderReader();
-                var dataToBackup = new List<SavegameBackupDto>();
-                foreach (var file in savegames)
+                var data = headerReader.ReadHeader(file);
+                if (data != null)
                 {
-                    var data = headerReader.ReadHeader(file);
-                    if (data != null)
+                    var savegameBytes = await File.ReadAllBytesAsync(file);
+                    var dto = new SavegameBackupDto()
                     {
-                        var savegameBytes = await File.ReadAllBytesAsync(file);
-                        var dto = new SavegameBackupDto()
-                        {
-                            Data = savegameBytes,
-                            FileName = file,
-                            FileType = FileType.Savegame,
-                            BackedUpOn = DateTime.Now,
-                            Md5 = await Md5Utils.ComputeMd5Hash(savegameBytes),
-                            LevelName = data.LevelName,
-                            SaveNumber = data.SaveNumber,
-                            SlotNumber = data.SlotNumber
-                        };
-                        dataToBackup.Add(dto);
-                    }
+                        Data = savegameBytes,
+                        FileName = file,
+                        FileType = FileType.Savegame,
+                        BackedUpOn = DateTime.Now,
+                        Md5 = await Md5Utils.ComputeMd5Hash(savegameBytes),
+                        LevelName = data.LevelName,
+                        SaveNumber = data.SaveNumber,
+                        SlotNumber = data.SlotNumber
+                    };
+                    dataToBackup.Add(dto);
                 }
+            }
 
-                _gamesUnitOfWork.BackupSavegames(savegameListView.GameId, dataToBackup, _numberOfVersionsToKeep);
-                _gamesUnitOfWork.Save();
-                savegameListView.SetBusy(false);
-            }
-            else
-            {
-                savegameListView.SetBusy(false);
-                return;
-            }
+            _gamesUnitOfWork.BackupSavegames(savegameListView.GameId, dataToBackup, _numberOfVersionsToKeep);
+            await _gamesUnitOfWork.Save();
+            savegameListView.SetBusy(false);
+        }
+        else
+        {
+            savegameListView.SetBusy(false);
+            return;
         }
     }
 
@@ -254,7 +250,7 @@ public class SavegameService
 
         var dialogViewModel = new RestoreSavegameDialogViewModel()
         {
-            Slots = availableSlots, 
+            Slots = availableSlots,
             SelectedSlot = availableSlots.FirstOrDefault(s => s.SaveSlot == savegame.SlotNumber),
             Data = savegame.Data,
             TargetDirectory = Path.GetDirectoryName(savegame.FileName),
@@ -276,7 +272,8 @@ public class SavegameService
     {
         var result = await _messageBoxService.Show("Delete all savegames".GetLocalizedString(),
             "Are you sure you want to delete all savegames? This action cannot be undone.".GetLocalizedString(),
-            MsgBoxButton.OkCancel, MsgBoxImage.Warning, checkBoxText: "Delete savegames marked as start of level".GetLocalizedString());
+            MsgBoxButton.OkCancel, MsgBoxImage.Warning,
+            checkBoxText: "Delete savegames marked as start of level".GetLocalizedString());
 
         if (result.ButtonResult == MsgBoxButtonResult.Ok)
         {
@@ -288,6 +285,7 @@ public class SavegameService
             {
                 targetTypes.Add(FileType.SavegameStartOfLevel);
             }
+
             _gamesUnitOfWork.DeleteFileBackupsByGameId(gameId, targetTypes);
             currentPage.SetBusy(false);
             NavigationManager.RequestRefresh();
