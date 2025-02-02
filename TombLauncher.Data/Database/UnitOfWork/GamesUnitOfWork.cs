@@ -82,12 +82,12 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameMetadataDto>>(Games.GetAll());
     }
 
-    public List<GameWithStatsDto> GetGamesWithStats()
+    public async Task< List<GameWithStatsDto>> GetGamesWithStats()
     {
         var outputList = new List<GameWithStatsDto>();
         var playSessions = PlaySessions.GetAll().ToLookup(ps => ps.GameId);
 
-        var games = Games.GetAll().ToList();
+        var games = await Games.GetAll().ToListAsync();
         foreach (var game in games)
         {
             var thisGamePlaySessions = playSessions[game.Id].ToList();
@@ -234,10 +234,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameMetadataDto>>(queryResult);
     }
 
-    public Dictionary<string, GameWithStatsDto> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
+    public async Task<Dictionary<string, GameWithStatsDto>> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
     {
-        var stats = GetGamesWithStats();
-        return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).ToList()
+        var stats = await GetGamesWithStats();
+        return (await Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).ToListAsync())
             .Join(stats, l => l.GameId, game => game.GameMetadata.Id, (i, game) => new { Link = i.Link, Game = game })
             .ToDictionary(k => k.Link, g => g.Game);
     }

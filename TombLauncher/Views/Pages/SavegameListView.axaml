@@ -4,9 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
-             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:views="clr-namespace:TombLauncher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.SavegameListView"
              x:DataType="pages:SavegameListViewModel">
@@ -20,11 +18,6 @@
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
     </Interaction.Behaviors>
-    <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
-                                                        TrueValue="FlagOutline"
-                                                        FalseValue="FlagOffOutline" />
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -33,7 +26,7 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Classes="h1" Text="{Binding GameTitle, Converter={StaticResource UppercaseConverter}}" />
         <DockPanel Grid.Row="1" LastChildFill="true">
-            <TextBlock DockPanel.Dock="Left" Text="{DynamicResource 'Slot'}"></TextBlock>
+            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{DynamicResource 'Slot'}"/>
             <CheckBox IsChecked="{Binding SavegameFilter.StartOfLevelOnly}"
                       Margin="2, 0, 0, 0"
                       DockPanel.Dock="Right"
@@ -76,59 +69,18 @@
             </ComboBox>
         </DockPanel>
         <ScrollViewer Grid.Row="2">
-            <ItemsRepeater ItemsSource="{Binding FilteredSaves}">
-                <ItemsRepeater.ItemTemplate>
+            <ItemsControl ItemsSource="{Binding FilteredSaves}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="viewModels:SavegameViewModel">
-                        <Border CornerRadius="3" Padding="10" Margin="10"
-                                Background="{StaticResource ButtonBackground}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding LevelName}" />
-                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-                                    <controls:IconOnlyButton Icon="Restore"
-                                                             ToolTip.Tip="{DynamicResource 'Restore'}"
-                                                             Command="{Binding RestoreSavegameCmd}" 
-                                                             CommandParameter="{Binding Id}"/>
-                                    
-                                    <ToggleButton IsChecked="{Binding IsStartOfLevel}" 
-                                                  Command="{Binding UpdateStartOfLevelStateCmd}"
-                                                  CommandParameter="{Binding .}"
-                                                  ToolTip.Tip="{DynamicResource 'Mark/unmark as start of level save'}">
-                                        <ToggleButton.Content>
-                                            <avalonia:MaterialIcon
-                                                Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToMaterialIconConverter}}">
-                                            </avalonia:MaterialIcon>
-                                        </ToggleButton.Content>
-                                    </ToggleButton>
-                                    <controls:IconOnlyButton Icon="Delete" 
-                                                         Command="{Binding DeleteSavegameCmd}" 
-                                                         CommandParameter="{Binding .}"
-                                                         IsVisible="{Binding !IsStartOfLevel}"
-                                                         Classes="btn-danger"/>
-                                </StackPanel>
-                                
-                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                           Text="{Binding Filename, Converter={StaticResource FilenameConverter}}" />
-                                <TextBlock Grid.Row="1" Grid.Column="2"
-                                           Text="{Binding SaveNumber}"/>
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Size}"></TextBlock>
-                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Length, Converter={StaticResource FileSizeFormatter}}"/>
-                            </Grid>
-                        </Border>
+                        <views:SavegameCardView/>
                     </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-            </ItemsRepeater>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
     </Grid>
 </UserControl>

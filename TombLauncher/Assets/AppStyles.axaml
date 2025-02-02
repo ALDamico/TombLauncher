@@ -167,4 +167,8 @@
             </DataTemplate>
         </Setter>
     </Style>
+    <Style Selector="TextBlock.small">
+        <Setter Property="FontSize" Value="9"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+    </Style>
 </Styles>

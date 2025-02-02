@@ -21,6 +21,7 @@ using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.Pages;
 using Path = System.IO.Path;
+using Avalonia.Media.Transformation;
 
 namespace TombLauncher.Services;
 
@@ -44,14 +45,6 @@ public class SavegameService
     private IDialogService _dialogService;
     public NavigationManager NavigationManager { get; }
 
-    public Task InitGameTitle(SavegameListViewModel targetViewModel)
-    {
-        targetViewModel.SetBusy(true);
-        var gameTitle = _gamesUnitOfWork.GetGameById(targetViewModel.GameId);
-        targetViewModel.GameTitle = gameTitle.Title;
-        return Task.CompletedTask;
-    }
-
     public async Task LoadSaveGames(SavegameListViewModel targetViewModel)
     {
         targetViewModel.SetBusy("Fetching savegames for GAMETITLE".GetLocalizedString(targetViewModel.GameTitle));
@@ -63,6 +56,9 @@ public class SavegameService
             var savegameHeader = headerParser.ReadHeader(savegame.FileName, savegame.Data);
             var viewModel = new SavegameViewModel()
             {
+                UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd,
+                DeleteSavegameCmd = targetViewModel.DeleteSaveCmd,
+                RestoreSavegameCmd = targetViewModel.RestoreSavegameCmd,
                 Id = savegame.Id,
                 Filename = savegame.FileName,
                 LevelName = savegameHeader.LevelName,
@@ -70,9 +66,7 @@ public class SavegameService
                 IsStartOfLevel = savegame.FileType == FileType.SavegameStartOfLevel,
                 SlotNumber = savegameHeader.SlotNumber,
                 Length = savegame.Data.LongLength,
-                UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd,
-                DeleteSavegameCmd = targetViewModel.DeleteSaveCmd,
-                RestoreSavegameCmd = targetViewModel.RestoreSavegameCmd
+                BackedUpOn = savegame.BackedUpOn
             };
             observableCollection.Add(viewModel);
         }
@@ -94,7 +88,7 @@ public class SavegameService
         savegameListViewModel.Slots = new ObservableCollection<SavegameSlotViewModel>();
         var allSlotsItem = new SavegameSlotViewModel()
         {
-            Header = "All slots",
+            Header = "All slots".GetLocalizedString(),
             IsEnabled = true,
             SaveSlot = null,
             FilterCmd = savegameListViewModel.FilterCmd
@@ -111,7 +105,7 @@ public class SavegameService
 
         savegameListViewModel.Slots.AddRange(usedSlots.Select(s => new SavegameSlotViewModel()
         {
-            Header = $"Slot #{s}",
+            Header = "Slot NUMBER".GetLocalizedString(s),
             SaveSlot = s,
             IsEnabled = true,
             FilterCmd = savegameListViewModel.FilterCmd
@@ -162,7 +156,14 @@ public class SavegameService
         }
 
         var backedUpSaves = await _gamesUnitOfWork.GetSavegameMd5sByGameId(savegameListView.GameId);
-        var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys);
+        var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys).ToList();
+        if (missingSaveGames.Count == 0)
+        {
+            await _messageBoxService.Show("Scan complete".GetLocalizedString(),
+                "There were no savegames to import.".GetLocalizedString(), MsgBoxButton.Ok,
+                MsgBoxImage.Information);
+            return;
+        }
 
         var userResponse = await _messageBoxService.Show("No savegame backups found",
             $"There were no savegame backups in Tomb Launcher's database, but we found {missingSaveGames.Count()} savegame files. Would you like to import them?",

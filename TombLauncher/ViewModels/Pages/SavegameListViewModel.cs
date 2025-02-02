@@ -24,9 +24,19 @@ public partial class SavegameListViewModel : PageViewModel
         //Initialize += OnInitialize;
         _savegameService.NavigationManager.OnNavigated += OnInitialize;
         DeleteAllCmd = new AsyncRelayCommand(DeleteAll);
-        CheckNonBackedUpSavegamesCmd = new AsyncRelayCommand(() => _savegameService.CheckSavegamesNotBackedUp(this));
-        TopBarCommands.Add(new CommandViewModel(){Command = DeleteAllCmd, Icon = MaterialIconKind.Delete, Tooltip = "Delete all".GetLocalizedString()});
-        TopBarCommands.Add(new CommandViewModel(){Command = CheckNonBackedUpSavegamesCmd, Icon = MaterialIconKind.Import, Tooltip = "Import missing savegames"});
+        CheckNonBackedUpSavegamesCmd = new AsyncRelayCommand(CheckNonBackedUpSavegames);
+        TopBarCommands.Add(new CommandViewModel()
+        {
+            Command = DeleteAllCmd, 
+            Icon = MaterialIconKind.Delete, 
+            Tooltip = "Delete all".GetLocalizedString()
+        });
+        TopBarCommands.Add(new CommandViewModel()
+        {
+            Command = CheckNonBackedUpSavegamesCmd, 
+            Icon = MaterialIconKind.Import,
+            Tooltip = "Import missing savegames".GetLocalizedString()
+        });
     }
     
     private async void OnInitialize()
@@ -65,7 +75,7 @@ public partial class SavegameListViewModel : PageViewModel
         await _savegameService.UpdateStartOfLevelState(this, targetSaveGame);
     }
     
-    public ICommand DeleteSaveCmd { get; set; }
+    public IRelayCommand DeleteSaveCmd { get; set; }
 
     private async Task DeleteSave(SavegameViewModel target)
     {
@@ -93,4 +103,9 @@ public partial class SavegameListViewModel : PageViewModel
     }
     
     public ICommand CheckNonBackedUpSavegamesCmd { get; }
+
+    private async Task CheckNonBackedUpSavegames()
+    {
+        await _savegameService.CheckSavegamesNotBackedUp(this);
+    }
 }

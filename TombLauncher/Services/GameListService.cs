@@ -39,10 +39,11 @@ public class GameListService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
 
-    public Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
+    public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
         host.SetBusy(true, "Loading games...".GetLocalizedString());
-        return Task.FromResult(GamesUnitOfWork.GetGamesWithStats().Select(ConvertDto).ToObservableCollection());
+
+        return (await GamesUnitOfWork.GetGamesWithStats()).Select(ConvertDto).ToObservableCollection();
     }
 
     private GameWithStatsViewModel ConvertDto(GameWithStatsDto dto)

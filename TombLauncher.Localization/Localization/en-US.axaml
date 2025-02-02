@@ -172,6 +172,16 @@
     <system:String x:Key="Rescans your backed up savegames and syncs their content with Tomb Launchers database">Rescans your backed up savegames and syncs their content with Tomb Launcher's database</system:String>
     <system:String x:Key="Sync savegame metadata">Sync savegame metadata</system:String>
     <system:String x:Key="Sync now">Sync now</system:String>
+    <system:String x:Key="Level name">Level name</system:String>
+    <system:String x:Key="Slot number">Slot #</system:String>
+    <system:String x:Key="File name">File name</system:String>
+    <system:String x:Key="Date and time">Date and time</system:String>
+    <system:String x:Key="All slots">All slots</system:String>
+    <system:String x:Key="Slot NUMBER">Slot #{0}</system:String>
+    <system:String x:Key="Filtering savegames...">Filtering savegames...</system:String>
+    <system:String x:Key="Scan complete">Scan complete</system:String>
+    <system:String x:Key="There were no savegames to import.">There were no savegames to import.</system:String>
+    <system:String x:Key="Import missing savegames">Import missing savegames</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

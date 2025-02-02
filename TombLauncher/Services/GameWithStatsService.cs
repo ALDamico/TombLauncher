@@ -48,13 +48,13 @@ public class GameWithStatsService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
     private FileSystemWatcher _watcher;
-    private SettingsService _settingsService;
     private bool _backupEnabled;
     private int? _numberOfSavesToKeep;
 
-    public void OpenGame(GameWithStatsViewModel game)
+    public async Task OpenGame(GameWithStatsViewModel game)
     {
-        NavigationManager.NavigateTo(new GameDetailsViewModel(game));
+        var gameDetailsViewModel = await Task.FromResult(new GameDetailsViewModel(game));
+        NavigationManager.NavigateTo(gameDetailsViewModel);
     }
 
     public async Task OpenGame(int gameId)
