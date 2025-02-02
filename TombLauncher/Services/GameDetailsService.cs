@@ -13,6 +13,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
@@ -75,8 +76,8 @@ public class GameDetailsService : IViewService
     {
         if (askConfirmation)
         {
-            var confirmation = await MessageBoxService.Show("Confirm".GetLocalizedString(),
-                "Are you sure you want to read the walkthrough?".GetLocalizedString(),
+            var confirmation = await MessageBoxService.ShowLocalized("Confirm",
+                "Are you sure you want to read the walkthrough?",
                  MsgBoxButton.YesNo, MsgBoxImage.Question);
             if (confirmation.ButtonResult == MsgBoxButtonResult.No)
                 return;

@@ -17,6 +17,7 @@ using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Navigation;
@@ -150,9 +151,12 @@ public class GameSearchResultService : IViewService
         {
             _logger.LogWarning("Game {GameTitle} already installed", gameToInstall.Title);
             var gameId = foundGameId.GetValueOrDefault();
-            var result = await MessageBoxService.Show("Game already installed",
-                "This game is already installed. Do you want to install anyway?", MsgBoxButton.YesNo,
-                MsgBoxImage.Question);
+            var result = await MessageBoxService.ShowLocalized("The same mod is already installed",
+                "The same mod is already installed TEXT",
+                MsgBoxButton.YesNo,
+                MsgBoxImage.Error,
+                noButtonText: "Cancel",
+                yesButtonText: "Install anyway");
             if (result.ButtonResult == MsgBoxButtonResult.No)
             {
                 _logger.LogInformation("Won't install already existing game {GameTitle}", gameToInstall.Title);

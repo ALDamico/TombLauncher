@@ -21,6 +21,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Utils;
@@ -211,7 +212,7 @@ public class SettingsService : IViewService
             }
 
             await _gamesUnitOfWork.SyncSavegameMetadata(allGamesWithSaves);
-            await MessageBoxService.Show("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
+            await MessageBoxService.ShowLocalized("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
                 MsgBoxImage.Success);
         }
         finally

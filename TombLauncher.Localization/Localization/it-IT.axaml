@@ -165,7 +165,7 @@
     <system:String x:Key="Restore">Ripristina</system:String>
     <system:String x:Key="Size">Dimensioni</system:String>
     <system:String x:Key="Delete all">Elimina tutti</system:String>
-    <system:String x:Key="Delete all savegames">Delete all savegames</system:String>
+    <system:String x:Key="Delete all savegames">Elimina tutti i salvataggi</system:String>
     <system:String x:Key="Are you sure you want to delete all savegames? This action cannot be undone.">Sei sicuro di voler eliminare tutti i salvataggi? Questa azione è irreversibile.</system:String>
     <system:String x:Key="Delete savegames marked as start of level">Elimina anche i salvataggi contrassegnati come Inizio di livello</system:String>
     <system:String x:Key="Rescans your backed up savegames and syncs their content with Tomb Launchers database">Scansiona i salvataggi noti a Tomb Launcher e ne sincronizza il contenuto col database.</system:String>
@@ -181,6 +181,8 @@
     <system:String x:Key="Scan complete">Scansione completata</system:String>
     <system:String x:Key="There were no savegames to import.">Non sono stati trovati salvataggi da importare.</system:String>
     <system:String x:Key="Import missing savegames">Importa salvataggi mancanti</system:String>
+    <system:String x:Key="Sync completed">Sincronizzazione completata</system:String>
+    <system:String x:Key="Syncronization completed successfully!">Sincronizzazione completata con successo!</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

@@ -182,6 +182,8 @@
     <system:String x:Key="Scan complete">Scan complete</system:String>
     <system:String x:Key="There were no savegames to import.">There were no savegames to import.</system:String>
     <system:String x:Key="Import missing savegames">Import missing savegames</system:String>
+    <system:String x:Key="Sync completed">Sync completed</system:String>
+    <system:String x:Key="Syncronization completed successfully!">Synchronization completed successfully!</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

@@ -22,6 +22,7 @@ using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.Pages;
 using Path = System.IO.Path;
 using Avalonia.Media.Transformation;
+using TombLauncher.Extensions;
 
 namespace TombLauncher.Services;
 
@@ -159,9 +160,8 @@ public class SavegameService
         var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys).ToList();
         if (missingSaveGames.Count == 0)
         {
-            await _messageBoxService.Show("Scan complete".GetLocalizedString(),
-                "There were no savegames to import.".GetLocalizedString(), MsgBoxButton.Ok,
-                MsgBoxImage.Information);
+            await _messageBoxService.ShowLocalized("Scan complete",
+                "There were no savegames to import.", MsgBoxButton.Ok, MsgBoxImage.Information);
             return;
         }
 
