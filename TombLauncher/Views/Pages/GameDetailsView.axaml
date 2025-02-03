@@ -59,7 +59,7 @@
                 Text="{DynamicResource 'Download'}"
                 Classes="stretched btn-success" />
             <controls:SplitIconButton
-                IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
+                IsVisible="{Binding Game.GameMetadata.IsInstalled, Converter={x:Static ObjectConverters.IsNotNull}}"
                 Classes="stretched btn-success"
                 Icon="Play"
                 Text="{DynamicResource 'Play'}"

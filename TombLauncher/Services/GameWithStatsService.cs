@@ -60,7 +60,7 @@ public class GameWithStatsService : IViewService
     public async Task OpenGame(int gameId)
     {
         var game = await GetGameById(gameId);
-        OpenGame(game);
+        await OpenGame(game);
     }
 
     public void PlayGame(GameWithStatsViewModel game)
@@ -125,8 +125,7 @@ public class GameWithStatsService : IViewService
 
     public bool CanPlayGame(GameWithStatsViewModel game)
     {
-        return game.GameMetadata.InstallDirectory.IsNotNullOrWhiteSpace() &&
-               game.GameMetadata.ExecutablePath.IsNotNullOrWhiteSpace();
+        return game.GameMetadata.IsInstalled;
     }
 
     private void OnSetupExited()

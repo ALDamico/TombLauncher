@@ -43,7 +43,7 @@ public class GameListService : IViewService
     {
         host.SetBusy(true, "Loading games...".GetLocalizedString());
 
-        return (await GamesUnitOfWork.GetGamesWithStats()).Select(ConvertDto).ToObservableCollection();
+        return (await GamesUnitOfWork.GetGamesWithStats(true)).Select(ConvertDto).ToObservableCollection();
     }
 
     private GameWithStatsViewModel ConvertDto(GameWithStatsDto dto)
@@ -71,7 +71,7 @@ public class GameListService : IViewService
             target.SetBusy(true, "Uninstalling".GetLocalizedString(game.GameMetadata.Title));
             var installDir = game.GameMetadata.InstallDirectory;
             Directory.Delete(installDir, true);
-            GamesUnitOfWork.DeleteGameById(game.GameMetadata.Id);
+            GamesUnitOfWork.MarkGameAsUninstalled(game.GameMetadata.Id);
             await GamesUnitOfWork.Save();
             target.ClearBusy();
             NavigationManager.NavigateTo(target);

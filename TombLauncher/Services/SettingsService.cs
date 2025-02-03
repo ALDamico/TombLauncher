@@ -196,7 +196,7 @@ public class SettingsService : IViewService
         try
         {
             currentPage.SetBusy("Syncing savegames...");
-            var allGamesWithSaves = _gamesUnitOfWork.GetSavegameBackups();
+            var allGamesWithSaves = await _gamesUnitOfWork.GetSavegameBackups();
             var headerReader = new SavegameHeaderReader();
             foreach (var savegame in allGamesWithSaves)
             {

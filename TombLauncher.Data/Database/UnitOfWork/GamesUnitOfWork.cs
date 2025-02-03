@@ -53,13 +53,32 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public async Task UpsertGame(IGameMetadata game)
     {
-        var entity = _mapper.Map<Game>(game);
-        if (entity.Id == default)
+        Game entity;
+        if (game.Id == default)
         {
+            entity = _mapper.Map<Game>(game);
             Games.Insert(entity);
         }
         else
         {
+            entity = Games.GetEntityById(game.Id);
+            entity.Author = game.Author;
+            entity.Description = game.Description;
+            entity.Difficulty = game.Difficulty;
+            entity.Guid = game.Guid;
+            entity.Id = game.Id;
+            entity.Length = game.Length;
+            entity.Setting = game.Setting;
+            entity.Title = game.Title;
+            entity.ExecutablePath = game.ExecutablePath;
+            entity.GameEngine = game.GameEngine;
+            entity.InstallDate = game.InstallDate;
+            entity.InstallDirectory = game.InstallDirectory;
+            entity.IsInstalled = game.IsInstalled;
+            entity.ReleaseDate = game.ReleaseDate;
+            entity.TitlePic = game.TitlePic;
+            entity.AuthorFullName = game.AuthorFullName;
+            entity.UniversalLauncherPath = game.UniversalLauncherPath;
             Games.Update(entity);
         }
 
@@ -67,9 +86,11 @@ public class GamesUnitOfWork : UnitOfWorkBase
         game.Id = entity.Id;
     }
 
-    public void DeleteGameById(int id)
+    public void MarkGameAsUninstalled(int id)
     {
-        Games.Delete(id);
+        var game = Games.GetEntityById(id);
+        game.IsInstalled = false;
+        Games.Update(game);
     }
 
     private GameHashes ToGameHashes(GameHashDto dto)
@@ -82,12 +103,16 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameMetadataDto>>(Games.GetAll());
     }
 
-    public async Task< List<GameWithStatsDto>> GetGamesWithStats()
+    public async Task<List<GameWithStatsDto>> GetGamesWithStats(bool installedOnly = false)
     {
         var outputList = new List<GameWithStatsDto>();
         var playSessions = PlaySessions.GetAll().ToLookup(ps => ps.GameId);
 
-        var games = await Games.GetAll().ToListAsync();
+        var games = Games.GetAll();
+        if (installedOnly)
+        {
+            games = games.Where(g => g.IsInstalled);
+        }
         foreach (var game in games)
         {
             var thisGamePlaySessions = playSessions[game.Id].ToList();
@@ -107,7 +132,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
             outputList.Add(gameWithStatsDto);
         }
 
-        return outputList;
+        return await Task.FromResult(outputList);
     }
 
     public GameWithStatsDto GetGameWithStats(int id)
@@ -179,6 +204,9 @@ public class GamesUnitOfWork : UnitOfWorkBase
         if (matches.Any(m => m.Count == computedHashes.Count))
         {
             var idToReturn = matches.FirstOrDefault()?.Id;
+            var game = Games.GetEntityById(idToReturn.GetValueOrDefault());
+            if (!game.IsInstalled)
+                return false;
             foundId = idToReturn;
             return true;
         }
@@ -204,11 +232,11 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameLinkDto>>(queryResult);
     }
 
-    public void SaveLink(GameLinkDto dto)
+    public async Task SaveLink(GameLinkDto dto)
     {
         if (dto.Id != default) return;
 
-        var entity = _mapper.Map<GameLink>(dto);
+        var entity = await Links.Get(l => l.Link == dto.Link && l.LinkType == dto.LinkType && l.BaseUrl == dto.BaseUrl).FirstOrDefaultAsync();
         Links.Upsert(entity);
     }
 
@@ -373,13 +401,13 @@ public class GamesUnitOfWork : UnitOfWorkBase
         }
     }
 
-    public List<FileBackupDto> GetSavegamesByGameId(int gameId)
+    public async Task<List<FileBackupDto>> GetSavegamesByGameId(int gameId)
     {
         var backups = Backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
             .Where(f => f.GameId == gameId)
             .OrderByDescending(f => f.BackedUpOn);
 
-        return _mapper.Map<List<FileBackupDto>>(backups);
+        return await _mapper.ProjectTo<FileBackupDto>(backups).ToListAsync();
     }
 
     public async Task<List<string>> GetSavegameMd5sByGameId(int gameId)
@@ -421,10 +449,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<SavegameBackupDto>(entity);
     }
 
-    public List<SavegameBackupDto> GetSavegameBackups()
+    public async Task<List<SavegameBackupDto>> GetSavegameBackups()
     {
         var entities = Backups.Get().Include(b => b.SavegameMetadata);
-        return _mapper.Map<List<SavegameBackupDto>>(entities);
+        return await _mapper.ProjectTo<SavegameBackupDto>(entities).ToListAsync();
     }
 
     public async Task SyncSavegameMetadata(IEnumerable<SavegameBackupDto> dtos)

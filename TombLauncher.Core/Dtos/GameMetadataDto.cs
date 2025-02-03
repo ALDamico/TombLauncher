@@ -21,4 +21,5 @@ public class GameMetadataDto : IGameMetadata
     public byte[] TitlePic { get; set; }
     public string AuthorFullName { get; set; }
     public string UniversalLauncherPath { get; set; }
+    public bool IsInstalled { get; set; }
 }

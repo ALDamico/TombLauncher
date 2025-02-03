@@ -50,7 +50,7 @@ public class SavegameService
     {
         targetViewModel.SetBusy("Fetching savegames for GAMETITLE".GetLocalizedString(targetViewModel.GameTitle));
         var observableCollection = new ObservableCollection<SavegameViewModel>();
-        var knownSavegames = _gamesUnitOfWork.GetSavegamesByGameId(targetViewModel.GameId);
+        var knownSavegames = await _gamesUnitOfWork.GetSavegamesByGameId(targetViewModel.GameId);
         var headerParser = new SavegameHeaderReader();
         foreach (var savegame in knownSavegames)
         {

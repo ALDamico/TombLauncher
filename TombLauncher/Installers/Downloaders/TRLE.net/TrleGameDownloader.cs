@@ -194,12 +194,12 @@ public class TrleGameDownloader : IGameDownloader
                         metadata.DetailsLink = detailsLink;
                         break;
                     case "difficulty":
-                        metadata.Difficulty = Enum.TryParse<GameDifficulty>(v, out var actualDifficulty)
+                        metadata.Difficulty = Enum.TryParse<GameDifficulty>(v, true, out var actualDifficulty)
                             ? actualDifficulty
                             : GameDifficulty.Unknown;
                         break;
                     case "duration":
-                        metadata.Length = Enum.TryParse<GameLength>(v, out var actualLength)
+                        metadata.Length = Enum.TryParse<GameLength>(v, true, out var actualLength)
                             ? actualLength
                             : GameLength.Unknown;
                         break;

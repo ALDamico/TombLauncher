@@ -106,11 +106,10 @@
                                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
                                     <controls:IconOnlyButton Icon="Play" Classes="btn-success" 
                                                              Command="{Binding InstalledGame.PlayCmd}" 
-                                                             IsVisible="{Binding InstalledGame, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                                             IsVisible="{Binding InstalledGame.GameMetadata.IsInstalled}"/>
                                     <Button Command="{Binding InstallCmd}"
                                             CommandParameter="{Binding .}"
-                                            ToolTip.Tip="{DynamicResource Download}"
-                                    >
+                                            ToolTip.Tip="{DynamicResource Download}">
                                         <avalonia:MaterialIcon Kind="Download"/>
                                     </Button>
                                     <controls:IconOnlyButton Icon="Cancel" 

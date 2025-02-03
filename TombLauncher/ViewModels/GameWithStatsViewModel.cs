@@ -34,7 +34,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     public ICommand OpenCmd { get; }
     private async Task Open()
     {
-        _gameWithStatsService.OpenGame(this);
+        await _gameWithStatsService.OpenGame(this);
     }
     
     public ICommand LaunchSetupCmd { get; }

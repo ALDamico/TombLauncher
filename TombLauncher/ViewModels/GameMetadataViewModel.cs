@@ -23,5 +23,6 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private Bitmap _titlePic;
     [ObservableProperty] private string _authorFullName;
     [ObservableProperty] private string _universalLauncherPath;
+    [ObservableProperty] private bool _isInstalled;
     public Guid Guid { get; set; }
 }
