@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
@@ -37,6 +39,7 @@ public class GameWithStatsService : IViewService
         }
 
         _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
+        _logger = Ioc.Default.GetRequiredService<ILogger<GameWithStatsService>>();
     }
 
     private SavegameHeaderProcessor _headerProcessor;
@@ -50,6 +53,7 @@ public class GameWithStatsService : IViewService
     private FileSystemWatcher _watcher;
     private bool _backupEnabled;
     private int? _numberOfSavesToKeep;
+    private ILogger<GameWithStatsService> _logger;
 
     public async Task OpenGame(GameWithStatsViewModel game)
     {
@@ -128,14 +132,26 @@ public class GameWithStatsService : IViewService
         return game.GameMetadata.IsInstalled;
     }
 
-    private void OnSetupExited()
+    private void OnSetupExited(Process process)
     {
+        if (process.ExitCode != 0)
+        {
+            _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
+        }
+        else
+        {
+            _logger.LogInformation("Setup process exited without issue");
+        }
         var currentPage = NavigationManager.GetCurrentPage();
         currentPage.ClearBusy();
     }
 
     private async Task OnGameExited(GameWithStatsViewModel game, Process process)
     {
+        if (process.ExitCode != 0)
+        {
+            _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
+        }
         var currentPage = NavigationManager.GetCurrentPage();
         try
         {
@@ -157,10 +173,20 @@ public class GameWithStatsService : IViewService
             {
                 GamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, savegameDtos, _numberOfSavesToKeep);
                 _headerProcessor.ClearProcessedFiles();
-                _headerProcessor?.Dispose();
-                _headerProcessor = null;
-                _watcher?.Dispose();
-                _watcher = null;
+                try
+                {
+                    _headerProcessor?.Dispose();
+                    _watcher?.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Shit happens
+                }
+                finally
+                {
+                    _headerProcessor = null;
+                    _watcher = null;
+                }
             }
 
             await GamesUnitOfWork.Save();
@@ -205,8 +231,12 @@ public class GameWithStatsService : IViewService
         }
         else
         {
-            process.Exited += (_, _) => OnSetupExited();
+            process.Exited += (sender, _) => OnSetupExited(sender as Process);
         }
+
+        process.ErrorDataReceived += (sender, args) => _logger.LogError("Process error: {StandardError}", args.Data);
+        process.OutputDataReceived +=
+            (sender, args) => _logger.LogInformation("Process output: {StandardOutput}", args.Data);
 
         process.Start();
     }

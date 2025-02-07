@@ -237,6 +237,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
         if (dto.Id != default) return;
 
         var entity = await Links.Get(l => l.Link == dto.Link && l.LinkType == dto.LinkType && l.BaseUrl == dto.BaseUrl).FirstOrDefaultAsync();
+        if (entity == null)
+        {
+            entity = _mapper.Map<GameLink>(dto);
+        }
         Links.Upsert(entity);
     }
 

@@ -7,7 +7,7 @@ namespace TombLauncher.Core.Savegames;
 public class SavegameHeaderProcessor : IDisposable
 {
     // Create an AutoResetEvent EventWaitHandle
-    private readonly EventWaitHandle _eventWaitHandle = new AutoResetEvent(false);
+    private EventWaitHandle _eventWaitHandle = new AutoResetEvent(false);
     private readonly Thread _worker;
     private readonly ConcurrentQueue<string> fileNamesQueue = new();
     private readonly SavegameHeaderReader _savegameHeaderReader;
@@ -58,6 +58,10 @@ public class SavegameHeaderProcessor : IDisposable
             else
             {
                 // No more file names - wait for a signal
+                if (_eventWaitHandle.SafeWaitHandle.IsClosed)
+                {
+                    _eventWaitHandle = new AutoResetEvent(false);
+                }
                 _eventWaitHandle.WaitOne();
             }
         }
