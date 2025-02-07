@@ -108,6 +108,9 @@
     <Style Selector="TextBlock.text-muted">
         <Setter Property="Foreground" Value="#6c757d"></Setter>
     </Style>
+    <Style Selector="TextBlock:disabled">
+        <Setter Property="Foreground" Value="#6c757d"></Setter>
+    </Style>
     <Style Selector="avalonia|MaterialIcon.text-muted">
         <Setter Property="Foreground" Value="#6c757d"></Setter>
     </Style>
@@ -163,5 +166,9 @@
                 </Canvas>
             </DataTemplate>
         </Setter>
+    </Style>
+    <Style Selector="TextBlock.small">
+        <Setter Property="FontSize" Value="9"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
     </Style>
 </Styles>

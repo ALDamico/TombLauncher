@@ -39,10 +39,11 @@ public class GameListService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
 
-    public Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
+    public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
         host.SetBusy(true, "Loading games...".GetLocalizedString());
-        return Task.FromResult(GamesUnitOfWork.GetGamesWithStats().Select(ConvertDto).ToObservableCollection());
+
+        return (await GamesUnitOfWork.GetGamesWithStats(true)).Select(ConvertDto).ToObservableCollection();
     }
 
     private GameWithStatsViewModel ConvertDto(GameWithStatsDto dto)
@@ -64,14 +65,14 @@ public class GameListService : IViewService
     public async Task Uninstall(GameListViewModel target, GameWithStatsViewModel game)
     {
         var confirmDialogViewModel = new GameUninstallConfirmDialogViewModel() { Game = game.GameMetadata };
-        confirmDialogViewModel.RequestCloseDialog += (_, args) =>
+        confirmDialogViewModel.RequestCloseDialog += async (_, args) =>
         {
             if (!args.DialogResult) return;
             target.SetBusy(true, "Uninstalling".GetLocalizedString(game.GameMetadata.Title));
             var installDir = game.GameMetadata.InstallDirectory;
             Directory.Delete(installDir, true);
-            GamesUnitOfWork.DeleteGameById(game.GameMetadata.Id);
-            GamesUnitOfWork.Save();
+            GamesUnitOfWork.MarkGameAsUninstalled(game.GameMetadata.Id);
+            await GamesUnitOfWork.Save();
             target.ClearBusy();
             NavigationManager.NavigateTo(target);
         };

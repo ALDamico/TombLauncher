@@ -30,7 +30,7 @@
                        FontWeight="DemiBold"
                        FontSize="20"
                        Text="{Binding Game.GameMetadata.Title}" />
-            <ScrollViewer VerticalScrollBarVisibility="Visible" >
+            <ScrollViewer VerticalScrollBarVisibility="Visible">
                 <TextBlock TextWrapping="Wrap" Classes="paragraph">
                     <Run Text="{DynamicResource By}" />
                     <Run Classes="italicsLabel"
@@ -52,16 +52,18 @@
             <Image Source="{Binding Game.GameMetadata.TitlePic}"
                    Width="320"
                    Height="240" />
-            <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNull}}"
-                                 Command="{Binding InstallCmd}" 
-                                 Icon="Download" 
-                                 Text="{DynamicResource 'Download'}" 
-                                 Classes="stretched btn-success"/>
-            <controls:SplitIconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
-                                      Classes="stretched btn-success"
-                                      Icon="Play"
-                                      Text="{DynamicResource 'Play'}"
-                                      Command="{Binding Game.PlayCmd}">
+            <controls:IconButton
+                IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNull}}"
+                Command="{Binding InstallCmd}"
+                Icon="Download"
+                Text="{DynamicResource 'Download'}"
+                Classes="stretched btn-success" />
+            <controls:SplitIconButton
+                IsVisible="{Binding Game.GameMetadata.IsInstalled, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Classes="stretched btn-success"
+                Icon="Play"
+                Text="{DynamicResource 'Play'}"
+                Command="{Binding Game.PlayCmd}">
                 <controls:SplitIconButton.Flyout>
                     <MenuFlyout>
                         <MenuItem Header="{DynamicResource Setup}"
@@ -73,20 +75,26 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
-                                 Command="{Binding BrowseFolderCmd}"
-                                 Classes="stretched" Icon="FolderOpen"
-                                 Text="{DynamicResource Browse files}" />
-            <controls:SplitIconButton IsVisible="{Binding WalkthroughLinks, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}" 
-                                      Command="{Binding ReadWalkthroughCmd}"
-                                      CommandParameter="{Binding WalkthroughLinks[0]}"
-                                      Icon="Map"
-                                      Classes="stretched"
-                                      Text="{DynamicResource 'Read walkthrough'}">
+            <controls:IconButton Icon="Floppy" Text="{DynamicResource Savegames}"
+                                 Command="{Binding ManageSaveGamesCmd}"
+                                 IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
+            </controls:IconButton>
+            <controls:IconButton
+                IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Command="{Binding BrowseFolderCmd}"
+                Classes="stretched" Icon="FolderOpen"
+                Text="{DynamicResource Browse files}" />
+            <controls:SplitIconButton
+                IsVisible="{Binding WalkthroughLinks, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}"
+                Command="{Binding ReadWalkthroughCmd}"
+                CommandParameter="{Binding WalkthroughLinks[0]}"
+                Icon="Map"
+                Classes="stretched"
+                Text="{DynamicResource 'Read walkthrough'}">
                 <controls:SplitIconButton.Flyout>
                     <MenuFlyout ItemsSource="{Binding WalkthroughLinks}">
                         <MenuFlyout.ItemContainerTheme>
-                            <ControlTheme TargetType="MenuItem" 
+                            <ControlTheme TargetType="MenuItem"
                                           BasedOn="{StaticResource {x:Type MenuItem}}"
                                           x:DataType="viewModels:GameLinkViewModel">
                                 <Setter Property="Header"
@@ -100,11 +108,12 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <controls:IconButton IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" 
-                                 Classes="stretched btn-danger"
-                                 Icon="Delete"
-                                 Text="{DynamicResource Uninstall}"
-                                 Command="{Binding UninstallCmd}" />
+            <controls:IconButton
+                IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Classes="stretched btn-danger"
+                Icon="Delete"
+                Text="{DynamicResource Uninstall}"
+                Command="{Binding UninstallCmd}" />
         </StackPanel>
     </Grid>
 </UserControl>

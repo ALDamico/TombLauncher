@@ -2,9 +2,13 @@
 using AutoMapper;
 using Newtonsoft.Json;
 using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization.Dtos;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Savegames;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Models;
+using TombLauncher.Factories.Mapping;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages.Settings;
@@ -62,6 +66,49 @@ public static class MapperConfigurationFactory
             cfg.CreateMap<DayOfWeekStatisticsDto, DayOfWeekAverageTimeStatisticsViewModel>();
             cfg.CreateMap<DailyStatisticsDto, DailyStatisticsViewModel>();
             cfg.CreateMap<GameStatisticsDto, GameStatisticsViewModel>();
+            cfg.CreateMap<FileBackup, FileBackupDto>().ReverseMap();
+            cfg.CreateMap<SavegameViewModel, FileBackupDto>()
+                .ConstructUsingServiceLocator()
+                .ForMember(m => m.FileType,
+                    opt => opt.MapFrom(vm => vm.IsStartOfLevel ? FileType.SavegameStartOfLevel : FileType.Savegame));
+            
+            cfg.CreateMap<FileBackupDto, SavegameViewModel>()
+                .ForMember(m => m.IsStartOfLevel, opt => opt.MapFrom(dto => dto.FileType == FileType.SavegameStartOfLevel))
+                .ForMember(m => m.SaveNumber, opt => opt.Ignore())
+                .ForMember(m => m.SlotNumber, opt => opt.Ignore())
+                .ForMember(m => m.LevelName, opt => opt.Ignore())
+                .ForMember(m => m.UpdateStartOfLevelStateCmd, opt => opt.Ignore());
+
+            var mappingHeaderReader = new SavegameHeaderReader();
+            var headerProxy = new SavegameHeaderProxy(mappingHeaderReader);
+
+            var levelNameResolver = new LevelNameResolver(headerProxy);
+            var slotNumberResolver = new SlotNumberResolver(headerProxy);
+            var saveNumberResolver = new SaveNumberResolver(headerProxy);
+
+            cfg.CreateMap<FileBackupDto, SavegameBackupDto>()
+                .ForMember(m => m.Md5, opt => opt.MapFrom(file => Md5Utils.ComputeMd5Hash(file.Data).GetAwaiter().GetResult()))
+                .ForMember(m => m.LevelName, opt => opt.MapFrom(levelNameResolver))
+                .ForMember(m => m.SlotNumber, opt => opt.MapFrom(slotNumberResolver))
+                .ForMember(m => m.SaveNumber, opt => opt.MapFrom(saveNumberResolver));
+
+            cfg.CreateMap<FileBackup, SavegameBackupDto>();
+                cfg.CreateMap<SavegameBackupDto, FileBackup>()
+                    .ConstructUsing(dto => new FileBackup()
+                    {
+                        SavegameMetadata = new SavegameMetadata()
+                    })
+                    .ForPath(dto => dto.SavegameMetadata.Id, opt => opt.MapFrom(o => o.MetadataId))
+                    .ForPath(dto => dto.SavegameMetadata.LevelName, opt => opt.MapFrom(o => o.LevelName))
+                    .ForPath(dto => dto.SavegameMetadata.SaveNumber, opt => opt.MapFrom(o => o.SaveNumber))
+                    .ForPath(dto => dto.SavegameMetadata.SlotNumber, opt => opt.MapFrom(o => o.SlotNumber))
+                    .ForPath(dto => dto.SavegameMetadata.FileBackupId, opt => opt.MapFrom(o => o.Id)); 
+                
+//                .ReverseMap();
+            cfg.CreateMap<SavegameMetadata, SavegameBackupDto>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(savegame => savegame.FileBackup.Id))
+                .ForMember(dto => dto.MetadataId, opt => opt.MapFrom(savegame => savegame.Id))
+                .ReverseMap();
 
             cfg.AddGlobalIgnore("InitCmd");
         });

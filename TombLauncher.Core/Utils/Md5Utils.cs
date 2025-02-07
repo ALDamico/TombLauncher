@@ -10,4 +10,10 @@ public static class Md5Utils
         var md5Hash = await md5.ComputeHashAsync(stream);
         return BitConverter.ToString(md5Hash).Replace("-", string.Empty).ToLowerInvariant();
     }
+
+    public static async Task<string> ComputeMd5Hash(byte[] bytes)
+    {
+        using var memoryStream = new MemoryStream(bytes);
+        return await ComputeMd5Hash(memoryStream);
+    }
 }

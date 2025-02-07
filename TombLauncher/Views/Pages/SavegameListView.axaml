@@ -1,0 +1,86 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.SavegameListView"
+             x:DataType="pages:SavegameListViewModel">
+    <Design.DataContext>
+        <pages:SavegameListViewModel />
+    </Design.DataContext>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCmd}" />
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Classes="h1" Text="{Binding GameTitle, Converter={StaticResource UppercaseConverter}}" />
+        <DockPanel Grid.Row="1" LastChildFill="true">
+            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{DynamicResource 'Slot'}"/>
+            <CheckBox IsChecked="{Binding SavegameFilter.StartOfLevelOnly}"
+                      Margin="2, 0, 0, 0"
+                      DockPanel.Dock="Right"
+                      Content="{DynamicResource 'Only start of level'}">
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="PropertyChanged" 
+                                          SourceObject="{Binding SavegameFilter}">
+                        <EventTriggerBehavior.Actions>
+                            <InvokeCommandAction Command="{Binding FilterCmd}"
+                                                 CommandParameter="{Binding SavegameFilter}" />
+                        </EventTriggerBehavior.Actions>
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </CheckBox>
+            <ComboBox ItemsSource="{Binding Slots}"
+                      SelectedItem="{Binding SelectedSlot}"
+                      SelectedValue="{Binding SavegameFilter.SlotNumber}"
+                      SelectedValueBinding="{Binding  SaveSlot}">
+                <ComboBox.Styles>
+                    <Style Selector="ComboBoxItem">
+                        <Setter Property="IsEnabled"
+                                Value="{Binding IsEnabled, DataType=viewModels:SavegameSlotViewModel}" />
+                    </Style>
+                </ComboBox.Styles>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Header}"
+                                   IsEnabled="{Binding IsEnabled}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="SelectionChanged" 
+                                          SourceObject="{Binding SelectedSlot}">
+                        <EventTriggerBehavior.Actions>
+                            <InvokeCommandAction Command="{Binding SelectedSlot.FilterCmd}"
+                                                 CommandParameter="{Binding SavegameFilter}" />
+                        </EventTriggerBehavior.Actions>
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </ComboBox>
+        </DockPanel>
+        <ScrollViewer Grid.Row="2">
+            <ItemsControl ItemsSource="{Binding FilteredSaves}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="viewModels:SavegameViewModel">
+                        <views:SavegameCardView/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

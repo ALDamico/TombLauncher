@@ -37,6 +37,37 @@ namespace TombLauncher.Data.Database.Migrations
                     b.ToTable("AppCrashes");
                 });
 
+            modelBuilder.Entity("TombLauncher.Data.Models.FileBackup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("BackedUpOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Data")
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Md5")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("FileBackups");
+                });
+
             modelBuilder.Entity("TombLauncher.Data.Models.Game", b =>
                 {
                     b.Property<int>("Id")
@@ -69,6 +100,9 @@ namespace TombLauncher.Data.Database.Migrations
 
                     b.Property<string>("InstallDirectory")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsInstalled")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Length")
                         .HasColumnType("INTEGER");
@@ -165,6 +199,41 @@ namespace TombLauncher.Data.Database.Migrations
                     b.ToTable("PlaySession");
                 });
 
+            modelBuilder.Entity("TombLauncher.Data.Models.SavegameMetadata", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FileBackupId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LevelName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SaveNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SlotNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileBackupId")
+                        .IsUnique();
+
+                    b.ToTable("SavegameMetadata");
+                });
+
+            modelBuilder.Entity("TombLauncher.Data.Models.FileBackup", b =>
+                {
+                    b.HasOne("TombLauncher.Data.Models.Game", null)
+                        .WithMany("FileBackups")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TombLauncher.Data.Models.GameHashes", b =>
                 {
                     b.HasOne("TombLauncher.Data.Models.Game", null)
@@ -194,8 +263,26 @@ namespace TombLauncher.Data.Database.Migrations
                     b.Navigation("Game");
                 });
 
+            modelBuilder.Entity("TombLauncher.Data.Models.SavegameMetadata", b =>
+                {
+                    b.HasOne("TombLauncher.Data.Models.FileBackup", "FileBackup")
+                        .WithOne("SavegameMetadata")
+                        .HasForeignKey("TombLauncher.Data.Models.SavegameMetadata", "FileBackupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FileBackup");
+                });
+
+            modelBuilder.Entity("TombLauncher.Data.Models.FileBackup", b =>
+                {
+                    b.Navigation("SavegameMetadata");
+                });
+
             modelBuilder.Entity("TombLauncher.Data.Models.Game", b =>
                 {
+                    b.Navigation("FileBackups");
+
                     b.Navigation("Hashes");
 
                     b.Navigation("Links");

@@ -6,6 +6,7 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
@@ -21,6 +22,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
         _playSessions = GetRepository<PlaySession>();
         _hashes = GetRepository<GameHashes>();
         _links = GetRepository<GameLink>();
+        _backups = GetRepository<FileBackup>();
+        _savegameMetadata = GetRepository<SavegameMetadata>();
     }
 
     private IMapper _mapper;
@@ -29,12 +32,17 @@ public class GamesUnitOfWork : UnitOfWorkBase
     private readonly Lazy<EfRepository<PlaySession>> _playSessions;
     private readonly Lazy<EfRepository<GameHashes>> _hashes;
     private readonly Lazy<EfRepository<GameLink>> _links;
+    private readonly Lazy<EfRepository<FileBackup>> _backups;
+    private readonly Lazy<EfRepository<SavegameMetadata>> _savegameMetadata;
 
     internal EfRepository<Game> Games => _games.Value;
 
     internal EfRepository<PlaySession> PlaySessions => _playSessions.Value;
     internal EfRepository<GameHashes> Hashes => _hashes.Value;
     internal EfRepository<GameLink> Links => _links.Value;
+    internal EfRepository<FileBackup> Backups => _backups.Value;
+
+    internal EfRepository<SavegameMetadata> SavegameMetadata => _savegameMetadata.Value;
 
     public GameMetadataDto GetGameById(int id)
     {
@@ -43,25 +51,46 @@ public class GamesUnitOfWork : UnitOfWorkBase
     }
 
 
-    public void UpsertGame(IGameMetadata game)
+    public async Task UpsertGame(IGameMetadata game)
     {
-        var entity = _mapper.Map<Game>(game);
-        if (entity.Id == default)
+        Game entity;
+        if (game.Id == default)
         {
+            entity = _mapper.Map<Game>(game);
             Games.Insert(entity);
         }
         else
         {
+            entity = Games.GetEntityById(game.Id);
+            entity.Author = game.Author;
+            entity.Description = game.Description;
+            entity.Difficulty = game.Difficulty;
+            entity.Guid = game.Guid;
+            entity.Id = game.Id;
+            entity.Length = game.Length;
+            entity.Setting = game.Setting;
+            entity.Title = game.Title;
+            entity.ExecutablePath = game.ExecutablePath;
+            entity.GameEngine = game.GameEngine;
+            entity.InstallDate = game.InstallDate;
+            entity.InstallDirectory = game.InstallDirectory;
+            entity.IsInstalled = game.IsInstalled;
+            entity.ReleaseDate = game.ReleaseDate;
+            entity.TitlePic = game.TitlePic;
+            entity.AuthorFullName = game.AuthorFullName;
+            entity.UniversalLauncherPath = game.UniversalLauncherPath;
             Games.Update(entity);
         }
 
-        Save();
+        await Save();
         game.Id = entity.Id;
     }
 
-    public void DeleteGameById(int id)
+    public void MarkGameAsUninstalled(int id)
     {
-        Games.Delete(id);
+        var game = Games.GetEntityById(id);
+        game.IsInstalled = false;
+        Games.Update(game);
     }
 
     private GameHashes ToGameHashes(GameHashDto dto)
@@ -74,12 +103,16 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameMetadataDto>>(Games.GetAll());
     }
 
-    public List<GameWithStatsDto> GetGamesWithStats()
+    public async Task<List<GameWithStatsDto>> GetGamesWithStats(bool installedOnly = false)
     {
         var outputList = new List<GameWithStatsDto>();
         var playSessions = PlaySessions.GetAll().ToLookup(ps => ps.GameId);
 
-        var games = Games.GetAll().ToList();
+        var games = Games.GetAll();
+        if (installedOnly)
+        {
+            games = games.Where(g => g.IsInstalled);
+        }
         foreach (var game in games)
         {
             var thisGamePlaySessions = playSessions[game.Id].ToList();
@@ -99,7 +132,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
             outputList.Add(gameWithStatsDto);
         }
 
-        return outputList;
+        return await Task.FromResult(outputList);
     }
 
     public GameWithStatsDto GetGameWithStats(int id)
@@ -171,6 +204,9 @@ public class GamesUnitOfWork : UnitOfWorkBase
         if (matches.Any(m => m.Count == computedHashes.Count))
         {
             var idToReturn = matches.FirstOrDefault()?.Id;
+            var game = Games.GetEntityById(idToReturn.GetValueOrDefault());
+            if (!game.IsInstalled)
+                return false;
             foundId = idToReturn;
             return true;
         }
@@ -178,14 +214,14 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return false;
     }
 
-    public void SaveHashes(List<GameHashDto> hashes)
+    public async Task SaveHashes(List<GameHashDto> hashes)
     {
         foreach (var hash in hashes)
         {
             Hashes.Insert(ToGameHashes(hash));
         }
 
-        Save();
+        await Save();
     }
 
     public List<GameLinkDto> GetLinks(int gameId, LinkType? linkType = null)
@@ -196,11 +232,15 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameLinkDto>>(queryResult);
     }
 
-    public void SaveLink(GameLinkDto dto)
+    public async Task SaveLink(GameLinkDto dto)
     {
         if (dto.Id != default) return;
 
-        var entity = _mapper.Map<GameLink>(dto);
+        var entity = await Links.Get(l => l.Link == dto.Link && l.LinkType == dto.LinkType && l.BaseUrl == dto.BaseUrl).FirstOrDefaultAsync();
+        if (entity == null)
+        {
+            entity = _mapper.Map<GameLink>(dto);
+        }
         Links.Upsert(entity);
     }
 
@@ -226,10 +266,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return _mapper.Map<List<GameMetadataDto>>(queryResult);
     }
 
-    public Dictionary<string, GameWithStatsDto> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
+    public async Task<Dictionary<string, GameWithStatsDto>> GetGamesByLinksDictionary(LinkType linkType, List<string> links)
     {
-        var stats = GetGamesWithStats();
-        return Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).ToList()
+        var stats = await GetGamesWithStats();
+        return (await Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).ToListAsync())
             .Join(stats, l => l.GameId, game => game.GameMetadata.Id, (i, game) => new { Link = i.Link, Game = game })
             .ToDictionary(k => k.Link, g => g.Game);
     }
@@ -291,7 +331,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
                 DifferentGamesPlayed = distinctGamesPlayed,
                 TotalPlayTime = totalPlayTime
             };
-            
+
             dailyStats.Add(dto);
 
             dateTimeIterator = dateTimeIterator.AddDays(1);
@@ -339,5 +379,104 @@ public class GamesUnitOfWork : UnitOfWorkBase
             LastPlayed = latestSession.StartDate,
             Id = latestSession.GameId
         };
+    }
+
+    public void BackupSavegames(int gameId, List<SavegameBackupDto> dtos, int? numberOfVersionsToKeep)
+    {
+        dtos.ForEach(f => f.GameId = gameId);
+        var entitiesToPersist = _mapper.Map<List<FileBackup>>(dtos);
+        foreach (var entity in entitiesToPersist)
+        {
+            Backups.Insert(entity);
+            SavegameMetadata.Upsert(entity.SavegameMetadata);
+        }
+
+        if (numberOfVersionsToKeep.HasValue)
+        {
+            var groups = Backups.GetAll().Include(b => b.SavegameMetadata).Where(b => b.GameId == gameId)
+                .OrderByDescending(b => b.BackedUpOn)
+                .GroupBy(b => b.SavegameMetadata.SlotNumber);
+            foreach (var group in groups)
+            {
+                var lastDate = group.Select(g => g).Take(numberOfVersionsToKeep.Value).LastOrDefault()?.BackedUpOn;
+                Backups.GetAll().Where(b => b.GameId == gameId).Include(b => b.SavegameMetadata)
+                    .Where(b => b.BackedUpOn < lastDate).ExecuteDelete();
+            }
+        }
+    }
+
+    public async Task<List<FileBackupDto>> GetSavegamesByGameId(int gameId)
+    {
+        var backups = Backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
+            .Where(f => f.GameId == gameId)
+            .OrderByDescending(f => f.BackedUpOn);
+
+        return await _mapper.ProjectTo<FileBackupDto>(backups).ToListAsync();
+    }
+
+    public async Task<List<string>> GetSavegameMd5sByGameId(int gameId)
+    {
+        return await Backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
+            .Where(f => f.GameId == gameId).Select(sg => sg.Md5).ToListAsync();
+    }
+
+    public async Task UpdateSavegameStartOfLevel(FileBackupDto targetSaveGame)
+    {
+        var entityToUpdate = Backups.GetEntityById(targetSaveGame.Id);
+        if (entityToUpdate == null)
+            throw new InvalidOperationException();
+        entityToUpdate.FileType = targetSaveGame.FileType;
+        Backups.Update(entityToUpdate);
+        await Backups.Commit();
+    }
+
+    public async Task DeleteFileBackupById(int id)
+    {
+        if (Backups.Delete(id))
+            await Backups.Commit();
+    }
+
+    public void DeleteFileBackupsByGameId(int gameId, IEnumerable<FileType> fileTypes = null)
+    {
+        var byGameId = Backups.Get(b => b.GameId == gameId);
+        if (fileTypes != null)
+        {
+            byGameId = byGameId.Where(b => fileTypes.Contains(b.FileType));
+        }
+
+        byGameId.ExecuteDelete();
+    }
+
+    public SavegameBackupDto GetSavegameById(int id)
+    {
+        var entity = Backups.GetEntityById(id);
+        return _mapper.Map<SavegameBackupDto>(entity);
+    }
+
+    public async Task<List<SavegameBackupDto>> GetSavegameBackups()
+    {
+        var entities = Backups.Get().Include(b => b.SavegameMetadata);
+        return await _mapper.ProjectTo<SavegameBackupDto>(entities).ToListAsync();
+    }
+
+    public async Task SyncSavegameMetadata(IEnumerable<SavegameBackupDto> dtos)
+    {
+        var idsToFind = dtos.Select(dto => dto.Id);
+        var mappedEntities = Backups.GetAll().Include(b => b.SavegameMetadata)
+            .Join(idsToFind, b => b.Id, i => i, (backup, i) => backup).ToList();
+        var lookup = dtos.ToDictionary(dto => dto.Id);
+        
+        foreach (var entity in mappedEntities)
+        {
+            var backup = lookup[entity.Id];
+            entity.SavegameMetadata.LevelName = backup.LevelName;
+            entity.SavegameMetadata.SlotNumber = backup.SlotNumber;
+            entity.SavegameMetadata.SaveNumber = backup.SaveNumber;
+            entity.Md5 = backup.Md5;
+            entity.BackedUpOn = DateTime.Now;
+            
+            Backups.Update(entity);
+        }
+        await Backups.Commit();
     }
 }

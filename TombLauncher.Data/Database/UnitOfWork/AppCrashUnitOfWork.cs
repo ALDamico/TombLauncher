@@ -30,7 +30,7 @@ public class AppCrashUnitOfWork : UnitOfWorkBase
             DateTime = DateTime.Now
         };
         Crashes.Insert(crash);
-        Save();
+        Save().GetAwaiter().GetResult();
     }
 
     public AppCrashDto GetNotNotifiedCrashes()
@@ -40,12 +40,12 @@ public class AppCrashUnitOfWork : UnitOfWorkBase
         return mapped;
     }
 
-    public void MarkAsNotified(int id)
+    public async Task MarkAsNotified(int id)
     {
         var entityToUpdate = Crashes.GetEntityById(id);
         if (entityToUpdate == null) return;
         entityToUpdate.WasNotified = true;
         Crashes.Update(entityToUpdate);
-        Save();
+        await Save();
     }
 }

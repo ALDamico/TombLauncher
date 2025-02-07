@@ -26,9 +26,9 @@ public abstract class UnitOfWorkBase : IDisposable, IAsyncDisposable
         _disposed = true;
     }
     
-    public void Save()
+    public async Task Save()
     {
-        DbContext.SaveChanges();
+        await DbContext.SaveChangesAsync();
     }
 
     protected Lazy<EfRepository<T>> GetRepository<T>() where T : class

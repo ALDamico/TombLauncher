@@ -7,7 +7,9 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Controls.Infotip"
              x:Name="InfotipRoot">
-    <avalonia:MaterialIcon Height="24" Width="24" Kind="QuestionMarkCircle">
+    
+    <avalonia:MaterialIcon Height="24" Width="24" Kind="{Binding ElementName=InfotipRoot, Path=Icon}" 
+                           Foreground="{Binding ElementName=InfotipRoot, Path=Foreground, TargetNullValue={StaticResource SystemControlForegroundBaseHighBrush}}">
         <ToolTip.Tip>
             <StackPanel Orientation="Vertical">
                 <TextBlock

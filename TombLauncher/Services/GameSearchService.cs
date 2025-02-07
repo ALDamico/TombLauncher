@@ -71,7 +71,7 @@ public class GameSearchService : IViewService
 
         var fetchedResults = await InvokeMerger(target, nextPage);
         
-        var gamesByLinks =
+        var gamesByLinks = await
             GamesUnitOfWork.GetGamesByLinksDictionary(LinkType.Download, nextPage.Select(p => p.DownloadLink).ToList());
         foreach (var game in Enumerable.Where(target.FetchedResults, r => r.InstalledGame == null))
         {
@@ -161,7 +161,7 @@ public class GameSearchService : IViewService
             var mappedGames = _mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);
             var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink) /*TODO Remove this*/
                 .Where(s => s.IsNotNullOrWhiteSpace()).ToList();
-            var installedGames = GamesUnitOfWork.GetGamesByLinksDictionary(LinkType.Download, downloadLinks);
+            var installedGames = await GamesUnitOfWork.GetGamesByLinksDictionary(LinkType.Download, downloadLinks);
             foreach (var game in mappedGames)
             {
                 if (game.DownloadLink == null) continue;
@@ -170,8 +170,6 @@ public class GameSearchService : IViewService
                     game.InstalledGame = _mapper.Map<GameWithStatsViewModel>(installedGame);
                 }
             }
-
-            var observableCollection = mappedGames.ToObservableCollection();
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {

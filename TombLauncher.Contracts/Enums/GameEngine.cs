@@ -19,8 +19,15 @@ public enum GameEngine
     TombRaider5 = 5,
     [Description("TEN")]
     Ten = 6,
+    // Lost Artefacts engines
     [Description("TR1X")]
     Tr1x = 1 << 8 | TombRaider1,
     [Description("TR2X")]
-    Tr2x = 2 << 8 | TombRaider2
+    Tr2x = 2 << 8 | TombRaider2,
+    [Description("Tomb Raider (DOS)")]
+    TombRaider1Dos = 1 << 9 | TombRaider1,
+    [Description("TombATI")]
+    TombAti = 2 << 9 | TombRaider1,
+    [Description("Tomb2Main")]
+    Tomb2Main
 }
