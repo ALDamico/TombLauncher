@@ -15,8 +15,8 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
-using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Navigation;
@@ -63,10 +63,9 @@ public class GameSearchResultService : IViewService
     public bool CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
     {
         if (obj == null) return false;
-        if (obj.InstalledGame != null) return false;
         var links = obj.Sources.Select(s => s.DownloadLink).ToList();
         var gameDto = GamesUnitOfWork.GetGameByLinks(LinkType.Download, links);
-        return gameDto == null || gameDto.ExecutablePath.IsNotNullOrWhiteSpace();
+        return gameDto is not { IsInstalled: true };
     }
 
     public async Task Install(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
@@ -131,7 +130,6 @@ public class GameSearchResultService : IViewService
                         StringComparison.InvariantCultureIgnoreCase) == true)
                 {
                     _logger.LogError(httpEx, "Error downloading game. This is potentially due to the download link redirecting to an external website.");
-                    continue;
                 }
             }
         }
@@ -150,25 +148,28 @@ public class GameSearchResultService : IViewService
         {
             _logger.LogWarning("Game {GameTitle} already installed", gameToInstall.Title);
             var gameId = foundGameId.GetValueOrDefault();
-            var result = await MessageBoxService.Show("Game already installed",
-                "This game is already installed. Do you want to install anyway?", MsgBoxButton.YesNo,
-                MsgBoxImage.Question);
+            var result = await MessageBoxService.ShowLocalized("The same mod is already installed",
+                "The same mod is already installed TEXT",
+                MsgBoxButton.YesNo,
+                MsgBoxImage.Error,
+                noButtonText: "Cancel",
+                yesButtonText: "Install anyway");
             if (result.ButtonResult == MsgBoxButtonResult.No)
             {
                 _logger.LogInformation("Won't install already existing game {GameTitle}", gameToInstall.Title);
-                GamesUnitOfWork.SaveLink(new GameLinkDto()
+                await GamesUnitOfWork.SaveLink(new GameLinkDto()
                     { Link = gameToInstall.DownloadLink, LinkType = LinkType.Download, GameId = gameId, BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName});
-                GamesUnitOfWork.SaveLink(new GameLinkDto()
+                await GamesUnitOfWork.SaveLink(new GameLinkDto()
                     { Link = gameToInstall.DetailsLink, LinkType = LinkType.Details, GameId = gameId, BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
                 if (gameToInstall.HasReviews)
                 {
-                    GamesUnitOfWork.SaveLink(new GameLinkDto()
+                    await GamesUnitOfWork.SaveLink(new GameLinkDto()
                         { Link = gameToInstall.ReviewsLink, LinkType = LinkType.Reviews, GameId = gameId, BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
                 }
 
                 if (gameToInstall.HasWalkthrough)
                 {
-                    GamesUnitOfWork.SaveLink(new GameLinkDto()
+                    await GamesUnitOfWork.SaveLink(new GameLinkDto()
                         { Link = gameToInstall.WalkthroughLink, LinkType = LinkType.Walkthrough, GameId = gameId, BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName });
                 }
                 return;
@@ -182,6 +183,12 @@ public class GameSearchResultService : IViewService
         var allDetails = await GameDownloadManager.FetchAllDetails(gameToInstallDto);
         var dto = await GameDownloadManager.FetchDetails(gameToInstallDto);
         dto.Guid = Guid.NewGuid();
+        if (gameToInstall.InstalledGame != null)
+        {
+            dto.Id = gameToInstall.InstalledGame.GameMetadata.Id;
+            dto.Guid = gameToInstall.InstalledGame.GameMetadata.Guid;
+            dto.InstallDirectory = gameToInstall.InstalledGame.GameMetadata.InstallDirectory;
+        }
         notificationViewModel.OpenCmdParam = dto;
         _logger.LogInformation("Starting install for {GameTitle}", gameToInstall.Title);
         var installLocation = await LevelInstaller.Install(downloadPath, dto, new Progress<CopyProgressInfo>(a =>
@@ -193,30 +200,33 @@ public class GameSearchResultService : IViewService
             installProgress.CurrentFileName = a.CurrentFileName;
         }));
         dto.InstallDate = DateTime.Now;
+        dto.IsInstalled = true;
         dto.InstallDirectory = installLocation;
+        dto.Difficulty = gameToInstall.Difficulty;
+        dto.Length = gameToInstall.Length;
         var detectionResult = EngineDetector.Detect(installLocation);
         dto.ExecutablePath = detectionResult.ExecutablePath;
         dto.UniversalLauncherPath = detectionResult.UniversalLauncherPath;
         dto.GameEngine = detectionResult.GameEngine;
         _logger.LogInformation("Saving data for {GameTitle} to database", gameToInstall.Title);
-        GamesUnitOfWork.UpsertGame(dto);
+        await GamesUnitOfWork.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
-        GamesUnitOfWork.SaveHashes(hashes);
+        await GamesUnitOfWork.SaveHashes(hashes);
         foreach (var detail in allDetails.Sources)
         {
-            GamesUnitOfWork.SaveLink(new GameLinkDto()
+            await GamesUnitOfWork.SaveLink(new GameLinkDto()
             {
                 Link = detail.DownloadLink, LinkType = LinkType.Download, GameId = dto.Id,
                 BaseUrl = detail.BaseUrl, DisplayName = detail.SourceSiteDisplayName
             });
-            GamesUnitOfWork.SaveLink(new GameLinkDto()
+            await GamesUnitOfWork.SaveLink(new GameLinkDto()
             {
                 Link = detail.DetailsLink, LinkType = LinkType.Details, GameId = dto.Id,
                 BaseUrl = detail.BaseUrl, DisplayName = detail.SourceSiteDisplayName
             });
             if (detail.HasReviews)
             {
-                GamesUnitOfWork.SaveLink(new GameLinkDto()
+                await GamesUnitOfWork.SaveLink(new GameLinkDto()
                 {
                     Link = detail.ReviewsLink, LinkType = LinkType.Reviews, GameId = dto.Id,
                     BaseUrl = detail.BaseUrl, DisplayName = detail.SourceSiteDisplayName
@@ -225,7 +235,7 @@ public class GameSearchResultService : IViewService
 
             if (detail.HasWalkthrough)
             {
-                GamesUnitOfWork.SaveLink(new GameLinkDto()
+                await GamesUnitOfWork.SaveLink(new GameLinkDto()
                 {
                     Link = detail.WalkthroughLink, LinkType = LinkType.Walkthrough, GameId = dto.Id,
                     BaseUrl = detail.BaseUrl, DisplayName = detail.SourceSiteDisplayName
@@ -238,7 +248,7 @@ public class GameSearchResultService : IViewService
         installProgress.Message = "Install complete";
         notificationViewModel.IsCancelable = false;
 
-        GamesUnitOfWork.Save();
+        await GamesUnitOfWork.Save();
         gameToInstall.InstalledGame = _mapper.Map<GameWithStatsViewModel>(GamesUnitOfWork.GetGameWithStats(dto.Id));
         _logger.LogInformation("Installation for {GameTitle} complete",gameToInstall.Title);
     }

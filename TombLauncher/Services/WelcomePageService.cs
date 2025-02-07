@@ -29,7 +29,13 @@ public class WelcomePageService : IViewService
         var unnotifiedCrash = AppCrashUnitOfWork.GetNotNotifiedCrashes();
         if (unnotifiedCrash == null) return;
         var appCrashHostService = Ioc.Default.GetRequiredService<AppCrashHostService>();
+
+        async void MarkAsNotified(AppCrashHostViewModel model)
+        {
+            await appCrashHostService.MarkAsNotified(model.Crash);
+        }
+
         DialogService.ShowDialog(new AppCrashHostViewModel(appCrashHostService) { Crash = unnotifiedCrash },
-            model => { appCrashHostService.MarkAsNotified(model.Crash); });
+            MarkAsNotified);
     }
 }

@@ -16,8 +16,9 @@ public partial class GameDetailsViewModel : PageViewModel
         _gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
         _game = game;
         BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
-        UninstallCmd = new RelayCommand(Uninstall, CanUninstall);
+        UninstallCmd = new AsyncRelayCommand(Uninstall, CanUninstall);
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
+        ManageSaveGamesCmd = new AsyncRelayCommand(ManageSavegames);
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var gameDetailsSettings = settingsService.GetGameDetailsSettings();
         _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
@@ -45,7 +46,14 @@ public partial class GameDetailsViewModel : PageViewModel
 
     private bool CanBrowseFolder()
     {
-        return _gameDetailsService.CanUninstall(Game.GameMetadata.InstallDirectory);
+        return _gameDetailsService.CanUninstall(Game.GameMetadata);
+    }
+    
+    public ICommand ManageSaveGamesCmd { get; }
+
+    private async Task ManageSavegames()
+    {
+        await _gameDetailsService.OpenSavegameList(this);
     }
     
     public ICommand ReadWalkthroughCmd { get; }
@@ -57,14 +65,14 @@ public partial class GameDetailsViewModel : PageViewModel
     
     public ICommand UninstallCmd { get; }
 
-    private void Uninstall()
+    private async Task Uninstall()
     {
-        _gameDetailsService.Uninstall(Game.GameMetadata.InstallDirectory, Game.GameMetadata.Id);
+        await _gameDetailsService.Uninstall(Game.GameMetadata.InstallDirectory, Game.GameMetadata.Id);
     }
 
     private bool CanUninstall()
     {
-        return _gameDetailsService.CanUninstall(Game.GameMetadata.InstallDirectory);
+        return _gameDetailsService.CanUninstall(Game.GameMetadata);
     }
 
     [ObservableProperty] private ICommand _installCmd;

@@ -20,4 +20,5 @@ public interface IGameMetadata
     byte[] TitlePic { get; set; }
     string AuthorFullName { get; set; }
     string UniversalLauncherPath { get; set; }
+    bool IsInstalled { get; set; }
 }

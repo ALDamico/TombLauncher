@@ -15,14 +15,14 @@ public class TombRaiderEngineDetector
         _gameEngines = new Dictionary<string, GameEngine>()
         {
             { "tomb3.exe", GameEngine.TombRaider3 },
-            { "tomb1main.exe", GameEngine.TombRaider1 },
-            { "tombati.exe", GameEngine.TombRaider1 },
+            { "tombati.exe", GameEngine.TombAti },
             { "tomb.exe", GameEngine.TombRaider1 },
             { "tomb2.exe", GameEngine.TombRaider2 },
             { "tomb2main.exe", GameEngine.TombRaider2 },
             { "tomb4.exe", GameEngine.TombRaider4 },
             { "tomb5.exe", GameEngine.TombRaider5 },
             { "tombengine.exe", GameEngine.Ten },
+            { "tomb1main.exe", GameEngine.Tr1x },
             { "tr1x.exe", GameEngine.Tr1x },
             { "tr2x.exe", GameEngine.Tr2x }
         };
@@ -47,6 +47,14 @@ public class TombRaiderEngineDetector
             if (_gameEngines.TryGetValue(Path.GetFileName(file).ToLowerInvariant(), out var gameEngine))
             {
                 result.GameEngine = gameEngine;
+                if (gameEngine == GameEngine.TombRaider2)
+                {
+                    var hasTomb2MainFiles = Directory.GetFiles(containingFolder, "TR2Main.dll");
+                    if (hasTomb2MainFiles?.Length > 0)
+                    {
+                        result.GameEngine = GameEngine.Tomb2Main;
+                    }
+                }
             }
         }
 

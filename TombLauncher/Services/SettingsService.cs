@@ -9,6 +9,7 @@ using Avalonia;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TombLauncher.Configuration;
@@ -17,6 +18,10 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Savegames;
+using TombLauncher.Core.Utils;
+using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Utils;
@@ -36,6 +41,7 @@ public class SettingsService : IViewService
         var mapperConfiguration = Ioc.Default.GetRequiredService<MapperConfiguration>();
         _mapper = mapperConfiguration.CreateMapper();
         _appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
+        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
     }
 
     private readonly IAppConfigurationWrapper _appConfiguration;
@@ -43,6 +49,7 @@ public class SettingsService : IViewService
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
+    private GamesUnitOfWork _gamesUnitOfWork;
     private readonly IMapper _mapper;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
@@ -72,6 +79,7 @@ public class SettingsService : IViewService
         var downloaderSettings = viewModel.Sections.OfType<DownloaderSettingsViewModel>().First();
         var gameDetailsSettings = viewModel.Sections.OfType<GameDetailsSettingsViewModel>().First();
         var randomGameSettings = viewModel.Sections.OfType<RandomGameSettingsViewModel>().First();
+        var backupSettings = viewModel.Sections.OfType<SavegameSettingsViewModel>().First();
 
         _appConfiguration.ApplicationLanguage =
             languageSettings.ApplicationLanguage.CultureInfo.IetfLanguageTag;
@@ -85,7 +93,12 @@ public class SettingsService : IViewService
             gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _appConfiguration.UseInternalViewer = gameDetailsSettings.UseInternalViewerIfAvailable;
         _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
-        await File.WriteAllTextAsync("appsettings.user.json", JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented, new JsonSerializerSettings(){NullValueHandling = NullValueHandling.Ignore}));
+        _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
+        _appConfiguration.NumberOfVersionsToKeep =
+            backupSettings.LimitNumberOfVersions ? backupSettings.NumberOfVersionsToKeep : null;
+        await File.WriteAllTextAsync("appsettings.user.json",
+            JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
+                new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
         viewModel.ClearBusy();
     }
 
@@ -114,6 +127,7 @@ public class SettingsService : IViewService
                     Priority = --priority
                 };
             }
+
             var dto = new DownloaderConfiguration()
             {
                 BaseUrl = downloader.BaseUrl,
@@ -133,8 +147,20 @@ public class SettingsService : IViewService
     {
         return new GameDetailsSettingsViewModel()
         {
-            AskForConfirmationBeforeWalkthrough = _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
+            AskForConfirmationBeforeWalkthrough =
+                _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
             UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault()
+        };
+    }
+
+    public SavegameSettingsViewModel GetSavegameSettings()
+    {
+        return new SavegameSettingsViewModel()
+        {
+            SavegameBackupEnabled = _appConfiguration.BackupSavegamesEnabled,
+            LimitNumberOfVersions = _appConfiguration.NumberOfVersionsToKeep != null,
+            NumberOfVersionsToKeep = _appConfiguration.NumberOfVersionsToKeep,
+            SavegameProcessingDelay = _appConfiguration.SavegameProcessingDelay
         };
     }
 
@@ -162,5 +188,38 @@ public class SettingsService : IViewService
     public string GetDatabasePath()
     {
         return _appConfiguration.DatabasePath;
+    }
+
+    public async Task SyncSavegames()
+    {
+        var currentPage = NavigationManager.GetCurrentPage();
+        try
+        {
+            currentPage.SetBusy("Syncing savegames...");
+            var allGamesWithSaves = await _gamesUnitOfWork.GetSavegameBackups();
+            var headerReader = new SavegameHeaderReader();
+            foreach (var savegame in allGamesWithSaves)
+            {
+                var headerData = headerReader.ReadHeader(savegame.FileName, savegame.Data);
+                savegame.LevelName = headerData.LevelName;
+                savegame.SlotNumber = headerData.SlotNumber;
+                savegame.SaveNumber = headerData.SaveNumber;
+                var md5 = await Md5Utils.ComputeMd5Hash(savegame.Data);
+                if (savegame.Md5 != md5)
+                {
+                    savegame.Md5 = md5;
+                }
+            }
+
+            await _gamesUnitOfWork.SyncSavegameMetadata(allGamesWithSaves);
+            await MessageBoxService.ShowLocalized("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
+                MsgBoxImage.Success);
+        }
+        finally
+        {
+            currentPage.SetBusy(false);    
+        }
+        
+        await Task.CompletedTask;
     }
 }

@@ -77,12 +77,12 @@ public class NewGameService : IViewService
         {
             _logger.LogWarning("Game {GameTitle} is already installed", gameMetadata.Title);
             var messageBoxResult = await Dispatcher.UIThread.InvokeAsync(() =>
-                MessageBoxService.Show(LocalizationManager["The same mod is already installed"],
-                    LocalizationManager["The same mod is already installed TEXT"],
+                MessageBoxService.ShowLocalized("The same mod is already installed",
+                    "The same mod is already installed TEXT",
                     MsgBoxButton.YesNo, 
                     MsgBoxImage.Error, 
-                    noButtonText:LocalizationManager["Cancel"], 
-                    yesButtonText:LocalizationManager["Install anyway"]));
+                    noButtonText:"Cancel", 
+                    yesButtonText:"Install anyway"));
             if (messageBoxResult.ButtonResult == MsgBoxButtonResult.No)
             {
                 _logger.LogInformation("Will not install");
@@ -107,9 +107,9 @@ public class NewGameService : IViewService
         gameMetadata.UniversalLauncherPath = gameEngineResult.UniversalLauncherPath;
 
         var dto = gameMetadata.ToDto();
-        GamesUnitOfWork.UpsertGame(dto);
+        await GamesUnitOfWork.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
-        GamesUnitOfWork.SaveHashes(hashes);
+        await GamesUnitOfWork.SaveHashes(hashes);
         _logger.LogInformation("Game {GameTitle} installed successfully", gameMetadata.Title);
         
         NavigationManager.GoBack();

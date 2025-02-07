@@ -7,13 +7,9 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.Styling;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
-using LiveChartsCore;
-using LiveChartsCore.Defaults;
-using LiveChartsCore.SkiaSharpView;
 using Material.Icons;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +24,7 @@ using Serilog;
 using Serilog.Events;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Factories;
@@ -36,7 +33,6 @@ using TombLauncher.Installers.Downloaders;
 using TombLauncher.Installers.Downloaders.AspideTR.com;
 using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
-using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Services;
 using TombLauncher.Updater;
@@ -165,6 +161,15 @@ public partial class App : Application
 
 
         serviceCollection.AddSingleton<NotificationService>();
+        serviceCollection.AddScoped(sp =>
+        {
+            var settingsService = sp.GetRequiredService<SettingsService>();
+            var delay = settingsService.GetSavegameSettings().SavegameProcessingDelay;
+            return new SavegameHeaderProcessor()
+            {
+                Delay = delay
+            };
+        });
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
@@ -253,6 +258,7 @@ public partial class App : Application
         serviceCollection.AddSingleton<SettingsService>();
         serviceCollection.AddTransient<RandomGameService>();
         serviceCollection.AddScoped<StatisticsService>();
+        serviceCollection.AddTransient<SavegameService>();
     }
 
     private static void ConfigureViewModels(ServiceCollection serviceCollection)
@@ -267,6 +273,7 @@ public partial class App : Application
         serviceCollection.AddSingleton<NotificationListViewModel>();
         serviceCollection.AddTransient<RandomGameViewModel>();
         serviceCollection.AddScoped<StatisticsPageViewModel>();
+        serviceCollection.AddTransient<SavegameListViewModel>();
     }
 
     private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection, IAppConfiguration appConfiguration)

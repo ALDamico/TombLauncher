@@ -61,4 +61,20 @@ public static class StringExtensions
     {
         return !s.IsNullOrWhiteSpace();
     }
+
+    public static string GetNullTerminatedString(byte[] arr, int sliceEnd = -1)
+    {
+        var indexOfNullCharacter = Array.IndexOf(arr, byte.MinValue);
+        if (indexOfNullCharacter < 0)
+        {
+            if (sliceEnd >= 0)
+            {
+                indexOfNullCharacter = sliceEnd;
+            }
+            else
+                indexOfNullCharacter = arr.Length;
+        }
+
+        return Encoding.ASCII.GetString(arr, 0, indexOfNullCharacter);
+    }
 }

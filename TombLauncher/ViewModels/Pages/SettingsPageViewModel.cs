@@ -78,12 +78,14 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         var gameDetailsSettings = _settingsService.GetGameDetailsSettings();
         var randomGameSettings = new RandomGameSettingsViewModel();
         randomGameSettings.MaxRerolls = _settingsService.GetRandomGameMaxRerolls();
+        var savegameSettings = _settingsService.GetSavegameSettings();
 
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);
         Sections.Add(downloaderSettings);
         Sections.Add(gameDetailsSettings);
         Sections.Add(randomGameSettings);
+        Sections.Add(savegameSettings);
         AcceptChanges();
     }
 

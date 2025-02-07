@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -13,7 +14,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     {
         _gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
         PlayCmd = new RelayCommand(Play, CanPlay);
-        OpenCmd = new RelayCommand(Open);
+        OpenCmd = new AsyncRelayCommand(Open);
         LaunchSetupCmd = new RelayCommand(LaunchSetup, CanPlay);
     }
 
@@ -31,9 +32,9 @@ public partial class GameWithStatsViewModel : ViewModelBase
 
     private bool CanPlay() => _gameWithStatsService.CanPlayGame(this);
     public ICommand OpenCmd { get; }
-    private void Open()
+    private async Task Open()
     {
-        _gameWithStatsService.OpenGame(this);
+        await _gameWithStatsService.OpenGame(this);
     }
     
     public ICommand LaunchSetupCmd { get; }
