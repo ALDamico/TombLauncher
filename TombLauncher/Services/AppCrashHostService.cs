@@ -65,6 +65,11 @@ public class AppCrashHostService : IViewService
 
     public async Task MarkAsNotified(AppCrashDto crash)
     {
-        await AppCrashUnitOfWork.MarkAsNotified(crash.Id);
+        await MarkAsNotified(crash.Id);
+    }
+
+    public async Task MarkAsNotified(int id)
+    {
+        await AppCrashUnitOfWork.MarkAsNotified(id);
     }
 }
