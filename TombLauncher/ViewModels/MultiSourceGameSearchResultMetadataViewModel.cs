@@ -38,6 +38,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private string _baseUrl;
     [ObservableProperty] private string _titlePic;
     [ObservableProperty] private string _sourceSiteDisplayName;
+    [ObservableProperty] private string _description;
     [ObservableProperty] private InstallProgressViewModel _installProgress;
     private string _reviewsLink;
 

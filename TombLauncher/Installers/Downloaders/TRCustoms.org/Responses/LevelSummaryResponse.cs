@@ -10,6 +10,7 @@ public class LevelSummaryResponse
     public string Description { get; set; }
     public LevelEngineResponse Engine { get; set; }
     public LevelDurationResponse Duration { get; set; }
+    public LevelDifficultyResponse Difficulty { get; set; }
     public List<LevelTagResponse> Tags { get; set; }
     public List<AuthorResponse> Authors { get; set; }
     public AuthorResponse Uploader { get; set; }
@@ -19,7 +20,7 @@ public class LevelSummaryResponse
     public List<LevelExternalLinkResponse> ExternalLinks { get; set; }
     public DateTime? LastUpdate { get; set; }
     public DateTime? LastUserContentUpdated { get; set; }
-    public int? LastFile { get; set; }
+    public LevelVersionResponse LastFile { get; set; }
     public int DownloadCount { get; set; }
     public int RatingCount { get; set; }
     public int ReviewCount { get; set; }

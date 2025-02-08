@@ -13,7 +13,6 @@ public class SearchRequest : TrCustomsBaseRequest
         Genres = new List<int>();
         Engines = new List<int>();
     }
-    public string Sort { get; set; }
     public List<int> Tags { get; set; }
     public List<int> Genres { get; set; }
     public List<int> Difficulties { get; set; }

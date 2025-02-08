@@ -8,6 +8,7 @@ public class MultiSourceSearchResultMetadataDto : IMultiSourceSearchResultMetada
 {
     public string Author { get; set; }
     public string AuthorFullName { get; set; }
+    public string Description { get; set; }
     public string Title { get; set; }
     public GameDifficulty Difficulty { get; set; }
     public GameLength Length { get; set; }
