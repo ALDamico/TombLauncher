@@ -72,7 +72,8 @@
     <system:String x:Key="Load more">Carica altri</system:String>
     <system:String x:Key="An error has occurred">Si è verificato un errore</system:String>
     <system:String x:Key="Accept">Accetta</system:String>
-    <system:String x:Key="This application has encountered an unrecoverable error and has been automatically restarted">Si è verificato un errore irreversibile e l'applicazione è stata riavviata automaticamente.</system:String>
+    <system:String x:Key="This application has encountered an error">Si è verificato un errore.</system:String>
+    <system:String x:Key="You can click Accept to try and ignore the problem or Restart application to automatically close and reopen it">Puoi fare clic su 'Accetta' per ignorare il problema, o 'Riavvia applicazione' per chiuderla e riaprirla automaticamente.</system:String>
     <system:String x:Key="Tomb Launcher is in active development and these kinds of errors could happen from time to time">Tomb Launcher è in fase di sviluppo attivo ed errori di questo tipo di tanto in tanto possono capitare.</system:String>
     <system:String x:Key="If you think this requires the developer s attention please file a bug report on GitHub">Se pensi che questo problema richieda l'attenzione dello sviluppatore, segnalalo su GitHub</system:String>
     <system:String x:Key="Type">Tipo</system:String>
@@ -183,6 +184,7 @@
     <system:String x:Key="Import missing savegames">Importa salvataggi mancanti</system:String>
     <system:String x:Key="Sync completed">Sincronizzazione completata</system:String>
     <system:String x:Key="Syncronization completed successfully!">Sincronizzazione completata con successo!</system:String>
+    <system:String x:Key="Restart application">Riavvia applicazione</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

@@ -7,6 +7,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
@@ -24,6 +25,7 @@ using Serilog;
 using Serilog.Events;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;
@@ -66,7 +68,6 @@ public partial class App : Application
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);
             var splashScreen = new SplashScreen();
-            desktop.MainWindow = splashScreen;
             splashScreen.Show();
             desktop.ShutdownRequested += (sender, args) =>
             {
@@ -74,16 +75,39 @@ public partial class App : Application
                 ((IDisposable)Log.Logger).Dispose();
             };
             
-            await Task.Delay(1);
-            await InitializeServices();
-            await ShowMainWindow(desktop, splashScreen);
+            Dispatcher.UIThread.UnhandledException += OnUnhandledException;
+
+            await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(desktop, splashScreen));
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
+    private void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    {
+        var appCrashUow = Ioc.Default.GetRequiredService<AppCrashUnitOfWork>();
+
+        var exception = e.Exception;
+        if (exception is TargetInvocationException tie)
+        {
+            exception = tie.InnerException;
+        }
+        
+        appCrashUow.InsertAppCrash(exception);
+
+        var welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
+        welcomePageService.HandleNotNotifiedCrashes();
+        e.Handled = true;
+        if (exception?.GetType() == typeof(AppRestartRequestedException))
+        {
+            // WTF?! How did you get in here?
+            e.Handled = false;
+        }
+    }
+
     private async Task ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop, SplashScreen splashScreen)
     {
+        await InitializeServices();
         ApplyInitialSettings();
         var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
         var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using System;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.UnitOfWork;
@@ -29,13 +30,13 @@ public class WelcomePageService : IViewService
         var unnotifiedCrash = AppCrashUnitOfWork.GetNotNotifiedCrashes();
         if (unnotifiedCrash == null) return;
         var appCrashHostService = Ioc.Default.GetRequiredService<AppCrashHostService>();
+        var appCrashHostViewModel = new AppCrashHostViewModel(appCrashHostService) { Crash = unnotifiedCrash };
 
         async void MarkAsNotified(AppCrashHostViewModel model)
         {
             await appCrashHostService.MarkAsNotified(model.Crash);
         }
 
-        DialogService.ShowDialog(new AppCrashHostViewModel(appCrashHostService) { Crash = unnotifiedCrash },
-            MarkAsNotified);
+        DialogService.ShowDialog(appCrashHostViewModel, MarkAsNotified);
     }
 }

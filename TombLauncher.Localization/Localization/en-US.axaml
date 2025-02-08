@@ -72,7 +72,8 @@
     <system:String x:Key="Load more">Load more</system:String>
     <system:String x:Key="An error has occurred">An error has occurred</system:String>
     <system:String x:Key="Accept">Accept</system:String>
-    <system:String x:Key="This application has encountered an unrecoverable error and has been automatically restarted">This application has encountered an unrecoverable error and has been automatically restarted</system:String>
+    <system:String x:Key="This application has encountered an error">This application has encountered an error.</system:String>
+    <system:String x:Key="You can click Accept to try and ignore the problem or Restart application to automatically close and reopen it">You can click 'Accept' to try and ignore the problem, or 'Restart application' to automatically close and reopen it</system:String>
     <system:String x:Key="Tomb Launcher is in active development and these kinds of errors could happen from time to time">Tomb Launcher is in active development and these kinds of errors could happen from time to time</system:String>
     <system:String x:Key="If you think this requires the developer s attention please file a bug report on GitHub">If you think this requires the developer's attention, please file a bug report on GitHub</system:String>
     <system:String x:Key="Type">Type</system:String>
@@ -184,6 +185,7 @@
     <system:String x:Key="Import missing savegames">Import missing savegames</system:String>
     <system:String x:Key="Sync completed">Sync completed</system:String>
     <system:String x:Key="Syncronization completed successfully!">Synchronization completed successfully!</system:String>
+    <system:String x:Key="Restart application">Restart application</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>
