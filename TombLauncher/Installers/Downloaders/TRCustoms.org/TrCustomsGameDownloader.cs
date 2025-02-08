@@ -12,6 +12,7 @@ using Newtonsoft.Json.Serialization;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Installers.Downloaders.TRCustoms.org.Requests;
 using TombLauncher.Installers.Downloaders.TRCustoms.org.Responses;
 using TombLauncher.Installers.Downloaders.TRCustoms.org.Utils;
@@ -49,6 +50,10 @@ public class TrCustomsGameDownloader : IGameDownloader
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
+    private Dictionary<GameEngine, LevelEngineResponse> _enginesMap;
+    private Dictionary<string, LevelTagResponse> _tagsMap;
+    private Dictionary<string, LevelGenreResponse> _genresMap;
+
     public async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
         CancellationToken cancellationToken)
     {
@@ -60,6 +65,9 @@ public class TrCustomsGameDownloader : IGameDownloader
         var tagMapTask = FetchTags(cancellationToken);
 
         await Task.WhenAll(engineMapTask, genreMapTask, tagMapTask);
+        _enginesMap = engineMapTask.Result;
+        _tagsMap = tagMapTask.Result;
+        _genresMap = genreMapTask.Result;
         
         CurrentPage = 0;
         return await FetchNextPage(cancellationToken);
@@ -84,7 +92,7 @@ public class TrCustomsGameDownloader : IGameDownloader
 
         var pagedResponse = JsonConvert.DeserializeObject<TrCustomsPagedResponse<T>>(
             await response.Content.ReadAsStringAsync(cancellationToken), _jsonSerializerSettings);
-
+// TODO Crashes because LastFile is an object, not a string
         return pagedResponse;
     }
 
@@ -154,9 +162,13 @@ public class TrCustomsGameDownloader : IGameDownloader
         if (CurrentPage > TotalPages) return new List<IGameSearchResultMetadata>();
         CurrentPage++;
         var result = new List<IGameSearchResultMetadata>();
+        var searchRequest = ConvertRequest(DownloaderSearchPayload, CurrentPage, _tagsMap, _genresMap);
+        var dictified = RequestUtils.DictifyRequest(searchRequest);
+        var response = await GetPagedResponse<LevelSummaryResponse>("levels", searchRequest, cancellationToken);
+        return result;
     }
 
-    private SearchRequest ConvertRequest(DownloaderSearchPayload downloaderSearchPayload, int currentPage)
+    private SearchRequest ConvertRequest(DownloaderSearchPayload downloaderSearchPayload, int currentPage, Dictionary<string, LevelTagResponse> tagLookup, Dictionary<string, LevelGenreResponse> genreLookup)
     {
         var searchRequest = new SearchRequest();
 
@@ -182,6 +194,25 @@ public class TrCustomsGameDownloader : IGameDownloader
         {
             searchRequest.Durations.Add((int)downloaderSearchPayload.Duration.GetValueOrDefault());
         }
+
+        if (downloaderSearchPayload.Setting.IsNotNullOrWhiteSpace())
+        {
+            var tokens = downloaderSearchPayload.Setting.ToUpperInvariant().Split(",");
+            foreach (var token in tokens)
+            {
+                if (tagLookup.TryGetValue(token, out var targetTag))
+                {
+                    searchRequest.Tags.Add(targetTag.Id);
+                }
+
+                if (genreLookup.TryGetValue(token, out var targetGenre))
+                {
+                    searchRequest.Genres.Add(targetGenre.Id);
+                }
+            }
+        }
+
+        return searchRequest;
     }
 
     public Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
