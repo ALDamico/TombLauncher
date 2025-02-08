@@ -243,6 +243,7 @@ public partial class App : Application
         serviceCollection.AddTransient<TrleGameDownloader>();
         serviceCollection.AddTransient(sp => new AspideTrGameDownloader(sp.GetRequiredService<ILocalizationManager>()
             .GetSubsetInvertedByPrefix("ATR")));
+        serviceCollection.AddTransient<TrCustomsGameDownloader>();
     }
 
     private static void ConfigurePageServices(ServiceCollection serviceCollection)
