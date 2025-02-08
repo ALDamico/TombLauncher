@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
+using TombLauncher.Installers.Downloaders.TRCustoms.org.Requests;
+using TombLauncher.Installers.Downloaders.TRCustoms.org.Responses;
+using TombLauncher.Installers.Downloaders.TRCustoms.org.Utils;
 
 namespace TombLauncher.Installers.Downloaders.TRCustoms.org;
 
@@ -24,7 +28,14 @@ public class TrCustomsGameDownloader : IGameDownloader
     {
         _httpClient = new HttpClient()
         {
-            BaseAddress = new Uri(BaseUrl)
+            BaseAddress = new Uri(BaseUrl),
+            DefaultRequestHeaders =
+            {
+                Accept =
+                {
+                    new MediaTypeWithQualityHeaderValue("application/json")
+                }
+            }
         };
         _jsonSerializerSettings = new JsonSerializerSettings()
         {
@@ -35,7 +46,8 @@ public class TrCustomsGameDownloader : IGameDownloader
         };
     }
 
-    private HttpClient _httpClient;
+    private readonly HttpClient _httpClient;
+    private readonly JsonSerializerSettings _jsonSerializerSettings;
 
     public async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
         CancellationToken cancellationToken)
@@ -43,33 +55,64 @@ public class TrCustomsGameDownloader : IGameDownloader
         DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
 
-        var engineMap = await FetchSupportedEngines(cancellationToken);
+        var engineMapTask = FetchSupportedEngines(cancellationToken);
+        var genreMapTask = FetchGenres(cancellationToken);
+        var tagMapTask = FetchTags(cancellationToken);
+
+        await Task.WhenAll(engineMapTask, genreMapTask, tagMapTask);
+        
         CurrentPage = 0;
-        return null;
+        return await FetchNextPage(cancellationToken);
     }
 
-    private JsonSerializerSettings _jsonSerializerSettings;
+    
 
-    private async Task<Dictionary<GameEngine, LevelEngineResponse>> FetchSupportedEngines(
-        CancellationToken cancellationToken)
+    private async Task<TrCustomsPagedResponse<T>> GetPagedResponse<T>(string endpoint, TrCustomsBaseRequest trCustomsRequest = null,
+        CancellationToken cancellationToken = default)
     {
+        var dictionarifiedRequest = RequestUtils.DictifyRequest(trCustomsRequest);
+        var relativeUri = new UriBuilder(_httpClient.BaseAddress);
+        relativeUri.Path = $"api/{endpoint}/";
+        var completeUri = QueryHelpers.AddQueryString(relativeUri.Uri.ToString(), dictionarifiedRequest);
         var request = new HttpRequestMessage
         {
             Method = HttpMethod.Get,
-            RequestUri = new Uri(_httpClient.BaseAddress, "/api/level_engines/?format=json"),
-            Headers =
-            {
-                { "User-Agent", "insomnia/10.3.0" },
-            },
+            RequestUri = new Uri(completeUri)
         };
-        TrCustomsPagedResponse<LevelEngineResponse> engines;
-        using (var response = await _httpClient.SendAsync(request, cancellationToken))
-        {
-            response.EnsureSuccessStatusCode();
+        using var response = await _httpClient.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
 
-            engines = JsonConvert.DeserializeObject<TrCustomsPagedResponse<LevelEngineResponse>>(
-                await response.Content.ReadAsStringAsync(cancellationToken), _jsonSerializerSettings);
-        }
+        var pagedResponse = JsonConvert.DeserializeObject<TrCustomsPagedResponse<T>>(
+            await response.Content.ReadAsStringAsync(cancellationToken), _jsonSerializerSettings);
+
+        return pagedResponse;
+    }
+
+    private async Task<Dictionary<string, LevelTagResponse>> FetchTags(CancellationToken cancellationToken)
+    {
+        // This will probably need to be changed if the number of tags and/or genres tends to grow quite quickly.
+        var request = new TrCustomsBaseRequest()
+        {
+            PageSize = 500
+        };
+
+        var tags = await GetPagedResponse<LevelTagResponse>("level_tags", request, cancellationToken);
+        return tags.Results.ToDictionary(t => t.Name.ToUpperInvariant(), t => t);
+    }
+
+    private async Task<Dictionary<string, LevelGenreResponse>> FetchGenres(CancellationToken cancellationToken)
+    {
+        var request = new TrCustomsBaseRequest()
+        {
+            PageSize = 50
+        };
+        var genres = await GetPagedResponse<LevelGenreResponse>("level_genres", request, cancellationToken);
+        return genres.Results.ToDictionary(g => g.Name.ToUpperInvariant(), g => g);
+    }
+
+    private async Task<Dictionary<GameEngine, LevelEngineResponse>> FetchSupportedEngines(CancellationToken cancellationToken)
+    {
+        var engines = await GetPagedResponse<LevelEngineResponse>("level_engines", cancellationToken:cancellationToken);
 
         var dict = new Dictionary<GameEngine, LevelEngineResponse>();
         if (engines == null)
@@ -106,9 +149,39 @@ public class TrCustomsGameDownloader : IGameDownloader
         return dict;
     }
 
-    public Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
+    public async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (CurrentPage > TotalPages) return new List<IGameSearchResultMetadata>();
+        CurrentPage++;
+        var result = new List<IGameSearchResultMetadata>();
+    }
+
+    private SearchRequest ConvertRequest(DownloaderSearchPayload downloaderSearchPayload, int currentPage)
+    {
+        var searchRequest = new SearchRequest();
+
+        searchRequest.Page = currentPage;
+        
+        searchRequest.Search = DownloaderSearchPayload.LevelName;
+        if (downloaderSearchPayload.LevelName != null)
+            searchRequest.Search = downloaderSearchPayload.LevelName;
+
+        var rating = downloaderSearchPayload.Rating;
+        searchRequest.Ratings.Add(rating);
+        if (rating == 10)
+        {
+            searchRequest.Ratings.Add(11);
+        }
+
+        if (downloaderSearchPayload.GameDifficulty != GameDifficulty.Unknown)
+        {
+            searchRequest.Difficulties.Add((int)downloaderSearchPayload.GameDifficulty.GetValueOrDefault());    
+        }
+
+        if (downloaderSearchPayload.Duration != GameLength.Unknown)
+        {
+            searchRequest.Durations.Add((int)downloaderSearchPayload.Duration.GetValueOrDefault());
+        }
     }
 
     public Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
@@ -130,7 +203,8 @@ public class TrCustomsGameDownloader : IGameDownloader
 
     public bool HasMorePages()
     {
-        throw new NotImplementedException();
+        if (TotalPages == null) return false;
+        return CurrentPage < TotalPages;
     }
 
     public int? TotalPages { get; private set; }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TombLauncher.Installers.Downloaders.TRCustoms.org;
+namespace TombLauncher.Installers.Downloaders.TRCustoms.org.Responses;
 
 public class TrCustomsPagedResponse<T>
 {

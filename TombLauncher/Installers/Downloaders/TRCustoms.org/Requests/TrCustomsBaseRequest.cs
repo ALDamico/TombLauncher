@@ -1,6 +1,6 @@
-﻿namespace TombLauncher.Installers.Downloaders.TRCustoms.org;
+﻿namespace TombLauncher.Installers.Downloaders.TRCustoms.org.Requests;
 
-public class LevelEnginesRequest
+public class TrCustomsBaseRequest
 {
     public int? Page { get; set; }
     public int? PageSize { get; set; }
