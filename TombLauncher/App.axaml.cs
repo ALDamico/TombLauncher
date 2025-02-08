@@ -33,6 +33,7 @@ using TombLauncher.Factories;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Installers.Downloaders.AspideTR.com;
+using TombLauncher.Installers.Downloaders.TRCustoms.org;
 using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
@@ -267,6 +268,7 @@ public partial class App : Application
         serviceCollection.AddTransient<TrleGameDownloader>();
         serviceCollection.AddTransient(sp => new AspideTrGameDownloader(sp.GetRequiredService<ILocalizationManager>()
             .GetSubsetInvertedByPrefix("ATR")));
+        serviceCollection.AddTransient<TrCustomsGameDownloader>();
     }
 
     private static void ConfigurePageServices(ServiceCollection serviceCollection)

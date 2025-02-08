@@ -96,6 +96,7 @@ public class TombLauncherGameMerger : IGameMerger
             {
                 Author = element.Author,
                 Difficulty = element.Difficulty,
+                Description = element.Description,
                 Engine = element.Engine,
                 Length = element.Length,
                 Rating = element.Rating,

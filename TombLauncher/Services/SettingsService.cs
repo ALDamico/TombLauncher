@@ -140,7 +140,7 @@ public class SettingsService : IViewService
             dtos.Add(dto);
         }
 
-        return dtos;
+        return dtos.OrderBy(dto => dto.Priority).ToList();
     }
 
     public GameDetailsSettingsViewModel GetGameDetailsSettings()

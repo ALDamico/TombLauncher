@@ -6,6 +6,7 @@ public interface IGameSearchResultMetadata
 {
     string Author { get; set; }
     string AuthorFullName { get; set; }
+    string Description { get; set; }
     string Title { get; set; }
     GameDifficulty Difficulty { get; set; }
     GameLength Length { get; set; }

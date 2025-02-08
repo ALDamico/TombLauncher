@@ -41,6 +41,7 @@
         <PackageReference Include="Markdown.Avalonia" Version="11.0.2" />
         <PackageReference Include="Material.Icons" Version="2.1.10" />
         <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.12" />
         <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.8.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
