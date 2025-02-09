@@ -75,6 +75,12 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
+            <controls:IconButton IsVisible="{Binding Game.GameMetadata.IsInstalled}" 
+                                 Classes="stretched" 
+                                 Icon="Terminal" 
+                                 Text="{DynamicResource 'Launch options'}" 
+                                 Command="{Binding OpenLaunchOptionsCmd}"
+                                 ToolTip.Tip="{DynamicResource 'Launch options tooltip'}"/>
             <controls:IconButton Icon="Floppy" Text="{DynamicResource Savegames}"
                                  Command="{Binding ManageSaveGamesCmd}"
                                  IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">

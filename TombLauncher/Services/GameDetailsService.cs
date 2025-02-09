@@ -17,6 +17,7 @@ using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
+using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.MessageBoxes;
 using TombLauncher.ViewModels.Pages;
 using Path = Avalonia.Controls.Shapes.Path;
@@ -153,5 +154,10 @@ public class GameDetailsService : IViewService
             
         }*/
         NavigationManager.NavigateTo(savegameListView);
+    }
+
+    public void OpenLaunchOptions(GameDetailsViewModel gameDetailsViewModel)
+    {
+        DialogService.ShowDialog(new LaunchOptionsDialogViewModel(){TargetGame = gameDetailsViewModel.Game.GameMetadata}, vm => {});
     }
 }

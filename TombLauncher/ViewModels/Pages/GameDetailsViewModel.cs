@@ -4,6 +4,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Services;
 
@@ -19,6 +20,7 @@ public partial class GameDetailsViewModel : PageViewModel
         UninstallCmd = new AsyncRelayCommand(Uninstall, CanUninstall);
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
         ManageSaveGamesCmd = new AsyncRelayCommand(ManageSavegames);
+        OpenLaunchOptionsCmd = new RelayCommand(OpenLaunchOptions);
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var gameDetailsSettings = settingsService.GetGameDetailsSettings();
         _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
@@ -28,6 +30,7 @@ public partial class GameDetailsViewModel : PageViewModel
 
     private bool _askForConfirmationBeforeOpeningWalkthrough;
     private bool _useInternalViewerIfAvailable;
+    private IDialogService _dialogService; 
 
     private async void OnInitialize()
     {
@@ -76,4 +79,11 @@ public partial class GameDetailsViewModel : PageViewModel
     }
 
     [ObservableProperty] private ICommand _installCmd;
+    
+    public ICommand OpenLaunchOptionsCmd { get; }
+
+    private void OpenLaunchOptions()
+    {
+        _gameDetailsService.OpenLaunchOptions(this);
+    }
 }
