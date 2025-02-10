@@ -13,8 +13,11 @@
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <TextBlock Text="{DynamicResource 'LAUNCH OPTIONS'}" Classes="h1"></TextBlock>
-        <Button Content="{DynamicResource 'Auto detect'}" 
-                Command="{Binding AutoDetectCmd}"></Button>
+        <controls:IconButton Icon="Sync" 
+                             Content="{DynamicResource 'Auto detect'}" 
+                             ToolTip.Tip="{DynamicResource 'Auto detect tooltip'}"
+                HorizontalAlignment="Right"
+                Command="{Binding AutoDetectCmd}"/>
         <ScrollViewer>
         <StackPanel Orientation="Vertical">
             <TextBlock Classes="small" Text="{DynamicResource 'Engine type'}"/>
@@ -46,7 +49,8 @@
                 <TextBox Text="{Binding SetupArgs}"/>
             </DockPanel>
             <CheckBox Classes="small" IsChecked="{Binding SupportsCustomSetup}" 
-                      Content="{DynamicResource 'Community patch setup executable'}"/>
+                      Content="{DynamicResource 'Uses community patch'}"/>
+            <TextBlock Classes="small" Text="{DynamicResource 'Community patch setup executable'}"></TextBlock>
             <DockPanel IsEnabled="{Binding SupportsCustomSetup}" LastChildFill="True">
                 <controls:Infotip DockPanel.Dock="Right" 
                                   ToolTipContent="{DynamicResource 'Community patch setup executable tooltip'}" />

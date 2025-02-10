@@ -199,6 +199,8 @@
     <system:String x:Key="Can launch setup">Can launch setup utility</system:String>
     <system:String x:Key="Community patch setup executable">Community patch setup executable</system:String>
     <system:String x:Key="Community patch setup executable tooltip">Enable this option if this level uses an enhanced community engine, like TRX or Tomb3 Community Edition, to launch its setup tool.</system:String>
+    <system:String x:Key="Auto detect tooltip">Try to detect automatically the best settings.</system:String>
+    <system:String x:Key="Uses community patch">Uses community patch</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>
