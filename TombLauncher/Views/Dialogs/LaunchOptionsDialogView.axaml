@@ -14,7 +14,7 @@
     <StackPanel Orientation="Vertical">
         <TextBlock Text="{DynamicResource 'LAUNCH OPTIONS'}" Classes="h1"></TextBlock>
         <controls:IconButton Icon="Sync" 
-                             Content="{DynamicResource 'Auto detect'}" 
+                             Text="{DynamicResource 'Auto detect'}" 
                              ToolTip.Tip="{DynamicResource 'Auto detect tooltip'}"
                 HorizontalAlignment="Right"
                 Command="{Binding AutoDetectCmd}"/>

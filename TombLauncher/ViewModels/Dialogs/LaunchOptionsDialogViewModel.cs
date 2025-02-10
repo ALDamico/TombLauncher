@@ -42,11 +42,7 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
     public ObservableCollection<string> AvailableExecutables
     {
         get => _availableExecutables;
-        set
-        {
-            _availableExecutables = value;
-            RaiseAndSetIfChanged(ref _availableExecutables, value);
-        }
+        set => RaiseAndSetIfChanged(ref _availableExecutables, value);
     }
 
     private string _gameExecutable;
@@ -54,11 +50,7 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
     public string GameExecutable
     {
         get => _gameExecutable;
-        set
-        {
-            _gameExecutable = value;
-            RaiseAndSetIfChanged(ref _gameExecutable, value);
-        }
+        set => RaiseAndSetIfChanged(ref _gameExecutable, value);
     }
 
     private ObservableCollection<EnumViewModel<GameEngine>> _availableEngines;
@@ -66,11 +58,7 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
     public ObservableCollection<EnumViewModel<GameEngine>> AvailableEngines
     {
         get => _availableEngines;
-        set
-        {
-            _availableEngines = value;
-            RaiseAndSetIfChanged(ref _availableEngines, value);
-        }
+        set => RaiseAndSetIfChanged(ref _availableEngines, value);
     }
 
     private GameEngine _selectedEngine;
