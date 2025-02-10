@@ -11,7 +11,11 @@ public enum FileType
     [Description("Savegame (start of level)")]
     SavegameStartOfLevel,
     [Description("Executable")]
-    Executable,
+    GameExecutable,
+    [Description]
+    SetupExecutable,
+    [Description]
+    CommunitySetupExecutable,
     [Description("Other")]
     Other
 }

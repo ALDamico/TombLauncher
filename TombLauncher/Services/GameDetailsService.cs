@@ -158,6 +158,49 @@ public class GameDetailsService : IViewService
 
     public void OpenLaunchOptions(GameDetailsViewModel gameDetailsViewModel)
     {
-        DialogService.ShowDialog(new LaunchOptionsDialogViewModel(){TargetGame = gameDetailsViewModel.Game.GameMetadata}, vm => {});
+        DialogService.ShowDialog(new LaunchOptionsDialogViewModel(){TargetGame = gameDetailsViewModel.Game.GameMetadata}, SaveLaunchOptions);
+    }
+
+    private async void SaveLaunchOptions(LaunchOptionsDialogViewModel vm)
+    {
+        var gameMetadata = vm.TargetGame;
+        NavigationManager.GetCurrentPage().SetBusy("Saving launch options...");
+
+        var launchOptionsDto = new LaunchOptionsDto()
+        {
+            GameEngine = vm.SelectedEngine,
+            GameId = gameMetadata.Id,
+            GameExecutable = new FileBackupDto()
+            {
+                FileName = vm.GameExecutable,
+                GameId = gameMetadata.Id,
+                FileType = FileType.GameExecutable
+            }
+        };
+        if (vm.SupportsSetup)
+        {
+            launchOptionsDto.SetupExecutable = new FileBackupDto()
+            {
+                Arguments = vm.SetupArgs,
+                FileName = vm.SetupExecutable,
+                FileType = FileType.SetupExecutable,
+                GameId = gameMetadata.Id
+            };
+        }
+
+        if (vm.SupportsCustomSetup)
+        {
+            launchOptionsDto.CommunitySetupExecutable = new FileBackupDto()
+            {
+                FileName = vm.CustomSetupExecutable,
+                FileType = FileType.CommunitySetupExecutable,
+                GameId = gameMetadata.Id
+            };
+        }
+
+        await GamesUnitOfWork.UpdateLaunchOptions(launchOptionsDto);
+        
+        NavigationManager.GetCurrentPage().ClearBusy();
+        
     }
 }

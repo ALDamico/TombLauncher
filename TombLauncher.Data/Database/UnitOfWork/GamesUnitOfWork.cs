@@ -10,6 +10,7 @@ using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
+using Z.EntityFramework.Plus;
 
 namespace TombLauncher.Data.Database.UnitOfWork;
 
@@ -478,5 +479,82 @@ public class GamesUnitOfWork : UnitOfWorkBase
             Backups.Update(entity);
         }
         await Backups.Commit();
+    }
+
+    public async Task UpdateLaunchOptions(LaunchOptionsDto launchOptionsDto)
+    {
+        var targetFileTypes = new List<FileType>()
+        {
+            FileType.GameExecutable,
+            FileType.SetupExecutable,
+            FileType.CommunitySetupExecutable
+        };
+        var fileBackupQueryable = Backups.Get(b => b.GameId == launchOptionsDto.GameId)
+                .Where(b => targetFileTypes.Contains(b.FileType));
+        var gameToUpdate = Games.GetEntityById(launchOptionsDto.GameId);
+        gameToUpdate.GameEngine = launchOptionsDto.GameEngine;
+        Games.Upsert(gameToUpdate);
+        
+        // Update game executable
+        var gameExecutable = fileBackupQueryable.Where(fb => fb.FileType == FileType.GameExecutable);//.UpdateAsync(fb => new fileba)
+        if (await gameExecutable.AnyAsync())
+        {
+            await gameExecutable.UpdateAsync(exe => new FileBackup()
+            {
+                FileName = exe.FileName
+            });
+        }
+        else
+        {
+            var newEntity = _mapper.Map<FileBackup>(launchOptionsDto.GameExecutable);
+            Backups.Insert(newEntity);
+        }
+        
+        // Update setup executable
+        if (launchOptionsDto.SetupExecutable == null)
+        {
+            await fileBackupQueryable.Where(b => b.FileType == FileType.SetupExecutable).DeleteAsync();
+        }
+        else
+        {
+            var setupQueryable = fileBackupQueryable.Where(fb => fb.FileType == FileType.SetupExecutable);
+            if (await setupQueryable.AnyAsync())
+            {
+                await setupQueryable.UpdateAsync(exe => new FileBackup()
+                {
+                    Arguments = launchOptionsDto.SetupExecutable.Arguments,
+                    FileName = launchOptionsDto.SetupExecutable.FileName
+                });
+            }
+            else
+            {
+                var newSetupExe = _mapper.Map<FileBackup>(launchOptionsDto.SetupExecutable);
+                Backups.Insert(newSetupExe);
+            }
+        }
+
+        if (launchOptionsDto.CommunitySetupExecutable == null)
+        {
+            await fileBackupQueryable.Where(b => b.FileType == FileType.CommunitySetupExecutable).DeleteAsync();
+        }
+        else
+        {
+            var communitySetupQueryable =
+                fileBackupQueryable.Where(fb => fb.FileType == FileType.CommunitySetupExecutable);
+            if (await communitySetupQueryable.AnyAsync())
+            {
+                await communitySetupQueryable.UpdateAsync(exe => new FileBackup()
+                {
+                    FileName = launchOptionsDto.CommunitySetupExecutable.FileName
+                });
+            }
+            else
+            {
+                var newCommunitySetupExe = _mapper.Map<FileBackup>(launchOptionsDto.CommunitySetupExecutable);
+                Backups.Insert(newCommunitySetupExe);
+            }
+        }
+
+        await Save();
     }
 }
