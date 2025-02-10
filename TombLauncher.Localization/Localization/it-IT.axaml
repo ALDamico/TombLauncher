@@ -191,6 +191,13 @@
     <system:String x:Key="Engine type">Tipo di motore</system:String>
     <system:String x:Key="Auto detect">Rileva automaticamente</system:String>
     <system:String x:Key="Game executable">Eseguibile</system:String>
+    <system:String x:Key="Setup executable">Eseguibile di setup</system:String>
+    <system:String x:Key="Setup executable tooltip">Il programma da avviare per lanciare la utility di configurazione del gioco.</system:String>
+    <system:String x:Key="Setup executable args">Argomenti per eseguibile di setup</system:String>
+    <system:String x:Key="Setup executable args tooltip">Gli argomenti da passare alla riga di comando per avviare il setup. Nel caso dei motori dei giochi classici, il valore da utilizzare è "-setup".</system:String>
+    <system:String x:Key="Can launch setup">Può avviare la utility di setup</system:String>
+    <system:String x:Key="Community patch setup executable">Eseguibile di setup della patch della community</system:String>
+    <system:String x:Key="Community patch setup executable tooltip">Abilita questa opzione se questo livello custom utilizza un motore avanzato della community come TRX o Tomb3 Community Edition, per avviare lo strumento di setup.</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

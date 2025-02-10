@@ -28,7 +28,6 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
         get => _targetGame;
         set
         {
-            _targetGame = value;
             RaiseAndSetIfChanged(ref _targetGame, value);
             SelectedEngine = GetSelectedEngine(value.GameEngine);
             AvailableExecutables = Directory.GetFiles(value.InstallDirectory, "*.exe", SearchOption.AllDirectories)
@@ -81,6 +80,46 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
         get => _selectedEngine;
         set => RaiseAndSetIfChanged(ref _selectedEngine, value);
     }
+
+    private string _setupExecutable;
+
+    public string SetupExecutable
+    {
+        get => _setupExecutable;
+        set => RaiseAndSetIfChanged(ref _setupExecutable, value);
+    }
+
+    private string _setupArgs;
+
+    public string SetupArgs
+    {
+        get => _setupArgs;
+        set => RaiseAndSetIfChanged(ref _setupArgs, value.NullIfEmpty());
+    }
+
+    private bool _supportsSetup;
+
+    public bool SupportsSetup
+    {
+        get => _supportsSetup;
+        set => RaiseAndSetIfChanged(ref _supportsSetup, value);
+    }
+
+    private bool _supportsCustomSetup;
+
+    public bool SupportsCustomSetup
+    {
+        get => _supportsCustomSetup;
+        set => RaiseAndSetIfChanged(ref _supportsCustomSetup, value);
+    }
+
+    private string _customSetupExecutable;
+
+    public string CustomSetupExecutable
+    {
+        get => _customSetupExecutable;
+        set => RaiseAndSetIfChanged(ref _customSetupExecutable, value);
+    }
     
     public ICommand AutoDetectCmd { get; }
 
@@ -89,9 +128,27 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
         var engineDetector = Ioc.Default.GetRequiredService<TombRaiderEngineDetector>();
         var detectionResult = engineDetector.Detect(TargetGame.InstallDirectory);
         SelectedEngine = GetSelectedEngine(detectionResult.GameEngine);
-        GameExecutable = AvailableExecutables.FirstOrDefault(e => e == detectionResult.ExecutablePath) ;
-        OnPropertyChanged(nameof(AvailableExecutables));
-        OnPropertyChanged(nameof(GameExecutable));
+        GameExecutable = AvailableExecutables.FirstOrDefault(e => e == detectionResult.ExecutablePath);
+        if (detectionResult.SetupExecutablePath.IsNotNullOrWhiteSpace())
+        {
+            SupportsSetup = true;
+            SetupArgs = detectionResult.SetupArgs;
+            SetupExecutable = AvailableExecutables.FirstOrDefault(e => e == detectionResult.SetupExecutablePath);
+        }
+        else
+        {
+            SupportsSetup = false;
+        }
+        if (detectionResult.CommunitySetupExecutablePath.IsNotNullOrWhiteSpace())
+        {
+            SupportsCustomSetup = true;
+            CustomSetupExecutable =
+                AvailableExecutables.FirstOrDefault(e => e == detectionResult.CommunitySetupExecutablePath);
+        }
+        else
+        {
+            SupportsCustomSetup = false;
+        }
     }
 
     private GameEngine GetSelectedEngine(GameEngine engine)

@@ -192,6 +192,13 @@
     <system:String x:Key="Engine type">Engine type</system:String>
     <system:String x:Key="Auto detect">Auto detect</system:String>
     <system:String x:Key="Game executable">Game executable</system:String>
+    <system:String x:Key="Setup executable">Setup executable</system:String>
+    <system:String x:Key="Setup executable tooltip">The program to run to launch the game setup utility.</system:String>
+    <system:String x:Key="Setup executable args">Setup executable arguments</system:String>
+    <system:String x:Key="Setup executable args tooltip">The arguments to pass to the command line in order to run the setup utility. For classic engines, this is "-setup".</system:String>
+    <system:String x:Key="Can launch setup">Can launch setup utility</system:String>
+    <system:String x:Key="Community patch setup executable">Community patch setup executable</system:String>
+    <system:String x:Key="Community patch setup executable tooltip">Enable this option if this level uses an enhanced community engine, like TRX or Tomb3 Community Edition, to launch its setup tool.</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

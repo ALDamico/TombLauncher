@@ -29,5 +29,7 @@ public enum GameEngine
     [Description("TombATI")]
     TombAti = 2 << 9 | TombRaider1,
     [Description("Tomb2Main")]
-    Tomb2Main
+    Tomb2Main = 1 << 10 | TombRaider2,
+    [Description("Tomb Raider III Community Edition")]
+    Tomb3CommunityEdition = 1 << 11 | TombRaider3
 }

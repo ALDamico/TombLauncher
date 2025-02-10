@@ -21,7 +21,6 @@ using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.Pages;
 using Path = System.IO.Path;
-using Avalonia.Media.Transformation;
 using TombLauncher.Extensions;
 
 namespace TombLauncher.Services;
@@ -201,7 +200,6 @@ public class SavegameService
         else
         {
             savegameListView.SetBusy(false);
-            return;
         }
     }
 
@@ -210,7 +208,7 @@ public class SavegameService
     {
         savegameListViewModel.SetBusy("Update in progress...");
         var dto = _mapper.Map<FileBackupDto>(targetSaveGame);
-        _gamesUnitOfWork.UpdateSavegameStartOfLevel(dto);
+        await _gamesUnitOfWork.UpdateSavegameStartOfLevel(dto);
         savegameListViewModel.SetBusy(false);
     }
 
@@ -227,7 +225,7 @@ public class SavegameService
 
         savegameListViewModel.SetBusy("Deleting savegame...");
 
-        _gamesUnitOfWork.DeleteFileBackupById(savegameViewModel.Id);
+        await _gamesUnitOfWork.DeleteFileBackupById(savegameViewModel.Id);
         savegameListViewModel.FilteredSaves.Remove(savegameViewModel);
         savegameListViewModel.Savegames.Remove(savegameViewModel);
         savegameListViewModel.SetBusy(false);

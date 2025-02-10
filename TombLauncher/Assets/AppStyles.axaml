@@ -171,4 +171,8 @@
         <Setter Property="FontSize" Value="9"/>
         <Setter Property="FontWeight" Value="DemiBold"/>
     </Style>
+    <Style Selector="CheckBox.small">
+        <Setter Property="FontSize" Value="9"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+    </Style>
 </Styles>
