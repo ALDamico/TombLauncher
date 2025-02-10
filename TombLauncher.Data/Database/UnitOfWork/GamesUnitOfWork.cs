@@ -6,7 +6,6 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Models;
@@ -27,7 +26,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         _savegameMetadata = GetRepository<SavegameMetadata>();
     }
 
-    private IMapper _mapper;
+    private readonly IMapper _mapper;
 
     private readonly Lazy<EfRepository<Game>> _games;
     private readonly Lazy<EfRepository<PlaySession>> _playSessions;
@@ -55,7 +54,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
     public async Task UpsertGame(IGameMetadata game)
     {
         Game entity;
-        if (game.Id == default)
+        if (game.Id == 0)
         {
             entity = _mapper.Map<Game>(game);
             Games.Insert(entity);
@@ -79,7 +78,6 @@ public class GamesUnitOfWork : UnitOfWorkBase
             entity.ReleaseDate = game.ReleaseDate;
             entity.TitlePic = game.TitlePic;
             entity.AuthorFullName = game.AuthorFullName;
-            entity.UniversalLauncherPath = game.UniversalLauncherPath;
             Games.Update(entity);
         }
 
@@ -109,19 +107,36 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var outputList = new List<GameWithStatsDto>();
         var playSessions = PlaySessions.GetAll().ToLookup(ps => ps.GameId);
 
-        var games = Games.GetAll();
+        var targetFileTypes = new List<FileType>()
+        {
+            FileType.GameExecutable,
+            FileType.SetupExecutable,
+            FileType.CommunitySetupExecutable
+        };
+
+        IQueryable<Game> games = Games.GetAll().Include(g => g.FileBackups.Where(b => targetFileTypes.Contains(b.FileType)));
         if (installedOnly)
         {
             games = games.Where(g => g.IsInstalled);
         }
         foreach (var game in games)
         {
+            var fileTypeLookup = game.FileBackups.ToLookup(g => g.FileType);
             var thisGamePlaySessions = playSessions[game.Id].ToList();
             var gameWithStatsDto = new GameWithStatsDto()
             {
                 GameMetadata = _mapper.Map<GameMetadataDto>(game),
                 TotalPlayedTime = TimeSpan.Zero
             };
+
+            gameWithStatsDto.GameMetadata.ExecutablePath =
+                fileTypeLookup[FileType.GameExecutable].FirstOrDefault()?.FileName;
+            gameWithStatsDto.GameMetadata.SetupExecutable =
+                fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.FileName;
+            gameWithStatsDto.GameMetadata.SetupExecutableArgs =
+                fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.Arguments;
+            gameWithStatsDto.GameMetadata.CommunitySetupExecutable =
+                fileTypeLookup[FileType.CommunitySetupExecutable].FirstOrDefault()?.FileName;
 
             if (thisGamePlaySessions.Any())
             {
@@ -136,15 +151,33 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return await Task.FromResult(outputList);
     }
 
-    public GameWithStatsDto GetGameWithStats(int id)
+    public async Task<GameWithStatsDto> GetGameWithStats(int id)
     {
         var playSessions = PlaySessions.Get(ps => ps.GameId == id).ToList();
-        var game = Games.GetEntityById(id);
+        var targetFileTypes = new List<FileType>()
+        {
+            FileType.GameExecutable,
+            FileType.SetupExecutable,
+            FileType.CommunitySetupExecutable
+        };
+        var game = await Games.Get().Include(g => g.FileBackups.Where(f => targetFileTypes.Contains(f.FileType)))
+            .SingleAsync(g => g.Id == id);
         var gameWithStatsDto = new GameWithStatsDto()
         {
             GameMetadata = _mapper.Map<GameMetadataDto>(game),
             TotalPlayedTime = TimeSpan.Zero
         };
+
+        var fileTypeLookup = game.FileBackups.ToLookup(f => f.FileType);
+        
+        gameWithStatsDto.GameMetadata.ExecutablePath =
+            fileTypeLookup[FileType.GameExecutable].FirstOrDefault()?.FileName;
+        gameWithStatsDto.GameMetadata.SetupExecutable =
+            fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.FileName;
+        gameWithStatsDto.GameMetadata.SetupExecutableArgs =
+            fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.Arguments;
+        gameWithStatsDto.GameMetadata.CommunitySetupExecutable =
+            fileTypeLookup[FileType.CommunitySetupExecutable].FirstOrDefault()?.FileName;
         if (playSessions.Any())
         {
             gameWithStatsDto.LastPlayed = playSessions.Max(ps => ps.StartDate);
@@ -195,7 +228,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var tempQueryable = computedHashes.Select(ToGameHashes).AsQueryable();
         var joined = hashesRepo.AsEnumerable().Join(tempQueryable, gh => gh.FileName + "#" + gh.Md5Hash,
             tmp => tmp.FileName + "#" + tmp.Md5Hash,
-            (gh, tmp) => gh);
+            (gh, _) => gh);
         var matches = joined.GroupBy(m => m.GameId).Select(g => new { Id = g.Key, Count = g.Count() }).ToList();
         if (matches.Count == 0)
         {
@@ -235,13 +268,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public async Task SaveLink(GameLinkDto dto)
     {
-        if (dto.Id != default) return;
+        if (dto.Id != 0) return;
 
-        var entity = await Links.Get(l => l.Link == dto.Link && l.LinkType == dto.LinkType && l.BaseUrl == dto.BaseUrl).FirstOrDefaultAsync();
-        if (entity == null)
-        {
-            entity = _mapper.Map<GameLink>(dto);
-        }
+        var entity = await Links.Get(l => l.Link == dto.Link && l.LinkType == dto.LinkType && l.BaseUrl == dto.BaseUrl).FirstOrDefaultAsync() ??
+                     _mapper.Map<GameLink>(dto);
         Links.Upsert(entity);
     }
 
@@ -271,7 +301,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
     {
         var stats = await GetGamesWithStats();
         return (await Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).ToListAsync())
-            .Join(stats, l => l.GameId, game => game.GameMetadata.Id, (i, game) => new { Link = i.Link, Game = game })
+            .Join(stats, l => l.GameId, game => game.GameMetadata.Id, (i, game) => new { i.Link, Game = game })
             .ToDictionary(k => k.Link, g => g.Game);
     }
 
@@ -280,7 +310,6 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var output = new StatisticsDto();
 
         var playSessionsRepo = PlaySessions.GetAll().Include(ps => ps.Game);
-        var gamesRepo = Games.GetAll();
 
         var groupedByGame = playSessionsRepo.ToLookup(ps => ps.GameId);
         var latestPayedGame = GetLatestPlayedGame(playSessionsRepo);
@@ -361,6 +390,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var maxDuration = listified.Max(s => s.EndDate - s.StartDate);
 
         var longest = listified.FirstOrDefault(r => r.EndDate - r.StartDate == maxDuration);
+        if (longest == null)
+            return null;
         return new GameStatisticsDto()
         {
             Title = longest.Game.Title,
@@ -373,6 +404,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
     private GameStatisticsDto GetLatestPlayedGame(IIncludableQueryable<PlaySession, Game> repo)
     {
         var latestSession = repo.FirstOrDefault(ps => ps.StartDate == repo.Max(p => p.StartDate));
+        if (latestSession == null)
+            return null;
 
         return new GameStatisticsDto()
         {
@@ -456,16 +489,17 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public async Task<List<SavegameBackupDto>> GetSavegameBackups()
     {
-        var entities = Backups.Get().Include(b => b.SavegameMetadata);
+        var entities = Backups.Get().Include(b => b.SavegameMetadata).Where(b => b.FileType == FileType.Savegame || b.FileType == FileType.SavegameStartOfLevel);
         return await _mapper.ProjectTo<SavegameBackupDto>(entities).ToListAsync();
     }
 
     public async Task SyncSavegameMetadata(IEnumerable<SavegameBackupDto> dtos)
     {
-        var idsToFind = dtos.Select(dto => dto.Id);
+        var savegameBackupDtos = dtos as SavegameBackupDto[] ?? dtos.ToArray();
+        var idsToFind = savegameBackupDtos.Select(dto => dto.Id);
         var mappedEntities = Backups.GetAll().Include(b => b.SavegameMetadata)
             .Join(idsToFind, b => b.Id, i => i, (backup, i) => backup).ToList();
-        var lookup = dtos.ToDictionary(dto => dto.Id);
+        var lookup = savegameBackupDtos.ToDictionary(dto => dto.Id);
         
         foreach (var entity in mappedEntities)
         {

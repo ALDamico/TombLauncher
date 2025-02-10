@@ -20,6 +20,8 @@ public class GameMetadataDto : IGameMetadata
     public Guid Guid { get; set; }
     public byte[] TitlePic { get; set; }
     public string AuthorFullName { get; set; }
-    public string UniversalLauncherPath { get; set; }
     public bool IsInstalled { get; set; }
+    public string SetupExecutable { get; set; }
+    public string SetupExecutableArgs { get; set; }
+    public string CommunitySetupExecutable { get; set; }
 }

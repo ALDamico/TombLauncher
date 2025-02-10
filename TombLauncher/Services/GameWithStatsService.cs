@@ -26,7 +26,7 @@ public class GameWithStatsService : IViewService
 {
     public GameWithStatsService()
     {
-        GamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
+        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
         LocalizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
         NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
@@ -43,17 +43,17 @@ public class GameWithStatsService : IViewService
     }
 
     private SavegameHeaderProcessor _headerProcessor;
-    private IMapper _mapper;
+    private readonly IMapper _mapper;
 
-    public GamesUnitOfWork GamesUnitOfWork { get; }
+    private readonly GamesUnitOfWork _gamesUnitOfWork;
     public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
     private FileSystemWatcher _watcher;
-    private bool _backupEnabled;
-    private int? _numberOfSavesToKeep;
-    private ILogger<GameWithStatsService> _logger;
+    private readonly bool _backupEnabled;
+    private readonly int? _numberOfSavesToKeep;
+    private readonly ILogger<GameWithStatsService> _logger;
 
     public async Task OpenGame(GameWithStatsViewModel game)
     {
@@ -86,7 +86,7 @@ public class GameWithStatsService : IViewService
         }
         try
         {
-            _watcher = new FileSystemWatcher(game.GameMetadata.InstallDirectory, "save*")
+            _watcher = new FileSystemWatcher(game.GameMetadata.InstallDirectory, "save*.*")
             {
                 IncludeSubdirectories = true,
                 EnableRaisingEvents = true,
@@ -111,13 +111,13 @@ public class GameWithStatsService : IViewService
     public async Task PlayGame(int gameId)
     {
         var gameViewModel = await GetGameById(gameId);
-        OpenGame(gameViewModel);
+        await OpenGame(gameViewModel);
         PlayGame(gameViewModel);
     }
 
     private async Task<GameWithStatsViewModel> GetGameById(int gameId)
     {
-        var game = await Task.Factory.StartNew(() => GamesUnitOfWork.GetGameWithStats(gameId));
+        var game = await _gamesUnitOfWork.GetGameWithStats(gameId);
         var gameViewModel = new GameWithStatsViewModel()
         {
             GameMetadata = game.GameMetadata.ToViewModel(),
@@ -156,7 +156,7 @@ public class GameWithStatsService : IViewService
         try
         {
             currentPage.SetBusy(true, "Saving play session...".GetLocalizedString());
-            GamesUnitOfWork.AddPlaySessionToGame(game.GameMetadata.ToDto(), process.StartTime, process.ExitTime);
+            _gamesUnitOfWork.AddPlaySessionToGame(game.GameMetadata.ToDto(), process.StartTime, process.ExitTime);
             currentPage.SetBusy("Backing up savegames...".GetLocalizedString());
             var filesToProcess = _headerProcessor.ProcessedFiles;
 
@@ -171,7 +171,7 @@ public class GameWithStatsService : IViewService
 
             if (_backupEnabled)
             {
-                GamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, savegameDtos, _numberOfSavesToKeep);
+                _gamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, savegameDtos, _numberOfSavesToKeep);
                 _headerProcessor.ClearProcessedFiles();
                 try
                 {
@@ -189,7 +189,7 @@ public class GameWithStatsService : IViewService
                 }
             }
 
-            await GamesUnitOfWork.Save();
+            await _gamesUnitOfWork.Save();
 
             NavigationManager.RequestRefresh();
         }
@@ -234,9 +234,9 @@ public class GameWithStatsService : IViewService
             process.Exited += (sender, _) => OnSetupExited(sender as Process);
         }
 
-        process.ErrorDataReceived += (sender, args) => _logger.LogError("Process error: {StandardError}", args.Data);
+        process.ErrorDataReceived += (_, args) => _logger.LogError("Process error: {StandardError}", args.Data);
         process.OutputDataReceived +=
-            (sender, args) => _logger.LogInformation("Process output: {StandardOutput}", args.Data);
+            (_, args) => _logger.LogInformation("Process output: {StandardOutput}", args.Data);
 
         process.Start();
     }

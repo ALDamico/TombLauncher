@@ -1,6 +1,4 @@
-﻿using System.IO;
-using Avalonia.Media.Imaging;
-using TombLauncher.Core.Dtos;
+﻿using TombLauncher.Core.Dtos;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 
@@ -27,7 +25,6 @@ public static class GameExtensions
             Guid = game.Guid,
             TitlePic = ImageUtils.ToBitmap(game.TitlePic),
             AuthorFullName = game.AuthorFullName,
-            UniversalLauncherPath = game.UniversalLauncherPath,
             IsInstalled = game.IsInstalled
         };
     }

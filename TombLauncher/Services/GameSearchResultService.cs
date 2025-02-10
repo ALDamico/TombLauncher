@@ -206,7 +206,6 @@ public class GameSearchResultService : IViewService
         dto.Length = gameToInstall.Length;
         var detectionResult = EngineDetector.Detect(installLocation);
         dto.ExecutablePath = detectionResult.ExecutablePath;
-        dto.UniversalLauncherPath = detectionResult.UniversalLauncherPath;
         dto.GameEngine = detectionResult.GameEngine;
         _logger.LogInformation("Saving data for {GameTitle} to database", gameToInstall.Title);
         await GamesUnitOfWork.UpsertGame(dto);
