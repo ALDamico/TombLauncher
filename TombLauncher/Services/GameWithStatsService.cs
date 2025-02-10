@@ -215,12 +215,16 @@ public class GameWithStatsService : IViewService
             executable = game.GameMetadata.UniversalLauncherPath;
         }
 
+        executable = Path.GetFileName(executable);
+
+        var workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, game.GameMetadata.ExecutablePath));
+
         var process = new Process()
         {
             StartInfo = new ProcessStartInfo(executable)
             {
                 Arguments = string.Join(" ", arguments ?? new List<string>()),
-                WorkingDirectory = game.GameMetadata.InstallDirectory,
+                WorkingDirectory = workingDirectory,
                 UseShellExecute = true,
             },
             EnableRaisingEvents = true

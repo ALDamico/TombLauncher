@@ -34,6 +34,18 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
                 .Select(p => Path.GetRelativePath(value.InstallDirectory, p))
                 .ToObservableCollection();
             GameExecutable = AvailableExecutables.FirstOrDefault(exe => exe == value.ExecutablePath);
+            SetupArgs = value.SetupExecutableArgs;
+            SetupExecutable = AvailableExecutables.FirstOrDefault(exe => exe ==value.SetupExecutable);
+            CustomSetupExecutable = AvailableExecutables.FirstOrDefault(exe => exe ==value.CommunitySetupExecutable);
+            if (SetupExecutable.IsNotNullOrWhiteSpace())
+            {
+                SupportsSetup = true;
+            }
+
+            if (CustomSetupExecutable.IsNotNullOrWhiteSpace())
+            {
+                SupportsCustomSetup = true;
+            }
         }
     }
 

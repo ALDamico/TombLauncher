@@ -24,5 +24,8 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private string _authorFullName;
     [ObservableProperty] private string _universalLauncherPath;
     [ObservableProperty] private bool _isInstalled;
+    [ObservableProperty] private string _setupExecutable;
+    [ObservableProperty] private string _setupExecutableArgs;
+    [ObservableProperty] private string _communitySetupExecutable;
     public Guid Guid { get; set; }
 }

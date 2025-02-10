@@ -32,6 +32,10 @@ public class SavegameHeaderProcessor : IDisposable
         // This statement is secured by lock to prevent other thread to mess with queue while enqueuing file name
         fileNamesQueue.Enqueue(fileName);
         // Signal worker that file name is enqueued and that it can be processed
+        if (_eventWaitHandle.SafeWaitHandle.IsClosed)
+        {
+            _eventWaitHandle = new AutoResetEvent(false);
+        }
         _eventWaitHandle.Set();
     }
 

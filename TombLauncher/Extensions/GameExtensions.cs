@@ -25,7 +25,10 @@ public static class GameExtensions
             Guid = game.Guid,
             TitlePic = ImageUtils.ToBitmap(game.TitlePic),
             AuthorFullName = game.AuthorFullName,
-            IsInstalled = game.IsInstalled
+            IsInstalled = game.IsInstalled,
+            SetupExecutable = game.SetupExecutable,
+            CommunitySetupExecutable = game.CommunitySetupExecutable,
+            SetupExecutableArgs = game.SetupExecutableArgs,
         };
     }
 
