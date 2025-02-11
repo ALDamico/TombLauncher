@@ -198,9 +198,13 @@ public class GameDetailsService : IViewService
             };
         }
 
+        gameMetadata.ExecutablePath = vm.GameExecutable;
+        gameMetadata.SetupExecutable = vm.SetupExecutable;
+        gameMetadata.SetupExecutableArgs = vm.SetupArgs;
+        gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
+
         await GamesUnitOfWork.UpdateLaunchOptions(launchOptionsDto);
         
         NavigationManager.GetCurrentPage().ClearBusy();
-        
     }
 }
