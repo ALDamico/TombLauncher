@@ -15,9 +15,9 @@ internal class GamesProfile : Profile
         CreateMap<GameLink, GameLinkDto>().ReverseMap();
         CreateMap<Game, GameMetadataDto>()
             .ForMember(g => g.ExecutablePath, opt => opt.MapFrom<GameExecutableResolver>())
-            .ForMember(g => g.SetupExecutable, opt => opt.Ignore())
+            .ForMember(g => g.SetupExecutable, opt => opt.MapFrom<SetupExecutableResolver>())
             .ForMember(g => g.SetupExecutableArgs, opt => opt.Ignore())
-            .ForMember(g => g.CommunitySetupExecutable, opt => opt.Ignore())
+            .ForMember(g => g.CommunitySetupExecutable, opt => opt.MapFrom<CommunitySetupExecutableResolver>())
             .ReverseMap();
 
         CreateMap<GameMetadataDto, GameMetadataViewModel>()

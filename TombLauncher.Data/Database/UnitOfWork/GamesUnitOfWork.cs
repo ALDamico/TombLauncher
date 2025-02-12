@@ -151,15 +151,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var game = await Games.Get().Include(g => g.FileBackups.Where(f => targetFileTypes.Contains(f.FileType)))
             .SingleAsync(g => g.Id == id);
 
-        var gameMetadata = _mapper.Map<GameMetadataDto>(game);
-        var fileTypeLookup = game.FileBackups.ToLookup(f => f.FileType);
-        gameMetadata.SetupExecutable =
-            fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.FileName;
-        gameMetadata.SetupExecutableArgs =
-            fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.Arguments;
-        gameMetadata.CommunitySetupExecutable =
-            fileTypeLookup[FileType.CommunitySetupExecutable].FirstOrDefault()?.FileName;
-        return gameMetadata;
+        return _mapper.Map<GameMetadataDto>(game);
     }
 
     public async Task<GameWithStatsDto> GetGameWithStats(int id)
