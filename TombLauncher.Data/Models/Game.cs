@@ -19,7 +19,7 @@ public class Game
     public List<PlaySession> PlaySessions { get; set; }
     public List<GameHashes> Hashes { get; set; }
     public List<GameLink> Links { get; set; }
-    public List<FileBackup> FileBackups { get; set; }
+    public List<FileBackup> FileBackups { get; set; } = new List<FileBackup>();
     public byte[] TitlePic { get; set; }
     public string AuthorFullName { get; set; }
     public bool IsInstalled { get; set; }

@@ -43,3 +43,70 @@ public class CommunitySetupExecutableResolver : IValueResolver<Game, GameMetadat
         return destination.CommunitySetupExecutable;
     }
 }
+
+public class GameFileBackupsResolver : IValueResolver<GameMetadataDto, Game, List<FileBackup>>
+{
+    public List<FileBackup> Resolve(GameMetadataDto source, Game destination, List<FileBackup> destMember, ResolutionContext context)
+    {
+        var gameExecutable = destination.FileBackups.FirstOrDefault(b => b.FileType == FileType.GameExecutable);
+        if (gameExecutable == null)
+        {
+            gameExecutable = new FileBackup()
+            {
+                GameId = source.Id,
+                FileName = source.ExecutablePath,
+                FileType = FileType.GameExecutable
+            };
+            destination.FileBackups.Add(gameExecutable);
+        }
+        else
+        {
+            gameExecutable.FileName = source.ExecutablePath;
+            gameExecutable.FileType = FileType.GameExecutable;
+        }
+
+        
+        if (source.SetupExecutable != null)
+        {
+            var setupExecutable = destination.FileBackups.FirstOrDefault(b => b.FileType == FileType.SetupExecutable);
+            if (setupExecutable == null)
+            {
+                setupExecutable = new FileBackup()
+                {
+                    GameId = source.Id,
+                    FileName = source.SetupExecutable,
+                    Arguments = source.SetupExecutableArgs,
+                    FileType = FileType.SetupExecutable
+                };
+                destination.FileBackups.Add(setupExecutable);
+            }
+            else
+            {
+                setupExecutable.FileName = source.SetupExecutable;
+                setupExecutable.Arguments = source.SetupExecutableArgs;
+            }
+        }
+
+        if (source.CommunitySetupExecutable != null)
+        {
+            var communitySetupExecutable =
+                destination.FileBackups.FirstOrDefault(b => b.FileType == FileType.CommunitySetupExecutable);
+            if (communitySetupExecutable == null)
+            {
+                communitySetupExecutable = new FileBackup()
+                {
+                    GameId = source.Id,
+                    FileName = source.CommunitySetupExecutable,
+                    FileType = FileType.CommunitySetupExecutable
+                };
+                destination.FileBackups.Add(communitySetupExecutable);
+            }
+            else
+            {
+                communitySetupExecutable.FileName = source.CommunitySetupExecutable;
+            }
+        }
+
+        return destination.FileBackups;
+    }
+}
