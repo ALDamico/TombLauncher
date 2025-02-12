@@ -69,7 +69,6 @@ public class GamesUnitOfWork : UnitOfWorkBase
             entity.Length = game.Length;
             entity.Setting = game.Setting;
             entity.Title = game.Title;
-            entity.ExecutablePath = game.ExecutablePath;
             entity.GameEngine = game.GameEngine;
             entity.InstallDate = game.InstallDate;
             entity.InstallDirectory = game.InstallDirectory;
@@ -79,6 +78,13 @@ public class GamesUnitOfWork : UnitOfWorkBase
             entity.AuthorFullName = game.AuthorFullName;
             Games.Update(entity);
         }
+        
+        // TODO Save launch options
+        /*var launchOptionsDto = new LaunchOptionsDto()
+        {
+            GameEngine = game.GameEngine,
+            GameExecutable = new FileBackupDto(){FileType = FileType.GameExecutable, FileName = game.ExecutablePath},
+        }*/
 
         await Save();
         game.Id = entity.Id;
@@ -106,39 +112,21 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var outputList = new List<GameWithStatsDto>();
         var playSessions = PlaySessions.GetAll().ToLookup(ps => ps.GameId);
 
-        var targetFileTypes = new List<FileType>()
-        {
-            FileType.GameExecutable,
-            FileType.SetupExecutable,
-            FileType.CommunitySetupExecutable
-        };
-
-        IQueryable<Game> games =
-            Games.GetAll().Include(g => g.FileBackups.Where(b => targetFileTypes.Contains(b.FileType)));
+        var games = Games.GetAll();
         if (installedOnly)
         {
             games = games.Where(g => g.IsInstalled);
         }
         foreach (var game in games)
         {
-            var fileTypeLookup = game.FileBackups.ToLookup(g => g.FileType);
             var thisGamePlaySessions = playSessions[game.Id].ToList();
             var gameWithStatsDto = new GameWithStatsDto()
             {
-                GameMetadata = _mapper.Map<GameMetadataDto>(game),
+                GameMetadata = await GetGameWithExecutables(game.Id),
                 TotalPlayedTime = TimeSpan.Zero
             };
 
-            gameWithStatsDto.GameMetadata.ExecutablePath =
-                fileTypeLookup[FileType.GameExecutable].FirstOrDefault()?.FileName;
-            gameWithStatsDto.GameMetadata.SetupExecutable =
-                fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.FileName;
-            gameWithStatsDto.GameMetadata.SetupExecutableArgs =
-                fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.Arguments;
-            gameWithStatsDto.GameMetadata.CommunitySetupExecutable =
-                fileTypeLookup[FileType.CommunitySetupExecutable].FirstOrDefault()?.FileName;
-
-            if (thisGamePlaySessions.Any())
+            if (thisGamePlaySessions.Count != 0)
             {
                 gameWithStatsDto.LastPlayed = thisGamePlaySessions.Max(ps => ps.StartDate);
                 gameWithStatsDto.TotalPlayedTime =
@@ -151,33 +139,38 @@ public class GamesUnitOfWork : UnitOfWorkBase
         return await Task.FromResult(outputList);
     }
 
-    public async Task<GameWithStatsDto> GetGameWithStats(int id)
+    private async Task<GameMetadataDto> GetGameWithExecutables(int id)
     {
-        var playSessions = PlaySessions.Get(ps => ps.GameId == id).ToList();
         var targetFileTypes = new List<FileType>()
         {
             FileType.GameExecutable,
             FileType.SetupExecutable,
             FileType.CommunitySetupExecutable
         };
+        
         var game = await Games.Get().Include(g => g.FileBackups.Where(f => targetFileTypes.Contains(f.FileType)))
             .SingleAsync(g => g.Id == id);
+
+        var gameMetadata = _mapper.Map<GameMetadataDto>(game);
+        var fileTypeLookup = game.FileBackups.ToLookup(f => f.FileType);
+        gameMetadata.SetupExecutable =
+            fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.FileName;
+        gameMetadata.SetupExecutableArgs =
+            fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.Arguments;
+        gameMetadata.CommunitySetupExecutable =
+            fileTypeLookup[FileType.CommunitySetupExecutable].FirstOrDefault()?.FileName;
+        return gameMetadata;
+    }
+
+    public async Task<GameWithStatsDto> GetGameWithStats(int id)
+    {
+        var playSessions = PlaySessions.Get(ps => ps.GameId == id).ToList();
         var gameWithStatsDto = new GameWithStatsDto()
         {
-            GameMetadata = _mapper.Map<GameMetadataDto>(game),
+            GameMetadata = await GetGameWithExecutables(id),
             TotalPlayedTime = TimeSpan.Zero
         };
 
-        var fileTypeLookup = game.FileBackups.ToLookup(f => f.FileType);
-        
-        gameWithStatsDto.GameMetadata.ExecutablePath =
-            fileTypeLookup[FileType.GameExecutable].FirstOrDefault()?.FileName;
-        gameWithStatsDto.GameMetadata.SetupExecutable =
-            fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.FileName;
-        gameWithStatsDto.GameMetadata.SetupExecutableArgs =
-            fileTypeLookup[FileType.SetupExecutable].FirstOrDefault()?.Arguments;
-        gameWithStatsDto.GameMetadata.CommunitySetupExecutable =
-            fileTypeLookup[FileType.CommunitySetupExecutable].FirstOrDefault()?.FileName;
         if (playSessions.Any())
         {
             gameWithStatsDto.LastPlayed = playSessions.Max(ps => ps.StartDate);
@@ -275,13 +268,14 @@ public class GamesUnitOfWork : UnitOfWorkBase
         Links.Upsert(entity);
     }
 
-    public GameMetadataDto GetGameByLinks(LinkType linkType, List<string> links)
+    public async Task<GameMetadataDto> GetGameByLinks(LinkType linkType, List<string> links)
     {
         var gameIds = Links.Get(l => links.Contains(l.Link) && l.LinkType == linkType).Select(l => l.GameId).Distinct()
             .ToList();
         if (gameIds.Count == 1)
         {
-            return _mapper.Map<GameMetadataDto>(Games.GetEntityById(gameIds.First()));
+            var gameId = gameIds.First();
+            return await GetGameWithExecutables(gameId);
         }
 
         return null;

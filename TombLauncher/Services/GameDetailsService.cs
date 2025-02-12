@@ -103,56 +103,13 @@ public class GameDetailsService : IViewService
         }
     }
 
-    public async Task OpenSavegameList(GameDetailsViewModel game)
+    public void OpenSavegameList(GameDetailsViewModel game)
     {
         game.SetBusy("Getting savegames...");
         var savegameListView = new SavegameListViewModel()
             { GameId = game.Game.GameMetadata.Id, GameTitle = game.Game.GameMetadata.Title , InstallLocation = game.Game.GameMetadata.InstallDirectory};
         game.SetBusy(false);
-        /*
-        
-
-        if (savegameListView.Savegames.Count == 0)
-        {
-            var installDir = game.Game.GameMetadata.InstallDirectory;
-
-            var savegames = Directory.GetFiles(installDir, "save*.*", SearchOption.AllDirectories).Where(f => System.IO.Path.GetExtension(f).TrimStart('.').All(char.IsDigit)).ToList();
-
-            var userResponse = await MessageBoxService.Show("No savegame backups found",
-                $"There were no savegame backups in Tomb Launcher's database, but we found {savegames.Count} savegame files. Would you like to import them?",
-                MsgBoxButton.YesNo, MsgBoxImage.Folder, "No".GetLocalizedString(), "Yes".GetLocalizedString());
-            if (userResponse.ButtonResult == MsgBoxButtonResult.Yes)
-            {
-                game.SetBusy("Importing your saved games...");
-                var headerReader = new SavegameHeaderReader();
-                var dataToBackup = new List<FileBackupDto>();
-                foreach (var file in savegames)
-                {
-                    var data = headerReader.ReadHeader(file);
-                    if (data != null)
-                    {
-                        var dto = new FileBackupDto()
-                        {
-                            Data = File.ReadAllBytes(file),
-                            FileName = file,
-                            FileType = FileType.Savegame,
-                            BackedUpOn = DateTime.Now
-                        };
-                        dataToBackup.Add(dto);
-                    }
-                }
-
-                GamesUnitOfWork.BackupSavegames(game.Game.GameMetadata.Id, dataToBackup);
-                game.SetBusy(false);
-            }
-            else
-            {
-                game.SetBusy(false);
-                return;
-            }
-            
-            
-        }*/
+       
         NavigationManager.NavigateTo(savegameListView);
     }
 
@@ -166,37 +123,7 @@ public class GameDetailsService : IViewService
         var gameMetadata = vm.TargetGame;
         NavigationManager.GetCurrentPage().SetBusy("Saving launch options...");
 
-        var launchOptionsDto = new LaunchOptionsDto()
-        {
-            GameEngine = vm.SelectedEngine,
-            GameId = gameMetadata.Id,
-            GameExecutable = new FileBackupDto()
-            {
-                FileName = vm.GameExecutable,
-                GameId = gameMetadata.Id,
-                FileType = FileType.GameExecutable
-            }
-        };
-        if (vm.SupportsSetup)
-        {
-            launchOptionsDto.SetupExecutable = new FileBackupDto()
-            {
-                Arguments = vm.SetupArgs,
-                FileName = vm.SetupExecutable,
-                FileType = FileType.SetupExecutable,
-                GameId = gameMetadata.Id
-            };
-        }
-
-        if (vm.SupportsCustomSetup)
-        {
-            launchOptionsDto.CommunitySetupExecutable = new FileBackupDto()
-            {
-                FileName = vm.CustomSetupExecutable,
-                FileType = FileType.CommunitySetupExecutable,
-                GameId = gameMetadata.Id
-            };
-        }
+        var launchOptionsDto = _mapper.Map<LaunchOptionsDto>(vm);
 
         gameMetadata.ExecutablePath = vm.GameExecutable;
         gameMetadata.SetupExecutable = vm.SetupExecutable;

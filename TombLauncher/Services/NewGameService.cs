@@ -104,7 +104,6 @@ public class NewGameService : IViewService
         var gameEngineResult = EngineDetector.Detect(installLocation);
         gameMetadata.GameEngine = gameEngineResult.GameEngine;
         gameMetadata.ExecutablePath = gameEngineResult.ExecutablePath;
-        gameMetadata.UniversalLauncherPath = gameEngineResult.UniversalLauncherPath;
 
         var dto = gameMetadata.ToDto();
         await GamesUnitOfWork.UpsertGame(dto);

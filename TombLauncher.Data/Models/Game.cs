@@ -14,7 +14,6 @@ public class Game
     public GameLength Length { get; set; }
     public GameDifficulty Difficulty { get; set; }
     public string InstallDirectory { get; set; }
-    public string ExecutablePath { get; set; }
     public string Description { get; set; }
     public Guid Guid { get; set; }
     public List<PlaySession> PlaySessions { get; set; }
@@ -23,6 +22,5 @@ public class Game
     public List<FileBackup> FileBackups { get; set; }
     public byte[] TitlePic { get; set; }
     public string AuthorFullName { get; set; }
-    public string UniversalLauncherPath { get; set; }
     public bool IsInstalled { get; set; }
 }

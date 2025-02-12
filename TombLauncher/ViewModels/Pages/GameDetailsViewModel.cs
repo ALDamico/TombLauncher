@@ -19,7 +19,7 @@ public partial class GameDetailsViewModel : PageViewModel
         BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
         UninstallCmd = new AsyncRelayCommand(Uninstall, CanUninstall);
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
-        ManageSaveGamesCmd = new AsyncRelayCommand(ManageSavegames);
+        ManageSaveGamesCmd = new RelayCommand(ManageSavegames);
         OpenLaunchOptionsCmd = new RelayCommand(OpenLaunchOptions);
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var gameDetailsSettings = settingsService.GetGameDetailsSettings();
@@ -54,9 +54,9 @@ public partial class GameDetailsViewModel : PageViewModel
     
     public ICommand ManageSaveGamesCmd { get; }
 
-    private async Task ManageSavegames()
+    private void ManageSavegames()
     {
-        await _gameDetailsService.OpenSavegameList(this);
+        _gameDetailsService.OpenSavegameList(this);
     }
     
     public ICommand ReadWalkthroughCmd { get; }

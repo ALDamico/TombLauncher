@@ -69,7 +69,7 @@ public class TombRaiderEngineDetector
                     }
                     case GameEngine.TombRaider3:
                     {
-                        if (PathUtils.DirectoryContainsFile(containingFolder, "tomb3.dll"))
+                        if (PathUtils.DirectoryContainsFile(containingFolder, "tomb3.dll") || PathUtils.DirectoryContainsFile(containingFolder, "tomb3main.dll"))
                         {
                             result.GameEngine = GameEngine.Tomb3CommunityEdition;
 

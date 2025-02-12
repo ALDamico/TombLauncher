@@ -64,7 +64,7 @@ public class GameSearchResultService : IViewService
     {
         if (obj == null) return false;
         var links = obj.Sources.Select(s => s.DownloadLink).ToList();
-        var gameDto = GamesUnitOfWork.GetGameByLinks(LinkType.Download, links);
+        var gameDto = GamesUnitOfWork.GetGameByLinks(LinkType.Download, links).GetAwaiter().GetResult();
         return gameDto is not { IsInstalled: true };
     }
 
@@ -207,6 +207,9 @@ public class GameSearchResultService : IViewService
         var detectionResult = EngineDetector.Detect(installLocation);
         dto.ExecutablePath = detectionResult.ExecutablePath;
         dto.GameEngine = detectionResult.GameEngine;
+        dto.SetupExecutable = detectionResult.SetupExecutablePath;
+        dto.SetupExecutableArgs = detectionResult.SetupArgs;
+        dto.CommunitySetupExecutable = detectionResult.CommunitySetupExecutablePath;
         _logger.LogInformation("Saving data for {GameTitle} to database", gameToInstall.Title);
         await GamesUnitOfWork.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
@@ -248,7 +251,7 @@ public class GameSearchResultService : IViewService
         notificationViewModel.IsCancelable = false;
 
         await GamesUnitOfWork.Save();
-        gameToInstall.InstalledGame = _mapper.Map<GameWithStatsViewModel>(GamesUnitOfWork.GetGameWithStats(dto.Id));
+        gameToInstall.InstalledGame = _mapper.Map<GameWithStatsViewModel>(await GamesUnitOfWork.GetGameWithStats(dto.Id));
         _logger.LogInformation("Installation for {GameTitle} complete",gameToInstall.Title);
     }
 

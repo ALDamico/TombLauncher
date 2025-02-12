@@ -118,12 +118,16 @@ public class GameSearchService : IViewService
         if (details != null)
         {
             var detailsViewModel = _mapper.Map<GameMetadataViewModel>(details);
-            var installedGame =
+            var installedGame = await 
                 GamesUnitOfWork.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink).ToList());
             if (installedGame != null)
             {
                 detailsViewModel.InstallDirectory = installedGame.InstallDirectory;
                 detailsViewModel.ExecutablePath = installedGame.ExecutablePath;
+                detailsViewModel.IsInstalled = installedGame.IsInstalled;
+                detailsViewModel.SetupExecutable = installedGame.SetupExecutable;
+                detailsViewModel.SetupExecutableArgs = installedGame.SetupExecutableArgs;
+                detailsViewModel.CommunitySetupExecutable = installedGame.CommunitySetupExecutable;
                 detailsViewModel.Id = installedGame.Id;
             }
 

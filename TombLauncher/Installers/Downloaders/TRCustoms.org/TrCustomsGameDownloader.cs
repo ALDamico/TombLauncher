@@ -308,7 +308,7 @@ public class TrCustomsGameDownloader : IGameDownloader
 
         searchRequest.Page = currentPage;
         
-        searchRequest.Search = DownloaderSearchPayload.LevelName;
+        searchRequest.Search = DownloaderSearchPayload.AuthorName;
         if (downloaderSearchPayload.LevelName != null)
             searchRequest.Search = downloaderSearchPayload.LevelName;
 

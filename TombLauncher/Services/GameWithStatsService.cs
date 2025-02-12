@@ -210,10 +210,6 @@ public class GameWithStatsService : IViewService
     private void LaunchProcess(GameWithStatsViewModel game, bool trackPlayTime = false, List<string> arguments = null)
     {
         var executable = game.GameMetadata.ExecutablePath;
-        if (game.GameMetadata.UniversalLauncherPath.IsNotNullOrWhiteSpace())
-        {
-            executable = game.GameMetadata.UniversalLauncherPath;
-        }
 
         executable = Path.GetFileName(executable);
 

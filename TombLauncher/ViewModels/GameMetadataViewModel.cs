@@ -22,7 +22,6 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private string _description;
     [ObservableProperty] private Bitmap _titlePic;
     [ObservableProperty] private string _authorFullName;
-    [ObservableProperty] private string _universalLauncherPath;
     [ObservableProperty] private bool _isInstalled;
     [ObservableProperty] private string _setupExecutable;
     [ObservableProperty] private string _setupExecutableArgs;
