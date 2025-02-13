@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -9,10 +10,10 @@ using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
-using TombLauncher.Localization;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 
@@ -38,6 +39,7 @@ public class NewGameService : IViewService
         LevelInstaller = levelInstaller;
         EngineDetector = engineDetector;
         _logger = Ioc.Default.GetRequiredService<ILogger<NewGameService>>();
+        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
     }
 
     private readonly ILogger<NewGameService> _logger;
@@ -49,6 +51,7 @@ public class NewGameService : IViewService
     public GameFileHashCalculator GameFileHashCalculator { get; }
     public TombRaiderLevelInstaller LevelInstaller { get; }
     public TombRaiderEngineDetector EngineDetector { get; }
+    private IMapper _mapper;
 
     public async Task<string> PickZipArchive()
     {
@@ -97,15 +100,21 @@ public class NewGameService : IViewService
         gameMetadata.InstallDate = DateTime.Now;
         var guid = Guid.NewGuid();
         gameMetadata.Guid = guid;
+
+        var gameMetadataDto = _mapper.Map<GameMetadataDto>(gameMetadata);
         
-        var installLocation = await LevelInstaller.Install(source, gameMetadata.ToDto(), progress);
+        var installLocation = await LevelInstaller.Install(source, gameMetadataDto, progress);
         progress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
         gameMetadata.InstallDirectory = installLocation;
         var gameEngineResult = EngineDetector.Detect(installLocation);
         gameMetadata.GameEngine = gameEngineResult.GameEngine;
         gameMetadata.ExecutablePath = gameEngineResult.ExecutablePath;
+        gameMetadata.SetupExecutable = gameEngineResult.SetupExecutablePath;
+        gameMetadata.SetupExecutableArgs = gameEngineResult.SetupArgs;
+        gameMetadata.CommunitySetupExecutable = gameEngineResult.CommunitySetupExecutablePath;
+        gameMetadata.IsInstalled = true;
 
-        var dto = gameMetadata.ToDto();
+        var dto = _mapper.Map<GameMetadataDto>(gameMetadata);
         await GamesUnitOfWork.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
         await GamesUnitOfWork.SaveHashes(hashes);

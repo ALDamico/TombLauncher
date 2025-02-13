@@ -31,28 +31,4 @@ public static class GameExtensions
             SetupExecutableArgs = game.SetupExecutableArgs,
         };
     }
-
-
-    public static GameMetadataDto ToDto(this GameMetadataViewModel game)
-    {
-        var titlePic = ImageUtils.ToByteArray(game.TitlePic);
-        return new GameMetadataDto()
-        {
-            Id = game.Id,
-            Author = game.Author,
-            GameEngine = game.GameEngine,
-            InstallDate = game.InstallDate,
-            ReleaseDate = game.ReleaseDate,
-            Title = game.Title,
-            Setting = game.Setting,
-            Difficulty = game.Difficulty,
-            Length = game.Length,
-            InstallDirectory = game.InstallDirectory,
-            Description = game.Description,
-            ExecutablePath = game.ExecutablePath,
-            Guid = game.Guid,
-            TitlePic = titlePic,
-            AuthorFullName = game.AuthorFullName
-        };
-    }
 }

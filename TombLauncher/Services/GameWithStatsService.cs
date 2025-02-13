@@ -167,7 +167,8 @@ public class GameWithStatsService : IViewService
         try
         {
             currentPage.SetBusy(true, "Saving play session...".GetLocalizedString());
-            _gamesUnitOfWork.AddPlaySessionToGame(game.GameMetadata.ToDto(), process.StartTime, process.ExitTime);
+            var gameMetadataDto = _mapper.Map<GameMetadataDto>(game.GameMetadata);
+            _gamesUnitOfWork.AddPlaySessionToGame(gameMetadataDto, process.StartTime, process.ExitTime);
             currentPage.SetBusy("Backing up savegames...".GetLocalizedString());
             var filesToProcess = _headerProcessor.ProcessedFiles;
 
