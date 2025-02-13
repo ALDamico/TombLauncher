@@ -1,15 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Dtos;
-using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Extensions;
-using TombLauncher.Localization;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
@@ -20,40 +16,33 @@ namespace TombLauncher.Services;
 
 public class GameListService : IViewService
 {
-    public GameListService(GamesUnitOfWork gamesUnitOfWork, 
-        ILocalizationManager localizationManager,
+    public GameListService(ILocalizationManager localizationManager,
         NavigationManager navigationManager, 
         IMessageBoxService messageBoxService, 
         IDialogService dialogService)
     {
-        GamesUnitOfWork = gamesUnitOfWork;
+        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
         LocalizationManager = localizationManager;
         NavigationManager = navigationManager;
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
+        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
     }
 
-    public GamesUnitOfWork GamesUnitOfWork { get; }
+    private readonly GamesUnitOfWork _gamesUnitOfWork;
     public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
+    private readonly IMapper _mapper;
 
     public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
         host.SetBusy(true, "Loading games...".GetLocalizedString());
 
-        return (await GamesUnitOfWork.GetGamesWithStats(true)).Select(ConvertDto).ToObservableCollection();
-    }
+        var gamesWithStats = await _gamesUnitOfWork.GetGamesWithStats(true);
 
-    private GameWithStatsViewModel ConvertDto(GameWithStatsDto dto)
-    {
-        return new GameWithStatsViewModel()
-        {
-            GameMetadata = dto.GameMetadata.ToViewModel(),
-            LastPlayed = dto.LastPlayed,
-            TotalPlayedTime = dto.TotalPlayedTime
-        };
+        return _mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
     }
 
     public void AddGame()
@@ -71,8 +60,8 @@ public class GameListService : IViewService
             target.SetBusy(true, "Uninstalling".GetLocalizedString(game.GameMetadata.Title));
             var installDir = game.GameMetadata.InstallDirectory;
             Directory.Delete(installDir, true);
-            GamesUnitOfWork.MarkGameAsUninstalled(game.GameMetadata.Id);
-            await GamesUnitOfWork.Save();
+            _gamesUnitOfWork.MarkGameAsUninstalled(game.GameMetadata.Id);
+            await _gamesUnitOfWork.Save();
             target.ClearBusy();
             NavigationManager.NavigateTo(target);
         };
