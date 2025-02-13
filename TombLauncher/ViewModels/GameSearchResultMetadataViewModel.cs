@@ -20,6 +20,7 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase
     [ObservableProperty] private string _detailsLink;
     [ObservableProperty] private string _baseUrl;
     [ObservableProperty] private Bitmap _titlePic;
+    [ObservableProperty] private string _description;
     private string _reviewsLink;
 
     public string ReviewsLink

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Utils;
 using TombLauncher.Installers.Models;
 
 namespace TombLauncher.Installers;
@@ -47,12 +48,59 @@ public class TombRaiderEngineDetector
             if (_gameEngines.TryGetValue(Path.GetFileName(file).ToLowerInvariant(), out var gameEngine))
             {
                 result.GameEngine = gameEngine;
-                if (gameEngine == GameEngine.TombRaider2)
+
+                if (gameEngine.HasFlag(GameEngine.TombRaider2) || gameEngine.HasFlag(GameEngine.TombRaider3) ||
+                    gameEngine.HasFlag(GameEngine.TombRaider4) || gameEngine.HasFlag(GameEngine.TombRaider5))
                 {
-                    var hasTomb2MainFiles = Directory.GetFiles(containingFolder, "TR2Main.dll");
-                    if (hasTomb2MainFiles?.Length > 0)
+                    result.SetupExecutablePath = result.ExecutablePath;
+                    result.SetupArgs = "-setup";
+                }
+                
+                switch (gameEngine)
+                {
+                    case GameEngine.TombRaider2:
                     {
-                        result.GameEngine = GameEngine.Tomb2Main;
+                        if (PathUtils.DirectoryContainsFile(containingFolder, "TR2Main.dll"))
+                        {
+                            result.GameEngine = GameEngine.Tomb2Main;
+                        }
+
+                        break;
+                    }
+                    case GameEngine.TombRaider3:
+                    {
+                        if (PathUtils.DirectoryContainsFile(containingFolder, "tomb3.dll") || PathUtils.DirectoryContainsFile(containingFolder, "tomb3main.dll"))
+                        {
+                            result.GameEngine = GameEngine.Tomb3CommunityEdition;
+
+                            if (PathUtils.DirectoryContainsFile(containingFolder, "tomb3_ConfigTool.exe"))
+                            {
+                                result.CommunitySetupExecutablePath =
+                                    PathUtils.GetRelativePath(containingFolder, "tomb3_ConfigTool.exe");
+                            }
+                        }
+
+                        break;
+                    }
+                    case GameEngine.Tr1x:
+                    {
+                        if (PathUtils.DirectoryContainsFile(containingFolder, "TR1X_ConfigTool.exe"))
+                        {
+                            result.CommunitySetupExecutablePath =
+                                PathUtils.GetRelativePath(containingFolder, "TR1X_ConfigTool.exe");
+                        }
+
+                        break;
+                    }
+                    case GameEngine.Tr2x:
+                    {
+                        if (PathUtils.DirectoryContainsFile(containingFolder, "TR2X_ConfigTool.exe"))
+                        {
+                            result.CommunitySetupExecutablePath =
+                                PathUtils.GetRelativePath(containingFolder, "TR2X_ConfigTool.exe");
+                        }
+
+                        break;
                     }
                 }
             }

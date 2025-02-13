@@ -118,13 +118,16 @@ public class GameSearchService : IViewService
         if (details != null)
         {
             var detailsViewModel = _mapper.Map<GameMetadataViewModel>(details);
-            var installedGame =
+            var installedGame = await 
                 GamesUnitOfWork.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink).ToList());
             if (installedGame != null)
             {
                 detailsViewModel.InstallDirectory = installedGame.InstallDirectory;
                 detailsViewModel.ExecutablePath = installedGame.ExecutablePath;
-                detailsViewModel.UniversalLauncherPath = installedGame.UniversalLauncherPath;
+                detailsViewModel.IsInstalled = installedGame.IsInstalled;
+                detailsViewModel.SetupExecutable = installedGame.SetupExecutable;
+                detailsViewModel.SetupExecutableArgs = installedGame.SetupExecutableArgs;
+                detailsViewModel.CommunitySetupExecutable = installedGame.CommunitySetupExecutable;
                 detailsViewModel.Id = installedGame.Id;
             }
 
@@ -157,7 +160,8 @@ public class GameSearchService : IViewService
         target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         try
         {
-            var games = await GameDownloadManager.GetGames(target.SearchPayload.ToDto());
+            var searchPayloadDto = _mapper.Map<DownloaderSearchPayload>(target.SearchPayload);
+            var games = await GameDownloadManager.GetGames(searchPayloadDto);
             var mappedGames = _mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);
             var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink) /*TODO Remove this*/
                 .Where(s => s.IsNotNullOrWhiteSpace()).ToList();

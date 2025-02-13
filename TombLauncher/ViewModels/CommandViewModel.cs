@@ -9,4 +9,5 @@ public partial class CommandViewModel : ViewModelBase
     [ObservableProperty] private ICommand _command;
     [ObservableProperty] private MaterialIconKind _icon;
     [ObservableProperty] private string _tooltip;
+    [ObservableProperty] private string _text;
 }

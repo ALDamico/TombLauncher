@@ -4,6 +4,10 @@ namespace TombLauncher.Core.Dtos;
 
 public class FileBackupDto
 {
+    public FileBackupDto()
+    {
+        BackedUpOn = DateTime.Now;
+    }
     public int Id { get; set; }
     public string FileName { get; set; }
     public byte[] Data { get; set; }
@@ -11,4 +15,5 @@ public class FileBackupDto
     public FileType FileType { get; set; }
     public int GameId { get; set; }
     public string Md5 { get; set; }
+    public string Arguments { get; set; }
 }

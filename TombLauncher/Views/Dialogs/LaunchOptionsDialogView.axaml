@@ -1,0 +1,63 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Dialogs.LaunchOptionsDialogView"
+             x:DataType="dialogs:LaunchOptionsDialogViewModel"
+             Width="600">
+    <Design.DataContext>
+        <dialogs:LaunchOptionsDialogViewModel/>
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <TextBlock Text="{DynamicResource 'LAUNCH OPTIONS'}" Classes="h1"></TextBlock>
+        <controls:IconButton Icon="Sync" 
+                             Text="{DynamicResource 'Auto detect'}" 
+                             ToolTip.Tip="{DynamicResource 'Auto detect tooltip'}"
+                HorizontalAlignment="Right"
+                Command="{Binding AutoDetectCmd}"/>
+        <ScrollViewer>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Classes="small" Text="{DynamicResource 'Engine type'}"/>
+            <ComboBox ItemsSource="{Binding AvailableEngines}"
+                      SelectedValue="{Binding SelectedEngine}"
+                      SelectedValueBinding="{Binding Value, Mode=TwoWay}"
+                      AutoScrollToSelectedItem="True"
+                      DisplayMemberBinding="{Binding Description}"/>
+            <TextBlock Classes="small" Text="{DynamicResource 'Game executable'}"/>
+            <ComboBox ItemsSource="{Binding AvailableExecutables}" 
+                      SelectedItem="{Binding GameExecutable,Mode=TwoWay}"/>
+            <CheckBox Classes="small" IsChecked="{Binding SupportsSetup}" 
+                      Content="{DynamicResource 'Can launch setup'}"></CheckBox>
+            <TextBlock Classes="small" 
+                       IsEnabled="{Binding SupportsSetup}"
+                       Text="{DynamicResource 'Setup executable'}"/>
+            <DockPanel IsEnabled="{Binding SupportsSetup}" LastChildFill="True">
+                <controls:Infotip DockPanel.Dock="Right" 
+                                  ToolTipContent="{DynamicResource 'Setup executable tooltip'}" />
+                <ComboBox ItemsSource="{Binding AvailableExecutables}" 
+                          SelectedItem="{Binding SetupExecutable}"/>
+            </DockPanel>
+            <TextBlock IsEnabled="{Binding SupportsSetup}" 
+                       Classes="small" 
+                       Text="{DynamicResource 'Setup executable args'}"/>
+            <DockPanel IsEnabled="{Binding SupportsSetup}" LastChildFill="True">
+                <controls:Infotip DockPanel.Dock="Right" 
+                                  ToolTipContent="{DynamicResource 'Setup executable args tooltip'}"/>
+                <TextBox Text="{Binding SetupArgs}"/>
+            </DockPanel>
+            <CheckBox Classes="small" IsChecked="{Binding SupportsCustomSetup}" 
+                      Content="{DynamicResource 'Uses community patch'}"/>
+            <TextBlock Classes="small" Text="{DynamicResource 'Community patch setup executable'}"></TextBlock>
+            <DockPanel IsEnabled="{Binding SupportsCustomSetup}" LastChildFill="True">
+                <controls:Infotip DockPanel.Dock="Right" 
+                                  ToolTipContent="{DynamicResource 'Community patch setup executable tooltip'}" />
+                <ComboBox ItemsSource="{Binding AvailableExecutables}" 
+                          SelectedItem="{Binding CustomSetupExecutable}"/>
+            </DockPanel>
+        </StackPanel>
+    </ScrollViewer>
+        </StackPanel>
+</UserControl>

@@ -19,6 +19,8 @@ public interface IGameMetadata
     Guid Guid { get; set; }
     byte[] TitlePic { get; set; }
     string AuthorFullName { get; set; }
-    string UniversalLauncherPath { get; set; }
     bool IsInstalled { get; set; }
+    string SetupExecutable { get; set; }
+    string SetupExecutableArgs { get; set; }
+    string CommunitySetupExecutable { get; set; }
 }

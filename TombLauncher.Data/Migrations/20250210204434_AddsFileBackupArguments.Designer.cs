@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TombLauncher.Data.Database;
 
 #nullable disable
 
-namespace TombLauncher.Data.Database.Migrations
+namespace TombLauncher.Data.Migrations
 {
     [DbContext(typeof(TombLauncherDbContext))]
-    partial class TombLauncherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250210204434_AddsFileBackupArguments")]
+    partial class AddsFileBackupArguments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
@@ -89,6 +92,9 @@ namespace TombLauncher.Data.Database.Migrations
                     b.Property<int>("Difficulty")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ExecutablePath")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("GameEngine")
                         .HasColumnType("INTEGER");
 
@@ -118,6 +124,9 @@ namespace TombLauncher.Data.Database.Migrations
 
                     b.Property<byte[]>("TitlePic")
                         .HasColumnType("BLOB");
+
+                    b.Property<string>("UniversalLauncherPath")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

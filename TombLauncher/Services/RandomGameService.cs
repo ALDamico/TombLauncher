@@ -71,7 +71,7 @@ public class RandomGameService
                 continue;
             }
 
-            var installedGame = _gamesUnitOfWork.GetGameByLinks(LinkType.Download,
+            var installedGame = await _gamesUnitOfWork.GetGameByLinks(LinkType.Download,
                 candidate.Sources.Select(s => s.DownloadLink).ToList());
             if (installedGame == null)
             {
@@ -88,8 +88,6 @@ public class RandomGameService
 
                         vm.Game.GameMetadata.InstallDirectory = mapped.InstalledGame.GameMetadata.InstallDirectory;
                         vm.Game.GameMetadata.ExecutablePath = mapped.InstalledGame.GameMetadata.ExecutablePath;
-                        vm.Game.GameMetadata.UniversalLauncherPath =
-                            mapped.InstalledGame.GameMetadata.UniversalLauncherPath;
                         vm.Game.GameMetadata.Id = mapped.InstalledGame.GameMetadata.Id;
                         vm.Game.RaiseCanExecuteChanged(vm.Game.PlayCmd);
                         vm.Game.RaiseCanExecuteChanged(vm.Game.LaunchSetupCmd);
