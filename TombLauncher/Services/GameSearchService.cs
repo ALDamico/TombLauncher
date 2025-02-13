@@ -160,7 +160,8 @@ public class GameSearchService : IViewService
         target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         try
         {
-            var games = await GameDownloadManager.GetGames(target.SearchPayload.ToDto());
+            var searchPayloadDto = _mapper.Map<DownloaderSearchPayload>(target.SearchPayload);
+            var games = await GameDownloadManager.GetGames(searchPayloadDto);
             var mappedGames = _mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);
             var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink) /*TODO Remove this*/
                 .Where(s => s.IsNotNullOrWhiteSpace()).ToList();

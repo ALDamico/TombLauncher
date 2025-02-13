@@ -23,5 +23,10 @@ public class SearchProfile : Profile
         CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
             .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto());
         CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>();
+
+        CreateMap<DownloaderSearchPayload, DownloaderSearchPayloadViewModel>()
+            .ForMember(m => m.AvailableDifficulties, opt => opt.Ignore())
+            .ForMember(m => m.AvailableEngines, opt => opt.Ignore())
+            .ReverseMap();
     }
 }
