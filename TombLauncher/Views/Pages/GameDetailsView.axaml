@@ -65,13 +65,24 @@
                 Text="{DynamicResource 'Play'}"
                 Command="{Binding Game.PlayCmd}">
                 <controls:SplitIconButton.Flyout>
-                    <MenuFlyout>
-                        <MenuItem Header="{DynamicResource Setup}"
-                                  Command="{Binding Game.LaunchSetupCmd}">
-                            <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="Settings" />
-                            </MenuItem.Icon>
-                        </MenuItem>
+                    <MenuFlyout ItemsSource="{Binding SetupCommands}">
+                        <MenuFlyout.ItemContainerTheme>
+                            <ControlTheme TargetType="MenuItem" 
+                                          BasedOn="{StaticResource {x:Type MenuItem}}" 
+                                          x:DataType="viewModels:CommandViewModel">
+                                <Setter Property="Command" Value="{Binding Command}"/>
+                            </ControlTheme>
+                        </MenuFlyout.ItemContainerTheme>
+                        <MenuFlyout.ItemTemplate>
+                            <DataTemplate DataType="viewModels:CommandViewModel">
+                                <MenuItem Header="{Binding Text}"
+                                          Command="{Binding Command}">
+                                    <MenuItem.Icon>
+                                        <avalonia:MaterialIcon Kind="{Binding Icon}"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </DataTemplate>
+                        </MenuFlyout.ItemTemplate>
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>

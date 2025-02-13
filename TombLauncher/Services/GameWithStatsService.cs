@@ -57,8 +57,9 @@ public class GameWithStatsService : IViewService
 
     public async Task OpenGame(GameWithStatsViewModel game)
     {
-        var gameDetailsViewModel = await Task.FromResult(new GameDetailsViewModel(game));
+        var gameDetailsViewModel = new GameDetailsViewModel(game);
         NavigationManager.NavigateTo(gameDetailsViewModel);
+        await Task.CompletedTask;
     }
 
     public async Task OpenGame(int gameId)
@@ -74,7 +75,7 @@ public class GameWithStatsService : IViewService
         InitFileSystemWatcher(game);
         //watcher.Created += WatcherOnCreated;
 
-        LaunchProcess(game, true);
+        LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
         
     }
 
@@ -130,6 +131,16 @@ public class GameWithStatsService : IViewService
     public bool CanPlayGame(GameWithStatsViewModel game)
     {
         return game.GameMetadata.IsInstalled;
+    }
+
+    public bool CanLaunchSetup(GameWithStatsViewModel game)
+    {
+        return game.GameMetadata.SetupExecutable.IsNotNullOrWhiteSpace();
+    }
+
+    public bool CanLaunchCommunitySetup(GameWithStatsViewModel game)
+    {
+        return game.GameMetadata.CommunitySetupExecutable.IsNotNullOrWhiteSpace();
     }
 
     private void OnSetupExited(Process process)
@@ -204,22 +215,28 @@ public class GameWithStatsService : IViewService
         var currentPage = NavigationManager.GetCurrentPage();
         currentPage.SetBusy(
             LocalizationManager.GetLocalizedString("Launching setup for GAMENAME", game.GameMetadata.Title));
-        LaunchProcess(game, false, ["-setup"]);
+        LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
     }
 
-    private void LaunchProcess(GameWithStatsViewModel game, bool trackPlayTime = false, List<string> arguments = null)
+    public void LaunchCommunitySetup(GameWithStatsViewModel game)
     {
-        var executable = game.GameMetadata.ExecutablePath;
+        var currentPage = NavigationManager.GetCurrentPage();
+        currentPage.SetBusy(
+            LocalizationManager.GetLocalizedString("Launching community patch setup for GAMENAME", game.GameMetadata.Title));
+        LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
+    }
 
-        executable = Path.GetFileName(executable);
+    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false, string arguments = null)
+    {
+        var executableFileNameOnly = Path.GetFileName(executable);
 
-        var workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, game.GameMetadata.ExecutablePath));
+        var workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable));
 
         var process = new Process()
         {
-            StartInfo = new ProcessStartInfo(executable)
+            StartInfo = new ProcessStartInfo(executableFileNameOnly)
             {
-                Arguments = string.Join(" ", arguments ?? new List<string>()),
+                Arguments = arguments ?? "",
                 WorkingDirectory = workingDirectory,
                 UseShellExecute = true,
             },

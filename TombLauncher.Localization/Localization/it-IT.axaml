@@ -200,6 +200,8 @@
     <system:String x:Key="Community patch setup executable tooltip">Abilita questa opzione se questo livello custom utilizza un motore avanzato della community come TRX o Tomb3 Community Edition, per avviare lo strumento di setup.</system:String>
     <system:String x:Key="Auto detect tooltip">Prova a rilevare automaticamente le impostazioni da utilizzare.</system:String>
     <system:String x:Key="Uses community patch">Utilizza patch della community</system:String>
+    <system:String x:Key="Launching community patch setup for GAMENAME">Avvio dell'utility di configurazione della patch della community per {0}</system:String>
+    <system:String x:Key="Community patch setup">Setup patch della community</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

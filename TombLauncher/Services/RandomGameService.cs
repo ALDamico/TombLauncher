@@ -71,7 +71,7 @@ public class RandomGameService
                 continue;
             }
 
-            var installedGame = _gamesUnitOfWork.GetGameByLinks(LinkType.Download,
+            var installedGame = await _gamesUnitOfWork.GetGameByLinks(LinkType.Download,
                 candidate.Sources.Select(s => s.DownloadLink).ToList());
             if (installedGame == null)
             {

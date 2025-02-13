@@ -1,11 +1,16 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
+using Material.Icons;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Extensions;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
@@ -25,12 +30,23 @@ public partial class GameDetailsViewModel : PageViewModel
         var gameDetailsSettings = settingsService.GetGameDetailsSettings();
         _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _useInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
+        SetupCommands = new ObservableCollection<CommandViewModel>();
+        if (Game.GameMetadata.SetupExecutable.IsNotNullOrWhiteSpace())
+        {
+            SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchSetupCmd, Icon = MaterialIconKind.Settings, Text = "Setup".GetLocalizedString()});
+        }
+
+        if (Game.GameMetadata.CommunitySetupExecutable.IsNotNullOrWhiteSpace())
+        {
+            SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchCommunitySetupCmd, Icon = MaterialIconKind.SettingsPlay, Text = "Community patch setup".GetLocalizedString()});
+        }
         Initialize += OnInitialize;
     }
 
     private bool _askForConfirmationBeforeOpeningWalkthrough;
     private bool _useInternalViewerIfAvailable;
-    private IDialogService _dialogService; 
+    private IDialogService _dialogService;
+    [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands;
 
     private async void OnInitialize()
     {
