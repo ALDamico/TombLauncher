@@ -119,13 +119,7 @@ public class GameWithStatsService : IViewService
     private async Task<GameWithStatsViewModel> GetGameById(int gameId)
     {
         var game = await _gamesUnitOfWork.GetGameWithStats(gameId);
-        var gameViewModel = new GameWithStatsViewModel()
-        {
-            GameMetadata = game.GameMetadata.ToViewModel(),
-            LastPlayed = game.LastPlayed,
-            TotalPlayedTime = game.TotalPlayedTime
-        };
-        return gameViewModel;
+        return _mapper.Map<GameWithStatsViewModel>(game);
     }
 
     public bool CanPlayGame(GameWithStatsViewModel game)
