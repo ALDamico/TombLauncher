@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -11,6 +10,7 @@ using Material.Icons;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Services;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;
@@ -106,7 +106,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
     {
         var settings = Ioc.Default.GetRequiredService<SettingsService>();
         var gitHubLink = settings.GetGitHubLink();
-        Process.Start(new ProcessStartInfo(gitHubLink){UseShellExecute = true});
+        AppUtils.OpenUrl(gitHubLink);
     }
 
     private bool _isPaneOpen;
