@@ -105,4 +105,6 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         get => User.SavegameProcessingDelay.Coalesce(Defaults.SavegameProcessingDelay);
         set => User.SavegameProcessingDelay = value.DefaultIfEquals(Defaults.SavegameProcessingDelay);
     }
+
+    public string GitHubLink { get => Defaults.GitHubLink; set => Defaults.GitHubLink = value; }
 }

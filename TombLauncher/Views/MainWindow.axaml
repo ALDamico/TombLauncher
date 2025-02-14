@@ -25,6 +25,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <controls:IconButton Grid.Row="0" 
                                      ToolTip.Tip="Menu" 
@@ -51,7 +52,27 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <ListBoxItem Grid.Row="2" 
+                <ListBoxItem Grid.Row="2" Content="{Binding GitHubLinkItem}" x:Name="GitHubLinkItem" 
+                             ToolTip.Tip="{Binding GitHubLinkItem.Tooltip}">
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior EventName="PointerReleased" 
+                                              SourceObject="GitHubLinkItem">
+                            <EventTriggerBehavior.Actions>
+                                <InvokeCommandAction Command="{Binding GitHubLinkItem.Command}"/>
+                            </EventTriggerBehavior.Actions>
+                        </EventTriggerBehavior>
+                    </Interaction.Behaviors>
+                    <ListBoxItem.ContentTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:CommandViewModel}">
+                            <StackPanel Spacing="20" 
+                                        Orientation="Horizontal">
+                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                <TextBlock Text="{Binding Text}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBoxItem.ContentTemplate>
+                </ListBoxItem>
+                <ListBoxItem Grid.Row="3" 
                              Content="{Binding SettingsItem}" 
                              x:Name="SettingsItem" 
                              IsSelected="{Binding IsSettingsOpen}">

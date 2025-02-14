@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using JamSoft.AvaloniaUI.Dialogs;
@@ -11,16 +10,15 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.MessageBoxes;
 using TombLauncher.ViewModels.Pages;
-using Path = Avalonia.Controls.Shapes.Path;
 
 namespace TombLauncher.Services;
 
@@ -87,8 +85,7 @@ public class GameDetailsService : IViewService
         
         try
         {
-            link = link.Replace("&", "^&");
-            Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
+            AppUtils.OpenUrl(link);
         }
         catch (SystemException)
         {

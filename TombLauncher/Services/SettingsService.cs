@@ -222,4 +222,9 @@ public class SettingsService : IViewService
         
         await Task.CompletedTask;
     }
+
+    public string GetGitHubLink()
+    {
+        return _appConfiguration.GitHubLink;
+    }
 }

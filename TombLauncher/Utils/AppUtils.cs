@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input.Platform;
@@ -34,5 +35,11 @@ public static class AppUtils
         {
             LiveCharts.Configure(config => config.AddLightTheme());
         }
+    }
+
+    public static void OpenUrl(string link)
+    {
+        link = link.Replace("&", "^&");
+        Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
     }
 }

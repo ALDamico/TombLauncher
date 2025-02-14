@@ -21,4 +21,5 @@ public class AppConfiguration : IAppConfiguration
     public bool BackupSavegamesEnabled { get; set; }
     public int? NumberOfVersionsToKeep { get; set; }
     public int SavegameProcessingDelay { get; set; }
+    public string GitHubLink { get; set; }
 }

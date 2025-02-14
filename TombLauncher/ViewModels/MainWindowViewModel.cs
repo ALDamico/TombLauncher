@@ -9,6 +9,8 @@ using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
+using TombLauncher.Services;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;
@@ -76,6 +78,14 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 await Task.FromResult(Ioc.Default.GetRequiredService<SettingsPageViewModel>())
         };
 
+        GitHubLinkItem = new CommandViewModel()
+        {
+            Tooltip = "Open Tomb Launcher's GitHub page".GetLocalizedString(),
+            Icon = MaterialIconKind.Github,
+            Text = "GitHub",
+            Command = new RelayCommand(OpenGithub)
+        };
+
         _navigationManager.StartNavigation(MenuItems.First().PageViewModelFactory.Invoke().GetAwaiter().GetResult());
         Title = "Tomb Launcher";
     }
@@ -89,7 +99,15 @@ public partial class MainWindowViewModel : WindowViewModelBase
     private readonly NavigationManager _navigationManager;
     [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
     [ObservableProperty] private MainMenuItemViewModel _settingsItem;
+    [ObservableProperty] private CommandViewModel _gitHubLinkItem;
     [ObservableProperty] private bool _isSettingsOpen;
+
+    private void OpenGithub()
+    {
+        var settings = Ioc.Default.GetRequiredService<SettingsService>();
+        var gitHubLink = settings.GetGitHubLink();
+        AppUtils.OpenUrl(gitHubLink);
+    }
 
     private bool _isPaneOpen;
 

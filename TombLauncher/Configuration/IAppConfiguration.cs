@@ -21,4 +21,5 @@ public interface IAppConfiguration
     bool BackupSavegamesEnabled { get; set; }
     int? NumberOfVersionsToKeep { get; set; }
     public int SavegameProcessingDelay { get; set; }
+    string GitHubLink { get; set; }
 }
