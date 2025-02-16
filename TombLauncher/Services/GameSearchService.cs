@@ -128,6 +128,7 @@ public class GameSearchService : IViewService
                 detailsViewModel.SetupExecutable = installedGame.SetupExecutable;
                 detailsViewModel.SetupExecutableArgs = installedGame.SetupExecutableArgs;
                 detailsViewModel.CommunitySetupExecutable = installedGame.CommunitySetupExecutable;
+                detailsViewModel.GameEngine = installedGame.GameEngine;
                 detailsViewModel.Id = installedGame.Id;
             }
 
