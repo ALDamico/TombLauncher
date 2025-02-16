@@ -51,11 +51,12 @@ public class SavegameService
     {
         var unsupportedHeaderReader = new SavegameUnsupportedHeaderReader();
         var classicGamesHeaderReader = new SavegameHeaderReader();
+        var tr1xHeaderReader = new Tr1xSavegameHeaderReader();
         _headerReaderMap = new Dictionary<GameEngine, ISavegameHeaderReader>()
         {
             { GameEngine.Unknown, unsupportedHeaderReader },
             { GameEngine.Ten, unsupportedHeaderReader },
-            { GameEngine.Tr1x, unsupportedHeaderReader }, // TODO Implement TRX header reader
+            { GameEngine.Tr1x, tr1xHeaderReader },
             { GameEngine.Tr2x, unsupportedHeaderReader },
             { GameEngine.Tomb2Main, classicGamesHeaderReader },
             { GameEngine.TombAti, classicGamesHeaderReader },
@@ -169,7 +170,7 @@ public class SavegameService
         var installDir = savegameListView.InstallLocation;
 
         var savegames = Directory.GetFiles(installDir, "save*.*", SearchOption.AllDirectories)
-            .Where(f => Path.GetExtension(f).TrimStart('.').All(char.IsDigit))
+            .Where(f => Path.GetExtension(f).TrimStart('.').All(char.IsDigit) || Path.GetExtension(f).TrimStart('.') == "dat")
             .ToList();
         var existingGamesDict = new Dictionary<string, string>();
         foreach (var savegameFile in savegames)
@@ -217,7 +218,7 @@ public class SavegameService
                 }
             }
 
-            _gamesUnitOfWork.BackupSavegames(savegameListView.GameId, dataToBackup, _numberOfVersionsToKeep);
+            _gamesUnitOfWork.BackupSavegames(savegameListView.GameId, savegameListView.GameEngine, dataToBackup, _numberOfVersionsToKeep);
             await _gamesUnitOfWork.Save();
             savegameListView.SetBusy(false);
         }
@@ -344,5 +345,10 @@ public class SavegameService
         }
         
         await Task.CompletedTask;
+    }
+
+    public ISavegameHeaderReader GetHeaderReader(GameEngine gameEngine)
+    {
+        return _headerReaderMap[gameEngine];
     }
 }

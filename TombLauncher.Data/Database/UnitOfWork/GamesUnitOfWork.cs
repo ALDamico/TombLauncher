@@ -409,9 +409,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
         };
     }
 
-    public void BackupSavegames(int gameId, List<SavegameBackupDto> dtos, int? numberOfVersionsToKeep)
+    public void BackupSavegames(int gameId, GameEngine engine, List<SavegameBackupDto> dtos, int? numberOfVersionsToKeep)
     {
         dtos.ForEach(f => f.GameId = gameId);
+        dtos.ForEach(f => f.GameEngine = engine);
         var entitiesToPersist = _mapper.Map<List<FileBackup>>(dtos);
         foreach (var entity in entitiesToPersist)
         {

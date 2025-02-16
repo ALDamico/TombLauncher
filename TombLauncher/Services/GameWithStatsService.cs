@@ -40,6 +40,7 @@ public class GameWithStatsService : IViewService
 
         _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
         _logger = Ioc.Default.GetRequiredService<ILogger<GameWithStatsService>>();
+        _savegameService = Ioc.Default.GetRequiredService<SavegameService>();
     }
 
     private SavegameHeaderProcessor _headerProcessor;
@@ -54,6 +55,7 @@ public class GameWithStatsService : IViewService
     private readonly bool _backupEnabled;
     private readonly int? _numberOfSavesToKeep;
     private readonly ILogger<GameWithStatsService> _logger;
+    private readonly SavegameService _savegameService;
 
     public async Task OpenGame(GameWithStatsViewModel game)
     {
@@ -94,6 +96,7 @@ public class GameWithStatsService : IViewService
                 NotifyFilter = NotifyFilters.LastWrite
             };
             _headerProcessor = Ioc.Default.GetRequiredService<SavegameHeaderProcessor>();
+            _headerProcessor.SavegameHeaderReader = _savegameService.GetHeaderReader(game.GameMetadata.GameEngine);
             _watcher.Changed += WatcherOnCreated;
         }
         catch
@@ -167,16 +170,14 @@ public class GameWithStatsService : IViewService
 
             foreach (var file in filesToProcess)
             {
-
                 file.Md5 = Md5Utils.ComputeMd5Hash(file.Data).GetAwaiter().GetResult();
             }
 
             filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
-            var savegameDtos = _mapper.Map<List<SavegameBackupDto>>(filesToProcess);
 
             if (_backupEnabled)
             {
-                _gamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, savegameDtos, _numberOfSavesToKeep);
+                _gamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
                 _headerProcessor.ClearProcessedFiles();
                 try
                 {
