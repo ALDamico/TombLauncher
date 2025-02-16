@@ -16,7 +16,9 @@ public class SavegamesProfile : Profile
             .ForMember(dto => dto.MetadataId, opt => opt.MapFrom(v => v.SavegameMetadata.Id))
             .ForMember(dto => dto.SlotNumber, opt => opt.MapFrom(v => v.SavegameMetadata.SlotNumber))
             .ForMember(dto => dto.SaveNumber, opt => opt.MapFrom(v => v.SavegameMetadata.SaveNumber))
-            .ForMember(dto => dto.LevelName, opt => opt.MapFrom(v => v.SavegameMetadata.LevelName));
+            .ForMember(dto => dto.LevelName, opt => opt.MapFrom(v => v.SavegameMetadata.LevelName))
+            .ForMember(dto => dto.GameEngine, opt => opt.MapFrom(v => v.Game.GameEngine));
+        
         CreateMap<SavegameBackupDto, FileBackup>()
             .ConstructUsing(dto => new FileBackup()
             {
@@ -27,7 +29,9 @@ public class SavegamesProfile : Profile
             .ForPath(dto => dto.SavegameMetadata.SaveNumber, opt => opt.MapFrom(o => o.SaveNumber))
             .ForPath(dto => dto.SavegameMetadata.SlotNumber, opt => opt.MapFrom(o => o.SlotNumber))
             .ForPath(dto => dto.SavegameMetadata.FileBackupId, opt => opt.MapFrom(o => o.Id))
-            .ForMember(dto => dto.Arguments, opt => opt.Ignore());
+            .ForMember(dto => dto.Arguments, opt => opt.Ignore())
+            .ForMember(dto => dto.Game, opt => opt.Ignore());
+        
         CreateMap<SavegameMetadata, SavegameBackupDto>()
             .ForMember(dto => dto.Id, opt => opt.MapFrom(savegame => savegame.FileBackup.Id))
             .ForMember(dto => dto.MetadataId, opt => opt.MapFrom(savegame => savegame.Id))
@@ -37,6 +41,7 @@ public class SavegamesProfile : Profile
             .ForMember(dto => dto.FileType, opt => opt.MapFrom(v => v.FileBackup.FileType))
             .ForMember(dto => dto.GameId, opt => opt.MapFrom(v => v.FileBackup.GameId))
             .ForMember(dto => dto.Md5, opt => opt.MapFrom(v => v.FileBackup.Md5))
+            .ForMember(dto => dto.GameEngine, opt => opt.MapFrom(v => v.FileBackup.Game.GameEngine))
             .ReverseMap();
 
         var mappingHeaderReader = new SavegameHeaderReader();
@@ -52,6 +57,7 @@ public class SavegamesProfile : Profile
             .ForMember(m => m.LevelName, opt => opt.MapFrom(levelNameResolver))
             .ForMember(m => m.SlotNumber, opt => opt.MapFrom(slotNumberResolver))
             .ForMember(m => m.SaveNumber, opt => opt.MapFrom(saveNumberResolver))
-            .ForMember(m => m.MetadataId, opt => opt.Ignore());
+            .ForMember(m => m.MetadataId, opt => opt.Ignore())
+            .ForMember(m => m.GameEngine, opt => opt.Ignore());
     }
 }

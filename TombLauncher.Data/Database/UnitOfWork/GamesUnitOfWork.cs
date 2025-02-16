@@ -483,7 +483,9 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public async Task<List<SavegameBackupDto>> GetSavegameBackups()
     {
-        var entities = Backups.Get().Include(b => b.SavegameMetadata).Where(b => b.FileType == FileType.Savegame || b.FileType == FileType.SavegameStartOfLevel);
+        var entities = Backups.Get().Include(b => b.SavegameMetadata)
+            .Include(b => b.Game)
+            .Where(b => b.FileType == FileType.Savegame || b.FileType == FileType.SavegameStartOfLevel);
         return await _mapper.ProjectTo<SavegameBackupDto>(entities).ToListAsync();
     }
 

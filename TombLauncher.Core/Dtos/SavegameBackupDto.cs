@@ -15,4 +15,5 @@ public class SavegameBackupDto
     public int SaveNumber { get; set; }
     public string LevelName { get; set; }
     public int MetadataId { get; set; }
+    public GameEngine GameEngine { get; set; }
 }

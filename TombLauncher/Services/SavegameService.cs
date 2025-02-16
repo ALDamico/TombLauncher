@@ -319,9 +319,10 @@ public class SavegameService
             page.SetBusy("Syncing savegames...");
             var allGamesWithSaves = await _gamesUnitOfWork.GetSavegameBackups();
             
-            var headerReader = new SavegameHeaderReader();
+            
             foreach (var savegame in allGamesWithSaves)
             {
+                var headerReader = _headerReaderMap[savegame.GameEngine];
                 var headerData = headerReader.ReadHeader(savegame.FileName, savegame.Data);
                 savegame.LevelName = headerData.LevelName;
                 savegame.SlotNumber = headerData.SlotNumber;
