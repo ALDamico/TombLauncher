@@ -13,5 +13,5 @@ public partial class MainMenuItemViewModel : ViewModelBase
 
     [ObservableProperty] private string _toolTip;
 
-    [ObservableProperty] private Func<Task<PageViewModel>> _pageViewModelFactory;
+    [ObservableProperty] private Task<PageViewModel> _pageViewModelFactory;
 }

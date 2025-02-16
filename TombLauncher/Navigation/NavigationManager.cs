@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Navigation;
 
 public class NavigationManager
 {
-    public NavigationManager()
-    {
-    }
-
     internal void SetDefaultPage(PageViewModel defaultPage)
     {
         _defaultPage = defaultPage;
@@ -17,38 +14,44 @@ public class NavigationManager
 
     private PageViewModel _defaultPage;
     private PageViewModel _currentPage;
-    
-    public Stack<PageViewModel> History { get; set; } = new();
+
+    private readonly Stack<PageViewModel> _history = new();
 
     public void GoBack()
     {
-        if (History.Count == 0)
+        if (_history.Count == 0)
         {
-            History.Push(_defaultPage);
+            _history.Push(_defaultPage);
             _currentPage = _defaultPage;
             InvokeOnNavigated();
             return;
         }
 
-        History.Pop();
-        if (History.Count > 0)
+        _history.Pop();
+        if (_history.Count > 0)
         {
-            _currentPage = History.Peek();
+            _currentPage = _history.Peek();
         }
         InvokeOnNavigated();
     }
 
     public bool CanGoBack()
     {
-        return History.Count > 1;
+        return _history.Count > 1;
     }
     
     public PageViewModel GetCurrentPage() => _currentPage;
 
-    public void StartNavigation(PageViewModel newPage)
+    public async Task StartNavigationAsync(Task<PageViewModel> newPage)
     {
-        History.Clear();
-        NavigateTo(newPage);
+        var page = await newPage;
+        await StartNavigationAsync(page);
+    }
+
+    public async Task StartNavigationAsync(PageViewModel newPage)
+    {
+        _history.Clear();
+        await NavigateTo(newPage);
     }
 
     public void RequestRefresh()
@@ -56,17 +59,24 @@ public class NavigationManager
         InvokeOnNavigated();
     }
 
-    public void NavigateTo(PageViewModel newPage)
+    public async Task NavigateTo(Task<PageViewModel> newPage)
     {
-        History.Push(newPage);
+        var awaitedPage = await newPage;
+        await NavigateTo(awaitedPage);
+    }
+
+    public Task NavigateTo(PageViewModel newPage)
+    {
+        _history.Push(newPage);
         _currentPage = newPage;
         InvokeOnNavigated();
+        return Task.CompletedTask;
     }
     
     public event Action OnNavigated;
 
-    private void InvokeOnNavigated()
+    private async void InvokeOnNavigated()
     {
-        OnNavigated?.Invoke();
+        await Task.Run(() => OnNavigated?.Invoke());
     }
 }

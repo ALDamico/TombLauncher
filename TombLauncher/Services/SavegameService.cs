@@ -35,7 +35,6 @@ public class SavegameService
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         _numberOfVersionsToKeep = settingsService.GetSavegameSettings().NumberOfVersionsToKeep;
         _dialogService = Ioc.Default.GetRequiredService<IDialogService>();
-        NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
     }
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
@@ -43,7 +42,6 @@ public class SavegameService
     private readonly IMapper _mapper;
     private int? _numberOfVersionsToKeep;
     private IDialogService _dialogService;
-    public NavigationManager NavigationManager { get; }
 
     public async Task LoadSaveGames(SavegameListViewModel targetViewModel)
     {
@@ -231,10 +229,9 @@ public class SavegameService
         savegameListViewModel.SetBusy(false);
     }
 
-    public async Task Restore(int savegameId, int max)
+    public async Task Restore(SavegameListViewModel savegameListViewModel, int savegameId, int max)
     {
-        var currentPage = NavigationManager.GetCurrentPage();
-        currentPage.SetBusy("Restoring savegame...");
+        savegameListViewModel.SetBusy("Restoring savegame...");
         var savegame = _gamesUnitOfWork.GetSavegameById(savegameId);
         var availableSlots = new ObservableCollection<SavegameSlotViewModel>();
         for (var i = 0; i < max; i++)
@@ -256,7 +253,7 @@ public class SavegameService
             BaseFileName = Path.GetFileNameWithoutExtension(savegame.FileName)
         };
         _dialogService.ShowDialog(dialogViewModel, ExecuteRestore);
-        currentPage.SetBusy(false);
+        savegameListViewModel.SetBusy(false);
         await Task.CompletedTask;
     }
 
@@ -267,7 +264,7 @@ public class SavegameService
         File.WriteAllBytes(fileName, vm.Data);
     }
 
-    public async Task DeleteAllSavegamesByGameId(int gameId)
+    public async Task DeleteAllSavegamesByGameId(SavegameListViewModel savegameListViewModel, int gameId)
     {
         var result = await _messageBoxService.Show("Delete all savegames".GetLocalizedString(),
             "Are you sure you want to delete all savegames? This action cannot be undone.".GetLocalizedString(),
@@ -276,8 +273,7 @@ public class SavegameService
 
         if (result.ButtonResult == MsgBoxButtonResult.Ok)
         {
-            var currentPage = NavigationManager.GetCurrentPage();
-            currentPage.SetBusy("Deleting savegames...");
+            savegameListViewModel.SetBusy("Deleting savegames...");
             var deleteStartOfLevel = result.CheckBoxResult;
             var targetTypes = new List<FileType>() { FileType.Savegame };
             if (deleteStartOfLevel)
@@ -286,8 +282,7 @@ public class SavegameService
             }
 
             _gamesUnitOfWork.DeleteFileBackupsByGameId(gameId, targetTypes);
-            currentPage.SetBusy(false);
-            NavigationManager.RequestRefresh();
+            savegameListViewModel.SetBusy(false);
         }
     }
 }

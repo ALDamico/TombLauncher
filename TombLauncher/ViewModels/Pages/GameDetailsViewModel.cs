@@ -19,13 +19,22 @@ public partial class GameDetailsViewModel : PageViewModel
 {
     public GameDetailsViewModel(GameWithStatsViewModel game) 
     {
-        _gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
         _game = game;
+        _gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
         BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
         UninstallCmd = new AsyncRelayCommand(Uninstall, CanUninstall);
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
         ManageSaveGamesCmd = new RelayCommand(ManageSavegames);
         OpenLaunchOptionsCmd = new RelayCommand(OpenLaunchOptions);
+    }
+
+    private bool _askForConfirmationBeforeOpeningWalkthrough;
+    private bool _useInternalViewerIfAvailable;
+    //private IDialogService _dialogService;
+    [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands;
+
+    protected override async Task RaiseInitialize()
+    {
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var gameDetailsSettings = settingsService.GetGameDetailsSettings();
         _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
@@ -40,16 +49,6 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchCommunitySetupCmd, Icon = MaterialIconKind.SettingsPlay, Text = "Community patch setup".GetLocalizedString()});
         }
-        Initialize += OnInitialize;
-    }
-
-    private bool _askForConfirmationBeforeOpeningWalkthrough;
-    private bool _useInternalViewerIfAvailable;
-    private IDialogService _dialogService;
-    [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands;
-
-    private async void OnInitialize()
-    {
         await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
     }
 

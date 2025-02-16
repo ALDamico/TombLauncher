@@ -15,7 +15,6 @@ public partial class RandomGameViewModel : PageViewModel
         _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         _randomGameService = Ioc.Default.GetRequiredService<RandomGameService>();
         PickRandomGameCmd = new AsyncRelayCommand(PickRandomGame);
-        Initialize += OnInitialize;
     }
 
     private readonly RandomGameService _randomGameService;
@@ -23,7 +22,7 @@ public partial class RandomGameViewModel : PageViewModel
     [ObservableProperty] private bool _attemptsExpired;
     [ObservableProperty] private int _maxRetries;
 
-    private async void OnInitialize()
+    protected override async Task RaiseInitialize()
     {
         await PickRandomGame();
     }

@@ -1,42 +1,30 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TombLauncher.Contracts.Progress;
 
 namespace TombLauncher.ViewModels;
 
 public abstract partial class PageViewModel : ViewModelBase
 {
+    private readonly IProgress<PageBusyState> _progress;
     protected PageViewModel()
     {
+        _progress = new Progress<PageBusyState>(state =>
+        {
+            IsBusy = state.IsBusy;
+            BusyMessage = state.BusyMessage;
+        });
         SaveCmd = new AsyncRelayCommand(Save, CanSave);
         CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
         TopBarCommands = new ObservableCollection<CommandViewModel>();
     }
-
-    public bool IsBusy
-    {
-        get => _isBusy;
-        protected set
-        {
-            _isBusy = value;
-            OnPropertyChanged();
-        }
-    }
     
-    private bool _isBusy;
-    private string _busyMessage;
-
-    public string BusyMessage
-    {
-        get => _busyMessage;
-        protected set
-        {
-            _busyMessage = value;
-            OnPropertyChanged();
-        }
-    }
+    [ObservableProperty]private bool _isBusy;
+    [ObservableProperty]private string _busyMessage;
     [ObservableProperty] private string _currentFileName;
     [ObservableProperty] private double? _percentageComplete;
     [ObservableProperty] private bool _isCancelable;
@@ -51,23 +39,19 @@ public abstract partial class PageViewModel : ViewModelBase
 
     public void SetBusy(bool isBusy, string busyMessage = null)
     {
-        IsBusy = isBusy;
-        if (busyMessage != null)
-        {
-            BusyMessage = busyMessage;
-        }
+        var busyState = new PageBusyState() { IsBusy = isBusy, BusyMessage = busyMessage };
+        _progress.Report(busyState);
     }
 
     public void SetBusy(string busyMessage)
     {
-        IsBusy = true;
-        BusyMessage = busyMessage;
+        var busyState = new PageBusyState() { IsBusy = true, BusyMessage = busyMessage };
+        _progress.Report(busyState);
     }
 
     public void ClearBusy()
     {
-        IsBusy = false;
-        BusyMessage = null;
+        _progress.Report(new PageBusyState());
     }
 
     public ICommand SaveCmd { get; protected set; }

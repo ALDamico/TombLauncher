@@ -58,8 +58,7 @@ public class GameWithStatsService : IViewService
     public async Task OpenGame(GameWithStatsViewModel game)
     {
         var gameDetailsViewModel = new GameDetailsViewModel(game);
-        NavigationManager.NavigateTo(gameDetailsViewModel);
-        await Task.CompletedTask;
+        await NavigationManager.NavigateTo(gameDetailsViewModel);
     }
 
     public async Task OpenGame(int gameId)

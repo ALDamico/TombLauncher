@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -16,12 +17,20 @@ public partial class GameListViewModel : PageViewModel
 
     public GameListViewModel()
     {
+        
+    }
+
+    private GameListService _gameListService;
+    
+    protected override async Task RaiseInitialize()
+    {
+        SetBusy("Fetching games...");
         _gameListService = Ioc.Default.GetRequiredService<GameListService>();
         AddGameCmd = new RelayCommand(AddGame);
         UninstallCmd = new RelayCommand<GameWithStatsViewModel>(Uninstall);
         OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
-        OpenSearchCmd = new RelayCommand(OpenSearch);
-        _gameListService.NavigationManager.OnNavigated += OnInit;
+        OpenSearchCmd = new AsyncRelayCommand(OpenSearch);
+        TopBarCommands.Clear();
         TopBarCommands.Add(new CommandViewModel()
         {
             Command = OpenSearchCmd,
@@ -34,38 +43,32 @@ public partial class GameListViewModel : PageViewModel
             Icon = MaterialIconKind.Plus,
             Tooltip = "Add".GetLocalizedString()
         });
-    }
-
-    private readonly GameListService _gameListService;
-
-    private async void OnInit()
-    {
         Games = await _gameListService.FetchGames(this);
         ClearBusy();
     }
 
-    public ICommand AddGameCmd { get; }
+    public ICommand AddGameCmd { get; private set; }
 
     private void AddGame()
     {
         _gameListService.AddGame();
     }
 
-    public ICommand OpenSearchCmd { get; }
+    public ICommand OpenSearchCmd { get; private set; }
 
-    private void OpenSearch()
+    private async Task OpenSearch()
     {
-        _gameListService.OpenSearch();
+        await _gameListService.OpenSearch();
     }
 
-    public ICommand OpenCmd { get; }
+    public ICommand OpenCmd { get; private set; }
 
     private void Open(GameWithStatsViewModel game)
     {
         game.OpenCmd.Execute(null);
     }
 
-    public ICommand UninstallCmd { get; }
+    public ICommand UninstallCmd { get; private set; }
 
     private async void Uninstall(GameWithStatsViewModel game)
     {
