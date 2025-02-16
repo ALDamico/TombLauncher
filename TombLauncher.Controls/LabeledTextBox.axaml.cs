@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 
 namespace TombLauncher.Controls;
@@ -21,7 +22,7 @@ public partial class LabeledTextBox : UserControl
     }
 
     public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<LabeledTextBox, string>(
-        nameof(Text));
+        nameof(Text), defaultBindingMode:BindingMode.TwoWay);
 
     public string Text
     {

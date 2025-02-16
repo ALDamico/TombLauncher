@@ -19,49 +19,41 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        <TextBlock Grid.Row="0" 
-                   Grid.Column="0" 
-                   Classes="label"
-                   Text="{DynamicResource Title}"/>
-        <TextBox Grid.Row="0" 
-                 Grid.Column="1" 
-                 Grid.ColumnSpan="3" 
-                 Classes="padded"
-                 Text="{Binding LevelName}"/>
-        <TextBlock Grid.Row="1" 
-                   Grid.Column="0" 
-                   Classes="label"
-                   Text="{DynamicResource Author}"/>
-        <TextBox Grid.Row="1" 
-                 Grid.Column="1" 
-                 Grid.ColumnSpan="3" 
-                 Classes="padded"
-                 Text="{Binding AuthorName}"/>
-        <TextBlock Grid.Row="2" 
-                   Grid.Column="0" 
-                   Classes="label"
-                   Text="{DynamicResource Engine}"/>
-        <ComboBox Grid.Row="2" 
-                  Grid.Column="1" 
-                  Classes="padded"
-                  ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableEngines}" 
-                  SelectedValue="{Binding GameEngine}"
-                  DisplayMemberBinding="{Binding Description}"
-                  SelectedValueBinding="{Binding Value}"/>
-        <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource Difficulty}" Classes="label"/>
-        <ComboBox Grid.Row="2" Grid.Column="3"
-                  ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableDifficulties}" 
-                  SelectedValue="{Binding GameDifficulty}" 
-                  DisplayMemberBinding="{Binding Description}" 
-                  SelectedValueBinding="{Binding Value}"
-                  Classes="padded"></ComboBox>
-        <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource Rating}" Classes="label"/>
-        <controls:RatingControl Grid.Row="3" Grid.Column="3" Value="{Binding Rating}" NumberOfStars="10" Classes="padded"/>
+        <controls:LabeledTextBox Grid.Row="0"
+            Label="{DynamicResource Title}"
+                                 Text="{Binding LevelName}"></controls:LabeledTextBox>
+        <Expander HorizontalAlignment="Stretch" Grid.Row="1" Header="More filters" x:Name="MoreFiltersExpander">
+            
+            <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=MoreFiltersExpander, Path=Width}">
+                <controls:LabeledTextBox Classes="padded" MinWidth="300" MaxWidth="600"
+                                           Label="{DynamicResource Author}" 
+                                           Text="{Binding AuthorName}"></controls:LabeledTextBox>
+                <Grid RowDefinitions="Auto, Auto" Classes="padded" MinWidth="300" MaxWidth="600">
+                    <TextBlock Grid.Row="0" Text="{DynamicResource Engine}" Classes="small"/>
+                    <ComboBox Grid.Row="1"
+                              ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableEngines}" 
+                              SelectedValue="{Binding GameEngine}"
+                              DisplayMemberBinding="{Binding Description}"
+                              SelectedValueBinding="{Binding Value}"/>
+                </Grid>
+                
+                <Grid RowDefinitions="Auto, Auto" Classes="padded" MinWidth="300" MaxWidth="600">
+                    <TextBlock Grid.Row="0" Text="{DynamicResource Difficulty}" Classes="small"/>
+                    <ComboBox Grid.Row="1"
+                              ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableDifficulties}" 
+                              SelectedValue="{Binding GameDifficulty}" 
+                              DisplayMemberBinding="{Binding Description}" 
+                              SelectedValueBinding="{Binding Value}"/>
+                </Grid>
+                
+                <Grid RowDefinitions="Auto, Auto" Classes="padded" MinWidth="300" MaxWidth="600">
+                    <TextBlock Grid.Row="0" Text="{DynamicResource Rating}" Classes="small"></TextBlock>
+                    <NumericUpDown Grid.Row="1" Value="{Binding Rating}" Minimum="1" Maximum="10"/>
+                </Grid>
+            </WrapPanel>
+            
+        </Expander>
     </Grid>
 </UserControl>
