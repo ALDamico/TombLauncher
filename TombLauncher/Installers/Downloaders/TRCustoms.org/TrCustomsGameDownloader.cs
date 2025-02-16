@@ -69,6 +69,7 @@ public class TrCustomsGameDownloader : IGameDownloader
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
     private Dictionary<int, GameEngine> _enginesMap;
+    private Dictionary<GameEngine, int> _reverseEnginesMap;
     private Dictionary<string, LevelTagResponse> _tagsMap;
     private Dictionary<string, LevelGenreResponse> _genresMap;
     private readonly Dictionary<string, int> _ratingMap;
@@ -85,6 +86,7 @@ public class TrCustomsGameDownloader : IGameDownloader
 
         await Task.WhenAll(engineMapTask, genreMapTask, tagMapTask);
         _enginesMap = engineMapTask.Result;
+        _reverseEnginesMap = _enginesMap.ToDictionary(k => k.Value, k => k.Key);
         _tagsMap = tagMapTask.Result;
         _genresMap = genreMapTask.Result;
         
@@ -112,7 +114,6 @@ public class TrCustomsGameDownloader : IGameDownloader
 
         var pagedResponse = JsonConvert.DeserializeObject<TrCustomsPagedResponse<T>>(
             await response.Content.ReadAsStringAsync(cancellationToken), _jsonSerializerSettings);
-// TODO Crashes because LastFile is an object, not a string
         return pagedResponse;
     }
 
@@ -347,6 +348,11 @@ public class TrCustomsGameDownloader : IGameDownloader
                     searchRequest.Genres.Add(targetGenre.Id);
                 }
             }
+        }
+
+        if (downloaderSearchPayload.GameEngine != null)
+        {
+            searchRequest.Engines.Add(_reverseEnginesMap[downloaderSearchPayload.GameEngine.GetValueOrDefault()]);
         }
 
         return searchRequest;
