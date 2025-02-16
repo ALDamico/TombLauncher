@@ -63,14 +63,14 @@ public class GameListService : IViewService
             _gamesUnitOfWork.MarkGameAsUninstalled(game.GameMetadata.Id);
             await _gamesUnitOfWork.Save();
             target.ClearBusy();
-            NavigationManager.NavigateTo(target);
+            await NavigationManager.NavigateTo(target);
         };
         DialogService.ShowDialog(confirmDialogViewModel, _ => { });
         await Task.CompletedTask;
     }
 
-    public void OpenSearch()
+    public async Task OpenSearch()
     {
-        NavigationManager.StartNavigation(Ioc.Default.GetRequiredService<GameSearchViewModel>());
+        await NavigationManager.NavigateTo(Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<GameSearchViewModel>()));
     }
 }

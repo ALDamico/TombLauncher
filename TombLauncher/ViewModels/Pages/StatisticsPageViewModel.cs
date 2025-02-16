@@ -17,12 +17,11 @@ public partial class StatisticsPageViewModel : PageViewModel
     {
         _statisticsService = Ioc.Default.GetRequiredService<StatisticsService>();
         _gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
-        Initialize += FetchStatistics;
         TopBarCommands = new ObservableCollection<CommandViewModel>()
         {
             new()
             {
-                Command = new RelayCommand(FetchStatistics), Icon = MaterialIconKind.Reload, Tooltip = "Reload".GetLocalizedString()
+                Command = new AsyncRelayCommand(RaiseInitialize), Icon = MaterialIconKind.Reload, Tooltip = "Reload".GetLocalizedString()
             }
         };
         OpenGameCmd = new AsyncRelayCommand<int>(OpenGame);
@@ -37,7 +36,7 @@ public partial class StatisticsPageViewModel : PageViewModel
     [ObservableProperty] private Version _netVersion;
     [ObservableProperty] private StatisticsViewModel _statistics;
 
-    private async void FetchStatistics()
+    protected override async Task RaiseInitialize()
     {
         IsBusy = true;
         BusyMessage = "Gathering statistics...".GetLocalizedString();

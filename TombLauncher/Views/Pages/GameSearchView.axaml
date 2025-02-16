@@ -16,6 +16,13 @@
     <Design.DataContext>
         <pages:GameSearchViewModel />
     </Design.DataContext>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCmd}"/>
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

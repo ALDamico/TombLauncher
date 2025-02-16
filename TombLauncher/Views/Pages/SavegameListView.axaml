@@ -35,7 +35,7 @@
                     <EventTriggerBehavior EventName="PropertyChanged" 
                                           SourceObject="{Binding SavegameFilter}">
                         <EventTriggerBehavior.Actions>
-                            <InvokeCommandAction Command="{Binding FilterCmd}"
+                            <InvokeCommandAction Command="{Binding SelectedSlot.FilterCmd}"
                                                  CommandParameter="{Binding SavegameFilter}" />
                         </EventTriggerBehavior.Actions>
                     </EventTriggerBehavior>

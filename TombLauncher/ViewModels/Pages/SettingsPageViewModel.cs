@@ -39,7 +39,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
                 }
             }
         };
-        Initialize += InitializeSettings;
     }
 
     private readonly SettingsService _settingsService;
@@ -58,7 +57,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         RaiseCanExecuteChanged(SaveCmd);
     }
 
-    private void InitializeSettings()
+    protected override Task RaiseInitialize()
     {
         var currentTheme = _settingsService.GetApplicationTheme();
         var appearanceSettings = new AppearanceSettingsViewModel()
@@ -87,6 +86,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         Sections.Add(randomGameSettings);
         Sections.Add(savegameSettings);
         AcceptChanges();
+        return base.RaiseInitialize();
     }
 
     protected override async Task SaveInner()

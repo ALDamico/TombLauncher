@@ -96,7 +96,7 @@ public class RandomGameService
                         vm.SetBusy(false);
                     }, () => mapped.InstalledGame == null)
                     ;
-                _navigationManager.StartNavigation(vm);
+                await _navigationManager.StartNavigationAsync(Task.FromResult<PageViewModel>(vm));
                 return;
             }
         }

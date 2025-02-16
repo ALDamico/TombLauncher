@@ -111,18 +111,26 @@ public class GamesUnitOfWork : UnitOfWorkBase
     {
         var outputList = new List<GameWithStatsDto>();
         var playSessions = PlaySessions.GetAll().ToLookup(ps => ps.GameId);
+        
+        var targetFileTypes = new List<FileType>()
+        {
+            FileType.GameExecutable,
+            FileType.SetupExecutable,
+            FileType.CommunitySetupExecutable
+        };
 
-        var games = Games.GetAll();
+        IQueryable<Game> games = Games.GetAll().Include(g => g.FileBackups.Where(b => targetFileTypes.Contains(b.FileType)));
         if (installedOnly)
         {
             games = games.Where(g => g.IsInstalled);
         }
         foreach (var game in games)
         {
+            var gameMetadata = _mapper.Map<GameMetadataDto>(game);
             var thisGamePlaySessions = playSessions[game.Id].ToList();
             var gameWithStatsDto = new GameWithStatsDto()
             {
-                GameMetadata = await GetGameWithExecutables(game.Id),
+                GameMetadata = gameMetadata,
                 TotalPlayedTime = TimeSpan.Zero
             };
 

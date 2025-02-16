@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Services;
 
@@ -9,14 +10,14 @@ public partial class WelcomePageViewModel : PageViewModel
     public WelcomePageViewModel()
     {
         _welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
-        Initialize += InitializeInner;
     }
 
     private readonly WelcomePageService _welcomePageService;
 
-    private void InitializeInner()
+    protected override Task RaiseInitialize()
     {
         _welcomePageService.HandleNotNotifiedCrashes();
+        return base.RaiseInitialize();
     }
 
     [ObservableProperty] private string _changeLogPath;
