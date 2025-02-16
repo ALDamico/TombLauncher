@@ -188,6 +188,8 @@ public class TrCustomsGameDownloader : IGameDownloader
         var searchRequest = ConvertRequest(DownloaderSearchPayload, CurrentPage, _tagsMap, _genresMap);
         var dictified = RequestUtils.DictifyRequest(searchRequest);
         var response = await GetPagedResponse<LevelSummaryResponse>("levels", dictified, cancellationToken);
+        if (TotalPages == null)
+            TotalPages = response.LastPage;
         ParseResultPage(response.Results, result, cancellationToken);
         return result;
     }
