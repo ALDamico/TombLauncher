@@ -43,21 +43,5 @@ public class SavegamesProfile : Profile
             .ForMember(dto => dto.Md5, opt => opt.MapFrom(v => v.FileBackup.Md5))
             .ForMember(dto => dto.GameEngine, opt => opt.MapFrom(v => v.FileBackup.Game.GameEngine))
             .ReverseMap();
-
-        var mappingHeaderReader = new SavegameHeaderReader();
-        var headerProxy = new SavegameHeaderProxy(mappingHeaderReader);
-
-        var levelNameResolver = new LevelNameResolver(headerProxy);
-        var slotNumberResolver = new SlotNumberResolver(headerProxy);
-        var saveNumberResolver = new SaveNumberResolver(headerProxy);
-
-        CreateMap<FileBackupDto, SavegameBackupDto>()
-            .ForMember(m => m.Md5,
-                opt => opt.MapFrom(file => Md5Utils.ComputeMd5Hash(file.Data).GetAwaiter().GetResult()))
-            .ForMember(m => m.LevelName, opt => opt.MapFrom(levelNameResolver))
-            .ForMember(m => m.SlotNumber, opt => opt.MapFrom(slotNumberResolver))
-            .ForMember(m => m.SaveNumber, opt => opt.MapFrom(saveNumberResolver))
-            .ForMember(m => m.MetadataId, opt => opt.Ignore())
-            .ForMember(m => m.GameEngine, opt => opt.Ignore());
     }
 }
