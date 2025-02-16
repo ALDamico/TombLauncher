@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Savegames.HeaderReaders;
 
 namespace TombLauncher.Core.Savegames;
 

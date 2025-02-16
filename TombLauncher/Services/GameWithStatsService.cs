@@ -31,7 +31,7 @@ public class GameWithStatsService : IViewService
         NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
         DialogService = Ioc.Default.GetRequiredService<IDialogService>();
-        var savegameSettings = Ioc.Default.GetRequiredService<SettingsService>().GetSavegameSettings();
+        var savegameSettings = Ioc.Default.GetRequiredService<SettingsService>().GetSavegameSettings(null);
         _backupEnabled = savegameSettings.SavegameBackupEnabled;
         if (_backupEnabled)
         {

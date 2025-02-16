@@ -9,7 +9,7 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 {
-    public DownloaderSettingsViewModel() : base("DOWNLOADERS")
+    public DownloaderSettingsViewModel(PageViewModel settingsPage) : base("DOWNLOADERS", settingsPage)
     {
         MoveUpCmd = new RelayCommand<DownloaderViewModel>(MoveUp, CanMoveUp);
         MoveDownCmd = new RelayCommand<DownloaderViewModel>(MoveDown, CanMoveDown);

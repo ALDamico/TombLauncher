@@ -5,7 +5,7 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class RandomGameSettingsViewModel : SettingsSectionViewModelBase
 {
-    public RandomGameSettingsViewModel() : base("RANDOM GAME")
+    public RandomGameSettingsViewModel(PageViewModel settingsPage) : base("RANDOM GAME", settingsPage)
     {
     }
 

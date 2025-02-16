@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Savegames;
+using TombLauncher.Core.Savegames.HeaderReaders;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Models;
 using TombLauncher.Factories.Mapping;

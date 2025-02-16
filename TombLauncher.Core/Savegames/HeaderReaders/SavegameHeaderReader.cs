@@ -2,10 +2,14 @@
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;
 
-namespace TombLauncher.Core.Savegames;
+namespace TombLauncher.Core.Savegames.HeaderReaders;
 
-public class SavegameHeaderReader
+public class SavegameHeaderReader : ISavegameHeaderReader
 {
+    public SavegameHeaderReader()
+    {
+        
+    }
     private const int MaxLevelNameLength = 75;
     private const int SaveNumberOffset = 75;
     public SavegameHeader ReadHeader(string filepath)

@@ -19,12 +19,14 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Savegames;
+using TombLauncher.Core.Savegames.HeaderReaders;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Utils;
+using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 using TombLauncher.ViewModels.Pages.Settings;
 
@@ -143,9 +145,9 @@ public class SettingsService : IViewService
         return dtos.OrderBy(dto => dto.Priority).ToList();
     }
 
-    public GameDetailsSettingsViewModel GetGameDetailsSettings()
+    public GameDetailsSettingsViewModel GetGameDetailsSettings(PageViewModel settingsPage)
     {
-        return new GameDetailsSettingsViewModel()
+        return new GameDetailsSettingsViewModel(settingsPage)
         {
             AskForConfirmationBeforeWalkthrough =
                 _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
@@ -153,9 +155,9 @@ public class SettingsService : IViewService
         };
     }
 
-    public SavegameSettingsViewModel GetSavegameSettings()
+    public SavegameSettingsViewModel GetSavegameSettings(PageViewModel settingsPage)
     {
-        return new SavegameSettingsViewModel()
+        return new SavegameSettingsViewModel(settingsPage)
         {
             SavegameBackupEnabled = _appConfiguration.BackupSavegamesEnabled,
             LimitNumberOfVersions = _appConfiguration.NumberOfVersionsToKeep != null,
@@ -190,37 +192,10 @@ public class SettingsService : IViewService
         return _appConfiguration.DatabasePath;
     }
 
-    public async Task SyncSavegames()
+    public async Task SyncSavegames(PageViewModel settingsPage)
     {
-        var currentPage = NavigationManager.GetCurrentPage();
-        try
-        {
-            currentPage.SetBusy("Syncing savegames...");
-            var allGamesWithSaves = await _gamesUnitOfWork.GetSavegameBackups();
-            var headerReader = new SavegameHeaderReader();
-            foreach (var savegame in allGamesWithSaves)
-            {
-                var headerData = headerReader.ReadHeader(savegame.FileName, savegame.Data);
-                savegame.LevelName = headerData.LevelName;
-                savegame.SlotNumber = headerData.SlotNumber;
-                savegame.SaveNumber = headerData.SaveNumber;
-                var md5 = await Md5Utils.ComputeMd5Hash(savegame.Data);
-                if (savegame.Md5 != md5)
-                {
-                    savegame.Md5 = md5;
-                }
-            }
-
-            await _gamesUnitOfWork.SyncSavegameMetadata(allGamesWithSaves);
-            await MessageBoxService.ShowLocalized("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
-                MsgBoxImage.Success);
-        }
-        finally
-        {
-            currentPage.SetBusy(false);    
-        }
-        
-        await Task.CompletedTask;
+        var savegameService = Ioc.Default.GetRequiredService<SavegameService>();
+        await savegameService.SyncSavegames(settingsPage);
     }
 
     public string GetGitHubLink()

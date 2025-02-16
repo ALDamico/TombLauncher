@@ -10,9 +10,11 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Savegames;
+using TombLauncher.Core.Savegames.HeaderReaders;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization.Extensions;
@@ -33,8 +35,9 @@ public class SavegameService
         _messageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
         _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-        _numberOfVersionsToKeep = settingsService.GetSavegameSettings().NumberOfVersionsToKeep;
+        _numberOfVersionsToKeep = settingsService.GetSavegameSettings(null).NumberOfVersionsToKeep;
         _dialogService = Ioc.Default.GetRequiredService<IDialogService>();
+        InitHeaderReaderMap();
     }
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
@@ -42,13 +45,36 @@ public class SavegameService
     private readonly IMapper _mapper;
     private int? _numberOfVersionsToKeep;
     private IDialogService _dialogService;
+    private Dictionary<GameEngine, ISavegameHeaderReader> _headerReaderMap;
+
+    private void InitHeaderReaderMap()
+    {
+        var unsupportedHeaderReader = new SavegameUnsupportedHeaderReader();
+        var classicGamesHeaderReader = new SavegameHeaderReader();
+        _headerReaderMap = new Dictionary<GameEngine, ISavegameHeaderReader>()
+        {
+            { GameEngine.Unknown, unsupportedHeaderReader },
+            { GameEngine.Ten, unsupportedHeaderReader },
+            { GameEngine.Tr1x, unsupportedHeaderReader }, // TODO Implement TRX header reader
+            { GameEngine.Tr2x, unsupportedHeaderReader },
+            { GameEngine.Tomb2Main, classicGamesHeaderReader },
+            { GameEngine.TombAti, classicGamesHeaderReader },
+            { GameEngine.TombRaider1, classicGamesHeaderReader },
+            { GameEngine.TombRaider2, classicGamesHeaderReader },
+            { GameEngine.TombRaider3, classicGamesHeaderReader },
+            { GameEngine.TombRaider4, classicGamesHeaderReader },
+            { GameEngine.TombRaider5, classicGamesHeaderReader },
+            { GameEngine.Tomb3CommunityEdition, classicGamesHeaderReader },
+            { GameEngine.TombRaider1Dos, classicGamesHeaderReader }
+        };
+    }
 
     public async Task LoadSaveGames(SavegameListViewModel targetViewModel)
     {
         targetViewModel.SetBusy("Fetching savegames for GAMETITLE".GetLocalizedString(targetViewModel.GameTitle));
         var observableCollection = new ObservableCollection<SavegameViewModel>();
         var knownSavegames = await _gamesUnitOfWork.GetSavegamesByGameId(targetViewModel.GameId);
-        var headerParser = new SavegameHeaderReader();
+        var headerParser = _headerReaderMap[targetViewModel.GameEngine];
         foreach (var savegame in knownSavegames)
         {
             var savegameHeader = headerParser.ReadHeader(savegame.FileName, savegame.Data);
@@ -168,7 +194,7 @@ public class SavegameService
         if (userResponse.ButtonResult == MsgBoxButtonResult.Yes)
         {
             savegameListView.SetBusy("Importing your saved games...");
-            var headerReader = new SavegameHeaderReader();
+            var headerReader = _headerReaderMap[savegameListView.GameEngine];
             var dataToBackup = new List<SavegameBackupDto>();
             foreach (var file in savegames)
             {
@@ -284,5 +310,38 @@ public class SavegameService
             _gamesUnitOfWork.DeleteFileBackupsByGameId(gameId, targetTypes);
             savegameListViewModel.SetBusy(false);
         }
+    }
+
+    public async Task SyncSavegames(PageViewModel page)
+    {
+        try
+        {
+            page.SetBusy("Syncing savegames...");
+            var allGamesWithSaves = await _gamesUnitOfWork.GetSavegameBackups();
+            
+            var headerReader = new SavegameHeaderReader();
+            foreach (var savegame in allGamesWithSaves)
+            {
+                var headerData = headerReader.ReadHeader(savegame.FileName, savegame.Data);
+                savegame.LevelName = headerData.LevelName;
+                savegame.SlotNumber = headerData.SlotNumber;
+                savegame.SaveNumber = headerData.SaveNumber;
+                var md5 = await Md5Utils.ComputeMd5Hash(savegame.Data);
+                if (savegame.Md5 != md5)
+                {
+                    savegame.Md5 = md5;
+                }
+            }
+
+            await _gamesUnitOfWork.SyncSavegameMetadata(allGamesWithSaves);
+            await _messageBoxService.ShowLocalized("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
+                MsgBoxImage.Success);
+        }
+        finally
+        {
+            page.SetBusy(false);    
+        }
+        
+        await Task.CompletedTask;
     }
 }

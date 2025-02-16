@@ -1,11 +1,10 @@
-﻿using System.ComponentModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 {
-    public GameDetailsSettingsViewModel() : base("GAME DETAILS")
+    public GameDetailsSettingsViewModel(PageViewModel settingsPage) : base("GAME DETAILS", settingsPage)
     {
     }
 

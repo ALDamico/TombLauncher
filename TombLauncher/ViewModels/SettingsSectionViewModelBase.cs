@@ -8,9 +8,10 @@ namespace TombLauncher.ViewModels;
 
 public abstract partial class SettingsSectionViewModelBase : ObservableValidator, IChangeTracking
 {
-    protected SettingsSectionViewModelBase(string sectionTitle)
+    protected SettingsSectionViewModelBase(string sectionTitle, PageViewModel settingsPage)
     {
         SectionTitle = sectionTitle.GetLocalizedString();
+        SettingsPage = settingsPage;
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -24,6 +25,7 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     [ObservableProperty] private string _sectionTitle;
     [ObservableProperty] private string _infoTipHeader;
     [ObservableProperty] private string _infoTipContent;
+    [ObservableProperty] private PageViewModel _settingsPage;
     internal void RaiseCanExecuteChanged<T>(ICommand command)
     {
         if (command is RelayCommand<T> relayCommand)

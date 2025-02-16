@@ -60,24 +60,29 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     protected override Task RaiseInitialize()
     {
         var currentTheme = _settingsService.GetApplicationTheme();
-        var appearanceSettings = new AppearanceSettingsViewModel()
+        var appearanceSettings = new AppearanceSettingsViewModel(this)
         {
             SelectedTheme = currentTheme
         };
         var supportedLanguages = _settingsService.GetSupportedLanguages();
-        var languageSettings = new LanguageSettingsViewModel();
-        languageSettings.AvailableLanguages = supportedLanguages.ToObservableCollection();
-        languageSettings.ApplicationLanguage =
-            supportedLanguages.FirstOrDefault(l =>
-                _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo));
+        var languageSettings = new LanguageSettingsViewModel(this)
+        {
+            AvailableLanguages = supportedLanguages.ToObservableCollection(),
+            ApplicationLanguage = supportedLanguages.FirstOrDefault(l =>
+                _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo))
+        };
 
         var downloaders = _settingsService.GetDownloaderViewModels();
-        var downloaderSettings = new DownloaderSettingsViewModel();
-        downloaderSettings.AvailableDownloaders = downloaders.ToObservableCollection();
-        var gameDetailsSettings = _settingsService.GetGameDetailsSettings();
-        var randomGameSettings = new RandomGameSettingsViewModel();
-        randomGameSettings.MaxRerolls = _settingsService.GetRandomGameMaxRerolls();
-        var savegameSettings = _settingsService.GetSavegameSettings();
+        var downloaderSettings = new DownloaderSettingsViewModel(this)
+        {
+            AvailableDownloaders = downloaders.ToObservableCollection()
+        };
+        var gameDetailsSettings = _settingsService.GetGameDetailsSettings(this);
+        var randomGameSettings = new RandomGameSettingsViewModel(this)
+        {
+            MaxRerolls = _settingsService.GetRandomGameMaxRerolls()
+        };
+        var savegameSettings = _settingsService.GetSavegameSettings(this);
 
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);

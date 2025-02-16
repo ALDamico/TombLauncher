@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
@@ -23,7 +24,7 @@ public partial class SavegameListViewModel : PageViewModel
         SetBusy("Loading savegames");
         _savegameService = Ioc.Default.GetRequiredService<SavegameService>();
         
-        _filterCmd = new AsyncRelayCommand<SaveGameListFilter>(Filter);
+        FilterCmd = new AsyncRelayCommand<SaveGameListFilter>(Filter);
         UpdateStartOfLevelStateCmd = new AsyncRelayCommand<SavegameViewModel>(UpdateStartOfLevelState);
         RestoreSavegameCmd = new AsyncRelayCommand<int>(RestoreSavegame);
         DeleteAllCmd = new AsyncRelayCommand(DeleteAll);
@@ -50,6 +51,7 @@ public partial class SavegameListViewModel : PageViewModel
 
     [ObservableProperty] private string _gameTitle;
     [ObservableProperty] private int _gameId;
+    [ObservableProperty] private GameEngine _gameEngine;
     [ObservableProperty] private string _installLocation;
 
     [ObservableProperty]

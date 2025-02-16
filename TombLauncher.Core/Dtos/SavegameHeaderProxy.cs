@@ -1,4 +1,5 @@
 ﻿using TombLauncher.Core.Savegames;
+using TombLauncher.Core.Savegames.HeaderReaders;
 
 namespace TombLauncher.Core.Dtos;
 
