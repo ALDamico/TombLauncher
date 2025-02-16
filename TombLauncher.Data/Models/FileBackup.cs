@@ -13,4 +13,5 @@ public class FileBackup
     public string Md5 { get; set; }
     public SavegameMetadata SavegameMetadata { get; set; }
     public string Arguments { get; set; }
+    public Game Game { get; set; }
 }

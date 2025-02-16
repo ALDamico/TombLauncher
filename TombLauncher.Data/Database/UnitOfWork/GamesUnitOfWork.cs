@@ -409,9 +409,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
         };
     }
 
-    public void BackupSavegames(int gameId, List<SavegameBackupDto> dtos, int? numberOfVersionsToKeep)
+    public void BackupSavegames(int gameId, GameEngine engine, List<SavegameBackupDto> dtos, int? numberOfVersionsToKeep)
     {
         dtos.ForEach(f => f.GameId = gameId);
+        dtos.ForEach(f => f.GameEngine = engine);
         var entitiesToPersist = _mapper.Map<List<FileBackup>>(dtos);
         foreach (var entity in entitiesToPersist)
         {
@@ -483,7 +484,9 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public async Task<List<SavegameBackupDto>> GetSavegameBackups()
     {
-        var entities = Backups.Get().Include(b => b.SavegameMetadata).Where(b => b.FileType == FileType.Savegame || b.FileType == FileType.SavegameStartOfLevel);
+        var entities = Backups.Get().Include(b => b.SavegameMetadata)
+            .Include(b => b.Game)
+            .Where(b => b.FileType == FileType.Savegame || b.FileType == FileType.SavegameStartOfLevel);
         return await _mapper.ProjectTo<SavegameBackupDto>(entities).ToListAsync();
     }
 

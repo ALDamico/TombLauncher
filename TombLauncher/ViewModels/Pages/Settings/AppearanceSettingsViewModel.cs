@@ -7,7 +7,7 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class AppearanceSettingsViewModel : SettingsSectionViewModelBase
 {
-    public AppearanceSettingsViewModel() : base("APPEARANCE")
+    public AppearanceSettingsViewModel(PageViewModel settingsPage) : base("APPEARANCE", settingsPage)
     {
         SelectedTheme = Application.Current.ActualThemeVariant;
         AvailableThemes = new ObservableCollection<ThemeVariant>()

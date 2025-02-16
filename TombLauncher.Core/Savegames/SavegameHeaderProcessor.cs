@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Savegames.HeaderReaders;
 
 namespace TombLauncher.Core.Savegames;
 
@@ -10,14 +11,13 @@ public class SavegameHeaderProcessor : IDisposable
     private EventWaitHandle _eventWaitHandle = new AutoResetEvent(false);
     private readonly Thread _worker;
     private readonly ConcurrentQueue<string> fileNamesQueue = new();
-    private readonly SavegameHeaderReader _savegameHeaderReader;
-    public List<FileBackupDto> ProcessedFiles { get; }
+    public ISavegameHeaderReader SavegameHeaderReader { get; set; }
+    public List<SavegameBackupDto> ProcessedFiles { get; }
     public int Delay { get; set; } = 500;
 
     public SavegameHeaderProcessor()
     {
-        _savegameHeaderReader = new SavegameHeaderReader();
-        ProcessedFiles = new List<FileBackupDto>();
+        ProcessedFiles = new List<SavegameBackupDto>();
         // Create worker thread
         _worker = new Thread(Work);
         // Start worker thread
@@ -74,16 +74,19 @@ public class SavegameHeaderProcessor : IDisposable
     private void ProcessFile(string e)
     {
         Task.Delay(Delay).GetAwaiter().GetResult();
-        var header = _savegameHeaderReader.ReadHeader(e);
+        var header = SavegameHeaderReader.ReadHeader(e);
         if (header == null)
             return;
 
-        var dto = new FileBackupDto()
+        var dto = new SavegameBackupDto()
         {
             Data = File.ReadAllBytes(e),
             FileName = e,
             FileType = FileType.Savegame,
-            BackedUpOn = DateTime.Now
+            BackedUpOn = DateTime.Now,
+            LevelName = header.LevelName,
+            SaveNumber = header.SaveNumber,
+            SlotNumber = header.SlotNumber
         };
         ProcessedFiles.Add(dto);
     }

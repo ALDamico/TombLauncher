@@ -142,7 +142,7 @@ public class GameSearchService : IViewService
             }
 
             target.ClearBusy();
-            NavigationManager.NavigateTo(vm);
+            await NavigationManager.NavigateTo(vm);
             return;
         }
 

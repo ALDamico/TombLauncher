@@ -20,14 +20,19 @@ internal class GamesProfile : Profile
             .ForMember(g => g.CommunitySetupExecutable, opt => opt.MapFrom<CommunitySetupExecutableResolver>());
             
         CreateMap<GameMetadataDto, Game>()
-            .ForMember(g => g.FileBackups, opt => opt.MapFrom<GameFileBackupsResolver>());
+            .ForMember(g => g.FileBackups, opt => opt.MapFrom<GameFileBackupsResolver>())
+            .ForMember(g => g.PlaySessions, opt => opt.Ignore())
+            .ForMember(g => g.Hashes, opt => opt.Ignore())
+            .ForMember(g => g.Links, opt => opt.Ignore());
 
         CreateMap<GameMetadataDto, GameMetadataViewModel>()
             .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
+        
         CreateMap<GameMetadataViewModel, GameMetadataDto>()
             .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
         
         CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
+        
         CreateMap<GameWithStatsDto, GameWithStatsViewModel>().ConstructUsing(dto =>
                 new GameWithStatsViewModel()
                 {

@@ -6,7 +6,7 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class LanguageSettingsViewModel : SettingsSectionViewModelBase
 {
-    public LanguageSettingsViewModel() : base("LANGUAGES")
+    public LanguageSettingsViewModel(PageViewModel settingsPage) : base("LANGUAGES", settingsPage)
     {
         InfoTipContent = "Localization infotip content".GetLocalizedString();
         InfoTipHeader = "Want to localize Tomb Launcher?".GetLocalizedString();

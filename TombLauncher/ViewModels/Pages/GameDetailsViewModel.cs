@@ -36,7 +36,7 @@ public partial class GameDetailsViewModel : PageViewModel
     protected override async Task RaiseInitialize()
     {
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-        var gameDetailsSettings = settingsService.GetGameDetailsSettings();
+        var gameDetailsSettings = settingsService.GetGameDetailsSettings(this);
         _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _useInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
         SetupCommands = new ObservableCollection<CommandViewModel>();

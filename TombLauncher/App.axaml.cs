@@ -189,7 +189,7 @@ public partial class App : Application
         serviceCollection.AddScoped(sp =>
         {
             var settingsService = sp.GetRequiredService<SettingsService>();
-            var delay = settingsService.GetSavegameSettings().SavegameProcessingDelay;
+            var delay = settingsService.GetSavegameSettings(null).SavegameProcessingDelay;
             return new SavegameHeaderProcessor()
             {
                 Delay = delay

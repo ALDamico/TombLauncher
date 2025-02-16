@@ -104,7 +104,12 @@ public class GameDetailsService : IViewService
     {
         game.SetBusy("Getting savegames...");
         var savegameListView = new SavegameListViewModel()
-            { GameId = game.Game.GameMetadata.Id, GameTitle = game.Game.GameMetadata.Title , InstallLocation = game.Game.GameMetadata.InstallDirectory};
+        {
+            GameId = game.Game.GameMetadata.Id,
+            GameTitle = game.Game.GameMetadata.Title,
+            InstallLocation = game.Game.GameMetadata.InstallDirectory,
+            GameEngine = game.Game.GameMetadata.GameEngine
+        };
         game.SetBusy(false);
        
         NavigationManager.NavigateTo(savegameListView);
