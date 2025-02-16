@@ -1,0 +1,31 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Controls.LabeledTextBox"
+             x:Name="LabeledTextBoxRoot"
+             >
+    <UserControl.Styles>
+        <Style Selector="TextBlock.small">
+            <Setter Property="FontSize" Value="9"/>
+            <Setter Property="FontWeight" Value="DemiBold"/>
+        </Style>
+    </UserControl.Styles>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" Classes="small" Text="{Binding ElementName=LabeledTextBoxRoot, Path=Label}"/>
+        <DockPanel Grid.Row="1" LastChildFill="True">
+            <ContentControl DockPanel.Dock="Right" 
+                            Content="{Binding ElementName=LabeledTextBoxRoot, Path=Infotip}" 
+                            IsVisible="{Binding ElementName=LabeledTextBoxRoot, Path=Infotip, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+            <TextBox Text="{Binding ElementName=LabeledTextBoxRoot, Path=Text}"/>
+        </DockPanel>
+        
+    </Grid>
+</UserControl>

@@ -40,14 +40,14 @@
                 <ComboBox ItemsSource="{Binding AvailableExecutables}" 
                           SelectedItem="{Binding SetupExecutable}"/>
             </DockPanel>
-            <TextBlock IsEnabled="{Binding SupportsSetup}" 
-                       Classes="small" 
-                       Text="{DynamicResource 'Setup executable args'}"/>
-            <DockPanel IsEnabled="{Binding SupportsSetup}" LastChildFill="True">
-                <controls:Infotip DockPanel.Dock="Right" 
-                                  ToolTipContent="{DynamicResource 'Setup executable args tooltip'}"/>
-                <TextBox Text="{Binding SetupArgs}"/>
-            </DockPanel>
+            
+            <controls:LabeledTextBox IsEnabled="{Binding SupportsSetup}" 
+                                     Label="{DynamicResource 'Setup executable args'}" 
+                                     Text="{Binding SetupArgs}">
+                <controls:LabeledTextBox.Infotip>
+                    <controls:Infotip ToolTipContent="{DynamicResource 'Setup executable args tooltip'}"/>
+                </controls:LabeledTextBox.Infotip>
+            </controls:LabeledTextBox>
             <CheckBox Classes="small" IsChecked="{Binding SupportsCustomSetup}" 
                       Content="{DynamicResource 'Uses community patch'}"/>
             <TextBlock Classes="small" Text="{DynamicResource 'Community patch setup executable'}"></TextBlock>
