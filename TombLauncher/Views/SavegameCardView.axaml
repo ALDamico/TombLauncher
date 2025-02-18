@@ -41,18 +41,17 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Grid.Column="0">
-                <TextBlock Classes="small" Text="{DynamicResource Slot number}" />
-                <TextBlock Text="{Binding SlotNumber}" />
+                <controls:LabeledTextBlock Label="{DynamicResource Slot number}" 
+                                           Text="{Binding SlotNumber}"/>
                 <TextBlock Classes="small" Text="{DynamicResource Level name}" />
                 <DockPanel LastChildFill="True">
                     <TextBlock Text="{Binding SaveNumber}"
                                DockPanel.Dock="Right" />
                     <TextBlock Text="{Binding LevelName}" />
                 </DockPanel>
-                <TextBlock Classes="small" Text="{DynamicResource File name}" />
-                <TextBlock Text="{Binding Filename, Converter={StaticResource FilenameConverter}}" />
-                <TextBlock Classes="small" Text="{DynamicResource Date and time}" />
-                <TextBlock Text="{Binding BackedUpOn}" />
+                <controls:LabeledTextBlock Label="{DynamicResource File name}" 
+                                           Text="{Binding Filename, Converter={StaticResource FilenameConverter}}"/>
+                <controls:LabeledTextBlock Label="{DynamicResource Date and time}" Text="{Binding BackedUpOn}"/>
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="0"
                         HorizontalAlignment="Right"

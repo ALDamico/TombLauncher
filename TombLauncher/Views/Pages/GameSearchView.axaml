@@ -48,11 +48,13 @@
                               AvailableEngines="{Binding AvailableEngines}"
                               />
         <controls:IconButton Grid.Row="1" Grid.Column="1"
+                             Margin="5, 11, 0, 10"
+                             MinHeight="32"
                              Text="{DynamicResource Search}"
                              Icon="Search"
                              HorizontalContentAlignment="Center"
                              VerticalContentAlignment="Center"
-                             VerticalAlignment="Stretch"
+                             VerticalAlignment="Top"
                              MinWidth="120"
                              Background="MidnightBlue"
                              Command="{Binding SearchCmd}" />
