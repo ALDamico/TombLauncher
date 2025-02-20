@@ -1,13 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Data.Dto;
-using TombLauncher.Extensions;
-using TombLauncher.Localization;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
@@ -17,40 +16,33 @@ namespace TombLauncher.Services;
 
 public class GameListService : IViewService
 {
-    public GameListService(GamesUnitOfWork gamesUnitOfWork, 
-        LocalizationManager localizationManager,
+    public GameListService(ILocalizationManager localizationManager,
         NavigationManager navigationManager, 
         IMessageBoxService messageBoxService, 
         IDialogService dialogService)
     {
-        GamesUnitOfWork = gamesUnitOfWork;
+        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
         LocalizationManager = localizationManager;
         NavigationManager = navigationManager;
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
+        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
     }
 
-    public GamesUnitOfWork GamesUnitOfWork { get; }
-    public LocalizationManager LocalizationManager { get; }
+    private readonly GamesUnitOfWork _gamesUnitOfWork;
+    public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
+    private readonly IMapper _mapper;
 
-    public Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
+    public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
-        host.IsBusy = true;
-        host.BusyMessage = LocalizationManager.GetLocalizedString("Loading games...");
-        return Task.FromResult(GamesUnitOfWork.GetGamesWithStats().Select(ConvertDto).ToObservableCollection());
-    }
+        host.SetBusy(true, "Loading games...".GetLocalizedString());
 
-    private GameWithStatsViewModel ConvertDto(GameWithStatsDto dto)
-    {
-        return new GameWithStatsViewModel(Ioc.Default.GetService<GameWithStatsService>())
-        {
-            GameMetadata = dto.GameMetadata.ToViewModel(),
-            LastPlayed = dto.LastPlayed,
-            TotalPlayedTime = dto.TotalPlayTime
-        };
+        var gamesWithStats = await _gamesUnitOfWork.GetGamesWithStats(true);
+
+        return _mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
     }
 
     public void AddGame()
@@ -62,19 +54,23 @@ public class GameListService : IViewService
     public async Task Uninstall(GameListViewModel target, GameWithStatsViewModel game)
     {
         var confirmDialogViewModel = new GameUninstallConfirmDialogViewModel() { Game = game.GameMetadata };
-        confirmDialogViewModel.RequestCloseDialog += (_, args) =>
+        confirmDialogViewModel.RequestCloseDialog += async (_, args) =>
         {
             if (!args.DialogResult) return;
-            target.IsBusy = true;
-            target.BusyMessage = LocalizationManager.GetLocalizedString("Uninstalling", game.GameMetadata.Title);
+            target.SetBusy(true, "Uninstalling".GetLocalizedString(game.GameMetadata.Title));
             var installDir = game.GameMetadata.InstallDirectory;
             Directory.Delete(installDir, true);
-            GamesUnitOfWork.DeleteGameById(game.GameMetadata.Id);
-            GamesUnitOfWork.Save();
-            target.IsBusy = false;
-            NavigationManager.NavigateTo(target);
+            _gamesUnitOfWork.MarkGameAsUninstalled(game.GameMetadata.Id);
+            await _gamesUnitOfWork.Save();
+            target.ClearBusy();
+            await NavigationManager.NavigateTo(target);
         };
         DialogService.ShowDialog(confirmDialogViewModel, _ => { });
         await Task.CompletedTask;
+    }
+
+    public async Task OpenSearch()
+    {
+        await NavigationManager.NavigateTo(Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<GameSearchViewModel>()));
     }
 }

@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.NotificationView"
+             x:DataType="viewModels:NotificationViewModel">
+    <Design.DataContext>
+        <viewModels:NotificationViewModel />
+    </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" FontWeight="DemiBold" Text="{Binding Title}"/>
+        <ContentControl Grid.Row="1" Grid.Column="0" Content="{Binding Content}" DockPanel.Dock="Left" />
+        <DockPanel LastChildFill="True" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
+            <controls:RoundIconButton Icon="Close" Command="{Binding DismissCmd}"
+                                      CommandParameter="{Binding .}"
+                                      IsVisible="{Binding IsDismissable}"
+                                      DockPanel.Dock="Right" Classes="round-button" />
+            <controls:RoundIconButton Icon="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsCancelable}"
+                                      Classes="btn-danger"
+                                      DockPanel.Dock="Right"/>
+            <controls:RoundIconButton Icon="{Binding OpenIcon}" Command="{Binding OpenCommand}"
+                                 CommandParameter="{Binding OpenCmdParam}"
+                                 IsVisible="{Binding IsOpenable}" DockPanel.Dock="Right" Classes="btn-success"/>
+        </DockPanel>
+    </Grid>
+
+</UserControl>

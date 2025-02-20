@@ -1,0 +1,48 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.InstallProgressView"
+             x:DataType="viewModels:InstallProgressViewModel">
+    <Design.DataContext>
+        <viewModels:InstallProgressViewModel />
+    </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding Message}" />
+        <DockPanel Grid.Row="1" IsVisible="{Binding IsDownloading}">
+            <TextBlock
+                DockPanel.Dock="Left"
+                >
+                <Run Text="{Binding CurrentBytes, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"></Run>
+                <Run Text="/" />
+                <Run Text="{Binding TotalBytes, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"></Run>
+            </TextBlock>
+            <TextBlock DockPanel.Dock="Right"
+                       IsVisible="{Binding TotalBytes, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter=0}"
+                       Text="{Binding DownloadSpeed, Converter={StaticResource TransferSpeedFormatter}}">
+            </TextBlock>
+            <ProgressBar IsVisible="{Binding TotalBytes, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter=0}"
+                         Minimum="0"
+                         Maximum="{Binding TotalBytes, FallbackValue=100}"
+                         Value="{Binding CurrentBytes, FallbackValue=0}" Margin="5, 0" />
+        </DockPanel>
+        <TextBlock Grid.Row="2" IsVisible="{Binding IsInstalling}" Text="{Binding CurrentFileName}"/>
+        <DockPanel Grid.Row="3" IsVisible="{Binding IsInstalling}" LastChildFill="True">
+            <TextBlock DockPanel.Dock="Left">
+                <Run Text="{Binding InstallPercentage}"></Run>
+                <Run Text="%"></Run>
+            </TextBlock>
+            <ProgressBar Minimum="0" Maximum="100" IsVisible="{Binding InstallPercentage, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter=0}" Value="{Binding InstallPercentage}"></ProgressBar>
+        </DockPanel>
+        
+    </Grid>
+
+</UserControl>

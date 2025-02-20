@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.LanguageSettingsView"
+             x:DataType="settings:LanguageSettingsViewModel">
+    <Design.DataContext>
+        <settings:LanguageSettingsViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <TextBlock Text="{DynamicResource 'Application language'}"/>
+        <ComboBox ItemsSource="{Binding AvailableLanguages}"
+                  SelectedItem="{Binding ApplicationLanguage, UpdateSourceTrigger=PropertyChanged}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Svg Height="16" Width="24"
+                             Path="{Binding CountryIso2Code, Converter={StaticResource CountryToFlagConverter}}"/>
+                        <Border Width="5" />
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+    </StackPanel>
+</UserControl>

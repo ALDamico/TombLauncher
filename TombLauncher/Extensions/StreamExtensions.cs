@@ -24,7 +24,7 @@ public static class StreamExtensions
         int bytesRead;
         var periodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
         if (progress != null)
-            RunInBackground(periodicTimer, () => progress?.Report(totalBytesRead));
+            _ = RunInBackground(periodicTimer, () => progress?.Report(totalBytesRead), cancellationToken);
         while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) != 0) {
             await destination.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
             totalBytesRead += bytesRead;
@@ -34,11 +34,11 @@ public static class StreamExtensions
         periodicTimer.Dispose();
     }
     
-    private static async Task RunInBackground(PeriodicTimer periodicTimer, Action action)
+    private static async Task RunInBackground(PeriodicTimer periodicTimer, Action action, CancellationToken cancellationToken)
     {
         do
         {
             action();
-        } while (await periodicTimer.WaitForNextTickAsync());
+        } while (await periodicTimer.WaitForNextTickAsync(cancellationToken));
     }
 }

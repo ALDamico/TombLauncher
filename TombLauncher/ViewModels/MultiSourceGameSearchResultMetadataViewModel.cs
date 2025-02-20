@@ -1,18 +1,32 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia.Media.Imaging;
+using System.Net.Http;
+using System.Security.Authentication;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.Data.Models;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Extensions;
+using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
 
-public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBase, IGameSearchResultMetadata
+public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBase
 {
     public MultiSourceGameSearchResultMetadataViewModel()
     {
+        _gameSearchResultService = Ioc.Default.GetRequiredService<GameSearchResultService>();
         Sources = new ObservableCollection<IGameSearchResultMetadata>();
+        InstallCmd = new AsyncRelayCommand(Install, CanInstall);
+        CancelInstallCmd = new AsyncRelayCommand(CancelInstall, CanCancelInstall);
     }
+
+    private readonly GameSearchResultService _gameSearchResultService;
+    
     [ObservableProperty] private string _author;
     [ObservableProperty] private string _authorFullName;
     [ObservableProperty] private string _title;
@@ -22,7 +36,10 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private GameEngine _engine;
     [ObservableProperty] private string _detailsLink;
     [ObservableProperty] private string _baseUrl;
-    [ObservableProperty] private Bitmap _titlePic;
+    [ObservableProperty] private string _titlePic;
+    [ObservableProperty] private string _sourceSiteDisplayName;
+    [ObservableProperty] private string _description;
+    [ObservableProperty] private InstallProgressViewModel _installProgress;
     private string _reviewsLink;
 
     public string ReviewsLink
@@ -35,7 +52,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         }
     }
 
-    public bool HasReviews => !string.IsNullOrWhiteSpace(ReviewsLink);
+    public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private string _downloadLink;
     private string _walkthroughLink;
 
@@ -49,15 +66,41 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         }
     }
 
-    public bool HasWalkthrough => !string.IsNullOrWhiteSpace(WalkthroughLink);
+    public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
     public int ReviewCount => Sources.Sum(s => s.ReviewCount);
     [ObservableProperty] private DateTime? _releaseDate;
     [ObservableProperty] private ObservableCollection<IGameSearchResultMetadata> _sources;
-    [ObservableProperty] private GameMetadataViewModel _installedGame;
-    [ObservableProperty] private double _totalBytes;
-    [ObservableProperty] private double _currentBytes;
-    [ObservableProperty] private double _downloadSpeed;
+    [ObservableProperty] private GameWithStatsViewModel _installedGame;
+    
+    public ICommand InstallCmd { get; }
 
+    private async Task Install()
+    {
+        try
+        {
+            await _gameSearchResultService.Install(this);
+        }
+        catch (OperationCanceledException)
+        {
+            InstallProgress = null;
+        }
+    }
+
+    private bool CanInstall()
+    {
+        return _gameSearchResultService.CanInstall(this);
+    }
+    public ICommand CancelInstallCmd { get; }
+
+    private async Task CancelInstall()
+    {
+        await _gameSearchResultService.CancelInstall();
+    }
+
+    private bool CanCancelInstall()
+    {
+        return _gameSearchResultService.CanCancelInstall(this);
+    }
 }

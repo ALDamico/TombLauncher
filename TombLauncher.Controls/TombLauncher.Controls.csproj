@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Avalonia.Controls">
+        <HintPath>..\TombLauncher\bin\Debug\net8.0\Avalonia.Controls.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Avalonia" Version="11.2.3" />
+      <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
+      <PackageReference Include="Avalonia.Svg" Version="11.0.0" />
+      <PackageReference Include="JamSoft.AvaloniaUI.Dialogs" Version="1.4.0" />
+      <PackageReference Include="Material.Icons" Version="2.1.10" />
+      <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="SplitIconButton.axaml.cs">
+        <DependentUpon>SplitIconButton.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\LipisFlags\**" />
+      
+    </ItemGroup>
+
+</Project>

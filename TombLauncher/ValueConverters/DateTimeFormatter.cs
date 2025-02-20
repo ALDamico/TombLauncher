@@ -2,6 +2,8 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Localization;
 
 namespace TombLauncher.ValueConverters;
@@ -10,12 +12,12 @@ public class DateTimeFormatter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var localizationManager = Ioc.Default.GetRequiredService<LocalizationManager>();
+        var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
         if (value is DateTime dateTime)
         {
             if (dateTime == default)
                 return string.Empty;
-            if (string.IsNullOrWhiteSpace(DesiredFormat))
+            if (DesiredFormat.IsNullOrWhiteSpace())
             {
                 return dateTime.ToString(localizationManager.CurrentCulture.DateTimeFormat);
             }
@@ -27,7 +29,7 @@ public class DateTimeFormatter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var localizationManager = Ioc.Default.GetRequiredService<LocalizationManager>();
+        var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
         if (targetType == typeof(DateTime))
         {
             if (DateTime.TryParse(value?.ToString(), localizationManager.CurrentCulture, out var dateTime))

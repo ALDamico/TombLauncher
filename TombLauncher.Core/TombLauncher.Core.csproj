@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
+      <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
+      <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    </ItemGroup>
+
+</Project>

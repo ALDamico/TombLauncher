@@ -2,7 +2,9 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Data.Models;
+using TombLauncher.ViewModels;
 
 namespace TombLauncher.Views;
 
@@ -13,19 +15,19 @@ public partial class GameSearchForm : UserControl
         InitializeComponent();
     }
 
-    public static readonly StyledProperty<List<GameEngine>> AvailableEnginesProperty = AvaloniaProperty.Register<GameSearchForm, List<GameEngine>>(
+    public static readonly StyledProperty<IList<EnumViewModel<GameEngine>>> AvailableEnginesProperty = AvaloniaProperty.Register<GameSearchForm, IList<EnumViewModel<GameEngine>>>(
         nameof(AvailableEngines));
 
-    public List<GameEngine> AvailableEngines
+    public IList<EnumViewModel<GameEngine>> AvailableEngines
     {
         get => GetValue(AvailableEnginesProperty);
         set => SetValue(AvailableEnginesProperty, value);
     }
 
-    public static readonly StyledProperty<List<GameDifficulty>> AvailableDifficultiesProperty = AvaloniaProperty.Register<GameSearchForm, List<GameDifficulty>>(
+    public static readonly StyledProperty<IList<EnumViewModel<GameDifficulty>>> AvailableDifficultiesProperty = AvaloniaProperty.Register<GameSearchForm, IList<EnumViewModel<GameDifficulty>>>(
         nameof(AvailableDifficulties));
 
-    public List<GameDifficulty> AvailableDifficulties
+    public IList<EnumViewModel<GameDifficulty>> AvailableDifficulties
     {
         get => GetValue(AvailableDifficultiesProperty);
         set => SetValue(AvailableDifficultiesProperty, value);

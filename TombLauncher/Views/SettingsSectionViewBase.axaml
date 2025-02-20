@@ -1,0 +1,24 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.SettingsSectionViewBase"
+             x:DataType="viewModels:SettingsSectionViewModelBase"
+             >
+    <Design.DataContext>
+        <viewModels:SettingsSectionViewModelBase/>
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <DockPanel LastChildFill="True">
+            <controls:Infotip IsVisible="{Binding InfoTipContent, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                              DockPanel.Dock="Right" 
+                              Header="{Binding InfoTipHeader}"
+                              ToolTipContent="{Binding InfoTipContent}"/>
+            <TextBlock Classes="settings-h1" Text="{Binding SectionTitle}" />
+        </DockPanel>
+        <ContentControl Content="{Binding }"></ContentControl>
+    </StackPanel>
+</UserControl>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,24 +10,33 @@ public abstract class ViewModelBase : ObservableObject
 {
     protected ViewModelBase()
     {
-        InitCmd = new RelayCommand(Init);
+        InitCmd = new AsyncRelayCommand(RaiseInitialize);
     }
     
     public ICommand InitCmd { get; set; }
 
-    private void Init()
+    protected virtual Task RaiseInitialize()
     {
-        if (_isInitialized) return;
-        _isInitialized = true;
-        RaiseInitialize();
+        return Task.CompletedTask;
     }
     
-    private bool _isInitialized;
-    
-    public event Action Initialize;
-    private void RaiseInitialize()
+    internal void RaiseCanExecuteChanged<T>(ICommand command)
     {
-        var handler = Initialize;
-        handler?.Invoke();
+        if (command is RelayCommand<T> relayCommand)
+            relayCommand.NotifyCanExecuteChanged();
+        else if (command is AsyncRelayCommand<T> asyncRelayCommand)
+            asyncRelayCommand.NotifyCanExecuteChanged();
+    }
+
+    internal void RaiseCanExecuteChanged(ICommand command)
+    {
+        if (command is RelayCommand relayCommand)
+        {
+            relayCommand.NotifyCanExecuteChanged();
+        }
+        else if (command is AsyncRelayCommand asyncRelayCommand)
+        {
+            asyncRelayCommand.NotifyCanExecuteChanged();
+        }
     }
 }

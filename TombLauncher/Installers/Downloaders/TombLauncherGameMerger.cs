@@ -1,7 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Models;
+using TombLauncher.Services;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers.Downloaders;
@@ -14,7 +21,7 @@ public class TombLauncherGameMerger : IGameMerger
     }
 
     public GameSearchResultMetadataDistanceCalculator Comparer { get; }
-    public int Merge(ICollection<MultiSourceGameSearchResultMetadataViewModel> fullList, ICollection<IGameSearchResultMetadata> addedElements)
+    public int Merge(ICollection<IMultiSourceSearchResultMetadata> fullList, ICollection<IGameSearchResultMetadata> addedElements)
     {
         var unmatched = new List<IGameSearchResultMetadata>(addedElements);
         var mergedCount = 0;
@@ -59,7 +66,7 @@ public class TombLauncherGameMerger : IGameMerger
                     element.Rating = match.Rating;
                 }
 
-                if (string.IsNullOrWhiteSpace(element.Setting))
+                if (element.Setting.IsNullOrWhiteSpace())
                 {
                     element.Setting = match.Setting;
                 }
@@ -85,17 +92,19 @@ public class TombLauncherGameMerger : IGameMerger
 
         foreach (var element in unmatched)
         {
-            fullList.Add(new MultiSourceGameSearchResultMetadataViewModel()
+            fullList.Add(new MultiSourceSearchResultMetadataDto()
             {
                 Author = element.Author,
                 Difficulty = element.Difficulty,
+                Description = element.Description,
                 Engine = element.Engine,
                 Length = element.Length,
                 Rating = element.Rating,
                 Setting = element.Setting,
-                Sources = new ObservableCollection<IGameSearchResultMetadata>(){element},
+                Sources = new HashSet<IGameSearchResultMetadata>(){element},
                 Title = element.Title,
                 BaseUrl = element.BaseUrl,
+                SourceSiteDisplayName = element.SourceSiteDisplayName,
                 DetailsLink = element.DetailsLink,
                 DownloadLink = element.DownloadLink,
                 ReleaseDate = element.ReleaseDate,

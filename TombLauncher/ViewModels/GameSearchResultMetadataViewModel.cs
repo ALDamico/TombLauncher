@@ -1,11 +1,14 @@
 ﻿using System;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.ViewModels;
 
-public partial class GameSearchResultMetadataViewModel : ViewModelBase, IGameSearchResultMetadata
+public partial class GameSearchResultMetadataViewModel : ViewModelBase
 {
     [ObservableProperty] private string _author;
     [ObservableProperty] private string _authorFullName;
@@ -17,6 +20,7 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase, IGameSea
     [ObservableProperty] private string _detailsLink;
     [ObservableProperty] private string _baseUrl;
     [ObservableProperty] private Bitmap _titlePic;
+    [ObservableProperty] private string _description;
     private string _reviewsLink;
 
     public string ReviewsLink
@@ -29,7 +33,8 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase, IGameSea
         }
     }
 
-    public bool HasReviews => !string.IsNullOrWhiteSpace(ReviewsLink);
+    public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
+    
     [ObservableProperty] private string _downloadLink;
     private string _walkthroughLink;
 
@@ -43,7 +48,7 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase, IGameSea
         }
     }
 
-    public bool HasWalkthrough => !string.IsNullOrWhiteSpace(WalkthroughLink);
+    public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
     [ObservableProperty] private int _reviewCount;

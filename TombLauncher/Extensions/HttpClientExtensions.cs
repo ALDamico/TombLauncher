@@ -3,15 +3,16 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using TombLauncher.Progress;
+using TombLauncher.Contracts.Progress;
 
 namespace TombLauncher.Extensions;
 
 public static class HttpClientExtensions
 {
     public static async Task DownloadAsync(this HttpClient client, string requestUri, Stream destination, IProgress<DownloadProgressInfo> progress = null, CancellationToken cancellationToken = default) {
+        
         // Get the http headers first to examine the content length
-        using (var response = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead)) {
+        using (var response = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken)) {
             var contentLength = response.Content.Headers.ContentLength;
             var startDate = DateTime.Now;
 

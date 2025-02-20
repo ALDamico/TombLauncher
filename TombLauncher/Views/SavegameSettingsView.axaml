@@ -1,0 +1,40 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.SavegameSettingsView"
+             x:DataType="settings:SavegameSettingsViewModel"
+             >
+    <Design.DataContext>
+        <settings:SavegameSettingsViewModel/>
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <TextBlock Text="{DynamicResource 'Allow Tomb Launcher to backup your saved games'}"/>
+        <CheckBox IsChecked="{Binding SavegameBackupEnabled}"/>
+        <TextBlock Text="{DynamicResource 'Limit the number of versions to keep'}"/>
+        <CheckBox IsChecked="{Binding LimitNumberOfVersions}"/>
+        <TextBlock Text="{DynamicResource 'Number of versions to keep'}" 
+                   IsEnabled="{Binding LimitNumberOfVersions}"/>
+        <NumericUpDown Minimum="1" 
+                       Value="{Binding NumberOfVersionsToKeep}" 
+                       IsEnabled="{Binding LimitNumberOfVersions}"/>
+        <DockPanel LastChildFill="True">
+            <controls:Infotip DockPanel.Dock="Right" Icon="Dangerous" Foreground="DarkRed"
+                              Header="{DynamicResource 'Potentially dangerous setting'}" 
+                              ToolTipContent="{DynamicResource 'Savegame backup millisecond delay warning'}"/>
+            <TextBlock Text="{DynamicResource 'Savegame backup delay (ms)'}"></TextBlock>
+        </DockPanel>
+        <NumericUpDown Minimum="1" Maximum="800" Value="{Binding SavegameProcessingDelay}"></NumericUpDown>
+        <DockPanel LastChildFill="True">
+            <controls:Infotip DockPanel.Dock="Right" 
+                              ToolTipContent="{DynamicResource 'Rescans your backed up savegames and syncs their content with Tomb Launchers database'}"/>
+            <TextBlock Text="{DynamicResource Sync savegame metadata}"/>    
+        </DockPanel>
+        <controls:IconButton Icon="Sync" 
+                             Text="{DynamicResource Sync now}" Command="{Binding SyncSavegamesInfoCmd}"/>
+        
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,27 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TombLauncher.Views.SplashScreen"
+        Title="SplashScreen"
+        SystemDecorations="None"
+        Background="Black"
+        CanResize="False"
+        Width="640"
+        Height="480"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
+        >
+    <Window.Styles>
+        <Style Selector="TextBlock.style">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Margin" Value="15"/>
+        </Style>
+    </Window.Styles>
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Classes="style" FontSize="48" FontFamily="{StaticResource TombRaiderFont}">TOMB LAUNCHER</TextBlock>
+        <TextBlock Classes="style" Text="Loading..."></TextBlock>
+    </StackPanel>
+</Window>

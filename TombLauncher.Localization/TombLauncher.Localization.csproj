@@ -16,11 +16,11 @@
       </Content>
       <None Remove="Localization\en-US.axaml" />
       <Content Include="Localization\en-US.axaml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Localization\it-IT.axaml" />
       <Content Include="Localization\it-IT.axaml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 
@@ -33,6 +33,10 @@
     <ItemGroup>
       <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.1.3" />
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
     </ItemGroup>
 
 </Project>

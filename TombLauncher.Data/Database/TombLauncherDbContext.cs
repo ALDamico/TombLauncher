@@ -5,11 +5,11 @@ namespace TombLauncher.Data.Database;
 
 public class TombLauncherDbContext : DbContext
 {
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public TombLauncherDbContext(DbContextOptions<TombLauncherDbContext> options) : base(options)
     {
-        optionsBuilder.UseSqlite("Data Source=./TombLauncher.db");
     }
 
     internal DbSet<Game> Games { get; set; }
     internal DbSet<AppCrash> AppCrashes { get; set; }
+    internal DbSet<FileBackup> FileBackups { get; set; }
 }

@@ -1,13 +1,16 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Localization.Dtos;
 
 namespace TombLauncher.Localization;
 
-public class LocalizationManager
+public class LocalizationManager : ILocalizationManager
 {
     public LocalizationManager(Application application)
     {
@@ -15,7 +18,6 @@ public class LocalizationManager
         _defaultCulture = CultureInfo.GetCultureInfo("en-US");
         _application = application;
         _localizationRelativePath = "Localization";
-        ChangeLanguage(_defaultCulture);
     }
 
     private CultureInfo _currentCulture;
@@ -26,24 +28,62 @@ public class LocalizationManager
 
     public CultureInfo CurrentCulture => _currentCulture;
 
+    public string GetLanguagesFolder()
+    {
+        return $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/{_localizationRelativePath}";
+    }
+
+    public List<AvailableLanguageDto> GetSupportedLanguages()
+    {
+        var cultureInfos = new List<AvailableLanguageDto>();
+        var languagesFolder = GetLanguagesFolder();
+        var dictionaryFiles = Directory.GetFiles(languagesFolder, "*.axaml");
+        foreach (var file in dictionaryFiles)
+        {
+            try
+            {
+                var fileName = Path.GetFileNameWithoutExtension(file);
+                var cultureInfo = CultureInfo.GetCultureInfo(fileName);
+
+                var countryCode = Regex.Match(fileName, @"-(\w{2})").Groups[1].Value;
+                var dto = new AvailableLanguageDto()
+                {
+                    Culture = cultureInfo,
+                    DictionaryName = fileName,
+                    DisplayName = cultureInfo.DisplayName,
+                    CountryIso2Code = countryCode
+                };
+                cultureInfos.Add(dto);
+            }
+            catch (CultureNotFoundException)
+            {
+                // Ignored for now
+            }
+        }
+
+        return cultureInfos;
+    }
+
     public void ChangeLanguage(CultureInfo targetLanguage)
     {
-        var currentApp = Application.Current;
-        if (currentApp == null) return;
+        /*var currentApp = Application.Current;
+        if (currentApp == null) return;*/
         _currentCulture = targetLanguage;
         var cultureName = _currentCulture.Name;
-        var currentTranslations = currentApp.Resources.MergedDictionaries.OfType<ResourceInclude>()
+        var currentTranslations = /*currentApp*/_application.Resources.MergedDictionaries.OfType<ResourceInclude>()
             .FirstOrDefault(dic => dic.Source?.OriginalString?.Contains(_localizationRelativePath) ?? false);
+        CultureInfo.CurrentUICulture = _currentCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = _currentCulture;
         if (currentTranslations != null)
         {
             _application.Resources.MergedDictionaries.Remove(currentTranslations);
         }
 
         var resourceKey =
-            $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/{_localizationRelativePath}/{cultureName}.axaml";
+            $"{GetLanguagesFolder()}/{cultureName}.axaml";
 
         var resourceKeyDefault =
-            $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/{_localizationRelativePath}/{_defaultCulture}.axaml";
+            $"{GetLanguagesFolder()}/{_defaultCulture}.axaml";
         var defaultKeyXaml = File.ReadAllText(resourceKeyDefault);
         string xaml;
 
@@ -56,7 +96,7 @@ public class LocalizationManager
         {
             xaml = defaultKeyXaml;
         }
-        
+
         var rd = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(xaml);
         var rdDefault = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(defaultKeyXaml);
         var missingKeys = Enumerable.Except<object>(rdDefault.Keys, rd.Keys);

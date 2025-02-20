@@ -1,5 +1,7 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using System;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization;
 using TombLauncher.Navigation;
@@ -9,7 +11,7 @@ namespace TombLauncher.Services;
 
 public class WelcomePageService : IViewService
 {
-    public WelcomePageService(AppCrashUnitOfWork appCrashUnitOfWork, LocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService)
+    public WelcomePageService(AppCrashUnitOfWork appCrashUnitOfWork, ILocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService)
     {
         AppCrashUnitOfWork = appCrashUnitOfWork;
         LocalizationManager = localizationManager;
@@ -18,7 +20,7 @@ public class WelcomePageService : IViewService
         DialogService = dialogService;
     }
     public AppCrashUnitOfWork AppCrashUnitOfWork { get; }
-    public LocalizationManager LocalizationManager { get; }
+    public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
@@ -28,7 +30,13 @@ public class WelcomePageService : IViewService
         var unnotifiedCrash = AppCrashUnitOfWork.GetNotNotifiedCrashes();
         if (unnotifiedCrash == null) return;
         var appCrashHostService = Ioc.Default.GetRequiredService<AppCrashHostService>();
-        DialogService.ShowDialog(new AppCrashHostViewModel(appCrashHostService) { Crash = unnotifiedCrash },
-            model => { appCrashHostService.MarkAsNotified(model.Crash); });
+        var appCrashHostViewModel = new AppCrashHostViewModel(appCrashHostService) { Crash = unnotifiedCrash };
+
+        async void MarkAsNotified(AppCrashHostViewModel model)
+        {
+            await appCrashHostService.MarkAsNotified(model.Crash);
+        }
+
+        DialogService.ShowDialog(appCrashHostViewModel, MarkAsNotified);
     }
 }

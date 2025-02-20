@@ -1,0 +1,58 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.NotificationListView"
+             x:DataType="viewModels:NotificationListViewModel">
+    <Design.DataContext>
+        <viewModels:NotificationListViewModel />
+    </Design.DataContext>
+
+    <controls:BadgedIconButton DockPanel.Dock="Right" Icon="Notifications"
+                               IsBadgeVisible="{Binding HasNewItems}"
+                               ToolTip.Tip="{DynamicResource Notifications}" 
+                               x:Name="NotificationButtonFlyout">
+        <Interaction.Behaviors>
+            <EventTriggerBehavior EventName="Click" SourceObject="NotificationButtonFlyout">
+                <EventTriggerBehavior.Actions>
+                    <InvokeCommandAction Command="{Binding MarkNoNewElementsCmd}" />
+                </EventTriggerBehavior.Actions>
+            </EventTriggerBehavior>
+        </Interaction.Behaviors>
+        <controls:BadgedIconButton.Flyout>
+            <Flyout>
+                <Grid Height="350" Width="350">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" HorizontalAlignment="Center" TextAlignment="Center"
+                               VerticalAlignment="Center" FontSize="20"
+                               Text="{DynamicResource Notifications}">
+                    </TextBlock>
+                    <controls:RoundIconButton Width="32" Height="32" Grid.Row="0" HorizontalAlignment="Right" Icon="Close"
+                                         ToolTip.Tip="{DynamicResource 'Clear all'}"
+                                         Command="{Binding ClearAllCmd}">
+                    </controls:RoundIconButton>
+                    <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontStyle="Italic"
+                               FontSize="20"
+                               Classes="text-muted"
+                               IsVisible="{Binding Notifications, Converter={StaticResource CollectionEmptyToVisibilityConverter }}">
+                        <avalonia:MaterialIcon Kind="NotificationsOff" />
+                        <Run Text="{DynamicResource 'No notifications'}"></Run>
+                    </TextBlock>
+
+                    <ScrollViewer Grid.Row="1">
+                        <ItemsControl ItemsSource="{Binding Notifications}">
+
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Flyout>
+        </controls:BadgedIconButton.Flyout>
+    </controls:BadgedIconButton>
+</UserControl>

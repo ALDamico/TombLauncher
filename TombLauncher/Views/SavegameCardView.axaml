@@ -1,0 +1,83 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.SavegameCardView"
+             x:DataType="viewModels:SavegameViewModel">
+    <Design.DataContext>
+        <viewModels:SavegameViewModel />
+    </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
+                                                        TrueValue="FlagOutline"
+                                                        FalseValue="FlagOffOutline" />
+    </UserControl.Resources>
+    <Border CornerRadius="3" Padding="10" Margin="10" Width="250"
+            Background="{DynamicResource ButtonBackground}">
+        <Border.Styles>
+            <Style Selector="TextBlock">
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+            <Style Selector="Border :is(Button)">
+                <Setter Property="Opacity" Value="0"/>
+                <Setter Property="Transitions">
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.25" />
+                    </Transitions>
+                </Setter>
+            </Style>
+            <Style Selector="Border:pointerover :is(Button)">
+                <Setter Property="Opacity" Value="1"/>
+            </Style>
+        </Border.Styles>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Grid.Column="0">
+                <controls:LabeledTextBlock Label="{DynamicResource Slot number}" 
+                                           Text="{Binding SlotNumber}"/>
+                <TextBlock Classes="small" Text="{DynamicResource Level name}" />
+                <DockPanel LastChildFill="True">
+                    <TextBlock Text="{Binding SaveNumber}"
+                               DockPanel.Dock="Right" />
+                    <TextBlock Text="{Binding LevelName}" />
+                </DockPanel>
+                <controls:LabeledTextBlock Label="{DynamicResource File name}" 
+                                           Text="{Binding Filename, Converter={StaticResource FilenameConverter}}"/>
+                <controls:LabeledTextBlock Label="{DynamicResource Date and time}" Text="{Binding BackedUpOn}"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+                <controls:IconOnlyButton Icon="Restore"
+                                         ToolTip.Tip="{DynamicResource 'Restore'}"
+                                         Command="{Binding RestoreSavegameCmd}"
+                                         CommandParameter="{Binding Id}">
+                </controls:IconOnlyButton>
+
+                <ToggleButton IsChecked="{Binding IsStartOfLevel}"
+                              Command="{Binding UpdateStartOfLevelStateCmd}"
+                              CommandParameter="{Binding .}"
+                              ToolTip.Tip="{DynamicResource 'Mark/unmark as start of level save'}">
+                    <ToggleButton.Content>
+                        <avalonia:MaterialIcon
+                            Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToMaterialIconConverter}}"/>
+                    </ToggleButton.Content>
+                </ToggleButton>
+                <controls:IconOnlyButton Icon="Delete"
+                                         Command="{Binding DeleteSavegameCmd}"
+                                         CommandParameter="{Binding .}"
+                                         IsVisible="{Binding !IsStartOfLevel}"
+                                         Classes="btn-danger" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

@@ -83,9 +83,9 @@ public class EfRepository<T> : IRepository<T> where T : class
         return false;
     }
 
-    public void Commit()
+    public async Task Commit()
     {
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 
     public bool Upsert(T entity)

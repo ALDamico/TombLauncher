@@ -3,8 +3,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using JamSoft.AvaloniaUI.Dialogs;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Data.Dto;
 using TombLauncher.Localization;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
@@ -14,7 +16,7 @@ namespace TombLauncher.Services;
 
 public class AppCrashHostService : IViewService
 {
-    public AppCrashHostService(AppCrashUnitOfWork appCrashUnitOfWork, LocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService)
+    public AppCrashHostService(AppCrashUnitOfWork appCrashUnitOfWork, ILocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService)
     {
         AppCrashUnitOfWork = appCrashUnitOfWork;
         LocalizationManager = localizationManager;
@@ -23,7 +25,7 @@ public class AppCrashHostService : IViewService
         DialogService = dialogService;
     }
     public AppCrashUnitOfWork AppCrashUnitOfWork { get; }
-    public LocalizationManager LocalizationManager { get; }
+    public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
@@ -41,7 +43,7 @@ public class AppCrashHostService : IViewService
                     }
                 }
             }, "json");
-        if (string.IsNullOrWhiteSpace(filePath)) return;
+        if (filePath.IsNullOrWhiteSpace()) return;
         await File.WriteAllTextAsync(filePath,
             JsonSerializer.Serialize(crash, new JsonSerializerOptions() { WriteIndented = true }));
     }
@@ -61,8 +63,13 @@ public class AppCrashHostService : IViewService
         AppUtils.SetClipboardTextAsync(serialized);
     }
 
-    public void MarkAsNotified(AppCrashDto crash)
+    public async Task MarkAsNotified(AppCrashDto crash)
     {
-        AppCrashUnitOfWork.MarkAsNotified(crash.Id);
+        await MarkAsNotified(crash.Id);
+    }
+
+    public async Task MarkAsNotified(int id)
+    {
+        await AppCrashUnitOfWork.MarkAsNotified(id);
     }
 }

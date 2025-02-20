@@ -4,8 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Serilog;
+using TombLauncher.Core.Exceptions;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Navigation;
+using TombLauncher.Services;
 
 namespace TombLauncher;
 
@@ -21,16 +24,21 @@ sealed class Program
         {
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
-        catch (Exception e)
+        catch (AppRestartRequestedException ex)
         {
-            var appCrashUoW = Ioc.Default.GetService<AppCrashUnitOfWork>();
-            appCrashUoW.InsertAppCrash(e);
-
+            var crashId = ex.CrashId;
+            var appCrashHostService = Ioc.Default.GetRequiredService<AppCrashHostService>();
+            appCrashHostService.MarkAsNotified(crashId).GetAwaiter().GetResult();
             var thisExecutable = Assembly.GetEntryAssembly()?.Location.Replace(".dll", ".exe");
             if (thisExecutable != null && File.Exists(thisExecutable))
             {
                 Process.Start(thisExecutable, args);
             }
+        }
+        finally
+        {
+            Log.Logger.Error("Application closing due to fatal exception");
+            ((IDisposable)Log.Logger).Dispose();
         }
     }
 

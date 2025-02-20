@@ -1,38 +1,17 @@
 ﻿using System;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Material.Icons;
 
 namespace TombLauncher.ViewModels;
 
-public class MainMenuItemViewModel : ViewModelBase
+public partial class MainMenuItemViewModel : ViewModelBase
 {
-    private MaterialIconKind _icon;
-    public MaterialIconKind Icon
-    {
-        get => _icon;
-        set => SetProperty(ref _icon, value);
-    }
+    [ObservableProperty] private MaterialIconKind _icon;
 
-    private string _text;
+    [ObservableProperty] private string _text;
 
-    public string Text
-    {
-        get => _text;
-        set => SetProperty(ref _text, value);
-    }
+    [ObservableProperty] private string _toolTip;
 
-    private string _tooltip;
-
-    public string ToolTip
-    {
-        get => _tooltip;
-        set => SetProperty(ref _tooltip, value);
-    }
-
-    private Lazy<PageViewModel> _pageViewModelFactory;
-
-    public PageViewModel PageViewModelFactory
-    {
-        get => _pageViewModelFactory.Value;
-        set => _pageViewModelFactory = new Lazy<PageViewModel>(() => value);
-    }
+    [ObservableProperty] private Task<PageViewModel> _pageViewModelFactory;
 }

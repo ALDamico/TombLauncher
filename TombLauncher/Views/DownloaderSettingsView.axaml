@@ -1,0 +1,54 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.DownloaderSettingsView"
+             x:DataType="settings:DownloaderSettingsViewModel">
+    <Design.DataContext>
+        <settings:DownloaderSettingsViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <DockPanel LastChildFill="True">
+            <StackPanel DockPanel.Dock="Right"
+                        Orientation="Vertical"
+                        HorizontalAlignment="Center">
+                <controls:IconButton Icon="ArrowUp"
+                                     ToolTip.Tip="{DynamicResource 'Move up'}"
+                                     Command="{Binding MoveUpCmd}"
+                                     CommandParameter="{Binding SelectedDownloader}" />
+                <Border Margin="20" />
+                <controls:IconButton Icon="ArrowDown"
+                                     ToolTip.Tip="{DynamicResource 'Move down'}"
+                                     Command="{Binding MoveDownCmd}"
+                                     CommandParameter="{Binding SelectedDownloader}" />
+            </StackPanel>
+            <ListBox ItemsSource="{Binding AvailableDownloaders}"
+                     SelectedItem="{Binding SelectedDownloader}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsEnabled}" />
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding DisplayName}"
+                                           FontWeight="DemiBold" />
+                                <TextBlock Text="{Binding BaseUrl}"
+                                           FontStyle="Italic" />
+                                <TextBlock>
+                                    <Run FontWeight="DemiBold"
+                                         Text="{DynamicResource Supported features}" />
+                                    <Run FontStyle="Italic"
+                                         Text="{Binding SupportedFeatures}" />
+                                </TextBlock>
+                            </StackPanel>
+                            <TextBlock Text="{Binding Priority}"
+                                       HorizontalAlignment="Right" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+    </StackPanel>
+</UserControl>

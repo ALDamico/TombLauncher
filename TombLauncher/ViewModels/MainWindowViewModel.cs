@@ -1,24 +1,30 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
+using TombLauncher.Services;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;
 
 public partial class MainWindowViewModel : WindowViewModelBase
 {
-    public MainWindowViewModel(NavigationManager navigationManager)
+    public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel)
     {
         _navigationManager = navigationManager;
         _navigationManager.OnNavigated += OnNavigated;
+        NotificationListViewModel = notificationListViewModel;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
+        OpenSettingsCmd = new AsyncRelayCommand(OpenSettings);
         MenuItems = new ObservableCollection<MainMenuItemViewModel>()
         {
             new MainMenuItemViewModel()
@@ -26,25 +32,55 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 ToolTip = "Welcome".GetLocalizedString(),
                 Icon = MaterialIconKind.HomeOutline,
                 Text = "Welcome".GetLocalizedString(),
-                PageViewModelFactory = Ioc.Default.GetRequiredService<WelcomePageViewModel>()
+                PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<WelcomePageViewModel>())
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "My mods".GetLocalizedString(),
                 Icon = MaterialIconKind.Games,
                 Text = "My mods".GetLocalizedString(),
-                PageViewModelFactory = Ioc.Default.GetRequiredService<GameListViewModel>()
+                PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<GameListViewModel>())
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "Search".GetLocalizedString(),
                 Icon = MaterialIconKind.Magnify,
                 Text = "Search".GetLocalizedString(),
-                PageViewModelFactory = Ioc.Default.GetRequiredService<GameSearchViewModel>()
+                PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<GameSearchViewModel>())
+            },
+            new MainMenuItemViewModel()
+            {
+                ToolTip = "Random".GetLocalizedString(),
+                Icon = MaterialIconKind.Gambling,
+                Text = "Random game".GetLocalizedString(),
+                PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<RandomGameViewModel>())
+            },
+            new MainMenuItemViewModel()
+            {
+                ToolTip = "Statistics".GetLocalizedString(),
+                Icon = MaterialIconKind.ChartBar,
+                Text = "Statistics".GetLocalizedString(),
+                PageViewModelFactory =  Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<StatisticsPageViewModel>())
             }
         };
-        
-        _navigationManager.StartNavigation(MenuItems.First().PageViewModelFactory);
+
+        SettingsItem = new MainMenuItemViewModel()
+        {
+            ToolTip = "Settings".GetLocalizedString(),
+            Icon = MaterialIconKind.Settings,
+            Text = "Settings".GetLocalizedString(),
+            PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<SettingsPageViewModel>())
+        };
+
+        GitHubLinkItem = new CommandViewModel()
+        {
+            Tooltip = "Open Tomb Launcher's GitHub page".GetLocalizedString(),
+            Icon = MaterialIconKind.Github,
+            Text = "GitHub",
+            Command = new RelayCommand(OpenGithub)
+        };
+
+        _navigationManager.StartNavigationAsync(MenuItems.First().PageViewModelFactory);
         Title = "Tomb Launcher";
     }
 
@@ -55,6 +91,17 @@ public partial class MainWindowViewModel : WindowViewModelBase
     }
 
     private readonly NavigationManager _navigationManager;
+    [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
+    [ObservableProperty] private MainMenuItemViewModel _settingsItem;
+    [ObservableProperty] private CommandViewModel _gitHubLinkItem;
+    [ObservableProperty] private bool _isSettingsOpen;
+
+    private void OpenGithub()
+    {
+        var settings = Ioc.Default.GetRequiredService<SettingsService>();
+        var gitHubLink = settings.GetGitHubLink();
+        AppUtils.OpenUrl(gitHubLink);
+    }
 
     private bool _isPaneOpen;
 
@@ -79,10 +126,12 @@ public partial class MainWindowViewModel : WindowViewModelBase
         get => _selectedMenuItem;
         set
         {
+            if (value != SettingsItem)
+                IsSettingsOpen = false;
             SetProperty(ref _selectedMenuItem, value);
             if (value != null)
             {
-                _navigationManager.StartNavigation(value.PageViewModelFactory);
+                _navigationManager.StartNavigationAsync(value.PageViewModelFactory);
                 OnNavigated();
             }
         }
@@ -98,6 +147,12 @@ public partial class MainWindowViewModel : WindowViewModelBase
     }
 
     private bool CanGoBack() => _navigationManager.CanGoBack();
-    
-    
+    public ICommand OpenSettingsCmd { get; }
+
+    private async Task OpenSettings()
+    {
+        await SettingsItem.PageViewModelFactory;
+        SelectedMenuItem = SettingsItem;
+        IsSettingsOpen = true;
+    }
 }

@@ -1,12 +1,8 @@
-﻿using System.IO;
-using System.Text.Json;
-using System.Windows.Input;
-using Avalonia.Platform.Storage;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.ViewModels;
-using TombLauncher.Data.Dto;
+using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Exceptions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -19,9 +15,10 @@ public class AppCrashHostViewModel : DialogViewModel
     {
         _appCrashHostService = appCrashHostService;
         AcceptCommandText = "Accept".GetLocalizedString();
+        CancelCommandText = "Restart application".GetLocalizedString();
+        CancelCommand = new RelayCommand(InvokeRestart);
         CopyCmd = new RelayCommand<object>(Copy, CanCopy);
         SaveCmd = new RelayCommand(Save);
-        // TODO Hide cancel button when functionality becomes available
     }
 
     private AppCrashHostService _appCrashHostService;
@@ -39,8 +36,6 @@ public class AppCrashHostViewModel : DialogViewModel
         set => RaiseAndSetIfChanged(ref _crash, value);
     }
 
-    public override bool CanCancel() => false;
-
     public ICommand SaveCmd { get; }
 
     private async void Save()
@@ -53,5 +48,10 @@ public class AppCrashHostViewModel : DialogViewModel
     private void Copy(object param)
     {
         _appCrashHostService.Copy(param);
+    }
+
+    private void InvokeRestart()
+    {
+        throw new AppRestartRequestedException(Crash.Id);
     }
 }

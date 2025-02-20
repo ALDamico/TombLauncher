@@ -1,27 +1,34 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using JamSoft.AvaloniaUI.Dialogs;
-using TombLauncher.Localization;
-using TombLauncher.Navigation;
+using TombLauncher.Contracts.Progress;
 
 namespace TombLauncher.ViewModels;
 
 public abstract partial class PageViewModel : ViewModelBase
 {
-    public PageViewModel(IMessageBoxService messageBoxService = null)
+    private readonly IProgress<PageBusyState> _progress;
+    protected PageViewModel()
     {
-        MessageBoxService = messageBoxService;
-        SaveCmd = new RelayCommand(Save, CanSave);
+        _progress = new Progress<PageBusyState>(state =>
+        {
+            IsBusy = state.IsBusy;
+            BusyMessage = state.BusyMessage;
+        });
+        SaveCmd = new AsyncRelayCommand(Save, CanSave);
         CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
+        TopBarCommands = new ObservableCollection<CommandViewModel>();
     }
-    [ObservableProperty] private bool _isBusy;
-    [ObservableProperty] private string _busyMessage;
+    
+    [ObservableProperty]private bool _isBusy;
+    [ObservableProperty]private string _busyMessage;
     [ObservableProperty] private string _currentFileName;
     [ObservableProperty] private double? _percentageComplete;
     [ObservableProperty] private bool _isCancelable;
+    [ObservableProperty] private ObservableCollection<CommandViewModel> _topBarCommands;
     
     public ICommand CancelCmd { get; }
 
@@ -30,31 +37,33 @@ public abstract partial class PageViewModel : ViewModelBase
         
     }
 
-    protected void SetBusy(bool isBusy, string busyMessage = null)
+    public void SetBusy(bool isBusy, string busyMessage = null)
     {
-        IsBusy = isBusy;
-        if (busyMessage != null)
-        {
-            BusyMessage = busyMessage;
-        }
+        var busyState = new PageBusyState() { IsBusy = isBusy, BusyMessage = busyMessage };
+        _progress.Report(busyState);
     }
 
-    protected void ClearBusy()
+    public void SetBusy(string busyMessage)
     {
-        IsBusy = false;
-        BusyMessage = null;
+        var busyState = new PageBusyState() { IsBusy = true, BusyMessage = busyMessage };
+        _progress.Report(busyState);
     }
 
-    public RelayCommand SaveCmd { get; protected set; }
+    public void ClearBusy()
+    {
+        _progress.Report(new PageBusyState());
+    }
+
+    public ICommand SaveCmd { get; protected set; }
     protected virtual bool CanSave() => false;
 
-    private async void Save()
+    private async Task Save()
     {
-        SaveInner();
+        await SaveInner();
     }
 
-    protected virtual void SaveInner()
+    protected virtual Task SaveInner()
     {
+        return Task.CompletedTask;
     }
-    protected IMessageBoxService MessageBoxService { get; private set; }
 }

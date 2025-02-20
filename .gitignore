@@ -6,3 +6,6 @@ riderModule.iml
 .idea
 *.DotSettings.user
 .vs
+TombLauncher.Data/TombLauncher.db
+Output
+TombLauncher/appsettings.Development.json
