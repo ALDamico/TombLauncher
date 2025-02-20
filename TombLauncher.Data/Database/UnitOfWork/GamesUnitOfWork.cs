@@ -368,6 +368,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     private static GameStatisticsDto GetMostPlayedByLaunches(ILookup<int, PlaySession> groupedByGame)
     {
+        if (groupedByGame.Count == 0)
+            return null;
         var mostPlaySessions = groupedByGame.MaxBy(g => g.Count());
         var mostPlayed = new GameStatisticsDto()
         {
@@ -381,6 +383,10 @@ public class GamesUnitOfWork : UnitOfWorkBase
     private GameStatisticsDto GetLongestPlaySession(IIncludableQueryable<PlaySession, Game> repo)
     {
         var listified = repo.ToList();
+        if (listified.Count == 0)
+        {
+            return null;
+        }
         var maxDuration = listified.Max(s => s.EndDate - s.StartDate);
 
         var longest = listified.FirstOrDefault(r => r.EndDate - r.StartDate == maxDuration);
