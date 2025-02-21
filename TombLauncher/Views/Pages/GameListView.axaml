@@ -45,7 +45,8 @@
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="{DynamicResource Play}" 
-                              Command="{Binding }">
+                              Command="{Binding PlayCmd}"
+                              CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
                             <avalonia:MaterialIcon Kind="Play"/>
                         </MenuItem.Icon>
