@@ -3,12 +3,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:views="clr-namespace:TombLauncher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GamesGridView"
              x:DataType="pages:GameListViewModel">
     <Design.DataContext>
         <pages:GameListViewModel />
     </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="views|GameCardView:pointerover Border">
+            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}"></Setter>
+        </Style>
+        <Style Selector="views|GameCardView Border">
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}"></Setter>
+        </Style>
+    </UserControl.Styles>
     <ScrollViewer>
         <ItemsControl ItemsSource="{Binding Games}">
             <ItemsControl.ItemsPanel>
@@ -18,91 +27,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border CornerRadius="3" Width="400" 
-                            Margin="10" 
-                            ClipToBounds="True"
-                            Background="{DynamicResource ButtonBackground}"
-                            x:Name="GameCard">
-                        <Border.Styles>
-                            <Style Selector="Border:pointerover">
-                                <Setter Property="Background" Value="{DynamicResource 'ButtonBackgroundPointerOver'}"></Setter>
-                            </Style>
-                        </Border.Styles>
-
-                        <Interaction.Behaviors>
-                            <EventTriggerBehavior EventName="DoubleTapped"
-                                                  SourceObject="{Binding ElementName=GameCard}">
-                                <InvokeCommandAction Command="{Binding PlayCmd}"></InvokeCommandAction>
-                            </EventTriggerBehavior>
-                        </Interaction.Behaviors>
-                        <Border.Styles>
-                            <Style Selector="TextBlock">
-                                <Setter Property="Foreground" Value="White" />
-                            </Style>
-                            <Style Selector="Border :is(Button)">
-                                <Setter Property="Opacity" Value="0" />
-                                <Setter Property="Transitions">
-                                    <Transitions>
-                                        <DoubleTransition Property="Opacity" Duration="0:0:0.25" />
-                                    </Transitions>
-                                </Setter>
-                            </Style>
-                            <Style Selector="Border:pointerover :is(Button)">
-                                <Setter Property="Opacity" Value="1" />
-                            </Style>
-                        </Border.Styles>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Image Grid.Row="0"
-                                   Margin="0"
-                                   Height="300"
-                                   Source="{Binding GameMetadata.TitlePic}"
-                                   HorizontalAlignment="Stretch"
-                                   VerticalAlignment="Stretch">
-                            </Image>
-                            <Grid Grid.Row="1" Margin="10">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.Styles>
-                                    <Style Selector="TextBlock">
-                                        <Setter Property="FontSize" Value="9" />
-                                    </Style>
-                                </Grid.Styles>
-                                <TextBlock Grid.Row="0" Text="{Binding GameMetadata.Title}"
-                                           TextWrapping="Wrap"
-                                           FontWeight="DemiBold"
-                                           FontSize="16" />
-                                <TextBlock Grid.Row="1" Text="{Binding GameMetadata.Author, TargetNullValue='Unknown'}"
-                                           FontStyle="Italic" />
-                                <TextBlock Grid.Row="2">
-                                    <Run FontWeight="DemiBold" Text="{DynamicResource 'Release date'}"></Run>
-                                    <Run FontStyle="Italic" Text="{Binding GameMetadata.ReleaseDate, StringFormat=d}" />
-                                </TextBlock>
-                                <TextBlock Grid.Row="3">
-                                    <Run FontWeight="DemiBold" Text="{DynamicResource 'Install date'}"></Run>
-                                    <Run FontStyle="Italic" Text="{Binding GameMetadata.InstallDate, StringFormat=d}" />
-                                </TextBlock>
-                                <TextBlock Grid.Row="4">
-                                    <Run FontWeight="DemiBold" Text="{DynamicResource 'Last played'}"></Run>
-                                    <Run FontStyle="Italic" Text="{Binding LastPlayed, StringFormat=g}"></Run>
-                                </TextBlock>
-                                <TextBlock Grid.Row="5">
-                                    <Run FontWeight="DemiBold" Text="{DynamicResource 'Time played'}" />
-                                    <Run FontStyle="Italic"
-                                         Text="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}" />
-                                </TextBlock>
-                            </Grid>
-                        </Grid>
-                    </Border>
+                    <views:GameCardView/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
