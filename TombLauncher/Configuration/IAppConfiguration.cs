@@ -22,4 +22,5 @@ public interface IAppConfiguration
     int? NumberOfVersionsToKeep { get; set; }
     public int SavegameProcessingDelay { get; set; }
     string GitHubLink { get; set; }
+    bool DefaultToGridView { get; set; }
 }

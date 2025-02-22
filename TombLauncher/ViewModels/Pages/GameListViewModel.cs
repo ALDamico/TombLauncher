@@ -27,6 +27,7 @@ public partial class GameListViewModel : PageViewModel
         OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
         OpenSearchCmd = new AsyncRelayCommand(OpenSearch);
         PlayCmd = new RelayCommand<GameWithStatsViewModel>(Play);
+        ShowAsGrid = Ioc.Default.GetRequiredService<SettingsService>().IsGridViewDefault();
         TopBarCommands.Clear();
         TopBarCommands.Add(new CommandViewModel()
         {

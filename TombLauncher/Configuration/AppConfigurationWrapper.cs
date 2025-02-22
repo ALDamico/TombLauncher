@@ -106,5 +106,15 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set => User.SavegameProcessingDelay = value.DefaultIfEquals(Defaults.SavegameProcessingDelay);
     }
 
-    public string GitHubLink { get => Defaults.GitHubLink; set => Defaults.GitHubLink = value; }
+    public string GitHubLink
+    {
+        get => Defaults.GitHubLink;
+        set => Defaults.GitHubLink = value;
+    }
+
+    public bool DefaultToGridView
+    {
+        get => User.DefaultToGridView.Coalesce(Defaults.DefaultToGridView);
+        set => User.DefaultToGridView = value.DefaultIfEquals(DefaultToGridView);
+    }
 }

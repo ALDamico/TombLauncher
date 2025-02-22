@@ -20,4 +20,5 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModelBase
     
     [ObservableProperty] private ThemeVariant _selectedTheme;
     [ObservableProperty] private ObservableCollection<ThemeVariant> _availableThemes;
+    [ObservableProperty] private bool _defaultToGridView;
 }
