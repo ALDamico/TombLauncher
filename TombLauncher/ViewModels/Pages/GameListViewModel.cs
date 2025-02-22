@@ -14,6 +14,7 @@ public partial class GameListViewModel : PageViewModel
 {
     [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games;
     [ObservableProperty] private GameWithStatsViewModel _selectedGame;
+    [ObservableProperty] private bool _showAsGrid;
 
     private GameListService _gameListService;
     

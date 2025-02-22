@@ -203,6 +203,8 @@
     <system:String x:Key="Launching community patch setup for GAMENAME">Avvio dell'utility di configurazione della patch della community per {0}</system:String>
     <system:String x:Key="Community patch setup">Setup patch della community</system:String>
     <system:String x:Key="Open Tomb Launcher's GitHub page">Apri la pagina GitHub di Tomb Launcher</system:String>
+    <system:String x:Key="Grid view">Visualizzazione griglia</system:String>
+    <system:String x:Key="Table view">Visualizzazione tabella</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

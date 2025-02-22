@@ -204,6 +204,8 @@
     <system:String x:Key="Launching community patch setup for GAMENAME">Launching community patch setup for {0}</system:String>
     <system:String x:Key="Community patch setup">Community patch setup</system:String>
     <system:String x:Key="Open Tomb Launcher's GitHub page">Open Tomb Launcher's GitHub page</system:String>
+    <system:String x:Key="Grid view">Grid view</system:String>
+    <system:String x:Key="Table view">Table view</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

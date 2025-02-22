@@ -5,12 +5,21 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
-             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              x:Class="TombLauncher.Views.Pages.GameListView"
              x:DataType="pages:GameListViewModel">
     <Design.DataContext>
         <pages:GameListViewModel />
     </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
+                                                        TrueValue="Grid"
+                                                        FalseValue="Table" />
+        <valueConverters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
+                                                  TrueValue="Grid view" 
+                                                  FalseValue="Table view"/>
+    </UserControl.Resources>
 
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
@@ -22,11 +31,22 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center"
+        <WrapPanel Grid.Row="1">
+            <ToggleButton IsChecked="{Binding ShowAsGrid}">
+                <ToggleButton.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <avalonia:MaterialIcon Kind="{Binding ShowAsGrid, Converter={StaticResource BooleanToMaterialIconConverter}}" 
+                                               Margin="5, 0"></avalonia:MaterialIcon>
+                        <TextBlock Text="{Binding ShowAsGrid, Converter={StaticResource BooleanToStringConverter}}"/>
+                    </StackPanel>
+                </ToggleButton.Content>
+            </ToggleButton>
+        </WrapPanel>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center"
                     IsVisible="{Binding Games, Converter={StaticResource CollectionEmptyToVisibilityConverter}}"
                     Orientation="Horizontal" VerticalAlignment="Center">
             <Image Source="/Assets/Lara_Croft_Flashlight.png" Height="320"/>
@@ -35,58 +55,7 @@
                 <TextBlock FontStyle="Italic" TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource 'Try adding one'}"/>
             </StackPanel>
         </StackPanel>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Games}" 
-                  IsReadOnly="True" 
-                  x:Name="GamesDataGrid"
-                  IsVisible="{Binding Games, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}" 
-                  SelectedItem="{Binding SelectedGame}"
-                  FrozenColumnCount="1"
-                  >
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="{DynamicResource Play}" 
-                              Command="{Binding PlayCmd}"
-                              CommandParameter="{Binding SelectedGame}">
-                        <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="Play"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Header="{DynamicResource 'View details'}" Command="{Binding OpenCmd}" CommandParameter="{Binding SelectedGame}"/>
-                    <Separator/>
-                    <MenuItem Header="{DynamicResource Uninstall}" 
-                              Command="{Binding UninstallCmd}" 
-                              CommandParameter="{Binding SelectedGame}">
-                        <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="TrashCan" Foreground="DarkRed"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </ContextMenu>
-            </DataGrid.ContextMenu>
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="{DynamicResource Actions}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" IsVisible="{Binding AreCommandsVisible}">
-                                <controls:IconButton Icon="Play"
-                                                     ToolTip.Tip="{Binding GameMetadata.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Play GAMENAME'}"
-                                                     Command="{Binding PlayCmd}" />
-                                <controls:IconButton Icon="Details" ToolTip.Tip="{DynamicResource View details}"
-                                                     Command="{Binding OpenCmd}">
-                                </controls:IconButton>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="{DynamicResource Title}" Binding="{Binding GameMetadata.Title}" />
-                <DataGridTextColumn Header="{DynamicResource Release date}" Binding="{Binding GameMetadata.ReleaseDate, StringFormat=d}" />
-                <DataGridTextColumn Header="{DynamicResource Install date}" Binding="{Binding GameMetadata.InstallDate, StringFormat=d}" />
-                <DataGridTextColumn Header="{DynamicResource Engine}" Binding="{Binding GameMetadata.GameEngine, Converter={StaticResource EnumToDescriptionConverter}}" />
-                <DataGridTextColumn Header="{DynamicResource Time played}" Binding="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"/>
-                <DataGridTextColumn Header="{DynamicResource Last played}" Binding="{Binding LastPlayed, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"/>
-                
-            </DataGrid.Columns>
-        </DataGrid>
-
-
+        <views:GamesDataGridView Grid.Row="2" DataContext="{Binding .}" IsVisible="{Binding !ShowAsGrid}"/>
+        <views:GamesGridView Grid.Row="2" DataContext="{Binding .}" IsVisible="{Binding ShowAsGrid}"/>
     </Grid>
 </UserControl>
