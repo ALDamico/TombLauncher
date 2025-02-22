@@ -3,17 +3,35 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:views="clr-namespace:TombLauncher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.AppearanceSettingsView"
-             x:DataType="settings:AppearanceSettingsViewModel"
-             >
+             x:DataType="settings:AppearanceSettingsViewModel">
     <Design.DataContext>
-        <settings:AppearanceSettingsViewModel/>
+        <settings:AppearanceSettingsViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="{DynamicResource 'App theme'}"></TextBlock>
-        <ComboBox SelectedItem="{Binding SelectedTheme}" 
-                  ItemsSource="{Binding AvailableThemes}"/>
-
+        <TextBlock Text="{DynamicResource 'App theme'}"/>
+        <ComboBox SelectedItem="{Binding SelectedTheme}"
+                  ItemsSource="{Binding AvailableThemes}" />
+        <TextBlock Margin="0, 5" Text="{DynamicResource Show games as}"/>
+        <RadioButton GroupName="ViewModeGroup" 
+                     IsChecked="{Binding !DefaultToGridView}">
+            <RadioButton.Content>
+                <views:RadioButtonDetailView Icon="Table" 
+                                             Text="{DynamicResource Table}" 
+                                             DetailsLine1="{DynamicResource The list of games will be displayed as a table.}"
+                                             DetailsLine2="{DynamicResource You can play a game by double-clicking a row.}"/>
+            </RadioButton.Content>
+        </RadioButton>
+        <RadioButton GroupName="ViewModeGroup" IsChecked="{Binding DefaultToGridView}">
+            <RadioButton.Content>
+                <views:RadioButtonDetailView Icon="Grid" 
+                                             Text="{DynamicResource Grid}"
+                                             DetailsLine1="{DynamicResource The list of games will be displayed as cards arranged in a grid.}"
+                                             DetailsLine2="{DynamicResource 'You can play a game by double-clicking its card, or open the game details by single-clicking it.'}"/>
+            </RadioButton.Content>
+        </RadioButton>
     </StackPanel>
 </UserControl>

@@ -62,7 +62,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         var currentTheme = _settingsService.GetApplicationTheme();
         var appearanceSettings = new AppearanceSettingsViewModel(this)
         {
-            SelectedTheme = currentTheme
+            SelectedTheme = currentTheme,
+            DefaultToGridView = _settingsService.IsGridViewDefault()
         };
         var supportedLanguages = _settingsService.GetSupportedLanguages();
         var languageSettings = new LanguageSettingsViewModel(this)

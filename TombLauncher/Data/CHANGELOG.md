@@ -6,12 +6,8 @@ It allows you to discover new custom levels, keep them organized in one place, k
 
 This project is still under active development, and as such some things may not work perfectly yet or may straight up be broken.
 
-# What's new in version 1.0.0
- - Adds downloaders for TRCustoms.org, TRLE.net and AspideTR
- - Keep track of your play time
- - Savegame backup and management (original engines and TRX only)
- - Statistics
- - Pick a new game at random
+# What's new in version 1.0.1
+ - View games in a grid
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22

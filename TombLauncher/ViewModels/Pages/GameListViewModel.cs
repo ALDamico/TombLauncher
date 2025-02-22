@@ -14,11 +14,7 @@ public partial class GameListViewModel : PageViewModel
 {
     [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games;
     [ObservableProperty] private GameWithStatsViewModel _selectedGame;
-
-    public GameListViewModel()
-    {
-        
-    }
+    [ObservableProperty] private bool _showAsGrid;
 
     private GameListService _gameListService;
     
@@ -30,6 +26,8 @@ public partial class GameListViewModel : PageViewModel
         UninstallCmd = new RelayCommand<GameWithStatsViewModel>(Uninstall);
         OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
         OpenSearchCmd = new AsyncRelayCommand(OpenSearch);
+        PlayCmd = new RelayCommand<GameWithStatsViewModel>(Play);
+        ShowAsGrid = Ioc.Default.GetRequiredService<SettingsService>().IsGridViewDefault();
         TopBarCommands.Clear();
         TopBarCommands.Add(new CommandViewModel()
         {
@@ -59,6 +57,13 @@ public partial class GameListViewModel : PageViewModel
     private async Task OpenSearch()
     {
         await _gameListService.OpenSearch();
+    }
+    
+    public ICommand PlayCmd { get; private set; }
+
+    private void Play(GameWithStatsViewModel game)
+    {
+        game.PlayCmd.Execute(null);
     }
 
     public ICommand OpenCmd { get; private set; }

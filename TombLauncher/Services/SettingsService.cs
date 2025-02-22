@@ -88,6 +88,7 @@ public class SettingsService : IViewService
         LocalizationManager.ChangeLanguage(languageSettings.ApplicationLanguage.CultureInfo);
         _appConfiguration.ApplicationTheme = appearanceSettings.SelectedTheme.Key.ToString();
         AppUtils.ChangeTheme(appearanceSettings.SelectedTheme);
+        _appConfiguration.DefaultToGridView = appearanceSettings.DefaultToGridView;
         var mappedDownloaderConfigs =
             _mapper.Map<List<DownloaderConfiguration>>(downloaderSettings.AvailableDownloaders);
         _appConfiguration.Downloaders = mappedDownloaderConfigs;
@@ -201,5 +202,10 @@ public class SettingsService : IViewService
     public string GetGitHubLink()
     {
         return _appConfiguration.GitHubLink;
+    }
+
+    public bool IsGridViewDefault()
+    {
+        return _appConfiguration.DefaultToGridView;
     }
 }

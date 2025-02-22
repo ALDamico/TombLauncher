@@ -22,4 +22,5 @@ public class AppConfiguration : IAppConfiguration
     public int? NumberOfVersionsToKeep { get; set; }
     public int SavegameProcessingDelay { get; set; }
     public string GitHubLink { get; set; }
+    public bool DefaultToGridView { get; set; }
 }

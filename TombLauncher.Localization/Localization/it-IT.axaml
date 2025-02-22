@@ -203,6 +203,15 @@
     <system:String x:Key="Launching community patch setup for GAMENAME">Avvio dell'utility di configurazione della patch della community per {0}</system:String>
     <system:String x:Key="Community patch setup">Setup patch della community</system:String>
     <system:String x:Key="Open Tomb Launcher's GitHub page">Apri la pagina GitHub di Tomb Launcher</system:String>
+    <system:String x:Key="Grid view">Visualizzazione griglia</system:String>
+    <system:String x:Key="Table view">Visualizzazione tabella</system:String>
+    <system:String x:Key="Show games as">Visualizza i giochi come</system:String>
+    <system:String x:Key="Table">Tabella</system:String>
+    <system:String x:Key="The list of games will be displayed as a table.">La lista dei giochi verrà visualizzata come una tabella.</system:String>
+    <system:String x:Key="You can play a game by double-clicking a row.">Puoi avviare un gioco facendo doppio clic su una riga.</system:String>
+    <system:String x:Key="Grid">Griglia</system:String>
+    <system:String x:Key="The list of games will be displayed as cards arranged in a grid.">La lista dei giochi verrà visualizzata come card disposte lungo una griglia.</system:String>
+    <system:String x:Key="You can play a game by double-clicking its card, or open the game details by single-clicking it.">Puoi avviare un gioco facendo doppio clic su una delle card, oppure visualizzarne i dettagli con un singolo clic.</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>
