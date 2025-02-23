@@ -14,11 +14,15 @@
     <Design.DataContext>
         <viewModels:MultiSourceGameSearchResultMetadataViewModel />
     </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Margin" Value="8,0,0,0"></Setter>
+        </Style>
+    </UserControl.Styles>
     <Border CornerRadius="3"
             Padding="10"
             Margin="5"
-            Classes="card-background"
-            >
+            Classes="card-background">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -40,12 +44,14 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <HyperlinkButton Grid.Row="0"
-                                 Content="{Binding Title}"
-                                 FontSize="16"
-                                 FontStyle="Italic"
-                                 Command="{Binding Path=((pages:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=pages1:GameSearchView}}"
-                                 CommandParameter="{Binding Path=.}" />
+                <Button Classes="hyperlink"
+                        Grid.Row="0"
+                        ToolTip.Tip="{Binding Title}"
+                        Content="{Binding Title}"
+                        FontSize="16"
+                        FontStyle="Italic"
+                        Command="{Binding Path=((pages:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=pages1:GameSearchView}}"
+                        CommandParameter="{Binding Path=.}" />
                 <TextBlock Grid.Row="1"
                            Classes="card-content"
                            IsVisible="{Binding Author, Converter={x:Static ObjectConverters.IsNotNull}}">
