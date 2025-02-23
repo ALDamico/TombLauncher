@@ -21,6 +21,8 @@
             <SolidColorBrush x:Key="PrimaryPointerOverBrush">#0a58ca</SolidColorBrush>
             <SolidColorBrush x:Key="GreenBrush">#198754</SolidColorBrush>
             <SolidColorBrush x:Key="GreenPointerOverBrush">#157347</SolidColorBrush>
+            <SolidColorBrush x:Key="RedBrush">#dc3545</SolidColorBrush>
+            <SolidColorBrush x:Key="RedPointerOverBrush">#b02a37</SolidColorBrush>
         </ResourceDictionary>
     </Styles.Resources>
 
@@ -138,23 +140,23 @@
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(Button).btn-danger">
-        <Setter Property="Background" Value="#dc3545" />
+        <Setter Property="Background" Value="{DynamicResource RedBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(Button).btn-danger:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="#b02a37" />
+        <Setter Property="Background" Value="{DynamicResource RedPointerOverBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(SplitButton).btn-danger">
-        <Setter Property="Background" Value="#dc3545" />
+        <Setter Property="Background" Value="{DynamicResource RedBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(controls|RoundIconButton).btn-danger">
-        <Setter Property="Background" Value="#dc3545" />
+        <Setter Property="Background" Value="{DynamicResource RedBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(controls|RoundIconButton).btn-danger:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="#b02a37" />
+        <Setter Property="Background" Value="{DynamicResource RedPointerOverBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector="TextBlock.text-muted">
