@@ -59,6 +59,10 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
     protected override Task RaiseInitialize()
     {
+        if (IsInitialized)
+            return base.RaiseInitialize();
+
+        IsInitialized = true;
         var currentTheme = _settingsService.GetApplicationTheme();
         var appearanceSettings = new AppearanceSettingsViewModel(this)
         {

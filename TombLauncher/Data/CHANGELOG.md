@@ -8,6 +8,8 @@ This project is still under active development, and as such some things may not 
 
 # What's new in version 1.0.1
  - View games in a grid
+ - Fixes some small UI snags with the light theme
+ - Fixes bug where settings sections would be duplicated on multiple navigations to the settings page
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22

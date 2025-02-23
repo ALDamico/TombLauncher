@@ -82,15 +82,30 @@
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
     <Style Selector=":is(Button).btn-success">
-        <Setter Property="Background" Value="Green"></Setter>
+        <Setter Property="Background" Value="#198754"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    <Style Selector=":is(Button):pointerover.btn-success /template/ ContentPresenter">
+        <Setter Property="Background" Value="#157347"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(SplitButton).btn-success">
-        <Setter Property="Background" Value="Green"></Setter>
+        <Setter Property="Background" Value="#198754"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
+    <Style Selector=":is(SplitButton):pointerover">
+        <Style Selector="^">
+            <Setter Property="Background" Value="#157347"></Setter>
+            <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>    
+        </Style>
+    </Style>
+    
     <Style Selector=":is(controls|RoundIconButton).btn-success">
-        <Setter Property="Background" Value="Green"></Setter>
+        <Setter Property="Background" Value="#198754"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    <Style Selector=":is(controls|RoundIconButton):pointerover.btn-success:pointerover">
+        <Setter Property="Background" Value="#157347"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(Button).btn-danger">
