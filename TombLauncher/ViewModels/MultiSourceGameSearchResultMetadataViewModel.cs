@@ -22,7 +22,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         _gameSearchResultService = Ioc.Default.GetRequiredService<GameSearchResultService>();
         Sources = new ObservableCollection<IGameSearchResultMetadata>();
         InstallCmd = new AsyncRelayCommand(Install, CanInstall);
-        CancelInstallCmd = new AsyncRelayCommand(CancelInstall, CanCancelInstall);
+        CancelInstallCmd = new AsyncRelayCommand(CancelInstall);
     }
 
     private readonly GameSearchResultService _gameSearchResultService;
@@ -40,32 +40,10 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private string _sourceSiteDisplayName;
     [ObservableProperty] private string _description;
     [ObservableProperty] private InstallProgressViewModel _installProgress;
-    private string _reviewsLink;
-
-    public string ReviewsLink
-    {
-        get => _reviewsLink;
-        set
-        {
-            SetProperty(ref _reviewsLink, value);
-            OnPropertyChanged(nameof(HasReviews));
-        }
-    }
-
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasReviews))]private string _reviewsLink;
     public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private string _downloadLink;
-    private string _walkthroughLink;
-
-    public string WalkthroughLink
-    {
-        get => _walkthroughLink;
-        set
-        {
-            SetProperty(ref _walkthroughLink, value);
-            OnPropertyChanged(nameof(HasWalkthrough));
-        }
-    }
-
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasWalkthrough))]private string _walkthroughLink;
     public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
@@ -97,10 +75,5 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     private async Task CancelInstall()
     {
         await _gameSearchResultService.CancelInstall();
-    }
-
-    private bool CanCancelInstall()
-    {
-        return _gameSearchResultService.CanCancelInstall(this);
     }
 }

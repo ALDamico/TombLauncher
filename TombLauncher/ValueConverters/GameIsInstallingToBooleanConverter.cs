@@ -13,7 +13,7 @@ public class GameIsInstallingToBooleanConverter : IValueConverter
         {
             if (vm.InstallCompleted)
                 return false;
-            return vm.IsInstalling || vm.IsDownloading;
+            return vm.ProcessStarted;
         }
 
         return false;
