@@ -83,6 +83,7 @@ public class GameSearchResultService : IViewService
                 installProgress.Message = $"Download cancelled";
                 installProgress.IsDownloading = false;
                 installProgress.IsInstalling = false;
+                installProgress.ProcessStarted = false;
                 _cancellationTokenSource = new CancellationTokenSource();
             }),
             IsCancelable = true,
@@ -247,6 +248,7 @@ public class GameSearchResultService : IViewService
 
         installProgress.IsInstalling = false;
         installProgress.IsDownloading = false;
+        installProgress.ProcessStarted = false;
         installProgress.Message = "Install complete";
         notificationViewModel.IsCancelable = false;
 
@@ -262,6 +264,4 @@ public class GameSearchResultService : IViewService
         _cancellationTokenSource = new CancellationTokenSource();
         _logger.LogInformation("Installation canceled");
     }
-
-    public bool CanCancelInstall(MultiSourceGameSearchResultMetadataViewModel target) => target.InstallProgress?.IsInstalling == true;
 }

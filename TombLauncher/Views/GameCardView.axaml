@@ -13,6 +13,7 @@
     <Border CornerRadius="3" Width="400"
             Margin="10"
             ClipToBounds="True"
+            Classes="card-background"
             x:Name="GameCard">
         <Interaction.Behaviors>
             <EventTriggerBehavior EventName="DoubleTapped"

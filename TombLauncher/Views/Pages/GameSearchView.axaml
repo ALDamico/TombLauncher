@@ -56,7 +56,7 @@
                              VerticalContentAlignment="Center"
                              VerticalAlignment="Top"
                              MinWidth="120"
-                             Background="MidnightBlue"
+                             Classes="btn-primary"
                              Command="{Binding SearchCmd}" />
         <ScrollViewer Grid.Row="2"
                       Grid.Column="0"
@@ -66,69 +66,8 @@
             <ItemsRepeater ItemsSource="{Binding FetchedResults}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
-                        <Border CornerRadius="3"
-                                Padding="10"
-                                Margin="5"
-                                Background="#3a3a3a">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"
-                                                      MaxWidth="480" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <asyncImageLoader:AdvancedImage Grid.Row="0"
-                                       Grid.Column="0"
-                                       MaxWidth="240"
-                                       Source="{Binding TitlePic, Converter={StaticResource StringNullToNullBitmap}}" />
-                                <Grid Grid.Row="0" Grid.Column="1">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <HyperlinkButton Grid.Row="0"
-                                                     Content="{Binding Title}"
-                                                     FontSize="16"
-                                                     FontStyle="Italic"
-                                                     Command="{Binding Path=((pages:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=pagesViews:GameSearchView}}"
-                                                     CommandParameter="{Binding Path=.}" />
-                                    <TextBlock Grid.Row="1"
-                                               IsVisible="{Binding Author, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                        <Run Text="{DynamicResource By}" />
-                                        <Run Text="{Binding Author}" />
-                                    </TextBlock>
-                                    <TextBlock Grid.Row="2"
-                                               IsVisible="{Binding ReleaseDate, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                        <Run Text="{DynamicResource Release date}" />
-                                        <Run Text="{Binding ReleaseDate, Mode=OneWay, Converter={StaticResource DateOnlyFormatter}}" />
-                                    </TextBlock>
-                                    <ContentControl Grid.Row="3" Content="{Binding InstallProgress}" IsVisible="{Binding InstallProgress, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                                </Grid>
-                                
-                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-                                    <controls:IconOnlyButton Icon="Play" Classes="btn-success" 
-                                                             Command="{Binding InstalledGame.PlayCmd}" 
-                                                             IsVisible="{Binding InstalledGame.GameMetadata.IsInstalled}"/>
-                                    <Button Command="{Binding InstallCmd}"
-                                            CommandParameter="{Binding .}"
-                                            ToolTip.Tip="{DynamicResource Download}">
-                                        <avalonia:MaterialIcon Kind="Download"/>
-                                    </Button>
-                                    <controls:IconOnlyButton Icon="Cancel" 
-                                                             Classes="btn-danger" 
-                                                             ToolTip.Tip="{DynamicResource Cancel}" 
-                                                             IsVisible="{Binding InstallProgress.IsInstalling}" 
-                                                             Command="{Binding CancelInstallCmd}"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
+                        <views:GameSearchResultCardView />
                     </DataTemplate>
-
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>
         </ScrollViewer>

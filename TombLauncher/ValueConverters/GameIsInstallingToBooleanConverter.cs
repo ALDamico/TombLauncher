@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using TombLauncher.ViewModels;
 
 namespace TombLauncher.ValueConverters;
 
-public class NegatedBooleanConverter : IValueConverter
+public class GameIsInstallingToBooleanConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (targetType == typeof(bool) && value is bool boolean)
+        if (value is InstallProgressViewModel vm)
         {
-            return !boolean;
+            if (vm.InstallCompleted)
+                return false;
+            return vm.ProcessStarted;
         }
 
         return false;
@@ -18,6 +21,6 @@ public class NegatedBooleanConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value;
+        throw new NotImplementedException();
     }
 }
