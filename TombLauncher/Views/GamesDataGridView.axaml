@@ -34,7 +34,7 @@
                               Command="{Binding UninstallCmd}" 
                               CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="TrashCan" Foreground="{DynamicResource RedBrush}"/>
+                            <avalonia:MaterialIcon Kind="TrashCan" Foreground="{DynamicResource DangerBrush}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>

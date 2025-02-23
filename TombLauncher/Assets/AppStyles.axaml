@@ -19,10 +19,14 @@
             </ResourceDictionary.ThemeDictionaries>
             <SolidColorBrush x:Key="PrimaryBrush">#0d6efd</SolidColorBrush>
             <SolidColorBrush x:Key="PrimaryPointerOverBrush">#0a58ca</SolidColorBrush>
-            <SolidColorBrush x:Key="GreenBrush">#198754</SolidColorBrush>
-            <SolidColorBrush x:Key="GreenPointerOverBrush">#157347</SolidColorBrush>
-            <SolidColorBrush x:Key="RedBrush">#dc3545</SolidColorBrush>
-            <SolidColorBrush x:Key="RedPointerOverBrush">#b02a37</SolidColorBrush>
+            <SolidColorBrush x:Key="SuccessBrush">#198754</SolidColorBrush>
+            <SolidColorBrush x:Key="SuccessPointerOverBrush">#157347</SolidColorBrush>
+            <SolidColorBrush x:Key="DangerBrush">#dc3545</SolidColorBrush>
+            <SolidColorBrush x:Key="DangerPointerOverBrush">#b02a37</SolidColorBrush>
+            <SolidColorBrush x:Key="WarningBrush">#ffc107</SolidColorBrush>
+            <SolidColorBrush x:Key="WarningPointerOverBrush">#ffcd39</SolidColorBrush>
+            <SolidColorBrush x:Key="SecondaryBrush">#6c757d</SolidColorBrush>
+            <SolidColorBrush x:Key="SecondaryPointerOverBrush">#565e64</SolidColorBrush>
         </ResourceDictionary>
     </Styles.Resources>
 
@@ -96,80 +100,80 @@
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(Button).btn-success">
-        <Setter Property="Background" Value="{DynamicResource GreenBrush}"></Setter>
+        <Setter Property="Background" Value="{DynamicResource SuccessBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(Button):pointerover.btn-success /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource GreenPointerOverBrush}"></Setter>
+        <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(SplitButton).btn-success">
-        <Setter Property="Background" Value="{DynamicResource GreenBrush}"></Setter>
+        <Setter Property="Background" Value="{DynamicResource SuccessBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <!-- SplitButtons in Avalonia are a bit weird. We need to have setters on the ContentPresenters of the two buttons
     (named PART_PrimaryButton and PART_SecondaryButton) in order for pseudoclasses to work as expected -->
     <Style Selector=":is(SplitButton).btn-success:pointerover Button">
         <Style Selector="^ /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource GreenPointerOverBrush}"></Setter>
+            <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
             <Setter Property="BorderBrush" Value="Transparent"></Setter>
             <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
         </Style>
     </Style>
     <Style Selector=":is(SplitButton).btn-success:pressed Button">
         <Style Selector="^ /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource GreenPointerOverBrush}"></Setter>
+            <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
             <Setter Property="BorderBrush" Value="Transparent"></Setter>
             <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
         </Style>
     </Style>
     <Style Selector=":is(SplitButton).btn-success:flyout-open Button">
         <Style Selector="^ /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource GreenPointerOverBrush}"></Setter>
+            <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
             <Setter Property="BorderBrush" Value="Transparent"></Setter>
             <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
         </Style>
     </Style>
 
     <Style Selector=":is(controls|RoundIconButton).btn-success">
-        <Setter Property="Background" Value="{DynamicResource GreenBrush}"></Setter>
+        <Setter Property="Background" Value="{DynamicResource SuccessBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(controls|RoundIconButton).btn-success:pointerover">
-        <Setter Property="Background" Value="{DynamicResource GreenPointerOverBrush}"></Setter>
+        <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(Button).btn-danger">
-        <Setter Property="Background" Value="{DynamicResource RedBrush}" />
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(Button).btn-danger:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource RedPointerOverBrush}" />
+        <Setter Property="Background" Value="{DynamicResource DangerPointerOverBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(SplitButton).btn-danger">
-        <Setter Property="Background" Value="{DynamicResource RedBrush}" />
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(controls|RoundIconButton).btn-danger">
-        <Setter Property="Background" Value="{DynamicResource RedBrush}" />
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(controls|RoundIconButton).btn-danger:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource RedPointerOverBrush}" />
+        <Setter Property="Background" Value="{DynamicResource DangerPointerOverBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector="TextBlock.text-muted">
-        <Setter Property="Foreground" Value="#6c757d"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"></Setter>
     </Style>
     <Style Selector="TextBlock:disabled">
-        <Setter Property="Foreground" Value="#6c757d"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"></Setter>
     </Style>
     <Style Selector="avalonia|MaterialIcon.text-muted">
-        <Setter Property="Foreground" Value="#6c757d"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"></Setter>
     </Style>
     <Style Selector="avalonia|MaterialIcon.warning">
-        <Setter Property="Foreground" Value="#ffc107"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"></Setter>
     </Style>
 
     <Style Selector="ProgressBar">
