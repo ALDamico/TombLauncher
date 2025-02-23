@@ -21,7 +21,6 @@
             <valueConverters:GameMetadataIsInstalledToBooleanConverter x:Key="GameInstalledToBooleanConverter"/>
             <valueConverters1:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
             <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" />
-            <valueConverters:NegatedBooleanConverter x:Key="NegatedBooleanConverter" />
             <valueConverters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
             <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />
             <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />

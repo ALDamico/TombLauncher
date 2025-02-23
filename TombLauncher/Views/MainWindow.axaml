@@ -6,6 +6,7 @@
         xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
         xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
         xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
@@ -155,8 +156,17 @@
                     </Button>
                 </StackPanel>
             </Border>
-            <TransitioningContentControl Margin="15" Grid.Row="1" Content="{Binding CurrentPage}"
-                                         IsEnabled="{Binding CurrentPage.IsBusy, Converter={StaticResource NegatedBooleanConverter}}" />
+            <TransitioningContentControl Grid.Row="1" 
+                                         Margin="15" 
+                                         Content="{Binding CurrentPage}">
+                <TransitioningContentControl.IsEnabled>
+                    <Binding Path="CurrentPage.IsBusy" Converter="{x:Static ObjectConverters.Equal}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>False</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </TransitioningContentControl.IsEnabled>
+            </TransitioningContentControl>
         </Grid>
     </SplitView>
 </Window>
