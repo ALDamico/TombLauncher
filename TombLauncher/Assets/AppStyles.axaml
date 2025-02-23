@@ -94,8 +94,22 @@
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <!-- SplitButtons in Avalonia are a bit weird. We need to have setters on the ContentPresenters of the two buttons
-    (named PART_PrimaryButton and PART_SecondaryButton) in order for the pointerover pseudoclass to work as expected -->
-    <Style Selector=":is(SplitButton):pointerover Button">
+    (named PART_PrimaryButton and PART_SecondaryButton) in order for pseudoclasses to work as expected -->
+    <Style Selector=":is(SplitButton).btn-success:pointerover Button">
+        <Style Selector="^ /template/ ContentPresenter">
+            <Setter Property="Background" Value="#157347"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>    
+        </Style>
+    </Style>
+    <Style Selector=":is(SplitButton).btn-success:pressed Button">
+        <Style Selector="^ /template/ ContentPresenter">
+            <Setter Property="Background" Value="#157347"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>    
+        </Style>
+    </Style>
+    <Style Selector=":is(SplitButton).btn-success:flyout-open Button">
         <Style Selector="^ /template/ ContentPresenter">
             <Setter Property="Background" Value="#157347"></Setter>
             <Setter Property="BorderBrush" Value="Transparent"></Setter>
