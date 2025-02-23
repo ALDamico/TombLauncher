@@ -56,7 +56,7 @@
                              VerticalContentAlignment="Center"
                              VerticalAlignment="Top"
                              MinWidth="120"
-                             Background="MidnightBlue"
+                             Classes="btn-primary"
                              Command="{Binding SearchCmd}" />
         <ScrollViewer Grid.Row="2"
                       Grid.Column="0"

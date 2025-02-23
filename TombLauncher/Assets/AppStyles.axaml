@@ -17,7 +17,7 @@
                     <SolidColorBrush x:Key="ColoredButtonTextBrush">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
-            <SolidColorBrush x:Key="PrimaryBrush">#0a58ca</SolidColorBrush>
+            <SolidColorBrush x:Key="PrimaryBrush">#0d6efd</SolidColorBrush>
             <SolidColorBrush x:Key="PrimaryPointerOverBrush">#0a58ca</SolidColorBrush>
             <SolidColorBrush x:Key="GreenBrush">#198754</SolidColorBrush>
             <SolidColorBrush x:Key="GreenPointerOverBrush">#157347</SolidColorBrush>
@@ -84,6 +84,14 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector=":is(Button).btn-primary">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    <Style Selector=":is(Button):pointerover.btn-primary /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryPointerOverBrush}"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(Button).btn-success">
         <Setter Property="Background" Value="{DynamicResource GreenBrush}"></Setter>
