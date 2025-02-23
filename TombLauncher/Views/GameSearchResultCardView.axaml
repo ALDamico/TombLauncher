@@ -67,7 +67,7 @@
                                          Command="{Binding InstalledGame.PlayCmd}"
                                          IsVisible="{Binding InstalledGame, Converter={StaticResource GameInstalledToBooleanConverter}, Mode=OneWay}" />
                 <Button Command="{Binding InstallCmd}"
-                        Classes="btn-success"
+                        Classes="btn-primary"
                         CommandParameter="{Binding .}"
                         IsVisible="{Binding InstalledGame, Converter={StaticResource GameNotInstalledToBooleanConverter}}"
                         ToolTip.Tip="{DynamicResource Download}">
