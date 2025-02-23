@@ -28,7 +28,7 @@
         <DockPanel Grid.Row="1" LastChildFill="true">
             <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{DynamicResource 'Slot'}"/>
             <CheckBox IsChecked="{Binding SavegameFilter.StartOfLevelOnly}"
-                      Margin="2, 0, 0, 0"
+                      Margin="8, 0, 0, 0"
                       DockPanel.Dock="Right"
                       Content="{DynamicResource 'Only start of level'}">
                 <Interaction.Behaviors>
@@ -41,7 +41,8 @@
                     </EventTriggerBehavior>
                 </Interaction.Behaviors>
             </CheckBox>
-            <ComboBox ItemsSource="{Binding Slots}"
+            <ComboBox Margin="8, 0" 
+                      ItemsSource="{Binding Slots}"
                       SelectedItem="{Binding SelectedSlot}"
                       SelectedValue="{Binding SavegameFilter.SlotNumber}"
                       SelectedValueBinding="{Binding  SaveSlot}">
