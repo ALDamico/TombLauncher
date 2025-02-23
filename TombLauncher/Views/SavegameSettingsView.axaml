@@ -22,7 +22,7 @@
                        Value="{Binding NumberOfVersionsToKeep}" 
                        IsEnabled="{Binding LimitNumberOfVersions}"/>
         <DockPanel LastChildFill="True">
-            <controls:Infotip DockPanel.Dock="Right" Icon="Dangerous" Foreground="DarkRed"
+            <controls:Infotip DockPanel.Dock="Right" Icon="Dangerous" Foreground="{DynamicResource RedBrush}"
                               Header="{DynamicResource 'Potentially dangerous setting'}" 
                               ToolTipContent="{DynamicResource 'Savegame backup millisecond delay warning'}"/>
             <TextBlock Text="{DynamicResource 'Savegame backup delay (ms)'}"></TextBlock>
