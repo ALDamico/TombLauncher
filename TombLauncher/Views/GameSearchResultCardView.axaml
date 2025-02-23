@@ -1,0 +1,84 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.GameSearchResultCardView"
+             x:DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
+    <Design.DataContext>
+        <viewModels:MultiSourceGameSearchResultMetadataViewModel />
+    </Design.DataContext>
+    <Border CornerRadius="3"
+            Padding="10"
+            Margin="5"
+            Classes="card-background"
+            >
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"
+                                  MaxWidth="480" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <asyncImageLoader:AdvancedImage Grid.Row="0"
+                                            Grid.Column="0"
+                                            MaxWidth="240"
+                                            Source="{Binding TitlePic, Converter={StaticResource StringNullToNullBitmap}}" />
+            <Grid Grid.Row="0" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <HyperlinkButton Grid.Row="0"
+                                 Content="{Binding Title}"
+                                 FontSize="16"
+                                 FontStyle="Italic"
+                                 Command="{Binding Path=((pages:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=pages1:GameSearchView}}"
+                                 CommandParameter="{Binding Path=.}" />
+                <TextBlock Grid.Row="1"
+                           Classes="card-content"
+                           IsVisible="{Binding Author, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <Run Text="{DynamicResource By}" />
+                    <Run Text="{Binding Author}" />
+                </TextBlock>
+                <TextBlock Grid.Row="2"
+                           Classes="card-content"
+                           IsVisible="{Binding ReleaseDate, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <Run Text="{DynamicResource Release date}" />
+                    <Run Text="{Binding ReleaseDate, Mode=OneWay, Converter={StaticResource DateOnlyFormatter}}" />
+                </TextBlock>
+                <ContentControl Grid.Row="3" Content="{Binding InstallProgress}"
+                                IsVisible="{Binding InstallProgress, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            </Grid>
+
+            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                <controls:IconOnlyButton Icon="Play" Classes="btn-success"
+                                         Command="{Binding InstalledGame.PlayCmd}"
+                                         IsVisible="{Binding InstalledGame, Converter={StaticResource GameInstalledToBooleanConverter}, Mode=OneWay}" />
+                <Button Command="{Binding InstallCmd}"
+                        Classes="btn-success"
+                        CommandParameter="{Binding .}"
+                        IsVisible="{Binding InstalledGame, Converter={StaticResource GameNotInstalledToBooleanConverter}}"
+                        ToolTip.Tip="{DynamicResource Download}">
+                    <avalonia:MaterialIcon Kind="Download" />
+                </Button>
+                <controls:IconOnlyButton Icon="Cancel"
+                                         Classes="btn-danger"
+                                         ToolTip.Tip="{DynamicResource Cancel}"
+                                         IsVisible="{Binding InstallProgress, Converter={StaticResource GameIsInstallingToBooleanConverter}}"
+                                         Command="{Binding CancelInstallCmd}" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

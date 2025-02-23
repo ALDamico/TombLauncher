@@ -1,7 +1,8 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls">
+        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+        xmlns:views="clr-namespace:TombLauncher.Views">
     <Design.PreviewWith>
         <Border Padding="20">
             <!-- Add Controls for Previewer Here -->
@@ -27,6 +28,7 @@
             <SolidColorBrush x:Key="WarningPointerOverBrush">#ffcd39</SolidColorBrush>
             <SolidColorBrush x:Key="SecondaryBrush">#6c757d</SolidColorBrush>
             <SolidColorBrush x:Key="SecondaryPointerOverBrush">#565e64</SolidColorBrush>
+            <SolidColorBrush x:Key="CardBackgroundBrush">#3a3a3a</SolidColorBrush>
         </ResourceDictionary>
     </Styles.Resources>
 
@@ -233,4 +235,12 @@
         <Setter Property="FontSize" Value="9" />
         <Setter Property="FontWeight" Value="DemiBold" />
     </Style>
+    <Style Selector="Border.card-background">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"></Setter>
+    </Style>
+    <Style Selector="TextBlock.card-content">
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    
+    
 </Styles>
