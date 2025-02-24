@@ -1,0 +1,101 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.GameDetailsSidebarView"
+             x:DataType="pages:GameDetailsViewModel"
+             x:Name="ViewRoot"
+             >
+    <Design.DataContext>
+        <pages:GameDetailsViewModel />
+    </Design.DataContext>
+    <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Stretch" Classes="stackedButtons">
+            <Image Source="{Binding Game.GameMetadata.TitlePic}"
+                   Width="320"
+                   Height="240" />
+            <controls:IconButton
+                IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNull}}"
+                Command="{Binding InstallCmd}"
+                Icon="Download"
+                Text="{DynamicResource 'Download'}"
+                Classes="stretched btn-success" />
+            <controls:SplitIconButton
+                IsVisible="{Binding Game.GameMetadata.IsInstalled, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Classes="stretched btn-success"
+                Icon="Play"
+                Text="{DynamicResource 'Play'}"
+                Command="{Binding Game.PlayCmd}">
+                <controls:SplitIconButton.Flyout>
+                    <MenuFlyout ItemsSource="{Binding SetupCommands}">
+                        <MenuFlyout.ItemContainerTheme>
+                            <ControlTheme TargetType="MenuItem" 
+                                          BasedOn="{StaticResource {x:Type MenuItem}}" 
+                                          x:DataType="viewModels:CommandViewModel">
+                                <Setter Property="Command" Value="{Binding Command}"/>
+                            </ControlTheme>
+                        </MenuFlyout.ItemContainerTheme>
+                        <MenuFlyout.ItemTemplate>
+                            <DataTemplate DataType="viewModels:CommandViewModel">
+                                <MenuItem Header="{Binding Text}"
+                                          Command="{Binding Command}">
+                                    <MenuItem.Icon>
+                                        <avalonia:MaterialIcon Kind="{Binding Icon}"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </DataTemplate>
+                        </MenuFlyout.ItemTemplate>
+                    </MenuFlyout>
+                </controls:SplitIconButton.Flyout>
+            </controls:SplitIconButton>
+            <controls:IconButton IsVisible="{Binding Game.GameMetadata.IsInstalled}" 
+                                 Classes="stretched" 
+                                 Icon="Terminal" 
+                                 Text="{DynamicResource 'Launch options'}" 
+                                 Command="{Binding OpenLaunchOptionsCmd}"
+                                 ToolTip.Tip="{DynamicResource 'Launch options tooltip'}"/>
+            <controls:IconButton Icon="Floppy" Text="{DynamicResource Savegames}"
+                                 Command="{Binding ManageSaveGamesCmd}"
+                                 IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
+            </controls:IconButton>
+            <controls:IconButton
+                IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Command="{Binding BrowseFolderCmd}"
+                Classes="stretched" Icon="FolderOpen"
+                Text="{DynamicResource Browse files}" />
+            <controls:SplitIconButton
+                IsVisible="{Binding WalkthroughLinks, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}"
+                Command="{Binding ReadWalkthroughCmd}"
+                CommandParameter="{Binding WalkthroughLinks[0]}"
+                Icon="Map"
+                Classes="stretched"
+                Text="{DynamicResource 'Read walkthrough'}">
+                <controls:SplitIconButton.Flyout>
+                    <MenuFlyout ItemsSource="{Binding WalkthroughLinks}">
+                        <MenuFlyout.ItemContainerTheme>
+                            <ControlTheme TargetType="MenuItem"
+                                          BasedOn="{StaticResource {x:Type MenuItem}}"
+                                          x:DataType="viewModels:GameLinkViewModel">
+                                <Setter Property="Header"
+                                        Value="{Binding DisplayName, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='From SITENAME'}">
+                                </Setter>
+                                <Setter Property="Command"
+                                        Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).ReadWalkthroughCmd}" />
+                                <Setter Property="CommandParameter" Value="{Binding .}"></Setter>
+                            </ControlTheme>
+                        </MenuFlyout.ItemContainerTheme>
+                    </MenuFlyout>
+                </controls:SplitIconButton.Flyout>
+            </controls:SplitIconButton>
+            <controls:IconButton
+                IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Classes="stretched btn-danger"
+                Icon="Delete"
+                Text="{DynamicResource Uninstall}"
+                Command="{Binding UninstallCmd}" />
+        </StackPanel>
+</UserControl>
