@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Configuration;
