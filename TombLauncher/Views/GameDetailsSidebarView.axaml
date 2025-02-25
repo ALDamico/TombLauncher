@@ -10,14 +10,14 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameDetailsSidebarView"
              x:DataType="pages:GameDetailsViewModel"
-             x:Name="ViewRoot"
-             >
+             x:Name="ViewRoot">
     <Design.DataContext>
         <pages:GameDetailsViewModel />
     </Design.DataContext>
-    <StackPanel Orientation="Vertical" 
-                HorizontalAlignment="Stretch" 
-                Classes="stackedButtons">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Orientation="Vertical"
+                    HorizontalAlignment="Stretch"
+                    Classes="stackedButtons">
             <Image Source="{Binding Game.GameMetadata.TitlePic}"
                    Width="320"
                    Height="240" />
@@ -36,10 +36,10 @@
                 <controls:SplitIconButton.Flyout>
                     <MenuFlyout ItemsSource="{Binding SetupCommands}">
                         <MenuFlyout.ItemContainerTheme>
-                            <ControlTheme TargetType="MenuItem" 
-                                          BasedOn="{StaticResource {x:Type MenuItem}}" 
+                            <ControlTheme TargetType="MenuItem"
+                                          BasedOn="{StaticResource {x:Type MenuItem}}"
                                           x:DataType="viewModels:CommandViewModel">
-                                <Setter Property="Command" Value="{Binding Command}"/>
+                                <Setter Property="Command" Value="{Binding Command}" />
                             </ControlTheme>
                         </MenuFlyout.ItemContainerTheme>
                         <MenuFlyout.ItemTemplate>
@@ -47,7 +47,7 @@
                                 <MenuItem Header="{Binding Text}"
                                           Command="{Binding Command}">
                                     <MenuItem.Icon>
-                                        <avalonia:MaterialIcon Kind="{Binding Icon}"/>
+                                        <avalonia:MaterialIcon Kind="{Binding Icon}" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </DataTemplate>
@@ -55,29 +55,30 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <Expander Header="{DynamicResource 'Documentation'}" VerticalAlignment="Stretch" Classes="stretched" MaxHeight="400">
+            <Expander Header="{DynamicResource 'Documentation'}" VerticalAlignment="Stretch" Classes="stretched"
+                      MaxHeight="400">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <ItemsRepeater ItemsSource="{Binding DocumentationFiles}" >
+                    <ItemsRepeater ItemsSource="{Binding DocumentationFiles}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate DataType="io:FileInfo">
-                                <Button Classes="hyperlink" 
-                                        HorizontalAlignment="Stretch" 
+                                <Button Classes="hyperlink"
+                                        HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
-                                        Content="{Binding Name}" 
+                                        Content="{Binding Name}"
                                         ToolTip.Tip="{Binding FullName}"
                                         Command="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).OpenDocumentCommand}"
-                                        CommandParameter="{Binding FullName}"/>
+                                        CommandParameter="{Binding FullName}" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                     </ItemsRepeater>
                 </ScrollViewer>
             </Expander>
-            <controls:IconButton IsVisible="{Binding Game.GameMetadata.IsInstalled}" 
-                                 Classes="stretched" 
-                                 Icon="Terminal" 
-                                 Text="{DynamicResource 'Launch options'}" 
+            <controls:IconButton IsVisible="{Binding Game.GameMetadata.IsInstalled}"
+                                 Classes="stretched"
+                                 Icon="Terminal"
+                                 Text="{DynamicResource 'Launch options'}"
                                  Command="{Binding OpenLaunchOptionsCmd}"
-                                 ToolTip.Tip="{DynamicResource 'Launch options tooltip'}"/>
+                                 ToolTip.Tip="{DynamicResource 'Launch options tooltip'}" />
             <controls:IconButton Icon="Floppy" Text="{DynamicResource Savegames}"
                                  Command="{Binding ManageSaveGamesCmd}"
                                  IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
@@ -117,15 +118,6 @@
                 Icon="Delete"
                 Text="{DynamicResource Uninstall}"
                 Command="{Binding UninstallCmd}" />
-            <!--<ListBox ItemsSource="{Binding DocumentationFiles}" MinHeight="200" MaxHeight="400">
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="io:FileInfo">
-                        <Button Classes="hyperlink" 
-                                Content="{Binding Name}" 
-                                ToolTip.Tip="{Binding FullName}"></Button>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>-->
-            
         </StackPanel>
+    </ScrollViewer>
 </UserControl>
