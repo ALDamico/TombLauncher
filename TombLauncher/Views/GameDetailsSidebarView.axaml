@@ -57,18 +57,19 @@
             </controls:SplitIconButton>
             <Expander Header="{DynamicResource 'Documentation'}" VerticalAlignment="Stretch" Classes="stretched" MaxHeight="400">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <ListBox ItemsSource="{Binding DocumentationFiles}" >
-                        <ListBox.ItemTemplate>
+                    <ItemsRepeater ItemsSource="{Binding DocumentationFiles}" >
+                        <ItemsRepeater.ItemTemplate>
                             <DataTemplate DataType="io:FileInfo">
-                                <Button Classes="hyperlink" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                <Button Classes="hyperlink" 
+                                        HorizontalAlignment="Stretch" 
+                                        HorizontalContentAlignment="Stretch"
                                         Content="{Binding Name}" 
                                         ToolTip.Tip="{Binding FullName}"
                                         Command="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).OpenDocumentCommand}"
-                                        CommandParameter="{Binding FullName}"
-                                        ></Button>
+                                        CommandParameter="{Binding FullName}"/>
                             </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
                 </ScrollViewer>
             </Expander>
             <controls:IconButton IsVisible="{Binding Game.GameMetadata.IsInstalled}" 
