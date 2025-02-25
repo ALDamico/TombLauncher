@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 
@@ -116,5 +115,22 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
     {
         get => User.DefaultToGridView.Coalesce(Defaults.DefaultToGridView);
         set => User.DefaultToGridView = value.DefaultIfEquals(DefaultToGridView);
+    }
+
+    public List<CheckableItem<string>> DocumentationPatterns
+    {
+        get
+        {
+            if (User.DocumentationPatterns.IsNullOrEmpty())
+            {
+                return Defaults.DocumentationPatterns;
+            }
+
+            var sharedPatterns =
+                Defaults.DocumentationPatterns.Where(p => User.DocumentationPatterns.All(p2 => p2.Value != p.Value));
+
+            return sharedPatterns.Concat(User.DocumentationPatterns).ToList();
+        }
+        set => User.DocumentationPatterns = value.Except(Defaults.DocumentationPatterns).ToList();
     }
 }

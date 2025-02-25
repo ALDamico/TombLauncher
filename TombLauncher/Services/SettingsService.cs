@@ -18,6 +18,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Savegames.HeaderReaders;
 using TombLauncher.Core.Utils;
@@ -152,7 +153,8 @@ public class SettingsService : IViewService
         {
             AskForConfirmationBeforeWalkthrough =
                 _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
-            UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault()
+            UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault(),
+            DocumentationPatterns = _appConfiguration.DocumentationPatterns.ToObservableCollection()
         };
     }
 

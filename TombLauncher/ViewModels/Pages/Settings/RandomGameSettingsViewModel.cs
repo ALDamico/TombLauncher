@@ -10,7 +10,6 @@ public partial class RandomGameSettingsViewModel : SettingsSectionViewModelBase
     }
 
     [Range(1, 15, ErrorMessage = "Allowed values: 1-15")]
-    
     public int MaxRerolls
     {
         get => _maxRerolls;

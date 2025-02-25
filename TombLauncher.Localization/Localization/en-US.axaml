@@ -213,6 +213,12 @@
     <system:String x:Key="Grid">Grid</system:String>
     <system:String x:Key="The list of games will be displayed as cards arranged in a grid.">The list of games will be displayed as cards arranged in a grid.</system:String>
     <system:String x:Key="You can play a game by double-clicking its card, or open the game details by single-clicking it.">You can play a game by double-clicking its card, or open the game details by single-clicking it.</system:String>
+    <system:String x:Key="Documentation">Documentation</system:String>
+    <system:String x:Key="Use the following patterns to recognize documentation files">Use the following patterns to recognize documentation files:</system:String>
+    <system:String x:Key="Insert a new pattern here...">Insert a new pattern here...</system:String>
+    <system:String x:Key="This pattern has already been added">This pattern has already been added.</system:String>
+    <system:String x:Key="The pattern PATTERN is not allowed">The pattern {0} is not allowed.</system:String>
+    <system:String x:Key="Clear">Clear</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

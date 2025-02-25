@@ -3,6 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
+             xmlns:dtos="clr-namespace:TombLauncher.Core.Dtos;assembly=TombLauncher.Core"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameDetailsSettingsView"
              x:DataType="settings:GameDetailsSettingsViewModel">
@@ -14,5 +17,31 @@
                   Content="{DynamicResource 'Ask for confirmation before opening a walkthrough'}" />
         <ToggleSwitch IsChecked="{Binding UseInternalViewerIfAvailable}"
                       Content="{DynamicResource 'Use internal viewer if available'}" />
+        <TextBlock Text="{DynamicResource 'Use the following patterns to recognize documentation files'}"/>
+        <DockPanel LastChildFill="True">
+            <controls:IconOnlyButton Icon="Clear" 
+                                     ToolTip.Tip="{DynamicResource Clear}" 
+                                     Command="{Binding ClearCurrentPatternCmd}" 
+                                     DockPanel.Dock="Right" 
+                                     Classes="btn-danger"></controls:IconOnlyButton>
+            <controls:IconOnlyButton Icon="Add" 
+                                     ToolTip.Tip="{DynamicResource 'Add'}" 
+                                     Command="{Binding AddPatternCmd}" 
+                                     DockPanel.Dock="Right" />
+            <TextBox Text="{Binding CurrentPattern}"
+                     Watermark="{DynamicResource 'Insert a new pattern here...'}">
+            </TextBox>
+        </DockPanel>
+        <AutoCompleteBox ItemsSource="{Binding DocumentationPatterns}" 
+                         Watermark="{DynamicResource 'Insert a new pattern here'}" FilterMode="Contains">
+            <AutoCompleteBox.ItemTemplate>
+                <DataTemplate >
+                    <DataTemplate.DataType>
+                        <x:Type TypeName="dtos:CheckableItem" x:TypeArguments="system:String"/>
+                    </DataTemplate.DataType>
+                    <CheckBox IsChecked="{Binding IsEnabled}" Content="{Binding Value}"/>
+                </DataTemplate>
+            </AutoCompleteBox.ItemTemplate>
+        </AutoCompleteBox>
     </StackPanel>
 </UserControl>

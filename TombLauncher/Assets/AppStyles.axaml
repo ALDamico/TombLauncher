@@ -80,11 +80,18 @@
     <Style Selector=":is(Control).padded">
         <Setter Property="Margin" Value="5"></Setter>
     </Style>
-    <Style Selector=":is(Button).stretched">
+    <Style Selector=":is(ContentControl).stretched">
         <Setter Property="Height" Value="36" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Expander.stretched">
+        <Setter Property="Height" Value="NaN"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
     </Style>
 
     <Style Selector=":is(SplitButton).stretched">

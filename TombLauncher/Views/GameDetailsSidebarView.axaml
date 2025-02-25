@@ -6,6 +6,7 @@
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:io="clr-namespace:System.IO;assembly=System.Runtime"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameDetailsSidebarView"
              x:DataType="pages:GameDetailsViewModel"
@@ -14,7 +15,9 @@
     <Design.DataContext>
         <pages:GameDetailsViewModel />
     </Design.DataContext>
-    <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Stretch" Classes="stackedButtons">
+    <StackPanel Orientation="Vertical" 
+                HorizontalAlignment="Stretch" 
+                Classes="stackedButtons">
             <Image Source="{Binding Game.GameMetadata.TitlePic}"
                    Width="320"
                    Height="240" />
@@ -52,6 +55,22 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
+            <Expander Header="{DynamicResource 'Documentation'}" VerticalAlignment="Stretch" Classes="stretched" MaxHeight="400">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ListBox ItemsSource="{Binding DocumentationFiles}" >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="io:FileInfo">
+                                <Button Classes="hyperlink" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                        Content="{Binding Name}" 
+                                        ToolTip.Tip="{Binding FullName}"
+                                        Command="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).OpenDocumentCommand}"
+                                        CommandParameter="{Binding FullName}"
+                                        ></Button>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+            </Expander>
             <controls:IconButton IsVisible="{Binding Game.GameMetadata.IsInstalled}" 
                                  Classes="stretched" 
                                  Icon="Terminal" 
@@ -97,5 +116,15 @@
                 Icon="Delete"
                 Text="{DynamicResource Uninstall}"
                 Command="{Binding UninstallCmd}" />
+            <!--<ListBox ItemsSource="{Binding DocumentationFiles}" MinHeight="200" MaxHeight="400">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="io:FileInfo">
+                        <Button Classes="hyperlink" 
+                                Content="{Binding Name}" 
+                                ToolTip.Tip="{Binding FullName}"></Button>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>-->
+            
         </StackPanel>
 </UserControl>

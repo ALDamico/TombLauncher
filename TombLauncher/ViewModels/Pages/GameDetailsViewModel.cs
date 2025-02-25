@@ -1,17 +1,17 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using JamSoft.AvaloniaUI.Dialogs;
 using Material.Icons;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
+using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels.Pages;
 
@@ -26,19 +26,23 @@ public partial class GameDetailsViewModel : PageViewModel
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
         ManageSaveGamesCmd = new RelayCommand(ManageSavegames);
         OpenLaunchOptionsCmd = new RelayCommand(OpenLaunchOptions);
+        OpenDocumentCommand = new RelayCommand<string>(OpenDocument);
     }
 
-    private bool _askForConfirmationBeforeOpeningWalkthrough;
-    private bool _useInternalViewerIfAvailable;
-    //private IDialogService _dialogService;
+    [ObservableProperty][NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCmd))]private bool _askForConfirmationBeforeOpeningWalkthrough;
+    [ObservableProperty] private bool _useInternalViewerIfAvailable;
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands;
+    [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles;
+    private List<string> _enabledPatterns;
 
     protected override async Task RaiseInitialize()
     {
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var gameDetailsSettings = settingsService.GetGameDetailsSettings(this);
-        _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
-        _useInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
+        AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
+        _enabledPatterns = gameDetailsSettings.GetEnabledPatterns();
+        
+        UseInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
         SetupCommands = new ObservableCollection<CommandViewModel>();
         if (Game.GameMetadata.SetupExecutable.IsNotNullOrWhiteSpace())
         {
@@ -49,6 +53,8 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchCommunitySetupCmd, Icon = MaterialIconKind.SettingsPlay, Text = "Community patch setup".GetLocalizedString()});
         }
+
+        DocumentationFiles = _gameDetailsService.GetDocumentationFiles(Game.GameMetadata.InstallDirectory, _enabledPatterns).ToObservableCollection();
         await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
     }
 
@@ -74,11 +80,11 @@ public partial class GameDetailsViewModel : PageViewModel
         _gameDetailsService.OpenSavegameList(this);
     }
     
-    public ICommand ReadWalkthroughCmd { get; }
+    public IRelayCommand ReadWalkthroughCmd { get; }
 
     private async Task ReadWalkthrough(GameLinkViewModel link)
     {
-        await _gameDetailsService.OpenWalkthrough(link.Link, _askForConfirmationBeforeOpeningWalkthrough);
+        await _gameDetailsService.OpenWalkthrough(link.Link, AskForConfirmationBeforeOpeningWalkthrough);
     }
     
     public ICommand UninstallCmd { get; }
@@ -100,5 +106,19 @@ public partial class GameDetailsViewModel : PageViewModel
     private void OpenLaunchOptions()
     {
         _gameDetailsService.OpenLaunchOptions(this);
+    }
+    
+    public ICommand OpenDocumentCommand { get; }
+
+    private void OpenDocument(string path)
+    {
+        if (UseInternalViewerIfAvailable)
+        {
+            
+        }
+        else
+        {
+            AppUtils.OpenUrl(path);
+        }
     }
 }

@@ -212,6 +212,12 @@
     <system:String x:Key="Grid">Griglia</system:String>
     <system:String x:Key="The list of games will be displayed as cards arranged in a grid.">La lista dei giochi verrà visualizzata come card disposte lungo una griglia.</system:String>
     <system:String x:Key="You can play a game by double-clicking its card, or open the game details by single-clicking it.">Puoi avviare un gioco facendo doppio clic su una delle card, oppure visualizzarne i dettagli con un singolo clic.</system:String>
+    <system:String x:Key="Documentation">Documentazione</system:String>
+    <system:String x:Key="Use the following patterns to recognize documentation files">Usa i seguenti pattern per riconoscere i file di documentazione:</system:String>
+    <system:String x:Key="Insert a new pattern here...">Inserisci un nuovo pattern...</system:String>
+    <system:String x:Key="This pattern has already been added">Questo pattern è già stato aggiunto.</system:String>
+    <system:String x:Key="The pattern PATTERN is not allowed">Il pattern {0} non è consentito.</system:String>
+    <system:String x:Key="Clear">Pulisci</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>
