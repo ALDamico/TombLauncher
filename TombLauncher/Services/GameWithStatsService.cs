@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,7 +13,6 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
@@ -32,7 +30,7 @@ public class GameWithStatsService : IViewService
         MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
         DialogService = Ioc.Default.GetRequiredService<IDialogService>();
         var savegameSettings = Ioc.Default.GetRequiredService<SettingsService>().GetSavegameSettings(null);
-        _backupEnabled = savegameSettings.SavegameBackupEnabled;
+        _backupEnabled = savegameSettings.SavegameBackupEnabled.GetValueOrDefault();
         if (_backupEnabled)
         {
             _numberOfSavesToKeep = savegameSettings.NumberOfVersionsToKeep;

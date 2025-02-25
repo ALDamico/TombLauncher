@@ -15,18 +15,23 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 {
     public GameDetailsSettingsViewModel(PageViewModel settingsPage) : base("GAME DETAILS", settingsPage)
     {
+        _editedPatternIndex = -1;
         AddPatternCmd = new RelayCommand(AddPattern, CanAddPattern);
         ClearCurrentPatternCmd = new RelayCommand(ClearCurrentPattern, CanClearCurrentPattern);
         DeletePatternCmd = new RelayCommand<CheckableItem<string>>(DeletePattern, CanDeletePattern);
+        EditPatternCmd = new RelayCommand<CheckableItem<string>>(EditPattern, CanEditPattern);
     }
 
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
     [ObservableProperty] private bool _useInternalViewerIfAvailable;
     [ObservableProperty] private ObservableCollection<CheckableItem<string>> _documentationPatterns;
     private string _currentPattern;
+    private CheckableItem<string> _editedPattern;
+    private int _editedPatternIndex;
 
     
     [CustomValidation(typeof(GameDetailsSettingsViewModel), nameof(ValidatePattern))]
+    
     public string CurrentPattern
     {
         get => _currentPattern;
@@ -35,6 +40,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
             SetProperty(ref _currentPattern, value, true);
             RaiseCanExecuteChanged(ClearCurrentPatternCmd);
             RaiseCanExecuteChanged(AddPatternCmd);
+            RaiseCanExecuteChanged(EditPatternCmd);
         }
     }
     public IRelayCommand AddPatternCmd { get; }
@@ -43,6 +49,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     {
         DocumentationPatterns.Add(new CheckableItem<string>(){IsChecked = true, Value = CurrentPattern});
         CurrentPattern = string.Empty;
+        _editedPattern = null;
     }
 
     private bool CanAddPattern() => CurrentPattern.IsNotNullOrWhiteSpace();
@@ -52,6 +59,12 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     private void ClearCurrentPattern()
     {
         CurrentPattern = string.Empty;
+        if (_editedPattern != null)
+        {
+            DocumentationPatterns.Insert(_editedPatternIndex, _editedPattern);
+            _editedPattern = null;
+            _editedPatternIndex = -1;
+        }
     }
 
     private bool CanClearCurrentPattern()
@@ -74,6 +87,21 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     private bool CanDeletePattern(CheckableItem<string> patternToDelete)
     {
         return patternToDelete is { CanUserCheck: true };
+    }
+    
+    public IRelayCommand EditPatternCmd { get; }
+
+    private void EditPattern(CheckableItem<string> patternToEdit)
+    {
+        _editedPattern = patternToEdit;
+        _editedPatternIndex = DocumentationPatterns.IndexOf(patternToEdit);
+        DocumentationPatterns.Remove(patternToEdit);
+        CurrentPattern = patternToEdit.Value;
+    }
+
+    private bool CanEditPattern(CheckableItem<string> patternToEdit)
+    {
+        return patternToEdit is { CanUserCheck: true } && _editedPattern == null;
     }
 
     public static ValidationResult ValidatePattern(string newPattern, ValidationContext validationContext)

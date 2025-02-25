@@ -33,25 +33,35 @@
                      Watermark="{DynamicResource 'Insert a new pattern here...'}" 
                      KeyUp="InputElement_OnKeyUp"/>
         </DockPanel>
-        <AutoCompleteBox ItemsSource="{Binding DocumentationPatterns}" 
-                         Watermark="{DynamicResource 'Insert a new pattern here'}" FilterMode="Contains">
-            <AutoCompleteBox.ItemTemplate>
-                <DataTemplate >
+        <ListBox ItemsSource="{Binding DocumentationPatterns}" MaxHeight="350">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
                     <DataTemplate.DataType>
                         <x:Type TypeName="dtos:CheckableItem" x:TypeArguments="system:String"/>
                     </DataTemplate.DataType>
                     <DockPanel LastChildFill="True">
-                        <controls:IconOnlyButton DockPanel.Dock="Right" Icon="Trash" Classes="btn-danger" ToolTip.Tip="{DynamicResource Delete}" 
+                        <controls:IconOnlyButton DockPanel.Dock="Right" 
+                                                 Icon="Trash" 
+                                                 Classes="btn-danger" 
+                                                 ToolTip.Tip="{DynamicResource Delete}" 
+                                                 IsVisible="{Binding CanUserCheck}"
                                                  Command="{Binding ElementName=ViewRoot, Path=((settings:GameDetailsSettingsViewModel)DataContext).DeletePatternCmd}"
                                                  CommandParameter="{Binding .}"/>
+                        <controls:IconOnlyButton DockPanel.Dock="Right" 
+                                                 Icon="Edit" 
+                                                 Classes="btn-primary" 
+                                                 ToolTip.Tip="{DynamicResource Edit}" 
+                                                 Command="{Binding ElementName=ViewRoot, Path=((settings:GameDetailsSettingsViewModel)DataContext).EditPatternCmd}"
+                                                 CommandParameter="{Binding .}"
+                                                 IsVisible="{Binding CanUserCheck}"
+                        ></controls:IconOnlyButton>
                         <CheckBox IsChecked="{Binding IsChecked}" 
                                   IsEnabled="{Binding CanUserCheck}" 
                                   Content="{Binding Value}"/>
                         
                     </DockPanel>
-                    
                 </DataTemplate>
-            </AutoCompleteBox.ItemTemplate>
-        </AutoCompleteBox>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </StackPanel>
 </UserControl>

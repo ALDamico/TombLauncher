@@ -25,8 +25,8 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
 
     public string ApplicationTheme
     {
-        get => User.ApplicationTheme.Coalesce(Defaults.ApplicationLanguage);
-        set => User.ApplicationTheme = value.DefaultIfEquals(Defaults.ApplicationLanguage);
+        get => User.ApplicationTheme.Coalesce(Defaults.ApplicationTheme);
+        set => User.ApplicationTheme = value.DefaultIfEquals(Defaults.ApplicationTheme);
     }
 
     public bool? UseInternalViewer
@@ -87,7 +87,7 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set => User.RandomGameMaxRerolls = value.DefaultIfEquals(Defaults.RandomGameMaxRerolls);
     }
 
-    public bool BackupSavegamesEnabled
+    public bool? BackupSavegamesEnabled
     {
         get => User.BackupSavegamesEnabled.Coalesce(Defaults.BackupSavegamesEnabled);
         set => User.BackupSavegamesEnabled = value.DefaultIfEquals(Defaults.BackupSavegamesEnabled);

@@ -218,6 +218,8 @@
     <system:String x:Key="This pattern has already been added">Questo pattern è già stato aggiunto.</system:String>
     <system:String x:Key="The pattern PATTERN is not allowed">Il pattern {0} non è consentito.</system:String>
     <system:String x:Key="Clear">Pulisci</system:String>
+    <system:String x:Key="Delete">Elimina</system:String>
+    <system:String x:Key="Edit">Modifica</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>
