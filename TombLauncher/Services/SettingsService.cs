@@ -38,7 +38,6 @@ public class SettingsService : IViewService
         var mapperConfiguration = Ioc.Default.GetRequiredService<MapperConfiguration>();
         _mapper = mapperConfiguration.CreateMapper();
         _appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
-        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
     }
 
     private readonly IAppConfigurationWrapper _appConfiguration;
@@ -46,7 +45,6 @@ public class SettingsService : IViewService
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
-    private GamesUnitOfWork _gamesUnitOfWork;
     private readonly IMapper _mapper;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
