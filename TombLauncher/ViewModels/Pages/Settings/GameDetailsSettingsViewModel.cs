@@ -17,6 +17,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     {
         AddPatternCmd = new RelayCommand(AddPattern, CanAddPattern);
         ClearCurrentPatternCmd = new RelayCommand(ClearCurrentPattern, CanClearCurrentPattern);
+        DeletePatternCmd = new RelayCommand<CheckableItem<string>>(DeletePattern, CanDeletePattern);
     }
 
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
@@ -40,7 +41,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 
     private void AddPattern()
     {
-        DocumentationPatterns.Add(new CheckableItem<string>(){IsEnabled = true, Value = CurrentPattern});
+        DocumentationPatterns.Add(new CheckableItem<string>(){IsChecked = true, Value = CurrentPattern});
         CurrentPattern = string.Empty;
     }
 
@@ -60,7 +61,19 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 
     public List<string> GetEnabledPatterns()
     {
-        return DocumentationPatterns.Where(p => p.IsEnabled).Select(p => p.Value).ToList();
+        return DocumentationPatterns.Where(p => p.IsChecked).Select(p => p.Value).ToList();
+    }
+    
+    public IRelayCommand DeletePatternCmd { get; }
+
+    private void DeletePattern(CheckableItem<string> patternToDelete)
+    {
+        DocumentationPatterns.Remove(patternToDelete);
+    }
+
+    private bool CanDeletePattern(CheckableItem<string> patternToDelete)
+    {
+        return patternToDelete is { CanUserCheck: true };
     }
 
     public static ValidationResult ValidatePattern(string newPattern, ValidationContext validationContext)

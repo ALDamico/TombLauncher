@@ -127,7 +127,7 @@ public class SettingsService : IViewService
                 config = new DownloaderConfiguration()
                 {
                     ClassName = className,
-                    IsEnabled = true,
+                    IsChecked = true,
                     Priority = --priority
                 };
             }
@@ -137,7 +137,7 @@ public class SettingsService : IViewService
                 BaseUrl = downloader.BaseUrl,
                 ClassName = className,
                 DisplayName = downloader.DisplayName,
-                IsEnabled = config.IsEnabled,
+                IsChecked = config.IsChecked,
                 Priority = config.Priority,
                 SupportedFeatures = downloader.SupportedFeatures.GetDescription()
             };
@@ -171,7 +171,7 @@ public class SettingsService : IViewService
 
     public List<IGameDownloader> GetActiveDownloaders()
     {
-        var downloaderConfigs = GetDownloaderConfigurations().Where(dl => dl.IsEnabled);
+        var downloaderConfigs = GetDownloaderConfigurations().Where(dl => dl.IsChecked);
         var output = new List<IGameDownloader>();
         foreach (var config in downloaderConfigs)
         {

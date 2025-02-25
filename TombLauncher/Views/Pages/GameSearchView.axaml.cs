@@ -14,8 +14,7 @@ public partial class GameSearchView : UserControl
 
     private void InputElement_OnKeyUp(object sender, KeyEventArgs e)
     {
-        var dataContext = this.DataContext as GameSearchViewModel;
-        if (dataContext == null) return;
+        if (DataContext is not GameSearchViewModel dataContext) return;
         if (e.Key == Key.Enter)
         {
             dataContext.SearchCmd.Execute(null);

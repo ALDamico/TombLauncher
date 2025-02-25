@@ -8,7 +8,8 @@
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameDetailsSettingsView"
-             x:DataType="settings:GameDetailsSettingsViewModel">
+             x:DataType="settings:GameDetailsSettingsViewModel"
+             x:Name="ViewRoot">
     <Design.DataContext>
         <settings:GameDetailsSettingsViewModel />
     </Design.DataContext>
@@ -29,8 +30,8 @@
                                      Command="{Binding AddPatternCmd}" 
                                      DockPanel.Dock="Right" />
             <TextBox Text="{Binding CurrentPattern}"
-                     Watermark="{DynamicResource 'Insert a new pattern here...'}">
-            </TextBox>
+                     Watermark="{DynamicResource 'Insert a new pattern here...'}" 
+                     KeyUp="InputElement_OnKeyUp"/>
         </DockPanel>
         <AutoCompleteBox ItemsSource="{Binding DocumentationPatterns}" 
                          Watermark="{DynamicResource 'Insert a new pattern here'}" FilterMode="Contains">
@@ -39,7 +40,16 @@
                     <DataTemplate.DataType>
                         <x:Type TypeName="dtos:CheckableItem" x:TypeArguments="system:String"/>
                     </DataTemplate.DataType>
-                    <CheckBox IsChecked="{Binding IsEnabled}" Content="{Binding Value}"/>
+                    <DockPanel LastChildFill="True">
+                        <controls:IconOnlyButton DockPanel.Dock="Right" Icon="Trash" Classes="btn-danger" ToolTip.Tip="{DynamicResource Delete}" 
+                                                 Command="{Binding ElementName=ViewRoot, Path=((settings:GameDetailsSettingsViewModel)DataContext).DeletePatternCmd}"
+                                                 CommandParameter="{Binding .}"/>
+                        <CheckBox IsChecked="{Binding IsChecked}" 
+                                  IsEnabled="{Binding CanUserCheck}" 
+                                  Content="{Binding Value}"/>
+                        
+                    </DockPanel>
+                    
                 </DataTemplate>
             </AutoCompleteBox.ItemTemplate>
         </AutoCompleteBox>

@@ -1,13 +1,18 @@
 ﻿namespace TombLauncher.Core.Dtos;
 
-public class CheckableItem<T> : IEquatable<T> where T: IEquatable<T>
+public abstract class CheckableItem
 {
-    public bool IsEnabled { get; set; }
+    public bool IsChecked { get; set; }
+    public bool CanUserCheck { get; set; } = true;
+}
+
+public class CheckableItem<T> : CheckableItem, IEquatable<T> where T: IEquatable<T>
+{
     public T Value { get; set; }
 
     protected bool Equals(CheckableItem<T> other)
     {
-        return IsEnabled == other.IsEnabled && EqualityComparer<T>.Default.Equals(Value, other.Value);
+        return EqualityComparer<T>.Default.Equals(Value, other.Value);
     }
 
     public bool Equals(T other)
@@ -25,6 +30,6 @@ public class CheckableItem<T> : IEquatable<T> where T: IEquatable<T>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(IsEnabled, Value);
+        return HashCode.Combine(IsChecked, Value);
     }
 }
