@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -24,14 +25,37 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
     [ObservableProperty] private bool _useInternalViewerIfAvailable;
-    [ObservableProperty] private ObservableCollection<CheckableItem<string>> _documentationPatterns;
+    private ObservableCollection<CheckableItem<string>> _documentationPatterns;
+
+    public ObservableCollection<CheckableItem<string>> DocumentationPatterns
+    {
+        get => _documentationPatterns;
+        set
+        {
+            if (_documentationPatterns != null)
+            {
+                _documentationPatterns.CollectionChanged -= DocumentationPatternsOnCollectionChanged;
+            }
+
+            SetProperty(ref _documentationPatterns, value);
+            if (value != null)
+            {
+                _documentationPatterns.CollectionChanged += DocumentationPatternsOnCollectionChanged;
+            }
+        }
+    }
+
+    private void DocumentationPatternsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(DocumentationPatterns));
+    }
+
     private string _currentPattern;
     private CheckableItem<string> _editedPattern;
     private int _editedPatternIndex;
 
     
     [CustomValidation(typeof(GameDetailsSettingsViewModel), nameof(ValidatePattern))]
-    
     public string CurrentPattern
     {
         get => _currentPattern;
@@ -50,6 +74,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
         DocumentationPatterns.Add(new CheckableItem<string>(){IsChecked = true, Value = CurrentPattern});
         CurrentPattern = string.Empty;
         _editedPattern = null;
+        EditInProgress = false;
     }
 
     private bool CanAddPattern() => CurrentPattern.IsNotNullOrWhiteSpace();
@@ -93,6 +118,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 
     private void EditPattern(CheckableItem<string> patternToEdit)
     {
+        EditInProgress = true;
         _editedPattern = patternToEdit;
         _editedPatternIndex = DocumentationPatterns.IndexOf(patternToEdit);
         DocumentationPatterns.Remove(patternToEdit);

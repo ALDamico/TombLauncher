@@ -5,11 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using Avalonia;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
-using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TombLauncher.Configuration;
@@ -19,11 +17,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Savegames;
-using TombLauncher.Core.Savegames.HeaderReaders;
-using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Utils;
@@ -96,6 +90,7 @@ public class SettingsService : IViewService
         _appConfiguration.AskForConfirmationBeforeWalkthrough =
             gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _appConfiguration.UseInternalViewer = gameDetailsSettings.UseInternalViewerIfAvailable;
+        _appConfiguration.DocumentationPatterns = gameDetailsSettings.DocumentationPatterns.ToList();
         _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
         _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
         _appConfiguration.NumberOfVersionsToKeep =

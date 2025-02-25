@@ -54,6 +54,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private void SectionErrorChanged(object sender, DataErrorsChangedEventArgs args)
     {
         OnPropertyChanged(nameof(IsChanged));
+        OnPropertyChanged(nameof(HasPendingEdits));
         RaiseCanExecuteChanged(SaveCmd);
     }
 
@@ -107,7 +108,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
     protected override bool CanSave()
     {
-        return IsChanged;
+        return IsChanged && !HasPendingEdits;
     }
 
     public void AcceptChanges()
@@ -118,6 +119,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         }
 
         OnPropertyChanged(nameof(IsChanged));
+        OnPropertyChanged(nameof(HasPendingEdits));
         RaiseCanExecuteChanged(SaveCmd);
     }
 
@@ -128,6 +130,14 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             var anyChanged = Sections.Any(s => s.IsChanged);
             var anyErrors = Sections.Any(s => s.HasErrors);
             return anyChanged && !anyErrors;
+        }
+    }
+
+    public bool HasPendingEdits
+    {
+        get
+        {
+            return Sections.Any(s => s.EditInProgress);
         }
     }
 }
