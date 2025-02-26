@@ -146,7 +146,8 @@ public class SettingsService : IViewService
             AskForConfirmationBeforeWalkthrough =
                 _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
             UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault(),
-            DocumentationPatterns = new EditablePatternListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationPatterns.ToObservableCollection()}
+            DocumentationPatterns = new EditablePatternListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationPatterns.ToObservableCollection()},
+            FolderExclusions = new EditableFolderExclusionsListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationFolderExclusions.ToObservableCollection()}
         };
     }
 
@@ -201,5 +202,15 @@ public class SettingsService : IViewService
     public bool IsGridViewDefault()
     {
         return _appConfiguration.DefaultToGridView;
+    }
+
+    public List<string> GetEnabledPatterns()
+    {
+        return _appConfiguration.DocumentationPatterns.GetCheckedItems().ToList();
+    }
+
+    public List<string> GetExcludedFolders()
+    {
+        return _appConfiguration.DocumentationFolderExclusions.GetCheckedItems().ToList();
     }
 }

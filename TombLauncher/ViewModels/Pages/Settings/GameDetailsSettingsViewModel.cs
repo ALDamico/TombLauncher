@@ -1,16 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Input;
-using Avalonia.Input;
+﻿using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Core.Dtos;
-using TombLauncher.Core.Extensions;
-using TombLauncher.Localization.Extensions;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
@@ -22,13 +11,53 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
     [ObservableProperty] private bool _useInternalViewerIfAvailable;
-    [ObservableProperty] private EditablePatternListBoxViewModel _documentationPatterns;
+    private EditablePatternListBoxViewModel _documentationPatterns;
 
-    public List<string> GetEnabledPatterns()
+    public EditablePatternListBoxViewModel DocumentationPatterns
     {
-        return DocumentationPatterns.TargetCollection
-            .Where(p => p.IsChecked)
-            .Select(p => p.Value)
-            .ToList();
+        get => _documentationPatterns;
+        set
+        {
+            if (_documentationPatterns != null)
+            {
+                _documentationPatterns.PropertyChanged -= OnChildPropertyChanged;
+            }
+            _documentationPatterns = value;
+            if (value != null)
+            {
+                _documentationPatterns.PropertyChanged += OnChildPropertyChanged;
+            }
+            OnPropertyChanged();
+        }
+    }
+    
+    private EditableFolderExclusionsListBoxViewModel _folderExclusions;
+
+    public EditableFolderExclusionsListBoxViewModel FolderExclusions
+    {
+        get => _folderExclusions;
+        set
+        {
+            if (_folderExclusions != null)
+            {
+                _folderExclusions.PropertyChanged -= OnChildPropertyChanged;
+            }
+            _folderExclusions = value;
+            if (value != null)
+            {
+                _folderExclusions.PropertyChanged += OnChildPropertyChanged;
+            }
+            OnPropertyChanged();
+        }
+    }
+
+    private void OnChildPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        string propertyName = "";
+        if (sender == DocumentationPatterns)
+            propertyName = nameof(DocumentationPatterns);
+        if (sender == FolderExclusions)
+            propertyName = nameof(FolderExclusions);
+        OnPropertyChanged(propertyName);
     }
 }

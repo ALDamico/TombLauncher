@@ -138,9 +138,11 @@ public class GameDetailsService : IViewService
         NavigationManager.GetCurrentPage().ClearBusy();
     }
 
-    public List<FileInfo> GetDocumentationFiles(string containingFolder, List<string> patterns)
+    public List<FileInfo> GetDocumentationFiles(string containingFolder, List<string> patterns, List<string> excludedFolders)
     {
-        return patterns.Select(p => Directory.GetFiles(containingFolder, p, SearchOption.AllDirectories)).SelectMany(f => f)
+        return patterns.Select(p => Directory.GetFiles(containingFolder, p, SearchOption.AllDirectories))
+            .SelectMany(f => f)
+            .Where(f => excludedFolders.All(dir => !f.Contains(dir)))
             .Select(f => new FileInfo(f))
             .ToList();
     }

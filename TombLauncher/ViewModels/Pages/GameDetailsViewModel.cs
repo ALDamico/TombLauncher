@@ -36,6 +36,7 @@ public partial class GameDetailsViewModel : PageViewModel
     [ObservableProperty] private GameWithStatsViewModel _game;
     [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks;
     private List<string> _enabledPatterns;
+    private List<string> _ignoredFolders;
     private readonly GameDetailsService _gameDetailsService;
     
 
@@ -44,12 +45,13 @@ public partial class GameDetailsViewModel : PageViewModel
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var gameDetailsSettings = settingsService.GetGameDetailsSettings(this);
         AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
-        _enabledPatterns = gameDetailsSettings.GetEnabledPatterns();
+        _enabledPatterns = settingsService.GetEnabledPatterns();
+        _ignoredFolders = settingsService.GetExcludedFolders();
         UseInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
         InitSetupCommands();
 
         if (Game.GameMetadata.IsInstalled)
-            DocumentationFiles = _gameDetailsService.GetDocumentationFiles(Game.GameMetadata.InstallDirectory, _enabledPatterns).ToObservableCollection();
+            DocumentationFiles = _gameDetailsService.GetDocumentationFiles(Game.GameMetadata.InstallDirectory, _enabledPatterns, _ignoredFolders).ToObservableCollection();
         await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
     }
     

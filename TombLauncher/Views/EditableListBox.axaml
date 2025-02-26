@@ -14,7 +14,7 @@
         <viewModels:EditableListBoxViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="{DynamicResource 'Use the following patterns to recognize documentation files'}"/>
+        <TextBlock Text="{Binding Header}"/>
         <DockPanel LastChildFill="True">
             <controls:IconOnlyButton Icon="Clear" 
                                      ToolTip.Tip="{DynamicResource Clear}" 
