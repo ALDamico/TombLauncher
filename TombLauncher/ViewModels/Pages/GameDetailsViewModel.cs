@@ -54,7 +54,8 @@ public partial class GameDetailsViewModel : PageViewModel
             SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchCommunitySetupCmd, Icon = MaterialIconKind.SettingsPlay, Text = "Community patch setup".GetLocalizedString()});
         }
 
-        DocumentationFiles = _gameDetailsService.GetDocumentationFiles(Game.GameMetadata.InstallDirectory, _enabledPatterns).ToObservableCollection();
+        if (Game.GameMetadata.IsInstalled)
+            DocumentationFiles = _gameDetailsService.GetDocumentationFiles(Game.GameMetadata.InstallDirectory, _enabledPatterns).ToObservableCollection();
         await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
     }
 
