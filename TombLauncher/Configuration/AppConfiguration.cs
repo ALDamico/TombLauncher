@@ -24,4 +24,5 @@ public class AppConfiguration : IAppConfiguration
     public string GitHubLink { get; set; }
     public bool DefaultToGridView { get; set; }
     public List<CheckableItem<string>> DocumentationPatterns { get; set; }
+    public List<CheckableItem<string>> DocumentationFolderExclusions { get; set; }
 }

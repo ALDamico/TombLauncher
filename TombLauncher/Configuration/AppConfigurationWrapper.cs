@@ -119,18 +119,14 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
 
     public List<CheckableItem<string>> DocumentationPatterns
     {
-        get
-        {
-            if (User.DocumentationPatterns.IsNullOrEmpty())
-            {
-                return Defaults.DocumentationPatterns;
-            }
-
-            var sharedPatterns =
-                Defaults.DocumentationPatterns.Where(p => User.DocumentationPatterns.All(p2 => p2.Value != p.Value));
-
-            return sharedPatterns.Concat(User.DocumentationPatterns).ToList();
-        }
+        get => CollectionUtils.GetSharedItems(Defaults.DocumentationPatterns, User.DocumentationPatterns);
         set => User.DocumentationPatterns = value.Except(Defaults.DocumentationPatterns).ToList();
+    }
+
+    public List<CheckableItem<string>> DocumentationFolderExclusions
+    {
+        get => CollectionUtils.GetSharedItems(Defaults.DocumentationFolderExclusions,
+            User.DocumentationFolderExclusions);
+        set => User.DocumentationFolderExclusions = value.Except(Defaults.DocumentationFolderExclusions).ToList();
     }
 }
