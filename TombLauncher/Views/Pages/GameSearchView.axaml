@@ -3,23 +3,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:TombLauncher.Views"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
-             xmlns:pagesViews="clr-namespace:TombLauncher.Views.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameSearchView"
-             x:DataType="pages:GameSearchViewModel"
-             KeyUp="InputElement_OnKeyUp">
+             x:DataType="pages:GameSearchViewModel">
     <Design.DataContext>
         <pages:GameSearchViewModel />
     </Design.DataContext>
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
-                <InvokeCommandAction Command="{Binding InitCmd}"/>
+                <InvokeCommandAction Command="{Binding InitCmd}" />
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
+        <EventTriggerBehavior EventName="KeyUp">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding HandleKeyUpCmd}"
+                                     PassEventArgsToCommand="True" />
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
     </Interaction.Behaviors>
@@ -35,18 +37,17 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" 
-                   Grid.Column="0" 
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
                    Grid.ColumnSpan="2"
-                   Classes="h1" 
-                   Text="{DynamicResource SEARCH}"/>
-        
+                   Classes="h1"
+                   Text="{DynamicResource SEARCH}" />
+
         <views:GameSearchForm Grid.Row="1"
                               Grid.Column="0"
-                              DataContext="{Binding SearchPayload}" 
+                              DataContext="{Binding SearchPayload}"
                               AvailableDifficulties="{Binding AvailableDifficulties}"
-                              AvailableEngines="{Binding AvailableEngines}"
-                              />
+                              AvailableEngines="{Binding AvailableEngines}" />
         <controls:IconButton Grid.Row="1" Grid.Column="1"
                              Margin="5, 11, 0, 10"
                              MinHeight="32"
@@ -61,8 +62,7 @@
         <ScrollViewer Grid.Row="2"
                       Grid.Column="0"
                       Grid.ColumnSpan="2"
-                      Offset="{Binding ScrollViewerOffset, Mode=TwoWay}"
-                      >
+                      Offset="{Binding ScrollViewerOffset, Mode=TwoWay}">
             <ItemsRepeater ItemsSource="{Binding FetchedResults}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
