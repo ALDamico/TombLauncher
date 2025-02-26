@@ -33,7 +33,11 @@ public partial class GameDetailsViewModel : PageViewModel
     [ObservableProperty] private bool _useInternalViewerIfAvailable;
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands;
     [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles;
+    [ObservableProperty] private GameWithStatsViewModel _game;
+    [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks;
     private List<string> _enabledPatterns;
+    private readonly GameDetailsService _gameDetailsService;
+    
 
     protected override async Task RaiseInitialize()
     {
@@ -41,27 +45,14 @@ public partial class GameDetailsViewModel : PageViewModel
         var gameDetailsSettings = settingsService.GetGameDetailsSettings(this);
         AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _enabledPatterns = gameDetailsSettings.GetEnabledPatterns();
-        
         UseInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
-        SetupCommands = new ObservableCollection<CommandViewModel>();
-        if (Game.GameMetadata.SetupExecutable.IsNotNullOrWhiteSpace())
-        {
-            SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchSetupCmd, Icon = MaterialIconKind.Settings, Text = "Setup".GetLocalizedString()});
-        }
-
-        if (Game.GameMetadata.CommunitySetupExecutable.IsNotNullOrWhiteSpace())
-        {
-            SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchCommunitySetupCmd, Icon = MaterialIconKind.SettingsPlay, Text = "Community patch setup".GetLocalizedString()});
-        }
+        InitSetupCommands();
 
         if (Game.GameMetadata.IsInstalled)
             DocumentationFiles = _gameDetailsService.GetDocumentationFiles(Game.GameMetadata.InstallDirectory, _enabledPatterns).ToObservableCollection();
         await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
     }
-
-    private readonly GameDetailsService _gameDetailsService;
-    [ObservableProperty] private GameWithStatsViewModel _game;
-    [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks;
+    
     public ICommand BrowseFolderCmd { get; }
 
     private void BrowseFolder()
@@ -120,6 +111,20 @@ public partial class GameDetailsViewModel : PageViewModel
         else
         {
             AppUtils.OpenUrl(path);
+        }
+    }
+    
+    private void InitSetupCommands()
+    {
+        SetupCommands = new ObservableCollection<CommandViewModel>();
+        if (Game.GameMetadata.SetupExecutable.IsNotNullOrWhiteSpace())
+        {
+            SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchSetupCmd, Icon = MaterialIconKind.Settings, Text = "Setup".GetLocalizedString()});
+        }
+
+        if (Game.GameMetadata.CommunitySetupExecutable.IsNotNullOrWhiteSpace())
+        {
+            SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchCommunitySetupCmd, Icon = MaterialIconKind.SettingsPlay, Text = "Community patch setup".GetLocalizedString()});
         }
     }
 }
