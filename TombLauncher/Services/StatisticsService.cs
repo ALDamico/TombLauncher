@@ -29,16 +29,6 @@ public class StatisticsService
     private readonly GamesUnitOfWork _gamesUnitOfWork;
     private readonly IMapper _mapper;
 
-    public Version GetApplicationVersion()
-    {
-        return Assembly.GetEntryAssembly()?.GetName().Version;
-    }
-
-    public Version GetNetVersion()
-    {
-        return Environment.Version;
-    }
-
     public long GetDatabaseSize()
     {
         var databasePath = _settingsService.GetDatabasePath();

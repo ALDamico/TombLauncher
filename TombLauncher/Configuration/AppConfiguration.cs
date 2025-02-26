@@ -10,7 +10,6 @@ public class AppConfiguration : IAppConfiguration
     public string ApplicationLanguage { get; set; }
     public string DatabasePath { get; set; }
     public string ApplicationTheme { get; set; }
-    public bool? UseInternalViewer { get; set; }
     public bool? AskForConfirmationBeforeWalkthrough { get; set; }
     public List<DownloaderConfiguration> Downloaders { get; set; }
     public LogLevel? MinimumLogLevel { get; set; }
@@ -25,4 +24,5 @@ public class AppConfiguration : IAppConfiguration
     public bool DefaultToGridView { get; set; }
     public List<CheckableItem<string>> DocumentationPatterns { get; set; }
     public List<CheckableItem<string>> DocumentationFolderExclusions { get; set; }
+    public string UpdateChannelName { get; set; }
 }
