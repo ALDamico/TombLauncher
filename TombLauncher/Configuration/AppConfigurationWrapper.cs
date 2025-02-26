@@ -29,12 +29,6 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set => User.ApplicationTheme = value.DefaultIfEquals(Defaults.ApplicationTheme);
     }
 
-    public bool? UseInternalViewer
-    {
-        get => User.UseInternalViewer.Coalesce(Defaults.UseInternalViewer);
-        set => User.UseInternalViewer = value.DefaultIfEquals(Defaults.UseInternalViewer);
-    }
-
     public bool? AskForConfirmationBeforeWalkthrough
     {
         get => User.AskForConfirmationBeforeWalkthrough.Coalesce(Defaults.AskForConfirmationBeforeWalkthrough);

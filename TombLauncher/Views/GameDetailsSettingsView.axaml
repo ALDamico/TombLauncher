@@ -14,8 +14,6 @@
     <StackPanel Orientation="Vertical">
         <ToggleSwitch IsChecked="{Binding AskForConfirmationBeforeWalkthrough}"
                   Content="{DynamicResource 'Ask for confirmation before opening a walkthrough'}" />
-        <ToggleSwitch IsChecked="{Binding UseInternalViewerIfAvailable}"
-                      Content="{DynamicResource 'Use internal viewer if available'}" />
         <views:EditableListBox DataContext="{Binding DocumentationPatterns}"/>
         <views:EditableListBox DataContext="{Binding FolderExclusions}"></views:EditableListBox>
     </StackPanel>

@@ -114,7 +114,6 @@
     <system:String x:Key="No">No</system:String>
     <system:String x:Key="GAME DETAILS">DETTAGLI DI GIOCO</system:String>
     <system:String x:Key="Ask for confirmation before opening a walkthrough">Chiedi conferma prima di aprire una soluzione</system:String>
-    <system:String x:Key="Use internal viewer if available">Utilizza il visualizzatore interno se disponibile</system:String>
     <system:String x:Key="Are you sure you want to read the walkthrough?">Sei sicuro di voler leggere la soluzione?</system:String>
     <system:String x:Key="Confirm">Conferma</system:String>
     <system:String x:Key="Notifications">Notifiche</system:String>

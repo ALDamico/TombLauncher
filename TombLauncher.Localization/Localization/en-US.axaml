@@ -114,7 +114,6 @@
     <system:String x:Key="No">No</system:String>
     <system:String x:Key="GAME DETAILS">GAME DETAILS</system:String>
     <system:String x:Key="Ask for confirmation before opening a walkthrough">Ask for confirmation before opening a walkthrough</system:String>
-    <system:String x:Key="Use internal viewer if available">Use internal viewer if available</system:String>
     <system:String x:Key="Are you sure you want to read the walkthrough?">Are you sure you want to read the walkthrough?</system:String>
     <system:String x:Key="Confirm">Confirm</system:String>
     <system:String x:Key="Notifications">Notifications</system:String>

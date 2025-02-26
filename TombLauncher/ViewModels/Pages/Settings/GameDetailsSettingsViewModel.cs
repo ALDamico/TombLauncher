@@ -10,7 +10,6 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     }
 
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
-    [ObservableProperty] private bool _useInternalViewerIfAvailable;
     private EditablePatternListBoxViewModel _documentationPatterns;
 
     public EditablePatternListBoxViewModel DocumentationPatterns
