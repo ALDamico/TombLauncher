@@ -30,7 +30,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsEnabled}" />
+                            <CheckBox IsChecked="{Binding IsChecked}" />
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="{Binding DisplayName}"
                                            FontWeight="DemiBold" />
