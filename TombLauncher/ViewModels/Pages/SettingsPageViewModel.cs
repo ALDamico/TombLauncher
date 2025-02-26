@@ -115,7 +115,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     {
         foreach (var section in Sections)
         {
-            section.AcceptChanges();
+            if (!section.EditInProgress)
+                section.AcceptChanges();
         }
 
         OnPropertyChanged(nameof(IsChanged));

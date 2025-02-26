@@ -17,7 +17,6 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Utils;
@@ -88,7 +87,7 @@ public class SettingsService : IViewService
         _appConfiguration.AskForConfirmationBeforeWalkthrough =
             gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _appConfiguration.UseInternalViewer = gameDetailsSettings.UseInternalViewerIfAvailable;
-        _appConfiguration.DocumentationPatterns = gameDetailsSettings.DocumentationPatterns.ToList();
+        _appConfiguration.DocumentationPatterns = gameDetailsSettings.DocumentationPatterns.TargetCollection.ToList();
         _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
         _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
         _appConfiguration.NumberOfVersionsToKeep =
@@ -147,7 +146,7 @@ public class SettingsService : IViewService
             AskForConfirmationBeforeWalkthrough =
                 _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
             UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault(),
-            DocumentationPatterns = _appConfiguration.DocumentationPatterns.ToObservableCollection()
+            DocumentationPatterns = new EditablePatternListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationPatterns.ToObservableCollection()}
         };
     }
 
