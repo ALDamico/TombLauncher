@@ -5,11 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using Avalonia;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
-using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TombLauncher.Configuration;
@@ -18,11 +16,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
-using TombLauncher.Core.Savegames;
-using TombLauncher.Core.Savegames.HeaderReaders;
-using TombLauncher.Core.Utils;
-using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Extensions;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Utils;
@@ -43,7 +37,6 @@ public class SettingsService : IViewService
         var mapperConfiguration = Ioc.Default.GetRequiredService<MapperConfiguration>();
         _mapper = mapperConfiguration.CreateMapper();
         _appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
-        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
     }
 
     private readonly IAppConfigurationWrapper _appConfiguration;
@@ -51,7 +44,6 @@ public class SettingsService : IViewService
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
-    private GamesUnitOfWork _gamesUnitOfWork;
     private readonly IMapper _mapper;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
@@ -94,7 +86,7 @@ public class SettingsService : IViewService
         _appConfiguration.Downloaders = mappedDownloaderConfigs;
         _appConfiguration.AskForConfirmationBeforeWalkthrough =
             gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
-        _appConfiguration.UseInternalViewer = gameDetailsSettings.UseInternalViewerIfAvailable;
+        _appConfiguration.DocumentationPatterns = gameDetailsSettings.DocumentationPatterns.TargetCollection.ToList();
         _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
         _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
         _appConfiguration.NumberOfVersionsToKeep =
@@ -126,7 +118,7 @@ public class SettingsService : IViewService
                 config = new DownloaderConfiguration()
                 {
                     ClassName = className,
-                    IsEnabled = true,
+                    IsChecked = true,
                     Priority = --priority
                 };
             }
@@ -136,7 +128,7 @@ public class SettingsService : IViewService
                 BaseUrl = downloader.BaseUrl,
                 ClassName = className,
                 DisplayName = downloader.DisplayName,
-                IsEnabled = config.IsEnabled,
+                IsChecked = config.IsChecked,
                 Priority = config.Priority,
                 SupportedFeatures = downloader.SupportedFeatures.GetDescription()
             };
@@ -152,7 +144,8 @@ public class SettingsService : IViewService
         {
             AskForConfirmationBeforeWalkthrough =
                 _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
-            UseInternalViewerIfAvailable = _appConfiguration.UseInternalViewer.GetValueOrDefault()
+            DocumentationPatterns = new EditablePatternListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationPatterns.ToObservableCollection()},
+            FolderExclusions = new EditableFolderExclusionsListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationFolderExclusions.ToObservableCollection()}
         };
     }
 
@@ -169,7 +162,7 @@ public class SettingsService : IViewService
 
     public List<IGameDownloader> GetActiveDownloaders()
     {
-        var downloaderConfigs = GetDownloaderConfigurations().Where(dl => dl.IsEnabled);
+        var downloaderConfigs = GetDownloaderConfigurations().Where(dl => dl.IsChecked);
         var output = new List<IGameDownloader>();
         foreach (var config in downloaderConfigs)
         {
@@ -207,5 +200,15 @@ public class SettingsService : IViewService
     public bool IsGridViewDefault()
     {
         return _appConfiguration.DefaultToGridView;
+    }
+
+    public List<string> GetEnabledPatterns()
+    {
+        return _appConfiguration.DocumentationPatterns.GetCheckedItems().ToList();
+    }
+
+    public List<string> GetExcludedFolders()
+    {
+        return _appConfiguration.DocumentationFolderExclusions.GetCheckedItems().ToList();
     }
 }

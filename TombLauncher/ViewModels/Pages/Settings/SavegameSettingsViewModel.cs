@@ -17,7 +17,7 @@ public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
         SyncSavegamesInfoCmd = new AsyncRelayCommand(SyncSavegamesInfo);
     }
 
-    [ObservableProperty] private bool _savegameBackupEnabled;
+    [ObservableProperty] private bool? _savegameBackupEnabled;
     [ObservableProperty] private bool _limitNumberOfVersions;
     [ObservableProperty] private int? _numberOfVersionsToKeep;
     [ObservableProperty] private int _savegameProcessingDelay;

@@ -77,4 +77,15 @@ public static class StringExtensions
 
         return Encoding.ASCII.GetString(arr, 0, indexOfNullCharacter);
     }
+
+    public static bool EndsWithAny(this string s, params char[] chars)
+    {
+        foreach (var c in chars)
+        {
+            if (s.EndsWith(c))
+                return true;
+        }
+
+        return false;
+    }
 }

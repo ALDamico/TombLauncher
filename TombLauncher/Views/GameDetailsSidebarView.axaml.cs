@@ -2,9 +2,9 @@
 
 namespace TombLauncher.Views;
 
-public partial class GameDetailsSettingsView : UserControl
+public partial class GameDetailsSidebarView : UserControl
 {
-    public GameDetailsSettingsView()
+    public GameDetailsSidebarView()
     {
         InitializeComponent();
     }

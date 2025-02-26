@@ -18,7 +18,8 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     {
         if (e.PropertyName is nameof(IsChanged) or nameof(SectionTitle) or nameof(InfoTipContent) or nameof(InfoTipHeader))
             return;
-        IsChanged = true;
+        if (e.PropertyName != nameof(EditInProgress) || !EditInProgress)
+            IsChanged = true;
         base.OnPropertyChanged(e);
     }
 
@@ -54,4 +55,15 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     }
 
     public bool IsChanged { get; protected set; }
+    private bool _editInProgress;
+
+    public bool EditInProgress
+    {
+        get => _editInProgress; 
+        protected set
+        {
+            _editInProgress = value;
+            OnPropertyChanged();
+        }
+    }
 }

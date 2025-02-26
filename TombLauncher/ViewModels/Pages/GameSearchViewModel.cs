@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -24,6 +25,7 @@ public partial class GameSearchViewModel : PageViewModel
         _gameSearchService = Ioc.Default.GetRequiredService<GameSearchService>();
         SearchPayload = new DownloaderSearchPayloadViewModel();
         SearchCmd = new AsyncRelayCommand(Search);
+        HandleKeyUpCmd = new AsyncRelayCommand<KeyEventArgs>(HandleKeyUp);
         OpenCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel>(Open);
         LoadMoreCmd = new AsyncRelayCommand(LoadMore);
         IsCancelable = true;
@@ -42,6 +44,14 @@ public partial class GameSearchViewModel : PageViewModel
     private async Task Search()
     {
         await _gameSearchService.Search(this);
+    }
+
+    [ObservableProperty] private ICommand _handleKeyUpCmd;
+
+    private async Task HandleKeyUp(KeyEventArgs keyEventArgs)
+    {
+        if (keyEventArgs.Key == Key.Enter)
+            await Search();
     }
 
     [ObservableProperty] private ICommand _loadMoreCmd;
