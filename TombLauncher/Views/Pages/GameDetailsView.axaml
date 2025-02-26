@@ -46,7 +46,5 @@
             </ScrollViewer>
         </DockPanel>
         <views:GameDetailsSidebarView DataContext="{Binding .}" Grid.Column="1"/>
-
-        
     </Grid>
 </UserControl>

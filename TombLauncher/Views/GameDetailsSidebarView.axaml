@@ -55,7 +55,10 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <Expander Header="{DynamicResource 'Documentation'}" VerticalAlignment="Stretch" Classes="stretched"
+            <Expander Header="{DynamicResource 'Documentation'}"
+                      IsVisible="{Binding DocumentationFiles, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}"
+                      VerticalAlignment="Stretch" 
+                      Classes="stretched"
                       MaxHeight="400">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ItemsRepeater ItemsSource="{Binding DocumentationFiles}">
