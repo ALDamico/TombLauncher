@@ -221,6 +221,7 @@
     <system:String x:Key="Clear">Clear</system:String>
     <system:String x:Key="Delete">Delete</system:String>
     <system:String x:Key="Edit">Edit</system:String>
+    <system:String x:Key="Specify a pattern">Specify a pattern.</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

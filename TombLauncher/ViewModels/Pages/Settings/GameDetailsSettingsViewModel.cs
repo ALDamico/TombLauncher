@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Core.Dtos;
@@ -17,6 +18,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     public GameDetailsSettingsViewModel(PageViewModel settingsPage) : base("GAME DETAILS", settingsPage)
     {
         _editedPatternIndex = -1;
+        HandleKeyUpCmd = new RelayCommand<KeyEventArgs>(HandleKeyUp);
         AddPatternCmd = new RelayCommand(AddPattern, CanAddPattern);
         ClearCurrentPatternCmd = new RelayCommand(ClearCurrentPattern, CanClearCurrentPattern);
         DeletePatternCmd = new RelayCommand<CheckableItem<string>>(DeletePattern, CanDeletePattern);
@@ -54,7 +56,6 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     private CheckableItem<string> _editedPattern;
     private int _editedPatternIndex;
 
-    
     [CustomValidation(typeof(GameDetailsSettingsViewModel), nameof(ValidatePattern))]
     public string CurrentPattern
     {
@@ -67,18 +68,19 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
             RaiseCanExecuteChanged(EditPatternCmd);
         }
     }
+
     public IRelayCommand AddPatternCmd { get; }
 
     private void AddPattern()
     {
-        DocumentationPatterns.Add(new CheckableItem<string>(){IsChecked = true, Value = CurrentPattern});
+        DocumentationPatterns.Add(new CheckableItem<string>() { IsChecked = true, Value = CurrentPattern });
         CurrentPattern = string.Empty;
         _editedPattern = null;
         EditInProgress = false;
     }
 
     private bool CanAddPattern() => CurrentPattern.IsNotNullOrWhiteSpace();
-    
+
     public IRelayCommand ClearCurrentPatternCmd { get; }
 
     private void ClearCurrentPattern()
@@ -101,7 +103,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     {
         return DocumentationPatterns.Where(p => p.IsChecked).Select(p => p.Value).ToList();
     }
-    
+
     public IRelayCommand DeletePatternCmd { get; }
 
     private void DeletePattern(CheckableItem<string> patternToDelete)
@@ -113,7 +115,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     {
         return patternToDelete is { CanUserCheck: true };
     }
-    
+
     public IRelayCommand EditPatternCmd { get; }
 
     private void EditPattern(CheckableItem<string> patternToEdit)
@@ -130,8 +132,27 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
         return patternToEdit is { CanUserCheck: true } && _editedPattern == null;
     }
 
+    public IRelayCommand<KeyEventArgs> HandleKeyUpCmd { get; }
+
+    private void HandleKeyUp(KeyEventArgs keyEventArgs)
+    {
+        switch (keyEventArgs.Key)
+        {
+            case Key.Enter:
+                var validationResult = ValidatePattern(CurrentPattern, new ValidationContext(this));
+                if (validationResult == ValidationResult.Success && CanAddPattern())
+                    AddPattern();
+                break;
+            case Key.Escape:
+                ClearCurrentPattern();
+                break;
+        }
+    }
+
     public static ValidationResult ValidatePattern(string newPattern, ValidationContext validationContext)
     {
+        if (newPattern == null)
+            return new ValidationResult("Specify a pattern".GetLocalizedString());
         var instance = (GameDetailsSettingsViewModel)validationContext.ObjectInstance;
         if (instance.DocumentationPatterns.Any(p => p.Value == newPattern))
         {
@@ -144,7 +165,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
             if (Regex.IsMatch(newPattern, invalidPattern))
                 return new ValidationResult("The pattern PATTERN is not allowed".GetLocalizedString(newPattern));
         }
-        
+
         return ValidationResult.Success;
     }
 }

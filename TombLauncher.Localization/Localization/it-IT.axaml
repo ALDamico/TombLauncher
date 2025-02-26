@@ -220,6 +220,7 @@
     <system:String x:Key="Clear">Pulisci</system:String>
     <system:String x:Key="Delete">Elimina</system:String>
     <system:String x:Key="Edit">Modifica</system:String>
+    <system:String x:Key="Specify a pattern">Specificare un pattern.</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

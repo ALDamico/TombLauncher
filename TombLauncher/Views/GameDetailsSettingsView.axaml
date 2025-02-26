@@ -30,8 +30,14 @@
                                      Command="{Binding AddPatternCmd}" 
                                      DockPanel.Dock="Right" />
             <TextBox Text="{Binding CurrentPattern}"
-                     Watermark="{DynamicResource 'Insert a new pattern here...'}" 
-                     KeyUp="InputElement_OnKeyUp"/>
+                     Watermark="{DynamicResource 'Insert a new pattern here...'}">
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="KeyUp">
+                        <InvokeCommandAction Command="{Binding HandleKeyUpCmd}" 
+                                             PassEventArgsToCommand="True"/>
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </TextBox>
         </DockPanel>
         <ListBox ItemsSource="{Binding DocumentationPatterns}" MaxHeight="350">
             <ListBox.ItemTemplate>
