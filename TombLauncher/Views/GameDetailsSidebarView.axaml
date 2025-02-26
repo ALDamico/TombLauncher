@@ -55,11 +55,19 @@
                     </MenuFlyout>
                 </controls:SplitIconButton.Flyout>
             </controls:SplitIconButton>
-            <Expander Header="{DynamicResource 'Documentation'}"
-                      IsVisible="{Binding DocumentationFiles, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}"
+            <Expander IsVisible="{Binding DocumentationFiles, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}"
                       VerticalAlignment="Stretch" 
                       Classes="stretched"
                       MaxHeight="400">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Center"
+                                Margin="45, 0, 0, 0">
+                        <avalonia:MaterialIcon Kind="FileDocumentMultiple"/>
+                        <TextBlock Text="{DynamicResource Documentation}" 
+                                   Margin="8, 0, 0, 0"/>
+                    </StackPanel>
+                </Expander.Header>
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ItemsRepeater ItemsSource="{Binding DocumentationFiles}">
                         <ItemsRepeater.ItemTemplate>
