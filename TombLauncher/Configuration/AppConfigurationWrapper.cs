@@ -123,4 +123,10 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
             User.DocumentationFolderExclusions);
         set => User.DocumentationFolderExclusions = value.Except(Defaults.DocumentationFolderExclusions).ToList();
     }
+
+    public string UpdateChannelName
+    {
+        get => User.UpdateChannelName.Coalesce(Defaults.UpdateChannelName);
+        set => User.UpdateChannelName = value.DefaultIfEquals(Defaults.UpdateChannelName);
+    }
 }

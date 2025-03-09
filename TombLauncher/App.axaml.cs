@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetSparkleUpdater;
+using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Downloaders;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.SignatureVerifiers;
@@ -26,6 +28,7 @@ using Serilog.Events;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;
@@ -205,19 +208,21 @@ public partial class App : Application
 
     private async Task InitNetSparkle(IAppConfigurationWrapper appConfiguration)
     {
-        var updateWorkers = AppCastWorkersFactory(appConfiguration);
+        var updateWorkers = UpdateUtils.AppCastWorkersFactory(appConfiguration);
 
         _sparkle = new SparkleUpdater(appConfiguration.AppCastUrl,
             new Ed25519Checker(SecurityMode.Strict, appConfiguration.AppCastPublicKey))
         {
-            UIFactory = new UIFactory(),
+            UIFactory = updateWorkers.UiFactory(),
             AppCastDataDownloader = updateWorkers.AppCastDataDownloader,
             UpdateDownloader = updateWorkers.UpdateDownloader,
             LogWriter = updateWorkers.LoggerToUse,
             UserInteractionMode = UserInteractionMode.NotSilent,
+            AppCastHelper = updateWorkers.AppCastHelper
         };
         _sparkle.UpdateDetected += (sender, args) =>
         {
+            var payload = new UpdateCommandPayload(_sparkle, args);
             var notificationService = Ioc.Default.GetRequiredService<NotificationService>();
             var localizationService = Ioc.Default.GetRequiredService<ILocalizationManager>();
             notificationService.AddNotification(new NotificationViewModel()
@@ -225,32 +230,12 @@ public partial class App : Application
                 Content = new StringNotificationViewModel()
                     { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion.Version) },
                 IsDismissable = true, IsCancelable = false, IsOpenable = true,
-                OpenCommand =
-                    new RelayCommand( () =>  _sparkle.ShowUpdateNeededUI(args.AppCastItems)),
-                OpenIcon = MaterialIconKind.Download
+                OpenCommand = updateWorkers.UpdateCommand,
+                OpenIcon = updateWorkers.UpdateIcon,
+                OpenCmdParam = payload
             });
         };
         await _sparkle.StartLoop(true);
-    }
-
-    private static UpdaterWorkersPayload AppCastWorkersFactory(IAppConfigurationWrapper appConfiguration)
-    {
-        UpdaterWorkersPayload updateWorkers = new UpdaterWorkersPayload()
-        {
-            LoggerToUse = new SerilogLogWriter()
-        };
-        if (appConfiguration.UpdaterUseLocalPaths)
-        {
-            updateWorkers.AppCastDataDownloader = new LocalFileAppCastDownloader() { UseLocalUriPath = true };
-            updateWorkers.UpdateDownloader = new LocalFileDownloader(updateWorkers.LoggerToUse) { UseLocalUriPath = true };
-        }
-        else
-        {
-            updateWorkers.AppCastDataDownloader = new WebRequestAppCastDataDownloader(updateWorkers.LoggerToUse);
-            updateWorkers.UpdateDownloader = new WebFileDownloader(updateWorkers.LoggerToUse);
-        }
-
-        return updateWorkers;
     }
 
     private void ApplyInitialSettings()
