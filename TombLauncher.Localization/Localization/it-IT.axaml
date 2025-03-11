@@ -224,6 +224,9 @@
     <system:String x:Key="Insert a folder name to ignore...">Inserisci il nome della cartella da ignorare...</system:String>
     <system:String x:Key="The specified folder name contains the following invalid characters: CHARLIST">Il nome di cartella specificato contiene i seguenti caratteri non validi: {0}</system:String>
     <system:String x:Key="Folder names cannot end with a dot or a space">I nomi di cartella non posono terminare con un punto o uno spazio.</system:String>
+    <system:String x:Key="Favourite">Preferito</system:String>
+    <system:String x:Key="Add to favourites">Aggiungi ai preferiti</system:String>
+    <system:String x:Key="Remove from favourites">Rimuovi dai preferiti</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

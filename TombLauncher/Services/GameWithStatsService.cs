@@ -250,4 +250,12 @@ public class GameWithStatsService : IViewService
 
         process.Start();
     }
+
+    public async Task ToggleFavourite(GameWithStatsViewModel gameWithStatsViewModel)
+    {
+        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        metadata.IsFavourite = !metadata.IsFavourite;
+        await _gamesUnitOfWork.UpsertGame(metadata);
+        gameWithStatsViewModel.GameMetadata.IsFavourite = metadata.IsFavourite;
+    }
 }

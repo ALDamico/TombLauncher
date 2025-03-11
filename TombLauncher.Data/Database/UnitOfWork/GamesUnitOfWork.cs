@@ -76,6 +76,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
             entity.ReleaseDate = game.ReleaseDate;
             entity.TitlePic = game.TitlePic;
             entity.AuthorFullName = game.AuthorFullName;
+            entity.IsFavourite = game.IsFavourite;
+            entity.IsCompleted = game.IsCompleted;
             Games.Update(entity);
         }
         

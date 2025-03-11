@@ -5,12 +5,19 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GamesDataGridView"
              x:DataType="pages:GameListViewModel">
     <Design.DataContext>
         <pages:GameListViewModel />
     </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter" TrueValue="Heart" FalseValue="HeartOutline"/>
+        <valueConverters:BooleanToStringConverter x:Key="AddRemoveFromFavouritesBooleanConverter" 
+                                                  TrueValue="Remove from favourites" 
+                                                  FalseValue="Add to favourites"/>
+    </UserControl.Resources>
     <DataGrid ItemsSource="{Binding Games}" 
               IsReadOnly="True" 
               x:Name="GamesDataGrid"
@@ -29,6 +36,14 @@
                     <MenuItem Header="{DynamicResource 'View details'}" 
                               Command="{Binding OpenCmd}" 
                               CommandParameter="{Binding SelectedGame}"/>
+                    <Separator/>
+                    <MenuItem Header="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}" 
+                              Command="{Binding AddToFavouritesCmd}"
+                              CommandParameter="{Binding SelectedGame}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource BooleanToMaterialIconConverter}}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <Separator/>
                     <MenuItem Header="{DynamicResource Uninstall}" 
                               Command="{Binding UninstallCmd}" 
@@ -60,6 +75,18 @@
                 <DataGridTextColumn Header="{DynamicResource Engine}" Binding="{Binding GameMetadata.GameEngine, Converter={StaticResource EnumToDescriptionConverter}}" />
                 <DataGridTextColumn Header="{DynamicResource Time played}" Binding="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"/>
                 <DataGridTextColumn Header="{DynamicResource Last played}" Binding="{Binding LastPlayed, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"/>
+                <DataGridTemplateColumn Header="{DynamicResource Favourite}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ToggleButton Classes="icon-only" 
+                                          Command="{Binding MarkGameAsFavouriteCmd}" 
+                                          ToolTip.Tip="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}">
+                                <avalonia:MaterialIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource BooleanToMaterialIconConverter}}"/>
+                            </ToggleButton>
+                            
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 </UserControl>

@@ -18,6 +18,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
         OpenCmd = new AsyncRelayCommand(Open);
         LaunchSetupCmd = new RelayCommand(LaunchSetup, CanLaunchSetup);
         LaunchCommunitySetupCmd = new RelayCommand(LaunchCommunitySetup, CanLaunchCommunitySetup);
+        MarkGameAsFavouriteCmd = new AsyncRelayCommand(MarkGameAsFavourite);
     }
 
     private readonly GameWithStatsService _gameWithStatsService;
@@ -62,5 +63,12 @@ public partial class GameWithStatsViewModel : ViewModelBase
     private bool CanLaunchCommunitySetup()
     {
         return _gameWithStatsService.CanLaunchCommunitySetup(this);
+    }
+    
+    public IAsyncRelayCommand MarkGameAsFavouriteCmd { get; }
+
+    private async Task MarkGameAsFavourite()
+    {
+        await _gameWithStatsService.ToggleFavourite(this);
     }
 }

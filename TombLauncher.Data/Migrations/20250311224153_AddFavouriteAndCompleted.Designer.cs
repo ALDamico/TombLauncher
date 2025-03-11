@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TombLauncher.Data.Database;
 
 #nullable disable
 
-namespace TombLauncher.Data.Database.Migrations
+namespace TombLauncher.Data.Migrations
 {
     [DbContext(typeof(TombLauncherDbContext))]
-    partial class TombLauncherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250311224153_AddFavouriteAndCompleted")]
+    partial class AddFavouriteAndCompleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");

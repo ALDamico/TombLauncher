@@ -23,4 +23,6 @@ public class Game
     public byte[] TitlePic { get; set; }
     public string AuthorFullName { get; set; }
     public bool IsInstalled { get; set; }
+    public bool IsFavourite { get; set; }
+    public bool IsCompleted { get; set; }
 }
