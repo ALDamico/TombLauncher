@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameDetailsView"
              x:Name="GameDetailsViewRoot"
@@ -11,6 +13,13 @@
     <Design.DataContext>
         <pages:GameDetailsViewModel />
     </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="FavouriteToMaterialIconConverter" 
+                                                        TrueValue="Heart" 
+                                                        FalseValue="HeartOutline"/>
+        <valueConverters:BooleanToStringConverter x:Key="FavouriteToToolTipConverter"
+                                                  TrueValue="Favourite"/>
+    </UserControl.Resources>
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
@@ -24,10 +33,16 @@
             <ColumnDefinition Width="Auto" MinWidth="200" />
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Column="0">
-            <TextBlock DockPanel.Dock="Top"
-                       FontWeight="DemiBold"
-                       FontSize="20"
-                       Text="{Binding Game.GameMetadata.Title}" />
+            <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <TextBlock FontWeight="DemiBold"
+                           FontSize="20"
+                           Text="{Binding Game.GameMetadata.Title}"/>
+                <avalonia:MaterialIcon Height="20"
+                                       Width="20"
+                                       Margin="5, 0"
+                                       ToolTip.Tip="{Binding Game.GameMetadata.IsFavourite, Converter={StaticResource FavouriteToToolTipConverter}}"
+                                       Kind="{Binding Game.GameMetadata.IsFavourite, Converter={StaticResource FavouriteToMaterialIconConverter}}"/>
+            </WrapPanel>
             <ScrollViewer VerticalScrollBarVisibility="Visible">
                 <TextBlock TextWrapping="Wrap" Classes="paragraph">
                     <Run Text="{DynamicResource By}" />
