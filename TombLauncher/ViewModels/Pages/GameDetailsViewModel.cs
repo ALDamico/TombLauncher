@@ -30,7 +30,6 @@ public partial class GameDetailsViewModel : PageViewModel
     }
 
     [ObservableProperty][NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCmd))]private bool _askForConfirmationBeforeOpeningWalkthrough;
-    [ObservableProperty] private bool _useInternalViewerIfAvailable;
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands;
     [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles;
     [ObservableProperty] private GameWithStatsViewModel _game;
@@ -47,7 +46,6 @@ public partial class GameDetailsViewModel : PageViewModel
         AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _enabledPatterns = settingsService.GetEnabledPatterns();
         _ignoredFolders = settingsService.GetExcludedFolders();
-        UseInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
         InitSetupCommands();
 
         if (Game.GameMetadata.IsInstalled)
@@ -106,14 +104,7 @@ public partial class GameDetailsViewModel : PageViewModel
 
     private void OpenDocument(string path)
     {
-        if (UseInternalViewerIfAvailable)
-        {
-            
-        }
-        else
-        {
-            AppUtils.OpenUrl(path);
-        }
+        AppUtils.OpenUrl(path);
     }
     
     private void InitSetupCommands()

@@ -23,4 +23,5 @@ public interface IAppConfiguration
     bool DefaultToGridView { get; set; }
     List<CheckableItem<string>> DocumentationPatterns { get; set; }
     List<CheckableItem<string>> DocumentationFolderExclusions { get; set; }
+    string UpdateChannelName { get; set; }
 }
