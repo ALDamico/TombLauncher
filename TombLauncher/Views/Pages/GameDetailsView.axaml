@@ -26,7 +26,7 @@
         <Style Selector="avalonia|MaterialIcon.header-icon">
             <Setter Property="Height" Value="20"/>
             <Setter Property="Width" Value="20"/>
-            <Setter Property="Margin" Value="5, 0"/>
+            <Setter Property="Margin" Value="10, 0"/>
         </Style>
     </UserControl.Styles>
     <Interaction.Behaviors>
@@ -47,11 +47,13 @@
                            FontSize="20"
                            Text="{Binding Game.GameMetadata.Title}"/>
                 <avalonia:MaterialIcon Classes="header-icon"
-                                       ToolTip.Tip="{Binding Game.GameMetadata.IsFavourite, Converter={StaticResource FavouriteToToolTipConverter}}"
-                                       Kind="{Binding Game.GameMetadata.IsFavourite, Converter={StaticResource FavouriteToMaterialIconConverter}}"/>
+                                       ToolTip.Tip="{DynamicResource Favourite}"
+                                       IsVisible="{Binding Game.GameMetadata.IsFavourite}"
+                                       Kind="Heart"/>
                 <avalonia:MaterialIcon Classes="header-icon"
                                        ToolTip.Tip="{DynamicResource Completed}"
-                                       Kind="{Binding Game.GameMetadata.IsCompleted, Converter={StaticResource CompletedToMaterialIconConverter}}"/>
+                                       IsVisible="{Binding Game.GameMetadata.IsCompleted}"
+                                       Kind="Trophy"/>
             </WrapPanel>
             <ScrollViewer VerticalScrollBarVisibility="Visible">
                 <TextBlock TextWrapping="Wrap" Classes="paragraph">
