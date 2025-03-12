@@ -228,6 +228,7 @@
     <system:String x:Key="Add to favourites">Aggiungi ai preferiti</system:String>
     <system:String x:Key="Remove from favourites">Rimuovi dai preferiti</system:String>
     <system:String x:Key="Completed">Completato</system:String>
+    <system:String x:Key="Resume your last game">Riprendi l'ultima partita</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>
