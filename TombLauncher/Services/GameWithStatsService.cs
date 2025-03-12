@@ -258,4 +258,12 @@ public class GameWithStatsService : IViewService
         await _gamesUnitOfWork.UpsertGame(metadata);
         gameWithStatsViewModel.GameMetadata.IsFavourite = metadata.IsFavourite;
     }
+
+    public async Task ToggleCompleted(GameWithStatsViewModel gameWithStatsViewModel)
+    {
+        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        metadata.IsCompleted = !metadata.IsCompleted;
+        await _gamesUnitOfWork.UpsertGame(metadata);
+        gameWithStatsViewModel.GameMetadata.IsCompleted = metadata.IsCompleted;
+    }
 }

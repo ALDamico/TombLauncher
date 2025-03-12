@@ -28,6 +28,7 @@ public partial class GameListViewModel : PageViewModel
         OpenSearchCmd = new AsyncRelayCommand(OpenSearch);
         PlayCmd = new RelayCommand<GameWithStatsViewModel>(Play);
         AddToFavouritesCmd = new AsyncRelayCommand<GameWithStatsViewModel>(AddToFavourites);
+        MarkUnmarkCompletedCmd = new AsyncRelayCommand<GameWithStatsViewModel>(MarkUnmarkCompleted);
         ShowAsGrid = Ioc.Default.GetRequiredService<SettingsService>().IsGridViewDefault();
         TopBarCommands.Clear();
         TopBarCommands.Add(new CommandViewModel()
@@ -87,4 +88,11 @@ public partial class GameListViewModel : PageViewModel
     {
         await game.MarkGameAsFavouriteCmd.ExecuteAsync(null);
     } 
+    
+    public ICommand MarkUnmarkCompletedCmd { get; private set; }
+
+    private async Task MarkUnmarkCompleted(GameWithStatsViewModel game)
+    {
+        await game.MarkGameAsCompletedCmd.ExecuteAsync(null);
+    }
 }

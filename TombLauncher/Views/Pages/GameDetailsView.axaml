@@ -17,9 +17,18 @@
         <valueConverters:BooleanToMaterialIconConverter x:Key="FavouriteToMaterialIconConverter" 
                                                         TrueValue="Heart" 
                                                         FalseValue="HeartOutline"/>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="CompletedToMaterialIconConverter"
+                                                        TrueValue="Trophy"/>
         <valueConverters:BooleanToStringConverter x:Key="FavouriteToToolTipConverter"
                                                   TrueValue="Favourite"/>
     </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="avalonia|MaterialIcon.header-icon">
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Margin" Value="5, 0"/>
+        </Style>
+    </UserControl.Styles>
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
@@ -37,11 +46,12 @@
                 <TextBlock FontWeight="DemiBold"
                            FontSize="20"
                            Text="{Binding Game.GameMetadata.Title}"/>
-                <avalonia:MaterialIcon Height="20"
-                                       Width="20"
-                                       Margin="5, 0"
+                <avalonia:MaterialIcon Classes="header-icon"
                                        ToolTip.Tip="{Binding Game.GameMetadata.IsFavourite, Converter={StaticResource FavouriteToToolTipConverter}}"
                                        Kind="{Binding Game.GameMetadata.IsFavourite, Converter={StaticResource FavouriteToMaterialIconConverter}}"/>
+                <avalonia:MaterialIcon Classes="header-icon"
+                                       ToolTip.Tip="{DynamicResource Completed}"
+                                       Kind="{Binding Game.GameMetadata.IsCompleted, Converter={StaticResource CompletedToMaterialIconConverter}}"/>
             </WrapPanel>
             <ScrollViewer VerticalScrollBarVisibility="Visible">
                 <TextBlock TextWrapping="Wrap" Classes="paragraph">

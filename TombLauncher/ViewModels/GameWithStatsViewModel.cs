@@ -4,7 +4,6 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Core.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
@@ -19,6 +18,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
         LaunchSetupCmd = new RelayCommand(LaunchSetup, CanLaunchSetup);
         LaunchCommunitySetupCmd = new RelayCommand(LaunchCommunitySetup, CanLaunchCommunitySetup);
         MarkGameAsFavouriteCmd = new AsyncRelayCommand(MarkGameAsFavourite);
+        MarkGameAsCompletedCmd = new AsyncRelayCommand(MarkGameAsComplete);
     }
 
     private readonly GameWithStatsService _gameWithStatsService;
@@ -70,5 +70,12 @@ public partial class GameWithStatsViewModel : ViewModelBase
     private async Task MarkGameAsFavourite()
     {
         await _gameWithStatsService.ToggleFavourite(this);
+    }
+    
+    public IAsyncRelayCommand MarkGameAsCompletedCmd { get; }
+
+    private async Task MarkGameAsComplete()
+    {
+        await _gameWithStatsService.ToggleCompleted(this);
     }
 }
