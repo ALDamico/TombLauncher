@@ -4,27 +4,32 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:views="clr-namespace:TombLauncher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.WelcomePageView"
              x:DataType="pages:WelcomePageViewModel">
     <Design.DataContext>
-        <pages:WelcomePageViewModel/>
+        <pages:WelcomePageViewModel />
     </Design.DataContext>
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
-                <InvokeCommandAction Command="{Binding InitCmd}"/>
+                <InvokeCommandAction Command="{Binding InitCmd}" />
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
     </Interaction.Behaviors>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" FontSize="20" FontWeight="DemiBold">Welcome to Tomb Launcher</TextBlock>
-        <TextBlock Grid.Row="1">Tomb Launcher is a Tomb Raider Level Editor manager.</TextBlock>
-        <mdxaml:MarkdownScrollViewer Grid.Row="2" Source="{Binding ChangeLogPath}" />
-    </Grid>
+    <ScrollViewer>
+        <StackPanel>
+            <TextBlock FontSize="20" FontWeight="DemiBold">Welcome to Tomb Launcher</TextBlock>
+            <TextBlock>Tomb Launcher is a Tomb Raider Level Editor manager.</TextBlock>
+            <TextBlock FontSize="16"  FontWeight="DemiBold"
+                       Margin="0, 10"
+                       Text="{DynamicResource Resume your last game}" 
+                       IsVisible="{Binding LatestPlayedGame, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+            <views:GameCardView DataContext="{Binding LatestPlayedGame}" 
+                                HorizontalAlignment="Left"
+                                IsVisible="{Binding ., Converter={x:Static ObjectConverters.IsNotNull}}"/>
+            <mdxaml:MarkdownScrollViewer MaxHeight="600" Source="{Binding ChangeLogPath}" />
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

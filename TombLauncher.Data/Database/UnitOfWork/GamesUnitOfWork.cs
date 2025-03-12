@@ -403,6 +403,24 @@ public class GamesUnitOfWork : UnitOfWorkBase
         };
     }
 
+    public GameWithStatsDto GetLatestPlayedGame()
+    {
+        var playSessionsRepo = PlaySessions.GetAll().Include(ps => ps.Game);
+        var entity = playSessionsRepo.FirstOrDefault(ps => ps.StartDate == playSessionsRepo.Max(p => p.StartDate));
+
+        if (entity == null)
+            return null;
+        var metadataDto = _mapper.Map<GameMetadataDto>(entity.Game);
+        var allPlaySessions = playSessionsRepo.Where(ps => ps.GameId == entity.GameId).ToList()
+            .Select(ps => ps.EndDate - ps.StartDate).Sum();
+        return new GameWithStatsDto()
+        {
+            GameMetadata = metadataDto,
+            LastPlayed = entity.StartDate,
+            TotalPlayedTime = allPlaySessions
+        };
+    }
+
     private GameStatisticsDto GetLatestPlayedGame(IIncludableQueryable<PlaySession, Game> repo)
     {
         var latestSession = repo.FirstOrDefault(ps => ps.StartDate == repo.Max(p => p.StartDate));
