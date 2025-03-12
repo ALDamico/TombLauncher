@@ -128,7 +128,7 @@
                 Classes="stretched btn-danger"
                 Icon="Delete"
                 Text="{DynamicResource Uninstall}"
-                Command="{Binding UninstallCmd}" />
+                Command="{Binding Game.UninstallCmd}" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

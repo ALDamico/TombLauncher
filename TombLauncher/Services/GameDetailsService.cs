@@ -48,20 +48,6 @@ public class GameDetailsService : IViewService
         Process.Start("explorer", gameFolder);
     }
 
-    public bool CanUninstall(GameMetadataViewModel metadataViewModel)
-    {
-        return metadataViewModel.IsInstalled;
-    }
-
-    public async Task Uninstall(string installDir, int gameId)
-    {
-        NavigationManager.GetCurrentPage().SetBusy("Uninstalling...");
-        Directory.Delete(installDir, true);
-        GamesUnitOfWork.MarkGameAsUninstalled(gameId);
-        await GamesUnitOfWork.Save();
-        NavigationManager.GoBack();
-    }
-
     public async Task FetchLinks(GameDetailsViewModel game, LinkType linkType)
     {
         var tf = new TaskFactory();

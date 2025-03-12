@@ -4,7 +4,6 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Core.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels;
@@ -18,6 +17,9 @@ public partial class GameWithStatsViewModel : ViewModelBase
         OpenCmd = new AsyncRelayCommand(Open);
         LaunchSetupCmd = new RelayCommand(LaunchSetup, CanLaunchSetup);
         LaunchCommunitySetupCmd = new RelayCommand(LaunchCommunitySetup, CanLaunchCommunitySetup);
+        MarkGameAsFavouriteCmd = new AsyncRelayCommand(MarkGameAsFavourite);
+        MarkGameAsCompletedCmd = new AsyncRelayCommand(MarkGameAsComplete);
+        UninstallCmd = new AsyncRelayCommand(Uninstall, CanUninstall);
     }
 
     private readonly GameWithStatsService _gameWithStatsService;
@@ -62,5 +64,31 @@ public partial class GameWithStatsViewModel : ViewModelBase
     private bool CanLaunchCommunitySetup()
     {
         return _gameWithStatsService.CanLaunchCommunitySetup(this);
+    }
+    
+    public IAsyncRelayCommand MarkGameAsFavouriteCmd { get; }
+
+    private async Task MarkGameAsFavourite()
+    {
+        await _gameWithStatsService.ToggleFavourite(this);
+    }
+    
+    public IAsyncRelayCommand MarkGameAsCompletedCmd { get; }
+
+    private async Task MarkGameAsComplete()
+    {
+        await _gameWithStatsService.ToggleCompleted(this);
+    }
+    
+    public ICommand UninstallCmd { get; }
+
+    private async Task Uninstall()
+    {
+        await _gameWithStatsService.Uninstall(GameMetadata.InstallDirectory, GameMetadata.Id);
+    }
+
+    public bool CanUninstall()
+    {
+        return _gameWithStatsService.CanUninstall(GameMetadata);
     }
 }

@@ -24,4 +24,6 @@ public class GameMetadataDto : IGameMetadata
     public string SetupExecutable { get; set; }
     public string SetupExecutableArgs { get; set; }
     public string CommunitySetupExecutable { get; set; }
+    public bool IsFavourite { get; set; }
+    public bool IsCompleted { get; set; }
 }

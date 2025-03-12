@@ -225,6 +225,10 @@
     <system:String x:Key="Insert a folder name to ignore...">Insert a folder name to ignore...</system:String>
     <system:String x:Key="The specified folder name contains the following invalid characters: CHARLIST">The specified folder name contains the following invalid characters: {0}</system:String>
     <system:String x:Key="Folder names cannot end with a dot or a space">Folder names cannot end with a dot or a space.</system:String>
+    <system:String x:Key="Favourite">Favourite</system:String>
+    <system:String x:Key="Add to favourites">Add to favourites</system:String>
+    <system:String x:Key="Remove from favourites">Remove from favourites</system:String>
+    <system:String x:Key="Completed">Completed</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

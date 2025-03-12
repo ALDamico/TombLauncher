@@ -4,17 +4,65 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameCardView"
              x:DataType="viewModels:GameWithStatsViewModel">
     <Design.DataContext>
         <viewModels:GameWithStatsViewModel />
     </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="AddToFavouritesBooleanToMaterialIconConverter" 
+                                                        TrueValue="Heart" 
+                                                        FalseValue="HeartOutline"/>
+        <valueConverters:BooleanToStringConverter x:Key="AddRemoveFromFavouritesBooleanConverter" 
+                                                  TrueValue="Remove from favourites" 
+                                                  FalseValue="Add to favourites"/>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="MarkAsCompletedBooleanToMaterialIconConverter" 
+                                                        TrueValue="Trophy" 
+                                                        FalseValue="TrophyBroken"/>
+        <valueConverters:BooleanToStringConverter x:Key="MarkUnmarkCompletedBooleanConverter" 
+                                                  TrueValue="Unmark as completed" 
+                                                  FalseValue="Mark as completed"/>
+    </UserControl.Resources>
     <Border CornerRadius="3" Width="400"
             Margin="10"
             ClipToBounds="True"
             Classes="card-background"
             x:Name="GameCard">
+        <Border.ContextMenu>
+            <ContextMenu>
+                    <MenuItem Header="{DynamicResource Play}" 
+                              Command="{Binding PlayCmd}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="Play"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{DynamicResource 'View details'}" 
+                              Command="{Binding OpenCmd}"/>
+                    <Separator/>
+                    <MenuItem Header="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}" 
+                              Command="{Binding MarkGameAsFavouriteCmd}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}"
+                              Command="{Binding MarkGameAsCompletedCmd}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="{DynamicResource Uninstall}" 
+                              Command="{Binding UninstallCmd}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="TrashCan" Foreground="{DynamicResource DangerBrush}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+        </Border.ContextMenu>
         <Interaction.Behaviors>
             <EventTriggerBehavior EventName="DoubleTapped"
                                   SourceObject="GameCard">

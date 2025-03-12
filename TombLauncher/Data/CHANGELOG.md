@@ -12,6 +12,8 @@ This project is still under active development, and as such some things may not 
  - Fixes bug where settings sections would be duplicated on multiple navigations to the settings page
  - Adds appropriate highlights for colored buttons
  - Shows documentation files in the game details view, and allows the user to open them directly from within Tomb Launcher.
+ - Add/remove games from favourites
+ - Mark/unmark game as completed
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22

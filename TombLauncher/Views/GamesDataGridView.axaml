@@ -5,12 +5,27 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GamesDataGridView"
              x:DataType="pages:GameListViewModel">
     <Design.DataContext>
         <pages:GameListViewModel />
     </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="AddToFavouritesBooleanToMaterialIconConverter" 
+                                                        TrueValue="Heart" 
+                                                        FalseValue="HeartOutline"/>
+        <valueConverters:BooleanToStringConverter x:Key="AddRemoveFromFavouritesBooleanConverter" 
+                                                  TrueValue="Remove from favourites" 
+                                                  FalseValue="Add to favourites"/>
+        <valueConverters:BooleanToMaterialIconConverter x:Key="MarkAsCompletedBooleanToMaterialIconConverter" 
+                                                        TrueValue="Trophy" 
+                                                        FalseValue="TrophyBroken"/>
+        <valueConverters:BooleanToStringConverter x:Key="MarkUnmarkCompletedBooleanConverter" 
+                                                  TrueValue="Unmark as completed" 
+                                                  FalseValue="Mark as completed"/>
+    </UserControl.Resources>
     <DataGrid ItemsSource="{Binding Games}" 
               IsReadOnly="True" 
               x:Name="GamesDataGrid"
@@ -29,6 +44,21 @@
                     <MenuItem Header="{DynamicResource 'View details'}" 
                               Command="{Binding OpenCmd}" 
                               CommandParameter="{Binding SelectedGame}"/>
+                    <Separator/>
+                    <MenuItem Header="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}" 
+                              Command="{Binding AddToFavouritesCmd}"
+                              CommandParameter="{Binding SelectedGame}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}"
+                              Command="{Binding MarkUnmarkCompletedCmd}"
+                              CommandParameter="{Binding SelectedGame}">
+                        <MenuItem.Icon>
+                            <avalonia:MaterialIcon Kind="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <Separator/>
                     <MenuItem Header="{DynamicResource Uninstall}" 
                               Command="{Binding UninstallCmd}" 
@@ -55,6 +85,36 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{DynamicResource Title}" Binding="{Binding GameMetadata.Title}" />
+                <DataGridTemplateColumn >
+                    <DataGridTemplateColumn.Header>
+                        <avalonia:MaterialIcon ToolTip.Tip="{DynamicResource Favourite}" 
+                                               Kind="Heart"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ToggleButton Classes="icon-only" 
+                                          Command="{Binding MarkGameAsFavouriteCmd}" 
+                                          ToolTip.Tip="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}">
+                                <avalonia:MaterialIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
+                            </ToggleButton>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn >
+                    <DataGridTemplateColumn.Header>
+                        <avalonia:MaterialIcon ToolTip.Tip="{DynamicResource Completed}" 
+                                               Kind="Trophy"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ToggleButton Classes="icon-only" 
+                                          Command="{Binding MarkGameAsCompletedCmd}" 
+                                          ToolTip.Tip="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}">
+                                <avalonia:MaterialIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
+                            </ToggleButton>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{DynamicResource Release date}" Binding="{Binding GameMetadata.ReleaseDate, StringFormat=d}" />
                 <DataGridTextColumn Header="{DynamicResource Install date}" Binding="{Binding GameMetadata.InstallDate, StringFormat=d}" />
                 <DataGridTextColumn Header="{DynamicResource Engine}" Binding="{Binding GameMetadata.GameEngine, Converter={StaticResource EnumToDescriptionConverter}}" />
