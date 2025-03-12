@@ -266,4 +266,18 @@ public class GameWithStatsService : IViewService
         await _gamesUnitOfWork.UpsertGame(metadata);
         gameWithStatsViewModel.GameMetadata.IsCompleted = metadata.IsCompleted;
     }
+    
+    public bool CanUninstall(GameMetadataViewModel metadataViewModel)
+    {
+        return metadataViewModel.IsInstalled;
+    }
+
+    public async Task Uninstall(string installDir, int gameId)
+    {
+        NavigationManager.GetCurrentPage().SetBusy("Uninstalling...");
+        Directory.Delete(installDir, true);
+        _gamesUnitOfWork.MarkGameAsUninstalled(gameId);
+        await _gamesUnitOfWork.Save();
+        NavigationManager.GoBack();
+    }
 }

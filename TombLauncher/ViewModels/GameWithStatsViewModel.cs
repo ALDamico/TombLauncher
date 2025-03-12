@@ -19,6 +19,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
         LaunchCommunitySetupCmd = new RelayCommand(LaunchCommunitySetup, CanLaunchCommunitySetup);
         MarkGameAsFavouriteCmd = new AsyncRelayCommand(MarkGameAsFavourite);
         MarkGameAsCompletedCmd = new AsyncRelayCommand(MarkGameAsComplete);
+        UninstallCmd = new AsyncRelayCommand(Uninstall, CanUninstall);
     }
 
     private readonly GameWithStatsService _gameWithStatsService;
@@ -77,5 +78,17 @@ public partial class GameWithStatsViewModel : ViewModelBase
     private async Task MarkGameAsComplete()
     {
         await _gameWithStatsService.ToggleCompleted(this);
+    }
+    
+    public ICommand UninstallCmd { get; }
+
+    private async Task Uninstall()
+    {
+        await _gameWithStatsService.Uninstall(GameMetadata.InstallDirectory, GameMetadata.Id);
+    }
+
+    public bool CanUninstall()
+    {
+        return _gameWithStatsService.CanUninstall(GameMetadata);
     }
 }
