@@ -14,6 +14,7 @@ This project is still under active development, and as such some things may not 
  - Shows documentation files in the game details view, and allows the user to open them directly from within Tomb Launcher.
  - Add/remove games from favourites
  - Mark/unmark game as completed
+ - Shows last played game on welcome page
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22
