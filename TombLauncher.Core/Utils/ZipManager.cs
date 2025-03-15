@@ -31,7 +31,7 @@ public class ZipManager : IDisposable
         return _zipFile.GetInputStream(file);
     }
 
-    public async Task ExtractAll(string targetPath, IProgress<CopyProgressInfo> progress = null)
+    public async Task ExtractAll(string targetPath, CancellationToken cancellationToken = default, IProgress<CopyProgressInfo> progress = null)
     {
         PathUtils.EnsureFolderExists(targetPath);
         var zipFileEnumerator = _zipFile.GetEnumerator();
@@ -40,6 +40,7 @@ public class ZipManager : IDisposable
 
         while (zipFileEnumerator.MoveNext())
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var current = (ZipEntry)zipFileEnumerator.Current;
             runningSize++;
 
@@ -72,9 +73,9 @@ public class ZipManager : IDisposable
             var size = 4096;
             var buffer = new byte[size];
 
-            while ((size = await inputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            while ((size = await inputStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
             {
-                streamWriter.Write(buffer, 0, size);
+                await streamWriter.WriteAsync(buffer, 0, size, cancellationToken);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Contracts.Downloaders;
@@ -10,9 +11,10 @@ namespace TombLauncher.Installers;
 
 public class TombRaiderLevelInstaller
 {
-    public async Task<string> Install(string containingFolder, IGameMetadata gameDto, 
+    public async Task<string> Install(string containingFolder, IGameMetadata gameDto, CancellationToken cancellationToken,
         IProgress<CopyProgressInfo> copyProgress = null)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (!Directory.Exists(containingFolder) && !File.Exists(containingFolder))
         {
             throw new ArgumentException("The source folder does not exist!", nameof(containingFolder));
@@ -26,10 +28,10 @@ public class TombRaiderLevelInstaller
         }
         else if (File.Exists(containingFolder))
         {
+            using var zipManager = new ZipManager(containingFolder);
             try
             {
-                var zipManager = new ZipManager(containingFolder);
-                await zipManager.ExtractAll(installFolder, copyProgress);
+                await zipManager.ExtractAll(installFolder, cancellationToken, copyProgress);
             }
             catch (ZipException)
             {
