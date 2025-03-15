@@ -15,6 +15,9 @@ This project is still under active development, and as such some things may not 
  - Add/remove games from favourites
  - Mark/unmark game as completed
  - Shows last played game on welcome page
+ - App properly cleans up after itself after a game has finished downloading
+ - Fixed a bug that prevented newly-installed games to be played from their notification
+ - The user can now perform a clean up of Tomb Launcher's temp folder manually
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22

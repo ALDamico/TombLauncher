@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Platform.Storage;
@@ -103,7 +104,7 @@ public class NewGameService : IViewService
 
         var gameMetadataDto = _mapper.Map<GameMetadataDto>(gameMetadata);
         
-        var installLocation = await LevelInstaller.Install(source, gameMetadataDto, progress);
+        var installLocation = await LevelInstaller.Install(source, gameMetadataDto, CancellationToken.None, progress);
         progress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
         gameMetadata.InstallDirectory = installLocation;
         var gameEngineResult = EngineDetector.Detect(installLocation);
