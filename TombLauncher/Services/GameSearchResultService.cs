@@ -111,7 +111,7 @@ public class GameSearchResultService : IViewService
                         return Task.CompletedTask;
                     return _gameWithStatsService.PlayGame(dto.Id);
                 },
-                (dto) => dto?.Id != default && _installProgress.InstallCompleted)
+                (dto) => dto?.Id != default && _installProgress == null || _installProgress.InstallCompleted)
         };
         await _notificationService.AddNotificationAsync(_notificationViewModel);
         gameToInstall.InstallProgress = _installProgress;
@@ -276,14 +276,14 @@ public class GameSearchResultService : IViewService
         _installProgress.IsInstalling = false;
         _installProgress.IsDownloading = false;
         _installProgress.ProcessStarted = false;
+        _installProgress.InstallCompleted = true;
         _installProgress.Message = "Install complete";
         if (_notificationViewModel != null)
         {
             _notificationViewModel.IsCancelable = false;
             _notificationViewModel.IsDismissable = true;
         }
-
-
+        
         await GamesUnitOfWork.Save();
         await AfterInstallCleanup();
         gameToInstall.InstalledGame =
