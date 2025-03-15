@@ -12,6 +12,7 @@ This project is still under active development, and as such some things may not 
  - Fixes bug where settings sections would be duplicated on multiple navigations to the settings page
  - Adds appropriate highlights for colored buttons
  - Shows documentation files in the game details view, and allows the user to open them directly from within Tomb Launcher.
+ - Support for multiple release channels (i.e. portable version)
  - Add/remove games from favourites
  - Mark/unmark game as completed
  - Shows last played game on welcome page
