@@ -230,6 +230,10 @@
     <system:String x:Key="Remove from favourites">Remove from favourites</system:String>
     <system:String x:Key="Completed">Completed</system:String>
     <system:String x:Key="Resume your last game">Resume your last game</system:String>
+    <system:String x:Key="Clean up temporary files">Clean up temporary files</system:String>
+    <system:String x:Key="Clean up Tomb Launcher`s temporary folder manually to reclaim some disk space.">Clean up Tomb Launcher's temporary folder manually to reclaim some disk space.</system:String>
+    <system:String x:Key="Clean up completed!">Clean up completed!</system:String>
+    <system:String x:Key="The clean up process has completed successfully!">The clean up process has completed successfully!</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

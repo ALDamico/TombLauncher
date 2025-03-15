@@ -9,6 +9,7 @@ using Avalonia.Styling;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
@@ -17,6 +18,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Utils;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Utils;
@@ -37,6 +39,7 @@ public class SettingsService : IViewService
         var mapperConfiguration = Ioc.Default.GetRequiredService<MapperConfiguration>();
         _mapper = mapperConfiguration.CreateMapper();
         _appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
+        _logger = Ioc.Default.GetRequiredService<ILogger<SettingsService>>();
     }
 
     private readonly IAppConfigurationWrapper _appConfiguration;
@@ -45,6 +48,7 @@ public class SettingsService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
     private readonly IMapper _mapper;
+    private readonly ILogger<SettingsService> _logger;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
     {
@@ -210,5 +214,35 @@ public class SettingsService : IViewService
     public List<string> GetExcludedFolders()
     {
         return _appConfiguration.DocumentationFolderExclusions.GetCheckedItems().ToList();
+    }
+
+    public async Task CleanUpTempFiles()
+    {
+        _logger.LogInformation("Starting temp folder clean up");
+        var tempFolder = PathUtils.GetTombLauncherTempDirectory();
+        var entries = Directory.GetFileSystemEntries(tempFolder).Where(e => e != tempFolder).ToArray();
+        foreach (var entry in entries)
+        {
+            try
+            {
+                _logger.LogInformation("Deleting entry {EntryName}", entry);
+                if (Directory.Exists(entry))
+                {
+                    Directory.Delete(entry, true);
+                }
+                else if (File.Exists(entry))
+                {
+                    File.Delete(entry);
+                }
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError("An IOException was ignored: {Ex}", ex);
+            }
+        }
+        
+        _logger.LogInformation("Temp folder clean up completed");
+
+        await Task.CompletedTask;
     }
 }

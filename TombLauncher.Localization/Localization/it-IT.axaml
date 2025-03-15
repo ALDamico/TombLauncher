@@ -229,6 +229,10 @@
     <system:String x:Key="Remove from favourites">Rimuovi dai preferiti</system:String>
     <system:String x:Key="Completed">Completato</system:String>
     <system:String x:Key="Resume your last game">Riprendi l'ultima partita</system:String>
+    <system:String x:Key="Clean up temporary files">Esegui pulizia dei file temporanei</system:String>
+    <system:String x:Key="Clean up Tomb Launcher`s temporary folder manually to reclaim some disk space.">Esegui manualmente la pulizia dei file temporanei di Tomb Launcher per recuperare spazio su disco.</system:String>
+    <system:String x:Key="Clean up completed!">Pulizia completata!</system:String>
+    <system:String x:Key="The clean up process has completed successfully!">Il processo di pulizia è stato completato con successo!</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

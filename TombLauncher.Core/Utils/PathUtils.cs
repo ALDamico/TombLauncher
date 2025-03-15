@@ -7,9 +7,17 @@ public class PathUtils
 {
     public static string GetRandomTempDirectory()
     {
-        var tempPath = Path.GetTempPath();
+        var tempPath = GetTombLauncherTempDirectory();
         var dirname = Path.GetRandomFileName();
-        var fullPath = Path.Combine(tempPath, "TombLauncher", dirname);
+        var fullPath = Path.Combine(tempPath, dirname);
+        EnsureFolderExists(fullPath);
+        return fullPath;
+    }
+
+    public static string GetTombLauncherTempDirectory()
+    {
+        var tempPath = Path.GetTempPath();
+        var fullPath = Path.Combine(tempPath, "TombLauncher");
         EnsureFolderExists(fullPath);
         return fullPath;
     }
