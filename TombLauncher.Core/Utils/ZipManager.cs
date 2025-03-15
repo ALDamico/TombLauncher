@@ -72,10 +72,11 @@ public class ZipManager : IDisposable
             await using var streamWriter = File.Create(targetFileName);
             var size = 4096;
             var buffer = new byte[size];
+            var memory = new Memory<byte>(buffer);
 
-            while ((size = await inputStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+            while (await inputStream.ReadAsync(memory, cancellationToken) > 0)
             {
-                await streamWriter.WriteAsync(buffer, 0, size, cancellationToken);
+                await streamWriter.WriteAsync(memory, cancellationToken);
             }
         }
     }
