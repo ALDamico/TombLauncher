@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -84,36 +85,8 @@ public class GameSearchResultService : IViewService
     {
         _logger.LogInformation("Attempting install for {GameTitle}", gameToInstall.Title);
         _installProgress = new InstallProgressViewModel();
-        _notificationViewModel = new NotificationViewModel()
-        {
-            Title = gameToInstall.Title,
-            Content = _installProgress,
-            OpenIcon = MaterialIconKind.Play,
-            CancelCommand = new AsyncRelayCommand(async () =>
-            {
-                await CancelInstall();
-                _installProgress.Message = $"Download cancelled";
-                _installProgress.IsDownloading = false;
-                _installProgress.IsInstalling = false;
-                _installProgress.ProcessStarted = false;
-                if (_notificationViewModel != null)
-                {
-                    _notificationViewModel.IsOpenable = false;
-                    _notificationViewModel.IsDismissable = true;
-                    _notificationViewModel.IsCancelable = false;
-                }
-            }),
-            IsCancelable = true,
-            IsOpenable = true,
-            OpenCommand = new AsyncRelayCommand<GameMetadataDto>((dto) =>
-                {
-                    if (dto == null)
-                        return Task.CompletedTask;
-                    return _gameWithStatsService.PlayGame(dto.Id);
-                },
-                (dto) => dto?.Id != default && _installProgress == null || _installProgress.InstallCompleted)
-        };
-        await _notificationService.AddNotificationAsync(_notificationViewModel);
+        await InitNotificationViewModel(gameToInstall);
+        
         gameToInstall.InstallProgress = _installProgress;
         var gameToInstallDto = _mapper.Map<MultiSourceSearchResultMetadataDto>(gameToInstall);
 
@@ -153,67 +126,14 @@ public class GameSearchResultService : IViewService
             }
         }
 
-        if (_downloadPath == null)
-        {
-            _logger.LogError("Download failed from all sources.");
-            _notificationService.RemoveNotification(_notificationViewModel);
-            await _notificationService.AddErrorNotificationAsync(gameToInstall.Title,
-                "Download failed from all sources. This is likely due to a download link redirecting to an external website.",
-                MaterialIconKind.Warning);
+        if (!await EnsureDownloadPathNotNull(gameToInstall)) 
             return;
-        }
 
         _logger.LogInformation("Calculating hashes for {GameTitle}", gameToInstall.Title);
         var hashCalculator = Ioc.Default.GetRequiredService<GameFileHashCalculator>();
         var hashes = await hashCalculator.CalculateHashes(_downloadPath);
-        if (GamesUnitOfWork.ExistsHashes(hashes, out var foundGameId))
-        {
-            _logger.LogWarning("Game {GameTitle} already installed", gameToInstall.Title);
-            var gameId = foundGameId.GetValueOrDefault();
-            var result = await MessageBoxService.ShowLocalized("The same mod is already installed",
-                "The same mod is already installed TEXT",
-                MsgBoxButton.YesNo,
-                MsgBoxImage.Error,
-                noButtonText: "Cancel",
-                yesButtonText: "Install anyway");
-            if (result.ButtonResult == MsgBoxButtonResult.No)
-            {
-                _logger.LogInformation("Won't install already existing game {GameTitle}", gameToInstall.Title);
-                await GamesUnitOfWork.SaveLink(new GameLinkDto()
-                {
-                    Link = gameToInstall.DownloadLink, LinkType = LinkType.Download, GameId = gameId,
-                    BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName
-                });
-                await GamesUnitOfWork.SaveLink(new GameLinkDto()
-                {
-                    Link = gameToInstall.DetailsLink, LinkType = LinkType.Details, GameId = gameId,
-                    BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName
-                });
-                if (gameToInstall.HasReviews)
-                {
-                    await GamesUnitOfWork.SaveLink(new GameLinkDto()
-                    {
-                        Link = gameToInstall.ReviewsLink, LinkType = LinkType.Reviews, GameId = gameId,
-                        BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName
-                    });
-                }
-
-                if (gameToInstall.HasWalkthrough)
-                {
-                    await GamesUnitOfWork.SaveLink(new GameLinkDto()
-                    {
-                        Link = gameToInstall.WalkthroughLink, LinkType = LinkType.Walkthrough, GameId = gameId,
-                        BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName
-                    });
-                }
-
-                return;
-            }
-            else
-            {
-                _logger.LogWarning("Will install anyway");
-            }
-        }
+        if (await CheckGameAlreadyInstalled(gameToInstall, hashes)) 
+            return;
 
         var allDetails = await GameDownloadManager.FetchAllDetails(gameToInstallDto);
         var dto = await GameDownloadManager.FetchDetails(gameToInstallDto);
@@ -292,6 +212,109 @@ public class GameSearchResultService : IViewService
         _installedGameId = null;
         _downloadPath = null;
         _logger.LogInformation("Installation for {GameTitle} complete", gameToInstall.Title);
+    }
+
+    private async Task<bool> CheckGameAlreadyInstalled(MultiSourceGameSearchResultMetadataViewModel gameToInstall, List<GameHashDto> hashes)
+    {
+        if (GamesUnitOfWork.ExistsHashes(hashes, out var foundGameId))
+        {
+            _logger.LogWarning("Game {GameTitle} already installed", gameToInstall.Title);
+            var gameId = foundGameId.GetValueOrDefault();
+            var result = await MessageBoxService.ShowLocalized("The same mod is already installed",
+                "The same mod is already installed TEXT",
+                MsgBoxButton.YesNo,
+                MsgBoxImage.Error,
+                noButtonText: "Cancel",
+                yesButtonText: "Install anyway");
+            if (result.ButtonResult == MsgBoxButtonResult.No)
+            {
+                _logger.LogInformation("Won't install already existing game {GameTitle}", gameToInstall.Title);
+                await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                {
+                    Link = gameToInstall.DownloadLink, LinkType = LinkType.Download, GameId = gameId,
+                    BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName
+                });
+                await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                {
+                    Link = gameToInstall.DetailsLink, LinkType = LinkType.Details, GameId = gameId,
+                    BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName
+                });
+                if (gameToInstall.HasReviews)
+                {
+                    await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                    {
+                        Link = gameToInstall.ReviewsLink, LinkType = LinkType.Reviews, GameId = gameId,
+                        BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName
+                    });
+                }
+
+                if (gameToInstall.HasWalkthrough)
+                {
+                    await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                    {
+                        Link = gameToInstall.WalkthroughLink, LinkType = LinkType.Walkthrough, GameId = gameId,
+                        BaseUrl = gameToInstall.BaseUrl, DisplayName = gameToInstall.SourceSiteDisplayName
+                    });
+                }
+
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning("Will install anyway");
+            }
+        }
+
+        return false;
+    }
+
+    private async Task<bool> EnsureDownloadPathNotNull(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
+    {
+        if (_downloadPath == null)
+        {
+            _logger.LogError("Download failed from all sources.");
+            _notificationService.RemoveNotification(_notificationViewModel);
+            await _notificationService.AddErrorNotificationAsync(gameToInstall.Title,
+                "Download failed from all sources. This is likely due to a download link redirecting to an external website.",
+                MaterialIconKind.Warning);
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task InitNotificationViewModel(MultiSourceGameSearchResultMetadataViewModel gameToInstall)
+    {
+        _notificationViewModel = new NotificationViewModel()
+        {
+            Title = gameToInstall.Title,
+            Content = _installProgress,
+            OpenIcon = MaterialIconKind.Play,
+            CancelCommand = new AsyncRelayCommand(async () =>
+            {
+                await CancelInstall();
+                _installProgress.Message = $"Download cancelled";
+                _installProgress.IsDownloading = false;
+                _installProgress.IsInstalling = false;
+                _installProgress.ProcessStarted = false;
+                if (_notificationViewModel != null)
+                {
+                    _notificationViewModel.IsOpenable = false;
+                    _notificationViewModel.IsDismissable = true;
+                    _notificationViewModel.IsCancelable = false;
+                }
+            }),
+            IsCancelable = true,
+            IsOpenable = true,
+            OpenCommand = new AsyncRelayCommand<GameMetadataDto>((dto) =>
+                {
+                    if (dto == null)
+                        return Task.CompletedTask;
+                    return _gameWithStatsService.PlayGame(dto.Id);
+                },
+                (dto) => dto?.Id != null && _installProgress.InstallCompleted)
+        };
+        await _notificationService.AddNotificationAsync(_notificationViewModel);
     }
 
     private void DetectGameEngine(string installLocation, IGameMetadata dto)
