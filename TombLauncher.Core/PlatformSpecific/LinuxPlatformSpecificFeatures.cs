@@ -37,4 +37,9 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
             UseShellExecute = true,
         };
     }
+
+    public NotifyFilters GetSavegameWatcherNotifyFilters()
+    {
+        return NotifyFilters.LastWrite | NotifyFilters.FileName;
+    }
 }

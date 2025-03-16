@@ -42,6 +42,7 @@ public class GameWithStatsService : IViewService
         _logger = Ioc.Default.GetRequiredService<ILogger<GameWithStatsService>>();
         _savegameService = Ioc.Default.GetRequiredService<SavegameService>();
         _winePath = settingsService.GetWinePath();
+        _platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
     }
 
     private SavegameHeaderProcessor _headerProcessor;
@@ -59,6 +60,7 @@ public class GameWithStatsService : IViewService
     private readonly SavegameService _savegameService;
     private readonly string _winePath;
     private DateTime? _startDate;
+    private IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public async Task OpenGame(GameWithStatsViewModel game)
     {
@@ -86,7 +88,7 @@ public class GameWithStatsService : IViewService
     {
         if (_watcher != null)
         {
-            _watcher.Changed -= WatcherOnCreated;
+            _watcher.Changed -= WatcherOnCreatedOrChanged;
         }
         try
         {
@@ -95,11 +97,11 @@ public class GameWithStatsService : IViewService
                 IncludeSubdirectories = true,
                 EnableRaisingEvents = true,
                 InternalBufferSize = 8192 * 32,
-                NotifyFilter = NotifyFilters.LastWrite
+                NotifyFilter = _platformSpecificFeatures.GetSavegameWatcherNotifyFilters()
             };
             _headerProcessor = Ioc.Default.GetRequiredService<SavegameHeaderProcessor>();
             _headerProcessor.SavegameHeaderReader = _savegameService.GetHeaderReader(game.GameMetadata.GameEngine);
-            _watcher.Changed += WatcherOnCreated;
+            _watcher.Changed += WatcherOnCreatedOrChanged;
         }
         catch
         {
@@ -108,7 +110,7 @@ public class GameWithStatsService : IViewService
         }
     }
 
-    private void WatcherOnCreated(object sender, FileSystemEventArgs e)
+    private void WatcherOnCreatedOrChanged(object sender, FileSystemEventArgs e)
     {
         _headerProcessor.EnqueueFileName(e.FullPath);
     }

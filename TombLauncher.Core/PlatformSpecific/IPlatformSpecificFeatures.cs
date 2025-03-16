@@ -10,4 +10,6 @@ public interface IPlatformSpecificFeatures
 
     ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
         string compatibilityExecutable, string workingDirectory);
+
+    NotifyFilters GetSavegameWatcherNotifyFilters();
 }

@@ -35,4 +35,9 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
             UseShellExecute = true,
         };
     }
+
+    public NotifyFilters GetSavegameWatcherNotifyFilters()
+    {
+        return NotifyFilters.LastWrite;
+    }
 }
