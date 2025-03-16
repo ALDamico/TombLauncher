@@ -233,6 +233,7 @@
     <system:String x:Key="Clean up Tomb Launcher`s temporary folder manually to reclaim some disk space.">Esegui manualmente la pulizia dei file temporanei di Tomb Launcher per recuperare spazio su disco.</system:String>
     <system:String x:Key="Clean up completed!">Pulizia completata!</system:String>
     <system:String x:Key="The clean up process has completed successfully!">Il processo di pulizia è stato completato con successo!</system:String>
+    <system:String x:Key="Space used by game">Spazio occupato per gioco</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

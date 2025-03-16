@@ -7,11 +7,15 @@ using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Extensions;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.ValueConverters;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services;
@@ -39,15 +43,7 @@ public class StatisticsService
     public long GetGamesSize()
     {
         var gamesFolder = PathUtils.GetGamesFolder();
-        var files = Directory.EnumerateFiles(gamesFolder, "*.*", SearchOption.AllDirectories);
-        var runningTotal = 0L;
-        foreach (var file in files)
-        {
-            var fileInfo = new FileInfo(file);
-            runningTotal += fileInfo.Length;
-        }
-
-        return runningTotal;
+        return PathUtils.GetDirectorySize(gamesFolder);
     }
 
     public StatisticsViewModel GetStatistics()
@@ -160,6 +156,17 @@ public class StatisticsService
                         Name = "Time played".GetLocalizedString(),
                     }
                 }
+            },
+            SpaceUsedStatistics = new ChartViewModel()
+            {
+                Series = statistics.SpaceUsedStatistics.AsPieSeries((dto, series) =>
+                {
+                    series.ToolTipLabelFormatter = point => point.Model.Title + Environment.NewLine + (string)new FileSizeFormatter().Convert(
+                        point.Model.SpaceUsedBytes, typeof(string), null,
+                        CultureInfo.InvariantCulture);
+                    LiveCharts.Configure(config => config
+                        .HasMap<GameSpaceUsedDto>((point, index) => new(index, point.SpaceUsedBytes)));
+                }).ToArray()
             }
         };
     }

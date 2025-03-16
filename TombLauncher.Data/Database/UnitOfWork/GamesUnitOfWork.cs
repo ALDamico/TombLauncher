@@ -365,7 +365,39 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
         output.DailyStatistics = dailyStats;
 
+        output.SpaceUsedStatistics = GetGameSpaceUsedStatistics();
+
         return output;
+    }
+
+    private List<GameSpaceUsedDto> GetGameSpaceUsedStatistics()
+    {
+        var spaceUsedStatistics = new List<GameSpaceUsedDto>();
+        
+        var gamesRepo = Games.GetAll();
+        foreach (var game in gamesRepo)
+        {
+            var installDirectory = game.InstallDirectory;
+            var directorySize = 0L;
+            if (Directory.Exists(installDirectory))
+            {
+                directorySize = PathUtils.GetDirectorySize(installDirectory);
+            }
+            else
+            {
+                continue;
+            }
+
+            var gameSpaceUsed = new GameSpaceUsedDto()
+            {
+                Id = game.Id,
+                Title = game.Title,
+                SpaceUsedBytes = directorySize
+            };
+            spaceUsedStatistics.Add(gameSpaceUsed);
+        }
+
+        return spaceUsedStatistics;
     }
 
     private static GameStatisticsDto GetMostPlayedByLaunches(ILookup<int, PlaySession> groupedByGame)
