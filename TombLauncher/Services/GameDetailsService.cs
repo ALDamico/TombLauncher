@@ -5,12 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
@@ -34,6 +36,7 @@ public class GameDetailsService : IViewService
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
         _mapper = mapperConfiguration.CreateMapper();
+        _platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
     }
 
     public GamesUnitOfWork GamesUnitOfWork { get; set; }
@@ -42,10 +45,11 @@ public class GameDetailsService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
     private IMapper _mapper;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public void OpenGameFolder(string gameFolder)
     {
-        Process.Start("explorer", gameFolder);
+        _platformSpecificFeatures.OpenGameFolder(gameFolder);
     }
 
     public async Task FetchLinks(GameDetailsViewModel game, LinkType linkType)

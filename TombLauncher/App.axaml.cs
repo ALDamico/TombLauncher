@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -29,6 +30,7 @@ using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;
@@ -146,6 +148,19 @@ public partial class App : Application
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton<IAppConfigurationWrapper>(appConfiguration);
+        serviceCollection.AddSingleton<IPlatformSpecificFeatures>(sp =>
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return new WindowsPlatformSpecificFeatures();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return new LinuxPlatformSpecificFeatures();
+            }
+
+            return null;
+        });
         ConfigureLogging(serviceCollection);
         ConfigureMappings(serviceCollection);
         ConfigurePageServices(serviceCollection);
