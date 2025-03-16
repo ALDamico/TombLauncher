@@ -25,4 +25,5 @@ public interface IAppConfiguration
     List<CheckableItem<string>> DocumentationFolderExclusions { get; set; }
     string UpdateChannelName { get; set; }
     string WinePath { get; set; }
+    string UnzipFallbackMethod { get; set; }
 }

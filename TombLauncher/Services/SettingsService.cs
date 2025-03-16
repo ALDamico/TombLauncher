@@ -19,6 +19,7 @@ using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Navigation;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Utils;
@@ -249,4 +250,13 @@ public class SettingsService : IViewService
     }
 
     public string GetWinePath() => _appConfiguration.WinePath;
+    public string GetUnzipFallbackMethod() => _appConfiguration.UnzipFallbackMethod;
+
+    public (string command, string commandLineArguments) GetUnzipFallbackMethodCommandLine()
+    {
+        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+        var methodToUse = platformSpecificFeatures.GetPlatformSpecificZipFallbackPrograms()
+            .FirstOrDefault(m => m.Name == GetUnzipFallbackMethod());
+        return (methodToUse.Command, methodToUse.CommandLineArguments);
+    }
 }

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Core.PlatformSpecific;
 
@@ -41,5 +42,14 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
     public NotifyFilters GetSavegameWatcherNotifyFilters()
     {
         return NotifyFilters.LastWrite | NotifyFilters.FileName;
+    }
+
+    public List<UnzipBackendDto> GetPlatformSpecificZipFallbackPrograms()
+    {
+        return
+        [
+            new UnzipBackendDto() { Name = "tar", Command  = "tar", CommandLineArguments = @"-xf ""{0}"" -C ""{1}""" },
+            new UnzipBackendDto() { Name = "unzip", Command = "unzip", CommandLineArguments = @"""{0}"" -d ""{1}""" }
+        ];
     }
 }

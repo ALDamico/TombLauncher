@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Utils;
+using TombLauncher.Services;
 
 namespace TombLauncher.Installers;
 
@@ -33,9 +37,17 @@ public class TombRaiderLevelInstaller
             {
                 await zipManager.ExtractAll(installFolder, cancellationToken, copyProgress);
             }
-            catch (ZipException)
+            catch (SharpZipBaseException)
             {
-                // ignore silently. File is not a valid zip
+                // Something happened that doesn't allow us to use SharpZipLib.
+                // Let's fallback to a simpler method
+                var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+                var commandLineToExecute = settingsService.GetUnzipFallbackMethodCommandLine();
+                var targetDirectory = PathUtils.GetRandomTempDirectory();
+                var commandLineArguments = string.Format(commandLineToExecute.commandLineArguments, containingFolder, targetDirectory);
+                var process = Process.Start(commandLineToExecute.command, commandLineArguments);
+                await process.WaitForExitAsync();
+                return await Install(targetDirectory, gameDto, cancellationToken, copyProgress);
             }
         }
 
