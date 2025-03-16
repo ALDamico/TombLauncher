@@ -50,10 +50,23 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </DockPanel>
-        <controls:IconButton Icon="VacuumCleaner" 
-                             Text="{DynamicResource 'Clean up temporary files'}" 
+        <controls:IconButton Icon="VacuumCleaner"
+                             Text="{DynamicResource 'Clean up temporary files'}"
                              ToolTip.Tip="{DynamicResource 'Clean up Tomb Launcher`s temporary folder manually to reclaim some disk space.'}"
-                             Command="{Binding CleanUpTempFilesCmd}" 
-                             Margin="0, 15, 0, 0" />
+                             Command="{Binding CleanUpTempFilesCmd}"
+                             Margin="0, 15" />
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Classes="small" Text="{DynamicResource 'Unzip fallback method'}"/>
+            <ComboBox Grid.Row="1"
+                      ItemsSource="{Binding AvailableUnzipFallbackMethods}"
+                      SelectedItem="{Binding SelectedUnzipFallbackMethod}"
+                      DisplayMemberBinding="{Binding Name}" />
+        </Grid>
+
     </StackPanel>
 </UserControl>
