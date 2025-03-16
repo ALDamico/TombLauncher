@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
+using TombLauncher.Core.Navigation;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -18,9 +19,9 @@ public partial class StatisticsPageViewModel : PageViewModel
     {
         _statisticsService = Ioc.Default.GetRequiredService<StatisticsService>();
         _gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
-        TopBarCommands = new ObservableCollection<CommandViewModel>()
+        TopBarCommands = new ObservableCollection<ITopBarCommand>()
         {
-            new()
+            new CommandViewModel()
             {
                 Command = new AsyncRelayCommand(RaiseInitialize), Icon = MaterialIconKind.Reload, Tooltip = "Reload".GetLocalizedString()
             }

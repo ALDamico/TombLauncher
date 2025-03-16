@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Material.Icons;
+using TombLauncher.Core.Navigation;
 
 namespace TombLauncher.ViewModels;
 
@@ -13,5 +14,5 @@ public partial class MainMenuItemViewModel : ViewModelBase
 
     [ObservableProperty] private string _toolTip;
 
-    [ObservableProperty] private Task<PageViewModel> _pageViewModelFactory;
+    [ObservableProperty] private Task<INavigationTarget> _pageViewModelFactory;
 }

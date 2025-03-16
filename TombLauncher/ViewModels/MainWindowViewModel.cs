@@ -7,9 +7,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
+using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.Navigation;
 using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages;
 
@@ -32,35 +32,35 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 ToolTip = "Welcome".GetLocalizedString(),
                 Icon = MaterialIconKind.HomeOutline,
                 Text = "Welcome".GetLocalizedString(),
-                PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<WelcomePageViewModel>())
+                PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<WelcomePageViewModel>())
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "My mods".GetLocalizedString(),
                 Icon = MaterialIconKind.Games,
                 Text = "My mods".GetLocalizedString(),
-                PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<GameListViewModel>())
+                PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<GameListViewModel>())
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "Search".GetLocalizedString(),
                 Icon = MaterialIconKind.Magnify,
                 Text = "Search".GetLocalizedString(),
-                PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<GameSearchViewModel>())
+                PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<GameSearchViewModel>())
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "Random".GetLocalizedString(),
                 Icon = MaterialIconKind.Gambling,
                 Text = "Random game".GetLocalizedString(),
-                PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<RandomGameViewModel>())
+                PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<RandomGameViewModel>())
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "Statistics".GetLocalizedString(),
                 Icon = MaterialIconKind.ChartBar,
                 Text = "Statistics".GetLocalizedString(),
-                PageViewModelFactory =  Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<StatisticsPageViewModel>())
+                PageViewModelFactory =  Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<StatisticsPageViewModel>())
             }
         };
 
@@ -69,7 +69,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
             ToolTip = "Settings".GetLocalizedString(),
             Icon = MaterialIconKind.Settings,
             Text = "Settings".GetLocalizedString(),
-            PageViewModelFactory = Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<SettingsPageViewModel>())
+            PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<SettingsPageViewModel>())
         };
 
         GitHubLinkItem = new CommandViewModel()
@@ -138,7 +138,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
         }
     }
 
-    public PageViewModel CurrentPage => _navigationManager.GetCurrentPage();
+    public INavigationTarget CurrentPage => _navigationManager.GetCurrentPage();
     public ICommand GoBackCmd { get; }
 
     private void GoBack()

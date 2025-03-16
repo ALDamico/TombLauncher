@@ -14,4 +14,14 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
         link = link.Replace("&", "^&");
         Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
     }
+
+    public EnumerationOptions GetEnumerationOptions()
+    {
+        return new EnumerationOptions()
+        {
+            MatchCasing = MatchCasing.PlatformDefault,
+            RecurseSubdirectories = true,
+            ReturnSpecialDirectories = false
+        };
+    }
 }

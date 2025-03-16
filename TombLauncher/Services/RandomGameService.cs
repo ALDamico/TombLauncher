@@ -8,10 +8,10 @@ using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 
@@ -96,7 +96,7 @@ public class RandomGameService
                         vm.SetBusy(false);
                     }, () => mapped.InstalledGame == null)
                     ;
-                await _navigationManager.StartNavigationAsync(Task.FromResult<PageViewModel>(vm));
+                await _navigationManager.StartNavigationAsync(Task.FromResult<INavigationTarget>(vm));
                 return;
             }
         }

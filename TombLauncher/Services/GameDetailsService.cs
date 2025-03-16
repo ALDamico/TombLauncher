@@ -12,12 +12,11 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.Navigation;
-using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.MessageBoxes;
@@ -130,7 +129,8 @@ public class GameDetailsService : IViewService
 
     public List<FileInfo> GetDocumentationFiles(string containingFolder, List<string> patterns, List<string> excludedFolders)
     {
-        return patterns.Select(p => Directory.GetFiles(containingFolder, p, SearchOption.AllDirectories))
+        var enumerationOptions = _platformSpecificFeatures.GetEnumerationOptions();
+        return patterns.Select(p => Directory.GetFiles(containingFolder, p, enumerationOptions))
             .SelectMany(f => f)
             .Where(f => excludedFolders.All(dir => !f.Contains(dir)))
             .Select(f => new FileInfo(f))

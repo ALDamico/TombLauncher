@@ -5,9 +5,9 @@ using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.Pages;
@@ -71,6 +71,6 @@ public class GameListService : IViewService
 
     public async Task OpenSearch()
     {
-        await NavigationManager.NavigateTo(Task.FromResult<PageViewModel>(Ioc.Default.GetRequiredService<GameSearchViewModel>()));
+        await NavigationManager.NavigateTo(Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<GameSearchViewModel>()));
     }
 }

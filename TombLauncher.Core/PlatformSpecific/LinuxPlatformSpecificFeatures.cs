@@ -14,4 +14,15 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
         link = link.Replace("&", "^&");
         Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
     }
+
+    public EnumerationOptions GetEnumerationOptions()
+    {
+        return new EnumerationOptions()
+        {
+            MatchCasing = MatchCasing.CaseInsensitive,
+            IgnoreInaccessible = true,
+            RecurseSubdirectories = true,
+            ReturnSpecialDirectories = false
+        };
+    }
 }
