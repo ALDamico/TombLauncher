@@ -8,6 +8,9 @@ This project is still under active development, and as such some things may not 
 
 # What's new in version 1.0.2
  - Pie chart of space used by games
+ - Adds zip extraction fallback method
+ - Linux support
+ - New game view rework
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22

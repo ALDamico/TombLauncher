@@ -238,6 +238,8 @@
     <system:String x:Key="Wine executable path">Wine executable path</system:String>
     <system:String x:Key="Wine tooltip content">Wine is a compatibility layer that allows Windows programs to run under Linux. In order to play TRLE customs, you need to have it installed on your Linux system.</system:String>
     <system:String x:Key="Unzip fallback method">Unzip fallback method</system:String>
+    <system:String x:Key="INSERT NEW GAME">INSERT NEW GAME</system:String>
+    <system:String x:Key="Install">Install</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>
