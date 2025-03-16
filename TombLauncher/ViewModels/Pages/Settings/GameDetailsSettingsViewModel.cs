@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
@@ -9,7 +10,9 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     {
     }
 
+    public bool IsWinePathOptionVisible => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
+    [ObservableProperty] private string _winePath;
     private EditablePatternListBoxViewModel _documentationPatterns;
 
     public EditablePatternListBoxViewModel DocumentationPatterns

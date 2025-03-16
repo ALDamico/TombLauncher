@@ -10,11 +10,12 @@ using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Navigation;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 
@@ -29,7 +30,8 @@ public class GameWithStatsService : IViewService
         NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
         DialogService = Ioc.Default.GetRequiredService<IDialogService>();
-        var savegameSettings = Ioc.Default.GetRequiredService<SettingsService>().GetSavegameSettings(null);
+        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        var savegameSettings = settingsService.GetSavegameSettings(null);
         _backupEnabled = savegameSettings.SavegameBackupEnabled.GetValueOrDefault();
         if (_backupEnabled)
         {
@@ -39,6 +41,8 @@ public class GameWithStatsService : IViewService
         _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
         _logger = Ioc.Default.GetRequiredService<ILogger<GameWithStatsService>>();
         _savegameService = Ioc.Default.GetRequiredService<SavegameService>();
+        _winePath = settingsService.GetWinePath();
+        _platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
     }
 
     private SavegameHeaderProcessor _headerProcessor;
@@ -54,6 +58,9 @@ public class GameWithStatsService : IViewService
     private readonly int? _numberOfSavesToKeep;
     private readonly ILogger<GameWithStatsService> _logger;
     private readonly SavegameService _savegameService;
+    private readonly string _winePath;
+    private DateTime? _startDate;
+    private IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public async Task OpenGame(GameWithStatsViewModel game)
     {
@@ -75,14 +82,13 @@ public class GameWithStatsService : IViewService
         //watcher.Created += WatcherOnCreated;
 
         LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
-        
     }
 
     private void InitFileSystemWatcher(GameWithStatsViewModel game)
     {
         if (_watcher != null)
         {
-            _watcher.Changed -= WatcherOnCreated;
+            _watcher.Changed -= WatcherOnCreatedOrChanged;
         }
         try
         {
@@ -91,11 +97,11 @@ public class GameWithStatsService : IViewService
                 IncludeSubdirectories = true,
                 EnableRaisingEvents = true,
                 InternalBufferSize = 8192 * 32,
-                NotifyFilter = NotifyFilters.LastWrite
+                NotifyFilter = _platformSpecificFeatures.GetSavegameWatcherNotifyFilters()
             };
             _headerProcessor = Ioc.Default.GetRequiredService<SavegameHeaderProcessor>();
             _headerProcessor.SavegameHeaderReader = _savegameService.GetHeaderReader(game.GameMetadata.GameEngine);
-            _watcher.Changed += WatcherOnCreated;
+            _watcher.Changed += WatcherOnCreatedOrChanged;
         }
         catch
         {
@@ -104,7 +110,7 @@ public class GameWithStatsService : IViewService
         }
     }
 
-    private void WatcherOnCreated(object sender, FileSystemEventArgs e)
+    private void WatcherOnCreatedOrChanged(object sender, FileSystemEventArgs e)
     {
         _headerProcessor.EnqueueFileName(e.FullPath);
     }
@@ -153,6 +159,7 @@ public class GameWithStatsService : IViewService
 
     private async Task OnGameExited(GameWithStatsViewModel game, Process process)
     {
+        Console.WriteLine("Exited!");
         if (process.ExitCode != 0)
         {
             _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
@@ -162,7 +169,7 @@ public class GameWithStatsService : IViewService
         {
             currentPage.SetBusy(true, "Saving play session...".GetLocalizedString());
             var gameMetadataDto = _mapper.Map<GameMetadataDto>(game.GameMetadata);
-            _gamesUnitOfWork.AddPlaySessionToGame(gameMetadataDto, process.StartTime, process.ExitTime);
+            _gamesUnitOfWork.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
             currentPage.SetBusy("Backing up savegames...".GetLocalizedString());
             var filesToProcess = _headerProcessor.ProcessedFiles;
 
@@ -221,18 +228,16 @@ public class GameWithStatsService : IViewService
 
     private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false, string arguments = null)
     {
+        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
         var executableFileNameOnly = Path.GetFileName(executable);
 
         var workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable));
+        // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
+        _startDate = DateTime.Now;
 
         var process = new Process()
         {
-            StartInfo = new ProcessStartInfo(executableFileNameOnly)
-            {
-                Arguments = arguments ?? "",
-                WorkingDirectory = workingDirectory,
-                UseShellExecute = true,
-            },
+            StartInfo = platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory),
             EnableRaisingEvents = true
         };
         if (trackPlayTime)

@@ -18,9 +18,9 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Navigation;
 using TombLauncher.Core.Utils;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.Navigation;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
@@ -90,6 +90,7 @@ public class SettingsService : IViewService
         _appConfiguration.Downloaders = mappedDownloaderConfigs;
         _appConfiguration.AskForConfirmationBeforeWalkthrough =
             gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
+        _appConfiguration.WinePath = gameDetailsSettings.WinePath;
         _appConfiguration.DocumentationPatterns = gameDetailsSettings.DocumentationPatterns.TargetCollection.ToList();
         _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
         _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
@@ -149,7 +150,8 @@ public class SettingsService : IViewService
             AskForConfirmationBeforeWalkthrough =
                 _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
             DocumentationPatterns = new EditablePatternListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationPatterns.ToObservableCollection()},
-            FolderExclusions = new EditableFolderExclusionsListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationFolderExclusions.ToObservableCollection()}
+            FolderExclusions = new EditableFolderExclusionsListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationFolderExclusions.ToObservableCollection()},
+            WinePath = GetWinePath()
         };
     }
 
@@ -245,4 +247,6 @@ public class SettingsService : IViewService
 
         await Task.CompletedTask;
     }
+
+    public string GetWinePath() => _appConfiguration.WinePath;
 }

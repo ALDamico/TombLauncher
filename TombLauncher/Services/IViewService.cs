@@ -1,7 +1,6 @@
 ﻿using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Localization;
-using TombLauncher.Navigation;
+using TombLauncher.Core.Navigation;
 
 namespace TombLauncher.Services;
 

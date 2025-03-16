@@ -6,10 +6,10 @@ using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Localization;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.Navigation;
 using TombLauncher.Utils;
 
 namespace TombLauncher.Services;

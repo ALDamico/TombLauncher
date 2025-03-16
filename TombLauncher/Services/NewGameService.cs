@@ -12,10 +12,10 @@ using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
-using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services;

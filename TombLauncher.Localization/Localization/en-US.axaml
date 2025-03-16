@@ -235,6 +235,8 @@
     <system:String x:Key="Clean up completed!">Clean up completed!</system:String>
     <system:String x:Key="The clean up process has completed successfully!">The clean up process has completed successfully!</system:String>
     <system:String x:Key="Space used by game">Space used by game</system:String>
+    <system:String x:Key="Wine executable path">Wine executable path</system:String>
+    <system:String x:Key="Wine tooltip content">Wine is a compatibility layer that allows Windows programs to run under Linux. In order to play TRLE customs, you need to have it installed on your Linux system.</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

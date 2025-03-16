@@ -25,4 +25,5 @@ public class AppConfiguration : IAppConfiguration
     public List<CheckableItem<string>> DocumentationPatterns { get; set; }
     public List<CheckableItem<string>> DocumentationFolderExclusions { get; set; }
     public string UpdateChannelName { get; set; }
+    public string WinePath { get; set; }
 }

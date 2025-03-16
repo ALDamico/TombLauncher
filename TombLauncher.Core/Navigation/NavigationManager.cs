@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using TombLauncher.ViewModels;
-
-namespace TombLauncher.Navigation;
+﻿namespace TombLauncher.Core.Navigation;
 
 public class NavigationManager
 {
-    internal void SetDefaultPage(PageViewModel defaultPage)
+    public void SetDefaultPage(INavigationTarget defaultPage)
     {
         _defaultPage = defaultPage;
     }
 
-    private PageViewModel _defaultPage;
-    private PageViewModel _currentPage;
+    private INavigationTarget _defaultPage;
+    private INavigationTarget _currentPage;
 
-    private readonly Stack<PageViewModel> _history = new();
+    private readonly Stack<INavigationTarget> _history = new();
 
     public void GoBack()
     {
@@ -40,15 +35,15 @@ public class NavigationManager
         return _history.Count > 1;
     }
     
-    public PageViewModel GetCurrentPage() => _currentPage;
+    public INavigationTarget GetCurrentPage() => _currentPage;
 
-    public async Task StartNavigationAsync(Task<PageViewModel> newPage)
+    public async Task StartNavigationAsync(Task<INavigationTarget> newPage)
     {
         var page = await newPage;
         await StartNavigationAsync(page);
     }
 
-    public async Task StartNavigationAsync(PageViewModel newPage)
+    public async Task StartNavigationAsync(INavigationTarget newPage)
     {
         _history.Clear();
         await NavigateTo(newPage);
@@ -59,13 +54,13 @@ public class NavigationManager
         InvokeOnNavigated();
     }
 
-    public async Task NavigateTo(Task<PageViewModel> newPage)
+    public async Task NavigateTo(Task<INavigationTarget> newPage)
     {
         var awaitedPage = await newPage;
         await NavigateTo(awaitedPage);
     }
 
-    public Task NavigateTo(PageViewModel newPage)
+    public Task NavigateTo(INavigationTarget newPage)
     {
         _history.Push(newPage);
         _currentPage = newPage;

@@ -39,12 +39,6 @@ public static class AppUtils
         }
     }
 
-    public static void OpenUrl(string link)
-    {
-        link = link.Replace("&", "^&");
-        Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
-    }
-
     public static Version GetApplicationVersion() => Assembly.GetEntryAssembly()?.GetName().Version;
 
     public static Version GetDotNetVersion() => Environment.Version;

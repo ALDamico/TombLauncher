@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
              xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameDetailsSettingsView"
              x:DataType="settings:GameDetailsSettingsViewModel"
@@ -12,9 +13,18 @@
         <settings:GameDetailsSettingsViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
+        <DockPanel LastChildFill="True">
+            <controls:Infotip DockPanel.Dock="Right" 
+                              Header="{DynamicResource 'Wine executable path'}" 
+                              ToolTipContent="{DynamicResource Wine tooltip content}"/>
+            <controls:LabeledTextBox Label="{DynamicResource 'Wine executable path'}" 
+                                     Text="{Binding WinePath}" 
+                                     IsVisible="{Binding IsWinePathOptionVisible}"/>
+        </DockPanel>
+        
         <ToggleSwitch IsChecked="{Binding AskForConfirmationBeforeWalkthrough}"
-                  Content="{DynamicResource 'Ask for confirmation before opening a walkthrough'}" />
+                      Content="{DynamicResource 'Ask for confirmation before opening a walkthrough'}" />
         <views:EditableListBox DataContext="{Binding DocumentationPatterns}"/>
-        <views:EditableListBox DataContext="{Binding FolderExclusions}"></views:EditableListBox>
+        <views:EditableListBox DataContext="{Binding FolderExclusions}"/>
     </StackPanel>
 </UserControl>

@@ -129,4 +129,10 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         get => User.UpdateChannelName.Coalesce(Defaults.UpdateChannelName);
         set => User.UpdateChannelName = value.DefaultIfEquals(Defaults.UpdateChannelName);
     }
+
+    public string WinePath
+    {
+        get => User.WinePath.Coalesce(Defaults.WinePath);
+        set => User.WinePath = value.DefaultIfEquals(Defaults.WinePath);
+    }
 }

@@ -24,4 +24,5 @@ public interface IAppConfiguration
     List<CheckableItem<string>> DocumentationPatterns { get; set; }
     List<CheckableItem<string>> DocumentationFolderExclusions { get; set; }
     string UpdateChannelName { get; set; }
+    string WinePath { get; set; }
 }

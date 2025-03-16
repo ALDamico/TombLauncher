@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -10,25 +10,21 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
-using Material.Icons;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetSparkleUpdater;
-using NetSparkleUpdater.AppCastHandlers;
-using NetSparkleUpdater.Downloaders;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.SignatureVerifiers;
-using NetSparkleUpdater.UI.Avalonia;
 using Serilog;
 using Serilog.Events;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
-using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Navigation;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;
@@ -39,7 +35,6 @@ using TombLauncher.Installers.Downloaders.AspideTR.com;
 using TombLauncher.Installers.Downloaders.TRCustoms.org;
 using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
-using TombLauncher.Navigation;
 using TombLauncher.Services;
 using TombLauncher.Updater;
 using TombLauncher.Utils;
@@ -146,6 +141,19 @@ public partial class App : Application
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton<IAppConfigurationWrapper>(appConfiguration);
+        serviceCollection.AddSingleton<IPlatformSpecificFeatures>(sp =>
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return new WindowsPlatformSpecificFeatures();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return new LinuxPlatformSpecificFeatures();
+            }
+
+            return null;
+        });
         ConfigureLogging(serviceCollection);
         ConfigureMappings(serviceCollection);
         ConfigurePageServices(serviceCollection);

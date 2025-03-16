@@ -6,8 +6,6 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Serilog;
 using TombLauncher.Core.Exceptions;
-using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Navigation;
 using TombLauncher.Services;
 
 namespace TombLauncher;
