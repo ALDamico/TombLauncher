@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Configuration;
@@ -26,4 +25,5 @@ public class AppConfiguration : IAppConfiguration
     public List<CheckableItem<string>> DocumentationFolderExclusions { get; set; }
     public string UpdateChannelName { get; set; }
     public string WinePath { get; set; }
+    public string UnzipFallbackMethod { get; set; }
 }

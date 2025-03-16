@@ -135,4 +135,10 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         get => User.WinePath.Coalesce(Defaults.WinePath);
         set => User.WinePath = value.DefaultIfEquals(Defaults.WinePath);
     }
+
+    public string UnzipFallbackMethod
+    {
+        get => User.UnzipFallbackMethod.Coalesce(Defaults.UnzipFallbackMethod);
+        set => value.DefaultIfEquals(Defaults.UnzipFallbackMethod);
+    }
 }

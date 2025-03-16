@@ -13,13 +13,12 @@
         <settings:GameDetailsSettingsViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <DockPanel LastChildFill="True">
+        <DockPanel LastChildFill="True" IsVisible="{Binding IsWinePathOptionVisible}">
             <controls:Infotip DockPanel.Dock="Right" 
                               Header="{DynamicResource 'Wine executable path'}" 
-                              ToolTipContent="{DynamicResource Wine tooltip content}"/>
+                              ToolTipContent="{DynamicResource Wine tooltip content}" />
             <controls:LabeledTextBox Label="{DynamicResource 'Wine executable path'}" 
-                                     Text="{Binding WinePath}" 
-                                     IsVisible="{Binding IsWinePathOptionVisible}"/>
+                                     Text="{Binding WinePath}" />
         </DockPanel>
         
         <ToggleSwitch IsChecked="{Binding AskForConfirmationBeforeWalkthrough}"

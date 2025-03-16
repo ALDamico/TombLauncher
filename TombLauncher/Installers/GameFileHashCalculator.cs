@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 using TombLauncher.Extensions;
+using TombLauncher.Services;
 using TombLauncher.Utils;
 
 namespace TombLauncher.Installers;
@@ -46,9 +50,22 @@ public class GameFileHashCalculator
             return await ProcessFolder(dataFolder, gameId);
         }
 
-        using (var zipManager = new ZipManager(dataFolder))
+        try
         {
+            using var zipManager = new ZipManager(dataFolder);
             return await ProcessZipFile(zipManager, gameId);
+        }
+        catch (SharpZipBaseException)
+        {
+            // Something happened that doesn't allow us to use SharpZipLib.
+            // Let's fallback to a simpler method
+            var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+            var commandLineToExecute = settingsService.GetUnzipFallbackMethodCommandLine();
+            var targetDirectory = PathUtils.GetRandomTempDirectory();
+            var commandLineArguments = string.Format(commandLineToExecute.commandLineArguments, dataFolder, targetDirectory);
+            var process = Process.Start(commandLineToExecute.command, commandLineArguments);
+            await process.WaitForExitAsync();
+            return await ProcessFolder(targetDirectory, gameId);
         }
 
 

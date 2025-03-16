@@ -2,11 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
@@ -22,13 +24,24 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         InfoTipContent = "Downloaders infotip content".GetLocalizedString();
         _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         _messageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
+        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+        var mapper = new Mapper(Ioc.Default.GetRequiredService<MapperConfiguration>());
+        AvailableUnzipFallbackMethods =
+            mapper.Map<ObservableCollection<UnzipBackendViewModel>>(platformSpecificFeatures
+                .GetPlatformSpecificZipFallbackPrograms()) ?? new ObservableCollection<UnzipBackendViewModel>();
+        SelectedUnzipFallbackMethod =
+            AvailableUnzipFallbackMethods!.FirstOrDefault(m => m.Name == _settingsService.GetUnzipFallbackMethod())!;
+        if (SelectedUnzipFallbackMethod == null)
+            SelectedUnzipFallbackMethod = AvailableUnzipFallbackMethods.FirstOrDefault()!;
         CleanUpTempFilesCmd = new AsyncRelayCommand(CleanUpTempFiles);
     }
 
     [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders;
     [ObservableProperty] private DownloaderViewModel _selectedDownloader;
+    [ObservableProperty] private ObservableCollection<UnzipBackendViewModel> _availableUnzipFallbackMethods;
+    [ObservableProperty] private UnzipBackendViewModel _selectedUnzipFallbackMethod;
     private readonly SettingsService _settingsService;
-    private IMessageBoxService _messageBoxService;
+    private readonly IMessageBoxService _messageBoxService;
 
     public ICommand MoveUpCmd { get; }
 

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Core.PlatformSpecific;
 
@@ -12,4 +13,5 @@ public interface IPlatformSpecificFeatures
         string compatibilityExecutable, string workingDirectory);
 
     NotifyFilters GetSavegameWatcherNotifyFilters();
+    List<UnzipBackendDto> GetPlatformSpecificZipFallbackPrograms();
 }
