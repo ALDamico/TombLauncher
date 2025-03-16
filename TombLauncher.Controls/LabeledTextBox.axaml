@@ -19,7 +19,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Grid.Row="0" Classes="small" Text="{Binding ElementName=LabeledTextBoxRoot, Path=Label}"/>
+        <TextBlock FontFamily="" Grid.Row="0" Classes="small" Text="{Binding ElementName=LabeledTextBoxRoot, Path=Label}"/>
         <DockPanel Grid.Row="1" LastChildFill="True">
             <ContentControl DockPanel.Dock="Right" 
                             Content="{Binding ElementName=LabeledTextBoxRoot, Path=Infotip}" 
