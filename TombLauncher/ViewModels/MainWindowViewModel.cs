@@ -7,10 +7,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.Services;
-using TombLauncher.Utils;
 using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;
@@ -100,7 +100,8 @@ public partial class MainWindowViewModel : WindowViewModelBase
     {
         var settings = Ioc.Default.GetRequiredService<SettingsService>();
         var gitHubLink = settings.GetGitHubLink();
-        AppUtils.OpenUrl(gitHubLink);
+        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+        platformSpecificFeatures.OpenUrl(gitHubLink);
     }
 
     private bool _isPaneOpen;

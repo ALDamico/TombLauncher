@@ -25,7 +25,7 @@ public partial class GameDetailsViewModel : PageViewModel
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
         ManageSaveGamesCmd = new RelayCommand(ManageSavegames);
         OpenLaunchOptionsCmd = new RelayCommand(OpenLaunchOptions);
-        OpenDocumentCommand = new RelayCommand<string>(OpenDocument);
+        OpenDocumentCommand = new AsyncRelayCommand<string>(OpenDocument);
     }
 
     [ObservableProperty][NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCmd))]private bool _askForConfirmationBeforeOpeningWalkthrough;
@@ -89,9 +89,9 @@ public partial class GameDetailsViewModel : PageViewModel
     
     public ICommand OpenDocumentCommand { get; }
 
-    private void OpenDocument(string path)
+    private async Task OpenDocument(string path)
     {
-        AppUtils.OpenUrl(path);
+        await _gameDetailsService.OpenWalkthrough(path, false);
     }
     
     private void InitSetupCommands()

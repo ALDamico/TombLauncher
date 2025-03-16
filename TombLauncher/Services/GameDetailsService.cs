@@ -76,7 +76,7 @@ public class GameDetailsService : IViewService
         
         try
         {
-            AppUtils.OpenUrl(link);
+            _platformSpecificFeatures.OpenUrl(link);
         }
         catch (SystemException)
         {

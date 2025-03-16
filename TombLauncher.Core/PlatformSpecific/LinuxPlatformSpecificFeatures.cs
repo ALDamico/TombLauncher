@@ -8,4 +8,10 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
     {
         Process.Start("xdg-open", gameFolder);
     }
+
+    public void OpenUrl(string link)
+    {
+        link = link.Replace("&", "^&");
+        Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
+    }
 }

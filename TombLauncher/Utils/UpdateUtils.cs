@@ -4,15 +4,13 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
-using NetSparkleUpdater;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Downloaders;
-using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.UI.Avalonia;
-using NetSparkleUpdater.UI.Avalonia.Helpers;
 using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Services;
 using TombLauncher.Updater;
 
@@ -44,15 +42,16 @@ public static class UpdateUtils
             {
                 {
                     StableChannel,
-                    new CommunityToolkit.Mvvm.Input.RelayCommand<UpdateCommandPayload>(payload =>
+                    new RelayCommand<UpdateCommandPayload>(payload =>
                         payload.Sparkle.ShowUpdateNeededUI(payload.Args.AppCastItems))
                 },
                 {
-                    PortableChannel, new CommunityToolkit.Mvvm.Input.RelayCommand<UpdateCommandPayload>(payload =>
+                    PortableChannel, new RelayCommand<UpdateCommandPayload>(payload =>
                     {
                         var settings = Ioc.Default.GetRequiredService<SettingsService>();
                         var gitHubLink = settings.GetGitHubLink();
-                        AppUtils.OpenUrl(gitHubLink);
+                        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+                        platformSpecificFeatures.OpenUrl(gitHubLink);
                     })
                 }
             };

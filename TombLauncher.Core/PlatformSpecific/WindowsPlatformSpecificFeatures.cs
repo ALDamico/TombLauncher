@@ -8,4 +8,10 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
     {
         Process.Start("explorer", gameFolder);
     }
+
+    public void OpenUrl(string link)
+    {
+        link = link.Replace("&", "^&");
+        Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
+    }
 }
