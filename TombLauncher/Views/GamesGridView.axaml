@@ -1,0 +1,35 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.GamesGridView"
+             x:DataType="pages:GameListViewModel">
+    <Design.DataContext>
+        <pages:GameListViewModel />
+    </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="views|GameCardView:pointerover Border">
+            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}"></Setter>
+        </Style>
+        <Style Selector="views|GameCardView Border">
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}"></Setter>
+        </Style>
+    </UserControl.Styles>
+    <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Games}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <views:GameCardView/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

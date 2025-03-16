@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using JamSoft.AvaloniaUI.Dialogs;
@@ -45,20 +46,6 @@ public class GameDetailsService : IViewService
     public void OpenGameFolder(string gameFolder)
     {
         Process.Start("explorer", gameFolder);
-    }
-
-    public bool CanUninstall(GameMetadataViewModel metadataViewModel)
-    {
-        return metadataViewModel.IsInstalled;
-    }
-
-    public async Task Uninstall(string installDir, int gameId)
-    {
-        NavigationManager.GetCurrentPage().SetBusy("Uninstalling...");
-        Directory.Delete(installDir, true);
-        GamesUnitOfWork.MarkGameAsUninstalled(gameId);
-        await GamesUnitOfWork.Save();
-        NavigationManager.GoBack();
     }
 
     public async Task FetchLinks(GameDetailsViewModel game, LinkType linkType)
@@ -135,5 +122,14 @@ public class GameDetailsService : IViewService
         await GamesUnitOfWork.UpdateLaunchOptions(launchOptionsDto);
         
         NavigationManager.GetCurrentPage().ClearBusy();
+    }
+
+    public List<FileInfo> GetDocumentationFiles(string containingFolder, List<string> patterns, List<string> excludedFolders)
+    {
+        return patterns.Select(p => Directory.GetFiles(containingFolder, p, SearchOption.AllDirectories))
+            .SelectMany(f => f)
+            .Where(f => excludedFolders.All(dir => !f.Contains(dir)))
+            .Select(f => new FileInfo(f))
+            .ToList();
     }
 }

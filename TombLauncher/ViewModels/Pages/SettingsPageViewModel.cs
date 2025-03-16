@@ -54,15 +54,21 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private void SectionErrorChanged(object sender, DataErrorsChangedEventArgs args)
     {
         OnPropertyChanged(nameof(IsChanged));
+        OnPropertyChanged(nameof(HasPendingEdits));
         RaiseCanExecuteChanged(SaveCmd);
     }
 
     protected override Task RaiseInitialize()
     {
+        if (IsInitialized)
+            return base.RaiseInitialize();
+
+        IsInitialized = true;
         var currentTheme = _settingsService.GetApplicationTheme();
         var appearanceSettings = new AppearanceSettingsViewModel(this)
         {
-            SelectedTheme = currentTheme
+            SelectedTheme = currentTheme,
+            DefaultToGridView = _settingsService.IsGridViewDefault()
         };
         var supportedLanguages = _settingsService.GetSupportedLanguages();
         var languageSettings = new LanguageSettingsViewModel(this)
@@ -102,17 +108,19 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
     protected override bool CanSave()
     {
-        return IsChanged;
+        return IsChanged && !HasPendingEdits;
     }
 
     public void AcceptChanges()
     {
         foreach (var section in Sections)
         {
-            section.AcceptChanges();
+            if (!section.EditInProgress)
+                section.AcceptChanges();
         }
 
         OnPropertyChanged(nameof(IsChanged));
+        OnPropertyChanged(nameof(HasPendingEdits));
         RaiseCanExecuteChanged(SaveCmd);
     }
 
@@ -123,6 +131,14 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             var anyChanged = Sections.Any(s => s.IsChanged);
             var anyErrors = Sections.Any(s => s.HasErrors);
             return anyChanged && !anyErrors;
+        }
+    }
+
+    public bool HasPendingEdits
+    {
+        get
+        {
+            return Sections.Any(s => s.EditInProgress);
         }
     }
 }

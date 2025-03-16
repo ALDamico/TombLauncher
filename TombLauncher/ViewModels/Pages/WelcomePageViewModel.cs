@@ -13,11 +13,14 @@ public partial class WelcomePageViewModel : PageViewModel
     }
 
     private readonly WelcomePageService _welcomePageService;
+    [ObservableProperty] private GameWithStatsViewModel _latestPlayedGame;
 
-    protected override Task RaiseInitialize()
+    protected override async Task RaiseInitialize()
     {
         _welcomePageService.HandleNotNotifiedCrashes();
-        return base.RaiseInitialize();
+        var latestPlayedGame = await _welcomePageService.GetLatestPlayedGame();
+        LatestPlayedGame = latestPlayedGame;
+        await base.RaiseInitialize();
     }
 
     [ObservableProperty] private string _changeLogPath;

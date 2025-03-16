@@ -1,9 +1,15 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using JamSoft.AvaloniaUI.Dialogs;
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
@@ -14,10 +20,15 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         MoveUpCmd = new RelayCommand<DownloaderViewModel>(MoveUp, CanMoveUp);
         MoveDownCmd = new RelayCommand<DownloaderViewModel>(MoveDown, CanMoveDown);
         InfoTipContent = "Downloaders infotip content".GetLocalizedString();
+        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        _messageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
+        CleanUpTempFilesCmd = new AsyncRelayCommand(CleanUpTempFiles);
     }
 
     [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders;
     [ObservableProperty] private DownloaderViewModel _selectedDownloader;
+    private readonly SettingsService _settingsService;
+    private IMessageBoxService _messageBoxService;
 
     public ICommand MoveUpCmd { get; }
 
@@ -66,5 +77,14 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
     {
         if (downloaderViewModel == null) return false;
         return downloaderViewModel.Priority < AvailableDownloaders.Count;
+    }
+    
+    public ICommand CleanUpTempFilesCmd { get; }
+
+    private async Task CleanUpTempFiles()
+    {
+        await _settingsService.CleanUpTempFiles();
+        await _messageBoxService.ShowLocalized("Clean up completed!", "The clean up process has completed successfully!",
+            MsgBoxButton.Ok, MsgBoxImage.Information);
     }
 }

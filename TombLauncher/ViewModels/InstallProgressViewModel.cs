@@ -4,6 +4,10 @@ namespace TombLauncher.ViewModels;
 
 public partial class InstallProgressViewModel: ViewModelBase
 {
+    public InstallProgressViewModel()
+    {
+        ProcessStarted = true;
+    }
     [ObservableProperty] private double _totalBytes;
     [ObservableProperty] private double _currentBytes;
     [ObservableProperty] private double _downloadSpeed;
@@ -13,4 +17,5 @@ public partial class InstallProgressViewModel: ViewModelBase
     [ObservableProperty] private bool _isDownloading;
     [ObservableProperty] private bool _isInstalling;
     [ObservableProperty] private bool _installCompleted;
+    [ObservableProperty] private bool _processStarted;
 }

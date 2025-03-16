@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -42,4 +44,8 @@ public static class AppUtils
         link = link.Replace("&", "^&");
         Process.Start(new ProcessStartInfo(link) { UseShellExecute = true });
     }
+
+    public static Version GetApplicationVersion() => Assembly.GetEntryAssembly()?.GetName().Version;
+
+    public static Version GetDotNetVersion() => Environment.Version;
 }

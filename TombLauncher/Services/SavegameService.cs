@@ -9,6 +9,7 @@ using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
@@ -37,6 +38,7 @@ public class SavegameService
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         _numberOfVersionsToKeep = settingsService.GetSavegameSettings(null).NumberOfVersionsToKeep;
         _dialogService = Ioc.Default.GetRequiredService<IDialogService>();
+        _logger = Ioc.Default.GetRequiredService<ILogger<SavegameService>>();
         InitHeaderReaderMap();
     }
 
@@ -46,6 +48,7 @@ public class SavegameService
     private int? _numberOfVersionsToKeep;
     private IDialogService _dialogService;
     private Dictionary<GameEngine, ISavegameHeaderReader> _headerReaderMap;
+    private ILogger<SavegameService> _logger;
 
     private void InitHeaderReaderMap()
     {
@@ -231,6 +234,7 @@ public class SavegameService
     public async Task UpdateStartOfLevelState(SavegameListViewModel savegameListViewModel,
         SavegameViewModel targetSaveGame)
     {
+        _logger.LogInformation("Setting savegame number {Savegame} as start of level...", targetSaveGame.SaveNumber);
         savegameListViewModel.SetBusy("Update in progress...");
         var dto = _mapper.Map<FileBackupDto>(targetSaveGame);
         await _gamesUnitOfWork.UpdateSavegameStartOfLevel(dto);
@@ -287,8 +291,10 @@ public class SavegameService
     private void ExecuteRestore(RestoreSavegameDialogViewModel vm)
     {
         var selectedSlot = vm.SelectedSlot.SaveSlot;
+        _logger.LogInformation("Restoring slot {SelectedSlot}...", selectedSlot);
         var fileName = Path.Combine(vm.TargetDirectory, string.Join(".", vm.BaseFileName, selectedSlot));
         File.WriteAllBytes(fileName, vm.Data);
+        _logger.LogInformation("Restores {SelectedSlot}", selectedSlot);
     }
 
     public async Task DeleteAllSavegamesByGameId(SavegameListViewModel savegameListViewModel, int gameId)
@@ -320,7 +326,6 @@ public class SavegameService
             page.SetBusy("Syncing savegames...");
             var allGamesWithSaves = await _gamesUnitOfWork.GetSavegameBackups();
             
-            
             foreach (var savegame in allGamesWithSaves)
             {
                 var headerReader = _headerReaderMap[savegame.GameEngine];
@@ -349,6 +354,8 @@ public class SavegameService
 
     public ISavegameHeaderReader GetHeaderReader(GameEngine gameEngine)
     {
-        return _headerReaderMap[gameEngine];
+        var headerToReturn = _headerReaderMap[gameEngine];
+        _logger.LogInformation("Using savegame header reader {HeaderReaderType}", headerToReturn.GetType());
+        return headerToReturn;
     }
 }

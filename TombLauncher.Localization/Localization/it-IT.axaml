@@ -114,7 +114,6 @@
     <system:String x:Key="No">No</system:String>
     <system:String x:Key="GAME DETAILS">DETTAGLI DI GIOCO</system:String>
     <system:String x:Key="Ask for confirmation before opening a walkthrough">Chiedi conferma prima di aprire una soluzione</system:String>
-    <system:String x:Key="Use internal viewer if available">Utilizza il visualizzatore interno se disponibile</system:String>
     <system:String x:Key="Are you sure you want to read the walkthrough?">Sei sicuro di voler leggere la soluzione?</system:String>
     <system:String x:Key="Confirm">Conferma</system:String>
     <system:String x:Key="Notifications">Notifiche</system:String>
@@ -203,6 +202,37 @@
     <system:String x:Key="Launching community patch setup for GAMENAME">Avvio dell'utility di configurazione della patch della community per {0}</system:String>
     <system:String x:Key="Community patch setup">Setup patch della community</system:String>
     <system:String x:Key="Open Tomb Launcher's GitHub page">Apri la pagina GitHub di Tomb Launcher</system:String>
+    <system:String x:Key="Grid view">Visualizzazione griglia</system:String>
+    <system:String x:Key="Table view">Visualizzazione tabella</system:String>
+    <system:String x:Key="Show games as">Visualizza i giochi come</system:String>
+    <system:String x:Key="Table">Tabella</system:String>
+    <system:String x:Key="The list of games will be displayed as a table.">La lista dei giochi verrà visualizzata come una tabella.</system:String>
+    <system:String x:Key="You can play a game by double-clicking a row.">Puoi avviare un gioco facendo doppio clic su una riga.</system:String>
+    <system:String x:Key="Grid">Griglia</system:String>
+    <system:String x:Key="The list of games will be displayed as cards arranged in a grid.">La lista dei giochi verrà visualizzata come card disposte lungo una griglia.</system:String>
+    <system:String x:Key="You can play a game by double-clicking its card, or open the game details by single-clicking it.">Puoi avviare un gioco facendo doppio clic su una delle card, oppure visualizzarne i dettagli con un singolo clic.</system:String>
+    <system:String x:Key="Documentation">Documentazione</system:String>
+    <system:String x:Key="Use the following patterns to recognize documentation files">Usa i seguenti pattern per riconoscere i file di documentazione:</system:String>
+    <system:String x:Key="Insert a new pattern here...">Inserisci un nuovo pattern...</system:String>
+    <system:String x:Key="This pattern has already been added">Questo pattern è già stato aggiunto.</system:String>
+    <system:String x:Key="The pattern PATTERN is not allowed">Il pattern {0} non è consentito.</system:String>
+    <system:String x:Key="Clear">Pulisci</system:String>
+    <system:String x:Key="Delete">Elimina</system:String>
+    <system:String x:Key="Edit">Modifica</system:String>
+    <system:String x:Key="Specify a pattern">Specificare un pattern.</system:String>
+    <system:String x:Key="Ignore the following folders when searching for documentation">Ignora le seguenti cartelle nella ricerca di documentazione:</system:String>
+    <system:String x:Key="Insert a folder name to ignore...">Inserisci il nome della cartella da ignorare...</system:String>
+    <system:String x:Key="The specified folder name contains the following invalid characters: CHARLIST">Il nome di cartella specificato contiene i seguenti caratteri non validi: {0}</system:String>
+    <system:String x:Key="Folder names cannot end with a dot or a space">I nomi di cartella non posono terminare con un punto o uno spazio.</system:String>
+    <system:String x:Key="Favourite">Preferito</system:String>
+    <system:String x:Key="Add to favourites">Aggiungi ai preferiti</system:String>
+    <system:String x:Key="Remove from favourites">Rimuovi dai preferiti</system:String>
+    <system:String x:Key="Completed">Completato</system:String>
+    <system:String x:Key="Resume your last game">Riprendi l'ultima partita</system:String>
+    <system:String x:Key="Clean up temporary files">Esegui pulizia dei file temporanei</system:String>
+    <system:String x:Key="Clean up Tomb Launcher`s temporary folder manually to reclaim some disk space.">Esegui manualmente la pulizia dei file temporanei di Tomb Launcher per recuperare spazio su disco.</system:String>
+    <system:String x:Key="Clean up completed!">Pulizia completata!</system:String>
+    <system:String x:Key="The clean up process has completed successfully!">Il processo di pulizia è stato completato con successo!</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

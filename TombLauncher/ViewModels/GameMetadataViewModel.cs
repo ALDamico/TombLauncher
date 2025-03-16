@@ -26,5 +26,7 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private string _setupExecutable;
     [ObservableProperty] private string _setupExecutableArgs;
     [ObservableProperty] private string _communitySetupExecutable;
+    [ObservableProperty] private bool _isCompleted;
+    [ObservableProperty] private bool _isFavourite;
     public Guid Guid { get; set; }
 }

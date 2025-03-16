@@ -10,9 +10,4 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
-
-    private void Button_OnClick(object sender, RoutedEventArgs e)
-    {
-        (DataContext as MainWindowViewModel).NotificationListViewModel.HasNewItems = false;
-    }
 }

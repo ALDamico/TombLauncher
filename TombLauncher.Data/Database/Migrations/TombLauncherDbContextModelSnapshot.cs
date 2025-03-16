@@ -101,6 +101,12 @@ namespace TombLauncher.Data.Database.Migrations
                     b.Property<string>("InstallDirectory")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsFavourite")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsInstalled")
                         .HasColumnType("INTEGER");
 
@@ -224,11 +230,13 @@ namespace TombLauncher.Data.Database.Migrations
 
             modelBuilder.Entity("TombLauncher.Data.Models.FileBackup", b =>
                 {
-                    b.HasOne("TombLauncher.Data.Models.Game", null)
+                    b.HasOne("TombLauncher.Data.Models.Game", "Game")
                         .WithMany("FileBackups")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("TombLauncher.Data.Models.GameHashes", b =>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,7 +13,6 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Navigation;
 using TombLauncher.ViewModels;
@@ -32,7 +30,7 @@ public class GameWithStatsService : IViewService
         MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
         DialogService = Ioc.Default.GetRequiredService<IDialogService>();
         var savegameSettings = Ioc.Default.GetRequiredService<SettingsService>().GetSavegameSettings(null);
-        _backupEnabled = savegameSettings.SavegameBackupEnabled;
+        _backupEnabled = savegameSettings.SavegameBackupEnabled.GetValueOrDefault();
         if (_backupEnabled)
         {
             _numberOfSavesToKeep = savegameSettings.NumberOfVersionsToKeep;
@@ -251,5 +249,35 @@ public class GameWithStatsService : IViewService
             (_, args) => _logger.LogInformation("Process output: {StandardOutput}", args.Data);
 
         process.Start();
+    }
+
+    public async Task ToggleFavourite(GameWithStatsViewModel gameWithStatsViewModel)
+    {
+        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        metadata.IsFavourite = !metadata.IsFavourite;
+        await _gamesUnitOfWork.UpsertGame(metadata);
+        gameWithStatsViewModel.GameMetadata.IsFavourite = metadata.IsFavourite;
+    }
+
+    public async Task ToggleCompleted(GameWithStatsViewModel gameWithStatsViewModel)
+    {
+        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        metadata.IsCompleted = !metadata.IsCompleted;
+        await _gamesUnitOfWork.UpsertGame(metadata);
+        gameWithStatsViewModel.GameMetadata.IsCompleted = metadata.IsCompleted;
+    }
+    
+    public bool CanUninstall(GameMetadataViewModel metadataViewModel)
+    {
+        return metadataViewModel.IsInstalled;
+    }
+
+    public async Task Uninstall(string installDir, int gameId)
+    {
+        NavigationManager.GetCurrentPage().SetBusy("Uninstalling...");
+        Directory.Delete(installDir, true);
+        _gamesUnitOfWork.MarkGameAsUninstalled(gameId);
+        await _gamesUnitOfWork.Save();
+        NavigationManager.GoBack();
     }
 }

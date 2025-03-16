@@ -114,7 +114,6 @@
     <system:String x:Key="No">No</system:String>
     <system:String x:Key="GAME DETAILS">GAME DETAILS</system:String>
     <system:String x:Key="Ask for confirmation before opening a walkthrough">Ask for confirmation before opening a walkthrough</system:String>
-    <system:String x:Key="Use internal viewer if available">Use internal viewer if available</system:String>
     <system:String x:Key="Are you sure you want to read the walkthrough?">Are you sure you want to read the walkthrough?</system:String>
     <system:String x:Key="Confirm">Confirm</system:String>
     <system:String x:Key="Notifications">Notifications</system:String>
@@ -204,6 +203,37 @@
     <system:String x:Key="Launching community patch setup for GAMENAME">Launching community patch setup for {0}</system:String>
     <system:String x:Key="Community patch setup">Community patch setup</system:String>
     <system:String x:Key="Open Tomb Launcher's GitHub page">Open Tomb Launcher's GitHub page</system:String>
+    <system:String x:Key="Grid view">Grid view</system:String>
+    <system:String x:Key="Table view">Table view</system:String>
+    <system:String x:Key="Show games as">Show games as</system:String>
+    <system:String x:Key="Table">Table</system:String>
+    <system:String x:Key="The list of games will be displayed as a table.">The list of games will be displayed as a table.</system:String>
+    <system:String x:Key="You can play a game by double-clicking a row.">You can play a game by double-clicking a row.</system:String>
+    <system:String x:Key="Grid">Grid</system:String>
+    <system:String x:Key="The list of games will be displayed as cards arranged in a grid.">The list of games will be displayed as cards arranged in a grid.</system:String>
+    <system:String x:Key="You can play a game by double-clicking its card, or open the game details by single-clicking it.">You can play a game by double-clicking its card, or open the game details by single-clicking it.</system:String>
+    <system:String x:Key="Documentation">Documentation</system:String>
+    <system:String x:Key="Use the following patterns to recognize documentation files">Use the following patterns to recognize documentation files:</system:String>
+    <system:String x:Key="Insert a new pattern here...">Insert a new pattern here...</system:String>
+    <system:String x:Key="This pattern has already been added">This pattern has already been added.</system:String>
+    <system:String x:Key="The pattern PATTERN is not allowed">The pattern {0} is not allowed.</system:String>
+    <system:String x:Key="Clear">Clear</system:String>
+    <system:String x:Key="Delete">Delete</system:String>
+    <system:String x:Key="Edit">Edit</system:String>
+    <system:String x:Key="Specify a pattern">Specify a pattern.</system:String>
+    <system:String x:Key="Ignore the following folders when searching for documentation">Ignore the following folders when searching for documentation:</system:String>
+    <system:String x:Key="Insert a folder name to ignore...">Insert a folder name to ignore...</system:String>
+    <system:String x:Key="The specified folder name contains the following invalid characters: CHARLIST">The specified folder name contains the following invalid characters: {0}</system:String>
+    <system:String x:Key="Folder names cannot end with a dot or a space">Folder names cannot end with a dot or a space.</system:String>
+    <system:String x:Key="Favourite">Favourite</system:String>
+    <system:String x:Key="Add to favourites">Add to favourites</system:String>
+    <system:String x:Key="Remove from favourites">Remove from favourites</system:String>
+    <system:String x:Key="Completed">Completed</system:String>
+    <system:String x:Key="Resume your last game">Resume your last game</system:String>
+    <system:String x:Key="Clean up temporary files">Clean up temporary files</system:String>
+    <system:String x:Key="Clean up Tomb Launcher`s temporary folder manually to reclaim some disk space.">Clean up Tomb Launcher's temporary folder manually to reclaim some disk space.</system:String>
+    <system:String x:Key="Clean up completed!">Clean up completed!</system:String>
+    <system:String x:Key="The clean up process has completed successfully!">The clean up process has completed successfully!</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>

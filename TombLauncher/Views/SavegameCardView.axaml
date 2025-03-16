@@ -17,8 +17,11 @@
                                                         TrueValue="FlagOutline"
                                                         FalseValue="FlagOffOutline" />
     </UserControl.Resources>
-    <Border CornerRadius="3" Padding="10" Margin="10" Width="250"
-            Background="{DynamicResource ButtonBackground}">
+    <Border CornerRadius="3" 
+            Padding="10" 
+            Margin="10" 
+            Width="250"
+            Classes="card-background">
         <Border.Styles>
             <Style Selector="TextBlock">
                 <Setter Property="Foreground" Value="White"/>

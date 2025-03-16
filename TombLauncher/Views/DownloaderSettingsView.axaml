@@ -30,7 +30,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsEnabled}" />
+                            <CheckBox IsChecked="{Binding IsChecked}" />
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="{Binding DisplayName}"
                                            FontWeight="DemiBold" />
@@ -50,5 +50,10 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </DockPanel>
+        <controls:IconButton Icon="VacuumCleaner" 
+                             Text="{DynamicResource 'Clean up temporary files'}" 
+                             ToolTip.Tip="{DynamicResource 'Clean up Tomb Launcher`s temporary folder manually to reclaim some disk space.'}"
+                             Command="{Binding CleanUpTempFilesCmd}" 
+                             Margin="0, 15, 0, 0" />
     </StackPanel>
 </UserControl>

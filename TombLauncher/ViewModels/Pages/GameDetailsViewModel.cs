@@ -1,17 +1,17 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using JamSoft.AvaloniaUI.Dialogs;
 using Material.Icons;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
+using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels.Pages;
 
@@ -22,23 +22,80 @@ public partial class GameDetailsViewModel : PageViewModel
         _game = game;
         _gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
         BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
-        UninstallCmd = new AsyncRelayCommand(Uninstall, CanUninstall);
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
         ManageSaveGamesCmd = new RelayCommand(ManageSavegames);
         OpenLaunchOptionsCmd = new RelayCommand(OpenLaunchOptions);
+        OpenDocumentCommand = new RelayCommand<string>(OpenDocument);
     }
 
-    private bool _askForConfirmationBeforeOpeningWalkthrough;
-    private bool _useInternalViewerIfAvailable;
-    //private IDialogService _dialogService;
+    [ObservableProperty][NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCmd))]private bool _askForConfirmationBeforeOpeningWalkthrough;
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands;
+    [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles;
+    [ObservableProperty] private GameWithStatsViewModel _game;
+    [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks;
+    private List<string> _enabledPatterns;
+    private List<string> _ignoredFolders;
+    private readonly GameDetailsService _gameDetailsService;
+    
 
     protected override async Task RaiseInitialize()
     {
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var gameDetailsSettings = settingsService.GetGameDetailsSettings(this);
-        _askForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
-        _useInternalViewerIfAvailable = gameDetailsSettings.UseInternalViewerIfAvailable;
+        AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
+        _enabledPatterns = settingsService.GetEnabledPatterns();
+        _ignoredFolders = settingsService.GetExcludedFolders();
+        InitSetupCommands();
+
+        if (Game.GameMetadata.IsInstalled)
+            DocumentationFiles = _gameDetailsService.GetDocumentationFiles(Game.GameMetadata.InstallDirectory, _enabledPatterns, _ignoredFolders).ToObservableCollection();
+        await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
+    }
+    
+    public ICommand BrowseFolderCmd { get; }
+
+    private void BrowseFolder()
+    {
+        _gameDetailsService.OpenGameFolder(Game.GameMetadata.InstallDirectory);
+    }
+
+    private bool CanBrowseFolder()
+    {
+        return Game.CanUninstall();
+    }
+    
+    public ICommand ManageSaveGamesCmd { get; }
+
+    private void ManageSavegames()
+    {
+        _gameDetailsService.OpenSavegameList(this);
+    }
+    
+    public IRelayCommand ReadWalkthroughCmd { get; }
+
+    private async Task ReadWalkthrough(GameLinkViewModel link)
+    {
+        await _gameDetailsService.OpenWalkthrough(link.Link, AskForConfirmationBeforeOpeningWalkthrough);
+    }
+
+    [ObservableProperty] private ICommand _installCmd;
+    
+    public ICommand OpenLaunchOptionsCmd { get; }
+
+    private void OpenLaunchOptions()
+    {
+        _gameDetailsService.OpenLaunchOptions(this);
+    }
+    
+    public ICommand OpenDocumentCommand { get; }
+
+    private void OpenDocument(string path)
+    {
+        AppUtils.OpenUrl(path);
+    }
+    
+    private void InitSetupCommands()
+    {
         SetupCommands = new ObservableCollection<CommandViewModel>();
         if (Game.GameMetadata.SetupExecutable.IsNotNullOrWhiteSpace())
         {
@@ -49,56 +106,5 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             SetupCommands.Add(new CommandViewModel(){Command = Game.LaunchCommunitySetupCmd, Icon = MaterialIconKind.SettingsPlay, Text = "Community patch setup".GetLocalizedString()});
         }
-        await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
-    }
-
-    private readonly GameDetailsService _gameDetailsService;
-    [ObservableProperty] private GameWithStatsViewModel _game;
-    [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks;
-    public ICommand BrowseFolderCmd { get; }
-
-    private void BrowseFolder()
-    {
-        _gameDetailsService.OpenGameFolder(Game.GameMetadata.InstallDirectory);
-    }
-
-    private bool CanBrowseFolder()
-    {
-        return _gameDetailsService.CanUninstall(Game.GameMetadata);
-    }
-    
-    public ICommand ManageSaveGamesCmd { get; }
-
-    private void ManageSavegames()
-    {
-        _gameDetailsService.OpenSavegameList(this);
-    }
-    
-    public ICommand ReadWalkthroughCmd { get; }
-
-    private async Task ReadWalkthrough(GameLinkViewModel link)
-    {
-        await _gameDetailsService.OpenWalkthrough(link.Link, _askForConfirmationBeforeOpeningWalkthrough);
-    }
-    
-    public ICommand UninstallCmd { get; }
-
-    private async Task Uninstall()
-    {
-        await _gameDetailsService.Uninstall(Game.GameMetadata.InstallDirectory, Game.GameMetadata.Id);
-    }
-
-    private bool CanUninstall()
-    {
-        return _gameDetailsService.CanUninstall(Game.GameMetadata);
-    }
-
-    [ObservableProperty] private ICommand _installCmd;
-    
-    public ICommand OpenLaunchOptionsCmd { get; }
-
-    private void OpenLaunchOptions()
-    {
-        _gameDetailsService.OpenLaunchOptions(this);
     }
 }

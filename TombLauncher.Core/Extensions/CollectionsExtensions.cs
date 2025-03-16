@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Core.Extensions;
 
@@ -15,5 +16,11 @@ public static class CollectionsExtensions
         var upperBound = collection.Count - 1;
         var index = random.Next(upperBound);
         return collection.ElementAt(index);
+    }
+
+    public static IEnumerable<T> GetCheckedItems<T>(this IEnumerable<CheckableItem<T>> enumerable)
+        where T : IEquatable<T>
+    {
+        return enumerable.Where(i => i.IsChecked).Select(i => i.Value);
     }
 }

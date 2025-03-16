@@ -76,6 +76,8 @@ public class GamesUnitOfWork : UnitOfWorkBase
             entity.ReleaseDate = game.ReleaseDate;
             entity.TitlePic = game.TitlePic;
             entity.AuthorFullName = game.AuthorFullName;
+            entity.IsFavourite = game.IsFavourite;
+            entity.IsCompleted = game.IsCompleted;
             Games.Update(entity);
         }
         
@@ -398,6 +400,24 @@ public class GamesUnitOfWork : UnitOfWorkBase
             LastPlayed = longest.StartDate,
             LastPlayedEnd = longest.EndDate,
             Id = longest.GameId
+        };
+    }
+
+    public GameWithStatsDto GetLatestPlayedGame()
+    {
+        var playSessionsRepo = PlaySessions.GetAll().Include(ps => ps.Game);
+        var entity = playSessionsRepo.FirstOrDefault(ps => ps.StartDate == playSessionsRepo.Max(p => p.StartDate));
+
+        if (entity == null)
+            return null;
+        var metadataDto = _mapper.Map<GameMetadataDto>(entity.Game);
+        var allPlaySessions = playSessionsRepo.Where(ps => ps.GameId == entity.GameId).ToList()
+            .Select(ps => ps.EndDate - ps.StartDate).Sum();
+        return new GameWithStatsDto()
+        {
+            GameMetadata = metadataDto,
+            LastPlayed = entity.StartDate,
+            TotalPlayedTime = allPlaySessions
         };
     }
 

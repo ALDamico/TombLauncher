@@ -1,7 +1,8 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls">
+        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+        xmlns:views="clr-namespace:TombLauncher.Views">
     <Design.PreviewWith>
         <Border Padding="20">
             <!-- Add Controls for Previewer Here -->
@@ -17,6 +18,17 @@
                     <SolidColorBrush x:Key="ColoredButtonTextBrush">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
+            <SolidColorBrush x:Key="PrimaryBrush">#0d6efd</SolidColorBrush>
+            <SolidColorBrush x:Key="PrimaryPointerOverBrush">#0a58ca</SolidColorBrush>
+            <SolidColorBrush x:Key="SuccessBrush">#198754</SolidColorBrush>
+            <SolidColorBrush x:Key="SuccessPointerOverBrush">#157347</SolidColorBrush>
+            <SolidColorBrush x:Key="DangerBrush">#dc3545</SolidColorBrush>
+            <SolidColorBrush x:Key="DangerPointerOverBrush">#b02a37</SolidColorBrush>
+            <SolidColorBrush x:Key="WarningBrush">#ffc107</SolidColorBrush>
+            <SolidColorBrush x:Key="WarningPointerOverBrush">#ffcd39</SolidColorBrush>
+            <SolidColorBrush x:Key="SecondaryBrush">#6c757d</SolidColorBrush>
+            <SolidColorBrush x:Key="SecondaryPointerOverBrush">#565e64</SolidColorBrush>
+            <SolidColorBrush x:Key="CardBackgroundBrush">#3a3a3a</SolidColorBrush>
         </ResourceDictionary>
     </Styles.Resources>
 
@@ -68,11 +80,18 @@
     <Style Selector=":is(Control).padded">
         <Setter Property="Margin" Value="5"></Setter>
     </Style>
-    <Style Selector=":is(Button).stretched">
+    <Style Selector=":is(ContentControl).stretched">
         <Setter Property="Height" Value="36" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Expander.stretched">
+        <Setter Property="Height" Value="NaN"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
     </Style>
 
     <Style Selector=":is(SplitButton).stretched">
@@ -81,44 +100,91 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
+    <Style Selector=":is(Button).btn-primary">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    <Style Selector=":is(Button):pointerover.btn-primary /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryPointerOverBrush}"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
     <Style Selector=":is(Button).btn-success">
-        <Setter Property="Background" Value="Green"></Setter>
+        <Setter Property="Background" Value="{DynamicResource SuccessBrush}"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    <Style Selector=":is(Button):pointerover.btn-success /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(SplitButton).btn-success">
-        <Setter Property="Background" Value="Green"></Setter>
+        <Setter Property="Background" Value="{DynamicResource SuccessBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
+    <!-- SplitButtons in Avalonia are a bit weird. We need to have setters on the ContentPresenters of the two buttons
+    (named PART_PrimaryButton and PART_SecondaryButton) in order for pseudoclasses to work as expected -->
+    <Style Selector=":is(SplitButton).btn-success:pointerover Button">
+        <Style Selector="^ /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+        </Style>
+    </Style>
+    <Style Selector=":is(SplitButton).btn-success:pressed Button">
+        <Style Selector="^ /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+        </Style>
+    </Style>
+    <Style Selector=":is(SplitButton).btn-success:flyout-open Button">
+        <Style Selector="^ /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+            <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+        </Style>
+    </Style>
+
     <Style Selector=":is(controls|RoundIconButton).btn-success">
-        <Setter Property="Background" Value="Green"></Setter>
+        <Setter Property="Background" Value="{DynamicResource SuccessBrush}"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    <Style Selector=":is(controls|RoundIconButton).btn-success:pointerover">
+        <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(Button).btn-danger">
-        <Setter Property="Background" Value="DarkRed"/>
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    <Style Selector=":is(Button).btn-danger:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DangerPointerOverBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(SplitButton).btn-danger">
-        <Setter Property="Background" Value="DarkRed"/>
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector=":is(controls|RoundIconButton).btn-danger">
-        <Setter Property="Background" Value="DarkRed"/>
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    <Style Selector=":is(controls|RoundIconButton).btn-danger:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DangerPointerOverBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>
     <Style Selector="TextBlock.text-muted">
-        <Setter Property="Foreground" Value="#6c757d"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"></Setter>
     </Style>
     <Style Selector="TextBlock:disabled">
-        <Setter Property="Foreground" Value="#6c757d"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"></Setter>
     </Style>
     <Style Selector="avalonia|MaterialIcon.text-muted">
-        <Setter Property="Foreground" Value="#6c757d"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"></Setter>
     </Style>
     <Style Selector="avalonia|MaterialIcon.warning">
-        <Setter Property="Foreground" Value="#ffc107"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"></Setter>
     </Style>
 
-    
     <Style Selector="ProgressBar">
         <Setter Property="Transitions">
             <Transitions>
@@ -126,7 +192,7 @@
             </Transitions>
         </Setter>
     </Style>
-    
+
     <Style Selector="DataValidationErrors">
         <Setter Property="Template">
             <ControlTemplate>
@@ -135,7 +201,7 @@
                                     ContentTemplate="{TemplateBinding ErrorTemplate}"
                                     DataContext="{TemplateBinding Owner}"
                                     Content="{Binding (DataValidationErrors.Errors)}"
-                                    IsVisible="{Binding (DataValidationErrors.HasErrors)}"/>
+                                    IsVisible="{Binding (DataValidationErrors.HasErrors)}" />
                     <ContentPresenter Name="PART_ContentPresenter"
                                       Background="{TemplateBinding Background}"
                                       BorderBrush="{TemplateBinding BorderBrush}"
@@ -143,36 +209,70 @@
                                       CornerRadius="{TemplateBinding CornerRadius}"
                                       ContentTemplate="{TemplateBinding ContentTemplate}"
                                       Content="{TemplateBinding Content}"
-                                      Padding="{TemplateBinding Padding}"/>
+                                      Padding="{TemplateBinding Padding}" />
                 </DockPanel>
             </ControlTemplate>
         </Setter>
         <Setter Property="ErrorTemplate">
             <DataTemplate x:DataType="{x:Type x:Object}">
-                <Canvas Width="14" Height="14" Margin="4 0 1 0" 
+                <Canvas Width="14" Height="14" Margin="4 0 1 0"
                         Background="Transparent">
                     <Canvas.Styles>
                         <Style Selector="ToolTip">
-                            <Setter Property="Background" Value="Red"/>
-                            <Setter Property="BorderBrush" Value="DarkRed"/>
+                            <Setter Property="Background" Value="Red" />
+                            <Setter Property="BorderBrush" Value="DarkRed" />
                         </Style>
                     </Canvas.Styles>
                     <ToolTip.Tip>
-                        <ItemsControl ItemsSource="{Binding}"/>
+                        <ItemsControl ItemsSource="{Binding}" />
                     </ToolTip.Tip>
-                    <Path Data="M14,7 A7,7 0 0,0 0,7 M0,7 A7,7 0 1,0 14,7 M7,3l0,5 M7,9l0,2" 
-                          Stroke="Red" 
-                          StrokeThickness="2"/>
+                    <Path Data="M14,7 A7,7 0 0,0 0,7 M0,7 A7,7 0 1,0 14,7 M7,3l0,5 M7,9l0,2"
+                          Stroke="Red"
+                          StrokeThickness="2" />
                 </Canvas>
             </DataTemplate>
         </Setter>
     </Style>
+
     <Style Selector="TextBlock.small">
-        <Setter Property="FontSize" Value="9"/>
-        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="FontSize" Value="9" />
+        <Setter Property="FontWeight" Value="DemiBold" />
     </Style>
     <Style Selector="CheckBox.small">
-        <Setter Property="FontSize" Value="9"/>
-        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="FontSize" Value="9" />
+        <Setter Property="FontWeight" Value="DemiBold" />
+    </Style>
+    <Style Selector="Border.card-background">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"></Setter>
+    </Style>
+    <Style Selector="TextBlock.card-content">
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+    </Style>
+    
+    <Style Selector="Button.hyperlink">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <TextBlock Text="{TemplateBinding Content}" Foreground="{StaticResource SystemAccentColor}" TextDecorations="Underline">
+                </TextBlock>
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"></Setter>
+    </Style>
+    
+    <Style Selector=":is(Button).icon-only">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"></Setter>
+    </Style>
+    <Style Selector=":is(ToggleButton).icon-only:checked">
+        <Style Selector="^:checked /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent"></Setter>
+        </Style>
+        <Setter Property="Background" Value="Transparent"/>
+        
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"></Setter>
     </Style>
 </Styles>

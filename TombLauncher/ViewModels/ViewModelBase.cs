@@ -19,6 +19,7 @@ public abstract class ViewModelBase : ObservableObject
     {
         return Task.CompletedTask;
     }
+    protected bool IsInitialized { get; set; }
     
     internal void RaiseCanExecuteChanged<T>(ICommand command)
     {

@@ -1,0 +1,68 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:dtos="clr-namespace:TombLauncher.Core.Dtos;assembly=TombLauncher.Core"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.EditableListBox"
+             x:DataType="viewModels:EditableListBoxViewModel"
+             x:Name="ViewRoot">
+    <Design.DataContext>
+        <viewModels:EditableListBoxViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <TextBlock Text="{Binding Header}"/>
+        <DockPanel LastChildFill="True">
+            <controls:IconOnlyButton Icon="Clear" 
+                                     ToolTip.Tip="{DynamicResource Clear}" 
+                                     Command="{Binding ClearCurrentValueCmd}" 
+                                     DockPanel.Dock="Right" 
+                                     Classes="btn-danger"></controls:IconOnlyButton>
+            <controls:IconOnlyButton Icon="Add" 
+                                     ToolTip.Tip="{DynamicResource 'Add'}" 
+                                     Command="{Binding AddValueCmd}" 
+                                     DockPanel.Dock="Right" />
+            <TextBox Text="{Binding CurrentValue}"
+                     Watermark="{Binding Watermark}">
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="KeyUp">
+                        <InvokeCommandAction Command="{Binding HandleKeyUpCmd}" 
+                                             PassEventArgsToCommand="True"/>
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </TextBox>
+        </DockPanel>
+        <ListBox ItemsSource="{Binding TargetCollection}" MaxHeight="350">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DataTemplate.DataType>
+                        <x:Type TypeName="dtos:CheckableItem" x:TypeArguments="system:String"/>
+                    </DataTemplate.DataType>
+                    <DockPanel LastChildFill="True">
+                        <controls:IconOnlyButton DockPanel.Dock="Right" 
+                                                 Icon="Trash" 
+                                                 Classes="btn-danger" 
+                                                 ToolTip.Tip="{DynamicResource Delete}" 
+                                                 IsVisible="{Binding CanUserCheck}"
+                                                 Command="{Binding ElementName=ViewRoot, Path=((viewModels:EditableListBoxViewModel)DataContext).DeleteValueCmd}"
+                                                 CommandParameter="{Binding .}"/>
+                        <controls:IconOnlyButton DockPanel.Dock="Right" 
+                                                 Icon="Edit" 
+                                                 Classes="btn-primary" 
+                                                 ToolTip.Tip="{DynamicResource Edit}" 
+                                                 Command="{Binding ElementName=ViewRoot, Path=((viewModels:EditableListBoxViewModel)DataContext).EditValueCmd}"
+                                                 CommandParameter="{Binding .}"
+                                                 IsVisible="{Binding CanUserCheck}"
+                        ></controls:IconOnlyButton>
+                        <CheckBox IsChecked="{Binding IsChecked}" 
+                                  IsEnabled="{Binding CanUserCheck}" 
+                                  Content="{Binding Value}"/>
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</UserControl>

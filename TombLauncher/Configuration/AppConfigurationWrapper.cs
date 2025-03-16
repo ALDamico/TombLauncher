@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 
@@ -26,14 +25,8 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
 
     public string ApplicationTheme
     {
-        get => User.ApplicationTheme.Coalesce(Defaults.ApplicationLanguage);
-        set => User.ApplicationTheme = value.DefaultIfEquals(Defaults.ApplicationLanguage);
-    }
-
-    public bool? UseInternalViewer
-    {
-        get => User.UseInternalViewer.Coalesce(Defaults.UseInternalViewer);
-        set => User.UseInternalViewer = value.DefaultIfEquals(Defaults.UseInternalViewer);
+        get => User.ApplicationTheme.Coalesce(Defaults.ApplicationTheme);
+        set => User.ApplicationTheme = value.DefaultIfEquals(Defaults.ApplicationTheme);
     }
 
     public bool? AskForConfirmationBeforeWalkthrough
@@ -88,7 +81,7 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set => User.RandomGameMaxRerolls = value.DefaultIfEquals(Defaults.RandomGameMaxRerolls);
     }
 
-    public bool BackupSavegamesEnabled
+    public bool? BackupSavegamesEnabled
     {
         get => User.BackupSavegamesEnabled.Coalesce(Defaults.BackupSavegamesEnabled);
         set => User.BackupSavegamesEnabled = value.DefaultIfEquals(Defaults.BackupSavegamesEnabled);
@@ -106,5 +99,34 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set => User.SavegameProcessingDelay = value.DefaultIfEquals(Defaults.SavegameProcessingDelay);
     }
 
-    public string GitHubLink { get => Defaults.GitHubLink; set => Defaults.GitHubLink = value; }
+    public string GitHubLink
+    {
+        get => Defaults.GitHubLink;
+        set => Defaults.GitHubLink = value;
+    }
+
+    public bool DefaultToGridView
+    {
+        get => User.DefaultToGridView.Coalesce(Defaults.DefaultToGridView);
+        set => User.DefaultToGridView = value.DefaultIfEquals(DefaultToGridView);
+    }
+
+    public List<CheckableItem<string>> DocumentationPatterns
+    {
+        get => CollectionUtils.GetSharedItems(Defaults.DocumentationPatterns, User.DocumentationPatterns);
+        set => User.DocumentationPatterns = value.Except(Defaults.DocumentationPatterns).ToList();
+    }
+
+    public List<CheckableItem<string>> DocumentationFolderExclusions
+    {
+        get => CollectionUtils.GetSharedItems(Defaults.DocumentationFolderExclusions,
+            User.DocumentationFolderExclusions);
+        set => User.DocumentationFolderExclusions = value.Except(Defaults.DocumentationFolderExclusions).ToList();
+    }
+
+    public string UpdateChannelName
+    {
+        get => User.UpdateChannelName.Coalesce(Defaults.UpdateChannelName);
+        set => User.UpdateChannelName = value.DefaultIfEquals(Defaults.UpdateChannelName);
+    }
 }
