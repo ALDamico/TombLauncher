@@ -18,9 +18,9 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Navigation;
 using TombLauncher.Core.Utils;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.Navigation;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
@@ -245,4 +245,6 @@ public class SettingsService : IViewService
 
         await Task.CompletedTask;
     }
+
+    public string GetWinePath() => _appConfiguration.WinePath;
 }

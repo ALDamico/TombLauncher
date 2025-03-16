@@ -24,4 +24,15 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
             ReturnSpecialDirectories = false
         };
     }
+
+    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
+        string compatibilityExecutable, string workingDirectory)
+    {
+        return new ProcessStartInfo(executableFileNameOnly)
+        {
+            Arguments = arguments ?? "",
+            WorkingDirectory = workingDirectory,
+            UseShellExecute = true,
+        };
+    }
 }
