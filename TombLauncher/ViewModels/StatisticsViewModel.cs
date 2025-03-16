@@ -17,4 +17,5 @@ public partial class StatisticsViewModel: ObservableObject
     [ObservableProperty] private ChartViewModel _dayOfWeekAveragePlayTimeStatistics;
     [ObservableProperty] private ChartViewModel _dayOfWeekTotalGamesPlayedStatistics;
     [ObservableProperty] private ChartViewModel _dailyAverageGameLengthStatistics;
+    [ObservableProperty] private ChartViewModel _spaceUsedStatistics;
 }

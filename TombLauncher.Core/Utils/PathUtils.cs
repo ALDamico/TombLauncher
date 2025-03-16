@@ -72,4 +72,17 @@ public class PathUtils
             '*', '?'
         ];
     }
+
+    public static long GetDirectorySize(string directory)
+    {
+        var files = Directory.EnumerateFiles(directory, "*.*", SearchOption.AllDirectories);
+        var runningTotal = 0L;
+        foreach (var file in files)
+        {
+            var fileInfo = new FileInfo(file);
+            runningTotal += fileInfo.Length;
+        }
+
+        return runningTotal;
+    }
 }

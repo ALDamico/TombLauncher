@@ -6,18 +6,8 @@ It allows you to discover new custom levels, keep them organized in one place, k
 
 This project is still under active development, and as such some things may not work perfectly yet or may straight up be broken.
 
-# What's new in version 1.0.1
- - View games in a grid
- - Fixes some small UI snags with the light theme
- - Fixes bug where settings sections would be duplicated on multiple navigations to the settings page
- - Adds appropriate highlights for colored buttons
- - Shows documentation files in the game details view, and allows the user to open them directly from within Tomb Launcher.
- - Add/remove games from favourites
- - Mark/unmark game as completed
- - Shows last played game on welcome page
- - App properly cleans up after itself after a game has finished downloading
- - Fixed a bug that prevented newly-installed games to be played from their notification
- - The user can now perform a clean up of Tomb Launcher's temp folder manually
+# What's new in version 1.0.2
+ - Pie chart of space used by games
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22

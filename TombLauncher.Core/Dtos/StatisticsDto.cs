@@ -7,4 +7,5 @@ public class StatisticsDto
     public GameStatisticsDto MostLaunches { get; set; }
     public List<DayOfWeekStatisticsDto> DayOfWeekStatistics { get; set; } = new List<DayOfWeekStatisticsDto>();
     public List<DailyStatisticsDto> DailyStatistics { get; set; }
+    public List<GameSpaceUsedDto> SpaceUsedStatistics { get; set; } = new List<GameSpaceUsedDto>();
 }
