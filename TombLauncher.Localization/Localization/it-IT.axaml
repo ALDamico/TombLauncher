@@ -237,6 +237,8 @@
     <system:String x:Key="Wine executable path">Percorso dell'eseguibile di Wine</system:String>
     <system:String x:Key="Wine tooltip content">Wine è un layer di compataibilità che consente di eseguire programmi Windows sotto Linux. Per poter giocare ai livelli custom di TRLE, è necessario che Wine sia installato sul sistema.</system:String>
     <system:String x:Key="Unzip fallback method">Metodo di decompressione di fallback</system:String>
+    <system:String x:Key="INSERT NEW GAME">INSERISCI UN NUOVO GIOCO</system:String>
+    <system:String x:Key="Install">Installa</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>
