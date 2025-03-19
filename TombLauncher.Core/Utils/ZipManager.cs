@@ -70,13 +70,13 @@ public class ZipManager : IDisposable
             var inputStream = _zipFile.GetInputStream(current);
             var targetFileName = Path.Combine(targetPath, current.Name);
             await using var streamWriter = File.Create(targetFileName);
-            var size = 4096;
+            var size = 4096 * 16;
             var buffer = new byte[size];
-            var memory = new Memory<byte>(buffer);
+           int bytesRead;
 
-            while (await inputStream.ReadAsync(memory, cancellationToken) > 0)
+            while ((bytesRead = await inputStream.ReadAsync(buffer, cancellationToken)) > 0)
             {
-                await streamWriter.WriteAsync(memory, cancellationToken);
+                await streamWriter.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
             }
         }
     }
