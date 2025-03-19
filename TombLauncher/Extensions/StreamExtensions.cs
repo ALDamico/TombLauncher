@@ -23,7 +23,7 @@ public static class StreamExtensions
         var buffer = new byte[bufferSize];
         long totalBytesRead = 0;
         int bytesRead;
-        var periodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
+        var periodicTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000));
         if (progress != null)
             _ = RunInBackground(periodicTimer, () => progress?.Report(totalBytesRead), cancellationToken);
         while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) != 0) {
