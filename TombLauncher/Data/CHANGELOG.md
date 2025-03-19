@@ -11,6 +11,7 @@ This project is still under active development, and as such some things may not 
  - Adds zip extraction fallback method
  - Linux support
  - New game view rework
+ - Download progress updates every second instead of over ever quarter of second
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22
