@@ -12,6 +12,7 @@ This project is still under active development, and as such some things may not 
  - Linux support
  - New game view rework
  - Download progress updates every second instead of over ever quarter of second
+ - Fixes bug with zip extraction that could lead to unplayable levels
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22
