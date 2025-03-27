@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,9 @@ using TombLauncher.Contracts.Progress;
 using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Utils;
 using TombLauncher.Extensions;
+using UtfUnknown;
 
 namespace TombLauncher.Installers.Downloaders.AspideTR.com;
 
@@ -86,7 +89,9 @@ public class AspideTrGameDownloader : IGameDownloader
             var titleNode = headerNode.SelectSingleNode("./h2/a");
             if (titleNode != null)
             {
-                searchResult.Title = titleNode.InnerText;
+                var targetEncoding = TryDetectEncoding(titleNode);
+
+                searchResult.Title = Encoding.UTF8.GetString(targetEncoding.GetBytes(titleNode.InnerText));
                 searchResult.DetailsLink = titleNode.Attributes["href"].Value;
             }
 
@@ -151,6 +156,27 @@ public class AspideTrGameDownloader : IGameDownloader
         }
 
         await Task.CompletedTask;
+    }
+
+    private static Encoding TryDetectEncoding(HtmlNode titleNode)
+    {
+        var detection = CharsetDetector.DetectFromBytes(Encoding.GetEncoding(1252).GetBytes(titleNode.InnerText));
+        if (detection.Details.IsNullOrEmpty())
+            return Encoding.UTF8;
+        var details = detection.Details.ToList();
+        var targetEncoding = details[0].Encoding;
+        if (details.Count > 1)
+        {
+            if (details[0].Encoding == Encoding.UTF8)
+            {
+                if (Math.Abs(details[0].Confidence - details[1].Confidence) <= 0.05)
+                {
+                    targetEncoding = details[1].Encoding;
+                }
+            }
+        }
+
+        return targetEncoding;
     }
 
     public async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
