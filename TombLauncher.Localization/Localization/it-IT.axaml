@@ -239,6 +239,7 @@
     <system:String x:Key="Unzip fallback method">Metodo di decompressione di fallback</system:String>
     <system:String x:Key="INSERT NEW GAME">INSERISCI UN NUOVO GIOCO</system:String>
     <system:String x:Key="Install">Installa</system:String>
+    <system:String x:Key="This level was found by one or more downloaders, but no download link is available.">Questo livello è stato trovato da uno o più downloader, ma non è disponibile un link per il download.</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantide</system:String>

@@ -8,6 +8,7 @@
              xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameSearchResultCardView"
              x:DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
@@ -19,6 +20,10 @@
             <Setter Property="Margin" Value="8,0,0,0"></Setter>
         </Style>
     </UserControl.Styles>
+    <UserControl.Resources>
+        <valueConverters:StringEmptyToLocalizedStringConverter x:Key="DownloadToolTipConverter" NotEmptyValue="Download" 
+                                                               EmptyValue="This level was found by one or more downloaders, but no download link is available."/>
+    </UserControl.Resources>
     <Border CornerRadius="3"
             Padding="10"
             Margin="5"
@@ -76,7 +81,9 @@
                         Classes="btn-primary"
                         CommandParameter="{Binding .}"
                         IsVisible="{Binding InstalledGame, Converter={StaticResource GameNotInstalledToBooleanConverter}}"
-                        ToolTip.Tip="{DynamicResource Download}">
+                        IsEnabled="{Binding ., Converter={StaticResource SearchResultCanDownloadToBooleanConverter}}"
+                        ToolTip.Tip="{Binding DownloadLink, Converter={StaticResource DownloadToolTipConverter}}"
+                        ToolTip.ShowOnDisabled="True">
                     <avalonia:MaterialIcon Kind="Download" />
                 </Button>
                 <controls:IconOnlyButton Icon="Cancel"

@@ -240,6 +240,7 @@
     <system:String x:Key="Unzip fallback method">Unzip fallback method</system:String>
     <system:String x:Key="INSERT NEW GAME">INSERT NEW GAME</system:String>
     <system:String x:Key="Install">Install</system:String>
+    <system:String x:Key="This level was found by one or more downloaders, but no download link is available.">This level was found by one or more downloaders, but no download link is available.</system:String>
     
     <!-- AspideTR keywords -->
     <system:String x:Key="ATR_Atlantis">Atlantis</system:String>
