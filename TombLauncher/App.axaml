@@ -16,6 +16,8 @@
     
     <Application.Resources>
         <ResourceDictionary>
+            <valueConverters:MultiSourceGameSearchResultMetadataCanDownloadToBooleanConverter 
+                x:Key="SearchResultCanDownloadToBooleanConverter"/>
             <valueConverters:GameIsInstallingToBooleanConverter x:Key="GameIsInstallingToBooleanConverter"/>
             <valueConverters:GameMetadataIsNotInstalledToBooleanConverter x:Key="GameNotInstalledToBooleanConverter"/>
             <valueConverters:GameMetadataIsInstalledToBooleanConverter x:Key="GameInstalledToBooleanConverter"/>

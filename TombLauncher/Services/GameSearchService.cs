@@ -130,10 +130,13 @@ public class GameSearchService : IViewService
                 detailsViewModel.GameEngine = installedGame.GameEngine;
                 detailsViewModel.Id = installedGame.Id;
             }
-
-            var gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();
-            var vm = new GameDetailsViewModel(new GameWithStatsViewModel()
-                { GameMetadata = detailsViewModel }) { InstallCmd = gameToOpen.InstallCmd };
+            
+            
+            var vm = new GameDetailsViewModel(new GameWithStatsViewModel(detailsViewModel));
+            if (gameToOpen.DownloadLink.IsNotNullOrWhiteSpace())
+            {
+                vm.InstallCmd = gameToOpen.InstallCmd;
+            }
 
             if (details.TitlePic is { Length: > 0 } && gameToOpen.TitlePic == null)
             {

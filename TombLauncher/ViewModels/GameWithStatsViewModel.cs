@@ -10,6 +10,10 @@ namespace TombLauncher.ViewModels;
 
 public partial class GameWithStatsViewModel : ViewModelBase
 {
+    public GameWithStatsViewModel(GameMetadataViewModel gameMetadata) : this()
+    {
+        GameMetadata = gameMetadata;
+    }
     public GameWithStatsViewModel()
     {
         _gameWithStatsService = Ioc.Default.GetRequiredService<GameWithStatsService>();

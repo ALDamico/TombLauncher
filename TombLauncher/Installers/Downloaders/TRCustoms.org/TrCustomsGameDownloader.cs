@@ -230,8 +230,8 @@ public class TrCustomsGameDownloader : IGameDownloader
                 Title = summary.Name,
                 ReleaseDate = summary.Created,
                 TitlePic = summary.Cover.Url,
-                SizeInMb = summary.LastFile.Size,
-                DownloadLink = summary.LastFile.Url,
+                SizeInMb = summary.LastFile?.Size,
+                DownloadLink = summary.LastFile?.Url,
                 ReviewCount = summary.ReviewCount,
                 ReviewsLink = $"levels/{summary.Id}/reviews",
                 DetailsLink = $"levels/{summary.Id}"
