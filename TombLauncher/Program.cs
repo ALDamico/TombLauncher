@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Serilog;
 using TombLauncher.Core.Exceptions;
@@ -18,6 +19,7 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         try
         {
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
