@@ -15,6 +15,7 @@ This project is still under active development, and as such some things may not 
  - Fixes bug with zip extraction that could lead to unplayable levels
  - Fixes mangled characters in AspideTR level titles
  - Fixes a bug that prevented levels with multiple authors to be merged correctly
+ - Fixes a bug that caused an exception if a downloader retrieves a game with no download link.
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22
