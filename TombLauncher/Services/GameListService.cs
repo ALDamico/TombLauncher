@@ -27,6 +27,7 @@ public class GameListService : IViewService
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
         _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
+        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
     }
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
@@ -35,6 +36,7 @@ public class GameListService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
     private readonly IMapper _mapper;
+    private readonly SettingsService _settingsService;
 
     public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
@@ -72,5 +74,10 @@ public class GameListService : IViewService
     public async Task OpenSearch()
     {
         await NavigationManager.NavigateTo(Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<GameSearchViewModel>()));
+    }
+
+    public void ApplySettings(GameListViewModel target)
+    {
+        target.ShowAsGrid = _settingsService.IsGridViewDefault();
     }
 }

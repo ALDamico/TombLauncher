@@ -36,6 +36,7 @@ public class GameDetailsService : IViewService
         DialogService = dialogService;
         _mapper = mapperConfiguration.CreateMapper();
         _platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
     }
 
     public GamesUnitOfWork GamesUnitOfWork { get; set; }
@@ -45,6 +46,15 @@ public class GameDetailsService : IViewService
     public IDialogService DialogService { get; }
     private IMapper _mapper;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
+    private SettingsService _settingsService;
+
+    public void InitializeSettings(GameDetailsViewModel target)
+    {
+        var gameDetailsSettings = _settingsService.GetGameDetailsSettings(null);
+        target.AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
+        target.EnabledPatterns = _settingsService.GetEnabledPatterns();
+        target.IgnoredFolders = _settingsService.GetExcludedFolders();
+    }
 
     public void OpenGameFolder(string gameFolder)
     {

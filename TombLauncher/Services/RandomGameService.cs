@@ -36,13 +36,15 @@ public class RandomGameService
 
     public async Task PickRandomGame(RandomGameViewModel target)
     {
-        var currentPage = _navigationManager.GetCurrentPage();
+        target.AttemptsExpired = false;
+        target.SetBusy("Picking a random game for you...".GetLocalizedString());
+        target.MaxRetries = _settingsService.GetRandomGameMaxRerolls();
         var maxRerolls = target.MaxRetries;
         for (var i = 0; i < maxRerolls; i++)
         {
             if (i > 0)
             {
-                currentPage.SetBusy(true,
+                target.SetBusy(true,
                     "Picking a random game for you... (Attempt NR of TOT)".GetLocalizedString(i + 1, maxRerolls));
             }
 

@@ -22,6 +22,7 @@ public partial class GameListViewModel : PageViewModel
     {
         SetBusy("Fetching games...");
         _gameListService = Ioc.Default.GetRequiredService<GameListService>();
+        _gameListService.ApplySettings(this);
         AddGameCmd = new RelayCommand(AddGame);
         UninstallCmd = new RelayCommand<GameWithStatsViewModel>(Uninstall);
         OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
@@ -29,7 +30,13 @@ public partial class GameListViewModel : PageViewModel
         PlayCmd = new RelayCommand<GameWithStatsViewModel>(Play);
         AddToFavouritesCmd = new AsyncRelayCommand<GameWithStatsViewModel>(AddToFavourites);
         MarkUnmarkCompletedCmd = new AsyncRelayCommand<GameWithStatsViewModel>(MarkUnmarkCompleted);
-        ShowAsGrid = Ioc.Default.GetRequiredService<SettingsService>().IsGridViewDefault();
+        InitTopBarCommands();
+        Games = await _gameListService.FetchGames(this);
+        ClearBusy();
+    }
+
+    private void InitTopBarCommands()
+    {
         TopBarCommands.Clear();
         TopBarCommands.Add(new CommandViewModel()
         {
@@ -43,8 +50,6 @@ public partial class GameListViewModel : PageViewModel
             Icon = MaterialIconKind.Plus,
             Tooltip = "Add".GetLocalizedString()
         });
-        Games = await _gameListService.FetchGames(this);
-        ClearBusy();
     }
 
     public ICommand AddGameCmd { get; private set; }
