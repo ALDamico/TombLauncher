@@ -29,7 +29,7 @@
             <views:GameCardView DataContext="{Binding LatestPlayedGame}" 
                                 HorizontalAlignment="Left"
                                 IsVisible="{Binding ., Converter={x:Static ObjectConverters.IsNotNull}}"/>
-            <mdxaml:MarkdownScrollViewer MaxHeight="600" Source="{Binding ChangeLogPath}" />
+            <mdxaml:MarkdownScrollViewer ScrollViewer.IsScrollChainingEnabled="True" Source="{Binding ChangeLogPath}" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>
