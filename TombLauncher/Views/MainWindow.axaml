@@ -11,7 +11,9 @@
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
         Icon="/Assets/tomb-launcher-icon.ico"
-        Title="{Binding Title}">
+        Title="{Binding Title}"
+        Width="1024"
+        Height="768">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
