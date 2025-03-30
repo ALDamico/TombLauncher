@@ -17,6 +17,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{5D025DB8-4D4E-47B1-B50C-6286868791BA}"
 	ProjectSection(SolutionItems) = preProject
 		installer-script.iss = installer-script.iss
+		TombLauncher.pupnet.conf = TombLauncher.pupnet.conf
+		Deploy\tomblauncher.desktop = Deploy\tomblauncher.desktop
+		Deploy\app.metainfo.xml = Deploy\app.metainfo.xml
 	EndProjectSection
 EndProject
 Global
