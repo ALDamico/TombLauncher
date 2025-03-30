@@ -12,29 +12,17 @@ public partial class RandomGameViewModel : PageViewModel
 {
     public RandomGameViewModel()
     {
-        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         _randomGameService = Ioc.Default.GetRequiredService<RandomGameService>();
         PickRandomGameCmd = new AsyncRelayCommand(PickRandomGame);
     }
 
     private readonly RandomGameService _randomGameService;
-    private readonly SettingsService _settingsService;
     [ObservableProperty] private bool _attemptsExpired;
     [ObservableProperty] private int _maxRetries;
 
-    protected override async Task RaiseInitialize()
-    {
-        await PickRandomGame();
-    }
+    protected override async Task RaiseInitialize() => await PickRandomGame();
     
     public ICommand PickRandomGameCmd { get; }
 
-    private async Task PickRandomGame()
-    {
-        AttemptsExpired = false;
-        IsBusy = true;
-        BusyMessage = "Picking a random game for you...".GetLocalizedString();
-        MaxRetries = _settingsService.GetRandomGameMaxRerolls();
-        await _randomGameService.PickRandomGame(this);
-    }
+    private async Task PickRandomGame() => await _randomGameService.PickRandomGame(this);
 }

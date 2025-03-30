@@ -23,10 +23,7 @@ public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private int _savegameProcessingDelay;
     
     public ICommand SyncSavegamesInfoCmd { get; }
-    private SettingsService _settingsService;
+    private readonly SettingsService _settingsService;
 
-    private async Task SyncSavegamesInfo()
-    {
-        await _settingsService.SyncSavegames(SettingsPage);
-    }
+    private async Task SyncSavegamesInfo() => await _settingsService.SyncSavegames(SettingsPage);
 }
