@@ -16,8 +16,10 @@ This project is still under active development, and as such some things may not 
  - Fixes mangled characters in AspideTR level titles
  - Fixes a bug that prevented levels with multiple authors to be merged correctly
  - Fixes a bug that caused an exception if a downloader retrieves a game with no download link.
+ - Changes application font to Figtree
 
 # Credits
  - This application is heavily inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher) by hobomaster22
  - Flag icons by [Lipis Flag Icons](https://github.com/lipis/flag-icons)
  - Tomb Raider Font by [Navin_Ad](https://www.dafont.com/navin-adchariyavanich.d5775)
+ - Figtree font by [Erik Kennedy](https://www.erikdkennedy.com/projects/figtree.html)
