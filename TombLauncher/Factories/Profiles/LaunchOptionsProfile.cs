@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.CodeAnalysis.FlowAnalysis;
 using TombLauncher.Core.Dtos;
-using TombLauncher.Data.Models;
 using TombLauncher.Factories.Mapping;
 using TombLauncher.ViewModels.Dialogs;
 
