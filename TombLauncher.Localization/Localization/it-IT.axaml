@@ -309,5 +309,9 @@
     <system:String x:Key="ATR_Shooter">Sparatutto</system:String>
     <system:String x:Key="Savegame parse error">Errore di lettura salvataggio</system:String>
     <system:String x:Key="An error occurred while processing a savegame. Savegames have not been backed up.">Si è verificato un errore durante la lettura di un salvataggio. I salvataggi non sono stati memorizzati dall'applicazione.</system:String>
+    <system:String x:Key="Configure">Configura</system:String>
+    <system:String x:Key="Game completed">Gioco completato</system:String>
+    <system:String x:Key="Play time">Tempo di gioco</system:String>
+    <system:String x:Key="Settings">Impostazioni</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
