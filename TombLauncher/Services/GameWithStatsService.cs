@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
@@ -15,6 +16,7 @@ using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
@@ -160,6 +162,7 @@ public class GameWithStatsService : IViewService
     private async Task OnGameExited(GameWithStatsViewModel game, Process process)
     {
         Console.WriteLine("Exited!");
+        var errorOccurred = false;
         if (process.ExitCode != 0)
         {
             _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
@@ -184,8 +187,10 @@ public class GameWithStatsService : IViewService
             {
                 _gamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
                 _headerProcessor.ClearProcessedFiles();
+                
                 try
                 {
+                    errorOccurred = _headerProcessor.ErrorOccurred;
                     _headerProcessor?.Dispose();
                     _watcher?.Dispose();
                 }
@@ -207,6 +212,12 @@ public class GameWithStatsService : IViewService
         finally
         {
             currentPage.ClearBusy();
+            if (errorOccurred)
+            {
+                await MessageBoxService.ShowLocalized("Savegame parse error",
+                    "An error occurred while processing a savegame. Savegames have not been backed up.",
+                    MsgBoxButton.Ok, MsgBoxImage.Error);
+            }
         }
     }
 

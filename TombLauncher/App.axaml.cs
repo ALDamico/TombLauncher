@@ -107,7 +107,7 @@ public partial class App : Application
     private async Task ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop, SplashScreen splashScreen)
     {
         await InitializeServices();
-        ApplyInitialSettings();
+        await ApplyInitialSettings();
         var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
         var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         navigationManager.SetDefaultPage(defaultPage);
@@ -246,7 +246,7 @@ public partial class App : Application
         await _sparkle.StartLoop(true);
     }
 
-    private void ApplyInitialSettings()
+    private Task ApplyInitialSettings()
     {
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
@@ -254,6 +254,7 @@ public partial class App : Application
         localizationManager.ChangeLanguage(applicationLanguage);
         var applicationTheme = settingsService.GetApplicationTheme();
         AppUtils.ChangeTheme(applicationTheme);
+        return Task.CompletedTask;
     }
 
     private void ConfigureDownloaders(ServiceCollection serviceCollection)

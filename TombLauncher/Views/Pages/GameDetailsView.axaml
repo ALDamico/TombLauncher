@@ -37,6 +37,58 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0">
+            <Image Source="{Binding Game.GameMetadata.TitlePic}" Stretch="None" HorizontalAlignment="Left">
+                <Image.OpacityMask>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%, 100%">
+                        <LinearGradientBrush.GradientStops>
+                            <GradientStop Offset="0" Color="Black"/>
+                            <GradientStop Offset="1" Color="Transparent"/>
+                        </LinearGradientBrush.GradientStops>
+                    </LinearGradientBrush>
+                </Image.OpacityMask>
+            </Image>
+            <StackPanel VerticalAlignment="Bottom">
+                <TextBlock FontWeight="DemiBold"
+                           FontSize="60"
+                           VerticalAlignment="Bottom"
+                           Text="{Binding Game.GameMetadata.Title}"/>
+                <TextBlock>
+                    <Run Text="{DynamicResource By}" />
+                    <Run Classes="italicsLabel"
+                         Text="{Binding Game.GameMetadata.Author, Converter={StaticResource LocalizedFallbackValueConverter}, ConverterParameter=Unknown}">
+                    </Run>
+                    <LineBreak />
+
+                    <Run Text="{DynamicResource Released on}" />
+                    <Run FontWeight="DemiBold"
+                         Text="{Binding Game.GameMetadata.ReleaseDate, StringFormat=d}" />
+                </TextBlock>
+            </StackPanel>
+            
+        </Grid>
+        <DockPanel Grid.Row="1" LastChildFill="True">
+            <views:GameBar DataContext="{Binding .}" DockPanel.Dock="Top"/>
+            <ScrollViewer DockPanel.Dock="Bottom">
+                <TextBlock TextWrapping="Wrap" 
+                           Classes="paragraph" 
+                           Text="{Binding Game.GameMetadata.Description}"/>
+            </ScrollViewer>
+        </DockPanel>
+        
+    </Grid>
+    
+    
+    
+    <!--
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" MinWidth="200" />
@@ -73,5 +125,5 @@
             </ScrollViewer>
         </DockPanel>
         <views:GameDetailsSidebarView DataContext="{Binding .}" Grid.Column="1"/>
-    </Grid>
+    </Grid>-->
 </UserControl>

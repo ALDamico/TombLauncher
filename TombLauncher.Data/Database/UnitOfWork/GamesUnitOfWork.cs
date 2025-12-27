@@ -437,7 +437,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
 
     public GameWithStatsDto GetLatestPlayedGame()
     {
-        var playSessionsRepo = PlaySessions.GetAll().Include(ps => ps.Game);
+        var playSessionsRepo = PlaySessions.GetAll().Include(ps => ps.Game).ThenInclude(g => g.FileBackups);
         var entity = playSessionsRepo.FirstOrDefault(ps => ps.StartDate == playSessionsRepo.Max(p => p.StartDate));
 
         if (entity == null)

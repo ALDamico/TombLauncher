@@ -79,10 +79,10 @@ public partial class GameDetailsViewModel : PageViewModel
 
     private void InitSetupCommands()
     {
-        SetupCommands = new ObservableCollection<CommandViewModel>();
+        var setupCommands = new ObservableCollection<CommandViewModel>();
         if (Game.GameMetadata.SetupExecutable.IsNotNullOrWhiteSpace())
         {
-            SetupCommands.Add(new CommandViewModel()
+            setupCommands.Add(new CommandViewModel()
             {
                 Command = Game.LaunchSetupCmd, Icon = MaterialIconKind.Settings, Text = "Setup".GetLocalizedString()
             });
@@ -90,11 +90,13 @@ public partial class GameDetailsViewModel : PageViewModel
 
         if (Game.GameMetadata.CommunitySetupExecutable.IsNotNullOrWhiteSpace())
         {
-            SetupCommands.Add(new CommandViewModel()
+            setupCommands.Add(new CommandViewModel()
             {
                 Command = Game.LaunchCommunitySetupCmd, Icon = MaterialIconKind.SettingsPlay,
                 Text = "Community patch setup".GetLocalizedString()
             });
         }
+
+        SetupCommands = setupCommands;
     }
 }

@@ -308,5 +308,11 @@
     <system:String x:Key="ATR_Child">Child</system:String>
     <system:String x:Key="ATR_Children">Children</system:String>
     <system:String x:Key="ATR_Shooter">Shooter</system:String>
+    <system:String x:Key="Savegame parse error">Savegame parse error</system:String>
+    <system:String x:Key="An error occurred while processing a savegame. Savegames have not been backed up.">An error occurred while processing a savegame. Savegames have not been backed up.</system:String>
+    <system:String x:Key="Configure">Configure</system:String>
+    <system:String x:Key="Game completed">Game completed</system:String>
+    <system:String x:Key="Play time">Play time</system:String>
+    <system:String x:Key="Settings">Settings</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

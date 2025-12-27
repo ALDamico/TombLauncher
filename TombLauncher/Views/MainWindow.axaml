@@ -4,12 +4,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
-        xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
         xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
+        xmlns:li="using:LoadingIndicators.Avalonia"
         Icon="/Assets/tomb-launcher-icon.ico"
         Title="{Binding Title}"
         Width="1024"
@@ -134,11 +134,7 @@
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}"
                     ZIndex="5000" Background="#A0000000">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <avaloniaProgressRing:ProgressRing IsActive="{Binding CurrentPage.IsBusy}"
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                       Foreground="RoyalBlue"
-                                                       Width="100"
-                                                       Height="100" />
+                    <li:LoadingIndicator IsActive="{Binding CurrentPage.IsBusy}" Mode="Arc" SpeedRatio="0.8" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="100"/>
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Center"
                                Text="{Binding CurrentPage.BusyMessage}"

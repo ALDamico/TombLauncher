@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Savegames.HeaderReaders;
 
 namespace TombLauncher.Core.Savegames;
@@ -18,6 +19,7 @@ public class SavegameHeaderProcessor : IDisposable
     public ISavegameHeaderReader SavegameHeaderReader { get; set; }
     public List<SavegameBackupDto> ProcessedFiles { get; }
     public int Delay { get; set; } = 500;
+    public bool ErrorOccurred { get; private set; }
 
     public SavegameHeaderProcessor()
     {
@@ -67,6 +69,8 @@ public class SavegameHeaderProcessor : IDisposable
 
             if (fileName != null)
             {
+                if (ErrorOccurred)
+                    continue;
                 // Process file
                 ProcessFile(fileName);
             }
@@ -87,7 +91,17 @@ public class SavegameHeaderProcessor : IDisposable
     private void ProcessFile(string e)
     {
         Task.Delay(Delay).GetAwaiter().GetResult();
-        var header = SavegameHeaderReader.ReadHeader(e);
+        SavegameHeader header = null;
+        try
+        {
+            header = SavegameHeaderReader.ReadHeader(e);
+        }
+        catch (SavegameParseException ex)
+        {
+            _logger.LogError("An error occurred while processing file {Filename}: {Exception}", e, ex);
+            ErrorOccurred = true;
+        }
+        
         if (header == null)
             return;
 
