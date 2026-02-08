@@ -23,7 +23,8 @@
                                  Padding="0 5"
                                  FontSize="28"
                                  Icon="DotsHorizontal"
-                                 IsTextVisible="False">
+                                 IsTextVisible="False"
+                                 CornerRadius="50">
                 <controls:IconButton.Flyout>
                     <MenuFlyout>
                         <MenuItem Header="{DynamicResource 'Launch options'}" 
@@ -59,6 +60,11 @@
                                     <Setter Property="Command"
                                             Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).ReadWalkthroughCmd}" />
                                     <Setter Property="CommandParameter" Value="{Binding .}"></Setter>
+                                    
+                                    <!-- Visual Overrides for Dynamic Items -->
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                    <Setter Property="CornerRadius" Value="4" />
                                 </ControlTheme>
                             </MenuItem.ItemContainerTheme>
                             <MenuItem.Icon>
@@ -75,6 +81,11 @@
                                     <Setter Property="Command" 
                                             Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).OpenDocumentCommand}"></Setter>
                                     <Setter Property="CommandParameter" Value="{Binding FullName}"></Setter>
+                                    
+                                    <!-- Visual Overrides for Dynamic Items -->
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                    <Setter Property="CornerRadius" Value="4" />
                                 </ControlTheme>
                             </MenuItem.ItemContainerTheme>
                         </MenuItem>
@@ -116,6 +127,11 @@
                                               BasedOn="{StaticResource {x:Type MenuItem}}"
                                               x:DataType="viewModels:CommandViewModel">
                                     <Setter Property="Command" Value="{Binding Command}" />
+                                    
+                                    <!-- Visual Overrides for Dynamic Items -->
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                    <Setter Property="CornerRadius" Value="4" />
                                 </ControlTheme>
                             </MenuFlyout.ItemContainerTheme>
                             <MenuFlyout.ItemTemplate>

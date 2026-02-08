@@ -2,11 +2,16 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Scion Theme: Deep Teal & Gold -->
     <!-- Primary Backgrounds -->
-    <SolidColorBrush x:Key="CardBackgroundBrush">#CC1A2626</SolidColorBrush> <!-- Glassy Dark Teal -->
+    <Color x:Key="CardBackgroundColor">#CC1A2626</Color>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Dark Teal -->
     <SolidColorBrush x:Key="CardBorderBrush">#33FFFFFF</SolidColorBrush>
     <SolidColorBrush x:Key="PageBackgroundBrush">#0F1515</SolidColorBrush>
-    <SolidColorBrush x:Key="SidebarBackgroundBrush">#0A0F0F</SolidColorBrush>
+    <!-- Fluent Theme Overrides -->
+    <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource CardBackgroundColor}" />
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{StaticResource CardBackgroundColor}" />
     
+    <Color x:Key="CardBorderColor">#33FFFFFF</Color>
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource CardBorderColor}" />
     <!-- Primary Actions -->
     <SolidColorBrush x:Key="PrimaryBrush">#008080</SolidColorBrush> <!-- Teal -->
     <SolidColorBrush x:Key="PrimaryPointerOverBrush">#009999</SolidColorBrush>

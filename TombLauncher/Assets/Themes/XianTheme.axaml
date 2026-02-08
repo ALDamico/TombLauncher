@@ -2,10 +2,17 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Xian Theme: Rust & Emerald -->
     <!-- Primary Backgrounds -->
-    <SolidColorBrush x:Key="CardBackgroundBrush">#CC261A1A</SolidColorBrush> <!-- Glassy Dark Rust -->
+    <Color x:Key="CardBackgroundColor">#CC261A1A</Color>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Dark Rust -->
     <SolidColorBrush x:Key="CardBorderBrush">#33FFFFFF</SolidColorBrush>
     <SolidColorBrush x:Key="PageBackgroundBrush">#150F0F</SolidColorBrush>
     <SolidColorBrush x:Key="SidebarBackgroundBrush">#0F0B0B</SolidColorBrush>
+    
+    <!-- Fluent Theme Overrides -->
+    <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource CardBackgroundColor}" />
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{StaticResource CardBackgroundColor}" />
+    <Color x:Key="CardBorderColor">#33FFFFFF</Color>
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource CardBorderColor}" />
     
     <!-- Primary Actions -->
     <SolidColorBrush x:Key="PrimaryBrush">#B7410E</SolidColorBrush> <!-- Rust -->
