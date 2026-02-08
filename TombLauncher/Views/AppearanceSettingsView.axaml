@@ -14,6 +14,7 @@
     <StackPanel Orientation="Vertical">
         <TextBlock Text="{DynamicResource 'App theme'}"/>
         <ComboBox SelectedItem="{Binding SelectedTheme}"
+                  DisplayMemberBinding="{Binding DisplayName}"
                   ItemsSource="{Binding AvailableThemes}" />
         <TextBlock Margin="0, 5" Text="{DynamicResource Show games as}"/>
         <RadioButton GroupName="ViewModeGroup" 

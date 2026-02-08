@@ -8,6 +8,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
@@ -73,7 +74,7 @@ public partial class App : Application
                 Log.Logger.Information("Application is shutting down");
                 ((IDisposable)Log.Logger).Dispose();
             };
-            
+
             Dispatcher.UIThread.UnhandledException += OnUnhandledException;
 
             await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(desktop, splashScreen));
@@ -84,18 +85,33 @@ public partial class App : Application
 
     private void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        var appCrashUow = Ioc.Default.GetRequiredService<AppCrashUnitOfWork>();
+        AppCrashUnitOfWork appCrashUow = null;
+        try
+        {
+            appCrashUow = Ioc.Default.GetRequiredService<AppCrashUnitOfWork>();
+        }
+        catch (InvalidOperationException)
+        {
+            // Service provider not configured yet.
+            // Log to console/debug as fallback
+            Console.Error.WriteLine("Unhandled exception occurred before IoC container was initialized.");
+            Console.Error.WriteLine(e.Exception);
+            // Cannot use database logging
+        }
 
         var exception = e.Exception;
         if (exception is TargetInvocationException tie)
         {
             exception = tie.InnerException;
         }
-        
-        appCrashUow.InsertAppCrash(exception);
 
-        var welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
-        welcomePageService.HandleNotNotifiedCrashes();
+        if (appCrashUow != null)
+        {
+            appCrashUow.InsertAppCrash(exception);
+            var welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
+            welcomePageService.HandleNotNotifiedCrashes();
+        }
+
         e.Handled = true;
         if (exception?.GetType() == typeof(AppRestartRequestedException))
         {
@@ -172,7 +188,7 @@ public partial class App : Application
         serviceCollection.AddScoped<TombRaiderEngineDetector>();
         serviceCollection.AddTransient<IGameMerger>(_ =>
             new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator()
-                { UseAuthor = true, IgnoreSubTitle = true }));
+            { UseAuthor = true, IgnoreSubTitle = true }));
         ConfigureDownloaders(serviceCollection);
         serviceCollection.AddTransient(sp =>
         {
@@ -210,7 +226,7 @@ public partial class App : Application
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
         Log.Logger.Information("Service initialization complete");
-        
+
         await Task.CompletedTask;
     }
 
@@ -236,8 +252,10 @@ public partial class App : Application
             notificationService.AddNotification(new NotificationViewModel()
             {
                 Content = new StringNotificationViewModel()
-                    { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion.Version) },
-                IsDismissable = true, IsCancelable = false, IsOpenable = true,
+                { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion.Version) },
+                IsDismissable = true,
+                IsCancelable = false,
+                IsOpenable = true,
                 OpenCommand = updateWorkers.UpdateCommand,
                 OpenIcon = updateWorkers.UpdateIcon,
                 OpenCmdParam = payload
@@ -250,10 +268,21 @@ public partial class App : Application
     {
         var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
         var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
+        var themeManager = Ioc.Default.GetRequiredService<ThemeManager>();
+
         var applicationLanguage = settingsService.GetApplicationLanguage();
         localizationManager.ChangeLanguage(applicationLanguage);
+
         var applicationTheme = settingsService.GetApplicationTheme();
-        AppUtils.ChangeTheme(applicationTheme);
+        themeManager.ApplyTheme(applicationTheme);
+
+        var baseVariant = ThemeVariant.Dark;
+        if (!string.IsNullOrEmpty(applicationTheme) && applicationTheme.Contains("Light"))
+        {
+            baseVariant = ThemeVariant.Light;
+        }
+        AppUtils.ChangeTheme(baseVariant);
+
         return Task.CompletedTask;
     }
 
@@ -279,13 +308,14 @@ public partial class App : Application
         serviceCollection.AddTransient<RandomGameService>();
         serviceCollection.AddScoped<StatisticsService>();
         serviceCollection.AddTransient<SavegameService>();
+        serviceCollection.AddSingleton<ThemeManager>();
     }
 
     private static void ConfigureViewModels(ServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton(sp =>
             new WelcomePageViewModel()
-                { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
+            { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
         serviceCollection.AddScoped<GameListViewModel>();
         serviceCollection.AddScoped<GameSearchViewModel>();
         serviceCollection.AddTransient<NewGameViewModel>();

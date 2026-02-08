@@ -12,6 +12,7 @@
         xmlns:li="using:LoadingIndicators.Avalonia"
         Icon="/Assets/tomb-launcher-icon.ico"
         Title="{Binding Title}"
+        Background="{DynamicResource PageBackgroundBrush}"
         Width="1024"
         Height="768">
 
@@ -23,7 +24,7 @@
     <SplitView IsPaneOpen="{Binding IsPaneOpen}" DisplayMode="CompactInline">
         <SplitView.Pane>
 
-            <Grid>
+            <Grid Background="{DynamicResource SidebarBackgroundBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -31,6 +32,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <controls:IconButton Grid.Row="0" 
+                                     Classes="icon-only"
                                      ToolTip.Tip="Menu" 
                                      Icon="Menu" 
                                      Command="{Binding TogglePaneCmd}"/>

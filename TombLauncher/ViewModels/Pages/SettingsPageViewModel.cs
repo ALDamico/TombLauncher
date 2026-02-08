@@ -65,11 +65,10 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         IsInitialized = true;
         var currentTheme = _settingsService.GetApplicationTheme();
-        var appearanceSettings = new AppearanceSettingsViewModel(this)
-        {
-            SelectedTheme = currentTheme,
-            DefaultToGridView = _settingsService.IsGridViewDefault()
-        };
+        var appearanceSettings = new AppearanceSettingsViewModel(this);
+        appearanceSettings.SelectedTheme = appearanceSettings.AvailableThemes.FirstOrDefault(t => t.Value == currentTheme)
+                                           ?? appearanceSettings.AvailableThemes.First();
+        appearanceSettings.DefaultToGridView = _settingsService.IsGridViewDefault();
         var supportedLanguages = _settingsService.GetSupportedLanguages();
         var languageSettings = new LanguageSettingsViewModel(this)
         {

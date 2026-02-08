@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Xian Theme: Rust & Emerald -->
+    <!-- Primary Backgrounds -->
+    <SolidColorBrush x:Key="CardBackgroundBrush">#CC261A1A</SolidColorBrush> <!-- Glassy Dark Rust -->
+    <SolidColorBrush x:Key="CardBorderBrush">#33FFFFFF</SolidColorBrush>
+    <SolidColorBrush x:Key="PageBackgroundBrush">#150F0F</SolidColorBrush>
+    <SolidColorBrush x:Key="SidebarBackgroundBrush">#0F0B0B</SolidColorBrush>
+    
+    <!-- Primary Actions -->
+    <SolidColorBrush x:Key="PrimaryBrush">#B7410E</SolidColorBrush> <!-- Rust -->
+    <SolidColorBrush x:Key="PrimaryPointerOverBrush">#D05015</SolidColorBrush>
+    <SolidColorBrush x:Key="ColoredButtonTextBrush">#FFFFFF</SolidColorBrush>
+
+    <!-- Accents -->
+    <SolidColorBrush x:Key="AccentBrush">#50C878</SolidColorBrush> <!-- Emerald -->
+    
+    <!-- Status -->
+    <SolidColorBrush x:Key="SuccessBrush">#50C878</SolidColorBrush> <!-- Emerald -->
+    <SolidColorBrush x:Key="SuccessPointerOverBrush">#157347</SolidColorBrush>
+    <SolidColorBrush x:Key="DangerBrush">#dc3545</SolidColorBrush>
+    <SolidColorBrush x:Key="DangerPointerOverBrush">#b02a37</SolidColorBrush>
+    <SolidColorBrush x:Key="WarningBrush">#ffc107</SolidColorBrush>
+    <SolidColorBrush x:Key="WarningPointerOverBrush">#ffcd39</SolidColorBrush>
+    
+    <!-- Text -->
+    <SolidColorBrush x:Key="TextBrush">#E0E0E0</SolidColorBrush>
+    <SolidColorBrush x:Key="MutedTextBrush">#A0A0A0</SolidColorBrush>
+    <SolidColorBrush x:Key="SecondaryBrush">#A0A0A0</SolidColorBrush>
+</ResourceDictionary>

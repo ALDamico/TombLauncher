@@ -25,10 +25,13 @@
                                                   TrueValue="Unmark as completed" 
                                                   FalseValue="Mark as completed"/>
     </UserControl.Resources>
-    <Border CornerRadius="3" Width="400"
+    <Border CornerRadius="8" Width="400"
             Margin="10"
             ClipToBounds="True"
             Classes="card-background"
+            BorderBrush="{DynamicResource CardBorderBrush}"
+            BorderThickness="1"
+            BoxShadow="0 4 8 0 #40000000"
             x:Name="GameCard">
         <Border.ContextMenu>
             <ContextMenu>
@@ -73,7 +76,7 @@
         </Interaction.Behaviors>
         <Border.Styles>
             <Style Selector="TextBlock">
-                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
             </Style>
             <Style Selector="Border :is(Button)">
                 <Setter Property="Opacity" Value="0" />

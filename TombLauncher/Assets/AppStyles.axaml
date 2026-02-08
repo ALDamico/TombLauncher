@@ -18,17 +18,8 @@
                     <SolidColorBrush x:Key="ColoredButtonTextBrush">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
-            <SolidColorBrush x:Key="PrimaryBrush">#0d6efd</SolidColorBrush>
-            <SolidColorBrush x:Key="PrimaryPointerOverBrush">#0a58ca</SolidColorBrush>
-            <SolidColorBrush x:Key="SuccessBrush">#198754</SolidColorBrush>
-            <SolidColorBrush x:Key="SuccessPointerOverBrush">#157347</SolidColorBrush>
-            <SolidColorBrush x:Key="DangerBrush">#dc3545</SolidColorBrush>
-            <SolidColorBrush x:Key="DangerPointerOverBrush">#b02a37</SolidColorBrush>
-            <SolidColorBrush x:Key="WarningBrush">#ffc107</SolidColorBrush>
-            <SolidColorBrush x:Key="WarningPointerOverBrush">#ffcd39</SolidColorBrush>
-            <SolidColorBrush x:Key="SecondaryBrush">#6c757d</SolidColorBrush>
-            <SolidColorBrush x:Key="SecondaryPointerOverBrush">#565e64</SolidColorBrush>
-            <SolidColorBrush x:Key="CardBackgroundBrush">#3a3a3a</SolidColorBrush>
+            <!-- Colors are now defined in Themes/ScionTheme.axaml and Themes/XianTheme.axaml -->
+
             <!-- Font families -->
             <FontFamily x:Key="TombRaiderFont">avares://TombLauncher/Assets#Tomb_Raider</FontFamily>
             <FontFamily x:Key="Figtree">avares://TombLauncher/Assets/Figtree-VariableFont_wght.ttf</FontFamily>
@@ -36,6 +27,7 @@
     </Styles.Resources>
     <Style Selector=":is(ContentControl)">
         <Setter Property="FontFamily" Value="{StaticResource Figtree}"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"></Setter>
     </Style>
 
     <Style Selector=":is(Button).round-button">
@@ -47,7 +39,7 @@
         <Setter Property="Padding" Value="6" />
     </Style>
     <Style Selector=":is(Button).round-button /template/ ContentPresenter">
-        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="CornerRadius" Value="50"></Setter>
     </Style>
     <Style Selector=":is(Button):pointerover.round-button /template/ ContentPresenter">
         <Setter Property="Background" Value="#80e0e0e0" />
@@ -109,6 +101,7 @@
     <Style Selector=":is(Button).btn-primary">
         <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+        <Setter Property="CornerRadius" Value="50"></Setter>
     </Style>
     <Style Selector=":is(Button):pointerover.btn-primary /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource PrimaryPointerOverBrush}"></Setter>
@@ -117,6 +110,7 @@
     <Style Selector=":is(Button).btn-success">
         <Setter Property="Background" Value="{DynamicResource SuccessBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+        <Setter Property="CornerRadius" Value="50"></Setter>
     </Style>
     <Style Selector=":is(Button):pointerover.btn-success /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource SuccessPointerOverBrush}"></Setter>
@@ -125,6 +119,7 @@
     <Style Selector=":is(SplitButton).btn-success">
         <Setter Property="Background" Value="{DynamicResource SuccessBrush}"></Setter>
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+        <Setter Property="CornerRadius" Value="50"></Setter>
     </Style>
     <!-- SplitButtons in Avalonia are a bit weird. We need to have setters on the ContentPresenters of the two buttons
     (named PART_PrimaryButton and PART_SecondaryButton) in order for pseudoclasses to work as expected -->
@@ -161,6 +156,7 @@
     <Style Selector=":is(Button).btn-danger">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+        <Setter Property="CornerRadius" Value="50"></Setter>
     </Style>
     <Style Selector=":is(Button).btn-danger:pointerover /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource DangerPointerOverBrush}" />
@@ -169,6 +165,7 @@
     <Style Selector=":is(SplitButton).btn-danger">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
+        <Setter Property="CornerRadius" Value="50"></Setter>
     </Style>
     <Style Selector=":is(controls|RoundIconButton).btn-danger">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
@@ -258,7 +255,7 @@
     <Style Selector="Button.hyperlink">
         <Setter Property="Template">
             <ControlTemplate>
-                <TextBlock Text="{TemplateBinding Content}" Foreground="{StaticResource SystemAccentColor}" TextDecorations="Underline">
+                <TextBlock Text="{TemplateBinding Content}" Foreground="{DynamicResource AccentBrush}" TextDecorations="Underline">
                 </TextBlock>
             </ControlTemplate>
         </Setter>
@@ -280,5 +277,32 @@
         
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"></Setter>
+    </Style>
+
+    <Style Selector="ListBox">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="ListBoxItem">
+        <Setter Property="CornerRadius" Value="50" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Margin" Value="0, 2" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+    </Style>
+
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#20808080" /> <!-- Subtle highlight -->
+    </Style>
+
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
+    </Style>
+
+    <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryPointerOverBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
     </Style>
 </Styles>

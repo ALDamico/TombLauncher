@@ -41,6 +41,7 @@ public class SettingsService : IViewService
         _mapper = mapperConfiguration.CreateMapper();
         _appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
         _logger = Ioc.Default.GetRequiredService<ILogger<SettingsService>>();
+        _themeManager = Ioc.Default.GetRequiredService<ThemeManager>();
     }
 
     private readonly IAppConfigurationWrapper _appConfiguration;
@@ -50,6 +51,7 @@ public class SettingsService : IViewService
     public IDialogService DialogService { get; }
     private readonly IMapper _mapper;
     private readonly ILogger<SettingsService> _logger;
+    private readonly ThemeManager _themeManager;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
     {
@@ -62,11 +64,9 @@ public class SettingsService : IViewService
         return new CultureInfo(_appConfiguration.ApplicationLanguage);
     }
 
-    public ThemeVariant GetApplicationTheme()
+    public string GetApplicationTheme()
     {
-        var targetSetting = _appConfiguration.ApplicationTheme;
-        var themeToApply = ReflectionUtils.GetStaticInstanceByName<ThemeVariant>(targetSetting);
-        return themeToApply;
+        return _appConfiguration.ApplicationTheme;
     }
 
     public async Task Save(SettingsPageViewModel viewModel)
@@ -83,8 +83,9 @@ public class SettingsService : IViewService
         _appConfiguration.ApplicationLanguage =
             languageSettings.ApplicationLanguage.CultureInfo.IetfLanguageTag;
         LocalizationManager.ChangeLanguage(languageSettings.ApplicationLanguage.CultureInfo);
-        _appConfiguration.ApplicationTheme = appearanceSettings.SelectedTheme.Key.ToString();
-        AppUtils.ChangeTheme(appearanceSettings.SelectedTheme);
+        _appConfiguration.ApplicationTheme = appearanceSettings.SelectedTheme.Value;
+        _themeManager.ApplyTheme(appearanceSettings.SelectedTheme.Value);
+        AppUtils.ChangeTheme(appearanceSettings.SelectedTheme.BaseVariant);
         _appConfiguration.DefaultToGridView = appearanceSettings.DefaultToGridView;
         var mappedDownloaderConfigs =
             _mapper.Map<List<DownloaderConfiguration>>(downloaderSettings.AvailableDownloaders);
@@ -150,8 +151,8 @@ public class SettingsService : IViewService
         {
             AskForConfirmationBeforeWalkthrough =
                 _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
-            DocumentationPatterns = new EditablePatternListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationPatterns.ToObservableCollection()},
-            FolderExclusions = new EditableFolderExclusionsListBoxViewModel(){TargetCollection = _appConfiguration.DocumentationFolderExclusions.ToObservableCollection()},
+            DocumentationPatterns = new EditablePatternListBoxViewModel() { TargetCollection = _appConfiguration.DocumentationPatterns.ToObservableCollection() },
+            FolderExclusions = new EditableFolderExclusionsListBoxViewModel() { TargetCollection = _appConfiguration.DocumentationFolderExclusions.ToObservableCollection() },
             WinePath = GetWinePath()
         };
     }
@@ -243,7 +244,7 @@ public class SettingsService : IViewService
                 _logger.LogError("An IOException was ignored: {Ex}", ex);
             }
         }
-        
+
         _logger.LogInformation("Temp folder clean up completed");
 
         await Task.CompletedTask;
