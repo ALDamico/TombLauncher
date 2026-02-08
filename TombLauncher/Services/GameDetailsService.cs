@@ -82,7 +82,7 @@ public class GameDetailsService : IViewService
             if (confirmation.ButtonResult == MsgBoxButtonResult.No)
                 return;
         }
-        
+
         try
         {
             _platformSpecificFeatures.OpenUrl(link);
@@ -111,19 +111,19 @@ public class GameDetailsService : IViewService
             GameEngine = game.Game.GameMetadata.GameEngine
         };
         game.SetBusy(false);
-       
+
         NavigationManager.NavigateTo(savegameListView);
     }
 
     public void OpenLaunchOptions(GameDetailsViewModel gameDetailsViewModel)
     {
-        DialogService.ShowDialog(new LaunchOptionsDialogViewModel(){TargetGame = gameDetailsViewModel.Game.GameMetadata}, SaveLaunchOptions);
+        DialogService.ShowDialog(new LaunchOptionsDialogViewModel() { TargetGame = gameDetailsViewModel.Game.GameMetadata }, SaveLaunchOptions);
     }
 
     private async void SaveLaunchOptions(LaunchOptionsDialogViewModel vm)
     {
         var gameMetadata = vm.TargetGame;
-        NavigationManager.GetCurrentPage().SetBusy("Saving launch options...");
+        NavigationManager.CurrentPage.SetBusy("Saving launch options...");
 
         var launchOptionsDto = _mapper.Map<LaunchOptionsDto>(vm);
 
@@ -133,8 +133,8 @@ public class GameDetailsService : IViewService
         gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
 
         await GamesUnitOfWork.UpdateLaunchOptions(launchOptionsDto);
-        
-        NavigationManager.GetCurrentPage().ClearBusy();
+
+        NavigationManager.CurrentPage.ClearBusy();
     }
 
     public List<FileInfo> GetDocumentationFiles(string containingFolder, List<string> patterns, List<string> excludedFolders)

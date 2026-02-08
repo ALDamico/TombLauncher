@@ -13,7 +13,8 @@
     <Color x:Key="CardBorderColor">#33FFFFFF</Color>
     <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource CardBorderColor}" />
     <!-- Primary Actions -->
-    <SolidColorBrush x:Key="PrimaryBrush">#008080</SolidColorBrush> <!-- Teal -->
+    <Color x:Key="PrimaryColor">#008080</Color>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" /> <!-- Teal -->
     <SolidColorBrush x:Key="PrimaryPointerOverBrush">#009999</SolidColorBrush>
     <SolidColorBrush x:Key="ColoredButtonTextBrush">#FFFFFF</SolidColorBrush>
 

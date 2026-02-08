@@ -9,7 +9,8 @@
     <SolidColorBrush x:Key="SidebarBackgroundBrush">#F8FDFD</SolidColorBrush>
     
     <!-- Primary Actions -->
-    <SolidColorBrush x:Key="PrimaryBrush">#008080</SolidColorBrush> <!-- Teal -->
+    <Color x:Key="PrimaryColor">#008080</Color>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" /> <!-- Teal -->
     <SolidColorBrush x:Key="PrimaryPointerOverBrush">#006666</SolidColorBrush>
     <SolidColorBrush x:Key="ColoredButtonTextBrush">#FFFFFF</SolidColorBrush>
 

@@ -9,7 +9,8 @@
     <SolidColorBrush x:Key="SidebarBackgroundBrush">#0F0B0B</SolidColorBrush>
     
     <!-- Primary Actions -->
-    <SolidColorBrush x:Key="PrimaryBrush">#B7410E</SolidColorBrush> <!-- Rust -->
+    <Color x:Key="PrimaryColor">#B7410E</Color>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" /> <!-- Rust -->
     <SolidColorBrush x:Key="PrimaryPointerOverBrush">#D05015</SolidColorBrush>
     <SolidColorBrush x:Key="ColoredButtonTextBrush">#FFFFFF</SolidColorBrush>
 

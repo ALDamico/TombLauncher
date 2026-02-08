@@ -1,6 +1,11 @@
-﻿namespace TombLauncher.Core.Navigation;
+using CommunityToolkit.Mvvm.ComponentModel;
+using TombLauncher.Core.Navigation;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
-public class NavigationManager
+namespace TombLauncher.Services;
+
+public partial class NavigationManager : ObservableObject
 {
     public void SetDefaultPage(INavigationTarget defaultPage)
     {
@@ -8,6 +13,8 @@ public class NavigationManager
     }
 
     private INavigationTarget _defaultPage;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanGoBack))]
     private INavigationTarget _currentPage;
 
     private readonly Stack<INavigationTarget> _history = new();
@@ -17,25 +24,18 @@ public class NavigationManager
         if (_history.Count == 0)
         {
             _history.Push(_defaultPage);
-            _currentPage = _defaultPage;
-            InvokeOnNavigated();
+            CurrentPage = _defaultPage;
             return;
         }
 
         _history.Pop();
         if (_history.Count > 0)
         {
-            _currentPage = _history.Peek();
+            CurrentPage = _history.Peek();
         }
-        InvokeOnNavigated();
     }
 
-    public bool CanGoBack()
-    {
-        return _history.Count > 1;
-    }
-    
-    public INavigationTarget GetCurrentPage() => _currentPage;
+    public bool CanGoBack => _history.Count > 1;
 
     public async Task StartNavigationAsync(Task<INavigationTarget> newPage)
     {
@@ -51,7 +51,7 @@ public class NavigationManager
 
     public void RequestRefresh()
     {
-        InvokeOnNavigated();
+        OnPropertyChanged(nameof(CurrentPage));
     }
 
     public async Task NavigateTo(Task<INavigationTarget> newPage)
@@ -63,15 +63,8 @@ public class NavigationManager
     public Task NavigateTo(INavigationTarget newPage)
     {
         _history.Push(newPage);
-        _currentPage = newPage;
-        InvokeOnNavigated();
+        CurrentPage = newPage;
+        OnPropertyChanged(nameof(CanGoBack));
         return Task.CompletedTask;
-    }
-    
-    public event Action OnNavigated;
-
-    private async void InvokeOnNavigated()
-    {
-        await Task.Run(() => OnNavigated?.Invoke());
     }
 }

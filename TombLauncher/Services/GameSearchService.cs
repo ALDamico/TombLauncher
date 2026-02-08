@@ -69,7 +69,7 @@ public class GameSearchService : IViewService
         var nextPage = await GameDownloadManager.FetchNextPage();
 
         var fetchedResults = await InvokeMerger(target, nextPage);
-        
+
         var gamesByLinks = await
             GamesUnitOfWork.GetGamesByLinksDictionary(LinkType.Download, nextPage.Select(p => p.DownloadLink).ToList());
         foreach (var game in Enumerable.Where(target.FetchedResults, r => r.InstalledGame == null))
@@ -80,7 +80,7 @@ public class GameSearchService : IViewService
             }
         }
 
-        var mappedResults = await new TaskFactory().StartNew(() => 
+        var mappedResults = await new TaskFactory().StartNew(() =>
             _mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(fetchedResults));
         foreach (var result in mappedResults)
         {
@@ -113,11 +113,11 @@ public class GameSearchService : IViewService
         var gameToOpenDto = _mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
 
         var details = await GameDownloadManager.FetchDetails(gameToOpenDto);
-        
+
         if (details != null)
         {
             var detailsViewModel = _mapper.Map<GameMetadataViewModel>(details);
-            var installedGame = await 
+            var installedGame = await
                 GamesUnitOfWork.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink).ToList());
             if (installedGame != null)
             {
@@ -130,8 +130,8 @@ public class GameSearchService : IViewService
                 detailsViewModel.GameEngine = installedGame.GameEngine;
                 detailsViewModel.Id = installedGame.Id;
             }
-            
-            
+
+
             var vm = new GameDetailsViewModel(new GameWithStatsViewModel(detailsViewModel));
             if (gameToOpen.DownloadLink.IsNotNullOrWhiteSpace())
             {
@@ -193,10 +193,10 @@ public class GameSearchService : IViewService
 
         target.ClearBusy();
 
-        if (NavigationManager.GetCurrentPage() != target)
+        if (NavigationManager.CurrentPage != target)
         {
             await _notificationService.AddNotificationAsync(new NotificationViewModel()
-                { Content = new StringNotificationViewModel() { Text = "Search completed" }, IsDismissable = true });
+            { Content = new StringNotificationViewModel() { Text = "Search completed" }, IsDismissable = true });
         }
         _logger.LogInformation("Search completed");
     }

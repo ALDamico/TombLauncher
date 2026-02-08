@@ -20,7 +20,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
     public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel)
     {
         _navigationManager = navigationManager;
-        _navigationManager.OnNavigated += OnNavigated;
+        _navigationManager.PropertyChanged += NavigationManagerOnPropertyChanged;
         NotificationListViewModel = notificationListViewModel;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
@@ -84,10 +84,17 @@ public partial class MainWindowViewModel : WindowViewModelBase
         Title = "Tomb Launcher";
     }
 
-    private void OnNavigated()
+    private void NavigationManagerOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        OnPropertyChanged(nameof(CurrentPage));
-        Dispatcher.UIThread.Invoke(() => ((RelayCommand)GoBackCmd).NotifyCanExecuteChanged());
+        if (e.PropertyName == nameof(NavigationManager.CurrentPage))
+        {
+            OnPropertyChanged(nameof(CurrentPage));
+        }
+
+        if (e.PropertyName == nameof(NavigationManager.CanGoBack))
+        {
+            Dispatcher.UIThread.Invoke(() => ((RelayCommand)GoBackCmd).NotifyCanExecuteChanged());
+        }
     }
 
     private readonly NavigationManager _navigationManager;
@@ -133,21 +140,19 @@ public partial class MainWindowViewModel : WindowViewModelBase
             if (value != null)
             {
                 _navigationManager.StartNavigationAsync(value.PageViewModelFactory);
-                OnNavigated();
             }
         }
     }
 
-    public INavigationTarget CurrentPage => _navigationManager.GetCurrentPage();
+    public INavigationTarget CurrentPage => _navigationManager.CurrentPage;
     public ICommand GoBackCmd { get; }
 
     private void GoBack()
     {
         _navigationManager.GoBack();
-        OnNavigated();
     }
 
-    private bool CanGoBack() => _navigationManager.CanGoBack();
+    private bool CanGoBack() => _navigationManager.CanGoBack;
     public ICommand OpenSettingsCmd { get; }
 
     private async Task OpenSettings()
