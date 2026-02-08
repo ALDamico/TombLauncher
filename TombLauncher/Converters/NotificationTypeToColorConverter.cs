@@ -1,5 +1,8 @@
 using System;
 using System.Globalization;
+using Avalonia;
+using Avalonia.Controls;
+using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using TombLauncher.Contracts.Enums;
@@ -12,14 +15,19 @@ public class NotificationTypeToColorConverter : IValueConverter
     {
         if (value is NotificationType type)
         {
-            return type switch
+            var key = type switch
             {
-                NotificationType.Info => Brushes.DodgerBlue,
-                NotificationType.Success => Brushes.ForestGreen,
-                NotificationType.Warning => Brushes.Goldenrod,
-                NotificationType.Error => Brushes.Crimson,
-                _ => Brushes.Gray
+                NotificationType.Info => "PrimaryBrush",
+                NotificationType.Success => "SuccessBrush",
+                NotificationType.Warning => "WarningBrush",
+                NotificationType.Error => "DangerBrush",
+                _ => "SecondaryBrush"
             };
+
+            if (Application.Current!.TryFindResource(key, out var resource) && resource is IBrush brush)
+            {
+                return brush;
+            }
         }
 
         return Brushes.Gray;
