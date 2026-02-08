@@ -11,6 +11,7 @@
         Width="640"
         Height="480"
         WindowStartupLocation="CenterScreen"
+        Topmost="True"
         ShowInTaskbar="False"
         >
     <Window.Styles>

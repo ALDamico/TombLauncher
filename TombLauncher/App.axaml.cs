@@ -77,6 +77,16 @@ public partial class App : Application
 
             Dispatcher.UIThread.UnhandledException += OnUnhandledException;
 
+            // Run initialization in background to allow Splash Screen to render
+            await Task.Run(async () =>
+            {
+                await InitializeServices();
+                // Trigger DB migration explicitly in background
+                using var scope = Ioc.Default.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<TombLauncherDbContext>();
+                await dbContext.Database.MigrateAsync();
+            });
+
             await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(desktop, splashScreen));
         }
 
@@ -122,7 +132,7 @@ public partial class App : Application
 
     private async Task ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop, SplashScreen splashScreen)
     {
-        await InitializeServices();
+        // Services initialized in background task
         await ApplyInitialSettings();
         var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
         var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
