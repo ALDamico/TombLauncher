@@ -17,13 +17,17 @@ public partial class GameListViewModel : PageViewModel
     [ObservableProperty] private bool _showAsGrid;
 
     private GameListService _gameListService;
-    
-    protected override async Task RaiseInitialize()
+
+    public GameListViewModel(GameListService gameListService)
+    {
+        _gameListService = gameListService;
+    }
+
+    public override async Task OnNavigatedTo(object parameter)
     {
         SetBusy("Fetching games...");
-        _gameListService = Ioc.Default.GetRequiredService<GameListService>();
         _gameListService.ApplySettings(this);
-        AddGameCmd = new RelayCommand(AddGame);
+        AddGameCmd = new AsyncRelayCommand(AddGame);
         UninstallCmd = new RelayCommand<GameWithStatsViewModel>(Uninstall);
         OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
         OpenSearchCmd = new AsyncRelayCommand(OpenSearch);
@@ -52,11 +56,11 @@ public partial class GameListViewModel : PageViewModel
         });
     }
 
-    public ICommand AddGameCmd { get; private set; }
+    public IAsyncRelayCommand AddGameCmd { get; private set; }
 
-    private void AddGame()
+    private async Task AddGame()
     {
-        _gameListService.AddGame();
+        await _gameListService.AddGame();
     }
 
     public ICommand OpenSearchCmd { get; private set; }
@@ -65,7 +69,7 @@ public partial class GameListViewModel : PageViewModel
     {
         await _gameListService.OpenSearch();
     }
-    
+
     public ICommand PlayCmd { get; private set; }
 
     private void Play(GameWithStatsViewModel game)
@@ -92,8 +96,8 @@ public partial class GameListViewModel : PageViewModel
     private async Task AddToFavourites(GameWithStatsViewModel game)
     {
         await game.MarkGameAsFavouriteCmd.ExecuteAsync(null);
-    } 
-    
+    }
+
     public ICommand MarkUnmarkCompletedCmd { get; private set; }
 
     private async Task MarkUnmarkCompleted(GameWithStatsViewModel game)

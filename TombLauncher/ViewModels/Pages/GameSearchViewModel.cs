@@ -19,18 +19,20 @@ public partial class GameSearchViewModel : PageViewModel
     [ObservableProperty] private bool _hasMoreResults;
     [ObservableProperty] private Vector _scrollViewerOffset;
 
-    protected override Task RaiseInitialize()
+    public GameSearchViewModel(GameSearchService gameSearchService)
     {
-        SetBusy(true);
-        _gameSearchService = Ioc.Default.GetRequiredService<GameSearchService>();
+        _gameSearchService = gameSearchService;
         SearchPayload = new DownloaderSearchPayloadViewModel();
         SearchCmd = new AsyncRelayCommand(Search);
         HandleKeyUpCmd = new AsyncRelayCommand<KeyEventArgs>(HandleKeyUp);
         OpenCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel>(Open);
         LoadMoreCmd = new AsyncRelayCommand(LoadMore);
         IsCancelable = true;
-        SetBusy(false);
-        return base.RaiseInitialize();
+    }
+
+    public override Task OnNavigatedTo(object parameter)
+    {
+        return Task.CompletedTask;
     }
 
 

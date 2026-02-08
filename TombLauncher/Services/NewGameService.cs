@@ -22,10 +22,10 @@ namespace TombLauncher.Services;
 
 public class NewGameService : IViewService
 {
-    public NewGameService(GamesUnitOfWork gamesUnitOfWork, 
-        ILocalizationManager localizationManager, 
-        NavigationManager navigationManager, 
-        IMessageBoxService messageBoxService, 
+    public NewGameService(GamesUnitOfWork gamesUnitOfWork,
+        ILocalizationManager localizationManager,
+        NavigationManager navigationManager,
+        IMessageBoxService messageBoxService,
         IDialogService dialogService,
         GameFileHashCalculator hashCalculator,
         TombRaiderLevelInstaller levelInstaller,
@@ -75,7 +75,7 @@ public class NewGameService : IViewService
     public async Task InstallGame(GameMetadataViewModel gameMetadata, IProgress<CopyProgressInfo> progress, string source)
     {
         _logger.LogInformation("Installing game {GameTitle}", gameMetadata.Title);
-        progress.Report(new CopyProgressInfo() { Message = LocalizationManager.GetLocalizedString("Installing GAMENAME", gameMetadata.Title)});
+        progress.Report(new CopyProgressInfo() { Message = LocalizationManager.GetLocalizedString("Installing GAMENAME", gameMetadata.Title) });
         var hashes = await GameFileHashCalculator.CalculateHashes(source);
         if (GamesUnitOfWork.ExistsHashes(hashes, out _))
         {
@@ -83,10 +83,10 @@ public class NewGameService : IViewService
             var messageBoxResult = await Dispatcher.UIThread.InvokeAsync(() =>
                 MessageBoxService.ShowLocalized("The same mod is already installed",
                     "The same mod is already installed TEXT",
-                    MsgBoxButton.YesNo, 
-                    MsgBoxImage.Error, 
-                    noButtonText:"Cancel", 
-                    yesButtonText:"Install anyway"));
+                    MsgBoxButton.YesNo,
+                    MsgBoxImage.Error,
+                    noButtonText: "Cancel",
+                    yesButtonText: "Install anyway"));
             if (messageBoxResult.ButtonResult == MsgBoxButtonResult.No)
             {
                 _logger.LogInformation("Will not install");
@@ -97,13 +97,13 @@ public class NewGameService : IViewService
                 _logger.LogWarning("Will install anyway");
             }
         }
-        
+
         gameMetadata.InstallDate = DateTime.Now;
         var guid = Guid.NewGuid();
         gameMetadata.Guid = guid;
 
         var gameMetadataDto = _mapper.Map<GameMetadataDto>(gameMetadata);
-        
+
         var installLocation = await LevelInstaller.Install(source, gameMetadataDto, CancellationToken.None, progress);
         progress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
         gameMetadata.InstallDirectory = installLocation;
@@ -120,7 +120,7 @@ public class NewGameService : IViewService
         hashes.ForEach(h => h.GameId = dto.Id);
         await GamesUnitOfWork.SaveHashes(hashes);
         _logger.LogInformation("Game {GameTitle} installed successfully", gameMetadata.Title);
-        
-        NavigationManager.GoBack();
+
+        await NavigationManager.GoBack();
     }
 }

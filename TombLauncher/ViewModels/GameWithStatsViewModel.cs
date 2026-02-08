@@ -27,7 +27,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     }
 
     private readonly GameWithStatsService _gameWithStatsService;
-    
+
     [ObservableProperty]
     private GameMetadataViewModel _gameMetadata;
     [ObservableProperty] private TimeSpan _totalPlayedTime;
@@ -45,7 +45,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     {
         await _gameWithStatsService.OpenGame(this);
     }
-    
+
     public ICommand LaunchSetupCmd { get; }
 
     private void LaunchSetup()
@@ -57,7 +57,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     {
         return _gameWithStatsService.CanLaunchSetup(this);
     }
-    
+
     public ICommand LaunchCommunitySetupCmd { get; }
 
     private void LaunchCommunitySetup()
@@ -69,26 +69,26 @@ public partial class GameWithStatsViewModel : ViewModelBase
     {
         return _gameWithStatsService.CanLaunchCommunitySetup(this);
     }
-    
+
     public IAsyncRelayCommand MarkGameAsFavouriteCmd { get; }
 
     private async Task MarkGameAsFavourite()
     {
         await _gameWithStatsService.ToggleFavourite(this);
     }
-    
+
     public IAsyncRelayCommand MarkGameAsCompletedCmd { get; }
 
     private async Task MarkGameAsComplete()
     {
         await _gameWithStatsService.ToggleCompleted(this);
     }
-    
+
     public ICommand UninstallCmd { get; }
 
     private async Task Uninstall()
     {
-        await _gameWithStatsService.Uninstall(GameMetadata.InstallDirectory, GameMetadata.Id);
+        await _gameWithStatsService.Uninstall(GameMetadata.Id);
     }
 
     public bool CanUninstall()

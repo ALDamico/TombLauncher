@@ -12,9 +12,9 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 {
-    public SettingsPageViewModel()
+    public SettingsPageViewModel(SettingsService settingsService)
     {
-        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        _settingsService = settingsService;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (sender, args) =>
@@ -58,10 +58,10 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         RaiseCanExecuteChanged(SaveCmd);
     }
 
-    protected override Task RaiseInitialize()
+    public override Task OnNavigatedTo(object parameter)
     {
         if (IsInitialized)
-            return base.RaiseInitialize();
+            return Task.CompletedTask;
 
         IsInitialized = true;
         var currentTheme = _settingsService.GetApplicationTheme();
@@ -96,7 +96,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         Sections.Add(randomGameSettings);
         Sections.Add(savegameSettings);
         AcceptChanges();
-        return base.RaiseInitialize();
+        return Task.CompletedTask;
     }
 
     protected override async Task SaveInner()

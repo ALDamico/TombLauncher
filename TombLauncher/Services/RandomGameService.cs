@@ -62,7 +62,7 @@ public class RandomGameService
             var pickedGame = gamePage.PickOneAtRandom();
 
             var allGamesResult = await _gameDownloadManager.GetGames(new DownloaderSearchPayload()
-                    { LevelName = pickedGame.Title })
+            { LevelName = pickedGame.Title })
                 ;
 
             var details = await _gameDownloadManager.FetchDetails(pickedGame);
@@ -79,12 +79,17 @@ public class RandomGameService
             {
                 var searchResultService = Ioc.Default.GetRequiredService<GameSearchResultService>();
                 var mapped = _mapper.Map<MultiSourceGameSearchResultMetadataViewModel>(candidate);
-                var vm = new GameDetailsViewModel(
-                    new GameWithStatsViewModel()
-                        { GameMetadata = _mapper.Map<GameMetadataViewModel>(details) });
-                vm.InstallCmd = new AsyncRelayCommand(async () =>
+
+                var gameWithStats = new GameWithStatsViewModel()
+                { GameMetadata = _mapper.Map<GameMetadataViewModel>(details) };
+
+                await _navigationManager.NavigateTo<GameDetailsViewModel>(gameWithStats);
+
+                if (_navigationManager.CurrentPage is GameDetailsViewModel vm)
+                {
+                    vm.InstallCmd = new AsyncRelayCommand(async () =>
                     {
-                        vm.SetBusy(true, $"Installing {mapped.Title}");
+                        vm.SetBusy(true, $"Installing {mapped.Title}"); // SetBusy via INavigationTarget is on PageViewModel base? Yes.
                         await searchResultService.Install(
                             mapped);
 
@@ -96,9 +101,8 @@ public class RandomGameService
                         vm.Game.RaiseCanExecuteChanged(vm.Game.OpenCmd);
                         vm.InstallCmd = null;
                         vm.SetBusy(false);
-                    }, () => mapped.InstalledGame == null)
-                    ;
-                await _navigationManager.StartNavigationAsync(Task.FromResult<INavigationTarget>(vm));
+                    }, () => mapped.InstalledGame == null);
+                }
                 return;
             }
         }

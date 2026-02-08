@@ -17,8 +17,8 @@ namespace TombLauncher.Services;
 public class GameListService : IViewService
 {
     public GameListService(ILocalizationManager localizationManager,
-        NavigationManager navigationManager, 
-        IMessageBoxService messageBoxService, 
+        NavigationManager navigationManager,
+        IMessageBoxService messageBoxService,
         IDialogService dialogService)
     {
         _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
@@ -47,10 +47,9 @@ public class GameListService : IViewService
         return _mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
     }
 
-    public void AddGame()
+    public async Task AddGame()
     {
-        var newGameViewModel = Ioc.Default.GetService<NewGameViewModel>();
-        NavigationManager.NavigateTo(newGameViewModel);
+        await NavigationManager.NavigateTo<NewGameViewModel>();
     }
 
     public async Task Uninstall(GameListViewModel target, GameWithStatsViewModel game)
@@ -65,7 +64,8 @@ public class GameListService : IViewService
             _gamesUnitOfWork.MarkGameAsUninstalled(game.GameMetadata.Id);
             await _gamesUnitOfWork.Save();
             target.ClearBusy();
-            await NavigationManager.NavigateTo(target);
+            // Refresh logic:
+            await NavigationManager.NavigateTo<GameListViewModel>();
         };
         DialogService.ShowDialog(confirmDialogViewModel, _ => { });
         await Task.CompletedTask;
@@ -73,7 +73,7 @@ public class GameListService : IViewService
 
     public async Task OpenSearch()
     {
-        await NavigationManager.NavigateTo(Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<GameSearchViewModel>()));
+        await NavigationManager.NavigateTo<GameSearchViewModel>();
     }
 
     public void ApplySettings(GameListViewModel target)

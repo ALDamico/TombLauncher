@@ -100,19 +100,9 @@ public class GameDetailsService : IViewService
         }
     }
 
-    public void OpenSavegameList(GameDetailsViewModel game)
+    public async Task OpenSavegameList(GameDetailsViewModel game)
     {
-        game.SetBusy("Getting savegames...");
-        var savegameListView = new SavegameListViewModel()
-        {
-            GameId = game.Game.GameMetadata.Id,
-            GameTitle = game.Game.GameMetadata.Title,
-            InstallLocation = game.Game.GameMetadata.InstallDirectory,
-            GameEngine = game.Game.GameMetadata.GameEngine
-        };
-        game.SetBusy(false);
-
-        NavigationManager.NavigateTo(savegameListView);
+        await NavigationManager.NavigateTo<SavegameListViewModel>(game.Game.GameMetadata);
     }
 
     public void OpenLaunchOptions(GameDetailsViewModel gameDetailsViewModel)
@@ -123,7 +113,8 @@ public class GameDetailsService : IViewService
     private async void SaveLaunchOptions(LaunchOptionsDialogViewModel vm)
     {
         var gameMetadata = vm.TargetGame;
-        NavigationManager.CurrentPage.SetBusy("Saving launch options...");
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.SetBusy("Saving launch options...");
 
         var launchOptionsDto = _mapper.Map<LaunchOptionsDto>(vm);
 
@@ -134,7 +125,7 @@ public class GameDetailsService : IViewService
 
         await GamesUnitOfWork.UpdateLaunchOptions(launchOptionsDto);
 
-        NavigationManager.CurrentPage.ClearBusy();
+        currentPage?.ClearBusy();
     }
 
     public List<FileInfo> GetDocumentationFiles(string containingFolder, List<string> patterns, List<string> excludedFolders)

@@ -16,9 +16,9 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class NewGameViewModel : PageViewModel
 {
-    public NewGameViewModel() 
+    public NewGameViewModel(NewGameService newGameService)
     {
-        _newGameService = Ioc.Default.GetRequiredService<NewGameService>();
+        _newGameService = newGameService;
         GameMetadata = new GameMetadataViewModel();
         GameMetadata.PropertyChanged += (sender, args) => RaiseCanExecuteChanged(SaveCmd);
 
@@ -67,7 +67,7 @@ public partial class NewGameViewModel : PageViewModel
     protected override async Task SaveInner()
     {
         IsBusy = true;
-        
+
         await _newGameService.InstallGame(GameMetadata, InstallProgress, Source);
     }
 

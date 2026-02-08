@@ -89,38 +89,7 @@ public partial class App : Application
 
             await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(desktop, splashScreen));
 
-            // Pre-load views to avoid stuttering on first navigation
-            Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                await Task.Delay(2000); // Wait for the UI to settle
-                var viewLocator = (ViewLocator)DataTemplates[0];
-                var viewModelsToPreload = new List<Type>()
-                {
-                    typeof(GameListViewModel),
-                    typeof(GameSearchViewModel),
-                    typeof(SettingsPageViewModel),
-                    typeof(StatisticsPageViewModel)
-                };
 
-                foreach (var viewModelType in viewModelsToPreload)
-                {
-                    try
-                    {
-                        var viewModel = Ioc.Default.GetService(viewModelType);
-                        if (viewModel != null)
-                        {
-                            viewLocator.Build(viewModel);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Logger.Error(ex, "Failed to pre-load view for {ViewModel}", viewModelType.Name);
-                    }
-                    await Task.Yield(); // Yield to UI thread to keep it responsive
-                }
-                Log.Logger.Information("View pre-loading complete");
-
-            }, DispatcherPriority.Background);
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -167,9 +136,7 @@ public partial class App : Application
     {
         // Services initialized in background task
         await ApplyInitialSettings();
-        var defaultPage = Ioc.Default.GetRequiredService<WelcomePageViewModel>();
         var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
-        navigationManager.SetDefaultPage(defaultPage);
         var mainWindow = new MainWindow
         {
             DataContext = new MainWindowViewModel(navigationManager,
@@ -219,7 +186,7 @@ public partial class App : Application
         ConfigureViewModels(serviceCollection);
         serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current));
         ConfigureDatabaseAccess(serviceCollection, appConfiguration);
-        serviceCollection.AddSingleton(_ => new NavigationManager());
+        serviceCollection.AddSingleton(sp => new NavigationManager(sp));
         serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
         {
             ApplicationName = "Tomb Launcher",
@@ -367,6 +334,7 @@ public partial class App : Application
         serviceCollection.AddTransient<RandomGameViewModel>();
         serviceCollection.AddScoped<StatisticsPageViewModel>();
         serviceCollection.AddTransient<SavegameListViewModel>();
+        serviceCollection.AddTransient<GameDetailsViewModel>();
     }
 
     private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection, IAppConfiguration appConfiguration)

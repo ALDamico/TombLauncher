@@ -9,44 +9,52 @@ using Material.Icons;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
+using TombLauncher.ViewModels;
 
 namespace TombLauncher.ViewModels.Pages;
 
 public partial class SavegameListViewModel : PageViewModel
 {
-    public SavegameListViewModel()
+    public SavegameListViewModel(SavegameService savegameService)
     {
+        _savegameService = savegameService;
         SavegameFilter = new SaveGameListFilter();
-    }
-    
-    protected override async Task RaiseInitialize()
-    {
-        SetBusy("Loading savegames");
-        _savegameService = Ioc.Default.GetRequiredService<SavegameService>();
-        
+
         FilterCmd = new AsyncRelayCommand<SaveGameListFilter>(Filter);
         UpdateStartOfLevelStateCmd = new AsyncRelayCommand<SavegameViewModel>(UpdateStartOfLevelState);
         RestoreSavegameCmd = new AsyncRelayCommand<int>(RestoreSavegame);
         DeleteAllCmd = new AsyncRelayCommand(DeleteAll);
         CheckNonBackedUpSavegamesCmd = new AsyncRelayCommand(CheckNonBackedUpSavegames);
-        
+
         DeleteSaveCmd = new AsyncRelayCommand<SavegameViewModel>(DeleteSave, CanDelete);
         TopBarCommands.Add(new CommandViewModel()
         {
-            Command = DeleteAllCmd, 
-            Icon = MaterialIconKind.Delete, 
+            Command = DeleteAllCmd,
+            Icon = MaterialIconKind.Delete,
             Tooltip = "Delete all".GetLocalizedString()
         });
         TopBarCommands.Add(new CommandViewModel()
         {
-            Command = CheckNonBackedUpSavegamesCmd, 
+            Command = CheckNonBackedUpSavegamesCmd,
             Icon = MaterialIconKind.Import,
             Tooltip = "Import missing savegames".GetLocalizedString()
         });
-        
-        await _savegameService.LoadSaveGames(this);
-        await _savegameService.InitSlots(this);
-        SetBusy(false);
+    }
+
+    public override async Task OnNavigatedTo(object parameter)
+    {
+        if (parameter is GameMetadataViewModel gameMetadata)
+        {
+            GameId = gameMetadata.Id;
+            GameTitle = gameMetadata.Title;
+            InstallLocation = gameMetadata.InstallDirectory;
+            GameEngine = gameMetadata.GameEngine;
+
+            SetBusy("Loading savegames");
+            await _savegameService.LoadSaveGames(this);
+            await _savegameService.InitSlots(this);
+            SetBusy(false);
+        }
     }
 
     [ObservableProperty] private string _gameTitle;
@@ -71,41 +79,41 @@ public partial class SavegameListViewModel : PageViewModel
             return;
         await _savegameService.ApplyFilter(this, slotNumber);
     }
-    
+
     public ICommand UpdateStartOfLevelStateCmd { get; private set; }
 
     private async Task UpdateStartOfLevelState(SavegameViewModel targetSaveGame)
     {
         await _savegameService.UpdateStartOfLevelState(this, targetSaveGame);
     }
-    
+
     public IRelayCommand DeleteSaveCmd { get; private set; }
 
     private async Task DeleteSave(SavegameViewModel target)
     {
         await _savegameService.DeleteSavegame(this, target);
     }
-    
+
     private bool CanDelete(SavegameViewModel obj)
     {
         if (obj == null) return false;
         return !obj.IsStartOfLevel;
     }
-    
+
     public ICommand RestoreSavegameCmd { get; private set; }
 
     private async Task RestoreSavegame(int savegameId)
     {
         await _savegameService.Restore(this, savegameId, Slots.Max(s => s.SaveSlot).GetValueOrDefault());
     }
-    
+
     public ICommand DeleteAllCmd { get; private set; }
 
     private async Task DeleteAll()
     {
         await _savegameService.DeleteAllSavegamesByGameId(this, GameId);
     }
-    
+
     public ICommand CheckNonBackedUpSavegamesCmd { get; private set; }
 
     private async Task CheckNonBackedUpSavegames()

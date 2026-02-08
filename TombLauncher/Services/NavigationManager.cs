@@ -1,70 +1,236 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.Core.Navigation;
+using System;
+using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
+using TombLauncher.Contracts.Navigation;
 
 namespace TombLauncher.Services;
 
 public partial class NavigationManager : ObservableObject
 {
-    public void SetDefaultPage(INavigationTarget defaultPage)
-    {
-        _defaultPage = defaultPage;
-    }
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ConcurrentStack<INavigableViewModel> _history = new();
 
-    private INavigationTarget _defaultPage;
+    // Using a semaphore to ensure navigation operations are serialized even if called from multiple threads
+    private readonly SemaphoreSlim _navigationLock = new(1, 1);
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanGoBack))]
-    private INavigationTarget _currentPage;
+    private INavigableViewModel? _currentPage;
 
-    private readonly Stack<INavigationTarget> _history = new();
+    public bool CanGoBack => _history.Count > 0;
 
-    public void GoBack()
+    public NavigationManager(IServiceProvider serviceProvider)
     {
-        if (_history.Count == 0)
+        _serviceProvider = serviceProvider;
+    }
+
+    /// <summary>
+    /// Navigates to a ViewModel type by resolving it from DI.
+    /// Supports passing a navigation parameter.
+    /// </summary>
+    /// <summary>
+    /// Navigates to a ViewModel type by resolving it from DI.
+    /// Supports passing a navigation parameter.
+    /// </summary>
+    public async Task NavigateTo<TViewModel>(object? parameter = null) where TViewModel : class, INavigableViewModel
+    {
+        var nextViewModel = _serviceProvider.GetRequiredService<TViewModel>();
+        INavigableViewModel? previousPage;
+
+        await _navigationLock.WaitAsync();
+        try
         {
-            _history.Push(_defaultPage);
-            CurrentPage = _defaultPage;
-            return;
+            previousPage = CurrentPage;
+
+            if (previousPage != null)
+            {
+                _history.Push(previousPage);
+            }
+
+            // Update state (UI triggers happen here)
+            CurrentPage = nextViewModel;
+        }
+        finally
+        {
+            _navigationLock.Release();
         }
 
-        _history.Pop();
-        if (_history.Count > 0)
+        if (previousPage != null)
         {
-            CurrentPage = _history.Peek();
+            // Notify previous page it's about to be hidden
+            // We do this outside the lock to avoid deadlocks if OnNavigatingFrom triggers navigation
+            try
+            {
+                await previousPage.OnNavigatingFrom();
+            }
+            catch (Exception)
+            {
+                // Log exception? 
+                // Ignore for now to ensure navigation continues
+            }
+        }
+
+        // Initialize new page
+        // We do this outside the lock to avoid deadlocks and allow UI to render the new page (likely in "Busy" state)
+        try
+        {
+            await nextViewModel.OnNavigatedTo(parameter);
+        }
+        catch (Exception)
+        {
+            // Handle initialization failure?
+            // Maybe navigate back or show error?
+            // For now, we stay on the page (which might be broken/empty) but at least app doesn't crash?
+            // Or maybe set CurrentPage back?
         }
     }
 
-    public bool CanGoBack => _history.Count > 1;
-
-    public async Task StartNavigationAsync(Task<INavigationTarget> newPage)
+    public async Task GoBack()
     {
-        var page = await newPage;
-        await StartNavigationAsync(page);
+        INavigableViewModel? previousPage = null;
+        INavigableViewModel? pageNavigatingFrom = null;
+
+        await _navigationLock.WaitAsync();
+        try
+        {
+            if (_history.TryPop(out previousPage))
+            {
+                pageNavigatingFrom = CurrentPage;
+                CurrentPage = previousPage;
+            }
+        }
+        finally
+        {
+            _navigationLock.Release();
+        }
+
+        if (previousPage != null)
+        {
+            if (pageNavigatingFrom != null)
+            {
+                try
+                {
+                    await pageNavigatingFrom.OnNavigatingFrom();
+                }
+                catch (Exception) { }
+            }
+
+            // Re-activating the previous page
+            try
+            {
+                await previousPage.OnNavigatedTo(null);
+            }
+            catch (Exception) { }
+        }
     }
 
-    public async Task StartNavigationAsync(INavigationTarget newPage)
+    public async Task NavigateToRoot<TViewModel>(object? parameter = null) where TViewModel : class, INavigableViewModel
     {
-        _history.Clear();
-        await NavigateTo(newPage);
+        var nextViewModel = _serviceProvider.GetRequiredService<TViewModel>();
+        INavigableViewModel? previousPage;
+
+        await _navigationLock.WaitAsync();
+        try
+        {
+            _history.Clear();
+            OnPropertyChanged(nameof(CanGoBack));
+
+            previousPage = CurrentPage;
+            CurrentPage = nextViewModel;
+        }
+        finally
+        {
+            _navigationLock.Release();
+        }
+
+        if (previousPage != null)
+        {
+            try
+            {
+                await previousPage.OnNavigatingFrom();
+            }
+            catch (Exception) { }
+        }
+
+        try
+        {
+            await nextViewModel.OnNavigatedTo(parameter);
+        }
+        catch (Exception) { }
     }
 
-    public void RequestRefresh()
+    public async Task NavigateTo(Type viewModelType, object? parameter = null)
     {
-        OnPropertyChanged(nameof(CurrentPage));
+        var nextViewModel = (INavigableViewModel)_serviceProvider.GetRequiredService(viewModelType);
+        INavigableViewModel? previousPage;
+
+        await _navigationLock.WaitAsync();
+        try
+        {
+            previousPage = CurrentPage;
+            if (previousPage != null)
+            {
+                _history.Push(previousPage);
+            }
+
+            CurrentPage = nextViewModel;
+        }
+        finally
+        {
+            _navigationLock.Release();
+        }
+
+        if (previousPage != null)
+        {
+            try
+            {
+                await previousPage.OnNavigatingFrom();
+            }
+            catch (Exception) { }
+        }
+
+        try
+        {
+            await nextViewModel.OnNavigatedTo(parameter);
+        }
+        catch (Exception) { }
     }
 
-    public async Task NavigateTo(Task<INavigationTarget> newPage)
+    public async Task NavigateToRoot(Type viewModelType, object? parameter = null)
     {
-        var awaitedPage = await newPage;
-        await NavigateTo(awaitedPage);
-    }
+        var nextViewModel = (INavigableViewModel)_serviceProvider.GetRequiredService(viewModelType);
+        INavigableViewModel? previousPage;
 
-    public Task NavigateTo(INavigationTarget newPage)
-    {
-        _history.Push(newPage);
-        CurrentPage = newPage;
-        OnPropertyChanged(nameof(CanGoBack));
-        return Task.CompletedTask;
+        await _navigationLock.WaitAsync();
+        try
+        {
+            _history.Clear();
+            OnPropertyChanged(nameof(CanGoBack));
+
+            previousPage = CurrentPage;
+            CurrentPage = nextViewModel;
+        }
+        finally
+        {
+            _navigationLock.Release();
+        }
+
+        if (previousPage != null)
+        {
+            try
+            {
+                await previousPage.OnNavigatingFrom();
+            }
+            catch (Exception) { }
+        }
+
+        try
+        {
+            await nextViewModel.OnNavigatedTo(parameter);
+        }
+        catch (Exception) { }
     }
 }

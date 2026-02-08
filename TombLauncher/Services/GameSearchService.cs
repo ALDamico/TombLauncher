@@ -132,20 +132,41 @@ public class GameSearchService : IViewService
             }
 
 
-            var vm = new GameDetailsViewModel(new GameWithStatsViewModel(detailsViewModel));
-            if (gameToOpen.DownloadLink.IsNotNullOrWhiteSpace())
-            {
-                vm.InstallCmd = gameToOpen.InstallCmd;
-            }
 
-            if (details.TitlePic is { Length: > 0 } && gameToOpen.TitlePic == null)
-            {
-                _logger.LogDebug("Game {GameName} has no title pic. Updating from fetched details", gameToOpen.Title);
-                gameToOpen.TitlePic = gameToOpenDto.TitlePic;
-            }
+            // Logic moved to after navigation block
+
 
             target.ClearBusy();
-            await NavigationManager.NavigateTo(vm);
+
+            // Note: passing the whole VM might check if GameDetailsViewModel handles it correctly
+            // GameDetailsViewModel expects GameWithStatsViewModel. 
+            // vm above was created manually. 
+            // We should pass "new GameWithStatsViewModel(detailsViewModel)" as parameter.
+            // And we need to handle "vm.InstallCmd = ..." after navigation? 
+            // Or pass a composite parameter?
+            // "vm" is local here. We are navigating to a NEW GameDetailsViewModel via DI.
+            // The InstallCmd assignment on the NEW VM needs to happen.
+            // OnNavigatedTo receives the parameter.
+            // If I pass GameWithStatsViewModel, the InstallCmd is NOT on it.
+            // The InstallCmd is on gameToOpen? No, gameToOpen.InstallCmd.
+            // The logic assigns vm.InstallCmd = gameToOpen.InstallCmd.
+            // I should pass a "GameDetailsParameter" or just "GameWithStatsViewModel" and set InstallCmd differently?
+            // Or maybe handle InstallCmd in GameDetailsViewModel differently?
+            // "gameToOpen.InstallCmd" comes from where?
+            // It seems "gameToOpen" is MultiSourceGameSearchResultMetadataViewModel.
+
+            // Let's create a DTO or just pass the GameWithStatsViewModel and handling InstallCmd logic is tricky if VM is created by DI.
+            // Can I retrieve the VM after navigation?
+            // NavigationManager.CurrentPage is updated.
+
+            await NavigationManager.NavigateTo<GameDetailsViewModel>(new GameWithStatsViewModel(detailsViewModel));
+            if (NavigationManager.CurrentPage is GameDetailsViewModel currentVm)
+            {
+                if (gameToOpen.DownloadLink.IsNotNullOrWhiteSpace())
+                {
+                    currentVm.InstallCmd = gameToOpen.InstallCmd;
+                }
+            }
             return;
         }
 

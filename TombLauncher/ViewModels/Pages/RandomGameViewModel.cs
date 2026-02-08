@@ -10,9 +10,9 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class RandomGameViewModel : PageViewModel
 {
-    public RandomGameViewModel()
+    public RandomGameViewModel(RandomGameService randomGameService)
     {
-        _randomGameService = Ioc.Default.GetRequiredService<RandomGameService>();
+        _randomGameService = randomGameService;
         PickRandomGameCmd = new AsyncRelayCommand(PickRandomGame);
     }
 
@@ -20,8 +20,8 @@ public partial class RandomGameViewModel : PageViewModel
     [ObservableProperty] private bool _attemptsExpired;
     [ObservableProperty] private int _maxRetries;
 
-    protected override async Task RaiseInitialize() => await PickRandomGame();
-    
+    public override async Task OnNavigatedTo(object parameter) => await PickRandomGame();
+
     public ICommand PickRandomGameCmd { get; }
 
     private async Task PickRandomGame() => await _randomGameService.PickRandomGame(this);

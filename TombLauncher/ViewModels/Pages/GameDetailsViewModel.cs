@@ -17,18 +17,18 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameDetailsViewModel : PageViewModel
 {
-    public GameDetailsViewModel(GameWithStatsViewModel game)
+    public GameDetailsViewModel(GameDetailsService gameDetailsService)
     {
-        _game = game;
-        _gameDetailsService = Ioc.Default.GetRequiredService<GameDetailsService>();
+        _gameDetailsService = gameDetailsService;
         BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
-        ManageSaveGamesCmd = new RelayCommand(ManageSavegames);
+        ManageSaveGamesCmd = new AsyncRelayCommand(ManageSavegames);
         OpenLaunchOptionsCmd = new RelayCommand(OpenLaunchOptions);
         OpenDocumentCommand = new AsyncRelayCommand<string>(OpenDocument);
     }
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCmd))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCmd))]
     private bool _askForConfirmationBeforeOpeningWalkthrough;
 
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands;
@@ -39,9 +39,13 @@ public partial class GameDetailsViewModel : PageViewModel
     public List<string> IgnoredFolders { get; set; }
     private readonly GameDetailsService _gameDetailsService;
 
-
-    protected override async Task RaiseInitialize()
+    public override async Task OnNavigatedTo(object parameter)
     {
+        if (parameter is GameWithStatsViewModel game)
+        {
+            Game = game;
+        }
+
         _gameDetailsService.InitializeSettings(this);
         InitSetupCommands();
 
@@ -58,9 +62,9 @@ public partial class GameDetailsViewModel : PageViewModel
 
     private bool CanBrowseFolder() => Game.CanUninstall();
 
-    public ICommand ManageSaveGamesCmd { get; }
+    public IAsyncRelayCommand ManageSaveGamesCmd { get; }
 
-    private void ManageSavegames() => _gameDetailsService.OpenSavegameList(this);
+    private async Task ManageSavegames() => await _gameDetailsService.OpenSavegameList(this);
 
     public IRelayCommand ReadWalkthroughCmd { get; }
 
@@ -84,7 +88,9 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             setupCommands.Add(new CommandViewModel()
             {
-                Command = Game.LaunchSetupCmd, Icon = MaterialIconKind.Settings, Text = "Setup".GetLocalizedString()
+                Command = Game.LaunchSetupCmd,
+                Icon = MaterialIconKind.Settings,
+                Text = "Setup".GetLocalizedString()
             });
         }
 
@@ -92,7 +98,8 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             setupCommands.Add(new CommandViewModel()
             {
-                Command = Game.LaunchCommunitySetupCmd, Icon = MaterialIconKind.SettingsPlay,
+                Command = Game.LaunchCommunitySetupCmd,
+                Icon = MaterialIconKind.SettingsPlay,
                 Text = "Community patch setup".GetLocalizedString()
             });
         }

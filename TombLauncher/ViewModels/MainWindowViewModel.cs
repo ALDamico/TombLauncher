@@ -32,35 +32,35 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 ToolTip = "Welcome".GetLocalizedString(),
                 Icon = MaterialIconKind.HomeOutline,
                 Text = "Welcome".GetLocalizedString(),
-                PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<WelcomePageViewModel>())
+                ViewModelType = typeof(WelcomePageViewModel)
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "My mods".GetLocalizedString(),
                 Icon = MaterialIconKind.Games,
                 Text = "My mods".GetLocalizedString(),
-                PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<GameListViewModel>())
+                ViewModelType = typeof(GameListViewModel)
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "Search".GetLocalizedString(),
                 Icon = MaterialIconKind.Magnify,
                 Text = "Search".GetLocalizedString(),
-                PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<GameSearchViewModel>())
+                ViewModelType = typeof(GameSearchViewModel)
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "Random".GetLocalizedString(),
                 Icon = MaterialIconKind.Gambling,
                 Text = "Random game".GetLocalizedString(),
-                PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<RandomGameViewModel>())
+                ViewModelType = typeof(RandomGameViewModel)
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "Statistics".GetLocalizedString(),
                 Icon = MaterialIconKind.ChartBar,
                 Text = "Statistics".GetLocalizedString(),
-                PageViewModelFactory =  Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<StatisticsPageViewModel>())
+                ViewModelType = typeof(StatisticsPageViewModel)
             }
         };
 
@@ -69,7 +69,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
             ToolTip = "Settings".GetLocalizedString(),
             Icon = MaterialIconKind.Settings,
             Text = "Settings".GetLocalizedString(),
-            PageViewModelFactory = Task.FromResult<INavigationTarget>(Ioc.Default.GetRequiredService<SettingsPageViewModel>())
+            ViewModelType = typeof(SettingsPageViewModel)
         };
 
         GitHubLinkItem = new CommandViewModel()
@@ -80,8 +80,9 @@ public partial class MainWindowViewModel : WindowViewModelBase
             Command = new RelayCommand(OpenGithub)
         };
 
-        _navigationManager.StartNavigationAsync(MenuItems.First().PageViewModelFactory);
         Title = "Tomb Launcher";
+        // Initialize default view
+        SelectedMenuItem = MenuItems.First();
     }
 
     private void NavigationManagerOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -139,17 +140,19 @@ public partial class MainWindowViewModel : WindowViewModelBase
             SetProperty(ref _selectedMenuItem, value);
             if (value != null)
             {
-                _navigationManager.StartNavigationAsync(value.PageViewModelFactory);
+                // Using NavigateToRoot for main menu items to clear history stack
+                _navigationManager.NavigateToRoot(value.ViewModelType);
             }
         }
     }
 
-    public INavigationTarget CurrentPage => _navigationManager.CurrentPage;
+
+    public INavigationTarget CurrentPage => _navigationManager.CurrentPage as INavigationTarget;
     public ICommand GoBackCmd { get; }
 
-    private void GoBack()
+    private async void GoBack()
     {
-        _navigationManager.GoBack();
+        await _navigationManager.GoBack();
     }
 
     private bool CanGoBack() => _navigationManager.CanGoBack;
@@ -157,7 +160,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
     private async Task OpenSettings()
     {
-        await SettingsItem.PageViewModelFactory;
+        await _navigationManager.NavigateTo(SettingsItem.ViewModelType);
         SelectedMenuItem = SettingsItem;
         IsSettingsOpen = true;
     }

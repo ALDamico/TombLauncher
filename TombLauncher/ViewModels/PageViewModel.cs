@@ -4,14 +4,25 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TombLauncher.Contracts.Navigation;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Navigation;
 
 namespace TombLauncher.ViewModels;
 
-public abstract partial class PageViewModel : ViewModelBase, INavigationTarget
+public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, INavigableViewModel
 {
     private readonly IProgress<PageBusyState> _progress;
+
+    public virtual Task OnNavigatedTo(object parameter)
+    {
+        return Task.CompletedTask;
+    }
+
+    public virtual Task OnNavigatingFrom()
+    {
+        return Task.CompletedTask;
+    }
     protected PageViewModel()
     {
         _progress = new Progress<PageBusyState>(state =>
@@ -23,19 +34,19 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget
         CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
         TopBarCommands = new ObservableCollection<ITopBarCommand>();
     }
-    
-    [ObservableProperty]private bool _isBusy;
-    [ObservableProperty]private string _busyMessage;
+
+    [ObservableProperty] private bool _isBusy;
+    [ObservableProperty] private string _busyMessage;
     [ObservableProperty] private string _currentFileName;
     [ObservableProperty] private double? _percentageComplete;
     [ObservableProperty] private bool _isCancelable;
     [ObservableProperty] private ObservableCollection<ITopBarCommand> _topBarCommands;
-    
+
     public ICommand CancelCmd { get; }
 
     protected virtual void Cancel()
     {
-        
+
     }
 
     public void SetBusy(bool isBusy, string busyMessage = null)

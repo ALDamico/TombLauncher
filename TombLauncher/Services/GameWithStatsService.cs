@@ -66,8 +66,7 @@ public class GameWithStatsService : IViewService
 
     public async Task OpenGame(GameWithStatsViewModel game)
     {
-        var gameDetailsViewModel = new GameDetailsViewModel(game);
-        await NavigationManager.NavigateTo(gameDetailsViewModel);
+        await NavigationManager.NavigateTo<GameDetailsViewModel>(game);
     }
 
     public async Task OpenGame(int gameId)
@@ -78,8 +77,8 @@ public class GameWithStatsService : IViewService
 
     public void PlayGame(GameWithStatsViewModel game)
     {
-        var currentPage = NavigationManager.CurrentPage;
-        currentPage.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
         InitFileSystemWatcher(game);
 
         LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
@@ -154,8 +153,8 @@ public class GameWithStatsService : IViewService
         {
             _logger.LogInformation("Setup process exited without issue");
         }
-        var currentPage = NavigationManager.CurrentPage;
-        currentPage.ClearBusy();
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.ClearBusy();
     }
 
     private async Task OnGameExited(GameWithStatsViewModel game, Process process)
@@ -166,13 +165,13 @@ public class GameWithStatsService : IViewService
         {
             _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
         }
-        var currentPage = NavigationManager.CurrentPage;
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         try
         {
-            currentPage.SetBusy(true, "Saving play session...".GetLocalizedString());
+            currentPage?.SetBusy(true, "Saving play session...".GetLocalizedString());
             var gameMetadataDto = _mapper.Map<GameMetadataDto>(game.GameMetadata);
             _gamesUnitOfWork.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
-            currentPage.SetBusy("Backing up savegames...".GetLocalizedString());
+            currentPage?.SetBusy("Backing up savegames...".GetLocalizedString());
             var filesToProcess = _headerProcessor.ProcessedFiles;
 
             foreach (var file in filesToProcess)
@@ -206,11 +205,11 @@ public class GameWithStatsService : IViewService
 
             await _gamesUnitOfWork.Save();
 
-            NavigationManager.RequestRefresh();
+            // NavigationManager.RequestRefresh(); // Not available in V2? Need to handle refresh.
         }
         finally
         {
-            currentPage.ClearBusy();
+            currentPage?.ClearBusy();
             if (errorOccurred)
             {
                 await MessageBoxService.ShowLocalized("Savegame parse error",
@@ -222,16 +221,16 @@ public class GameWithStatsService : IViewService
 
     public void LaunchSetup(GameWithStatsViewModel game)
     {
-        var currentPage = NavigationManager.CurrentPage;
-        currentPage.SetBusy(
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.SetBusy(
             LocalizationManager.GetLocalizedString("Launching setup for GAMENAME", game.GameMetadata.Title));
         LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
     }
 
     public void LaunchCommunitySetup(GameWithStatsViewModel game)
     {
-        var currentPage = NavigationManager.CurrentPage;
-        currentPage.SetBusy(
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.SetBusy(
             LocalizationManager.GetLocalizedString("Launching community patch setup for GAMENAME", game.GameMetadata.Title));
         LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
     }
@@ -287,12 +286,15 @@ public class GameWithStatsService : IViewService
         return metadataViewModel.IsInstalled;
     }
 
-    public async Task Uninstall(string installDir, int gameId)
+    public async Task Uninstall(int gameId)
     {
-        NavigationManager.CurrentPage.SetBusy("Uninstalling...");
+        var game = await _gamesUnitOfWork.GetGameWithStats(gameId);
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.SetBusy("Uninstalling...".GetLocalizedString());
+        var installDir = game.GameMetadata.InstallDirectory;
         Directory.Delete(installDir, true);
         _gamesUnitOfWork.MarkGameAsUninstalled(gameId);
         await _gamesUnitOfWork.Save();
-        NavigationManager.GoBack();
+        await NavigationManager.GoBack();
     }
 }
