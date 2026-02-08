@@ -248,6 +248,22 @@
     <Style Selector="Border.card-background">
         <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"></Setter>
     </Style>
+
+    <Style Selector="Border.interactive-card">
+        <Setter Property="RenderTransform" Value="scale(1)"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="CubicEaseOut"/>
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.interactive-card:pointerover">
+        <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        <Setter Property="BoxShadow" Value="0 4 8 0 #40000000"/>
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
     <Style Selector="TextBlock.card-content">
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"></Setter>
     </Style>

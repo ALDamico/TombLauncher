@@ -159,6 +159,9 @@
             <TransitioningContentControl Grid.Row="1" 
                                          Margin="15" 
                                          Content="{Binding CurrentPage}">
+                <TransitioningContentControl.PageTransition>
+                    <CrossFade Duration="0:00:00.25" />
+                </TransitioningContentControl.PageTransition>
                 <TransitioningContentControl.IsEnabled>
                     <Binding Path="CurrentPage.IsBusy" Converter="{x:Static ObjectConverters.Equal}">
                         <Binding.ConverterParameter>

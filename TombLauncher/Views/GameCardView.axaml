@@ -28,7 +28,7 @@
     <Border CornerRadius="8" Width="400"
             Margin="10"
             ClipToBounds="True"
-            Classes="card-background"
+            Classes="card-background interactive-card"
             BorderBrush="{DynamicResource CardBorderBrush}"
             BorderThickness="1"
             BoxShadow="0 4 8 0 #40000000"

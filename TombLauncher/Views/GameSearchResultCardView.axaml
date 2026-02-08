@@ -27,7 +27,7 @@
     <Border CornerRadius="3"
             Padding="10"
             Margin="5"
-            Classes="card-background">
+            Classes="card-background interactive-card">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
