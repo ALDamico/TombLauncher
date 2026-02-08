@@ -11,29 +11,20 @@ public class ViewLocator : IDataTemplate
 {
     private const string ViewModelsPrefix = "TombLauncher.ViewModels.ViewModels.";
     private const string ViewsPrefix = "TombLauncher.Views.";
-    private readonly ConditionalWeakTable<object, Control> _viewCache = new();
-
     public Control Build(object data)
     {
         if (data is null)
             return null;
 
-        if (_viewCache.TryGetValue(data, out var cachedView))
-        {
-            return cachedView;
-        }
-
         var pageControl = GetControl(data, "Page");
         if (pageControl != null)
         {
-            _viewCache.Add(data, pageControl);
             return pageControl;
         }
 
         var view = GetControl(data, "View");
         if (view != null)
         {
-            _viewCache.Add(data, view);
             return view;
         }
 
@@ -44,7 +35,6 @@ public class ViewLocator : IDataTemplate
         {
             var control = (Control)Activator.CreateInstance(type)!;
             control.DataContext = data;
-            _viewCache.Add(data, control);
             return control;
         }
 

@@ -1,7 +1,10 @@
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Notifications;
@@ -13,7 +16,7 @@ public class NotificationService
     public NotificationService(NotificationListViewModel notificationListViewModel)
     {
         _notificationListViewModel = notificationListViewModel;
-        GenericDismissNotificationCmd = new RelayCommand<NotificationViewModel>(DismissNotification);
+        GenericDismissNotificationCmd = new AsyncRelayCommand<NotificationViewModel>(DismissNotification);
     }
 
     private NotificationListViewModel _notificationListViewModel;
@@ -21,8 +24,10 @@ public class NotificationService
     public async Task AddNotificationAsync(NotificationViewModel notificationViewModel)
     {
         notificationViewModel.DismissCmd = GenericDismissNotificationCmd;
-        _notificationListViewModel.Notifications.Add(notificationViewModel);
-        await Task.CompletedTask;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _notificationListViewModel.Notifications.Add(notificationViewModel);
+        });
     }
 
     public void AddNotification(NotificationViewModel notificationViewModel)
@@ -38,7 +43,8 @@ public class NotificationService
             IsCancelable = false,
             IsDismissable = true,
             Title = title.GetLocalizedString(),
-            Content = new StringIconNotificationViewModel(){Icon = icon, Text = errorMessage}
+            Content = new StringIconNotificationViewModel() { Icon = icon, Text = errorMessage },
+            Type = NotificationType.Error
         };
         await AddNotificationAsync(notificationViewModel);
     }
@@ -58,14 +64,38 @@ public class NotificationService
         AddErrorNotificationAsync(errorMessage, icon).GetAwaiter().GetResult();
     }
 
-    private void DismissNotification(NotificationViewModel thisNotification)
+    public async Task AddSuccessNotification(string title, string message)
     {
-        _notificationListViewModel.Notifications.Remove(thisNotification);
+        var notificationViewModel = new NotificationViewModel()
+        {
+            IsOpenable = false,
+            IsCancelable = false,
+            IsDismissable = true,
+            Title = title.GetLocalizedString(),
+            Content = new StringNotificationViewModel() { Text = message },
+            Type = NotificationType.Success
+        };
+        await AddNotificationAsync(notificationViewModel);
+    }
+
+    private async Task DismissNotification(NotificationViewModel thisNotification)
+    {
+        if (thisNotification == null) return;
+        await Dispatcher.UIThread.InvokeAsync(() => thisNotification.IsClosing = true);
+        await Task.Delay(350);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _notificationListViewModel.Notifications.Remove(thisNotification);
+        });
     }
 
     public void RemoveNotification(NotificationViewModel notificationViewModel)
     {
-        _notificationListViewModel.Notifications.Remove(notificationViewModel);
+        if (notificationViewModel == null) return;
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            _notificationListViewModel.Notifications.Remove(notificationViewModel);
+        });
     }
 
     private ICommand GenericDismissNotificationCmd { get; }
