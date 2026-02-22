@@ -11,5 +11,5 @@
     <Design.DataContext>
         <notifications:StringNotificationViewModel/>
     </Design.DataContext>
-    <TextBlock Text="{Binding Text}"/>
+    <TextBlock Text="{Binding Text}" TextWrapping="Wrap"/>
 </UserControl>

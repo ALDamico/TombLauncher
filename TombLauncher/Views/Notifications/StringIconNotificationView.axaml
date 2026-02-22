@@ -12,8 +12,12 @@
     <Design.DataContext>
         <notifications:StringIconNotificationViewModel/>
     </Design.DataContext>
-    <Grid ColumnDefinitions="Auto, *">
-        <avalonia:MaterialIcon Grid.Column="0" Kind="{Binding Icon}" Classes="warning"/>
-        <TextBlock Grid.Column="1" Margin="10, 0, 0, 0" Text="{Binding Text}" TextWrapping="Wrap"/>    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <avalonia:MaterialIcon Grid.Column="0" Kind="{Binding Icon}" Classes="warning" Width="24" Height="24" VerticalAlignment="Top"/>
+        <TextBlock Grid.Column="1" Margin="10, 0, 0, 0" Text="{Binding Text}" TextWrapping="Wrap" VerticalAlignment="Top"/>    
     </Grid>
 </UserControl>
