@@ -26,7 +26,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     }
 
     private readonly GameSearchResultService _gameSearchResultService;
-    
+
     [ObservableProperty] private string _author;
     [ObservableProperty] private string _authorFullName;
     [ObservableProperty] private string _title;
@@ -40,10 +40,10 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private string _sourceSiteDisplayName;
     [ObservableProperty] private string _description;
     [ObservableProperty] private InstallProgressViewModel _installProgress;
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasReviews))]private string _reviewsLink;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasReviews))] private string _reviewsLink;
     public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private string _downloadLink;
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasWalkthrough))]private string _walkthroughLink;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasWalkthrough))] private string _walkthroughLink;
     public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private int? _sizeInMb;
     [ObservableProperty] private double? _rating;
@@ -51,7 +51,9 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private DateTime? _releaseDate;
     [ObservableProperty] private ObservableCollection<IGameSearchResultMetadata> _sources;
     [ObservableProperty] private GameWithStatsViewModel _installedGame;
-    
+    [ObservableProperty] private bool _isNewlyAdded;
+    [ObservableProperty] private bool _isRecentlyUpdated;
+
     public ICommand InstallCmd { get; }
 
     private async Task Install()

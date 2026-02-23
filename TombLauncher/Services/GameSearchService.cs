@@ -84,6 +84,14 @@ public class GameSearchService : IViewService
             _mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(fetchedResults));
         var addedCount = 0;
         var updatedCount = 0;
+
+        // Clear previous flags
+        foreach (var existing in target.FetchedResults)
+        {
+            existing.IsNewlyAdded = false;
+            existing.IsRecentlyUpdated = false;
+        }
+
         foreach (var result in mappedResults)
         {
             var existingItem =
@@ -94,11 +102,13 @@ public class GameSearchService : IViewService
                 if (existingItem.Sources.Count < result.Sources.Count)
                 {
                     await Dispatcher.UIThread.InvokeAsync(() => existingItem.Sources = result.Sources);
+                    existingItem.IsRecentlyUpdated = true;
                     updatedCount++;
                 }
             }
             else
             {
+                result.IsNewlyAdded = true;
                 await Dispatcher.UIThread.InvokeAsync(() => target.FetchedResults.Add(result),
                     DispatcherPriority.Default);
                 addedCount++;
