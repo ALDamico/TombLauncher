@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -40,5 +41,23 @@ public partial class GameSearchForm : UserControl
     {
         get => GetValue(AvailableLengthsProperty);
         set => SetValue(AvailableLengthsProperty, value);
+    }
+
+    public static readonly StyledProperty<ICommand> SearchCommandProperty = AvaloniaProperty.Register<GameSearchForm, ICommand>(
+        nameof(SearchCommand));
+
+    public ICommand SearchCommand
+    {
+        get => GetValue(SearchCommandProperty);
+        set => SetValue(SearchCommandProperty, value);
+    }
+
+    public static readonly StyledProperty<ICommand> ClearFiltersCommandProperty = AvaloniaProperty.Register<GameSearchForm, ICommand>(
+        nameof(ClearFiltersCommand));
+
+    public ICommand ClearFiltersCommand
+    {
+        get => GetValue(ClearFiltersCommandProperty);
+        set => SetValue(ClearFiltersCommandProperty, value);
     }
 }

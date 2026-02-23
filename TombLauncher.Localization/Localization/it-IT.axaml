@@ -70,6 +70,8 @@
     <system:String x:Key="Search">Cerca</system:String>
     <system:String x:Key="Rating">Valutazione</system:String>
     <system:String x:Key="Load more">Carica altri</system:String>
+    <system:String x:Key="Load more added">{0} nuovi risultati aggiunti</system:String>
+    <system:String x:Key="Load more updated">{0} risultati aggiornati</system:String>
     <system:String x:Key="An error has occurred">Si è verificato un errore</system:String>
     <system:String x:Key="Accept">Accetta</system:String>
     <system:String x:Key="This application has encountered an error">Si è verificato un errore.</system:String>
@@ -104,6 +106,10 @@
     <system:String x:Key="Loading in progress">Caricamento in corso</system:String>
     <system:String x:Key="Search starting...">Avvio ricerca...</system:String>
     <system:String x:Key="SEARCH">CERCA</system:String>
+    <system:String x:Key="More filters">Altri filtri</system:String>
+    <system:String x:Key="results found">risultati trovati</system:String>
+    <system:String x:Key="No results found">Nessun risultato trovato</system:String>
+    <system:String x:Key="Try different search terms">Prova con parole chiave o filtri diversi</system:String>
     <system:String x:Key="Setup">Configura</system:String>
     <system:String x:Key="Launching setup for GAMENAME">Avvio dell'utility di configurazione per {0}</system:String>
     <system:String x:Key="Read walkthrough">Leggi la soluzione</system:String>

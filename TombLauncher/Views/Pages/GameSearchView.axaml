@@ -6,8 +6,10 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameSearchView"
+             x:Name="root"
              x:DataType="pages:GameSearchViewModel">
     <Design.DataContext>
         <pages:GameSearchViewModel />
@@ -29,55 +31,81 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+
+        <!-- Page Title -->
         <TextBlock Grid.Row="0"
-                   Grid.Column="0"
-                   Grid.ColumnSpan="2"
                    Classes="h1"
                    Text="{DynamicResource SEARCH}" />
 
+        <!-- Search Form (now contains the Search button) -->
         <views:GameSearchForm Grid.Row="1"
-                              Grid.Column="0"
                               DataContext="{Binding SearchPayload}"
                               AvailableDifficulties="{Binding AvailableDifficulties}"
-                              AvailableEngines="{Binding AvailableEngines}" />
-        <controls:IconButton Grid.Row="1" Grid.Column="1"
-                             Margin="5, 11, 0, 10"
-                             MinHeight="32"
-                             Text="{DynamicResource Search}"
-                             Icon="Search"
+                              AvailableEngines="{Binding AvailableEngines}"
+                              SearchCommand="{Binding #root.((pages:GameSearchViewModel)DataContext).SearchCmd}"
+                              ClearFiltersCommand="{Binding #root.((pages:GameSearchViewModel)DataContext).ClearFiltersCmd}"
+                              Margin="0, 0, 0, 8"/>
+
+        <!-- Result Count -->
+        <TextBlock Grid.Row="2"
+                   Margin="8, 4"
+                   FontSize="13"
+                   Foreground="{DynamicResource MutedTextBrush}"
+                   IsVisible="{Binding HasSearched}">
+            <Run Text="{Binding ResultCount, Mode=OneWay, StringFormat='{}{0} '}"/><Run Text="{DynamicResource 'results found'}"/><Run Text="{Binding LoadMoreFeedback, Mode=OneWay}"/>
+        </TextBlock>
+        
+        <!-- Results Area -->
+        <Panel Grid.Row="3">
+            <!-- Empty State: shown when searched but no results -->
+            <StackPanel HorizontalAlignment="Center" 
+                        VerticalAlignment="Center"
+                        Spacing="8"
+                        IsVisible="{Binding ShowEmptyState}">
+                <avalonia:MaterialIcon Kind="MagnifyClose" 
+                                       Width="64" Height="64"
+                                       Foreground="{DynamicResource MutedTextBrush}"
+                                       HorizontalAlignment="Center"/>
+                <TextBlock FontSize="18" FontWeight="DemiBold" 
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Text="{DynamicResource 'No results found'}"/>
+                <TextBlock FontStyle="Italic" FontSize="13"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center" 
+                           Foreground="{DynamicResource MutedTextBrush}"
+                           Text="{DynamicResource 'Try different search terms'}"/>
+            </StackPanel>
+            
+            <!-- Results List -->
+            <ScrollViewer Offset="{Binding ScrollViewerOffset, Mode=TwoWay}"
+                          IsVisible="{Binding ShowResults}">
+                <ItemsRepeater ItemsSource="{Binding FetchedResults}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
+                            <views:GameSearchResultCardView />
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </Panel>
+        
+        <!-- Load More Button -->
+        <controls:IconButton Grid.Row="4"
+                             HorizontalAlignment="Center"
+                             Margin="0, 8"
+                             Icon="ChevronDown"
+                             Text="{DynamicResource 'Load more'}"
+                             Classes="btn-primary"
+                             MinWidth="160"
+                             MinHeight="36"
                              HorizontalContentAlignment="Center"
                              VerticalContentAlignment="Center"
-                             VerticalAlignment="Top"
-                             MinWidth="120"
-                             Classes="btn-primary"
-                             Command="{Binding SearchCmd}" />
-        <ScrollViewer Grid.Row="2"
-                      Grid.Column="0"
-                      Grid.ColumnSpan="2"
-                      Offset="{Binding ScrollViewerOffset, Mode=TwoWay}">
-            <ItemsRepeater ItemsSource="{Binding FetchedResults}">
-                <ItemsRepeater.ItemTemplate>
-                    <DataTemplate DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
-                        <views:GameSearchResultCardView />
-                    </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-            </ItemsRepeater>
-        </ScrollViewer>
-        <Button Grid.Row="3"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                HorizontalContentAlignment="Center"
-                HorizontalAlignment="Center"
-                Content="{DynamicResource 'Load more'}"
-                Command="{Binding LoadMoreCmd}"
-                IsVisible="{Binding HasMoreResults}" />
+                             Command="{Binding LoadMoreCmd}"
+                             IsVisible="{Binding HasMoreResults}" />
     </Grid>
 </UserControl>

@@ -85,8 +85,6 @@ public partial class MainWindowViewModel : WindowViewModelBase
         Title = "Tomb Launcher";
         // Initialize default view
         SelectedMenuItem = MenuItems.First();
-
-        GenerateTestNotifications();
     }
 
     private void NavigationManagerOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -169,31 +167,4 @@ public partial class MainWindowViewModel : WindowViewModelBase
         IsSettingsOpen = true;
     }
     private readonly NotificationService _notificationService;
-
-    private async void GenerateTestNotifications()
-    {
-        // Info
-        await _notificationService.AddNotificationAsync(new NotificationViewModel()
-        {
-            Title = "Info Notification",
-            Content = new StringNotificationViewModel() { Text = "This is an informational message to test the UI." },
-            Type = TombLauncher.Contracts.Enums.NotificationType.Info,
-            IsDismissable = true
-        });
-
-        // Success
-        await _notificationService.AddSuccessNotification("Operation Successful", "The requested operation completed successfully without errors.");
-
-        // Warning
-        await _notificationService.AddNotificationAsync(new NotificationViewModel()
-        {
-            Title = "Warning Alert",
-            Content = new StringNotificationViewModel() { Text = "This is a warning. Something might need your attention soon." },
-            Type = TombLauncher.Contracts.Enums.NotificationType.Warning,
-            IsDismissable = true
-        });
-
-        // Error
-        await _notificationService.AddErrorNotificationAsync("Critical Error", "An unexpected error occurred while processing the request.", MaterialIconKind.AlertCircle);
-    }
 }

@@ -82,6 +82,8 @@ public class GameSearchService : IViewService
 
         var mappedResults = await new TaskFactory().StartNew(() =>
             _mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(fetchedResults));
+        var addedCount = 0;
+        var updatedCount = 0;
         foreach (var result in mappedResults)
         {
             var existingItem =
@@ -89,19 +91,38 @@ public class GameSearchService : IViewService
                     r.Title == result.Title && r.BaseUrl == result.BaseUrl && r.DetailsLink == result.DetailsLink);
             if (existingItem != null)
             {
-                await Dispatcher.UIThread.InvokeAsync(() => existingItem.Sources = result.Sources);
+                if (existingItem.Sources.Count < result.Sources.Count)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() => existingItem.Sources = result.Sources);
+                    updatedCount++;
+                }
             }
             else
             {
-                Console.WriteLine($"Adding new item {result.Title}");
                 await Dispatcher.UIThread.InvokeAsync(() => target.FetchedResults.Add(result),
                     DispatcherPriority.Default);
+                addedCount++;
             }
         }
 
         target.HasMoreResults = CanLoadMore();
         _logger.LogInformation("Loading finished. Has more results: {MoreResults}", target.HasMoreResults);
         target.ClearBusy();
+
+        // Show feedback
+        if (addedCount > 0 || updatedCount > 0)
+        {
+            var addedText = addedCount > 0 ? "Load more added".GetLocalizedString(addedCount) : "";
+            var updatedText = updatedCount > 0 ? "Load more updated".GetLocalizedString(updatedCount) : "";
+            var parts = new[] { addedText, updatedText }.Where(s => s.Length > 0);
+            var message = string.Join(", ", parts);
+            target.LoadMoreFeedback = " (" + message + ")";
+            await _notificationService.AddSuccessNotification("Load more", message);
+        }
+        else
+        {
+            target.LoadMoreFeedback = null;
+        }
     }
 
     public bool CanLoadMore() => GameDownloadManager.HasMoreResults();

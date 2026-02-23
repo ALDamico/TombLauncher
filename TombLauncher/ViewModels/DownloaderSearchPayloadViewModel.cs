@@ -23,4 +23,28 @@ public partial class DownloaderSearchPayloadViewModel : ObservableValidator
     [ObservableProperty] private ObservableCollection<EnumViewModel<GameDifficulty>> _availableDifficulties;
     [ObservableProperty] private ObservableCollection<EnumViewModel<GameEngine>> _availableEngines;
 
+    public bool HasActiveFilters =>
+        !string.IsNullOrWhiteSpace(LevelName) ||
+        !string.IsNullOrWhiteSpace(AuthorName) ||
+        GameEngine != null ||
+        GameDifficulty != null ||
+        Duration != null ||
+        Rating != 0;
+
+    partial void OnLevelNameChanged(string value) => OnPropertyChanged(nameof(HasActiveFilters));
+    partial void OnAuthorNameChanged(string value) => OnPropertyChanged(nameof(HasActiveFilters));
+    partial void OnGameEngineChanged(GameEngine? value) => OnPropertyChanged(nameof(HasActiveFilters));
+    partial void OnGameDifficultyChanged(GameDifficulty? value) => OnPropertyChanged(nameof(HasActiveFilters));
+    partial void OnDurationChanged(GameLength? value) => OnPropertyChanged(nameof(HasActiveFilters));
+    partial void OnRatingChanged(int value) => OnPropertyChanged(nameof(HasActiveFilters));
+
+    public void ClearFilters()
+    {
+        LevelName = null;
+        AuthorName = null;
+        GameEngine = null;
+        GameDifficulty = null;
+        Duration = null;
+        Rating = 0;
+    }
 }

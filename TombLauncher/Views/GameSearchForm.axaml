@@ -5,55 +5,120 @@
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameSearchForm"
              x:DataType="viewModels:DownloaderSearchPayloadViewModel">
     <Design.DataContext>
         <viewModels:DownloaderSearchPayloadViewModel/>
     </Design.DataContext>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <controls:LabeledTextBox Grid.Row="0"
-            Label="{DynamicResource Title}"
-                                 Text="{Binding LevelName}"></controls:LabeledTextBox>
-        <Expander HorizontalAlignment="Stretch" Grid.Row="1" Header="More filters" x:Name="MoreFiltersExpander">
-            
-            <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=MoreFiltersExpander, Path=Width}">
-                <controls:LabeledTextBox Classes="padded" MinWidth="300" MaxWidth="600"
-                                           Label="{DynamicResource Author}" 
-                                           Text="{Binding AuthorName}"></controls:LabeledTextBox>
-                <Grid RowDefinitions="Auto, Auto" Classes="padded" MinWidth="300" MaxWidth="600">
-                    <TextBlock Grid.Row="0" Text="{DynamicResource Engine}" Classes="small"/>
-                    <ComboBox Grid.Row="1"
-                              ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableEngines}" 
-                              SelectedValue="{Binding GameEngine}"
-                              DisplayMemberBinding="{Binding Description}"
-                              SelectedValueBinding="{Binding Value}"/>
-                </Grid>
+    
+    <StackPanel Spacing="12">
+        <!-- Search Bar -->
+        <Border Classes="search-bar">
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <avalonia:MaterialIcon Grid.Column="0" Kind="Magnify" 
+                                       Width="22" Height="22" 
+                                       Foreground="{DynamicResource MutedTextBrush}"
+                                       VerticalAlignment="Center"
+                                       Margin="4, 0, 8, 0"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding LevelName}"
+                         Watermark="{DynamicResource Title}"
+                         VerticalAlignment="Center"/>
+                <controls:IconButton Grid.Column="2"
+                                     Icon="Search"
+                                     Text="{DynamicResource Search}"
+                                     Classes="btn-primary"
+                                     MinWidth="100"
+                                     MinHeight="32"
+                                     HorizontalContentAlignment="Center"
+                                     VerticalContentAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=SearchCommand}"/>
+            </Grid>
+        </Border>
+        
+        <!-- Filters Toggle -->
+        <Expander HorizontalAlignment="Stretch" 
+                  Header="{DynamicResource 'More filters'}" 
+                  x:Name="MoreFiltersExpander">
+            <StackPanel Spacing="8">
+                <WrapPanel Orientation="Horizontal">
+                    <!-- Author -->
+                    <Border Classes="filter-chip" Margin="0, 0, 8, 8">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{DynamicResource Author}" Classes="small" 
+                                       Foreground="{DynamicResource MutedTextBrush}"/>
+                            <TextBox Text="{Binding AuthorName}" 
+                                     MinWidth="200" 
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Watermark="{DynamicResource Author}"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Engine -->
+                    <Border Classes="filter-chip" Margin="0, 0, 8, 8">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{DynamicResource Engine}" Classes="small"
+                                       Foreground="{DynamicResource MutedTextBrush}"/>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableEngines}" 
+                                      SelectedValue="{Binding GameEngine}"
+                                      DisplayMemberBinding="{Binding Description}"
+                                      SelectedValueBinding="{Binding Value}"
+                                      MinWidth="200"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Difficulty -->
+                    <Border Classes="filter-chip" Margin="0, 0, 8, 8">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{DynamicResource Difficulty}" Classes="small"
+                                       Foreground="{DynamicResource MutedTextBrush}"/>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableDifficulties}" 
+                                      SelectedValue="{Binding GameDifficulty}" 
+                                      DisplayMemberBinding="{Binding Description}" 
+                                      SelectedValueBinding="{Binding Value}"
+                                      MinWidth="200"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Rating -->
+                    <Border Classes="filter-chip" Margin="0, 0, 8, 8">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{DynamicResource Rating}" Classes="small"
+                                       Foreground="{DynamicResource MutedTextBrush}"/>
+                            <NumericUpDown Value="{Binding Rating}" 
+                                           Minimum="0" Maximum="10"
+                                           MinWidth="200"/>
+                        </StackPanel>
+                    </Border>
+                </WrapPanel>
                 
-                <Grid RowDefinitions="Auto, Auto" Classes="padded" MinWidth="300" MaxWidth="600">
-                    <TextBlock Grid.Row="0" Text="{DynamicResource Difficulty}" Classes="small"/>
-                    <ComboBox Grid.Row="1"
-                              ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableDifficulties}" 
-                              SelectedValue="{Binding GameDifficulty}" 
-                              DisplayMemberBinding="{Binding Description}" 
-                              SelectedValueBinding="{Binding Value}"/>
-                </Grid>
-                
-                <Grid RowDefinitions="Auto, Auto" Classes="padded" MinWidth="300" MaxWidth="600">
-                    <TextBlock Grid.Row="0" Text="{DynamicResource Rating}" Classes="small"></TextBlock>
-                    <NumericUpDown Grid.Row="1" Value="{Binding Rating}" Minimum="1" Maximum="10"/>
-                </Grid>
-            </WrapPanel>
-            
+                <!-- Clear Filters Button -->
+                <Button Content="{DynamicResource Clear}"
+                        HorizontalAlignment="Left"
+                        Classes="round-button"
+                        Padding="12, 6"
+                        Width="NaN"
+                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=ClearFiltersCommand}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Border Background="Transparent" Cursor="Hand">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <avalonia:MaterialIcon Kind="FilterRemove" Width="16" Height="16"
+                                                           Foreground="{DynamicResource MutedTextBrush}"/>
+                                    <TextBlock Text="{DynamicResource Clear}" 
+                                               Foreground="{DynamicResource MutedTextBrush}"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
         </Expander>
-    </Grid>
+    </StackPanel>
 </UserControl>

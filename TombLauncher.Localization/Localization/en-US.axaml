@@ -70,6 +70,8 @@
     <system:String x:Key="Search">Search</system:String>
     <system:String x:Key="Rating">Rating</system:String>
     <system:String x:Key="Load more">Load more</system:String>
+    <system:String x:Key="Load more added">{0} new results added</system:String>
+    <system:String x:Key="Load more updated">{0} results updated</system:String>
     <system:String x:Key="An error has occurred">An error has occurred</system:String>
     <system:String x:Key="Accept">Accept</system:String>
     <system:String x:Key="This application has encountered an error">This application has encountered an error.</system:String>
@@ -104,6 +106,10 @@
     <system:String x:Key="Loading in progress">Loading in progress</system:String>
     <system:String x:Key="Search starting...">Search starting...</system:String>
     <system:String x:Key="SEARCH">SEARCH</system:String>
+    <system:String x:Key="More filters">More filters</system:String>
+    <system:String x:Key="results found">results found</system:String>
+    <system:String x:Key="No results found">No results found</system:String>
+    <system:String x:Key="Try different search terms">Try different keywords or filters</system:String>
     <system:String x:Key="Setup">Setup</system:String>
     <system:String x:Key="Launching setup for GAMENAME">Launching setup for {0}</system:String>
     <system:String x:Key="Read walkthrough">Read walkthrough</system:String>
