@@ -19,13 +19,22 @@ namespace TombLauncher.Services;
 
 public class RandomGameService
 {
-    public RandomGameService()
+    public RandomGameService(
+        SettingsService settingsService,
+        GamesUnitOfWork gamesUnitOfWork,
+        GameDownloadManager gameDownloadManager,
+        NavigationManager navigationManager,
+        MapperConfiguration mapperConfiguration,
+        GameSearchResultService gameSearchResultService,
+        GameWithStatsService gameWithStatsService)
     {
-        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
-        _gameDownloadManager = Ioc.Default.GetRequiredService<GameDownloadManager>();
-        _navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
-        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
+        _settingsService = settingsService;
+        _gamesUnitOfWork = gamesUnitOfWork;
+        _gameDownloadManager = gameDownloadManager;
+        _navigationManager = navigationManager;
+        _mapper = mapperConfiguration.CreateMapper();
+        _gameSearchResultService = gameSearchResultService;
+        _gameWithStatsService = gameWithStatsService;
     }
 
     private SettingsService _settingsService;
@@ -33,6 +42,8 @@ public class RandomGameService
     private GameDownloadManager _gameDownloadManager;
     private NavigationManager _navigationManager;
     private IMapper _mapper;
+    private GameSearchResultService _gameSearchResultService;
+    private GameWithStatsService _gameWithStatsService;
 
     public async Task PickRandomGame(RandomGameViewModel target)
     {
@@ -77,10 +88,9 @@ public class RandomGameService
                 candidate.Sources.Select(s => s.DownloadLink).ToList());
             if (installedGame == null)
             {
-                var searchResultService = Ioc.Default.GetRequiredService<GameSearchResultService>();
                 var mapped = _mapper.Map<MultiSourceGameSearchResultMetadataViewModel>(candidate);
 
-                var gameWithStats = new GameWithStatsViewModel()
+                var gameWithStats = new GameWithStatsViewModel(_gameWithStatsService)
                 { GameMetadata = _mapper.Map<GameMetadataViewModel>(details) };
 
                 await _navigationManager.NavigateTo<GameDetailsViewModel>(gameWithStats);
@@ -90,7 +100,7 @@ public class RandomGameService
                     vm.InstallCmd = new AsyncRelayCommand(async () =>
                     {
                         vm.SetBusy(true, $"Installing {mapped.Title}"); // SetBusy via INavigationTarget is on PageViewModel base? Yes.
-                        await searchResultService.Install(
+                        await _gameSearchResultService.Install(
                             mapped);
 
                         vm.Game.GameMetadata.InstallDirectory = mapped.InstalledGame.GameMetadata.InstallDirectory;

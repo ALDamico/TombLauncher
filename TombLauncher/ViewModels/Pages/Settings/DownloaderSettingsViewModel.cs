@@ -17,15 +17,14 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 {
-    public DownloaderSettingsViewModel(PageViewModel settingsPage) : base("DOWNLOADERS", settingsPage)
+    public DownloaderSettingsViewModel(PageViewModel settingsPage, SettingsService settingsService, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage)
     {
         MoveUpCmd = new RelayCommand<DownloaderViewModel>(MoveUp, CanMoveUp);
         MoveDownCmd = new RelayCommand<DownloaderViewModel>(MoveDown, CanMoveDown);
         InfoTipContent = "Downloaders infotip content".GetLocalizedString();
-        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-        _messageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
-        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
-        var mapper = new Mapper(Ioc.Default.GetRequiredService<MapperConfiguration>());
+        _settingsService = settingsService;
+        _messageBoxService = messageBoxService;
+        var mapper = new Mapper(mapperConfiguration);
         AvailableUnzipFallbackMethods =
             mapper.Map<ObservableCollection<UnzipBackendViewModel>>(platformSpecificFeatures
                 .GetPlatformSpecificZipFallbackPrograms()) ?? new ObservableCollection<UnzipBackendViewModel>();
@@ -91,7 +90,7 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         if (downloaderViewModel == null) return false;
         return downloaderViewModel.Priority < AvailableDownloaders.Count;
     }
-    
+
     public ICommand CleanUpTempFilesCmd { get; }
 
     private async Task CleanUpTempFiles()

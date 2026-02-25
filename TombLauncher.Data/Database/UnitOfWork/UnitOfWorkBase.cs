@@ -1,15 +1,12 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using TombLauncher.Data.Database.Repositories;
+﻿using TombLauncher.Data.Database.Repositories;
 
 namespace TombLauncher.Data.Database.UnitOfWork;
 
 public abstract class UnitOfWorkBase : IDisposable, IAsyncDisposable
 {
-    public UnitOfWorkBase()
+    public UnitOfWorkBase(TombLauncherDbContext dbContext)
     {
-        DbContext = Ioc.Default.GetRequiredService<TombLauncherDbContext>();
-        DbContext.Database.Migrate();
+        DbContext = dbContext;
     }
     protected readonly TombLauncherDbContext DbContext;
     private bool _disposed;
@@ -25,7 +22,7 @@ public abstract class UnitOfWorkBase : IDisposable, IAsyncDisposable
 
         _disposed = true;
     }
-    
+
     public async Task Save()
     {
         await DbContext.SaveChangesAsync();

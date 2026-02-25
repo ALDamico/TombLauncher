@@ -16,6 +16,7 @@ using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
+using TombLauncher.Installers;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
@@ -27,7 +28,9 @@ namespace TombLauncher.Services;
 public class GameDetailsService : IViewService
 {
     public GameDetailsService(GamesUnitOfWork gamesUnitOfWork, ILocalizationManager localizationManager,
-        NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration)
+        NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration,
+        IPlatformSpecificFeatures platformSpecificFeatures, SettingsService settingsService,
+        TombRaiderEngineDetector engineDetector)
     {
         GamesUnitOfWork = gamesUnitOfWork;
         LocalizationManager = localizationManager;
@@ -35,8 +38,9 @@ public class GameDetailsService : IViewService
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
         _mapper = mapperConfiguration.CreateMapper();
-        _platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
-        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        _platformSpecificFeatures = platformSpecificFeatures;
+        _settingsService = settingsService;
+        _engineDetector = engineDetector;
     }
 
     public GamesUnitOfWork GamesUnitOfWork { get; set; }
@@ -47,6 +51,7 @@ public class GameDetailsService : IViewService
     private IMapper _mapper;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private SettingsService _settingsService;
+    private TombRaiderEngineDetector _engineDetector;
 
     public void InitializeSettings(GameDetailsViewModel target)
     {
@@ -107,7 +112,7 @@ public class GameDetailsService : IViewService
 
     public void OpenLaunchOptions(GameDetailsViewModel gameDetailsViewModel)
     {
-        DialogService.ShowDialog(new LaunchOptionsDialogViewModel() { TargetGame = gameDetailsViewModel.Game.GameMetadata }, SaveLaunchOptions);
+        DialogService.ShowDialog(new LaunchOptionsDialogViewModel(_engineDetector) { TargetGame = gameDetailsViewModel.Game.GameMetadata }, SaveLaunchOptions);
     }
 
     private async void SaveLaunchOptions(LaunchOptionsDialogViewModel vm)

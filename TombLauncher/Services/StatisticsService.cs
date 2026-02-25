@@ -22,11 +22,14 @@ namespace TombLauncher.Services;
 
 public class StatisticsService
 {
-    public StatisticsService()
+    public StatisticsService(
+        SettingsService settingsService,
+        GamesUnitOfWork gamesUnitOfWork,
+        MapperConfiguration mapperConfiguration)
     {
-        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
-        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
+        _settingsService = settingsService;
+        _gamesUnitOfWork = gamesUnitOfWork;
+        _mapper = mapperConfiguration.CreateMapper();
     }
 
     private readonly SettingsService _settingsService;
@@ -142,14 +145,14 @@ public class StatisticsService
                         Name = "Total play time".GetLocalizedString()
                     }
                 },
-                XAxis = new []
+                XAxis = new[]
                 {
                     new DateTimeAxis(TimeSpan.FromDays(1), v => v.ToString("d"))
                     {
                         Name = "Day".GetLocalizedString()
                     }
                 },
-                YAxis = new []
+                YAxis = new[]
                 {
                     new TimeSpanAxis(TimeSpan.FromMinutes(15), v => string.Format("{0:%h} h {0:%m} min" , v))
                     {

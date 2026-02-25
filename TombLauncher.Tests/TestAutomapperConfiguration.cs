@@ -1,3 +1,4 @@
+using System;
 using TombLauncher.Factories;
 
 namespace TombLauncher.Tests;
@@ -10,7 +11,7 @@ public class TestAutomapperConfiguration
         Exception thrownException = null;
         try
         {
-            var configuration = MapperConfigurationFactory.GetMapperConfiguration();
+            var configuration = MapperConfigurationFactory.GetMapperConfiguration(Activator.CreateInstance);
             configuration.AssertConfigurationIsValid();
         }
         catch (Exception e)

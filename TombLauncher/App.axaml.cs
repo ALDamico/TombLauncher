@@ -1,4 +1,5 @@
 using System;
+using AutoMapper;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -140,7 +141,8 @@ public partial class App : Application
         var mainWindow = new MainWindow
         {
             DataContext = new MainWindowViewModel(navigationManager,
-                Ioc.Default.GetRequiredService<NotificationListViewModel>(), Ioc.Default.GetRequiredService<NotificationService>()),
+                Ioc.Default.GetRequiredService<NotificationListViewModel>(), Ioc.Default.GetRequiredService<NotificationService>(),
+                Ioc.Default.GetRequiredService<SettingsService>(), Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>()),
         };
 
         desktop.MainWindow = mainWindow;
@@ -324,7 +326,7 @@ public partial class App : Application
     private static void ConfigureViewModels(ServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton(sp =>
-            new WelcomePageViewModel()
+            new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>())
             { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
         serviceCollection.AddScoped<GameListViewModel>();
         serviceCollection.AddScoped<GameSearchViewModel>();
@@ -366,6 +368,11 @@ public partial class App : Application
 
     private static void ConfigureMappings(ServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton(_ => MapperConfigurationFactory.GetMapperConfiguration());
+        serviceCollection.AddSingleton(sp => MapperConfigurationFactory.GetMapperConfiguration(sp.GetService));
+        serviceCollection.AddSingleton<IMapper>(sp =>
+        {
+            var config = sp.GetRequiredService<MapperConfiguration>();
+            return config.CreateMapper(sp.GetService);
+        });
     }
 }

@@ -7,9 +7,9 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class WelcomePageViewModel : PageViewModel
 {
-    public WelcomePageViewModel()
+    public WelcomePageViewModel(WelcomePageService welcomePageService)
     {
-        _welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
+        _welcomePageService = welcomePageService;
     }
 
     private readonly WelcomePageService _welcomePageService;

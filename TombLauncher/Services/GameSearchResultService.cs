@@ -35,7 +35,8 @@ public class GameSearchResultService : IViewService
         TombRaiderEngineDetector engineDetector, ILocalizationManager localizationManager,
         NavigationManager navigationManager,
         IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration,
-        NotificationService notificationService, GameWithStatsService gameWithStatsService)
+        NotificationService notificationService, GameWithStatsService gameWithStatsService,
+        ILogger<GameSearchResultService> logger, GameFileHashCalculator hashCalculator)
     {
         GameDownloadManager = downloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
@@ -49,7 +50,8 @@ public class GameSearchResultService : IViewService
         _mapper = mapperConfiguration.CreateMapper();
         _notificationService = notificationService;
         _gameWithStatsService = gameWithStatsService;
-        _logger = Ioc.Default.GetRequiredService<ILogger<GameSearchResultService>>();
+        _logger = logger;
+        _hashCalculator = hashCalculator;
     }
 
     private ILogger<GameSearchResultService> _logger;
@@ -66,6 +68,7 @@ public class GameSearchResultService : IViewService
     public IMessageBoxService MessageBoxService { get; }
     public IDialogService DialogService { get; }
     private IMapper _mapper;
+    private GameFileHashCalculator _hashCalculator;
     private string _downloadPath;
     private string _installPath;
     private int? _installedGameId;
@@ -135,8 +138,7 @@ public class GameSearchResultService : IViewService
             return;
 
         _logger.LogInformation("Calculating hashes for {GameTitle}", gameToInstall.Title);
-        var hashCalculator = Ioc.Default.GetRequiredService<GameFileHashCalculator>();
-        var hashes = await hashCalculator.CalculateHashes(_downloadPath);
+        var hashes = await _hashCalculator.CalculateHashes(_downloadPath);
         if (await CheckGameAlreadyInstalled(gameToInstall, hashes))
             return;
 

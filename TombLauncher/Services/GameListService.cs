@@ -19,15 +19,18 @@ public class GameListService : IViewService
     public GameListService(ILocalizationManager localizationManager,
         NavigationManager navigationManager,
         IMessageBoxService messageBoxService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        GamesUnitOfWork gamesUnitOfWork,
+        MapperConfiguration mapperConfiguration,
+        SettingsService settingsService)
     {
-        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
+        _gamesUnitOfWork = gamesUnitOfWork;
         LocalizationManager = localizationManager;
         NavigationManager = navigationManager;
         MessageBoxService = messageBoxService;
         DialogService = dialogService;
-        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
-        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        _mapper = mapperConfiguration.CreateMapper();
+        _settingsService = settingsService;
     }
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;

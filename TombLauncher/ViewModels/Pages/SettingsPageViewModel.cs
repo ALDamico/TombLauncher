@@ -2,9 +2,11 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
+using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages.Settings;
 
@@ -12,9 +14,12 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 {
-    public SettingsPageViewModel(SettingsService settingsService)
+    public SettingsPageViewModel(SettingsService settingsService, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration)
     {
         _settingsService = settingsService;
+        _messageBoxService = messageBoxService;
+        _platformSpecificFeatures = platformSpecificFeatures;
+        _mapperConfiguration = mapperConfiguration;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (sender, args) =>
@@ -42,6 +47,9 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     }
 
     private readonly SettingsService _settingsService;
+    private readonly IMessageBoxService _messageBoxService;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
+    private readonly MapperConfiguration _mapperConfiguration;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object sender, PropertyChangedEventArgs args)
@@ -78,7 +86,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();
-        var downloaderSettings = new DownloaderSettingsViewModel(this)
+        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsService, _messageBoxService, _platformSpecificFeatures, _mapperConfiguration)
         {
             AvailableDownloaders = downloaders.ToObservableCollection()
         };

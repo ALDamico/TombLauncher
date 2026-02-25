@@ -29,7 +29,9 @@ public class GameSearchService : IViewService
     public GameSearchService(GameDownloadManager gameDownloadManager, GamesUnitOfWork gamesUnitOfWork,
         ILocalizationManager localizationManager, NavigationManager navigationManager,
         IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration,
-        NotificationService notificationService, GameListService gameListService)
+        NotificationService notificationService, GameListService gameListService,
+        ILogger<GameSearchService> logger, SettingsService settingsService,
+        GameWithStatsService gameWithStatsService)
     {
         GameDownloadManager = gameDownloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
@@ -40,12 +42,16 @@ public class GameSearchService : IViewService
         _mapper = mapperConfiguration.CreateMapper();
         _notificationService = notificationService;
         _gameListService = gameListService;
-        _logger = Ioc.Default.GetRequiredService<ILogger<GameSearchService>>();
+        _logger = logger;
+        _settingsService = settingsService;
+        _gameWithStatsService = gameWithStatsService;
     }
 
     private NotificationService _notificationService;
     private GameListService _gameListService;
     private ILogger<GameSearchService> _logger;
+    private SettingsService _settingsService;
+    private GameWithStatsService _gameWithStatsService;
 
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
@@ -190,7 +196,7 @@ public class GameSearchService : IViewService
             // Can I retrieve the VM after navigation?
             // NavigationManager.CurrentPage is updated.
 
-            await NavigationManager.NavigateTo<GameDetailsViewModel>(new GameWithStatsViewModel(detailsViewModel));
+            await NavigationManager.NavigateTo<GameDetailsViewModel>(new GameWithStatsViewModel(_gameWithStatsService, detailsViewModel));
             if (NavigationManager.CurrentPage is GameDetailsViewModel currentVm)
             {
                 if (gameToOpen.DownloadLink.IsNotNullOrWhiteSpace())
@@ -208,8 +214,7 @@ public class GameSearchService : IViewService
     {
         target.SetBusy("Search starting...".GetLocalizedString());
         _logger.LogInformation("Started search with parameters: {Target}", target);
-        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-        var downloaders = settingsService.GetActiveDownloaders();
+        var downloaders = _settingsService.GetActiveDownloaders();
         GameDownloadManager.Downloaders.Clear();
         GameDownloadManager.Downloaders.AddRange(downloaders);
         target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();

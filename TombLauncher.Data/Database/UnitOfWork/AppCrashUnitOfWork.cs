@@ -8,7 +8,7 @@ namespace TombLauncher.Data.Database.UnitOfWork;
 
 public class AppCrashUnitOfWork : UnitOfWorkBase
 {
-    public AppCrashUnitOfWork(MapperConfiguration mapperConfiguration)
+    public AppCrashUnitOfWork(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration) : base(dbContext)
     {
         _mapper = mapperConfiguration.CreateMapper();
         _appCrashes = GetRepository<AppCrash>();
@@ -22,7 +22,7 @@ public class AppCrashUnitOfWork : UnitOfWorkBase
     public void InsertAppCrash(Exception exception)
     {
         var exceptionDto = _mapper.Map<ExceptionDto>(exception);
-        
+
         var serializedException = JsonSerializer.Serialize(exceptionDto);
         var crash = new AppCrash()
         {

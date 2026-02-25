@@ -11,9 +11,9 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
 {
-    public SavegameSettingsViewModel(PageViewModel settingsPage) : base("SAVEGAMES", settingsPage)
+    public SavegameSettingsViewModel(PageViewModel settingsPage, SettingsService settingsService) : base("SAVEGAMES", settingsPage)
     {
-        _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        _settingsService = settingsService;
         SyncSavegamesInfoCmd = new AsyncRelayCommand(SyncSavegamesInfo);
     }
 
@@ -21,7 +21,7 @@ public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private bool _limitNumberOfVersions;
     [ObservableProperty] private int? _numberOfVersionsToKeep;
     [ObservableProperty] private int _savegameProcessingDelay;
-    
+
     public ICommand SyncSavegamesInfoCmd { get; }
     private readonly SettingsService _settingsService;
 

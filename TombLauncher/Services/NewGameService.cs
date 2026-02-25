@@ -29,7 +29,9 @@ public class NewGameService : IViewService
         IDialogService dialogService,
         GameFileHashCalculator hashCalculator,
         TombRaiderLevelInstaller levelInstaller,
-        TombRaiderEngineDetector engineDetector)
+        TombRaiderEngineDetector engineDetector,
+        ILogger<NewGameService> logger,
+        MapperConfiguration mapperConfiguration)
     {
         GamesUnitOfWork = gamesUnitOfWork;
         LocalizationManager = localizationManager;
@@ -39,8 +41,8 @@ public class NewGameService : IViewService
         GameFileHashCalculator = hashCalculator;
         LevelInstaller = levelInstaller;
         EngineDetector = engineDetector;
-        _logger = Ioc.Default.GetRequiredService<ILogger<NewGameService>>();
-        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
+        _logger = logger;
+        _mapper = mapperConfiguration.CreateMapper();
     }
 
     private readonly ILogger<NewGameService> _logger;

@@ -25,14 +25,24 @@ namespace TombLauncher.Services;
 
 public class GameWithStatsService : IViewService
 {
-    public GameWithStatsService()
+    public GameWithStatsService(
+        GamesUnitOfWork gamesUnitOfWork,
+        ILocalizationManager localizationManager,
+        NavigationManager navigationManager,
+        IMessageBoxService messageBoxService,
+        IDialogService dialogService,
+        SettingsService settingsService,
+        MapperConfiguration mapperConfiguration,
+        ILogger<GameWithStatsService> logger,
+        SavegameService savegameService,
+        IPlatformSpecificFeatures platformSpecificFeatures,
+        SavegameHeaderProcessor headerProcessor)
     {
-        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
-        LocalizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
-        NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
-        MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
-        DialogService = Ioc.Default.GetRequiredService<IDialogService>();
-        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        _gamesUnitOfWork = gamesUnitOfWork;
+        LocalizationManager = localizationManager;
+        NavigationManager = navigationManager;
+        MessageBoxService = messageBoxService;
+        DialogService = dialogService;
         var savegameSettings = settingsService.GetSavegameSettings(null);
         _backupEnabled = savegameSettings.SavegameBackupEnabled.GetValueOrDefault();
         if (_backupEnabled)
@@ -40,11 +50,12 @@ public class GameWithStatsService : IViewService
             _numberOfSavesToKeep = savegameSettings.NumberOfVersionsToKeep;
         }
 
-        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
-        _logger = Ioc.Default.GetRequiredService<ILogger<GameWithStatsService>>();
-        _savegameService = Ioc.Default.GetRequiredService<SavegameService>();
+        _mapper = mapperConfiguration.CreateMapper();
+        _logger = logger;
+        _savegameService = savegameService;
         _winePath = settingsService.GetWinePath();
-        _platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+        _platformSpecificFeatures = platformSpecificFeatures;
+        _headerProcessor = headerProcessor;
     }
 
     private SavegameHeaderProcessor _headerProcessor;
@@ -99,7 +110,6 @@ public class GameWithStatsService : IViewService
                 InternalBufferSize = 8192 * 32,
                 NotifyFilter = _platformSpecificFeatures.GetSavegameWatcherNotifyFilters()
             };
-            _headerProcessor = Ioc.Default.GetRequiredService<SavegameHeaderProcessor>();
             _headerProcessor.SavegameHeaderReader = _savegameService.GetHeaderReader(game.GameMetadata.GameEngine);
             _watcher.Changed += WatcherOnCreatedOrChanged;
         }
@@ -237,7 +247,6 @@ public class GameWithStatsService : IViewService
 
     private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false, string arguments = null)
     {
-        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
         var executableFileNameOnly = Path.GetFileName(executable);
 
         var workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable));
@@ -246,7 +255,7 @@ public class GameWithStatsService : IViewService
 
         var process = new Process()
         {
-            StartInfo = platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory),
+            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory),
             EnableRaisingEvents = true
         };
         if (trackPlayTime)

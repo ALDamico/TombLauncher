@@ -27,15 +27,20 @@ namespace TombLauncher.Services;
 
 public class SavegameService
 {
-    public SavegameService()
+    public SavegameService(
+        GamesUnitOfWork gamesUnitOfWork,
+        IMessageBoxService messageBoxService,
+        MapperConfiguration mapperConfiguration,
+        SettingsService settingsService,
+        IDialogService dialogService,
+        ILogger<SavegameService> logger)
     {
-        _gamesUnitOfWork = Ioc.Default.GetRequiredService<GamesUnitOfWork>();
-        _messageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
-        _mapper = Ioc.Default.GetRequiredService<MapperConfiguration>().CreateMapper();
-        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        _gamesUnitOfWork = gamesUnitOfWork;
+        _messageBoxService = messageBoxService;
+        _mapper = mapperConfiguration.CreateMapper();
         _numberOfVersionsToKeep = settingsService.GetSavegameSettings(null).NumberOfVersionsToKeep;
-        _dialogService = Ioc.Default.GetRequiredService<IDialogService>();
-        _logger = Ioc.Default.GetRequiredService<ILogger<SavegameService>>();
+        _dialogService = dialogService;
+        _logger = logger;
         InitHeaderReaderMap();
     }
 
@@ -322,7 +327,7 @@ public class SavegameService
         {
             page.SetBusy("Syncing savegames...");
             var allGamesWithSaves = await _gamesUnitOfWork.GetSavegameBackups();
-            
+
             foreach (var savegame in allGamesWithSaves)
             {
                 var headerReader = _headerReaderMap[savegame.GameEngine];
@@ -343,9 +348,9 @@ public class SavegameService
         }
         finally
         {
-            page.SetBusy(false);    
+            page.SetBusy(false);
         }
-        
+
         await Task.CompletedTask;
     }
 

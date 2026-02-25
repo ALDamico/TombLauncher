@@ -18,12 +18,14 @@ namespace TombLauncher.ViewModels;
 
 public partial class MainWindowViewModel : WindowViewModelBase
 {
-    public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel, NotificationService notificationService)
+    public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel, NotificationService notificationService, SettingsService settingsService, IPlatformSpecificFeatures platformSpecificFeatures)
     {
         _navigationManager = navigationManager;
         _navigationManager.PropertyChanged += NavigationManagerOnPropertyChanged;
         NotificationListViewModel = notificationListViewModel;
         _notificationService = notificationService;
+        _settingsService = settingsService;
+        _platformSpecificFeatures = platformSpecificFeatures;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
         OpenSettingsCmd = new AsyncRelayCommand(OpenSettings);
@@ -101,6 +103,8 @@ public partial class MainWindowViewModel : WindowViewModelBase
     }
 
     private readonly NavigationManager _navigationManager;
+    private readonly SettingsService _settingsService;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
     [ObservableProperty] private MainMenuItemViewModel _settingsItem;
     [ObservableProperty] private CommandViewModel _gitHubLinkItem;
@@ -108,10 +112,8 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
     private void OpenGithub()
     {
-        var settings = Ioc.Default.GetRequiredService<SettingsService>();
-        var gitHubLink = settings.GetGitHubLink();
-        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
-        platformSpecificFeatures.OpenUrl(gitHubLink);
+        var gitHubLink = _settingsService.GetGitHubLink();
+        _platformSpecificFeatures.OpenUrl(gitHubLink);
     }
 
     private bool _isPaneOpen;

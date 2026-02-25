@@ -14,7 +14,7 @@ namespace TombLauncher.Data.Database.UnitOfWork;
 
 public class GamesUnitOfWork : UnitOfWorkBase
 {
-    public GamesUnitOfWork(MapperConfiguration mapperConfiguration)
+    public GamesUnitOfWork(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration) : base(dbContext)
     {
         _mapper = mapperConfiguration.CreateMapper();
         _games = GetRepository<Game>();
@@ -80,7 +80,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
             entity.IsCompleted = game.IsCompleted;
             Games.Update(entity);
         }
-        
+
         // TODO Save launch options
         /*var launchOptionsDto = new LaunchOptionsDto()
         {
@@ -113,7 +113,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
     {
         var outputList = new List<GameWithStatsDto>();
         var playSessions = PlaySessions.GetAll().ToLookup(ps => ps.GameId);
-        
+
         var targetFileTypes = new List<FileType>()
         {
             FileType.GameExecutable,
@@ -157,7 +157,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
             FileType.SetupExecutable,
             FileType.CommunitySetupExecutable
         };
-        
+
         var game = await Games.Get().Include(g => g.FileBackups.Where(f => targetFileTypes.Contains(f.FileType)))
             .SingleAsync(g => g.Id == id);
 
@@ -373,7 +373,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
     private List<GameSpaceUsedDto> GetGameSpaceUsedStatistics()
     {
         var spaceUsedStatistics = new List<GameSpaceUsedDto>();
-        
+
         var gamesRepo = Games.GetAll();
         foreach (var game in gamesRepo)
         {
@@ -555,7 +555,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
         var mappedEntities = Backups.GetAll().Include(b => b.SavegameMetadata)
             .Join(idsToFind, b => b.Id, i => i, (backup, i) => backup).ToList();
         var lookup = savegameBackupDtos.ToDictionary(dto => dto.Id);
-        
+
         foreach (var entity in mappedEntities)
         {
             var backup = lookup[entity.Id];
@@ -564,7 +564,7 @@ public class GamesUnitOfWork : UnitOfWorkBase
             entity.SavegameMetadata.SaveNumber = backup.SaveNumber;
             entity.Md5 = backup.Md5;
             entity.BackedUpOn = DateTime.Now;
-            
+
             Backups.Update(entity);
         }
         await Backups.Commit();

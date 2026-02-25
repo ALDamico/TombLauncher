@@ -36,6 +36,11 @@ TombLauncher ← Tests
 
 ## Code Rules
 
+### Design Principles
+- **Always choose the architecturally correct solution**, not the path of least resistance. If a pattern is wrong (e.g. Service Locator, tight coupling), fix it properly — don't patch it with workarounds like `AfterMap` hacks or static accessors.
+- **ViewModels must not resolve their own dependencies.** If a ViewModel needs a service, inject it via constructor. If the ViewModel is created by AutoMapper, restructure the mapping so the service layer sets the dependency after mapping — the ViewModel itself must remain passive.
+- **Prefer explicit DI over implicit resolution.** Every dependency should be visible in the constructor signature.
+
 ### General
 - **Target framework**: .NET 10
 - **Nullable**: `disable` (except `TombLauncher.Tests` where it is `enable`)

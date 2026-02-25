@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -31,20 +32,33 @@ namespace TombLauncher.Services;
 
 public class SettingsService : IViewService
 {
-    public SettingsService()
+    public SettingsService(
+        ILocalizationManager localizationManager,
+        NavigationManager navigationManager,
+        IMessageBoxService messageBoxService,
+        IDialogService dialogService,
+        MapperConfiguration mapperConfiguration,
+        IAppConfigurationWrapper appConfiguration,
+        ILogger<SettingsService> logger,
+        ThemeManager themeManager,
+        IServiceProvider serviceProvider,
+        IPlatformSpecificFeatures platformSpecificFeatures)
     {
-        LocalizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
-        NavigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
-        MessageBoxService = Ioc.Default.GetRequiredService<IMessageBoxService>();
-        DialogService = Ioc.Default.GetRequiredService<IDialogService>();
-        var mapperConfiguration = Ioc.Default.GetRequiredService<MapperConfiguration>();
+        LocalizationManager = localizationManager;
+        NavigationManager = navigationManager;
+        MessageBoxService = messageBoxService;
+        DialogService = dialogService;
         _mapper = mapperConfiguration.CreateMapper();
-        _appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
-        _logger = Ioc.Default.GetRequiredService<ILogger<SettingsService>>();
-        _themeManager = Ioc.Default.GetRequiredService<ThemeManager>();
+        _appConfiguration = appConfiguration;
+        _logger = logger;
+        _themeManager = themeManager;
+        _serviceProvider = serviceProvider;
+        _platformSpecificFeatures = platformSpecificFeatures;
     }
 
     private readonly IAppConfigurationWrapper _appConfiguration;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     public ILocalizationManager LocalizationManager { get; }
     public NavigationManager NavigationManager { get; }
     public IMessageBoxService MessageBoxService { get; }
@@ -159,7 +173,7 @@ public class SettingsService : IViewService
 
     public SavegameSettingsViewModel GetSavegameSettings(PageViewModel settingsPage)
     {
-        return new SavegameSettingsViewModel(settingsPage)
+        return new SavegameSettingsViewModel(settingsPage, this)
         {
             SavegameBackupEnabled = _appConfiguration.BackupSavegamesEnabled,
             LimitNumberOfVersions = _appConfiguration.NumberOfVersionsToKeep != null,
@@ -180,7 +194,7 @@ public class SettingsService : IViewService
                 continue;
             }
 
-            var downloader = (IGameDownloader)Ioc.Default.GetRequiredService(downloaderImpl);
+            var downloader = (IGameDownloader)_serviceProvider.GetRequiredService(downloaderImpl);
             output.Add(downloader);
         }
 
@@ -196,7 +210,9 @@ public class SettingsService : IViewService
 
     public async Task SyncSavegames(PageViewModel settingsPage)
     {
-        var savegameService = Ioc.Default.GetRequiredService<SavegameService>();
+        // Lazy resolution via IServiceProvider to break circular dependency:
+        // SettingsService -> SavegameService -> SettingsService
+        var savegameService = _serviceProvider.GetRequiredService<SavegameService>();
         await savegameService.SyncSavegames(settingsPage);
     }
 
@@ -255,8 +271,7 @@ public class SettingsService : IViewService
 
     public (string command, string commandLineArguments) GetUnzipFallbackMethodCommandLine()
     {
-        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
-        var methodToUse = platformSpecificFeatures.GetPlatformSpecificZipFallbackPrograms()
+        var methodToUse = _platformSpecificFeatures.GetPlatformSpecificZipFallbackPrograms()
             .FirstOrDefault(m => m.Name == GetUnzipFallbackMethod());
         return (methodToUse.Command, methodToUse.CommandLineArguments);
     }

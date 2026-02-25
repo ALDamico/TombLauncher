@@ -1,6 +1,8 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Services;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 
@@ -8,7 +10,7 @@ namespace TombLauncher.Factories.Profiles;
 
 public class SearchProfile : Profile
 {
-    public SearchProfile()
+    public SearchProfile(Func<Type, object> serviceFactory)
     {
         CreateMap<IGameSearchResultMetadata, GameSearchResultMetadataViewModel>();
         CreateMap<GameSearchResultMetadataViewModel, IGameSearchResultMetadata>()
@@ -16,10 +18,12 @@ public class SearchProfile : Profile
             .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)))
             .ForMember(dto => dto.SourceSiteDisplayName, opt => opt.Ignore());
         CreateMap<IMultiSourceSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
-            .ConstructUsing(vm =>
-                new MultiSourceGameSearchResultMetadataViewModel())
+            .ConstructUsing((src, ctx) =>
+                new MultiSourceGameSearchResultMetadataViewModel((GameSearchResultService)serviceFactory(typeof(GameSearchResultService))))
             .ForMember(vm => vm.InstallProgress, m => m.Ignore())
-            .ForMember(vm => vm.InstalledGame, m => m.Ignore());
+            .ForMember(vm => vm.InstalledGame, m => m.Ignore())
+            .ForMember(vm => vm.IsNewlyAdded, m => m.Ignore())
+            .ForMember(vm => vm.IsRecentlyUpdated, m => m.Ignore());
         CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
             .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto());
         CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>();

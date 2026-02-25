@@ -6,7 +6,6 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
@@ -17,9 +16,9 @@ namespace TombLauncher.ViewModels;
 
 public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBase
 {
-    public MultiSourceGameSearchResultMetadataViewModel()
+    public MultiSourceGameSearchResultMetadataViewModel(GameSearchResultService gameSearchResultService)
     {
-        _gameSearchResultService = Ioc.Default.GetRequiredService<GameSearchResultService>();
+        _gameSearchResultService = gameSearchResultService;
         Sources = new ObservableCollection<IGameSearchResultMetadata>();
         InstallCmd = new AsyncRelayCommand(Install, CanInstall);
         CancelInstallCmd = new AsyncRelayCommand(CancelInstall);

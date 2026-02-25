@@ -15,8 +15,11 @@ namespace TombLauncher.ViewModels.Dialogs;
 
 public class LaunchOptionsDialogViewModel : DialogViewModel
 {
-    public LaunchOptionsDialogViewModel()
+    private TombRaiderEngineDetector _engineDetector;
+
+    public LaunchOptionsDialogViewModel(TombRaiderEngineDetector engineDetector)
     {
+        _engineDetector = engineDetector;
         SelectedEngine = GameEngine.Unknown;
         AvailableEngines = EnumUtils.GetEnumViewModels<GameEngine>().ToObservableCollection();
         AutoDetectCmd = new RelayCommand(AutoDetect);
@@ -35,8 +38,8 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
                 .ToObservableCollection();
             GameExecutable = AvailableExecutables.FirstOrDefault(exe => exe == value.ExecutablePath);
             SetupArgs = value.SetupExecutableArgs;
-            SetupExecutable = AvailableExecutables.FirstOrDefault(exe => exe ==value.SetupExecutable);
-            CustomSetupExecutable = AvailableExecutables.FirstOrDefault(exe => exe ==value.CommunitySetupExecutable);
+            SetupExecutable = AvailableExecutables.FirstOrDefault(exe => exe == value.SetupExecutable);
+            CustomSetupExecutable = AvailableExecutables.FirstOrDefault(exe => exe == value.CommunitySetupExecutable);
             if (SetupExecutable.IsNotNullOrWhiteSpace())
             {
                 SupportsSetup = true;
@@ -120,13 +123,12 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
         get => _customSetupExecutable;
         set => RaiseAndSetIfChanged(ref _customSetupExecutable, value);
     }
-    
+
     public ICommand AutoDetectCmd { get; }
 
     private void AutoDetect()
     {
-        var engineDetector = Ioc.Default.GetRequiredService<TombRaiderEngineDetector>();
-        var detectionResult = engineDetector.Detect(TargetGame.InstallDirectory);
+        var detectionResult = _engineDetector.Detect(TargetGame.InstallDirectory);
         SelectedEngine = GetSelectedEngine(detectionResult.GameEngine);
         GameExecutable = AvailableExecutables.FirstOrDefault(e => e == detectionResult.ExecutablePath);
         if (detectionResult.SetupExecutablePath.IsNotNullOrWhiteSpace())
@@ -156,5 +158,5 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
         var vm = AvailableEngines.FirstOrDefault(e => e.Value == engine);
         return vm?.Value ?? GameEngine.Unknown;
     }
-    
+
 }
