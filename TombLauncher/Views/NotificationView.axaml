@@ -55,13 +55,13 @@
             </Setter>
         </Style>
         
-        <Style Selector="Border.notification-card:pointerover">
+        <Style Selector="Grid.notification-wrapper:pointerover > Border.notification-card">
             <Setter Property="RenderTransform" Value="scale(1.02)"/>
             <Setter Property="BoxShadow" Value="0 8 16 0 #60000000"/>
         </Style>
     </UserControl.Styles>
     
-    <Grid Classes="notification-wrapper" Classes.closing="{Binding IsClosing}" Margin="5,5,5,5">
+    <Grid Classes="notification-wrapper" Classes.closing="{Binding IsClosing}" Margin="5,5,5,5" Background="Transparent">
         <Grid.RenderTransform>
             <TranslateTransform />
         </Grid.RenderTransform>
