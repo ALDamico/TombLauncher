@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Navigation;
 
 namespace TombLauncher.Services;
@@ -11,6 +12,7 @@ namespace TombLauncher.Services;
 public partial class NavigationManager : ObservableObject
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<NavigationManager> _logger;
     private readonly ConcurrentStack<INavigableViewModel> _history = new();
 
     // Using a semaphore to ensure navigation operations are serialized even if called from multiple threads
@@ -25,6 +27,7 @@ public partial class NavigationManager : ObservableObject
     public NavigationManager(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
+        _logger = serviceProvider.GetRequiredService<ILogger<NavigationManager>>();
     }
 
     /// <summary>
@@ -66,10 +69,9 @@ public partial class NavigationManager : ObservableObject
             {
                 await previousPage.OnNavigatingFrom();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Log exception? 
-                // Ignore for now to ensure navigation continues
+                _logger.LogError(ex, "Error in OnNavigatingFrom for {ViewModelType}", previousPage.GetType().Name);
             }
         }
 
@@ -79,12 +81,9 @@ public partial class NavigationManager : ObservableObject
         {
             await nextViewModel.OnNavigatedTo(parameter);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Handle initialization failure?
-            // Maybe navigate back or show error?
-            // For now, we stay on the page (which might be broken/empty) but at least app doesn't crash?
-            // Or maybe set CurrentPage back?
+            _logger.LogError(ex, "Error in OnNavigatedTo for {ViewModelType}", nextViewModel.GetType().Name);
         }
     }
 
@@ -115,7 +114,7 @@ public partial class NavigationManager : ObservableObject
                 {
                     await pageNavigatingFrom.OnNavigatingFrom();
                 }
-                catch (Exception) { }
+                catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatingFrom during GoBack for {ViewModelType}", pageNavigatingFrom.GetType().Name); }
             }
 
             // Re-activating the previous page
@@ -123,7 +122,7 @@ public partial class NavigationManager : ObservableObject
             {
                 await previousPage.OnNavigatedTo(null);
             }
-            catch (Exception) { }
+            catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during GoBack for {ViewModelType}", previousPage.GetType().Name); }
         }
     }
 
@@ -152,14 +151,14 @@ public partial class NavigationManager : ObservableObject
             {
                 await previousPage.OnNavigatingFrom();
             }
-            catch (Exception) { }
+            catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatingFrom during NavigateToRoot for {ViewModelType}", previousPage.GetType().Name); }
         }
 
         try
         {
             await nextViewModel.OnNavigatedTo(parameter);
         }
-        catch (Exception) { }
+        catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during NavigateToRoot for {ViewModelType}", nextViewModel.GetType().Name); }
     }
 
     public async Task NavigateTo(Type viewModelType, object? parameter = null)
@@ -189,14 +188,14 @@ public partial class NavigationManager : ObservableObject
             {
                 await previousPage.OnNavigatingFrom();
             }
-            catch (Exception) { }
+            catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatingFrom during NavigateTo(Type) for {ViewModelType}", previousPage.GetType().Name); }
         }
 
         try
         {
             await nextViewModel.OnNavigatedTo(parameter);
         }
-        catch (Exception) { }
+        catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during NavigateTo(Type) for {ViewModelType}", nextViewModel.GetType().Name); }
     }
 
     public async Task NavigateToRoot(Type viewModelType, object? parameter = null)
@@ -224,13 +223,13 @@ public partial class NavigationManager : ObservableObject
             {
                 await previousPage.OnNavigatingFrom();
             }
-            catch (Exception) { }
+            catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatingFrom during NavigateToRoot(Type) for {ViewModelType}", previousPage.GetType().Name); }
         }
 
         try
         {
             await nextViewModel.OnNavigatedTo(parameter);
         }
-        catch (Exception) { }
+        catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during NavigateToRoot(Type) for {ViewModelType}", nextViewModel.GetType().Name); }
     }
 }
