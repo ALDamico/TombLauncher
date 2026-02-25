@@ -26,23 +26,16 @@ namespace TombLauncher.Services;
 public class GameWithStatsService : IViewService
 {
     public GameWithStatsService(
+        ViewServiceContext viewContext,
         GamesUnitOfWork gamesUnitOfWork,
-        ILocalizationManager localizationManager,
-        NavigationManager navigationManager,
-        IMessageBoxService messageBoxService,
-        IDialogService dialogService,
         SettingsService settingsService,
-        MapperConfiguration mapperConfiguration,
         ILogger<GameWithStatsService> logger,
         SavegameService savegameService,
         IPlatformSpecificFeatures platformSpecificFeatures,
         SavegameHeaderProcessor headerProcessor)
     {
+        ViewContext = viewContext;
         _gamesUnitOfWork = gamesUnitOfWork;
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
         var savegameSettings = settingsService.GetSavegameSettings(null);
         _backupEnabled = savegameSettings.SavegameBackupEnabled.GetValueOrDefault();
         if (_backupEnabled)
@@ -50,7 +43,6 @@ public class GameWithStatsService : IViewService
             _numberOfSavesToKeep = savegameSettings.NumberOfVersionsToKeep;
         }
 
-        _mapper = mapperConfiguration.CreateMapper();
         _logger = logger;
         _savegameService = savegameService;
         _winePath = settingsService.GetWinePath();
@@ -58,14 +50,15 @@ public class GameWithStatsService : IViewService
         _headerProcessor = headerProcessor;
     }
 
+    public ViewServiceContext ViewContext { get; }
     private SavegameHeaderProcessor _headerProcessor;
-    private readonly IMapper _mapper;
+    private IMapper _mapper => ViewContext.Mapper;
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
-    public ILocalizationManager LocalizationManager { get; }
-    public NavigationManager NavigationManager { get; }
-    public IMessageBoxService MessageBoxService { get; }
-    public IDialogService DialogService { get; }
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
     private FileSystemWatcher _watcher;
     private readonly bool _backupEnabled;
     private readonly int? _numberOfSavesToKeep;

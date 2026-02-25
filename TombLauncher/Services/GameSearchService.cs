@@ -26,20 +26,14 @@ namespace TombLauncher.Services;
 
 public class GameSearchService : IViewService
 {
-    public GameSearchService(GameDownloadManager gameDownloadManager, GamesUnitOfWork gamesUnitOfWork,
-        ILocalizationManager localizationManager, NavigationManager navigationManager,
-        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration,
+    public GameSearchService(ViewServiceContext viewContext, GameDownloadManager gameDownloadManager, GamesUnitOfWork gamesUnitOfWork,
         NotificationService notificationService, GameListService gameListService,
         ILogger<GameSearchService> logger, SettingsService settingsService,
         GameWithStatsService gameWithStatsService)
     {
+        ViewContext = viewContext;
         GameDownloadManager = gameDownloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
-        _mapper = mapperConfiguration.CreateMapper();
         _notificationService = notificationService;
         _gameListService = gameListService;
         _logger = logger;
@@ -47,6 +41,12 @@ public class GameSearchService : IViewService
         _gameWithStatsService = gameWithStatsService;
     }
 
+    public ViewServiceContext ViewContext { get; }
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
+    private IMapper _mapper => ViewContext.Mapper;
     private NotificationService _notificationService;
     private GameListService _gameListService;
     private ILogger<GameSearchService> _logger;
@@ -55,11 +55,6 @@ public class GameSearchService : IViewService
 
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
-    public ILocalizationManager LocalizationManager { get; }
-    public NavigationManager NavigationManager { get; }
-    public IMessageBoxService MessageBoxService { get; }
-    public IDialogService DialogService { get; }
-    private IMapper _mapper;
 
     private Task<List<IMultiSourceSearchResultMetadata>> InvokeMerger(GameSearchViewModel target, List<IGameSearchResultMetadata> nextPage)
     {

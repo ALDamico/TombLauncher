@@ -16,19 +16,17 @@ namespace TombLauncher.Services;
 
 public class AppCrashHostService : IViewService
 {
-    public AppCrashHostService(AppCrashUnitOfWork appCrashUnitOfWork, ILocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService)
+    public AppCrashHostService(ViewServiceContext viewContext, AppCrashUnitOfWork appCrashUnitOfWork)
     {
+        ViewContext = viewContext;
         AppCrashUnitOfWork = appCrashUnitOfWork;
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
     }
+    public ViewServiceContext ViewContext { get; }
     public AppCrashUnitOfWork AppCrashUnitOfWork { get; }
-    public ILocalizationManager LocalizationManager { get; }
-    public NavigationManager NavigationManager { get; }
-    public IMessageBoxService MessageBoxService { get; }
-    public IDialogService DialogService { get; }
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
 
     public async Task Save(AppCrashDto crash)
     {

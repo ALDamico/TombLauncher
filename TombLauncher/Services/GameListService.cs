@@ -16,29 +16,22 @@ namespace TombLauncher.Services;
 
 public class GameListService : IViewService
 {
-    public GameListService(ILocalizationManager localizationManager,
-        NavigationManager navigationManager,
-        IMessageBoxService messageBoxService,
-        IDialogService dialogService,
+    public GameListService(ViewServiceContext viewContext,
         GamesUnitOfWork gamesUnitOfWork,
-        MapperConfiguration mapperConfiguration,
         SettingsService settingsService)
     {
+        ViewContext = viewContext;
         _gamesUnitOfWork = gamesUnitOfWork;
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
-        _mapper = mapperConfiguration.CreateMapper();
         _settingsService = settingsService;
     }
 
+    public ViewServiceContext ViewContext { get; }
     private readonly GamesUnitOfWork _gamesUnitOfWork;
-    public ILocalizationManager LocalizationManager { get; }
-    public NavigationManager NavigationManager { get; }
-    public IMessageBoxService MessageBoxService { get; }
-    public IDialogService DialogService { get; }
-    private readonly IMapper _mapper;
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
+    private IMapper _mapper => ViewContext.Mapper;
     private readonly SettingsService _settingsService;
 
     public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)

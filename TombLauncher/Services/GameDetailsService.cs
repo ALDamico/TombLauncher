@@ -27,28 +27,24 @@ namespace TombLauncher.Services;
 
 public class GameDetailsService : IViewService
 {
-    public GameDetailsService(GamesUnitOfWork gamesUnitOfWork, ILocalizationManager localizationManager,
-        NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration,
+    public GameDetailsService(ViewServiceContext viewContext, GamesUnitOfWork gamesUnitOfWork,
         IPlatformSpecificFeatures platformSpecificFeatures, SettingsService settingsService,
         TombRaiderEngineDetector engineDetector)
     {
+        ViewContext = viewContext;
         GamesUnitOfWork = gamesUnitOfWork;
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
-        _mapper = mapperConfiguration.CreateMapper();
         _platformSpecificFeatures = platformSpecificFeatures;
         _settingsService = settingsService;
         _engineDetector = engineDetector;
     }
 
+    public ViewServiceContext ViewContext { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; set; }
-    public ILocalizationManager LocalizationManager { get; set; }
-    public NavigationManager NavigationManager { get; set; }
-    public IMessageBoxService MessageBoxService { get; }
-    public IDialogService DialogService { get; }
-    private IMapper _mapper;
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
+    private IMapper _mapper => ViewContext.Mapper;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private SettingsService _settingsService;
     private TombRaiderEngineDetector _engineDetector;

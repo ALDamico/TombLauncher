@@ -6,8 +6,9 @@ namespace TombLauncher.Services;
 
 public interface IViewService
 {
-    ILocalizationManager LocalizationManager { get; }
-    NavigationManager NavigationManager { get; }
-    IMessageBoxService MessageBoxService { get; }
-    IDialogService DialogService { get; }
+    ViewServiceContext ViewContext { get; }
+    ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    NavigationManager NavigationManager => ViewContext.NavigationManager;
+    IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    IDialogService DialogService => ViewContext.DialogService;
 }

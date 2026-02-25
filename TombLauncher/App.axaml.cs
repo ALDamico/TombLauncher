@@ -308,6 +308,7 @@ public partial class App : Application
 
     private static void ConfigurePageServices(ServiceCollection serviceCollection)
     {
+        serviceCollection.AddSingleton<ViewServiceContext>();
         serviceCollection.AddScoped<GameDetailsService>();
         serviceCollection.AddScoped<NewGameService>();
         serviceCollection.AddScoped<GameListService>();

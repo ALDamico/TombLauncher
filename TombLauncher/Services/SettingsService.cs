@@ -33,22 +33,14 @@ namespace TombLauncher.Services;
 public class SettingsService : IViewService
 {
     public SettingsService(
-        ILocalizationManager localizationManager,
-        NavigationManager navigationManager,
-        IMessageBoxService messageBoxService,
-        IDialogService dialogService,
-        MapperConfiguration mapperConfiguration,
+        ViewServiceContext viewContext,
         IAppConfigurationWrapper appConfiguration,
         ILogger<SettingsService> logger,
         ThemeManager themeManager,
         IServiceProvider serviceProvider,
         IPlatformSpecificFeatures platformSpecificFeatures)
     {
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
-        _mapper = mapperConfiguration.CreateMapper();
+        ViewContext = viewContext;
         _appConfiguration = appConfiguration;
         _logger = logger;
         _themeManager = themeManager;
@@ -56,14 +48,15 @@ public class SettingsService : IViewService
         _platformSpecificFeatures = platformSpecificFeatures;
     }
 
+    public ViewServiceContext ViewContext { get; }
     private readonly IAppConfigurationWrapper _appConfiguration;
     private readonly IServiceProvider _serviceProvider;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
-    public ILocalizationManager LocalizationManager { get; }
-    public NavigationManager NavigationManager { get; }
-    public IMessageBoxService MessageBoxService { get; }
-    public IDialogService DialogService { get; }
-    private readonly IMapper _mapper;
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
+    private IMapper _mapper => ViewContext.Mapper;
     private readonly ILogger<SettingsService> _logger;
     private readonly ThemeManager _themeManager;
 

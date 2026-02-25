@@ -30,30 +30,26 @@ namespace TombLauncher.Services;
 
 public class GameSearchResultService : IViewService
 {
-    public GameSearchResultService(GameDownloadManager downloadManager, GamesUnitOfWork gamesUnitOfWork,
+    public GameSearchResultService(ViewServiceContext viewContext, GamesUnitOfWork gamesUnitOfWork,
         TombRaiderLevelInstaller levelInstaller,
-        TombRaiderEngineDetector engineDetector, ILocalizationManager localizationManager,
-        NavigationManager navigationManager,
-        IMessageBoxService messageBoxService, IDialogService dialogService, MapperConfiguration mapperConfiguration,
+        TombRaiderEngineDetector engineDetector,
+        GameDownloadManager downloadManager,
         NotificationService notificationService, GameWithStatsService gameWithStatsService,
         ILogger<GameSearchResultService> logger, GameFileHashCalculator hashCalculator)
     {
+        ViewContext = viewContext;
         GameDownloadManager = downloadManager;
         GamesUnitOfWork = gamesUnitOfWork;
         LevelInstaller = levelInstaller;
         EngineDetector = engineDetector;
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
         _cancellationTokenSource = new CancellationTokenSource();
-        _mapper = mapperConfiguration.CreateMapper();
         _notificationService = notificationService;
         _gameWithStatsService = gameWithStatsService;
         _logger = logger;
         _hashCalculator = hashCalculator;
     }
 
+    public ViewServiceContext ViewContext { get; }
     private ILogger<GameSearchResultService> _logger;
 
     private NotificationService _notificationService;
@@ -63,11 +59,11 @@ public class GameSearchResultService : IViewService
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public TombRaiderLevelInstaller LevelInstaller { get; }
     public TombRaiderEngineDetector EngineDetector { get; }
-    public ILocalizationManager LocalizationManager { get; }
-    public NavigationManager NavigationManager { get; }
-    public IMessageBoxService MessageBoxService { get; }
-    public IDialogService DialogService { get; }
-    private IMapper _mapper;
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
+    private IMapper _mapper => ViewContext.Mapper;
     private GameFileHashCalculator _hashCalculator;
     private string _downloadPath;
     private string _installPath;

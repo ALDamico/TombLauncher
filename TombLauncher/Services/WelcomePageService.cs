@@ -12,24 +12,21 @@ namespace TombLauncher.Services;
 
 public class WelcomePageService : IViewService
 {
-    public WelcomePageService(AppCrashUnitOfWork appCrashUnitOfWork, ILocalizationManager localizationManager, NavigationManager navigationManager, IMessageBoxService messageBoxService, IDialogService dialogService, GamesUnitOfWork gamesUnitOfWork, MapperConfiguration mapperConfiguration, AppCrashHostService appCrashHostService)
+    public WelcomePageService(ViewServiceContext viewContext, AppCrashUnitOfWork appCrashUnitOfWork, GamesUnitOfWork gamesUnitOfWork, AppCrashHostService appCrashHostService)
     {
+        ViewContext = viewContext;
         AppCrashUnitOfWork = appCrashUnitOfWork;
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
         _gamesUnitOfWork = gamesUnitOfWork;
-        _mapper = new Mapper(mapperConfiguration);
         _appCrashHostService = appCrashHostService;
     }
+    public ViewServiceContext ViewContext { get; }
     public AppCrashUnitOfWork AppCrashUnitOfWork { get; }
-    public ILocalizationManager LocalizationManager { get; }
-    public NavigationManager NavigationManager { get; }
-    public IMessageBoxService MessageBoxService { get; }
-    public IDialogService DialogService { get; }
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
+    private IMapper _mapper => ViewContext.Mapper;
     private GamesUnitOfWork _gamesUnitOfWork;
-    private IMapper _mapper;
     private AppCrashHostService _appCrashHostService;
 
     internal void HandleNotNotifiedCrashes()

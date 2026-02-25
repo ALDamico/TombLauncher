@@ -22,39 +22,31 @@ namespace TombLauncher.Services;
 
 public class NewGameService : IViewService
 {
-    public NewGameService(GamesUnitOfWork gamesUnitOfWork,
-        ILocalizationManager localizationManager,
-        NavigationManager navigationManager,
-        IMessageBoxService messageBoxService,
-        IDialogService dialogService,
+    public NewGameService(ViewServiceContext viewContext, GamesUnitOfWork gamesUnitOfWork,
         GameFileHashCalculator hashCalculator,
         TombRaiderLevelInstaller levelInstaller,
         TombRaiderEngineDetector engineDetector,
-        ILogger<NewGameService> logger,
-        MapperConfiguration mapperConfiguration)
+        ILogger<NewGameService> logger)
     {
+        ViewContext = viewContext;
         GamesUnitOfWork = gamesUnitOfWork;
-        LocalizationManager = localizationManager;
-        NavigationManager = navigationManager;
-        MessageBoxService = messageBoxService;
-        DialogService = dialogService;
         GameFileHashCalculator = hashCalculator;
         LevelInstaller = levelInstaller;
         EngineDetector = engineDetector;
         _logger = logger;
-        _mapper = mapperConfiguration.CreateMapper();
     }
 
+    public ViewServiceContext ViewContext { get; }
     private readonly ILogger<NewGameService> _logger;
     public GamesUnitOfWork GamesUnitOfWork { get; }
-    public ILocalizationManager LocalizationManager { get; }
-    public NavigationManager NavigationManager { get; }
-    public IMessageBoxService MessageBoxService { get; }
-    public IDialogService DialogService { get; }
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
+    private IMapper _mapper => ViewContext.Mapper;
     public GameFileHashCalculator GameFileHashCalculator { get; }
     public TombRaiderLevelInstaller LevelInstaller { get; }
     public TombRaiderEngineDetector EngineDetector { get; }
-    private IMapper _mapper;
 
     public async Task<string> PickZipArchive()
     {
