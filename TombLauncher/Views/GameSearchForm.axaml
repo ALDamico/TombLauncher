@@ -53,26 +53,43 @@
             </ToggleButton>
             
             <!-- Clear Filters -->
-            <Button Content="{DynamicResource Clear}"
-                    HorizontalAlignment="Left"
-                    Classes="round-button"
+            <Button HorizontalAlignment="Left"
                     Padding="10, 6"
                     Width="NaN"
                     Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=ClearFiltersCommand}">
-                <Button.Template>
-                    <ControlTemplate>
-                        <Border Background="Transparent" Cursor="Hand">
-                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                <avalonia:MaterialIcon Kind="FilterRemove" Width="16" Height="16"
-                                                       Foreground="{DynamicResource MutedTextBrush}"/>
-                                <TextBlock Text="{DynamicResource Clear}" 
-                                           Foreground="{DynamicResource MutedTextBrush}"
-                                           FontSize="12"
-                                           VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="CornerRadius" Value="12"/>
+                    </Style>
+                    <Style Selector="Button /template/ ContentPresenter">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="CornerRadius" Value="12"/>
+                    </Style>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                        <Setter Property="Background" Value="#20808080"/>
+                    </Style>
+                    <Style Selector="Button:pointerover avalonia|MaterialIcon">
+                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                    </Style>
+                    <Style Selector="Button:pointerover TextBlock">
+                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                    </Style>
+                    <Style Selector="Button:disabled">
+                        <Setter Property="Opacity" Value="0.35"/>
+                        <Setter Property="Cursor" Value="Arrow"/>
+                    </Style>
+                </Button.Styles>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <avalonia:MaterialIcon Kind="FilterRemove" Width="16" Height="16"
+                                           Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Text="{DynamicResource Clear}" 
+                               Foreground="{DynamicResource MutedTextBrush}"
+                               FontSize="12"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
             </Button>
         </StackPanel>
         
