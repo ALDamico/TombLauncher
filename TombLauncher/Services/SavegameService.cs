@@ -16,6 +16,7 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Savegames.HeaderReaders;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
@@ -28,14 +29,14 @@ namespace TombLauncher.Services;
 public class SavegameService
 {
     public SavegameService(
-        GamesUnitOfWork gamesUnitOfWork,
+        ISavegameRepository savegameRepository,
         IMessageBoxService messageBoxService,
         MapperConfiguration mapperConfiguration,
         SettingsPageService settingsService,
         IDialogService dialogService,
         ILogger<SavegameService> logger)
     {
-        _gamesUnitOfWork = gamesUnitOfWork;
+        _savegameRepository = savegameRepository;
         _messageBoxService = messageBoxService;
         _mapper = mapperConfiguration.CreateMapper();
         _numberOfVersionsToKeep = settingsService.GetSavegameSettings(null).NumberOfVersionsToKeep;
@@ -44,7 +45,7 @@ public class SavegameService
         InitHeaderReaderMap();
     }
 
-    private readonly GamesUnitOfWork _gamesUnitOfWork;
+    private readonly ISavegameRepository _savegameRepository;
     private readonly IMessageBoxService _messageBoxService;
     private readonly IMapper _mapper;
     private int? _numberOfVersionsToKeep;
@@ -79,7 +80,7 @@ public class SavegameService
     {
         targetViewModel.SetBusy("Fetching savegames for GAMETITLE".GetLocalizedString(targetViewModel.GameTitle));
         var observableCollection = new ObservableCollection<SavegameViewModel>();
-        var knownSavegames = await _gamesUnitOfWork.GetSavegamesByGameId(targetViewModel.GameId);
+        var knownSavegames = await _savegameRepository.GetSavegamesByGameId(targetViewModel.GameId);
         var headerParser = _headerReaderMap[targetViewModel.GameEngine];
         foreach (var savegame in knownSavegames)
         {
@@ -185,7 +186,7 @@ public class SavegameService
             existingGamesDict[md5] = savegameFile;
         }
 
-        var backedUpSaves = await _gamesUnitOfWork.GetSavegameMd5sByGameId(savegameListView.GameId);
+        var backedUpSaves = await _savegameRepository.GetSavegameMd5sByGameId(savegameListView.GameId);
         var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys).ToList();
         if (missingSaveGames.Count == 0)
         {
@@ -223,8 +224,8 @@ public class SavegameService
                 }
             }
 
-            _gamesUnitOfWork.BackupSavegames(savegameListView.GameId, savegameListView.GameEngine, dataToBackup, _numberOfVersionsToKeep);
-            await _gamesUnitOfWork.Save();
+            _savegameRepository.BackupSavegames(savegameListView.GameId, savegameListView.GameEngine, dataToBackup, _numberOfVersionsToKeep);
+            await _savegameRepository.Save();
             savegameListView.SetBusy(false);
         }
         else
@@ -239,7 +240,7 @@ public class SavegameService
         _logger.LogInformation("Setting savegame number {Savegame} as start of level...", targetSaveGame.SaveNumber);
         savegameListViewModel.SetBusy("Update in progress...");
         var dto = _mapper.Map<FileBackupDto>(targetSaveGame);
-        await _gamesUnitOfWork.UpdateSavegameStartOfLevel(dto);
+        await _savegameRepository.UpdateSavegameStartOfLevel(dto);
         savegameListViewModel.SetBusy(false);
     }
 
@@ -256,7 +257,7 @@ public class SavegameService
 
         savegameListViewModel.SetBusy("Deleting savegame...");
 
-        await _gamesUnitOfWork.DeleteFileBackupById(savegameViewModel.Id);
+        await _savegameRepository.DeleteFileBackupById(savegameViewModel.Id);
         savegameListViewModel.FilteredSaves.Remove(savegameViewModel);
         savegameListViewModel.Savegames.Remove(savegameViewModel);
         savegameListViewModel.SetBusy(false);
@@ -265,7 +266,7 @@ public class SavegameService
     public async Task Restore(SavegameListViewModel savegameListViewModel, int savegameId, int max)
     {
         savegameListViewModel.SetBusy("Restoring savegame...");
-        var savegame = _gamesUnitOfWork.GetSavegameById(savegameId);
+        var savegame = _savegameRepository.GetSavegameById(savegameId);
         var availableSlots = new ObservableCollection<SavegameSlotViewModel>();
         for (var i = 0; i < max; i++)
         {
@@ -316,7 +317,7 @@ public class SavegameService
                 targetTypes.Add(FileType.SavegameStartOfLevel);
             }
 
-            _gamesUnitOfWork.DeleteFileBackupsByGameId(gameId, targetTypes);
+            _savegameRepository.DeleteFileBackupsByGameId(gameId, targetTypes);
             savegameListViewModel.SetBusy(false);
         }
     }
@@ -326,7 +327,7 @@ public class SavegameService
         try
         {
             page.SetBusy("Syncing savegames...");
-            var allGamesWithSaves = await _gamesUnitOfWork.GetSavegameBackups();
+            var allGamesWithSaves = await _savegameRepository.GetSavegameBackups();
 
             foreach (var savegame in allGamesWithSaves)
             {
@@ -342,7 +343,7 @@ public class SavegameService
                 }
             }
 
-            await _gamesUnitOfWork.SyncSavegameMetadata(allGamesWithSaves);
+            await _savegameRepository.SyncSavegameMetadata(allGamesWithSaves);
             await _messageBoxService.ShowLocalized("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
                 MsgBoxImage.Success);
         }

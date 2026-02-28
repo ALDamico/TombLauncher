@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
@@ -15,6 +14,7 @@ using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
+using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
@@ -28,6 +28,7 @@ public class GameWithStatsService : IViewService
     public GameWithStatsService(
         ViewServiceContext viewContext,
         GamesUnitOfWork gamesUnitOfWork,
+        ISavegameRepository savegameRepository,
         ISettingsProvider settingsProvider,
         ILogger<GameWithStatsService> logger,
         SavegameService savegameService,
@@ -36,6 +37,7 @@ public class GameWithStatsService : IViewService
     {
         ViewContext = viewContext;
         _gamesUnitOfWork = gamesUnitOfWork;
+        _savegameRepository = savegameRepository;
         var savegameSettings = settingsProvider.GetSavegameSettings();
         _backupEnabled = savegameSettings.IsBackupEnabled;
         if (_backupEnabled)
@@ -55,6 +57,7 @@ public class GameWithStatsService : IViewService
     private IMapper _mapper => ViewContext.Mapper;
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
+    private readonly ISavegameRepository _savegameRepository;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
@@ -186,7 +189,7 @@ public class GameWithStatsService : IViewService
 
             if (_backupEnabled)
             {
-                _gamesUnitOfWork.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
+                _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
                 _headerProcessor.ClearProcessedFiles();
 
                 try
@@ -207,6 +210,7 @@ public class GameWithStatsService : IViewService
             }
 
             await _gamesUnitOfWork.Save();
+            await _savegameRepository.Save();
 
             // NavigationManager.RequestRefresh(); // Not available in V2? Need to handle refresh.
         }

@@ -25,9 +25,9 @@ using Serilog.Events;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
+using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Factories;
@@ -350,6 +350,7 @@ public partial class App : Application
             var connectionString = $"Data Source={databasePath}";
             opts.UseSqlite(connectionString);
         });
+        serviceCollection.AddScoped<ISavegameRepository, SavegameRepository>();
         serviceCollection.AddScoped<GamesUnitOfWork>();
         serviceCollection.AddScoped<AppCrashUnitOfWork>();
     }
