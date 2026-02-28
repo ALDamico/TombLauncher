@@ -187,6 +187,8 @@ public partial class App : Application
         serviceCollection.AddSingleton<IAppFileOperationsService, AppFileOperationsService>();
         serviceCollection.AddSingleton<ThemeManager>();
         serviceCollection.AddSingleton<ISavegameHeaderProvider, SavegameHeaderProvider>();
+        serviceCollection.AddTransient<SavegameQueryService>();
+        serviceCollection.AddTransient<SavegameCommandService>();
         ConfigurePageServices(serviceCollection);
         ConfigureViewModels(serviceCollection);
         serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current));
