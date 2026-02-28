@@ -17,19 +17,20 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 {
-    public DownloaderSettingsViewModel(PageViewModel settingsPage, SettingsService settingsService, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage)
+    public DownloaderSettingsViewModel(PageViewModel settingsPage, ISettingsProvider settingsProvider, IAppFileOperationsService appFileOperations, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage)
     {
         MoveUpCmd = new RelayCommand<DownloaderViewModel>(MoveUp, CanMoveUp);
         MoveDownCmd = new RelayCommand<DownloaderViewModel>(MoveDown, CanMoveDown);
         InfoTipContent = "Downloaders infotip content".GetLocalizedString();
-        _settingsService = settingsService;
+        _settingsProvider = settingsProvider;
+        _appFileOperations = appFileOperations;
         _messageBoxService = messageBoxService;
         var mapper = new Mapper(mapperConfiguration);
         AvailableUnzipFallbackMethods =
             mapper.Map<ObservableCollection<UnzipBackendViewModel>>(platformSpecificFeatures
                 .GetPlatformSpecificZipFallbackPrograms()) ?? new ObservableCollection<UnzipBackendViewModel>();
         SelectedUnzipFallbackMethod =
-            AvailableUnzipFallbackMethods!.FirstOrDefault(m => m.Name == _settingsService.GetUnzipFallbackMethod())!;
+            AvailableUnzipFallbackMethods!.FirstOrDefault(m => m.Name == _settingsProvider.GetGameDetailsSettings().UnzipFallbackMethod)!;
         if (SelectedUnzipFallbackMethod == null)
             SelectedUnzipFallbackMethod = AvailableUnzipFallbackMethods.FirstOrDefault()!;
         CleanUpTempFilesCmd = new AsyncRelayCommand(CleanUpTempFiles);
@@ -39,7 +40,8 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private DownloaderViewModel _selectedDownloader;
     [ObservableProperty] private ObservableCollection<UnzipBackendViewModel> _availableUnzipFallbackMethods;
     [ObservableProperty] private UnzipBackendViewModel _selectedUnzipFallbackMethod;
-    private readonly SettingsService _settingsService;
+    private readonly ISettingsProvider _settingsProvider;
+    private readonly IAppFileOperationsService _appFileOperations;
     private readonly IMessageBoxService _messageBoxService;
 
     public ICommand MoveUpCmd { get; }
@@ -95,7 +97,7 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 
     private async Task CleanUpTempFiles()
     {
-        await _settingsService.CleanUpTempFiles();
+        await _appFileOperations.CleanUpTempFiles();
         await _messageBoxService.ShowLocalized("Clean up completed!", "The clean up process has completed successfully!",
             MsgBoxButton.Ok, MsgBoxImage.Information);
     }

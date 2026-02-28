@@ -28,13 +28,13 @@ namespace TombLauncher.Services;
 public class GameDetailsService : IViewService
 {
     public GameDetailsService(ViewServiceContext viewContext, GamesUnitOfWork gamesUnitOfWork,
-        IPlatformSpecificFeatures platformSpecificFeatures, SettingsService settingsService,
+        IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider,
         TombRaiderEngineDetector engineDetector)
     {
         ViewContext = viewContext;
         GamesUnitOfWork = gamesUnitOfWork;
         _platformSpecificFeatures = platformSpecificFeatures;
-        _settingsService = settingsService;
+        _settingsProvider = settingsProvider;
         _engineDetector = engineDetector;
     }
 
@@ -46,15 +46,15 @@ public class GameDetailsService : IViewService
     public IDialogService DialogService => ViewContext.DialogService;
     private IMapper _mapper => ViewContext.Mapper;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
-    private SettingsService _settingsService;
+    private ISettingsProvider _settingsProvider;
     private TombRaiderEngineDetector _engineDetector;
 
     public void InitializeSettings(GameDetailsViewModel target)
     {
-        var gameDetailsSettings = _settingsService.GetGameDetailsSettings(null);
+        var gameDetailsSettings = _settingsProvider.GetGameDetailsSettings();
         target.AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
-        target.EnabledPatterns = _settingsService.GetEnabledPatterns();
-        target.IgnoredFolders = _settingsService.GetExcludedFolders();
+        target.EnabledPatterns = gameDetailsSettings.EnabledPatterns.Select(p => p.Value).ToList();
+        target.IgnoredFolders = gameDetailsSettings.ExcludedFolders.Select(p => p.Value).ToList();
     }
 
     public void OpenGameFolder(string gameFolder)

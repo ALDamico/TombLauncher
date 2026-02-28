@@ -28,7 +28,7 @@ public class GameSearchService : IViewService
 {
     public GameSearchService(ViewServiceContext viewContext, GameDownloadManager gameDownloadManager, GamesUnitOfWork gamesUnitOfWork,
         NotificationService notificationService, GameListService gameListService,
-        ILogger<GameSearchService> logger, SettingsService settingsService,
+        ILogger<GameSearchService> logger, ISettingsProvider settingsProvider,
         GameWithStatsService gameWithStatsService)
     {
         ViewContext = viewContext;
@@ -37,7 +37,7 @@ public class GameSearchService : IViewService
         _notificationService = notificationService;
         _gameListService = gameListService;
         _logger = logger;
-        _settingsService = settingsService;
+        _settingsProvider = settingsProvider;
         _gameWithStatsService = gameWithStatsService;
     }
 
@@ -50,7 +50,7 @@ public class GameSearchService : IViewService
     private NotificationService _notificationService;
     private GameListService _gameListService;
     private ILogger<GameSearchService> _logger;
-    private SettingsService _settingsService;
+    private ISettingsProvider _settingsProvider;
     private GameWithStatsService _gameWithStatsService;
 
     public GameDownloadManager GameDownloadManager { get; }
@@ -209,7 +209,7 @@ public class GameSearchService : IViewService
     {
         target.SetBusy("Search starting...".GetLocalizedString());
         _logger.LogInformation("Started search with parameters: {Target}", target);
-        var downloaders = _settingsService.GetActiveDownloaders();
+        var downloaders = _settingsProvider.GetActiveDownloaders();
         GameDownloadManager.Downloaders.Clear();
         GameDownloadManager.Downloaders.AddRange(downloaders);
         target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();

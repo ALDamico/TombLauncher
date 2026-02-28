@@ -59,15 +59,14 @@ public class GameFileHashCalculator
         {
             // Something happened that doesn't allow us to use SharpZipLib.
             // Let's fallback to a simpler method
-            var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-            var commandLineToExecute = settingsService.GetUnzipFallbackMethodCommandLine();
+            var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
+            var commandLineToExecute = settingsProvider.GetGameDetailsSettings().UnzipFallbackMethodCommandLine;
             var targetDirectory = PathUtils.GetRandomTempDirectory();
-            var commandLineArguments = string.Format(commandLineToExecute.commandLineArguments, dataFolder, targetDirectory);
-            var process = Process.Start(commandLineToExecute.command, commandLineArguments);
+            var commandLineArguments = string.Format(commandLineToExecute.CommandLineArguments, dataFolder, targetDirectory);
+            var process = Process.Start(commandLineToExecute.Command, commandLineArguments);
             await process.WaitForExitAsync();
             return await ProcessFolder(targetDirectory, gameId);
         }
-
 
         throw new InvalidOperationException("Provided path isn't a directory or a zip file");
     }
@@ -75,11 +74,11 @@ public class GameFileHashCalculator
     private async Task<List<GameHashDto>> ProcessZipFile(ZipManager zipFile, int gameId)
     {
         var hashes = new List<GameHashDto>();
-        
+
         var entriesToProcess = zipFile.GetEntries().Where(e => _extensions.Any(ex => e.Name.EndsWith(ex))).ToList();
         foreach (var entry in entriesToProcess)
         {
-            
+
             var relativePath = PathUtils.NormalizePath(entry.Name);
             var stream = zipFile.GetInputStream(entry);
             var dto = await GetGameHashDto(gameId, stream, relativePath);

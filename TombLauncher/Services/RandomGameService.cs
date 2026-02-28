@@ -20,7 +20,7 @@ namespace TombLauncher.Services;
 public class RandomGameService
 {
     public RandomGameService(
-        SettingsService settingsService,
+        ISettingsProvider settingsProvider,
         GamesUnitOfWork gamesUnitOfWork,
         GameDownloadManager gameDownloadManager,
         NavigationManager navigationManager,
@@ -28,7 +28,7 @@ public class RandomGameService
         GameSearchResultService gameSearchResultService,
         GameWithStatsService gameWithStatsService)
     {
-        _settingsService = settingsService;
+        _settingsProvider = settingsProvider;
         _gamesUnitOfWork = gamesUnitOfWork;
         _gameDownloadManager = gameDownloadManager;
         _navigationManager = navigationManager;
@@ -37,7 +37,7 @@ public class RandomGameService
         _gameWithStatsService = gameWithStatsService;
     }
 
-    private SettingsService _settingsService;
+    private ISettingsProvider _settingsProvider;
     private GamesUnitOfWork _gamesUnitOfWork;
     private GameDownloadManager _gameDownloadManager;
     private NavigationManager _navigationManager;
@@ -49,7 +49,7 @@ public class RandomGameService
     {
         target.AttemptsExpired = false;
         target.SetBusy("Picking a random game for you...".GetLocalizedString());
-        target.MaxRetries = _settingsService.GetRandomGameMaxRerolls();
+        target.MaxRetries = _settingsProvider.GetApplicationSettings().RandomGameMaxRerolls;
         var maxRerolls = target.MaxRetries;
         for (var i = 0; i < maxRerolls; i++)
         {
@@ -59,7 +59,7 @@ public class RandomGameService
                     "Picking a random game for you... (Attempt NR of TOT)".GetLocalizedString(i + 1, maxRerolls));
             }
 
-            var downloaders = _settingsService.GetActiveDownloaders();
+            var downloaders = _settingsProvider.GetActiveDownloaders();
             var downloaderToUse = downloaders.PickOneAtRandom();
 
             // Initialization call to discover the total number of pages

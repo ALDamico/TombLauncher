@@ -18,11 +18,11 @@ public class GameListService : IViewService
 {
     public GameListService(ViewServiceContext viewContext,
         GamesUnitOfWork gamesUnitOfWork,
-        SettingsService settingsService)
+        ISettingsProvider settingsProvider)
     {
         ViewContext = viewContext;
         _gamesUnitOfWork = gamesUnitOfWork;
-        _settingsService = settingsService;
+        _settingsProvider = settingsProvider;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -32,7 +32,7 @@ public class GameListService : IViewService
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
     public IDialogService DialogService => ViewContext.DialogService;
     private IMapper _mapper => ViewContext.Mapper;
-    private readonly SettingsService _settingsService;
+    private readonly ISettingsProvider _settingsProvider;
 
     public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
@@ -74,6 +74,6 @@ public class GameListService : IViewService
 
     public void ApplySettings(GameListViewModel target)
     {
-        target.ShowAsGrid = _settingsService.IsGridViewDefault();
+        target.ShowAsGrid = _settingsProvider.GetAppearanceSettings().IsGridViewDefault;
     }
 }

@@ -23,22 +23,22 @@ namespace TombLauncher.Services;
 public class StatisticsService
 {
     public StatisticsService(
-        SettingsService settingsService,
+        ISettingsProvider settingsProvider,
         GamesUnitOfWork gamesUnitOfWork,
         MapperConfiguration mapperConfiguration)
     {
-        _settingsService = settingsService;
+        _settingsProvider = settingsProvider;
         _gamesUnitOfWork = gamesUnitOfWork;
         _mapper = mapperConfiguration.CreateMapper();
     }
 
-    private readonly SettingsService _settingsService;
+    private readonly ISettingsProvider _settingsProvider;
     private readonly GamesUnitOfWork _gamesUnitOfWork;
     private readonly IMapper _mapper;
 
     public long GetDatabaseSize()
     {
-        var databasePath = _settingsService.GetDatabasePath();
+        var databasePath = _settingsProvider.GetApplicationSettings().DatabasePath;
         var fileInfo = new FileInfo(databasePath);
         return fileInfo.Length;
     }

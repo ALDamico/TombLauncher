@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
@@ -14,9 +15,10 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 {
-    public SettingsPageViewModel(SettingsService settingsService, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration)
+    public SettingsPageViewModel(SettingsPageService settingsService, ISettingsProvider settingsProvider, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration)
     {
         _settingsService = settingsService;
+        _settingsProvider = settingsProvider;
         _messageBoxService = messageBoxService;
         _platformSpecificFeatures = platformSpecificFeatures;
         _mapperConfiguration = mapperConfiguration;
@@ -46,7 +48,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
     }
 
-    private readonly SettingsService _settingsService;
+    private readonly SettingsPageService _settingsService;
+    private readonly ISettingsProvider _settingsProvider;
     private readonly IMessageBoxService _messageBoxService;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly MapperConfiguration _mapperConfiguration;
@@ -72,11 +75,12 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             return Task.CompletedTask;
 
         IsInitialized = true;
-        var currentTheme = _settingsService.GetApplicationTheme();
+        var appearanceCoreSettings = _settingsProvider.GetAppearanceSettings();
+        var currentTheme = appearanceCoreSettings.ApplicationTheme;
         var appearanceSettings = new AppearanceSettingsViewModel(this);
         appearanceSettings.SelectedTheme = appearanceSettings.AvailableThemes.FirstOrDefault(t => t.Value == currentTheme)
                                            ?? appearanceSettings.AvailableThemes.First();
-        appearanceSettings.DefaultToGridView = _settingsService.IsGridViewDefault();
+        appearanceSettings.DefaultToGridView = appearanceCoreSettings.IsGridViewDefault;
         var supportedLanguages = _settingsService.GetSupportedLanguages();
         var languageSettings = new LanguageSettingsViewModel(this)
         {
@@ -86,14 +90,14 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();
-        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsService, _messageBoxService, _platformSpecificFeatures, _mapperConfiguration)
+        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, Ioc.Default.GetRequiredService<IAppFileOperationsService>(), _messageBoxService, _platformSpecificFeatures, _mapperConfiguration)
         {
             AvailableDownloaders = downloaders.ToObservableCollection()
         };
         var gameDetailsSettings = _settingsService.GetGameDetailsSettings(this);
         var randomGameSettings = new RandomGameSettingsViewModel(this)
         {
-            MaxRerolls = _settingsService.GetRandomGameMaxRerolls()
+            MaxRerolls = _settingsProvider.GetApplicationSettings().RandomGameMaxRerolls
         };
         var savegameSettings = _settingsService.GetSavegameSettings(this);
 

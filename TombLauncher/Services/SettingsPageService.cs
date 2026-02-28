@@ -30,38 +30,38 @@ using TombLauncher.ViewModels.Pages.Settings;
 
 namespace TombLauncher.Services;
 
-public class SettingsService : IViewService
+public class SettingsPageService : IViewService
 {
-    public SettingsService(
+    public SettingsPageService(
         ViewServiceContext viewContext,
         IAppConfigurationWrapper appConfiguration,
-        ILogger<SettingsService> logger,
+        ILogger<SettingsPageService> logger,
         ThemeManager themeManager,
         IServiceProvider serviceProvider,
-        IPlatformSpecificFeatures platformSpecificFeatures,
-        IAppFileOperationsService appFileOperations)
+        IAppFileOperationsService appFileOperations,
+        ISettingsProvider settingsProvider)
     {
         ViewContext = viewContext;
         _appConfiguration = appConfiguration;
         _logger = logger;
         _themeManager = themeManager;
         _serviceProvider = serviceProvider;
-        _platformSpecificFeatures = platformSpecificFeatures;
         _appFileOperations = appFileOperations;
+        _settingsProvider = settingsProvider;
     }
 
     public ViewServiceContext ViewContext { get; }
     private readonly IAppConfigurationWrapper _appConfiguration;
     private readonly IServiceProvider _serviceProvider;
-    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
     public IDialogService DialogService => ViewContext.DialogService;
     private IMapper _mapper => ViewContext.Mapper;
-    private readonly ILogger<SettingsService> _logger;
+    private readonly ILogger<SettingsPageService> _logger;
     private readonly ThemeManager _themeManager;
     private readonly IAppFileOperationsService _appFileOperations;
+    private readonly ISettingsProvider _settingsProvider;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
     {
@@ -69,15 +69,9 @@ public class SettingsService : IViewService
         return _mapper.Map<List<ApplicationLanguageViewModel>>(supportedLanguages);
     }
 
-    public CultureInfo GetApplicationLanguage()
-    {
-        return new CultureInfo(_appConfiguration.ApplicationLanguage);
-    }
+    public CultureInfo GetApplicationLanguage() => _settingsProvider.GetApplicationSettings().ApplicationLanguage;
 
-    public string GetApplicationTheme()
-    {
-        return _appConfiguration.ApplicationTheme;
-    }
+    public string GetApplicationTheme() => _settingsProvider.GetAppearanceSettings().ApplicationTheme;
 
     public async Task Save(SettingsPageViewModel viewModel)
     {
@@ -116,54 +110,19 @@ public class SettingsService : IViewService
 
     public List<DownloaderViewModel> GetDownloaderViewModels()
     {
-        return _mapper.Map<List<DownloaderViewModel>>(GetDownloaderConfigurations());
-    }
-
-    private List<DownloaderConfiguration> GetDownloaderConfigurations()
-    {
-        var dtos = new List<DownloaderConfiguration>();
-        var downloaders = ReflectionUtils.GetImplementors<IGameDownloader>(BindingFlags.NonPublic).ToList();
-        var priority = downloaders.Count();
-
-        var configCustomizations = _appConfiguration.Downloaders.ToDictionary(d => d.ClassName);
-        foreach (var downloader in downloaders)
-        {
-            var className = downloader.GetType().FullName;
-            configCustomizations.TryGetValue(className, out var config);
-            if (config == null)
-            {
-                config = new DownloaderConfiguration()
-                {
-                    ClassName = className,
-                    IsChecked = true,
-                    Priority = --priority
-                };
-            }
-
-            var dto = new DownloaderConfiguration()
-            {
-                BaseUrl = downloader.BaseUrl,
-                ClassName = className,
-                DisplayName = downloader.DisplayName,
-                IsChecked = config.IsChecked,
-                Priority = config.Priority,
-                SupportedFeatures = downloader.SupportedFeatures.GetDescription()
-            };
-            dtos.Add(dto);
-        }
-
-        return dtos.OrderBy(dto => dto.Priority).ToList();
+        return _mapper.Map<List<DownloaderViewModel>>(_settingsProvider.GetDownloaderConfigurations());
     }
 
     public GameDetailsSettingsViewModel GetGameDetailsSettings(PageViewModel settingsPage)
     {
+        var settings = _settingsProvider.GetGameDetailsSettings();
         return new GameDetailsSettingsViewModel(settingsPage)
         {
             AskForConfirmationBeforeWalkthrough =
                 _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
-            DocumentationPatterns = new EditablePatternListBoxViewModel() { TargetCollection = _appConfiguration.DocumentationPatterns.ToObservableCollection() },
-            FolderExclusions = new EditableFolderExclusionsListBoxViewModel() { TargetCollection = _appConfiguration.DocumentationFolderExclusions.ToObservableCollection() },
-            WinePath = GetWinePath()
+            DocumentationPatterns = new EditablePatternListBoxViewModel() { TargetCollection = settings.EnabledPatterns.ToObservableCollection() },
+            FolderExclusions = new EditableFolderExclusionsListBoxViewModel() { TargetCollection = settings.ExcludedFolders.ToObservableCollection() },
+            WinePath = settings.WinePath
         };
     }
 
@@ -178,31 +137,7 @@ public class SettingsService : IViewService
         };
     }
 
-    public List<IGameDownloader> GetActiveDownloaders()
-    {
-        var downloaderConfigs = GetDownloaderConfigurations().Where(dl => dl.IsChecked);
-        var output = new List<IGameDownloader>();
-        foreach (var config in downloaderConfigs)
-        {
-            var downloaderImpl = ReflectionUtils.GetTypeByName(config.ClassName);
-            if (downloaderImpl == null)
-            {
-                continue;
-            }
 
-            var downloader = (IGameDownloader)_serviceProvider.GetRequiredService(downloaderImpl);
-            output.Add(downloader);
-        }
-
-        return output;
-    }
-
-    public int GetRandomGameMaxRerolls() => _appConfiguration.RandomGameMaxRerolls.GetValueOrDefault();
-
-    public string GetDatabasePath()
-    {
-        return _appConfiguration.DatabasePath;
-    }
 
     public async Task SyncSavegames(PageViewModel settingsPage)
     {
@@ -212,38 +147,8 @@ public class SettingsService : IViewService
         await savegameService.SyncSavegames(settingsPage);
     }
 
-    public string GetGitHubLink()
-    {
-        return _appConfiguration.GitHubLink;
-    }
-
-    public bool IsGridViewDefault()
-    {
-        return _appConfiguration.DefaultToGridView;
-    }
-
-    public List<string> GetEnabledPatterns()
-    {
-        return _appConfiguration.DocumentationPatterns.GetCheckedItems().ToList();
-    }
-
-    public List<string> GetExcludedFolders()
-    {
-        return _appConfiguration.DocumentationFolderExclusions.GetCheckedItems().ToList();
-    }
-
     public async Task CleanUpTempFiles()
     {
         await _appFileOperations.CleanUpTempFiles();
-    }
-
-    public string GetWinePath() => _appConfiguration.WinePath;
-    public string GetUnzipFallbackMethod() => _appConfiguration.UnzipFallbackMethod;
-
-    public (string command, string commandLineArguments) GetUnzipFallbackMethodCommandLine()
-    {
-        var methodToUse = _platformSpecificFeatures.GetPlatformSpecificZipFallbackPrograms()
-            .FirstOrDefault(m => m.Name == GetUnzipFallbackMethod());
-        return (methodToUse.Command, methodToUse.CommandLineArguments);
     }
 }

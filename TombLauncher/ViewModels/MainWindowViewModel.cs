@@ -18,13 +18,13 @@ namespace TombLauncher.ViewModels;
 
 public partial class MainWindowViewModel : WindowViewModelBase
 {
-    public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel, NotificationService notificationService, SettingsService settingsService, IPlatformSpecificFeatures platformSpecificFeatures)
+    public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel, NotificationService notificationService, ISettingsProvider settingsProvider, IPlatformSpecificFeatures platformSpecificFeatures)
     {
         _navigationManager = navigationManager;
         _navigationManager.PropertyChanged += NavigationManagerOnPropertyChanged;
         NotificationListViewModel = notificationListViewModel;
         _notificationService = notificationService;
-        _settingsService = settingsService;
+        _settingsProvider = settingsProvider;
         _platformSpecificFeatures = platformSpecificFeatures;
         TogglePaneCmd = new RelayCommand(TogglePane);
         GoBackCmd = new RelayCommand(GoBack, CanGoBack);
@@ -103,7 +103,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
     }
 
     private readonly NavigationManager _navigationManager;
-    private readonly SettingsService _settingsService;
+    private readonly ISettingsProvider _settingsProvider;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
     [ObservableProperty] private MainMenuItemViewModel _settingsItem;
@@ -112,7 +112,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
     private void OpenGithub()
     {
-        var gitHubLink = _settingsService.GetGitHubLink();
+        var gitHubLink = _settingsProvider.GetApplicationSettings().GitHubLink;
         _platformSpecificFeatures.OpenUrl(gitHubLink);
     }
 

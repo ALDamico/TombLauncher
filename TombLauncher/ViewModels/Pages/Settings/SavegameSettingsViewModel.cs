@@ -11,7 +11,7 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
 {
-    public SavegameSettingsViewModel(PageViewModel settingsPage, SettingsService settingsService) : base("SAVEGAMES", settingsPage)
+    public SavegameSettingsViewModel(PageViewModel settingsPage, SettingsPageService settingsService) : base("SAVEGAMES", settingsPage)
     {
         _settingsService = settingsService;
         SyncSavegamesInfoCmd = new AsyncRelayCommand(SyncSavegamesInfo);
@@ -23,7 +23,7 @@ public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private int _savegameProcessingDelay;
 
     public ICommand SyncSavegamesInfoCmd { get; }
-    private readonly SettingsService _settingsService;
+    private readonly SettingsPageService _settingsService;
 
     private async Task SyncSavegamesInfo() => await _settingsService.SyncSavegames(SettingsPage);
 }

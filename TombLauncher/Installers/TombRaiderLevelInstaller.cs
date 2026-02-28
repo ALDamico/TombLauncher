@@ -25,7 +25,7 @@ public class TombRaiderLevelInstaller
         }
         var installFolder =
             Path.Combine(PathUtils.GetGamesFolder(), gameDto.Guid.ToString());
-        
+
         if (Directory.Exists(containingFolder))
         {
             CopyDirectory(containingFolder, installFolder, true);
@@ -41,11 +41,11 @@ public class TombRaiderLevelInstaller
             {
                 // Something happened that doesn't allow us to use SharpZipLib.
                 // Let's fallback to a simpler method
-                var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
-                var commandLineToExecute = settingsService.GetUnzipFallbackMethodCommandLine();
+                var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
+                var commandLineToExecute = settingsProvider.GetGameDetailsSettings().UnzipFallbackMethodCommandLine;
                 var targetDirectory = PathUtils.GetRandomTempDirectory();
-                var commandLineArguments = string.Format(commandLineToExecute.commandLineArguments, containingFolder, targetDirectory);
-                var process = Process.Start(commandLineToExecute.command, commandLineArguments);
+                var commandLineArguments = string.Format(commandLineToExecute.CommandLineArguments, containingFolder, targetDirectory);
+                var process = Process.Start(commandLineToExecute.Command, commandLineArguments);
                 await process.WaitForExitAsync();
                 return await Install(targetDirectory, gameDto, cancellationToken, copyProgress);
             }
@@ -54,7 +54,7 @@ public class TombRaiderLevelInstaller
         return installFolder;
     }
 
-    
+
 
     private static string MakeValidFileName(string name)
     {
@@ -79,7 +79,7 @@ public class TombRaiderLevelInstaller
 
         // Create the destination directory
         Directory.CreateDirectory(destinationDir);
-        
+
         if (progress != null)
         {
             var copyProgressInfo = new CopyProgressInfo()

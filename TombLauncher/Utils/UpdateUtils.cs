@@ -48,8 +48,8 @@ public static class UpdateUtils
                 {
                     PortableChannel, new RelayCommand<UpdateCommandPayload>(payload =>
                     {
-                        var settings = Ioc.Default.GetRequiredService<SettingsService>();
-                        var gitHubLink = settings.GetGitHubLink();
+                        var settings = Ioc.Default.GetRequiredService<ISettingsProvider>();
+                        var gitHubLink = settings.GetApplicationSettings().GitHubLink;
                         var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
                         platformSpecificFeatures.OpenUrl(gitHubLink);
                     })
@@ -112,7 +112,7 @@ public static class UpdateUtils
         {
             updateWorkers.AppCastDataDownloader = new LocalFileAppCastDownloader() { UseLocalUriPath = true };
             updateWorkers.UpdateDownloader = new LocalFileDownloader(updateWorkers.LoggerToUse)
-                { UseLocalUriPath = true };
+            { UseLocalUriPath = true };
         }
         else
         {

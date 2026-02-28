@@ -28,7 +28,7 @@ public class GameWithStatsService : IViewService
     public GameWithStatsService(
         ViewServiceContext viewContext,
         GamesUnitOfWork gamesUnitOfWork,
-        SettingsService settingsService,
+        ISettingsProvider settingsProvider,
         ILogger<GameWithStatsService> logger,
         SavegameService savegameService,
         IPlatformSpecificFeatures platformSpecificFeatures,
@@ -36,8 +36,8 @@ public class GameWithStatsService : IViewService
     {
         ViewContext = viewContext;
         _gamesUnitOfWork = gamesUnitOfWork;
-        var savegameSettings = settingsService.GetSavegameSettings(null);
-        _backupEnabled = savegameSettings.SavegameBackupEnabled.GetValueOrDefault();
+        var savegameSettings = settingsProvider.GetSavegameSettings();
+        _backupEnabled = savegameSettings.IsBackupEnabled;
         if (_backupEnabled)
         {
             _numberOfSavesToKeep = savegameSettings.NumberOfVersionsToKeep;
@@ -45,7 +45,7 @@ public class GameWithStatsService : IViewService
 
         _logger = logger;
         _savegameService = savegameService;
-        _winePath = settingsService.GetWinePath();
+        _winePath = settingsProvider.GetGameDetailsSettings().WinePath;
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
     }

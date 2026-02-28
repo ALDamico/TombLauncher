@@ -142,7 +142,7 @@ public partial class App : Application
         {
             DataContext = new MainWindowViewModel(navigationManager,
                 Ioc.Default.GetRequiredService<NotificationListViewModel>(), Ioc.Default.GetRequiredService<NotificationService>(),
-                Ioc.Default.GetRequiredService<SettingsService>(), Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>()),
+                Ioc.Default.GetRequiredService<ISettingsProvider>(), Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>()),
         };
 
         desktop.MainWindow = mainWindow;
@@ -207,7 +207,7 @@ public partial class App : Application
             var cts = new CancellationTokenSource();
             var downloadManager = new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>())
             {
-                Downloaders = Ioc.Default.GetRequiredService<SettingsService>().GetActiveDownloaders()
+                Downloaders = Ioc.Default.GetRequiredService<ISettingsProvider>().GetActiveDownloaders()
             };
 
 
@@ -227,8 +227,8 @@ public partial class App : Application
         serviceCollection.AddSingleton<NotificationService>();
         serviceCollection.AddScoped(sp =>
         {
-            var settingsService = sp.GetRequiredService<SettingsService>();
-            var delay = settingsService.GetSavegameSettings(null).SavegameProcessingDelay;
+            var settingsProvider = sp.GetRequiredService<ISettingsProvider>();
+            var delay = settingsProvider.GetSavegameSettings().ProcessingDelay;
             return new SavegameHeaderProcessor()
             {
                 Delay = delay
@@ -278,14 +278,14 @@ public partial class App : Application
 
     private Task ApplyInitialSettings()
     {
-        var settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+        var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
         var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
         var themeManager = Ioc.Default.GetRequiredService<ThemeManager>();
 
-        var applicationLanguage = settingsService.GetApplicationLanguage();
+        var applicationLanguage = settingsProvider.GetApplicationSettings().ApplicationLanguage;
         localizationManager.ChangeLanguage(applicationLanguage);
 
-        var applicationTheme = settingsService.GetApplicationTheme();
+        var applicationTheme = settingsProvider.GetAppearanceSettings().ApplicationTheme;
         themeManager.ApplyTheme(applicationTheme);
 
         var baseVariant = ThemeVariant.Dark;
@@ -318,7 +318,8 @@ public partial class App : Application
         serviceCollection.AddSingleton<WelcomePageService>();
         serviceCollection.AddTransient<GameSearchService>();
         serviceCollection.AddTransient<GameSearchResultService>();
-        serviceCollection.AddSingleton<SettingsService>();
+        serviceCollection.AddSingleton<ISettingsProvider, SettingsProvider>();
+        serviceCollection.AddSingleton<SettingsPageService>();
         serviceCollection.AddTransient<RandomGameService>();
         serviceCollection.AddScoped<StatisticsService>();
         serviceCollection.AddTransient<SavegameService>();

@@ -31,7 +31,7 @@ public class SavegameService
         GamesUnitOfWork gamesUnitOfWork,
         IMessageBoxService messageBoxService,
         MapperConfiguration mapperConfiguration,
-        SettingsService settingsService,
+        SettingsPageService settingsService,
         IDialogService dialogService,
         ILogger<SavegameService> logger)
     {
