@@ -142,8 +142,8 @@ public class SettingsPageService : IViewService
     public async Task SyncSavegames(PageViewModel settingsPage)
     {
         // Lazy resolution via IServiceProvider to break circular dependency:
-        // SettingsService -> SavegameService -> SettingsService
-        var savegameService = _serviceProvider.GetRequiredService<SavegameService>();
+        // SettingsPageService -> SavegameCommandService -> SettingsProvider -> AppConfiguration
+        var savegameService = _serviceProvider.GetRequiredService<SavegameCommandService>();
         await savegameService.SyncSavegames(settingsPage);
     }
 

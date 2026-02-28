@@ -15,9 +15,10 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class SavegameListViewModel : PageViewModel
 {
-    public SavegameListViewModel(SavegameService savegameService)
+    public SavegameListViewModel(SavegameQueryService savegameQueryService, SavegameCommandService savegameCommandService)
     {
-        _savegameService = savegameService;
+        _savegameQueryService = savegameQueryService;
+        _savegameCommandService = savegameCommandService;
         SavegameFilter = new SaveGameListFilter();
 
         FilterCmd = new AsyncRelayCommand<SaveGameListFilter>(Filter);
@@ -51,8 +52,8 @@ public partial class SavegameListViewModel : PageViewModel
             GameEngine = gameMetadata.GameEngine;
 
             SetBusy("Loading savegames");
-            await _savegameService.LoadSaveGames(this);
-            await _savegameService.InitSlots(this);
+            await _savegameQueryService.LoadSaveGames(this);
+            await _savegameQueryService.InitSlots(this);
             SetBusy(false);
         }
     }
@@ -69,29 +70,30 @@ public partial class SavegameListViewModel : PageViewModel
     [ObservableProperty] private ObservableCollection<SavegameSlotViewModel> _slots;
     [ObservableProperty] private SavegameSlotViewModel _selectedSlot;
     [ObservableProperty] private SaveGameListFilter _savegameFilter;
-    private SavegameService _savegameService;
+    private SavegameQueryService _savegameQueryService;
+    private SavegameCommandService _savegameCommandService;
 
     [ObservableProperty] public ICommand _filterCmd;
 
     private async Task Filter(SaveGameListFilter slotNumber)
     {
-        if (_savegameService == null)
+        if (_savegameQueryService == null)
             return;
-        await _savegameService.ApplyFilter(this, slotNumber);
+        await _savegameQueryService.ApplyFilter(this, slotNumber);
     }
 
     public ICommand UpdateStartOfLevelStateCmd { get; private set; }
 
     private async Task UpdateStartOfLevelState(SavegameViewModel targetSaveGame)
     {
-        await _savegameService.UpdateStartOfLevelState(this, targetSaveGame);
+        await _savegameCommandService.UpdateStartOfLevelState(this, targetSaveGame);
     }
 
     public IRelayCommand DeleteSaveCmd { get; private set; }
 
     private async Task DeleteSave(SavegameViewModel target)
     {
-        await _savegameService.DeleteSavegame(this, target);
+        await _savegameCommandService.DeleteSavegame(this, target);
     }
 
     private bool CanDelete(SavegameViewModel obj)
@@ -104,20 +106,20 @@ public partial class SavegameListViewModel : PageViewModel
 
     private async Task RestoreSavegame(int savegameId)
     {
-        await _savegameService.Restore(this, savegameId, Slots.Max(s => s.SaveSlot).GetValueOrDefault());
+        await _savegameCommandService.Restore(this, savegameId, Slots.Max(s => s.SaveSlot).GetValueOrDefault());
     }
 
     public ICommand DeleteAllCmd { get; private set; }
 
     private async Task DeleteAll()
     {
-        await _savegameService.DeleteAllSavegamesByGameId(this, GameId);
+        await _savegameCommandService.DeleteAllSavegamesByGameId(this, GameId);
     }
 
     public ICommand CheckNonBackedUpSavegamesCmd { get; private set; }
 
     private async Task CheckNonBackedUpSavegames()
     {
-        await _savegameService.CheckSavegamesNotBackedUp(this);
+        await _savegameQueryService.CheckSavegamesNotBackedUp(this);
     }
 }

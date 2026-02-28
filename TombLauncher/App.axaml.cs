@@ -326,7 +326,6 @@ public partial class App : Application
         serviceCollection.AddSingleton<SettingsPageService>();
         serviceCollection.AddTransient<RandomGameService>();
         serviceCollection.AddScoped<StatisticsService>();
-        serviceCollection.AddTransient<SavegameService>();
     }
 
     private static void ConfigureViewModels(ServiceCollection serviceCollection)

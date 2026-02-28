@@ -31,7 +31,7 @@ public class GameWithStatsService : IViewService
         ISavegameRepository savegameRepository,
         ISettingsProvider settingsProvider,
         ILogger<GameWithStatsService> logger,
-        SavegameService savegameService,
+        ISavegameHeaderProvider headerProvider,
         IPlatformSpecificFeatures platformSpecificFeatures,
         SavegameHeaderProcessor headerProcessor)
     {
@@ -46,7 +46,7 @@ public class GameWithStatsService : IViewService
         }
 
         _logger = logger;
-        _savegameService = savegameService;
+        _headerProvider = headerProvider;
         _winePath = settingsProvider.GetGameDetailsSettings().WinePath;
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
@@ -66,7 +66,7 @@ public class GameWithStatsService : IViewService
     private readonly bool _backupEnabled;
     private readonly int? _numberOfSavesToKeep;
     private readonly ILogger<GameWithStatsService> _logger;
-    private readonly SavegameService _savegameService;
+    private readonly ISavegameHeaderProvider _headerProvider;
     private readonly string _winePath;
     private DateTime? _startDate;
     private IPlatformSpecificFeatures _platformSpecificFeatures;
@@ -106,7 +106,7 @@ public class GameWithStatsService : IViewService
                 InternalBufferSize = 8192 * 32,
                 NotifyFilter = _platformSpecificFeatures.GetSavegameWatcherNotifyFilters()
             };
-            _headerProcessor.SavegameHeaderReader = _savegameService.GetHeaderReader(game.GameMetadata.GameEngine);
+            _headerProcessor.SavegameHeaderReader = _headerProvider.GetHeaderReader(game.GameMetadata.GameEngine);
             _watcher.Changed += WatcherOnCreatedOrChanged;
         }
         catch
