@@ -9,6 +9,8 @@ using TombLauncher.Contracts.Navigation;
 
 namespace TombLauncher.Services;
 
+#nullable enable
+
 public partial class NavigationManager : ObservableObject
 {
     private readonly IServiceProvider _serviceProvider;

@@ -2,12 +2,13 @@ using System;
 using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
-using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Converters;
+
+#nullable enable
 
 public class NotificationTypeToColorConverter : IValueConverter
 {

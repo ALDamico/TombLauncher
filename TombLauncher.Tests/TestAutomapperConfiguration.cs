@@ -3,12 +3,14 @@ using TombLauncher.Factories;
 
 namespace TombLauncher.Tests;
 
+#nullable enable
+
 public class TestAutomapperConfiguration
 {
     [Fact]
     public void ExecuteTest()
     {
-        Exception thrownException = null;
+        Exception? thrownException = null;
         try
         {
             var configuration = MapperConfigurationFactory.GetMapperConfiguration(Activator.CreateInstance);

@@ -9,8 +9,6 @@ namespace TombLauncher.Services;
 
 public class ThemeManager
 {
-    private readonly ResourceDictionary _scionTheme;
-    private readonly ResourceDictionary _xianTheme;
 
     public ThemeManager()
     {

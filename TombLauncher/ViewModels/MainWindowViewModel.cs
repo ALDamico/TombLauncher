@@ -16,6 +16,8 @@ using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;
 
+#nullable enable
+
 public partial class MainWindowViewModel : WindowViewModelBase
 {
     public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel, NotificationService notificationService, ISettingsProvider settingsProvider, IPlatformSpecificFeatures platformSpecificFeatures)
@@ -132,7 +134,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
     }
 
     public ObservableCollection<MainMenuItemViewModel> MenuItems { get; }
-    private MainMenuItemViewModel _selectedMenuItem;
+    private MainMenuItemViewModel _selectedMenuItem = null!;
 
     public MainMenuItemViewModel SelectedMenuItem
     {
@@ -145,18 +147,18 @@ public partial class MainWindowViewModel : WindowViewModelBase
             if (value != null)
             {
                 // Using NavigateToRoot for main menu items to clear history stack
-                _navigationManager.NavigateToRoot(value.ViewModelType);
+                _ = _navigationManager.NavigateToRoot(value.ViewModelType);
             }
         }
     }
 
 
-    public INavigationTarget CurrentPage => _navigationManager.CurrentPage as INavigationTarget;
+    public INavigationTarget? CurrentPage => _navigationManager.CurrentPage as INavigationTarget;
     public ICommand GoBackCmd { get; }
 
-    private async void GoBack()
+    private void GoBack()
     {
-        await _navigationManager.GoBack();
+        _ = _navigationManager.GoBack();
     }
 
     private bool CanGoBack() => _navigationManager.CanGoBack;
