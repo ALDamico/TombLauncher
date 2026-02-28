@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using AvaloniaEdit.Utils;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
@@ -15,7 +14,6 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Savegames.HeaderReaders;
 using TombLauncher.Core.Utils;
-using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
@@ -30,6 +28,7 @@ public class SavegameService
 {
     public SavegameService(
         ISavegameRepository savegameRepository,
+        ISavegameHeaderProvider headerProvider,
         IMessageBoxService messageBoxService,
         MapperConfiguration mapperConfiguration,
         SettingsPageService settingsService,
@@ -37,51 +36,29 @@ public class SavegameService
         ILogger<SavegameService> logger)
     {
         _savegameRepository = savegameRepository;
+        _headerProvider = headerProvider;
         _messageBoxService = messageBoxService;
         _mapper = mapperConfiguration.CreateMapper();
         _numberOfVersionsToKeep = settingsService.GetSavegameSettings(null).NumberOfVersionsToKeep;
         _dialogService = dialogService;
         _logger = logger;
-        InitHeaderReaderMap();
     }
 
     private readonly ISavegameRepository _savegameRepository;
+    private readonly ISavegameHeaderProvider _headerProvider;
     private readonly IMessageBoxService _messageBoxService;
     private readonly IMapper _mapper;
     private int? _numberOfVersionsToKeep;
     private IDialogService _dialogService;
-    private Dictionary<GameEngine, ISavegameHeaderReader> _headerReaderMap;
     private ILogger<SavegameService> _logger;
 
-    private void InitHeaderReaderMap()
-    {
-        var unsupportedHeaderReader = new SavegameUnsupportedHeaderReader();
-        var classicGamesHeaderReader = new SavegameHeaderReader();
-        var tr1xHeaderReader = new Tr1xSavegameHeaderReader();
-        _headerReaderMap = new Dictionary<GameEngine, ISavegameHeaderReader>()
-        {
-            { GameEngine.Unknown, unsupportedHeaderReader },
-            { GameEngine.Ten, unsupportedHeaderReader },
-            { GameEngine.Tr1x, tr1xHeaderReader },
-            { GameEngine.Tr2x, unsupportedHeaderReader },
-            { GameEngine.Tomb2Main, classicGamesHeaderReader },
-            { GameEngine.TombAti, classicGamesHeaderReader },
-            { GameEngine.TombRaider1, classicGamesHeaderReader },
-            { GameEngine.TombRaider2, classicGamesHeaderReader },
-            { GameEngine.TombRaider3, classicGamesHeaderReader },
-            { GameEngine.TombRaider4, classicGamesHeaderReader },
-            { GameEngine.TombRaider5, classicGamesHeaderReader },
-            { GameEngine.Tomb3CommunityEdition, classicGamesHeaderReader },
-            { GameEngine.TombRaider1Dos, classicGamesHeaderReader }
-        };
-    }
 
     public async Task LoadSaveGames(SavegameListViewModel targetViewModel)
     {
         targetViewModel.SetBusy("Fetching savegames for GAMETITLE".GetLocalizedString(targetViewModel.GameTitle));
         var observableCollection = new ObservableCollection<SavegameViewModel>();
         var knownSavegames = await _savegameRepository.GetSavegamesByGameId(targetViewModel.GameId);
-        var headerParser = _headerReaderMap[targetViewModel.GameEngine];
+        var headerParser = _headerProvider.GetHeaderReader(targetViewModel.GameEngine);
         foreach (var savegame in knownSavegames)
         {
             var savegameHeader = headerParser.ReadHeader(savegame.FileName, savegame.Data);
@@ -201,7 +178,7 @@ public class SavegameService
         if (userResponse.ButtonResult == MsgBoxButtonResult.Yes)
         {
             savegameListView.SetBusy("Importing your saved games...");
-            var headerReader = _headerReaderMap[savegameListView.GameEngine];
+            var headerReader = _headerProvider.GetHeaderReader(savegameListView.GameEngine);
             var dataToBackup = new List<SavegameBackupDto>();
             foreach (var file in savegames)
             {
@@ -331,7 +308,7 @@ public class SavegameService
 
             foreach (var savegame in allGamesWithSaves)
             {
-                var headerReader = _headerReaderMap[savegame.GameEngine];
+                var headerReader = _headerProvider.GetHeaderReader(savegame.GameEngine);
                 var headerData = headerReader.ReadHeader(savegame.FileName, savegame.Data);
                 savegame.LevelName = headerData.LevelName;
                 savegame.SlotNumber = headerData.SlotNumber;
@@ -357,7 +334,7 @@ public class SavegameService
 
     public ISavegameHeaderReader GetHeaderReader(GameEngine gameEngine)
     {
-        var headerToReturn = _headerReaderMap[gameEngine];
+        var headerToReturn = _headerProvider.GetHeaderReader(gameEngine);
         _logger.LogInformation("Using savegame header reader {HeaderReaderType}", headerToReturn.GetType());
         return headerToReturn;
     }

@@ -184,6 +184,9 @@ public partial class App : Application
         });
         ConfigureLogging(serviceCollection);
         ConfigureMappings(serviceCollection);
+        serviceCollection.AddSingleton<IAppFileOperationsService, AppFileOperationsService>();
+        serviceCollection.AddSingleton<ThemeManager>();
+        serviceCollection.AddSingleton<ISavegameHeaderProvider, SavegameHeaderProvider>();
         ConfigurePageServices(serviceCollection);
         ConfigureViewModels(serviceCollection);
         serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current));
@@ -308,7 +311,6 @@ public partial class App : Application
 
     private static void ConfigurePageServices(ServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<IAppFileOperationsService, AppFileOperationsService>();
         serviceCollection.AddSingleton<ViewServiceContext>();
         serviceCollection.AddScoped<GameDetailsService>();
         serviceCollection.AddScoped<NewGameService>();
@@ -323,7 +325,6 @@ public partial class App : Application
         serviceCollection.AddTransient<RandomGameService>();
         serviceCollection.AddScoped<StatisticsService>();
         serviceCollection.AddTransient<SavegameService>();
-        serviceCollection.AddSingleton<ThemeManager>();
     }
 
     private static void ConfigureViewModels(ServiceCollection serviceCollection)
