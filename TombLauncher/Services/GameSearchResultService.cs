@@ -35,7 +35,8 @@ public class GameSearchResultService : IViewService
         TombRaiderEngineDetector engineDetector,
         GameDownloadManager downloadManager,
         NotificationService notificationService, GameWithStatsService gameWithStatsService,
-        ILogger<GameSearchResultService> logger, GameFileHashCalculator hashCalculator)
+        ILogger<GameSearchResultService> logger, GameFileHashCalculator hashCalculator,
+        IAppFileOperationsService appFileOperations)
     {
         ViewContext = viewContext;
         GameDownloadManager = downloadManager;
@@ -47,6 +48,7 @@ public class GameSearchResultService : IViewService
         _gameWithStatsService = gameWithStatsService;
         _logger = logger;
         _hashCalculator = hashCalculator;
+        _appFileOperations = appFileOperations;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -65,6 +67,7 @@ public class GameSearchResultService : IViewService
     public IDialogService DialogService => ViewContext.DialogService;
     private IMapper _mapper => ViewContext.Mapper;
     private GameFileHashCalculator _hashCalculator;
+    private readonly IAppFileOperationsService _appFileOperations;
     private string _downloadPath;
     private string _installPath;
     private int? _installedGameId;
@@ -410,18 +413,10 @@ public class GameSearchResultService : IViewService
     {
         if (_downloadPath == null)
             return;
-        try
-        {
-            if (Directory.Exists(_downloadPath))
-                Directory.Delete(_downloadPath);
-
-            // _downloadPath may be a file
-            if (File.Exists(_downloadPath))
-                File.Delete(_downloadPath);
-        }
-        catch (IOException)
-        {
-        }
+        if (Directory.Exists(_downloadPath))
+            await _appFileOperations.DeleteDirectory(_downloadPath);
+        else
+            await _appFileOperations.DeleteFile(_downloadPath);
 
         if (_installedGameId != null && _installPath.IsNotNullOrWhiteSpace())
         {

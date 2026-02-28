@@ -38,7 +38,8 @@ public class SettingsService : IViewService
         ILogger<SettingsService> logger,
         ThemeManager themeManager,
         IServiceProvider serviceProvider,
-        IPlatformSpecificFeatures platformSpecificFeatures)
+        IPlatformSpecificFeatures platformSpecificFeatures,
+        IAppFileOperationsService appFileOperations)
     {
         ViewContext = viewContext;
         _appConfiguration = appConfiguration;
@@ -46,6 +47,7 @@ public class SettingsService : IViewService
         _themeManager = themeManager;
         _serviceProvider = serviceProvider;
         _platformSpecificFeatures = platformSpecificFeatures;
+        _appFileOperations = appFileOperations;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -59,6 +61,7 @@ public class SettingsService : IViewService
     private IMapper _mapper => ViewContext.Mapper;
     private readonly ILogger<SettingsService> _logger;
     private readonly ThemeManager _themeManager;
+    private readonly IAppFileOperationsService _appFileOperations;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
     {
@@ -231,32 +234,7 @@ public class SettingsService : IViewService
 
     public async Task CleanUpTempFiles()
     {
-        _logger.LogInformation("Starting temp folder clean up");
-        var tempFolder = PathUtils.GetTombLauncherTempDirectory();
-        var entries = Directory.GetFileSystemEntries(tempFolder).Where(e => e != tempFolder).ToArray();
-        foreach (var entry in entries)
-        {
-            try
-            {
-                _logger.LogInformation("Deleting entry {EntryName}", entry);
-                if (Directory.Exists(entry))
-                {
-                    Directory.Delete(entry, true);
-                }
-                else if (File.Exists(entry))
-                {
-                    File.Delete(entry);
-                }
-            }
-            catch (IOException ex)
-            {
-                _logger.LogError("An IOException was ignored: {Ex}", ex);
-            }
-        }
-
-        _logger.LogInformation("Temp folder clean up completed");
-
-        await Task.CompletedTask;
+        await _appFileOperations.CleanUpTempFiles();
     }
 
     public string GetWinePath() => _appConfiguration.WinePath;
