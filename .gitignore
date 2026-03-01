@@ -11,3 +11,4 @@ Output
 TombLauncher/appsettings.Development.json
 build_warnings*.txt
 build_warnings*.log
+bin\\Debug/
