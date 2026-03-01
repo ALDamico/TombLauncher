@@ -65,7 +65,7 @@
                                 HorizontalAlignment="Center"
                                 Margin="45, 0, 0, 0">
                         <avalonia:MaterialIcon Kind="FileDocumentMultiple"/>
-                        <TextBlock Text="{DynamicResource Documentation}" 
+                        <TextBlock Text="{loc:Translate DOCUMENTATION}" 
                                    Margin="8, 0, 0, 0"/>
                     </StackPanel>
                 </Expander.Header>
@@ -91,7 +91,7 @@
                                  Text="{loc:Translate LAUNCH_OPTIONS}"
                                  Command="{Binding OpenLaunchOptionsCmd}"
                                  ToolTip.Tip="{loc:Translate LAUNCH_OPTIONS_TOOLTIP}" />
-            <controls:IconButton Icon="Floppy" Text="{DynamicResource Savegames}"
+            <controls:IconButton Icon="Floppy" Text="{loc:Translate SAVEGAMES}"
                                  Command="{Binding ManageSaveGamesCmd}"
                                  IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
             </controls:IconButton>
@@ -99,7 +99,7 @@
                 IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
                 Command="{Binding BrowseFolderCmd}"
                 Classes="stretched" Icon="FolderOpen"
-                Text="{DynamicResource Browse files}" />
+                Text="{loc:Translate BROWSE_FILES}" />
             <controls:SplitIconButton
                 IsVisible="{Binding WalkthroughLinks, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}"
                 Command="{Binding ReadWalkthroughCmd}"
@@ -128,7 +128,7 @@
                 IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
                 Classes="stretched btn-danger"
                 Icon="Delete"
-                Text="{DynamicResource Uninstall}"
+                Text="{loc:Translate UNINSTALL}"
                 Command="{Binding Game.UninstallCmd}" />
         </StackPanel>
     </ScrollViewer>

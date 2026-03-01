@@ -36,7 +36,7 @@
             x:Name="GameCard">
         <Border.ContextMenu>
             <ContextMenu>
-                    <MenuItem Header="{DynamicResource Play}" 
+                    <MenuItem Header="{loc:Translate PLAY}" 
                               Command="{Binding PlayCmd}">
                         <MenuItem.Icon>
                             <avalonia:MaterialIcon Kind="Play"/>
@@ -58,7 +58,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="{DynamicResource Uninstall}" 
+                    <MenuItem Header="{loc:Translate UNINSTALL}" 
                               Command="{Binding UninstallCmd}">
                         <MenuItem.Icon>
                             <avalonia:MaterialIcon Kind="TrashCan" Foreground="{DynamicResource DangerBrush}"/>

@@ -26,11 +26,11 @@
                                        Margin="4, 0, 8, 0"/>
                 <TextBox Grid.Column="1" 
                          Text="{Binding LevelName}"
-                         Watermark="{DynamicResource Title}"
+                         Watermark="{loc:Translate TITLE}"
                          VerticalAlignment="Center"/>
                 <controls:IconButton Grid.Column="2"
                                      Icon="Search"
-                                     Text="{DynamicResource Search}"
+                                     Text="{loc:Translate SEARCH}"
                                      Classes="btn-primary"
                                      MinWidth="100"
                                      MinHeight="32"
@@ -86,7 +86,7 @@
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <avalonia:MaterialIcon Kind="FilterRemove" Width="16" Height="16"
                                            Foreground="{DynamicResource MutedTextBrush}"/>
-                    <TextBlock Text="{DynamicResource Clear}" 
+                    <TextBlock Text="{loc:Translate CLEAR}" 
                                Foreground="{DynamicResource MutedTextBrush}"
                                FontSize="12"
                                VerticalAlignment="Center"/>
@@ -102,20 +102,20 @@
             <!-- Author -->
             <Border Classes="filter-chip" Margin="0, 0, 8, 8">
                 <StackPanel Spacing="4">
-                    <TextBlock Text="{DynamicResource Author}" Classes="small" 
+                    <TextBlock Text="{loc:Translate AUTHOR}" Classes="small" 
                                Foreground="{DynamicResource MutedTextBrush}"/>
                     <TextBox Text="{Binding AuthorName}" 
                              MinWidth="200" 
                              Background="Transparent"
                              BorderThickness="0"
-                             Watermark="{DynamicResource Author}"/>
+                             Watermark="{loc:Translate AUTHOR}"/>
                 </StackPanel>
             </Border>
             
             <!-- Engine -->
             <Border Classes="filter-chip" Margin="0, 0, 8, 8">
                 <StackPanel Spacing="4">
-                    <TextBlock Text="{DynamicResource Engine}" Classes="small"
+                    <TextBlock Text="{loc:Translate ENGINE}" Classes="small"
                                Foreground="{DynamicResource MutedTextBrush}"/>
                     <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableEngines}" 
                               SelectedValue="{Binding GameEngine}"
@@ -128,7 +128,7 @@
             <!-- Difficulty -->
             <Border Classes="filter-chip" Margin="0, 0, 8, 8">
                 <StackPanel Spacing="4">
-                    <TextBlock Text="{DynamicResource Difficulty}" Classes="small"
+                    <TextBlock Text="{loc:Translate DIFFICULTY}" Classes="small"
                                Foreground="{DynamicResource MutedTextBrush}"/>
                     <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableDifficulties}" 
                               SelectedValue="{Binding GameDifficulty}" 
@@ -141,7 +141,7 @@
             <!-- Rating -->
             <Border Classes="filter-chip" Margin="0, 0, 8, 8">
                 <StackPanel Spacing="4">
-                    <TextBlock Text="{DynamicResource Rating}" Classes="small"
+                    <TextBlock Text="{loc:Translate RATING}" Classes="small"
                                Foreground="{DynamicResource MutedTextBrush}"/>
                     <NumericUpDown Value="{Binding Rating}" 
                                    Minimum="0" Maximum="10"

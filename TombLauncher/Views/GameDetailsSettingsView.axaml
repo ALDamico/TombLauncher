@@ -17,7 +17,7 @@
         <DockPanel LastChildFill="True" IsVisible="{Binding IsWinePathOptionVisible}">
             <controls:Infotip DockPanel.Dock="Right" 
                               Header="{loc:Translate WINE_EXECUTABLE_PATH}" 
-                              ToolTipContent="{DynamicResource Wine tooltip content}" />
+                              ToolTipContent="{loc:Translate WINE_TOOLTIP_CONTENT}" />
             <controls:LabeledTextBox Label="{loc:Translate WINE_EXECUTABLE_PATH}" 
                                      Text="{Binding WinePath}" />
         </DockPanel>

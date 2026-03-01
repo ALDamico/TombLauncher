@@ -66,7 +66,7 @@
         <Grid.RenderTransform>
             <TranslateTransform />
         </Grid.RenderTransform>
-        <Border Background="{DynamicResource CardBackground}" 
+        <Border Background="{loc:Translate CARDBACKGROUND}" 
                 CornerRadius="8" 
                 Classes="notification-card"
                 BoxShadow="0 4 8 0 #40000000">

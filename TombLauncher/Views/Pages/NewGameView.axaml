@@ -68,14 +68,14 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" Classes="small"
-                               Text="{DynamicResource ZIP archive or folder}" />
+                               Text="{loc:Translate ZIP_ARCHIVE_OR_FOLDER}" />
                     <DockPanel Grid.Row="1" Grid.Column="0">
-                        <controls:SplitIconButton Icon="FolderZip" Text="{DynamicResource Open ZIP file}"
+                        <controls:SplitIconButton Icon="FolderZip" Text="{loc:Translate OPEN_ZIP_FILE}"
                                                   VerticalAlignment="Top"
                                                   DockPanel.Dock="Right" Command="{Binding PickZipArchiveCmd}">
                             <controls:SplitIconButton.Flyout>
                                 <MenuFlyout Placement="Bottom">
-                                    <MenuItem Header="{DynamicResource Open folder}"
+                                    <MenuItem Header="{loc:Translate OPEN_FOLDER}"
                                               Command="{Binding PickFolderCmd}">
                                         <MenuItem.Icon>
                                             <avalonia:MaterialIcon Kind="Folder" />
@@ -92,15 +92,15 @@
                                          Grid.Column="0"
                                          Grid.ColumnSpan="2"
                                          Text="{Binding GameMetadata.Title}"
-                                         Label="{DynamicResource Title}" />
+                                         Label="{loc:Translate TITLE}" />
                 <controls:LabeledTextBox Grid.Row="3"
                                          Grid.Column="0"
                                          Text="{Binding GameMetadata.Author}"
-                                         Label="{DynamicResource Author}" />
+                                         Label="{loc:Translate AUTHOR}" />
                 <controls:LabeledCalendarDatePicker Grid.Row="3"
                                                     Grid.Column="1"
                                                     SelectedDate="{Binding GameMetadata.ReleaseDate}"
-                                                    Label="{DynamicResource Release date}"
+                                                    Label="{loc:Translate RELEASE_DATE}"
                                                     Margin="20, 0, 0, 0" />
                 <Grid Grid.Row="4" Grid.Column="0">
                     <Grid.RowDefinitions>
@@ -109,7 +109,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0"
                                Classes="small"
-                               Text="{DynamicResource Length}" />
+                               Text="{loc:Translate LENGTH}" />
                     <ComboBox Grid.Row="1"
                               ItemsSource="{Binding AvailableLengths}"
                               SelectedValueBinding="{Binding Value}"
@@ -126,7 +126,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Classes="small" Text="{DynamicResource Difficulty}" />
+                    <TextBlock Grid.Row="0" Classes="small" Text="{loc:Translate DIFFICULTY}" />
                     <ComboBox Grid.Row="1"
                               ItemsSource="{Binding AvailableDifficulties}"
                               SelectedValueBinding="{Binding Value}"
@@ -146,18 +146,18 @@
                                  Grid.Column="0"
                                  Grid.ColumnSpan="4"
                                  Text="{Binding GameMetadata.Setting}"
-                                 Label="{DynamicResource Setting milieu}" />
+                                 Label="{loc:Translate SETTING_MILIEU}" />
 
         <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Classes="small" Text="{DynamicResource Synopsis}" />
+            <TextBlock Grid.Row="0" Classes="small" Text="{loc:Translate SYNOPSIS}" />
             <TextBox Grid.Row="1" Text="{Binding GameMetadata.Description}"
                      AcceptsReturn="True" />
         </Grid>
         <controls:IconButton Grid.Row="4" Grid.Column="3" Icon="FloppyDisc" HorizontalAlignment="Right"
-                             Text="{DynamicResource Install}" Command="{Binding SaveCmd}" />
+                             Text="{loc:Translate INSTALL}" Command="{Binding SaveCmd}" />
     </Grid>
 </UserControl>

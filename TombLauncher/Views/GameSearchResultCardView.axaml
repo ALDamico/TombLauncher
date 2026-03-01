@@ -141,7 +141,7 @@
                 <!-- Author -->
                 <TextBlock IsVisible="{Binding Author, Converter={x:Static ObjectConverters.IsNotNull}}"
                            FontSize="13" Margin="0">
-                    <Run Text="{DynamicResource By}" />
+                    <Run Text="{loc:Translate BY}" />
                     <Run Text="{Binding Author}" FontWeight="SemiBold" />
                 </TextBlock>
 
@@ -220,7 +220,7 @@
                 </Button>
                 <controls:IconOnlyButton Icon="Cancel"
                                          Classes="btn-danger"
-                                         ToolTip.Tip="{DynamicResource Cancel}"
+                                         ToolTip.Tip="{loc:Translate CANCEL}"
                                          IsVisible="{Binding InstallProgress, Converter={StaticResource GameIsInstallingToBooleanConverter}}"
                                          Command="{Binding CancelInstallCmd}" />
             </StackPanel>

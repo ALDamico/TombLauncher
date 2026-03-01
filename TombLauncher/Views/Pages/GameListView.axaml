@@ -52,7 +52,7 @@
                     Orientation="Horizontal" VerticalAlignment="Center">
             <Image Source="/Assets/Lara_Croft_Flashlight.png" Height="320"/>
             <StackPanel Orientation="Vertical">
-                <TextBlock FontSize="20" FontWeight="DemiBold" TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource No games}" />
+                <TextBlock FontSize="20" FontWeight="DemiBold" TextAlignment="Center" HorizontalAlignment="Center" Text="{loc:Translate NO_GAMES}" />
                 <TextBlock FontStyle="Italic" TextAlignment="Center" HorizontalAlignment="Center" Text="{loc:Translate TRY_ADDING_ONE}"/>
             </StackPanel>
         </StackPanel>

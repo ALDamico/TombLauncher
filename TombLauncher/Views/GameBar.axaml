@@ -35,14 +35,14 @@
                                 <avalonia:MaterialIcon Kind="Terminal"></avalonia:MaterialIcon>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{DynamicResource Savegames}" 
+                        <MenuItem Header="{loc:Translate SAVEGAMES}" 
                                   Command="{Binding ManageSaveGamesCmd}"
                                   IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
                             <MenuItem.Icon>
                                 <avalonia:MaterialIcon Kind="Floppy"></avalonia:MaterialIcon>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{DynamicResource Browse files}" 
+                        <MenuItem Header="{loc:Translate BROWSE_FILES}" 
                                   IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
                                   Command="{Binding BrowseFolderCmd}">
                             <MenuItem.Icon>

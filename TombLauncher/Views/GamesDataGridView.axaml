@@ -35,7 +35,7 @@
               FrozenColumnCount="1">
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="{DynamicResource Play}" 
+                    <MenuItem Header="{loc:Translate Play}" 
                               Command="{Binding PlayCmd}"
                               CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
@@ -61,7 +61,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="{DynamicResource Uninstall}" 
+                    <MenuItem Header="{loc:Translate UNINSTALL}" 
                               Command="{Binding UninstallCmd}" 
                               CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
@@ -71,24 +71,24 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="{DynamicResource Actions}">
+                <DataGridTemplateColumn Header="{loc:Translate ACTIONS}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" IsVisible="{Binding AreCommandsVisible}">
                                 <controls:IconButton Icon="Play"
                                                      ToolTip.Tip="{Binding GameMetadata.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Play GAMENAME'}"
                                                      Command="{Binding PlayCmd}" />
-                                <controls:IconButton Icon="Details" ToolTip.Tip="{DynamicResource View details}"
+                                <controls:IconButton Icon="Details" ToolTip.Tip="{loc:Translate VIEW_DETAILS}"
                                                      Command="{Binding OpenCmd}">
                                 </controls:IconButton>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="{DynamicResource Title}" Binding="{Binding GameMetadata.Title}" />
+                <DataGridTextColumn Header="{loc:Translate TITLE}" Binding="{Binding GameMetadata.Title}" />
                 <DataGridTemplateColumn >
                     <DataGridTemplateColumn.Header>
-                        <avalonia:MaterialIcon ToolTip.Tip="{DynamicResource Favourite}" 
+                        <avalonia:MaterialIcon ToolTip.Tip="{loc:Translate FAVOURITE}" 
                                                Kind="Heart"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
@@ -103,7 +103,7 @@
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn >
                     <DataGridTemplateColumn.Header>
-                        <avalonia:MaterialIcon ToolTip.Tip="{DynamicResource Completed}" 
+                        <avalonia:MaterialIcon ToolTip.Tip="{loc:Translate COMPLETED}" 
                                                Kind="Trophy"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
@@ -116,11 +116,11 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="{DynamicResource Release date}" Binding="{Binding GameMetadata.ReleaseDate, StringFormat=d}" />
-                <DataGridTextColumn Header="{DynamicResource Install date}" Binding="{Binding GameMetadata.InstallDate, StringFormat=d}" />
-                <DataGridTextColumn Header="{DynamicResource Engine}" Binding="{Binding GameMetadata.GameEngine, Converter={StaticResource EnumToDescriptionConverter}}" />
-                <DataGridTextColumn Header="{DynamicResource Time played}" Binding="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"/>
-                <DataGridTextColumn Header="{DynamicResource Last played}" Binding="{Binding LastPlayed, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"/>
+                <DataGridTextColumn Header="{loc:Translate RELEASE_DATE}" Binding="{Binding GameMetadata.ReleaseDate, StringFormat=d}" />
+                <DataGridTextColumn Header="{loc:Translate INSTALL_DATE}" Binding="{Binding GameMetadata.InstallDate, StringFormat=d}" />
+                <DataGridTextColumn Header="{loc:Translate ENGINE}" Binding="{Binding GameMetadata.GameEngine, Converter={StaticResource EnumToDescriptionConverter}}" />
+                <DataGridTextColumn Header="{loc:Translate TIME_PLAYED}" Binding="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"/>
+                <DataGridTextColumn Header="{loc:Translate LAST_PLAYED}" Binding="{Binding LastPlayed, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"/>
             </DataGrid.Columns>
         </DataGrid>
 </UserControl>

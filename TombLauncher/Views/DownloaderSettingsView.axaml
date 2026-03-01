@@ -39,7 +39,7 @@
                                            FontStyle="Italic" />
                                 <TextBlock>
                                     <Run FontWeight="DemiBold"
-                                         Text="{DynamicResource Supported features}" />
+                                         Text="{loc:Translate SUPPORTED_FEATURES}" />
                                     <Run FontStyle="Italic"
                                          Text="{Binding SupportedFeatures}" />
                                 </TextBlock>

@@ -24,24 +24,24 @@
                                                        FalseValue="Red" />
     </UserControl.Resources>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="{DynamicResource An error has occurred}" FontWeight="DemiBold" FontSize="16" />
+        <TextBlock Text="{loc:Translate AN_ERROR_HAS_OCCURRED}" FontWeight="DemiBold" FontSize="16" />
         <TextBlock
-            Text="{DynamicResource This application has encountered an error}" />
+            Text="{loc:Translate THIS_APPLICATION_HAS_ENCOUNTERED_AN_ERROR}" />
         <TextBlock
-            Text="{DynamicResource You can click Accept to try and ignore the problem or Restart application to automatically close and reopen it}" />
+            Text="{loc:Translate YOU_CAN_CLICK_ACCEPT_TO_TRY_AND_IGNORE_THE_PROBLEM}" />
         <TextBlock
-            Text="{DynamicResource Tomb Launcher is in active development and these kinds of errors could happen from time to time}" />
+            Text="{loc:Translate TOMB_LAUNCHER_IS_IN_ACTIVE_DEVELOPMENT_AND_THESE_K}" />
         <TextBlock
-            Text="{DynamicResource If you think this requires the developer s attention please file a bug report on GitHub}" />
+            Text="{loc:Translate IF_YOU_THINK_THIS_REQUIRES_THE_DEVELOPER_S_ATTENTI}" />
         <!-- TODO Add instructions on how to file a bug report on GitHub once repo is available -->
 
         <DockPanel HorizontalAlignment="Right">
-            <Button DockPanel.Dock="Right" ToolTip.Tip="{DynamicResource Copy}"
+            <Button DockPanel.Dock="Right" ToolTip.Tip="{loc:Translate COPY}"
                     Command="{Binding CopyCmd}"
                     CommandParameter="{Binding Crash}">
                 <avalonia:MaterialIcon Kind="ContentCopy"></avalonia:MaterialIcon>
             </Button>
-            <Button DockPanel.Dock="Right" ToolTip.Tip="{DynamicResource Save}" Command="{Binding SaveCmd}">
+            <Button DockPanel.Dock="Right" ToolTip.Tip="{loc:Translate SAVE}" Command="{Binding SaveCmd}">
                 <avalonia:MaterialIcon Kind="FloppyDisc" />
             </Button>
         </DockPanel>
@@ -57,19 +57,19 @@
                 <RowDefinition Height="Auto" MinHeight="200" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Type}" FontWeight="DemiBold" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Translate TYPE}" FontWeight="DemiBold" />
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Crash.ExceptionDto.Type}" />
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource Message}" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Translate MESSAGE}" />
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Crash.ExceptionDto.Message}" />
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Source}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Translate SOURCE}" />
             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Crash.ExceptionDto.Source}" />
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Stacktrace}" />
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Translate STACKTRACE}" />
             <TextBox Grid.Row="3" Grid.Column="1"
                      IsReadOnly="True"
                      MaxLines="15"
                      Text="{Binding Crash.ExceptionDto.StackTrace}" />
             <TextBlock Grid.Row="4" Grid.Column="0"
-                       Text="{DynamicResource Has inner exception}" />
+                       Text="{loc:Translate HAS_INNER_EXCEPTION}" />
             <avalonia:MaterialIcon Grid.Row="4" Grid.Column="1"
                                    HorizontalAlignment="Left"
                                    FontSize="16"

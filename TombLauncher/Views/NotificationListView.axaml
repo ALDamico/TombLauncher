@@ -26,7 +26,7 @@
 
     <controls:BadgedIconButton DockPanel.Dock="Right" Icon="Notifications"
                                IsBadgeVisible="{Binding HasNewItems}"
-                               ToolTip.Tip="{DynamicResource Notifications}" 
+                               ToolTip.Tip="{loc:Translate NOTIFICATIONS}" 
                                x:Name="NotificationButtonFlyout">
         <Interaction.Behaviors>
             <EventTriggerBehavior EventName="Click" SourceObject="NotificationButtonFlyout">
@@ -65,11 +65,11 @@
                     </Grid.RowDefinitions>
                     
                     <!-- Header -->
-                    <Border Grid.Row="0" BorderBrush="{DynamicResource SurfaceStrokeColorDefault}" BorderThickness="0,0,0,1" Padding="15">
+                    <Border Grid.Row="0" BorderBrush="{loc:Translate SURFACESTROKECOLORDEFAULT}" BorderThickness="0,0,0,1" Padding="15">
                         <Grid>
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" 
                                        FontSize="18" FontWeight="SemiBold"
-                                       Text="{DynamicResource Notifications}"/>
+                                       Text="{loc:Translate NOTIFICATIONS}"/>
                             
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
                                 <controls:RoundIconButton Width="32" Height="32" Icon="CheckAll"

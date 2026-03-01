@@ -62,13 +62,13 @@
                            VerticalAlignment="Bottom"
                            Text="{Binding Game.GameMetadata.Title}"/>
                 <TextBlock>
-                    <Run Text="{DynamicResource By}" />
+                    <Run Text="{loc:Translate BY}" />
                     <Run Classes="italicsLabel"
                          Text="{Binding Game.GameMetadata.Author, Converter={StaticResource LocalizedFallbackValueConverter}, ConverterParameter=Unknown}">
                     </Run>
                     <LineBreak />
 
-                    <Run Text="{DynamicResource Released on}" />
+                    <Run Text="{loc:Translate RELEASED_ON}" />
                     <Run FontWeight="DemiBold"
                          Text="{Binding Game.GameMetadata.ReleaseDate, StringFormat=d}" />
                 </TextBlock>
@@ -100,23 +100,23 @@
                            FontSize="20"
                            Text="{Binding Game.GameMetadata.Title}"/>
                 <avalonia:MaterialIcon Classes="header-icon"
-                                       ToolTip.Tip="{DynamicResource Favourite}"
+                                       ToolTip.Tip="{loc:Translate FAVOURITE}"
                                        IsVisible="{Binding Game.GameMetadata.IsFavourite}"
                                        Kind="Heart"/>
                 <avalonia:MaterialIcon Classes="header-icon"
-                                       ToolTip.Tip="{DynamicResource Completed}"
+                                       ToolTip.Tip="{loc:Translate COMPLETED}"
                                        IsVisible="{Binding Game.GameMetadata.IsCompleted}"
                                        Kind="Trophy"/>
             </WrapPanel>
             <ScrollViewer VerticalScrollBarVisibility="Visible">
                 <TextBlock TextWrapping="Wrap" Classes="paragraph">
-                    <Run Text="{DynamicResource By}" />
+                    <Run Text="{loc:Translate BY}" />
                     <Run Classes="italicsLabel"
                          Text="{Binding Game.GameMetadata.Author, Converter={StaticResource LocalizedFallbackValueConverter}, ConverterParameter=Unknown}">
                     </Run>
                     <LineBreak />
 
-                    <Run Text="{DynamicResource Released on}" />
+                    <Run Text="{loc:Translate RELEASED_ON}" />
                     <Run FontWeight="DemiBold"
                          Text="{Binding Game.GameMetadata.ReleaseDate, StringFormat=d}" />
                     <LineBreak />

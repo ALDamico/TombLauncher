@@ -16,21 +16,21 @@
         <ComboBox SelectedItem="{Binding SelectedTheme}"
                   DisplayMemberBinding="{Binding DisplayName}"
                   ItemsSource="{Binding AvailableThemes}" />
-        <TextBlock Margin="0, 5" Text="{DynamicResource Show games as}"/>
+        <TextBlock Margin="0, 5" Text="{loc:Translate SHOW_GAMES_AS}"/>
         <RadioButton GroupName="ViewModeGroup" 
                      IsChecked="{Binding !DefaultToGridView}">
             <RadioButton.Content>
                 <views:RadioButtonDetailView Icon="Table" 
-                                             Text="{DynamicResource Table}" 
-                                             DetailsLine1="{DynamicResource The list of games will be displayed as a table.}"
-                                             DetailsLine2="{DynamicResource You can play a game by double-clicking a row.}"/>
+                                             Text="{loc:Translate TABLE}" 
+                                             DetailsLine1="{loc:Translate THE_LIST_OF_GAMES_WILL_BE_DISPLAYED_AS_A_TABLE}"
+                                             DetailsLine2="{loc:Translate YOU_CAN_PLAY_A_GAME_BY_DOUBLE_CLICKING_A_ROW}"/>
             </RadioButton.Content>
         </RadioButton>
         <RadioButton GroupName="ViewModeGroup" IsChecked="{Binding DefaultToGridView}">
             <RadioButton.Content>
                 <views:RadioButtonDetailView Icon="Grid" 
-                                             Text="{DynamicResource Grid}"
-                                             DetailsLine1="{DynamicResource The list of games will be displayed as cards arranged in a grid.}"
+                                             Text="{loc:Translate GRID}"
+                                             DetailsLine1="{loc:Translate THE_LIST_OF_GAMES_WILL_BE_DISPLAYED_AS_CARDS_ARRAN}"
                                              DetailsLine2="{loc:Translate YOU_CAN_PLAY_A_GAME_BY_DOUBLE_CLICKING_ITS_CARD_OR}"/>
             </RadioButton.Content>
         </RadioButton>

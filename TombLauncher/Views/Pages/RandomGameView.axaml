@@ -31,6 +31,6 @@
             <LineBreak/>
             <Run Text="{loc:Translate MAXIMUM_ATTEMPTS_REACHED_LINE_3}"/>
         </TextBlock>
-        <Button HorizontalAlignment="Center" Command="{Binding PickRandomGameCmd}" Content="{DynamicResource Try again}"/>
+        <Button HorizontalAlignment="Center" Command="{Binding PickRandomGameCmd}" Content="{loc:Translate TRY_AGAIN}"/>
     </StackPanel>
 </UserControl>
