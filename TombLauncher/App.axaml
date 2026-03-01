@@ -18,29 +18,29 @@
     <Application.Resources>
         <ResourceDictionary>
             <valueConverters:MultiSourceGameSearchResultMetadataCanDownloadToBooleanConverter 
-                x:Key="SEARCHRESULTCANDOWNLOADTOBOOLEANCONVERTER"/>
-            <valueConverters:GameIsInstallingToBooleanConverter x:Key="GAMEISINSTALLINGTOBOOLEANCONVERTER"/>
-            <valueConverters:GameMetadataIsNotInstalledToBooleanConverter x:Key="GAMENOTINSTALLEDTOBOOLEANCONVERTER"/>
-            <valueConverters:GameMetadataIsInstalledToBooleanConverter x:Key="GAMEINSTALLEDTOBOOLEANCONVERTER"/>
-            <valueConverters1:CollectionEmptyToVisibilityConverter x:Key="COLLECTIONEMPTYTOVISIBILITYCONVERTER" />
-            <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="COLLECTIONNOTEMPTYTOVISIBILITYCONVERTER" />
-            <valueConverters:EnumToDescriptionConverter x:Key="ENUMTODESCRIPTIONCONVERTER" />
-            <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TIMESPANTOHUMANREADABLESTRINGCONVERTER" />
-            <valueConverters:DateTimeToStringConverter x:Key="DATETIMETOSTRINGCONVERTER" />
-            <valueConverters:LocalizedFallbackValueConverter x:Key="LOCALIZEDFALLBACKVALUECONVERTER" />
-            <valueConverters:LocalizedStringConverter x:Key="LOCALIZEDSTRINGCONVERTER" />
-            <valueConverters1:IsSmallerOrEqualConverter x:Key="ISSMALLEROREQUALCONVERTER" />
-            <valueConverters:DateTimeFormatter x:Key="DATEONLYFORMATTER">
+                x:Key="SearchResultCanDownloadToBooleanConverter"/>
+            <valueConverters:GameIsInstallingToBooleanConverter x:Key="GameIsInstallingToBooleanConverter"/>
+            <valueConverters:GameMetadataIsNotInstalledToBooleanConverter x:Key="GameNotInstalledToBooleanConverter"/>
+            <valueConverters:GameMetadataIsInstalledToBooleanConverter x:Key="GameInstalledToBooleanConverter"/>
+            <valueConverters1:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
+            <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" />
+            <valueConverters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+            <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />
+            <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+            <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter" />
+            <valueConverters:LocalizedStringConverter x:Key="LocalizedStringConverter" />
+            <valueConverters1:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
+            <valueConverters:DateTimeFormatter x:Key="DateOnlyFormatter">
                 <valueConverters:DateTimeFormatter.DesiredFormat>DateOnlyFormat</valueConverters:DateTimeFormatter.DesiredFormat>
             </valueConverters:DateTimeFormatter>
-            <valueConverters:DateTimeFormatter x:Key="DATETIMEFORMATTER">
+            <valueConverters:DateTimeFormatter x:Key="DateTimeFormatter">
                 <valueConverters:DateTimeFormatter.DesiredFormat>DateTimeFormat</valueConverters:DateTimeFormatter.DesiredFormat>
             </valueConverters:DateTimeFormatter>
-            <valueConverters:GreaterThanZeroToBoolConverter x:Key="GREATERTHANZEROTOBOOLCONVERTER"/>
-            <valueConverters:TransferSpeedFormatter x:Key="TRANSFERSPEEDFORMATTER"/>
-            <valueConverters:FileSizeFormatter x:Key="FILESIZEFORMATTER"/>
-            <valueConverters2:CountryIdToFlagImageSourceConverter x:Key="COUNTRYTOFLAGCONVERTER"/>
-            <valueConverters:StringNullToNullBitmapConverter x:Key="STRINGNULLTONULLBITMAP">
+            <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter"/>
+            <valueConverters:TransferSpeedFormatter x:Key="TransferSpeedFormatter"/>
+            <valueConverters:FileSizeFormatter x:Key="FileSizeFormatter"/>
+            <valueConverters2:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>
+            <valueConverters:StringNullToNullBitmapConverter x:Key="StringNullToNullBitmap">
                 <valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
                     <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm-light.png</system:String>
                 </valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
@@ -48,8 +48,8 @@
                     <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm.png</system:String>
                 </valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
             </valueConverters:StringNullToNullBitmapConverter>
-            <valueConverters:UppercaseConverter x:Key="UPPERCASECONVERTER"/>
-            <valueConverters:FilenameConverter x:Key="FILENAMECONVERTER"/>
+            <valueConverters:UppercaseConverter x:Key="UppercaseConverter"/>
+            <valueConverters:FilenameConverter x:Key="FilenameConverter"/>
             
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://TombLauncher/Assets/Themes/ScionTheme.axaml" />

@@ -1,5 +1,3 @@
-using System;
-using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using TombLauncher.Localization.Converters;

@@ -40,7 +40,7 @@
         <!-- Page Title -->
         <TextBlock Grid.Row="0"
                    Classes="h1"
-                   Text="{DynamicResource SEARCH}" />
+                   Text="{DynamicResource Search}" />
 
         <!-- Search Form (now contains the Search button) -->
         <views:GameSearchForm Grid.Row="1"

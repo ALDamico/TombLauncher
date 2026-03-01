@@ -18,7 +18,7 @@
         </Style>
     </UserControl.Styles>
     <UserControl.Resources>
-        <valueConverters:ObjectNotNullToMaterialIconConverter x:Key="OBJECTNOTNULLTOMATERIALICONCONVERTER"
+        <valueConverters:ObjectNotNullToMaterialIconConverter x:Key="ObjectNotNullToMaterialIconConverter"
                                                               TrueValue="Check" FalseValue="Close" />
         <valueConverters:ObjectNotNullToBrushConverter x:Key="ObjectNotNullToBrushConverter" TrueValue="Green"
                                                        FalseValue="Red" />

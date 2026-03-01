@@ -14,7 +14,7 @@
         <viewModels:SavegameViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="BOOLEANTOMATERIALICONCONVERTER"
+        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
                                                         TrueValue="FlagOutline"
                                                         FalseValue="FlagOffOutline" />
     </UserControl.Resources>

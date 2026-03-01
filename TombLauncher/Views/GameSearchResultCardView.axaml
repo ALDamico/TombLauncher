@@ -18,7 +18,7 @@
         <viewModels:MultiSourceGameSearchResultMetadataViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:StringEmptyToLocalizedStringConverter x:Key="DOWNLOADTOOLTIPCONVERTER" NotEmptyValue="Download" 
+        <valueConverters:StringEmptyToLocalizedStringConverter x:Key="DownloadToolTipConverter" NotEmptyValue="Download" 
                                                                EmptyValue="This level was found by one or more downloaders, but no download link is available."/>
     </UserControl.Resources>
 

@@ -690,3 +690,71 @@ ORDER BY "p"."StartDate"
 SELECT "g"."Id", "g"."Author", "g"."AuthorFullName", "g"."Description", "g"."Difficulty", "g"."GameEngine", "g"."Guid", "g"."InstallDate", "g"."InstallDirectory", "g"."IsCompleted", "g"."IsFavourite", "g"."IsInstalled", "g"."Length", "g"."ReleaseDate", "g"."Setting", "g"."Title", "g"."TitlePic"
 FROM "Games" AS "g"
 2026-03-01 10:30:45.063 +01:00 [INF] Application is shutting down
+2026-03-01 23:33:24.131 +01:00 [INF] Service initialization complete
+2026-03-01 23:33:24.598 +01:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-03-01 23:33:24.612 +01:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsLock' AND "type" = 'table';
+2026-03-01 23:33:24.631 +01:00 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT OR IGNORE INTO "__EFMigrationsLock"("Id", "Timestamp") VALUES(1, '2026-03-01 22:33:24.6145527+00:00');
+SELECT changes();
+2026-03-01 23:33:24.668 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" TEXT NOT NULL CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY,
+    "ProductVersion" TEXT NOT NULL
+);
+2026-03-01 23:33:24.675 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+2026-03-01 23:33:24.677 +01:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-03-01 23:33:24.683 +01:00 [INF] Applying migration '20260301220552_FileBackupArgumentsNullable'.
+2026-03-01 23:33:24.694 +01:00 [WRN] The migration operation 'PRAGMA foreign_keys = 0;
+' from migration 'FileBackupArgumentsNullable' cannot be executed in a transaction. If the app is terminated or an unrecoverable error occurs while this operation is being executed then the migration will be left in a partially applied state and would need to be reverted manually before it can be applied again. Create a separate migration that contains just this operation.
+2026-03-01 23:33:24.694 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "ef_temp_FileBackups" (
+    "Id" INTEGER NOT NULL CONSTRAINT "PK_FileBackups" PRIMARY KEY AUTOINCREMENT,
+    "Arguments" TEXT NULL,
+    "BackedUpOn" TEXT NOT NULL,
+    "Data" BLOB NULL,
+    "FileName" TEXT NOT NULL,
+    "FileType" INTEGER NOT NULL,
+    "GameId" INTEGER NOT NULL,
+    "Md5" TEXT NULL,
+    CONSTRAINT "FK_FileBackups_Games_GameId" FOREIGN KEY ("GameId") REFERENCES "Games" ("Id") ON DELETE CASCADE
+);
+2026-03-01 23:33:24.694 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ef_temp_FileBackups" ("Id", "Arguments", "BackedUpOn", "Data", "FileName", "FileType", "GameId", "Md5")
+SELECT "Id", "Arguments", "BackedUpOn", "Data", "FileName", "FileType", "GameId", "Md5"
+FROM "FileBackups";
+2026-03-01 23:33:24.709 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+PRAGMA foreign_keys = 0;
+2026-03-01 23:33:24.710 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DROP TABLE "FileBackups";
+2026-03-01 23:33:24.710 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE "ef_temp_FileBackups" RENAME TO "FileBackups";
+2026-03-01 23:33:24.724 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+PRAGMA foreign_keys = 1;
+2026-03-01 23:33:24.724 +01:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_FileBackups_GameId" ON "FileBackups" ("GameId");
+2026-03-01 23:33:24.753 +01:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20260301220552_FileBackupArgumentsNullable', '10.0.2');
+2026-03-01 23:33:24.769 +01:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DELETE FROM "__EFMigrationsLock";
+2026-03-01 23:33:25.150 +01:00 [FTL] Unhandled exception occurred before OnFrameworkInitializationCompleted
+System.Collections.Generic.KeyNotFoundException: Static resource 'DefaultRingGradient' not found.
+   at Avalonia.Markup.Xaml.MarkupExtensions.StaticResourceExtension.ProvideValue(IServiceProvider serviceProvider, Object resourceKey)
+   at Avalonia.Markup.Xaml.MarkupExtensions.StaticResourceExtension.ProvideValue(IServiceProvider serviceProvider)
+   at TombLauncher.Controls.RingLoader.!XamlIlPopulate(IServiceProvider, RingLoader) in /home/aldamico/RiderProjects/TombLauncher/TombLauncher.Controls/RingLoader.axaml:line 18
+   at TombLauncher.Controls.RingLoader.!XamlIlPopulateTrampoline(RingLoader)
+   at TombLauncher.Controls.RingLoader.InitializeComponent(Boolean loadXaml) in /home/aldamico/RiderProjects/TombLauncher/TombLauncher.Controls/obj/Debug/net10.0/Avalonia.Generators/Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator/TombLauncher.Controls.RingLoader.g.cs:line 24
+   at TombLauncher.Controls.RingLoader..ctor() in /home/aldamico/RiderProjects/TombLauncher/TombLauncher.Controls/RingLoader.axaml.cs:line 12
+   at TombLauncher.Views.MainWindow.!XamlIlPopulate(IServiceProvider, MainWindow) in /home/aldamico/RiderProjects/TombLauncher/TombLauncher/Views/MainWindow.axaml:line 140
+   at TombLauncher.Views.MainWindow.!XamlIlPopulateTrampoline(MainWindow)
+   at TombLauncher.Views.MainWindow.InitializeComponent(Boolean loadXaml, Boolean attachDevTools) in /home/aldamico/RiderProjects/TombLauncher/TombLauncher/obj/Debug/net10.0/Avalonia.Generators/Avalonia.Generators.NameGenerator.AvaloniaNameSourceGenerator/TombLauncher.Views.MainWindow.g.cs:line 28
+   at TombLauncher.Views.MainWindow..ctor() in /home/aldamico/RiderProjects/TombLauncher/TombLauncher/Views/MainWindow.axaml.cs:line 11
+   at TombLauncher.App.ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop, SplashScreen splashScreen) in /home/aldamico/RiderProjects/TombLauncher/TombLauncher/App.axaml.cs:line 152
+   at TombLauncher.App.<>c__DisplayClass3_1.<<OnFrameworkInitializationCompleted>b__2>d.MoveNext() in /home/aldamico/RiderProjects/TombLauncher/TombLauncher/App.axaml.cs:line 93
+--- End of stack trace from previous location ---
+   at TombLauncher.App.OnFrameworkInitializationCompleted() in /home/aldamico/RiderProjects/TombLauncher/TombLauncher/App.axaml.cs:line 93

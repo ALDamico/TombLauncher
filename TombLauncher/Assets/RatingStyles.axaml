@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="using:TombLauncher.Localization"
 				xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
 				xmlns:valueConverters="clr-namespace:TombLauncher.Core.ValueConverters;assembly=TombLauncher.Core">
 
@@ -36,38 +35,38 @@
 
 	<!-- Define the Theme Variants -->
 	<ResourceDictionary.ThemeDictionaries>
-		<ResourceDictionary x:Key="DEFAULT">
+		<ResourceDictionary x:Key="Default">
 			<!-- Selected Brushes-->
-			<SolidColorBrush x:Key="RATINGCONTROLSELECTEDBRUSH" Color="Gold"/>
-			<SolidColorBrush x:Key="RATINGCONTROLSELECTEDSTROKENBRUSH" Color="Goldenrod"/>
+			<SolidColorBrush x:Key="RatingControlSelectedBrush" Color="Gold"/>
+			<SolidColorBrush x:Key="RatingControlSelectedStrokenBrush" Color="Goldenrod"/>
 			<!-- Unselected Brushes-->
-			<SolidColorBrush x:Key="RATINGCONTROLUNSELECTEDBRUSH" Color="White"/>
-			<SolidColorBrush x:Key="RATINGCONTROLUNSELECTEDSTROKENBRUSH" Color="Gray"/>
+			<SolidColorBrush x:Key="RatingControlUnselectedBrush" Color="White"/>
+			<SolidColorBrush x:Key="RatingControlUnselectedStrokenBrush" Color="Gray"/>
 		</ResourceDictionary>
-		<ResourceDictionary x:Key="LIGHT">
+		<ResourceDictionary x:Key="Light">
 			<!-- Selected Brushes-->
-			<SolidColorBrush x:Key="RATINGCONTROLSELECTEDBRUSH" Color="Gold"/>
-			<SolidColorBrush x:Key="RATINGCONTROLSELECTEDSTROKENBRUSH" Color="Gray"/>
+			<SolidColorBrush x:Key="RatingControlSelectedBrush" Color="Gold"/>
+			<SolidColorBrush x:Key="RatingControlSelectedStrokenBrush" Color="Gray"/>
 			<!-- Unselected Brushes-->
-			<SolidColorBrush x:Key="RATINGCONTROLUNSELECTEDBRUSH" Color="White"/>
-			<SolidColorBrush x:Key="RATINGCONTROLUNSELECTEDSTROKENBRUSH" Color="Gray"/>
+			<SolidColorBrush x:Key="RatingControlUnselectedBrush" Color="White"/>
+			<SolidColorBrush x:Key="RatingControlUnselectedStrokenBrush" Color="Gray"/>
 		</ResourceDictionary>
-		<ResourceDictionary x:Key="DARK">
+		<ResourceDictionary x:Key="Dark">
 			<!-- Selected Brushes-->
-			<SolidColorBrush x:Key="RATINGCONTROLSELECTEDBRUSH" Color="Red"/>
-			<SolidColorBrush x:Key="RATINGCONTROLSELECTEDSTROKENBRUSH" Color="White"/>
+			<SolidColorBrush x:Key="RatingControlSelectedBrush" Color="Red"/>
+			<SolidColorBrush x:Key="RatingControlSelectedStrokenBrush" Color="White"/>
 			<!-- Unselected Brushes-->
-			<SolidColorBrush x:Key="RATINGCONTROLUNSELECTEDBRUSH" Color="Transparent"/>
-			<SolidColorBrush x:Key="RATINGCONTROLUNSELECTEDSTROKENBRUSH" Color="White"/>
+			<SolidColorBrush x:Key="RatingControlUnselectedBrush" Color="Transparent"/>
+			<SolidColorBrush x:Key="RatingControlUnselectedStrokenBrush" Color="White"/>
 		</ResourceDictionary>
 	</ResourceDictionary.ThemeDictionaries>
 
 
 	<!--This is the ControlTheme for our RatingControl-->
-	<ControlTheme x:Key="X_TYPE_CONTROLS_RATINGCONTROL" TargetType="controls:RatingControl">
+	<ControlTheme x:Key="{x:Type controls:RatingControl}" TargetType="controls:RatingControl">
 		<ControlTheme.Resources>
 			<!--We need to add our IsSmallerOrEqualConverter here as a Resource-->
-			<valueConverters:IsSmallerOrEqualConverter x:Key="ISSMALLEROREQUALCONVERTER" />
+			<valueConverters:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
 		</ControlTheme.Resources>
 		<!--Every TemplatedControl needs to have a ControlTemplate applied. In this setter we define it.-->
 		<Setter Property="Template">

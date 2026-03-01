@@ -15,12 +15,12 @@
         <pages:GameDetailsViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="FAVOURITETOMATERIALICONCONVERTER" 
+        <valueConverters:BooleanToMaterialIconConverter x:Key="FavouriteToMaterialIconConverter" 
                                                         TrueValue="Heart" 
                                                         FalseValue="HeartOutline"/>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="COMPLETEDTOMATERIALICONCONVERTER"
+        <valueConverters:BooleanToMaterialIconConverter x:Key="CompletedToMaterialIconConverter"
                                                         TrueValue="Trophy"/>
-        <valueConverters:BooleanToStringConverter x:Key="FAVOURITETOTOOLTIPCONVERTER"
+        <valueConverters:BooleanToStringConverter x:Key="FavouriteToToolTipConverter"
                                                   TrueValue="Favourite"/>
     </UserControl.Resources>
     <UserControl.Styles>

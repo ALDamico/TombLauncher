@@ -7,7 +7,7 @@
              x:Class="TombLauncher.Controls.RingLoader">
     
     <UserControl.Resources>
-        <LinearGradientBrush x:Key="DEFAULTRINGGRADIENT" StartPoint="0%,0%" EndPoint="100%,100%">
+        <LinearGradientBrush x:Key="DefaultRingGradient" StartPoint="0%,0%" EndPoint="100%,100%">
             <GradientStop Offset="0" Color="{DynamicResource PrimaryColor}" />
             <GradientStop Offset="1" Color="Transparent" />
         </LinearGradientBrush>

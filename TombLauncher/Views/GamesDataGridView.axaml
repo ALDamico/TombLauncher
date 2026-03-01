@@ -14,16 +14,16 @@
         <pages:GameListViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="ADDTOFAVOURITESBOOLEANTOMATERIALICONCONVERTER" 
+        <valueConverters:BooleanToMaterialIconConverter x:Key="AddToFavouritesBooleanToMaterialIconConverter" 
                                                         TrueValue="Heart" 
                                                         FalseValue="HeartOutline"/>
-        <valueConverters:BooleanToStringConverter x:Key="ADDREMOVEFROMFAVOURITESBOOLEANCONVERTER" 
+        <valueConverters:BooleanToStringConverter x:Key="AddRemoveFromFavouritesBooleanConverter" 
                                                   TrueValue="Remove from favourites" 
                                                   FalseValue="Add to favourites"/>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="MARKASCOMPLETEDBOOLEANTOMATERIALICONCONVERTER" 
+        <valueConverters:BooleanToMaterialIconConverter x:Key="MarkAsCompletedBooleanToMaterialIconConverter" 
                                                         TrueValue="Trophy" 
                                                         FalseValue="TrophyBroken"/>
-        <valueConverters:BooleanToStringConverter x:Key="MARKUNMARKCOMPLETEDBOOLEANCONVERTER" 
+        <valueConverters:BooleanToStringConverter x:Key="MarkUnmarkCompletedBooleanConverter" 
                                                   TrueValue="Unmark as completed" 
                                                   FalseValue="Mark as completed"/>
     </UserControl.Resources>

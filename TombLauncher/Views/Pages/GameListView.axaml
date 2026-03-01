@@ -14,10 +14,10 @@
         <pages:GameListViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="BOOLEANTOMATERIALICONCONVERTER"
+        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
                                                         TrueValue="Grid"
                                                         FalseValue="Table" />
-        <valueConverters:BooleanToStringConverter x:Key="BOOLEANTOSTRINGCONVERTER" 
+        <valueConverters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
                                                   TrueValue="Grid view" 
                                                   FalseValue="Table view"/>
     </UserControl.Resources>
