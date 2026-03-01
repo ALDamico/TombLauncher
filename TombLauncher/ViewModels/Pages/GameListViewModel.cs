@@ -46,13 +46,13 @@ public partial class GameListViewModel : PageViewModel
         {
             Command = OpenSearchCmd!,
             Icon = MaterialIconKind.Search,
-            Tooltip = "Open search".GetLocalizedString()
+            Tooltip = "OPEN_SEARCH".GetLocalizedString()
         });
         TopBarCommands.Add(new CommandViewModel()
         {
             Command = AddGameCmd!,
             Icon = MaterialIconKind.Plus,
-            Tooltip = "Add".GetLocalizedString()
+            Tooltip = "ADD".GetLocalizedString()
         });
     }
 

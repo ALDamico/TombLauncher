@@ -21,7 +21,7 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
     {
         MoveUpCmd = new RelayCommand<DownloaderViewModel?>(MoveUp, CanMoveUp);
         MoveDownCmd = new RelayCommand<DownloaderViewModel?>(MoveDown, CanMoveDown);
-        InfoTipContent = "Downloaders infotip content".GetLocalizedString();
+        InfoTipContent = "DOWNLOADERS_INFOTIP_CONTENT".GetLocalizedString();
         _settingsProvider = settingsProvider;
         _appFileOperations = appFileOperations;
         _messageBoxService = messageBoxService;

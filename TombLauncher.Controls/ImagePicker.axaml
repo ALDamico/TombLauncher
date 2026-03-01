@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:TombLauncher.Controls"
@@ -19,7 +20,7 @@
     </UserControl.Styles>
     <Grid>
         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" x:Name="Text"
-                   Text="{DynamicResource 'Click to change'}" ZIndex="999" Background="Gray">
+                   Text="{loc:Translate CLICK_TO_CHANGE}" ZIndex="999" Background="Gray">
         </TextBlock>
         <Image x:Name="Image"
                Source="{CompiledBinding Path=Source, RelativeSource={RelativeSource FindAncestor, AncestorType=controls:ImagePicker}, Mode=TwoWay}">

@@ -23,7 +23,7 @@ public partial class StatisticsPageViewModel : PageViewModel
         {
             new CommandViewModel()
             {
-                Command = new AsyncRelayCommand(Initialize), Icon = MaterialIconKind.Reload, Tooltip = "Reload".GetLocalizedString()
+                Command = new AsyncRelayCommand(Initialize), Icon = MaterialIconKind.Reload, Tooltip = "RELOAD".GetLocalizedString()
             }
         };
         OpenGameCmd = new AsyncRelayCommand<int>(OpenGame);
@@ -46,7 +46,7 @@ public partial class StatisticsPageViewModel : PageViewModel
     private async Task Initialize()
     {
         IsBusy = true;
-        BusyMessage = "Gathering statistics...".GetLocalizedString();
+        BusyMessage = "GATHERING_STATISTICS".GetLocalizedString();
         var t1 = Task.Run(() => ApplicationVersion = AppUtils.GetApplicationVersion());
         // Note: GetDatabaseSize might access shared resources but running in Task.Factory.StartNew on background thread might be risky if DbContext is not thread safe?
         // StatisticService typically uses new context or scope.

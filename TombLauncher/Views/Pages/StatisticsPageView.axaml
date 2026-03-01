@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
@@ -25,7 +26,7 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
     <Grid RowDefinitions="Auto, *">
-        <TextBlock Grid.Row="0" Text="{DynamicResource 'STATISTICS'}" Classes="h1" />
+        <TextBlock Grid.Row="0" Text="{loc:Translate STATISTICS}" Classes="h1" />
         <ScrollViewer Grid.Row="1">
             <StackPanel Orientation="Vertical">
 
@@ -45,9 +46,9 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{DynamicResource 'Application version'}" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{loc:Translate APPLICATION_VERSION}" />
                     <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ApplicationVersion}" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{DynamicResource 'Dotnet version'}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{loc:Translate DOTNET_VERSION}" />
                     <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NetVersion}" />
                     <avalonia1:MaterialIcon Height="24" Width="24" HorizontalAlignment="Center"
                                             VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Kind="Database"
@@ -107,7 +108,7 @@
                     
                 </Grid>
                 <!-- TODO Make localizable -->
-                <TextBlock Text="{DynamicResource 'Space used by game'}"/>
+                <TextBlock Text="{loc:Translate SPACE_USED_BY_GAME}"/>
                 <avalonia:PieChart Series="{Binding Statistics.SpaceUsedStatistics.Series}" 
                                    Height="600"/>
                 

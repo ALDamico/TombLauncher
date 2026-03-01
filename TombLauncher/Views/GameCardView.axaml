@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
@@ -12,16 +13,16 @@
         <viewModels:GameWithStatsViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="AddToFavouritesBooleanToMaterialIconConverter" 
+        <valueConverters:BooleanToMaterialIconConverter x:Key="ADDTOFAVOURITESBOOLEANTOMATERIALICONCONVERTER" 
                                                         TrueValue="Heart" 
                                                         FalseValue="HeartOutline"/>
-        <valueConverters:BooleanToStringConverter x:Key="AddRemoveFromFavouritesBooleanConverter" 
+        <valueConverters:BooleanToStringConverter x:Key="ADDREMOVEFROMFAVOURITESBOOLEANCONVERTER" 
                                                   TrueValue="Remove from favourites" 
                                                   FalseValue="Add to favourites"/>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="MarkAsCompletedBooleanToMaterialIconConverter" 
+        <valueConverters:BooleanToMaterialIconConverter x:Key="MARKASCOMPLETEDBOOLEANTOMATERIALICONCONVERTER" 
                                                         TrueValue="Trophy" 
                                                         FalseValue="TrophyBroken"/>
-        <valueConverters:BooleanToStringConverter x:Key="MarkUnmarkCompletedBooleanConverter" 
+        <valueConverters:BooleanToStringConverter x:Key="MARKUNMARKCOMPLETEDBOOLEANCONVERTER" 
                                                   TrueValue="Unmark as completed" 
                                                   FalseValue="Mark as completed"/>
     </UserControl.Resources>
@@ -41,7 +42,7 @@
                             <avalonia:MaterialIcon Kind="Play"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{DynamicResource 'View details'}" 
+                    <MenuItem Header="{loc:Translate VIEW_DETAILS}" 
                               Command="{Binding OpenCmd}"/>
                     <Separator/>
                     <MenuItem Header="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}" 
@@ -123,19 +124,19 @@
                 <TextBlock Grid.Row="1" Text="{Binding GameMetadata.Author, TargetNullValue='Unknown'}"
                            FontStyle="Italic" />
                 <TextBlock Grid.Row="2">
-                    <Run FontWeight="DemiBold" Text="{DynamicResource 'Release date'}"></Run>
+                    <Run FontWeight="DemiBold" Text="{loc:Translate RELEASE_DATE}"></Run>
                     <Run FontStyle="Italic" Text="{Binding GameMetadata.ReleaseDate, StringFormat=d}" />
                 </TextBlock>
                 <TextBlock Grid.Row="3">
-                    <Run FontWeight="DemiBold" Text="{DynamicResource 'Install date'}"></Run>
+                    <Run FontWeight="DemiBold" Text="{loc:Translate INSTALL_DATE}"></Run>
                     <Run FontStyle="Italic" Text="{Binding GameMetadata.InstallDate, StringFormat=d}" />
                 </TextBlock>
                 <TextBlock Grid.Row="4">
-                    <Run FontWeight="DemiBold" Text="{DynamicResource 'Last played'}"></Run>
+                    <Run FontWeight="DemiBold" Text="{loc:Translate LAST_PLAYED}"></Run>
                     <Run FontStyle="Italic" Text="{Binding LastPlayed, StringFormat=g}"></Run>
                 </TextBlock>
                 <TextBlock Grid.Row="5">
-                    <Run FontWeight="DemiBold" Text="{DynamicResource 'Time played'}" />
+                    <Run FontWeight="DemiBold" Text="{loc:Translate TIME_PLAYED}" />
                     <Run FontStyle="Italic"
                          Text="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}" />
                 </TextBlock>

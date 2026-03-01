@@ -36,7 +36,7 @@ public class GameListService : IViewService
 
     public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
-        host.SetBusy(true, "Loading games...".GetLocalizedString());
+        host.SetBusy(true, "LOADING_GAMES".GetLocalizedString());
 
         var gamesWithStats = await _gamesUnitOfWork.GetGamesWithStats(true);
 
@@ -54,7 +54,7 @@ public class GameListService : IViewService
         confirmDialogViewModel.RequestCloseDialog += async (_, args) =>
         {
             if (!args.DialogResult) return;
-            target.SetBusy(true, "Uninstalling".GetLocalizedString(game.GameMetadata.Title));
+            target.SetBusy(true, "UNINSTALLING".GetLocalizedString(game.GameMetadata.Title));
             var installDir = game.GameMetadata.InstallDirectory;
             if (installDir != null)
                 Directory.Delete(installDir, true);

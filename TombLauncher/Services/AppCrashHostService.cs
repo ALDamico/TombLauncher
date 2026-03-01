@@ -30,10 +30,10 @@ public class AppCrashHostService : IViewService
 
     public async Task Save(AppCrashDto crash)
     {
-        var filePath = await DialogService.SaveFile("Save error details".GetLocalizedString(),
+        var filePath = await DialogService.SaveFile("SAVE_ERROR_DETAILS".GetLocalizedString(),
             new FilePickerFileType[]
             {
-                new FilePickerFileType("JSON files".GetLocalizedString())
+                new FilePickerFileType("JSON_FILES".GetLocalizedString())
                 {
                     Patterns = new string[]
                     {

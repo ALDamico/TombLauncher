@@ -103,7 +103,7 @@ public partial class GameDetailsViewModel : PageViewModel
             {
                 Command = Game.LaunchSetupCmd,
                 Icon = MaterialIconKind.Settings,
-                Text = "Setup".GetLocalizedString()
+                Text = "SETUP".GetLocalizedString()
             });
         }
 
@@ -113,7 +113,7 @@ public partial class GameDetailsViewModel : PageViewModel
             {
                 Command = Game.LaunchCommunitySetupCmd,
                 Icon = MaterialIconKind.SettingsPlay,
-                Text = "Community patch setup".GetLocalizedString()
+                Text = "COMMUNITY_PATCH_SETUP".GetLocalizedString()
             });
         }
 

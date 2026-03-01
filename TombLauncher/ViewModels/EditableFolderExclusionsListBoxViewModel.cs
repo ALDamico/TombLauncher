@@ -10,8 +10,8 @@ public class EditableFolderExclusionsListBoxViewModel : EditableListBoxViewModel
 {
     public EditableFolderExclusionsListBoxViewModel()
     {
-        Watermark = "Insert a folder name to ignore...".GetLocalizedString();
-        Header = "Ignore the following folders when searching for documentation".GetLocalizedString();
+        Watermark = "INSERT_A_FOLDER_NAME_TO_IGNORE".GetLocalizedString();
+        Header = "IGNORE_THE_FOLLOWING_FOLDERS_WHEN_SEARCHING_FOR_DO".GetLocalizedString();
     }
     public override ValidationResult Validate(string newValue)
     {
@@ -23,11 +23,11 @@ public class EditableFolderExclusionsListBoxViewModel : EditableListBoxViewModel
         {
             var invalidCharsStr = string.Join(", ", intersection);
             return new ValidationResult(
-                "The specified folder name contains the following invalid characters: CHARLIST".GetLocalizedString(invalidCharsStr));
+                "THE_SPECIFIED_FOLDER_NAME_CONTAINS_THE_FOLLOWING_I".GetLocalizedString(invalidCharsStr));
         }
 
         if (newValue.EndsWithAny('.', ' '))
-            return new ValidationResult("Folder names cannot end with a dor or a space".GetLocalizedString());
+            return new ValidationResult("FOLDER_NAMES_CANNOT_END_WITH_A_DOR_OR_A_SPACE".GetLocalizedString());
 
         return ValidationResult.Success!;
     }

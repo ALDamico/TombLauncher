@@ -14,8 +14,8 @@ public class AppCrashHostViewModel : DialogViewModel
     public AppCrashHostViewModel(AppCrashHostService appCrashHostService)
     {
         _appCrashHostService = appCrashHostService;
-        AcceptCommandText = "Accept".GetLocalizedString();
-        CancelCommandText = "Restart application".GetLocalizedString();
+        AcceptCommandText = "ACCEPT".GetLocalizedString();
+        CancelCommandText = "RESTART_APPLICATION".GetLocalizedString();
         CancelCommand = new RelayCommand(InvokeRestart);
         CopyCmd = new RelayCommand<object>(Copy, CanCopy);
         SaveCmd = new RelayCommand(Save);

@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
@@ -24,11 +25,11 @@
         <Image Stretch="None" Source="/Assets/tr1005.png"/>
         <TextBlock HorizontalAlignment="Center" 
                    TextAlignment="Center">
-            <Run Text="{DynamicResource 'Maximum attempts reached line 1'}"/>
+            <Run Text="{loc:Translate MAXIMUM_ATTEMPTS_REACHED_LINE}"/>
             <LineBreak/>
             <Run Text="{Binding MaxRetries, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Maximum attempts reached line 2', Mode=OneWay}"/>
             <LineBreak/>
-            <Run Text="{DynamicResource 'Maximum attempts reached line 3'}"/>
+            <Run Text="{loc:Translate MAXIMUM_ATTEMPTS_REACHED_LINE_3}"/>
         </TextBlock>
         <Button HorizontalAlignment="Center" Command="{Binding PickRandomGameCmd}" Content="{DynamicResource Try again}"/>
     </StackPanel>

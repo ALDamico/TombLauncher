@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
@@ -77,7 +78,7 @@
                                                           IsVisible="{Binding HasNewItems}"/>
                                 
                                 <controls:RoundIconButton Width="32" Height="32" Icon="Close" 
-                                                          ToolTip.Tip="{DynamicResource 'Clear all'}"
+                                                          ToolTip.Tip="{loc:Translate CLEAR_ALL}"
                                                           Command="{Binding ClearAllCmd}">
                                 </controls:RoundIconButton>
                             </StackPanel>
@@ -88,7 +89,7 @@
                     <Grid Grid.Row="1" IsVisible="{Binding !Notifications.Count}">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
                             <avalonia:MaterialIcon Kind="NotificationsNone" Width="48" Height="48" Opacity="0.5"/>
-                            <TextBlock Text="{DynamicResource 'No notifications'}" 
+                            <TextBlock Text="{loc:Translate NO_NOTIFICATIONS}" 
                                        HorizontalAlignment="Center" 
                                        Opacity="0.6"
                                        FontStyle="Italic"/>

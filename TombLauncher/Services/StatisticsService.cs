@@ -78,7 +78,7 @@ public class StatisticsService
                 {
                     new Axis()
                     {
-                        Name = "Day of week".GetLocalizedString(),
+                        Name = "DAY_OF_WEEK".GetLocalizedString(),
                         Labels = DateTimeExtensions.GetAbbreviatedDayNamesOrdered(CultureInfo.CurrentUICulture),
                     }
                 },
@@ -88,7 +88,7 @@ public class StatisticsService
                         TimeSpan.FromMinutes(15),
                         v => string.Format("{0:%h} h {0:%m} min", v))
                     {
-                        Name = "Average time played".GetLocalizedString(),
+                        Name = "AVERAGE_TIME_PLAYED".GetLocalizedString(),
                     }
                 }
             },
@@ -111,7 +111,7 @@ public class StatisticsService
                 {
                     new Axis()
                     {
-                        Name = "Day of week".GetLocalizedString(),
+                        Name = "DAY_OF_WEEK".GetLocalizedString(),
                         Labels = DateTimeExtensions.GetAbbreviatedDayNamesOrdered(CultureInfo.CurrentUICulture)
                     }
                 },
@@ -120,8 +120,8 @@ public class StatisticsService
                     new Axis()
                     {
                         Labeler = v =>
-                            v.ToString(CultureInfo.InvariantCulture) + " " + "games played".GetLocalizedString(),
-                        Name = "Total games played".GetLocalizedString(),
+                            v.ToString(CultureInfo.InvariantCulture) + " " + "GAMES_PLAYED".GetLocalizedString(),
+                        Name = "TOTAL_GAMES_PLAYED".GetLocalizedString(),
                     }
                 }
             },
@@ -135,28 +135,28 @@ public class StatisticsService
                             new DailyStatisticsAverageGameDurationViewModel()
                                 { Date = s.Date, AverageGameDuration = s.AverageGameDuration }).ToList(),
                         ScalesYAt = 0,
-                        Name = "Average play time".GetLocalizedString()
+                        Name = "AVERAGE_PLAY_TIME".GetLocalizedString()
                     }, new LineSeries<DailyStatisticsAverageGameDurationViewModel>()
                     {
                         Values = statistics.DailyStatistics.Select(s =>
                             new DailyStatisticsAverageGameDurationViewModel()
                                 { Date = s.Date, AverageGameDuration = s.TotalPlayTime }).ToList(),
                         ScalesYAt = 0,
-                        Name = "Total play time".GetLocalizedString()
+                        Name = "TOTAL_PLAY_TIME".GetLocalizedString()
                     }
                 },
                 XAxis = new[]
                 {
                     new DateTimeAxis(TimeSpan.FromDays(1), v => v.ToString("d"))
                     {
-                        Name = "Day".GetLocalizedString()
+                        Name = "DAY".GetLocalizedString()
                     }
                 },
                 YAxis = new[]
                 {
                     new TimeSpanAxis(TimeSpan.FromMinutes(15), v => string.Format("{0:%h} h {0:%m} min" , v))
                     {
-                        Name = "Time played".GetLocalizedString(),
+                        Name = "TIME_PLAYED".GetLocalizedString(),
                     }
                 }
             },

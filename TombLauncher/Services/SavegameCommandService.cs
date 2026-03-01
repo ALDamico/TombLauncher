@@ -56,8 +56,8 @@ public class SavegameCommandService
 
     public async Task DeleteSavegame(SavegameListViewModel savegameListViewModel, SavegameViewModel savegameViewModel)
     {
-        var userIsSure = await _messageBoxService.Show("Confirm delete".GetLocalizedString(),
-            "Are you sure you want to delete this savegame? This action cannot be undone.".GetLocalizedString(),
+        var userIsSure = await _messageBoxService.Show("CONFIRM_DELETE".GetLocalizedString(),
+            "ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_SAVEGAME_THIS".GetLocalizedString(),
             MsgBoxButton.YesNo,
             MsgBoxImage.Question);
         if (userIsSure.ButtonResult == MsgBoxButtonResult.No)
@@ -112,10 +112,10 @@ public class SavegameCommandService
 
     public async Task DeleteAllSavegamesByGameId(SavegameListViewModel savegameListViewModel, int gameId)
     {
-        var result = await _messageBoxService.Show("Delete all savegames".GetLocalizedString(),
-            "Are you sure you want to delete all savegames? This action cannot be undone.".GetLocalizedString(),
+        var result = await _messageBoxService.Show("DELETE_ALL_SAVEGAMES".GetLocalizedString(),
+            "ARE_YOU_SURE_YOU_WANT_TO_DELETE_ALL_SAVEGAMES_THIS".GetLocalizedString(),
             MsgBoxButton.OkCancel, MsgBoxImage.Warning,
-            checkBoxText: "Delete savegames marked as start of level".GetLocalizedString());
+            checkBoxText: "DELETE_SAVEGAMES_MARKED_AS_START_OF_LEVEL".GetLocalizedString());
 
         if (result.ButtonResult == MsgBoxButtonResult.Ok)
         {

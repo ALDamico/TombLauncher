@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
@@ -11,7 +12,7 @@
         <dialogs:RestoreSavegameDialogViewModel/>
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="{DynamicResource 'Slot'}"></TextBlock>
+        <TextBlock Text="{loc:Translate SLOT}"></TextBlock>
         <ComboBox ItemsSource="{Binding Slots}" SelectedItem="{Binding SelectedSlot}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>

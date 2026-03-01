@@ -40,7 +40,7 @@ public class SavegameQueryService
 
     public async Task LoadSaveGames(SavegameListViewModel targetViewModel)
     {
-        targetViewModel.SetBusy("Fetching savegames for GAMETITLE".GetLocalizedString(targetViewModel.GameTitle));
+        targetViewModel.SetBusy("FETCHING_SAVEGAMES_FOR_GAMETITLE".GetLocalizedString(targetViewModel.GameTitle));
         var observableCollection = new ObservableCollection<SavegameViewModel>();
         var knownSavegames = await _savegameRepository.GetSavegamesByGameId(targetViewModel.GameId);
         var headerParser = _headerProvider.GetHeaderReader(targetViewModel.GameEngine);
@@ -81,7 +81,7 @@ public class SavegameQueryService
         savegameListViewModel.Slots = new ObservableCollection<SavegameSlotViewModel>();
         var allSlotsItem = new SavegameSlotViewModel()
         {
-            Header = "All slots".GetLocalizedString(),
+            Header = "ALL_SLOTS".GetLocalizedString(),
             IsEnabled = true,
             SaveSlot = null,
             FilterCmd = savegameListViewModel.FilterCmd
@@ -98,7 +98,7 @@ public class SavegameQueryService
 
         savegameListViewModel.Slots.AddRange(usedSlots.Select(s => new SavegameSlotViewModel()
         {
-            Header = "Slot NUMBER".GetLocalizedString(s),
+            Header = "SLOT_NUMBER".GetLocalizedString(s),
             SaveSlot = s,
             IsEnabled = true,
             FilterCmd = savegameListViewModel.FilterCmd
@@ -109,7 +109,7 @@ public class SavegameQueryService
 
     public Task ApplyFilter(SavegameListViewModel savegameListViewModel, SaveGameListFilter filter)
     {
-        savegameListViewModel.SetBusy("Filtering savegames...".GetLocalizedString());
+        savegameListViewModel.SetBusy("FILTERING_SAVEGAMES".GetLocalizedString());
         var slotNumber = filter.SlotNumber;
         var startOfLevelOnly = filter.StartOfLevelOnly;
         var savegameEnumerable = savegameListViewModel.Savegames.AsEnumerable();
@@ -160,7 +160,7 @@ public class SavegameQueryService
 
         var userResponse = await _messageBoxService.Show("No savegame backups found",
             $"There were no savegame backups in Tomb Launcher's database, but we found {missingSaveGames.Count()} savegame files. Would you like to import them?",
-            MsgBoxButton.YesNo, MsgBoxImage.Folder, "No".GetLocalizedString(), "Yes".GetLocalizedString());
+            MsgBoxButton.YesNo, MsgBoxImage.Folder, "NO".GetLocalizedString(), "YES".GetLocalizedString());
         if (userResponse.ButtonResult == MsgBoxButtonResult.Yes)
         {
             savegameListView.SetBusy("Importing your saved games...");

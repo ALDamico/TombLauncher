@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:utils="clr-namespace:TombLauncher.Utils"
@@ -39,7 +40,7 @@
                    Grid.ColumnSpan="4"
                    HorizontalAlignment="Center"
                    Classes="h1"
-                   Text="{DynamicResource 'INSERT NEW GAME'}" />
+                   Text="{loc:Translate INSERT_NEW_GAME}" />
         <DockPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" LastChildFill="True">
             <controls:ImagePicker DockPanel.Dock="Right"
                                   Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static utils:ImageUtils.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"

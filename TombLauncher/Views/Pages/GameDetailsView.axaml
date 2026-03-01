@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
@@ -14,12 +15,12 @@
         <pages:GameDetailsViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="FavouriteToMaterialIconConverter" 
+        <valueConverters:BooleanToMaterialIconConverter x:Key="FAVOURITETOMATERIALICONCONVERTER" 
                                                         TrueValue="Heart" 
                                                         FalseValue="HeartOutline"/>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="CompletedToMaterialIconConverter"
+        <valueConverters:BooleanToMaterialIconConverter x:Key="COMPLETEDTOMATERIALICONCONVERTER"
                                                         TrueValue="Trophy"/>
-        <valueConverters:BooleanToStringConverter x:Key="FavouriteToToolTipConverter"
+        <valueConverters:BooleanToStringConverter x:Key="FAVOURITETOTOOLTIPCONVERTER"
                                                   TrueValue="Favourite"/>
     </UserControl.Resources>
     <UserControl.Styles>

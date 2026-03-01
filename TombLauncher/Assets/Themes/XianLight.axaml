@@ -1,32 +1,33 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization">
     <!-- Xian Light Theme -->
     <!-- Primary Backgrounds -->
     <Color x:Key="CardBackgroundColor">#CCF8F0F0</Color>
-    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Light Rust -->
-    <SolidColorBrush x:Key="CardBorderBrush">#33000000</SolidColorBrush>
-    <SolidColorBrush x:Key="PageBackgroundBrush">#FFFFFF</SolidColorBrush>
-    <SolidColorBrush x:Key="SidebarBackgroundBrush">#FCF5F5</SolidColorBrush>
+    <SolidColorBrush x:Key="CARDBACKGROUNDBRUSH" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Light Rust -->
+    <SolidColorBrush x:Key="CARDBORDERBRUSH">#33000000</SolidColorBrush>
+    <SolidColorBrush x:Key="PAGEBACKGROUNDBRUSH">#FFFFFF</SolidColorBrush>
+    <SolidColorBrush x:Key="SIDEBARBACKGROUNDBRUSH">#FCF5F5</SolidColorBrush>
     
     <!-- Primary Actions -->
-    <Color x:Key="PrimaryColor">#B7410E</Color>
-    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" /> <!-- Rust -->
-    <SolidColorBrush x:Key="PrimaryPointerOverBrush">#9E380C</SolidColorBrush>
-    <SolidColorBrush x:Key="ColoredButtonTextBrush">#FFFFFF</SolidColorBrush>
+    <Color x:Key="PRIMARYCOLOR">#B7410E</Color>
+    <SolidColorBrush x:Key="PRIMARYBRUSH" Color="{StaticResource PrimaryColor}" /> <!-- Rust -->
+    <SolidColorBrush x:Key="PRIMARYPOINTEROVERBRUSH">#9E380C</SolidColorBrush>
+    <SolidColorBrush x:Key="COLOREDBUTTONTEXTBRUSH">#FFFFFF</SolidColorBrush>
 
     <!-- Accents -->
-    <SolidColorBrush x:Key="AccentBrush">#2E8B57</SolidColorBrush> <!-- Sea Green for visibility -->
+    <SolidColorBrush x:Key="ACCENTBRUSH">#2E8B57</SolidColorBrush> <!-- Sea Green for visibility -->
     
     <!-- Status -->
-    <SolidColorBrush x:Key="SuccessBrush">#2E8B57</SolidColorBrush> <!-- Sea Green -->
-    <SolidColorBrush x:Key="SuccessPointerOverBrush">#157347</SolidColorBrush>
-    <SolidColorBrush x:Key="DangerBrush">#dc3545</SolidColorBrush>
-    <SolidColorBrush x:Key="DangerPointerOverBrush">#b02a37</SolidColorBrush>
-    <SolidColorBrush x:Key="WarningBrush">#ffc107</SolidColorBrush>
+    <SolidColorBrush x:Key="SUCCESSBRUSH">#2E8B57</SolidColorBrush> <!-- Sea Green -->
+    <SolidColorBrush x:Key="SUCCESSPOINTEROVERBRUSH">#157347</SolidColorBrush>
+    <SolidColorBrush x:Key="DANGERBRUSH">#dc3545</SolidColorBrush>
+    <SolidColorBrush x:Key="DANGERPOINTEROVERBRUSH">#b02a37</SolidColorBrush>
+    <SolidColorBrush x:Key="WARNINGBRUSH">#ffc107</SolidColorBrush>
     <SolidColorBrush x:Key="WarningPointerOverBrush">#ffcd39</SolidColorBrush>
     
     <!-- Text -->
-    <SolidColorBrush x:Key="TextBrush">#212529</SolidColorBrush>
-    <SolidColorBrush x:Key="MutedTextBrush">#6c757d</SolidColorBrush>
-    <SolidColorBrush x:Key="SecondaryBrush">#6c757d</SolidColorBrush>
+    <SolidColorBrush x:Key="TEXTBRUSH">#212529</SolidColorBrush>
+    <SolidColorBrush x:Key="MUTEDTEXTBRUSH">#6c757d</SolidColorBrush>
+    <SolidColorBrush x:Key="SECONDARYBRUSH">#6c757d</SolidColorBrush>
 </ResourceDictionary>

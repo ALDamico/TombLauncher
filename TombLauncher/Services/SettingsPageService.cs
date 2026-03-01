@@ -75,7 +75,7 @@ public class SettingsPageService : IViewService
 
     public async Task Save(SettingsPageViewModel viewModel)
     {
-        viewModel.SetBusy(true, "Saving application settings...".GetLocalizedString());
+        viewModel.SetBusy(true, "SAVING_APPLICATION_SETTINGS".GetLocalizedString());
 
         var languageSettings = viewModel.Sections.OfType<LanguageSettingsViewModel>().First();
         var appearanceSettings = viewModel.Sections.OfType<AppearanceSettingsViewModel>().First();

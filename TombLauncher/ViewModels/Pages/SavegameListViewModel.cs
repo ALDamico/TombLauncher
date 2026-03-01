@@ -32,13 +32,13 @@ public partial class SavegameListViewModel : PageViewModel
         {
             Command = DeleteAllCmd,
             Icon = MaterialIconKind.Delete,
-            Tooltip = "Delete all".GetLocalizedString()
+            Tooltip = "DELETE_ALL".GetLocalizedString()
         });
         TopBarCommands.Add(new CommandViewModel()
         {
             Command = CheckNonBackedUpSavegamesCmd,
             Icon = MaterialIconKind.Import,
-            Tooltip = "Import missing savegames".GetLocalizedString()
+            Tooltip = "IMPORT_MISSING_SAVEGAMES".GetLocalizedString()
         });
     }
 

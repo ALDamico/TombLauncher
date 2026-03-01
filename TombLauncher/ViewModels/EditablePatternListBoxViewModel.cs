@@ -11,23 +11,23 @@ public class EditablePatternListBoxViewModel : EditableListBoxViewModel
 {
     public EditablePatternListBoxViewModel()
     {
-        Watermark = "Insert a new pattern here...".GetLocalizedString();
-        Header = "Use the following patterns to recognize documentation files".GetLocalizedString();
+        Watermark = "INSERT_A_NEW_PATTERN_HERE".GetLocalizedString();
+        Header = "USE_THE_FOLLOWING_PATTERNS_TO_RECOGNIZE_DOCUMENTAT".GetLocalizedString();
     }
     public override ValidationResult Validate(string newValue)
     {
         if (newValue == null)
-            return new ValidationResult("Specify a pattern".GetLocalizedString());
+            return new ValidationResult("SPECIFY_A_PATTERN".GetLocalizedString());
         if (TargetCollection.Any(p => p.Value == newValue))
         {
-            return new ValidationResult("This pattern has already been added".GetLocalizedString());
+            return new ValidationResult("THIS_PATTERN_HAS_ALREADY_BEEN_ADDED".GetLocalizedString());
         }
 
         var invalidPatterns = new List<string>() { @"^\*+$", @"^\*+\.\*+$" };
         foreach (var invalidPattern in invalidPatterns)
         {
             if (Regex.IsMatch(newValue, invalidPattern))
-                return new ValidationResult("The pattern PATTERN is not allowed".GetLocalizedString(newValue));
+                return new ValidationResult("THE_PATTERN_IS_NOT_ALLOWED".GetLocalizedString(newValue));
         }
 
         return ValidationResult.Success!;

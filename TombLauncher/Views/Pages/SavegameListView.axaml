@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
@@ -26,11 +27,11 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Classes="h1" Text="{Binding GameTitle, Converter={StaticResource UppercaseConverter}}" />
         <DockPanel Grid.Row="1" LastChildFill="true">
-            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{DynamicResource 'Slot'}"/>
+            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{loc:Translate SLOT}"/>
             <CheckBox IsChecked="{Binding SavegameFilter.StartOfLevelOnly}"
                       Margin="8, 0, 0, 0"
                       DockPanel.Dock="Right"
-                      Content="{DynamicResource 'Only start of level'}">
+                      Content="{loc:Translate ONLY_START_OF_LEVEL}">
                 <Interaction.Behaviors>
                     <EventTriggerBehavior EventName="PropertyChanged" 
                                           SourceObject="{Binding SavegameFilter}">

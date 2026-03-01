@@ -56,7 +56,7 @@ public class NotificationService
 
     public async Task AddErrorNotificationAsync(string errorMessage, MaterialIconKind icon)
     {
-        await AddErrorNotificationAsync("An error occurred".GetLocalizedString(), errorMessage, icon);
+        await AddErrorNotificationAsync("AN_ERROR_OCCURRED".GetLocalizedString(), errorMessage, icon);
     }
 
     public void AddErrorNotification(string errorMessage, MaterialIconKind icon)

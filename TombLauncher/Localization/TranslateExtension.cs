@@ -2,6 +2,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
+using TombLauncher.Localization.Converters;
 
 namespace TombLauncher.Localization;
 
@@ -13,6 +14,7 @@ public class TranslateExtension : MarkupExtension
     }
 
     public string Key { get; }
+    public StringCasing Casing { get; set; } = StringCasing.Normal;
 
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
@@ -30,7 +32,8 @@ public class TranslateExtension : MarkupExtension
         var binding = new Binding($"[{Key}]")
         {
             Source = localizationManager,
-            Mode = BindingMode.OneWay
+            Mode = BindingMode.OneWay,
+            Converter = new StringCasingConverter { Casing = Casing }
         };
 
         return binding;

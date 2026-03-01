@@ -178,10 +178,10 @@ public class GameWithStatsService : IViewService
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         try
         {
-            currentPage?.SetBusy(true, "Saving play session...".GetLocalizedString());
+            currentPage?.SetBusy(true, "SAVING_PLAY_SESSION".GetLocalizedString());
             var gameMetadataDto = _mapper.Map<GameMetadataDto>(game.GameMetadata);
             _gamesUnitOfWork.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
-            currentPage?.SetBusy("Backing up savegames...".GetLocalizedString());
+            currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
             var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
 
             foreach (var file in filesToProcess)
@@ -309,7 +309,7 @@ public class GameWithStatsService : IViewService
     {
         var game = await _gamesUnitOfWork.GetGameWithStats(gameId);
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy("Uninstalling...".GetLocalizedString());
+        currentPage?.SetBusy("UNINSTALLING_1".GetLocalizedString());
         var installDir = game.GameMetadata.InstallDirectory;
         if (installDir != null)
         {

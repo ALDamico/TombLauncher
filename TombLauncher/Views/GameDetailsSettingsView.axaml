@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
@@ -15,14 +16,14 @@
     <StackPanel Orientation="Vertical">
         <DockPanel LastChildFill="True" IsVisible="{Binding IsWinePathOptionVisible}">
             <controls:Infotip DockPanel.Dock="Right" 
-                              Header="{DynamicResource 'Wine executable path'}" 
+                              Header="{loc:Translate WINE_EXECUTABLE_PATH}" 
                               ToolTipContent="{DynamicResource Wine tooltip content}" />
-            <controls:LabeledTextBox Label="{DynamicResource 'Wine executable path'}" 
+            <controls:LabeledTextBox Label="{loc:Translate WINE_EXECUTABLE_PATH}" 
                                      Text="{Binding WinePath}" />
         </DockPanel>
         
         <ToggleSwitch IsChecked="{Binding AskForConfirmationBeforeWalkthrough}"
-                      Content="{DynamicResource 'Ask for confirmation before opening a walkthrough'}" />
+                      Content="{loc:Translate ASK_FOR_CONFIRMATION_BEFORE_OPENING_A_WALKTHROUGH}" />
         <views:EditableListBox DataContext="{Binding DocumentationPatterns}"/>
         <views:EditableListBox DataContext="{Binding FolderExclusions}"/>
     </StackPanel>

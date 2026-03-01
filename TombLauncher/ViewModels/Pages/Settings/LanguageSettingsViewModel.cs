@@ -8,8 +8,8 @@ public partial class LanguageSettingsViewModel : SettingsSectionViewModelBase
 {
     public LanguageSettingsViewModel(PageViewModel settingsPage) : base("LANGUAGES", settingsPage)
     {
-        InfoTipContent = "Localization infotip content".GetLocalizedString();
-        InfoTipHeader = "Want to localize Tomb Launcher?".GetLocalizedString();
+        InfoTipContent = "LOCALIZATION_INFOTIP_CONTENT".GetLocalizedString();
+        InfoTipHeader = "WANT_TO_LOCALIZE_TOMB_LAUNCHER".GetLocalizedString();
     }
 
     [ObservableProperty] private ApplicationLanguageViewModel? _applicationLanguage;

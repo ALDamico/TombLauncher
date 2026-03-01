@@ -48,12 +48,12 @@ public class UrlOpenErrorMessageBox : ViewModelBase, IMsgBoxViewModel
     public WindowStartupLocation WindowStartupLocation { get; set; } = WindowStartupLocation.CenterOwner;
     public bool Topmost { get; set; }
     public Bitmap? Icon { get; set; }
-    public string? AcceptCommandText { get; set; } = "Yes".GetLocalizedString();
+    public string? AcceptCommandText { get; set; } = "YES".GetLocalizedString();
     public ICommand NoCommand { get; set; } = null!;
     public string? CancelCommandText { get; set; } = string.Empty;
     public string? Message { get; set; } = string.Empty;
     public string? MsgBoxTitle { get; set; } = string.Empty;
-    public string? NoCommandText { get; set; } = "No".GetLocalizedString();
+    public string? NoCommandText { get; set; } = "NO".GetLocalizedString();
     public bool ShowNoButton { get; set; } = true;
     public bool ShowYesButton { get; set; } = true;
     public bool ShowOkButton { get; set; } = false;

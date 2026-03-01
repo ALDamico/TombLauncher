@@ -1,5 +1,6 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
         xmlns:views="clr-namespace:TombLauncher.Views">
@@ -11,18 +12,18 @@
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="ColoredButtonTextBrush">White</SolidColorBrush>
+                <ResourceDictionary x:Key="LIGHT">
+                    <SolidColorBrush x:Key="COLOREDBUTTONTEXTBRUSH">White</SolidColorBrush>
                 </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="ColoredButtonTextBrush">White</SolidColorBrush>
+                <ResourceDictionary x:Key="DARK">
+                    <SolidColorBrush x:Key="COLOREDBUTTONTEXTBRUSH">White</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <!-- Colors are now defined in Themes/ScionTheme.axaml and Themes/XianTheme.axaml -->
 
             <!-- Font families -->
-            <FontFamily x:Key="TombRaiderFont">avares://TombLauncher/Assets#Tomb_Raider</FontFamily>
-            <FontFamily x:Key="Figtree">avares://TombLauncher/Assets/Figtree-VariableFont_wght.ttf</FontFamily>
+            <FontFamily x:Key="TOMBRAIDERFONT">avares://TombLauncher/Assets#Tomb_Raider</FontFamily>
+            <FontFamily x:Key="FIGTREE">avares://TombLauncher/Assets/Figtree-VariableFont_wght.ttf</FontFamily>
         </ResourceDictionary>
     </Styles.Resources>
     <Style Selector=":is(ContentControl)">

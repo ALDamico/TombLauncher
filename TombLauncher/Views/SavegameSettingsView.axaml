@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
@@ -12,25 +13,25 @@
         <settings:SavegameSettingsViewModel/>
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="{DynamicResource 'Allow Tomb Launcher to backup your saved games'}"/>
+        <TextBlock Text="{loc:Translate ALLOW_TOMB_LAUNCHER_TO_BACKUP_YOUR_SAVED_GAMES}"/>
         <CheckBox IsChecked="{Binding SavegameBackupEnabled}"/>
-        <TextBlock Text="{DynamicResource 'Limit the number of versions to keep'}"/>
+        <TextBlock Text="{loc:Translate LIMIT_THE_NUMBER_OF_VERSIONS_TO_KEEP}"/>
         <CheckBox IsChecked="{Binding LimitNumberOfVersions}"/>
-        <TextBlock Text="{DynamicResource 'Number of versions to keep'}" 
+        <TextBlock Text="{loc:Translate NUMBER_OF_VERSIONS_TO_KEEP}" 
                    IsEnabled="{Binding LimitNumberOfVersions}"/>
         <NumericUpDown Minimum="1" 
                        Value="{Binding NumberOfVersionsToKeep}" 
                        IsEnabled="{Binding LimitNumberOfVersions}"/>
         <DockPanel LastChildFill="True">
             <controls:Infotip DockPanel.Dock="Right" Icon="Dangerous" Foreground="{DynamicResource DangerBrush}"
-                              Header="{DynamicResource 'Potentially dangerous setting'}" 
-                              ToolTipContent="{DynamicResource 'Savegame backup millisecond delay warning'}"/>
-            <TextBlock Text="{DynamicResource 'Savegame backup delay (ms)'}"></TextBlock>
+                              Header="{loc:Translate POTENTIALLY_DANGEROUS_SETTING}" 
+                              ToolTipContent="{loc:Translate SAVEGAME_BACKUP_MILLISECOND_DELAY_WARNING}"/>
+            <TextBlock Text="{loc:Translate SAVEGAME_BACKUP_DELAY_MS}"></TextBlock>
         </DockPanel>
         <NumericUpDown Minimum="1" Maximum="800" Value="{Binding SavegameProcessingDelay}"></NumericUpDown>
         <DockPanel LastChildFill="True">
             <controls:Infotip DockPanel.Dock="Right" 
-                              ToolTipContent="{DynamicResource 'Rescans your backed up savegames and syncs their content with Tomb Launchers database'}"/>
+                              ToolTipContent="{loc:Translate RESCANS_YOUR_BACKED_UP_SAVEGAMES_AND_SYNCS_THEIR_C}"/>
             <TextBlock Text="{DynamicResource Sync savegame metadata}"/>    
         </DockPanel>
         <controls:IconButton Icon="Sync" 

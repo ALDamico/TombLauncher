@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
@@ -12,7 +13,7 @@
         <settings:AppearanceSettingsViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="{DynamicResource 'App theme'}"/>
+        <TextBlock Text="{loc:Translate APP_THEME}"/>
         <ComboBox SelectedItem="{Binding SelectedTheme}"
                   DisplayMemberBinding="{Binding DisplayName}"
                   ItemsSource="{Binding AvailableThemes}" />
@@ -31,7 +32,7 @@
                 <views:RadioButtonDetailView Icon="Grid" 
                                              Text="{DynamicResource Grid}"
                                              DetailsLine1="{DynamicResource The list of games will be displayed as cards arranged in a grid.}"
-                                             DetailsLine2="{DynamicResource 'You can play a game by double-clicking its card, or open the game details by single-clicking it.'}"/>
+                                             DetailsLine2="{loc:Translate YOU_CAN_PLAY_A_GAME_BY_DOUBLE_CLICKING_ITS_CARD_OR}"/>
             </RadioButton.Content>
         </RadioButton>
     </StackPanel>

@@ -66,7 +66,7 @@ public class GameSearchService : IViewService
     public async Task LoadMore(GameSearchViewModel target)
     {
         _logger.LogInformation("Loading more results");
-        target.SetBusy("Loading in progress".GetLocalizedString());
+        target.SetBusy("LOADING_IN_PROGRESS".GetLocalizedString());
         var nextPage = await GameDownloadManager.FetchNextPage();
 
         var fetchedResults = await InvokeMerger(target, nextPage);
@@ -123,8 +123,8 @@ public class GameSearchService : IViewService
         // Show feedback
         if (addedCount > 0 || updatedCount > 0)
         {
-            var addedText = addedCount > 0 ? "Load more added".GetLocalizedString(addedCount) : "";
-            var updatedText = updatedCount > 0 ? "Load more updated".GetLocalizedString(updatedCount) : "";
+            var addedText = addedCount > 0 ? "LOAD_MORE_ADDED".GetLocalizedString(addedCount) : "";
+            var updatedText = updatedCount > 0 ? "LOAD_MORE_UPDATED".GetLocalizedString(updatedCount) : "";
             var parts = new[] { addedText, updatedText }.Where(s => s.Length > 0);
             var message = string.Join(", ", parts);
             target.LoadMoreFeedback = " (" + message + ")";
@@ -207,7 +207,7 @@ public class GameSearchService : IViewService
 
     public async Task Search(GameSearchViewModel target)
     {
-        target.SetBusy("Search starting...".GetLocalizedString());
+        target.SetBusy("SEARCH_STARTING".GetLocalizedString());
         _logger.LogInformation("Started search with parameters: {Target}", target);
         var downloaders = _settingsProvider.GetActiveDownloaders();
         GameDownloadManager.Downloaders.Clear();

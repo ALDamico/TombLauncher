@@ -94,8 +94,8 @@ public class GameDetailsService : IViewService
             {
                 MsgBoxImage = MsgBoxImage.Error,
                 Message =
-                    "An error occurred while trying to open the walkthrough at WALKTHROUGH_URL. Would you like to copy this URL to the clipboard?".GetLocalizedString(link),
-                MsgBoxTitle = "Error".GetLocalizedString(),
+                    "AN_ERROR_OCCURRED_WHILE_TRYING_TO_OPEN_THE_WALKTHR".GetLocalizedString(link),
+                MsgBoxTitle = "ERROR".GetLocalizedString(),
                 TargetUrl = link
             });
         }

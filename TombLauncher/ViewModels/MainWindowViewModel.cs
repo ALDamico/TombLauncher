@@ -33,52 +33,52 @@ public partial class MainWindowViewModel : WindowViewModelBase
         {
             new MainMenuItemViewModel()
             {
-                ToolTip = "Welcome".GetLocalizedString(),
+                ToolTip = "WELCOME".GetLocalizedString(),
                 Icon = MaterialIconKind.HomeOutline,
-                Text = "Welcome".GetLocalizedString(),
+                Text = "WELCOME".GetLocalizedString(),
                 ViewModelType = typeof(WelcomePageViewModel)
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = "My mods".GetLocalizedString(),
+                ToolTip = "MY_MODS".GetLocalizedString(),
                 Icon = MaterialIconKind.Games,
-                Text = "My mods".GetLocalizedString(),
+                Text = "MY_MODS".GetLocalizedString(),
                 ViewModelType = typeof(GameListViewModel)
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = "Search".GetLocalizedString(),
+                ToolTip = "SEARCH".GetLocalizedString(),
                 Icon = MaterialIconKind.Magnify,
-                Text = "Search".GetLocalizedString(),
+                Text = "SEARCH".GetLocalizedString(),
                 ViewModelType = typeof(GameSearchViewModel)
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = "Random".GetLocalizedString(),
+                ToolTip = "RANDOM".GetLocalizedString(),
                 Icon = MaterialIconKind.Gambling,
-                Text = "Random game".GetLocalizedString(),
+                Text = "RANDOM_GAME".GetLocalizedString(),
                 ViewModelType = typeof(RandomGameViewModel)
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = "Statistics".GetLocalizedString(),
+                ToolTip = "STATISTICS".GetLocalizedString(),
                 Icon = MaterialIconKind.ChartBar,
-                Text = "Statistics".GetLocalizedString(),
+                Text = "STATISTICS".GetLocalizedString(),
                 ViewModelType = typeof(StatisticsPageViewModel)
             }
         };
 
         SettingsItem = new MainMenuItemViewModel()
         {
-            ToolTip = "Settings".GetLocalizedString(),
+            ToolTip = "SETTINGS".GetLocalizedString(),
             Icon = MaterialIconKind.Settings,
-            Text = "Settings".GetLocalizedString(),
+            Text = "SETTINGS".GetLocalizedString(),
             ViewModelType = typeof(SettingsPageViewModel)
         };
 
         GitHubLinkItem = new CommandViewModel()
         {
-            Tooltip = "Open Tomb Launcher's GitHub page".GetLocalizedString(),
+            Tooltip = "OPEN_TOMB_LAUNCHER_S_GITHUB_PAGE".GetLocalizedString(),
             Icon = MaterialIconKind.Github,
             Text = "GitHub",
             Command = new RelayCommand(OpenGithub)

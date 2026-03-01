@@ -1,5 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:TombLauncher.Controls"
@@ -7,7 +8,7 @@
              x:Class="TombLauncher.Controls.RingLoader">
     
     <UserControl.Resources>
-        <LinearGradientBrush x:Key="DefaultRingGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+        <LinearGradientBrush x:Key="DEFAULTRINGGRADIENT" StartPoint="0%,0%" EndPoint="100%,100%">
             <GradientStop Offset="0" Color="{DynamicResource PrimaryColor}" />
             <GradientStop Offset="1" Color="Transparent" />
         </LinearGradientBrush>

@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -13,10 +14,10 @@
         <pages:GameListViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
+        <valueConverters:BooleanToMaterialIconConverter x:Key="BOOLEANTOMATERIALICONCONVERTER"
                                                         TrueValue="Grid"
                                                         FalseValue="Table" />
-        <valueConverters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
+        <valueConverters:BooleanToStringConverter x:Key="BOOLEANTOSTRINGCONVERTER" 
                                                   TrueValue="Grid view" 
                                                   FalseValue="Table view"/>
     </UserControl.Resources>
@@ -52,7 +53,7 @@
             <Image Source="/Assets/Lara_Croft_Flashlight.png" Height="320"/>
             <StackPanel Orientation="Vertical">
                 <TextBlock FontSize="20" FontWeight="DemiBold" TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource No games}" />
-                <TextBlock FontStyle="Italic" TextAlignment="Center" HorizontalAlignment="Center" Text="{DynamicResource 'Try adding one'}"/>
+                <TextBlock FontStyle="Italic" TextAlignment="Center" HorizontalAlignment="Center" Text="{loc:Translate TRY_ADDING_ONE}"/>
             </StackPanel>
         </StackPanel>
         <views:GamesDataGridView Grid.Row="2" DataContext="{Binding .}" IsVisible="{Binding !ShowAsGrid}"/>
