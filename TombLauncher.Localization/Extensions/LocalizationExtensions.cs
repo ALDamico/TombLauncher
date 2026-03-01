@@ -7,7 +7,7 @@ public static class LocalizationExtensions
 {
     public static string GetLocalizedString(this string s)
     {
-        return s.GetLocalizedString(null);
+        return s.GetLocalizedString([]);
     }
 
     public static string GetLocalizedString(this string s, params object[] args)

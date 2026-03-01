@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.ComponentModel;
 using TombLauncher.Contracts.Localization.Dtos;
 
 namespace TombLauncher.Contracts.Localization;
 
-public interface ILocalizationManager
+public interface ILocalizationManager : INotifyPropertyChanged
 {
     CultureInfo CurrentCulture { get; }
     string DateOnlyFormat { get; }

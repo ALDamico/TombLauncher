@@ -5,12 +5,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
+using System.ComponentModel;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Localization.Dtos;
 
 namespace TombLauncher.Localization;
 
-public class LocalizationManager : ILocalizationManager
+public class LocalizationManager : ILocalizationManager, INotifyPropertyChanged
 {
     public LocalizationManager(Application application)
     {
@@ -18,13 +19,16 @@ public class LocalizationManager : ILocalizationManager
         _defaultCulture = CultureInfo.GetCultureInfo("en-US");
         _application = application;
         _localizationRelativePath = "Localization";
+        Instance = this;
     }
+
+    public static LocalizationManager? Instance { get; private set; }
 
     private CultureInfo _currentCulture;
     private string _localizationRelativePath;
     private CultureInfo _defaultCulture;
     private Application _application;
-    private ResourceDictionary _localizedStrings;
+    private ResourceDictionary _localizedStrings = new();
 
     public CultureInfo CurrentCulture => _currentCulture;
 
@@ -113,7 +117,11 @@ public class LocalizationManager : ILocalizationManager
 
         _application.Resources.MergedDictionaries.Add(resultingDictionary);
         _localizedStrings = resultingDictionary;
+
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Item[]"));
     }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public Dictionary<string, string> GetSubsetInvertedByPrefix(string prefix)
     {
@@ -124,8 +132,8 @@ public class LocalizationManager : ILocalizationManager
         var dictionary = new Dictionary<string, string>();
         foreach (var element in elements)
         {
-            dictionary.TryAdd(element.Value.ToString().ToLowerInvariant(),
-                element.Key.ToString().Replace(prefix, string.Empty).ToLowerInvariant());
+            dictionary.TryAdd(element.Value?.ToString()?.ToLowerInvariant() ?? string.Empty,
+                element.Key.ToString()?.Replace(prefix, string.Empty).ToLowerInvariant() ?? string.Empty);
         }
 
         return dictionary;
@@ -143,7 +151,7 @@ public class LocalizationManager : ILocalizationManager
             return parms.Length == 0 ? key : string.Format(key, parms);
         }
 
-        return !_localizedStrings.TryGetValue(key, out var s) ? key : string.Format((string)s ?? key, parms);
+        return !_localizedStrings.TryGetValue(key, out var s) ? key : string.Format((s as string) ?? key, parms);
     }
 
     public string this[string key] => GetLocalizedString(key);
