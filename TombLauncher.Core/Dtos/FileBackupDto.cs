@@ -10,10 +10,10 @@ public class FileBackupDto
     }
     public int Id { get; set; }
     public required string FileName { get; set; }
-    public required byte[] Data { get; set; }
+    public byte[]? Data { get; set; }
     public DateTime BackedUpOn { get; set; }
     public FileType FileType { get; set; }
     public int GameId { get; set; }
-    public required string Md5 { get; set; }
+    public string? Md5 { get; set; }
     public string? Arguments { get; set; }
 }

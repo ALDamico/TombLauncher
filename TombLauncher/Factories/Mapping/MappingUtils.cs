@@ -17,9 +17,7 @@ internal static class MappingUtils
             {
                 GameId = launchOptionsDialogViewModel.TargetGame.Id,
                 FileName = launchOptionsDialogViewModel.GameExecutable,
-                FileType = FileType.GameExecutable,
-                Data = Array.Empty<byte>(),
-                Md5 = string.Empty
+                FileType = FileType.GameExecutable
             };
         }
 
@@ -36,9 +34,7 @@ internal static class MappingUtils
                 GameId = launchOptionsDialogViewModel.TargetGame.Id,
                 FileName = launchOptionsDialogViewModel.SetupExecutable ?? string.Empty,
                 Arguments = launchOptionsDialogViewModel.SetupArgs,
-                FileType = FileType.SetupExecutable,
-                Data = Array.Empty<byte>(),
-                Md5 = string.Empty
+                FileType = FileType.SetupExecutable
             };
         }
 
@@ -54,9 +50,7 @@ internal static class MappingUtils
             {
                 GameId = launchOptionsDialogViewModel.TargetGame.Id,
                 FileName = launchOptionsDialogViewModel.CustomSetupExecutable ?? string.Empty,
-                FileType = FileType.CommunitySetupExecutable,
-                Data = Array.Empty<byte>(),
-                Md5 = string.Empty
+                FileType = FileType.CommunitySetupExecutable
             };
         }
 
