@@ -9,7 +9,7 @@ public partial class DailyStatisticsAverageGameDurationViewModel : ObservableObj
 {
     [ObservableProperty] private DateTime _date;
     [ObservableProperty] private TimeSpan _averageGameDuration;
-    public ChartEntityMetaData MetaData { get; set; }
+    public ChartEntityMetaData? MetaData { get; set; }
     public Coordinate Coordinate { get; set; }
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {

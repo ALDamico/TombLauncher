@@ -8,7 +8,7 @@ namespace TombLauncher.ValueConverters;
 
 public class EnumToDescriptionConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is Enum e)
         {
@@ -18,7 +18,7 @@ public class EnumToDescriptionConverter : IValueConverter
         return string.Empty;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is string str)
         {

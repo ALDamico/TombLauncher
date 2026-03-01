@@ -31,12 +31,12 @@ public partial class GameDetailsViewModel : PageViewModel
     [NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCmd))]
     private bool _askForConfirmationBeforeOpeningWalkthrough;
 
-    [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands;
-    [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles;
-    [ObservableProperty] private GameWithStatsViewModel _game;
-    [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks;
-    public List<string> EnabledPatterns { get; set; }
-    public List<string> IgnoredFolders { get; set; }
+    [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands = new ObservableCollection<CommandViewModel>();
+    [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles = new ObservableCollection<FileInfo>();
+    [ObservableProperty] private GameWithStatsViewModel _game = null!;
+    [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks = new ObservableCollection<GameLinkViewModel>();
+    public List<string> EnabledPatterns { get; set; } = new List<string>();
+    public List<string> IgnoredFolders { get; set; } = new List<string>();
     private readonly GameDetailsService _gameDetailsService;
 
     public override async Task OnNavigatedTo(object parameter)
@@ -49,7 +49,7 @@ public partial class GameDetailsViewModel : PageViewModel
         _gameDetailsService.InitializeSettings(this);
         InitSetupCommands();
 
-        if (Game.GameMetadata.IsInstalled)
+        if (Game.GameMetadata.IsInstalled && Game.GameMetadata.InstallDirectory != null)
             DocumentationFiles = _gameDetailsService
                 .GetDocumentationFiles(Game.GameMetadata.InstallDirectory, EnabledPatterns, IgnoredFolders)
                 .ToObservableCollection();
@@ -58,7 +58,13 @@ public partial class GameDetailsViewModel : PageViewModel
 
     public ICommand BrowseFolderCmd { get; }
 
-    private void BrowseFolder() => _gameDetailsService.OpenGameFolder(Game.GameMetadata.InstallDirectory);
+    private void BrowseFolder()
+    {
+        if (Game.GameMetadata.InstallDirectory != null)
+        {
+            _gameDetailsService.OpenGameFolder(Game.GameMetadata.InstallDirectory);
+        }
+    }
 
     private bool CanBrowseFolder() => Game.CanUninstall();
 
@@ -68,10 +74,13 @@ public partial class GameDetailsViewModel : PageViewModel
 
     public IRelayCommand ReadWalkthroughCmd { get; }
 
-    private async Task ReadWalkthrough(GameLinkViewModel link) =>
-        await _gameDetailsService.OpenWalkthrough(link.Link, AskForConfirmationBeforeOpeningWalkthrough);
+    private async Task ReadWalkthrough(GameLinkViewModel? link)
+    {
+        if (link != null)
+            await _gameDetailsService.OpenWalkthrough(link.Link, AskForConfirmationBeforeOpeningWalkthrough);
+    }
 
-    [ObservableProperty] private ICommand _installCmd;
+    [ObservableProperty] private ICommand? _installCmd;
 
     public ICommand OpenLaunchOptionsCmd { get; }
 
@@ -79,7 +88,11 @@ public partial class GameDetailsViewModel : PageViewModel
 
     public ICommand OpenDocumentCommand { get; }
 
-    private async Task OpenDocument(string path) => await _gameDetailsService.OpenWalkthrough(path, false);
+    private async Task OpenDocument(string? path)
+    {
+        if (path != null)
+            await _gameDetailsService.OpenWalkthrough(path, false);
+    }
 
     private void InitSetupCommands()
     {

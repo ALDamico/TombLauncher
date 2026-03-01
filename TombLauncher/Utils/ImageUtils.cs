@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
@@ -8,9 +9,9 @@ namespace TombLauncher.Utils;
 
 public static class ImageUtils
 {
-    public static byte[] ToByteArray(Bitmap bitmap)
+    public static byte[] ToByteArray(Bitmap? bitmap)
     {
-        byte[] arr = null;
+        byte[] arr = [];
         if (bitmap == null)
         {
             return arr;
@@ -21,14 +22,14 @@ public static class ImageUtils
         return memoryStream.ToArray();
     }
 
-    public static Bitmap ToBitmap(byte[] byteArr)
+    public static Bitmap? ToBitmap(byte[]? byteArr)
     {
         if (byteArr == null)
         {
             return null;
         }
 
-        var memoryStream = new MemoryStream(byteArr);
+        using var memoryStream = new MemoryStream(byteArr);
         return new Bitmap(memoryStream);
     }
 
@@ -36,7 +37,7 @@ public static class ImageUtils
     {
         get
         {
-            if (App.Current.ActualThemeVariant == ThemeVariant.Dark)
+            if (Application.Current?.ActualThemeVariant == ThemeVariant.Dark)
             {
                 return new Bitmap(
                     AssetLoader.Open(new Uri("avares://TombLauncher/Assets/unknown-title-pic-sm-light.png")));

@@ -7,8 +7,8 @@ namespace TombLauncher.ViewModels;
 
 public partial class CommandViewModel : ViewModelBase, ITopBarCommand
 {
-    [ObservableProperty] private ICommand _command;
+    [ObservableProperty] private ICommand _command = null!;
     [ObservableProperty] private MaterialIconKind _icon;
-    [ObservableProperty] private string _tooltip;
-    [ObservableProperty] private string _text;
+    [ObservableProperty] private string _tooltip = null!;
+    [ObservableProperty] private string _text = null!;
 }

@@ -1,6 +1,6 @@
 ﻿namespace TombLauncher.Contracts.Downloaders;
 
-public interface IMultiSourceSearchResultMetadata : IGameSearchResultMetadata
+public interface IMergedGameSearchResultMetadata : IGameSearchResultMetadata
 {
     public HashSet<IGameSearchResultMetadata> Sources { get; set; }
 }

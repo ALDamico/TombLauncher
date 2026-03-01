@@ -16,8 +16,6 @@ using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;
 
-#nullable enable
-
 public partial class MainWindowViewModel : WindowViewModelBase
 {
     public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel, NotificationService notificationService, ISettingsProvider settingsProvider, IPlatformSpecificFeatures platformSpecificFeatures)
@@ -147,7 +145,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
             if (value != null)
             {
                 // Using NavigateToRoot for main menu items to clear history stack
-                _ = _navigationManager.NavigateToRoot(value.ViewModelType);
+                _ = _navigationManager.NavigateToRoot(value.ViewModelType!);
             }
         }
     }
@@ -166,7 +164,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
     private async Task OpenSettings()
     {
-        await _navigationManager.NavigateTo(SettingsItem.ViewModelType);
+        await _navigationManager.NavigateTo(SettingsItem.ViewModelType!);
         SelectedMenuItem = SettingsItem;
         IsSettingsOpen = true;
     }

@@ -56,9 +56,9 @@ public class GameSearchService : IViewService
     public GameDownloadManager GameDownloadManager { get; }
     public GamesUnitOfWork GamesUnitOfWork { get; }
 
-    private Task<List<IMultiSourceSearchResultMetadata>> InvokeMerger(GameSearchViewModel target, List<IGameSearchResultMetadata> nextPage)
+    private Task<List<IMergedGameSearchResultMetadata>> InvokeMerger(GameSearchViewModel target, List<IGameSearchResultMetadata> nextPage)
     {
-        var fetchedResults = _mapper.Map<List<IMultiSourceSearchResultMetadata>>(target.FetchedResults);
+        var fetchedResults = _mapper.Map<List<IMergedGameSearchResultMetadata>>(target.FetchedResults);
         GameDownloadManager.Merge(fetchedResults, nextPage);
         return Task.FromResult(fetchedResults);
     }
@@ -132,7 +132,7 @@ public class GameSearchService : IViewService
         }
         else
         {
-            target.LoadMoreFeedback = null;
+            target.LoadMoreFeedback = string.Empty;
         }
     }
 

@@ -8,9 +8,9 @@ namespace TombLauncher.ValueConverters;
 
 public class StringNullToNullBitmapConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        var themeVariant = App.Current.ActualThemeVariant;
+        var themeVariant = App.Current?.ActualThemeVariant;
         if (value is string str)
         {
             if (str.IsNullOrWhiteSpace())
@@ -39,18 +39,18 @@ public class StringNullToNullBitmapConverter : IValueConverter
         return value;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is string str)
         {
             if (str == null || str == LightThemeVariantValue || str == DarkThemeVariantValue)
-                return null;
+                return string.Empty;
             return str;
         }
 
         return value;
     }
-    
-    public string LightThemeVariantValue { get; set; }
-    public string DarkThemeVariantValue { get; set; }
+
+    public string LightThemeVariantValue { get; set; } = string.Empty;
+    public string DarkThemeVariantValue { get; set; } = string.Empty;
 }

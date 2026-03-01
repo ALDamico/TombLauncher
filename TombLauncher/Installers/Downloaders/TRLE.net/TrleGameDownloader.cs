@@ -60,7 +60,7 @@ public class TrleGameDownloader : IGameDownloader
 
     public string DisplayName => "TRLE.net";
     public string BaseUrl => "https://trle.net";
-    public DownloaderSearchPayload DownloaderSearchPayload { get; private set; }
+    public DownloaderSearchPayload DownloaderSearchPayload { get; set; } = new();
     private HttpClient _httpClient;
 
     private readonly Dictionary<GameEngine, string> _gameEngineMapping;
@@ -95,7 +95,7 @@ public class TrleGameDownloader : IGameDownloader
         CurrentPage = 0;
 
         var result = await FetchNextPage(cancellationToken);
-        
+
         return result;
     }
 
@@ -162,8 +162,9 @@ public class TrleGameDownloader : IGameDownloader
     {
         cancellationToken.ThrowIfCancellationRequested();
         var resultsTable = htmlDocument.DocumentNode.SelectSingleNode("//table[@class='FindTable']");
-        var rows = resultsTable.SelectNodes("./tr");
-        var headerRow = rows.FirstOrDefault().SelectNodes("./strong/td");
+        var rows = resultsTable?.SelectNodes("./tr");
+        var headerRow = rows?.FirstOrDefault()?.SelectNodes("./strong/td");
+        if (rows == null || headerRow == null) return;
         var dataRows = rows.Skip(1);
         foreach (var row in dataRows)
         {
@@ -177,8 +178,8 @@ public class TrleGameDownloader : IGameDownloader
                 var value = zip.Value;
                 if (value == null) continue;
                 var v = value.InnerText?.Trim().IsNullOrEmpty() == true
-                    ? value.SelectSingleNode("./a")?.Attributes["href"].Value
-                    : value.InnerText.Trim();
+                    ? value.SelectSingleNode("./a")?.Attributes["href"]?.Value
+                    : value.InnerText?.Trim() ?? string.Empty;
                 if (v == null) continue;
                 switch (zip.Key)
                 {
@@ -191,7 +192,7 @@ public class TrleGameDownloader : IGameDownloader
                     case "levelname/info":
                         metadata.Title = v;
                         var detailsLink = value.SelectSingleNode("./a")?.Attributes["href"]?.Value;
-                        metadata.DetailsLink = detailsLink;
+                        metadata.DetailsLink = detailsLink ?? string.Empty;
                         break;
                     case "difficulty":
                         metadata.Difficulty = Enum.TryParse<GameDifficulty>(v, true, out var actualDifficulty)
@@ -222,7 +223,7 @@ public class TrleGameDownloader : IGameDownloader
                             metadata.ReviewCount = reviewCount;
                         break;
                     case "released":
-                        if (DateTime.TryParse(v, CultureInfo.InvariantCulture, DateTimeStyles.None,out var releasedDate))
+                        if (DateTime.TryParse(v, CultureInfo.InvariantCulture, DateTimeStyles.None, out var releasedDate))
                             metadata.ReleaseDate = releasedDate;
                         break;
                 }
@@ -336,18 +337,18 @@ public class TrleGameDownloader : IGameDownloader
 
         var gameEngine = _gameEngineMapping[searchPayload.GameEngine.GetValueOrDefault()];
         int? duration = null;
-        if (searchPayload.Duration.GetValueOrDefault() != GameLength.Unknown)
+        if (searchPayload.Duration != null && searchPayload.Duration.GetValueOrDefault() != GameLength.Unknown)
         {
-            duration = (int)(searchPayload.Duration);
+            duration = (int)(searchPayload.Duration.Value);
         }
 
         return new TrleSearchRequest()
         {
             Atype = 1,
-            Author = searchPayload.AuthorName,
+            Author = searchPayload.AuthorName ?? string.Empty,
             Class = string.Empty,
             Difficulty = difficulty, // TODO verify these value match
-            Level = searchPayload.LevelName,
+            Level = searchPayload.LevelName ?? string.Empty,
             Rating = searchPayload.Rating,
             Sorttype = 2,
             Type = gameEngine,

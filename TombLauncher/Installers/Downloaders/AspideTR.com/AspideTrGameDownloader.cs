@@ -38,7 +38,7 @@ public class AspideTrGameDownloader : IGameDownloader
 
     public string DisplayName => "AspideTR";
     public string BaseUrl => "https://www.aspidetr.com/";
-    public DownloaderSearchPayload DownloaderSearchPayload { get; private set; }
+    public DownloaderSearchPayload DownloaderSearchPayload { get; set; } = new();
 
     private readonly HttpClient _httpClient;
 
@@ -330,9 +330,9 @@ public class AspideTrGameDownloader : IGameDownloader
     {
         return new AspideTrSearchRequest()
         {
-            LAuthor = request.AuthorName,
-            LTitle = request.LevelName,
-            LType = ConvertEngine(request.GameEngine.GetValueOrDefault()),
+            LAuthor = request.AuthorName ?? string.Empty,
+            LTitle = request.LevelName ?? string.Empty,
+            LType = ConvertEngine(request.GameEngine.GetValueOrDefault()) ?? 0,
             Classes = string.Join("-", ConvertFlags(request))
         };
     }

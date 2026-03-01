@@ -117,6 +117,9 @@ public class LocalizationManager : ILocalizationManager
 
     public Dictionary<string, string> GetSubsetInvertedByPrefix(string prefix)
     {
+        if (_localizedStrings == null)
+            return new Dictionary<string, string>();
+
         var elements = _localizedStrings.Where(ls => (ls.Key as string)?.StartsWith(prefix + "_") == true);
         var dictionary = new Dictionary<string, string>();
         foreach (var element in elements)
@@ -133,6 +136,11 @@ public class LocalizationManager : ILocalizationManager
         if (parms == null)
         {
             parms = [];
+        }
+
+        if (_localizedStrings == null)
+        {
+            return parms.Length == 0 ? key : string.Format(key, parms);
         }
 
         return !_localizedStrings.TryGetValue(key, out var s) ? key : string.Format((string)s ?? key, parms);

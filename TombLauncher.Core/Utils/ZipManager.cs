@@ -7,14 +7,14 @@ namespace TombLauncher.Core.Utils;
 
 public class ZipManager : IDisposable
 {
-    public ZipManager(string path, StringCodec stringCodec = null)
+    public ZipManager(string path, StringCodec? stringCodec = null)
     {
         stringCodec ??= StringCodec.Default;
         _zipFile = new ZipFile(path, stringCodec);
     }
 
     private ZipFile _zipFile;
-    private IEnumerator _zipFileEnumerator;
+    private IEnumerator? _zipFileEnumerator;
 
     public IEnumerable<ZipEntry> GetEntries()
     {
@@ -31,7 +31,7 @@ public class ZipManager : IDisposable
         return _zipFile.GetInputStream(file);
     }
 
-    public async Task ExtractAll(string targetPath, CancellationToken cancellationToken = default, IProgress<CopyProgressInfo> progress = null)
+    public async Task ExtractAll(string targetPath, CancellationToken cancellationToken = default, IProgress<CopyProgressInfo>? progress = null)
     {
         PathUtils.EnsureFolderExists(targetPath);
         var zipFileEnumerator = _zipFile.GetEnumerator();
@@ -50,10 +50,10 @@ public class ZipManager : IDisposable
                 continue;
             }
 
-            var relativePath = Path.GetDirectoryName((string)current.Name);
+            var relativePath = Path.GetDirectoryName(current.Name);
             if (relativePath.IsNotNullOrWhiteSpace())
             {
-                PathUtils.EnsureFolderExists(Path.Combine(targetPath, relativePath));
+                PathUtils.EnsureFolderExists(Path.Combine(targetPath, relativePath!));
             }
 
             if (progress != null)
@@ -72,7 +72,7 @@ public class ZipManager : IDisposable
             await using var streamWriter = File.Create(targetFileName);
             var size = 4096 * 16;
             var buffer = new byte[size];
-           int bytesRead;
+            int bytesRead;
 
             while ((bytesRead = await inputStream.ReadAsync(buffer, cancellationToken)) > 0)
             {

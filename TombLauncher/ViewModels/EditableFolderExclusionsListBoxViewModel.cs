@@ -6,7 +6,7 @@ using TombLauncher.Localization.Extensions;
 
 namespace TombLauncher.ViewModels;
 
-public class EditableFolderExclusionsListBoxViewModel: EditableListBoxViewModel 
+public class EditableFolderExclusionsListBoxViewModel : EditableListBoxViewModel
 {
     public EditableFolderExclusionsListBoxViewModel()
     {
@@ -28,7 +28,7 @@ public class EditableFolderExclusionsListBoxViewModel: EditableListBoxViewModel
 
         if (newValue.EndsWithAny('.', ' '))
             return new ValidationResult("Folder names cannot end with a dor or a space".GetLocalizedString());
-        
-        return ValidationResult.Success;
+
+        return ValidationResult.Success!;
     }
 }

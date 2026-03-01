@@ -34,17 +34,17 @@ public class SettingsProvider : ISettingsProvider
     public ApplicationCoreSettings GetApplicationSettings()
     {
         return new ApplicationCoreSettings(
-            _appConfiguration.GitHubLink,
-            new CultureInfo(_appConfiguration.ApplicationLanguage),
+            _appConfiguration.GitHubLink ?? string.Empty,
+            new CultureInfo(_appConfiguration.ApplicationLanguage ?? "en-US"),
             _appConfiguration.RandomGameMaxRerolls.GetValueOrDefault(),
-            _appConfiguration.DatabasePath
+            _appConfiguration.DatabasePath ?? "TombLauncher.sqlite"
         );
     }
 
     public AppearanceCoreSettings GetAppearanceSettings()
     {
         return new AppearanceCoreSettings(
-            _appConfiguration.ApplicationTheme,
+            _appConfiguration.ApplicationTheme ?? string.Empty,
             _appConfiguration.DefaultToGridView
         );
     }
@@ -55,18 +55,20 @@ public class SettingsProvider : ISettingsProvider
         var downloaders = ReflectionUtils.GetImplementors<IGameDownloader>(BindingFlags.NonPublic).ToList();
         var priority = downloaders.Count();
 
-        var configCustomizations = _appConfiguration.Downloaders.ToDictionary(d => d.ClassName);
+        var configCustomizations = _appConfiguration.Downloaders?.Where(d => d.ClassName != null).ToDictionary(d => d.ClassName!) ?? new Dictionary<string, DownloaderConfiguration>();
         foreach (var downloader in downloaders)
         {
             var className = downloader.GetType().FullName;
-            configCustomizations.TryGetValue(className, out var config);
+            configCustomizations.TryGetValue(className!, out var config);
             if (config == null)
             {
                 config = new DownloaderConfiguration()
                 {
                     ClassName = className,
                     IsChecked = true,
-                    Priority = --priority
+                    Priority = --priority,
+                    BaseUrl = string.Empty,
+                    DisplayName = string.Empty
                 };
             }
 
@@ -91,6 +93,7 @@ public class SettingsProvider : ISettingsProvider
         var output = new List<IGameDownloader>();
         foreach (var config in downloaderConfigs)
         {
+            if (config.ClassName == null) continue;
             var downloaderImpl = ReflectionUtils.GetTypeByName(config.ClassName);
             if (downloaderImpl == null)
             {
@@ -109,11 +112,11 @@ public class SettingsProvider : ISettingsProvider
         var methodToUse = _platformSpecificFeatures.GetPlatformSpecificZipFallbackPrograms()
             .FirstOrDefault(m => m.Name == _appConfiguration.UnzipFallbackMethod);
         return new GameDetailsCoreSettings(
-            _appConfiguration.WinePath,
-            _appConfiguration.UnzipFallbackMethod,
-            methodToUse != null ? (methodToUse.Command, methodToUse.CommandLineArguments) : (null, null),
-            _appConfiguration.DocumentationPatterns.ToList(),
-            _appConfiguration.DocumentationFolderExclusions.ToList(),
+            _appConfiguration.WinePath ?? string.Empty,
+            _appConfiguration.UnzipFallbackMethod ?? string.Empty,
+            methodToUse != null ? (methodToUse.Command, methodToUse.CommandLineArguments) : (string.Empty, string.Empty),
+            _appConfiguration.DocumentationPatterns?.ToList() ?? new List<CheckableItem<string>>(),
+            _appConfiguration.DocumentationFolderExclusions?.ToList() ?? new List<CheckableItem<string>>(),
             _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault()
         );
     }

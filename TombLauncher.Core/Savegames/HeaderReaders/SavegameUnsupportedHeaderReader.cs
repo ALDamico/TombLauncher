@@ -10,6 +10,7 @@ public class SavegameUnsupportedHeaderReader : ISavegameHeaderReader
         return new SavegameHeader()
         {
             Filepath = filepath,
+            LevelName = "Unknown Level",
             SaveNumber = -1,
             SlotNumber = SavegameUtils.GetSlotNumber(filepath)
         };

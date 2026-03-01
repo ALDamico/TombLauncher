@@ -24,8 +24,8 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     }
 
     [ObservableProperty] private string _sectionTitle;
-    [ObservableProperty] private string _infoTipHeader;
-    [ObservableProperty] private string _infoTipContent;
+    [ObservableProperty] private string _infoTipHeader = string.Empty;
+    [ObservableProperty] private string _infoTipContent = string.Empty;
     [ObservableProperty] private PageViewModel _settingsPage;
     internal void RaiseCanExecuteChanged<T>(ICommand command)
     {
@@ -59,7 +59,7 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
 
     public bool EditInProgress
     {
-        get => _editInProgress; 
+        get => _editInProgress;
         protected set
         {
             _editInProgress = value;

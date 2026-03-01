@@ -47,7 +47,7 @@ public class Tr1xSavegameHeaderReader : ISavegameHeaderReader
                 using var bsonReader = new BsonDataReader(memoryStream);
                 var jsonSerializer = new JsonSerializer();
                 var savegame = jsonSerializer.Deserialize<Tr1xSavegame>(bsonReader);
-                levelTitle = savegame.LevelTitle;
+                levelTitle = savegame?.LevelTitle ?? "Unknown Level";
                 saveNumber = savegame.SaveCounter;
             }
             else
@@ -84,7 +84,7 @@ public class Tr1xSavegameHeaderReader : ISavegameHeaderReader
 
     private class Tr1xSavegame
     {
-        [JsonProperty("level_title")] public string LevelTitle { get; set; }
+        [JsonProperty("level_title")] public string? LevelTitle { get; set; }
         [JsonProperty("save_counter")] public int SaveCounter { get; set; }
     }
 

@@ -20,7 +20,7 @@ namespace TombLauncher.Factories;
 
 public static class MapperConfigurationFactory
 {
-    public static MapperConfiguration GetMapperConfiguration(Func<Type, object> serviceFactory = null)
+    public static MapperConfiguration GetMapperConfiguration(Func<Type, object>? serviceFactory = null)
     {
         var mapperConfiguration = new MapperConfiguration(cfg =>
         {
@@ -34,9 +34,9 @@ public static class MapperConfigurationFactory
             }
 
             cfg.AddProfile<AppCrashProfile>();
-            cfg.AddProfile(new GamesProfile(serviceFactory ?? (_ => null)));
+            cfg.AddProfile(new GamesProfile(serviceFactory ?? (_ => null!)));
             cfg.AddProfile<SettingsProfile>();
-            cfg.AddProfile(new SearchProfile(serviceFactory ?? (_ => null)));
+            cfg.AddProfile(new SearchProfile(serviceFactory ?? (_ => null!)));
             cfg.AddProfile<StatisticsProfile>();
             cfg.AddProfile<SavegamesProfile>();
             cfg.AddProfile<LaunchOptionsProfile>();

@@ -53,7 +53,7 @@ public class GameWithStatsService : IViewService
     }
 
     public ViewServiceContext ViewContext { get; }
-    private SavegameHeaderProcessor _headerProcessor;
+    private SavegameHeaderProcessor? _headerProcessor;
     private IMapper _mapper => ViewContext.Mapper;
 
     private readonly GamesUnitOfWork _gamesUnitOfWork;
@@ -62,7 +62,7 @@ public class GameWithStatsService : IViewService
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
     public IDialogService DialogService => ViewContext.DialogService;
-    private FileSystemWatcher _watcher;
+    private FileSystemWatcher? _watcher;
     private readonly bool _backupEnabled;
     private readonly int? _numberOfSavesToKeep;
     private readonly ILogger<GameWithStatsService> _logger;
@@ -88,7 +88,10 @@ public class GameWithStatsService : IViewService
         currentPage?.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
         InitFileSystemWatcher(game);
 
-        LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
+        if (game.GameMetadata.ExecutablePath != null) 
+        {
+            LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
+        }
     }
 
     private void InitFileSystemWatcher(GameWithStatsViewModel game)
@@ -99,14 +102,15 @@ public class GameWithStatsService : IViewService
         }
         try
         {
-            _watcher = new FileSystemWatcher(game.GameMetadata.InstallDirectory, "save*.*")
+            _watcher = new FileSystemWatcher(game.GameMetadata.InstallDirectory ?? string.Empty, "save*.*")
             {
                 IncludeSubdirectories = true,
                 EnableRaisingEvents = true,
                 InternalBufferSize = 8192 * 32,
                 NotifyFilter = _platformSpecificFeatures.GetSavegameWatcherNotifyFilters()
             };
-            _headerProcessor.SavegameHeaderReader = _headerProvider.GetHeaderReader(game.GameMetadata.GameEngine);
+            if (_headerProcessor != null)
+                _headerProcessor.SavegameHeaderReader = _headerProvider.GetHeaderReader(game.GameMetadata.GameEngine);
             _watcher.Changed += WatcherOnCreatedOrChanged;
         }
         catch
@@ -118,7 +122,7 @@ public class GameWithStatsService : IViewService
 
     private void WatcherOnCreatedOrChanged(object sender, FileSystemEventArgs e)
     {
-        _headerProcessor.EnqueueFileName(e.FullPath);
+        _headerProcessor?.EnqueueFileName(e.FullPath);
     }
 
     public async Task PlayGame(int gameId)
@@ -178,7 +182,7 @@ public class GameWithStatsService : IViewService
             var gameMetadataDto = _mapper.Map<GameMetadataDto>(game.GameMetadata);
             _gamesUnitOfWork.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
             currentPage?.SetBusy("Backing up savegames...".GetLocalizedString());
-            var filesToProcess = _headerProcessor.ProcessedFiles;
+            var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
 
             foreach (var file in filesToProcess)
             {
@@ -190,11 +194,11 @@ public class GameWithStatsService : IViewService
             if (_backupEnabled)
             {
                 _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
-                _headerProcessor.ClearProcessedFiles();
+                _headerProcessor?.ClearProcessedFiles();
 
                 try
                 {
-                    errorOccurred = _headerProcessor.ErrorOccurred;
+                    errorOccurred = _headerProcessor?.ErrorOccurred ?? false;
                     _headerProcessor?.Dispose();
                     _watcher?.Dispose();
                 }
@@ -231,7 +235,10 @@ public class GameWithStatsService : IViewService
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy(
             LocalizationManager.GetLocalizedString("Launching setup for GAMENAME", game.GameMetadata.Title));
-        LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
+        if (game.GameMetadata.SetupExecutable != null)
+        {
+            LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
+        }
     }
 
     public void LaunchCommunitySetup(GameWithStatsViewModel game)
@@ -239,14 +246,20 @@ public class GameWithStatsService : IViewService
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy(
             LocalizationManager.GetLocalizedString("Launching community patch setup for GAMENAME", game.GameMetadata.Title));
-        LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
+        if (game.GameMetadata.CommunitySetupExecutable != null)
+        {
+            LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
+        }
     }
 
-    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false, string arguments = null)
+    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false, string? arguments = null)
     {
         var executableFileNameOnly = Path.GetFileName(executable);
-
-        var workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable));
+        string workingDirectory = string.Empty;
+        if (game.GameMetadata.InstallDirectory != null)
+        {
+            workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable)) ?? string.Empty;
+        }
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
         _startDate = DateTime.Now;
 
@@ -257,11 +270,11 @@ public class GameWithStatsService : IViewService
         };
         if (trackPlayTime)
         {
-            process.Exited += async (sender, _) => await OnGameExited(game, sender as Process);
+            process.Exited += async (sender, _) => await OnGameExited(game, (Process)sender!);
         }
         else
         {
-            process.Exited += (sender, _) => OnSetupExited(sender as Process);
+            process.Exited += (sender, _) => OnSetupExited((Process)sender!);
         }
 
         process.ErrorDataReceived += (_, args) => _logger.LogError("Process error: {StandardError}", args.Data);
@@ -298,7 +311,10 @@ public class GameWithStatsService : IViewService
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy("Uninstalling...".GetLocalizedString());
         var installDir = game.GameMetadata.InstallDirectory;
-        Directory.Delete(installDir, true);
+        if (installDir != null)
+        {
+            Directory.Delete(installDir, true);
+        }
         _gamesUnitOfWork.MarkGameAsUninstalled(gameId);
         await _gamesUnitOfWork.Save();
         await NavigationManager.GoBack();

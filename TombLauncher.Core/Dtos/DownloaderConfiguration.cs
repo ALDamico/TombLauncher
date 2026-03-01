@@ -4,14 +4,14 @@ namespace TombLauncher.Core.Dtos;
 
 public class DownloaderConfiguration : CheckableItem, IEquatable<DownloaderConfiguration>, IEqualityComparer<DownloaderConfiguration>
 {
-    public string DisplayName { get; set; }
-    public string BaseUrl { get; set; }
+    public required string DisplayName { get; set; }
+    public required string BaseUrl { get; set; }
     public int Priority { get; set; }
-    public string ClassName { get; set; }
+    public string? ClassName { get; set; }
     [JsonIgnore]
-    public string SupportedFeatures { get; set; }
+    public string? SupportedFeatures { get; set; }
 
-    public bool Equals(DownloaderConfiguration other)
+    public bool Equals(DownloaderConfiguration? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -20,7 +20,7 @@ public class DownloaderConfiguration : CheckableItem, IEquatable<DownloaderConfi
                SupportedFeatures == other.SupportedFeatures;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
@@ -33,7 +33,7 @@ public class DownloaderConfiguration : CheckableItem, IEquatable<DownloaderConfi
         return HashCode.Combine(DisplayName, BaseUrl, IsChecked, Priority, ClassName, SupportedFeatures);
     }
 
-    public bool Equals(DownloaderConfiguration x, DownloaderConfiguration y)
+    public bool Equals(DownloaderConfiguration? x, DownloaderConfiguration? y)
     {
         if (ReferenceEquals(x, y)) return true;
         if (x is null) return false;

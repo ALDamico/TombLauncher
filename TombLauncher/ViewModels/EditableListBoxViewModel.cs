@@ -9,7 +9,7 @@ using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.ViewModels;
 
-public abstract partial class EditableListBoxViewModel : ObservableValidator 
+public abstract partial class EditableListBoxViewModel : ObservableValidator
 {
     public EditableListBoxViewModel()
     {
@@ -21,9 +21,9 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
         HandleKeyUpCmd = new RelayCommand<KeyEventArgs>(HandleKeyUp);
     }
 
-    private CheckableItem<string> _editedValue;
+    private CheckableItem<string>? _editedValue;
     private int _editedValueIndex;
-    private ObservableCollection<CheckableItem<string>> _targetCollection;
+    private ObservableCollection<CheckableItem<string>> _targetCollection = null!;
 
     public ObservableCollection<CheckableItem<string>> TargetCollection
     {
@@ -47,22 +47,22 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
     [NotifyDataErrorInfo]
     [NotifyCanExecuteChangedFor(nameof(ClearCurrentValueCmd), nameof(AddValueCmd), nameof(EditValueCmd))]
     [CustomValidation(typeof(EditableListBoxViewModel), nameof(InvokeValidateMethod))]
-    private string _currentValue;
+    private string _currentValue = null!;
 
-    [ObservableProperty] private string _watermark;
-    [ObservableProperty] private string _header;
-    
+    [ObservableProperty] private string _watermark = null!;
+    [ObservableProperty] private string _header = null!;
+
     public IRelayCommand AddValueCmd { get; }
 
     private void AddValue()
     {
-        TargetCollection.Add(new CheckableItem<string>(){IsChecked = true, Value = CurrentValue});
+        TargetCollection.Add(new CheckableItem<string>() { IsChecked = true, Value = CurrentValue });
         CurrentValue = string.Empty;
         _editedValue = null;
     }
 
     private bool CanAddValue() => CurrentValue.IsNotNullOrWhiteSpace() && !HasErrors;
-    
+
     public IRelayCommand ClearCurrentValueCmd { get; }
 
     private void ClearCurrentValue()
@@ -77,23 +77,28 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
     }
 
     private bool CanClearCurrentValue() => CurrentValue.IsNotNullOrWhiteSpace();
-    
+
     public IRelayCommand DeleteValueCmd { get; }
 
-    private void DeleteValue(CheckableItem<string> valueToDelete)
+    private void DeleteValue(CheckableItem<string>? valueToDelete)
     {
-        TargetCollection.Remove(valueToDelete);
+        if (valueToDelete != null)
+        {
+            TargetCollection.Remove(valueToDelete);
+        }
     }
 
-    private bool CanDeleteValue(CheckableItem<string> valueToDelete)
+    private bool CanDeleteValue(CheckableItem<string>? valueToDelete)
     {
         return valueToDelete is { CanUserCheck: true };
     }
-    
+
     public IRelayCommand EditValueCmd { get; }
 
-    private void EditValue(CheckableItem<string> valueToEdit)
+    private void EditValue(CheckableItem<string>? valueToEdit)
     {
+        if (valueToEdit == null) return;
+
         // TODO Add EditInProgress
         _editedValue = valueToEdit;
         _editedValueIndex = TargetCollection.IndexOf(valueToEdit);
@@ -101,15 +106,16 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
         CurrentValue = valueToEdit.Value;
     }
 
-    private bool CanEditValue(CheckableItem<string> valueToEdit)
+    private bool CanEditValue(CheckableItem<string>? valueToEdit)
     {
         return valueToEdit is { CanUserCheck: true } && _editedValue == null;
     }
-    
+
     public IRelayCommand<KeyEventArgs> HandleKeyUpCmd { get; }
 
-    private void HandleKeyUp(KeyEventArgs keyEventArgs)
+    private void HandleKeyUp(KeyEventArgs? keyEventArgs)
     {
+        if (keyEventArgs == null) return;
         switch (keyEventArgs.Key)
         {
             case Key.Enter:
@@ -122,8 +128,8 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
                 break;
         }
     }
-    
-    private void TargetCollectionOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+
+    private void TargetCollectionOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         OnPropertyChanged(nameof(TargetCollection));
     }

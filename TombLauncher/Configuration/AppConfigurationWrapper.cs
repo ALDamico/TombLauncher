@@ -11,19 +11,19 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
     public IAppConfiguration Defaults { get; set; } = new AppConfiguration();
     public IAppConfiguration User { get; set; } = new AppConfiguration();
 
-    public string ApplicationLanguage
+    public string? ApplicationLanguage
     {
         get => User.ApplicationLanguage.Coalesce(Defaults.ApplicationLanguage);
         set => User.ApplicationLanguage = value.DefaultIfEquals(Defaults.ApplicationLanguage);
     }
 
-    public string DatabasePath
+    public string? DatabasePath
     {
         get => User.DatabasePath.Coalesce(Defaults.DatabasePath);
         set => User.DatabasePath = value.DefaultIfEquals(Defaults.DatabasePath);
     }
 
-    public string ApplicationTheme
+    public string? ApplicationTheme
     {
         get => User.ApplicationTheme.Coalesce(Defaults.ApplicationTheme);
         set => User.ApplicationTheme = value.DefaultIfEquals(Defaults.ApplicationTheme);
@@ -36,12 +36,12 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
             value.DefaultIfEquals(Defaults.AskForConfirmationBeforeWalkthrough);
     }
 
-    public List<DownloaderConfiguration> Downloaders
+    public List<DownloaderConfiguration>? Downloaders
     {
         get => User.Downloaders.Coalesce(Defaults.Downloaders);
         set
         {
-            if (value.SequenceEqual(Defaults.Downloaders, new DownloaderConfiguration()))
+            if (value!.SequenceEqual(Defaults.Downloaders!, new DownloaderConfiguration() { BaseUrl = string.Empty, DisplayName = string.Empty }))
             {
                 User.Downloaders = null;
                 return;
@@ -57,13 +57,13 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set => User.MinimumLogLevel = value.DefaultIfEquals(Defaults.MinimumLogLevel);
     }
 
-    public string AppCastUrl
+    public string? AppCastUrl
     {
         get => Defaults.AppCastUrl;
         set => Defaults.AppCastUrl = value;
     }
 
-    public string AppCastPublicKey
+    public string? AppCastPublicKey
     {
         get => Defaults.AppCastPublicKey;
         set => Defaults.AppCastPublicKey = value;
@@ -99,7 +99,7 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set => User.SavegameProcessingDelay = value.DefaultIfEquals(Defaults.SavegameProcessingDelay);
     }
 
-    public string GitHubLink
+    public string? GitHubLink
     {
         get => Defaults.GitHubLink;
         set => Defaults.GitHubLink = value;
@@ -111,34 +111,34 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         set => User.DefaultToGridView = value.DefaultIfEquals(DefaultToGridView);
     }
 
-    public List<CheckableItem<string>> DocumentationPatterns
+    public List<CheckableItem<string>>? DocumentationPatterns
     {
-        get => CollectionUtils.GetSharedItems(Defaults.DocumentationPatterns, User.DocumentationPatterns);
-        set => User.DocumentationPatterns = value.Except(Defaults.DocumentationPatterns).ToList();
+        get => CollectionUtils.GetSharedItems(Defaults.DocumentationPatterns ?? new(), User.DocumentationPatterns ?? new());
+        set => User.DocumentationPatterns = value!.Except(Defaults.DocumentationPatterns ?? new()).ToList();
     }
 
-    public List<CheckableItem<string>> DocumentationFolderExclusions
+    public List<CheckableItem<string>>? DocumentationFolderExclusions
     {
-        get => CollectionUtils.GetSharedItems(Defaults.DocumentationFolderExclusions,
-            User.DocumentationFolderExclusions);
-        set => User.DocumentationFolderExclusions = value.Except(Defaults.DocumentationFolderExclusions).ToList();
+        get => CollectionUtils.GetSharedItems(Defaults.DocumentationFolderExclusions ?? new(),
+            User.DocumentationFolderExclusions ?? new());
+        set => User.DocumentationFolderExclusions = value!.Except(Defaults.DocumentationFolderExclusions ?? new()).ToList();
     }
 
-    public string UpdateChannelName
+    public string? UpdateChannelName
     {
         get => User.UpdateChannelName.Coalesce(Defaults.UpdateChannelName);
         set => User.UpdateChannelName = value.DefaultIfEquals(Defaults.UpdateChannelName);
     }
 
-    public string WinePath
+    public string? WinePath
     {
         get => User.WinePath.Coalesce(Defaults.WinePath);
         set => User.WinePath = value.DefaultIfEquals(Defaults.WinePath);
     }
 
-    public string UnzipFallbackMethod
+    public string? UnzipFallbackMethod
     {
-        get => User.UnzipFallbackMethod.Coalesce(Defaults.UnzipFallbackMethod);
-        set => value.DefaultIfEquals(Defaults.UnzipFallbackMethod);
+        get => User.UnzipFallbackMethod?.Coalesce(Defaults.UnzipFallbackMethod) ?? string.Empty;
+        set => User.UnzipFallbackMethod = value.DefaultIfEquals(Defaults.UnzipFallbackMethod);
     }
 }

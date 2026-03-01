@@ -8,5 +8,5 @@ public class LevelVersionResponse
     public int Version { get; set; }
     public int Size { get; set; }
     public DateTime? Created { get; set; }
-    public string Url { get; set; }
+    public string? Url { get; set; } = null!;
 }

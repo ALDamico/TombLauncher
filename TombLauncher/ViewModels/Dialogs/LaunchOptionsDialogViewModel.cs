@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs.ViewModels;
@@ -13,7 +14,7 @@ using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels.Dialogs;
 
-public class LaunchOptionsDialogViewModel : DialogViewModel
+public partial class LaunchOptionsDialogViewModel : DialogViewModel
 {
     private TombRaiderEngineDetector _engineDetector;
 
@@ -22,9 +23,9 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
         _engineDetector = engineDetector;
         SelectedEngine = GameEngine.Unknown;
         AvailableEngines = EnumUtils.GetEnumViewModels<GameEngine>().ToObservableCollection();
-        AutoDetectCmd = new RelayCommand(AutoDetect);
+        AvailableEngines = EnumUtils.GetEnumViewModels<GameEngine>().ToObservableCollection();
     }
-    private GameMetadataViewModel _targetGame;
+    private GameMetadataViewModel _targetGame = null!;
 
     public GameMetadataViewModel TargetGame
     {
@@ -33,9 +34,16 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
         {
             RaiseAndSetIfChanged(ref _targetGame, value);
             SelectedEngine = GetSelectedEngine(value.GameEngine);
-            AvailableExecutables = Directory.GetFiles(value.InstallDirectory, "*.exe", SearchOption.AllDirectories)
-                .Select(p => Path.GetRelativePath(value.InstallDirectory, p))
-                .ToObservableCollection();
+            if (!string.IsNullOrWhiteSpace(value.InstallDirectory))
+            {
+                AvailableExecutables = Directory.GetFiles(value.InstallDirectory, "*.exe", SearchOption.AllDirectories)
+                    .Select(p => Path.GetRelativePath(value.InstallDirectory, p))
+                    .ToObservableCollection();
+            }
+            else
+            {
+                AvailableExecutables = new ObservableCollection<string>();
+            }
             GameExecutable = AvailableExecutables.FirstOrDefault(exe => exe == value.ExecutablePath);
             SetupArgs = value.SetupExecutableArgs;
             SetupExecutable = AvailableExecutables.FirstOrDefault(exe => exe == value.SetupExecutable);
@@ -52,24 +60,21 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
         }
     }
 
-    private ObservableCollection<string> _availableExecutables;
-
-    public ObservableCollection<string> AvailableExecutables
+    private ObservableCollection<string>? _availableExecutables;
+    public ObservableCollection<string>? AvailableExecutables
     {
         get => _availableExecutables;
         set => RaiseAndSetIfChanged(ref _availableExecutables, value);
     }
 
-    private string _gameExecutable;
-
-    public string GameExecutable
+    private string? _gameExecutable;
+    public string? GameExecutable
     {
         get => _gameExecutable;
         set => RaiseAndSetIfChanged(ref _gameExecutable, value);
     }
 
-    private ObservableCollection<EnumViewModel<GameEngine>> _availableEngines;
-
+    private ObservableCollection<EnumViewModel<GameEngine>> _availableEngines = null!;
     public ObservableCollection<EnumViewModel<GameEngine>> AvailableEngines
     {
         get => _availableEngines;
@@ -77,31 +82,28 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
     }
 
     private GameEngine _selectedEngine;
-
     public GameEngine SelectedEngine
     {
         get => _selectedEngine;
         set => RaiseAndSetIfChanged(ref _selectedEngine, value);
     }
 
-    private string _setupExecutable;
-
-    public string SetupExecutable
+    private string? _setupExecutable;
+    public string? SetupExecutable
     {
         get => _setupExecutable;
         set => RaiseAndSetIfChanged(ref _setupExecutable, value);
     }
 
-    private string _setupArgs;
+    private string? _setupArgs;
 
-    public string SetupArgs
+    public string? SetupArgs
     {
         get => _setupArgs;
-        set => RaiseAndSetIfChanged(ref _setupArgs, value.NullIfEmpty());
+        set => RaiseAndSetIfChanged(ref _setupArgs, value?.NullIfEmpty());
     }
 
     private bool _supportsSetup;
-
     public bool SupportsSetup
     {
         get => _supportsSetup;
@@ -109,47 +111,50 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
     }
 
     private bool _supportsCustomSetup;
-
     public bool SupportsCustomSetup
     {
         get => _supportsCustomSetup;
         set => RaiseAndSetIfChanged(ref _supportsCustomSetup, value);
     }
 
-    private string _customSetupExecutable;
-
-    public string CustomSetupExecutable
+    private string? _customSetupExecutable;
+    public string? CustomSetupExecutable
     {
         get => _customSetupExecutable;
         set => RaiseAndSetIfChanged(ref _customSetupExecutable, value);
     }
 
-    public ICommand AutoDetectCmd { get; }
-
+    [RelayCommand]
     private void AutoDetect()
     {
-        var detectionResult = _engineDetector.Detect(TargetGame.InstallDirectory);
-        SelectedEngine = GetSelectedEngine(detectionResult.GameEngine);
-        GameExecutable = AvailableExecutables.FirstOrDefault(e => e == detectionResult.ExecutablePath);
-        if (detectionResult.SetupExecutablePath.IsNotNullOrWhiteSpace())
+        if (TargetGame.InstallDirectory != null)
         {
-            SupportsSetup = true;
-            SetupArgs = detectionResult.SetupArgs;
-            SetupExecutable = AvailableExecutables.FirstOrDefault(e => e == detectionResult.SetupExecutablePath);
-        }
-        else
-        {
-            SupportsSetup = false;
-        }
-        if (detectionResult.CommunitySetupExecutablePath.IsNotNullOrWhiteSpace())
-        {
-            SupportsCustomSetup = true;
-            CustomSetupExecutable =
-                AvailableExecutables.FirstOrDefault(e => e == detectionResult.CommunitySetupExecutablePath);
-        }
-        else
-        {
-            SupportsCustomSetup = false;
+            var detectionResult = _engineDetector.Detect(TargetGame.InstallDirectory);
+            SelectedEngine = GetSelectedEngine(detectionResult.GameEngine);
+            if (AvailableExecutables != null)
+            {
+                GameExecutable = AvailableExecutables.FirstOrDefault(e => e == detectionResult.ExecutablePath);
+                if (detectionResult.SetupExecutablePath.IsNotNullOrWhiteSpace())
+                {
+                    SupportsSetup = true;
+                    SetupArgs = detectionResult.SetupArgs;
+                    SetupExecutable = AvailableExecutables.FirstOrDefault(e => e == detectionResult.SetupExecutablePath);
+                }
+                else
+                {
+                    SupportsSetup = false;
+                }
+                if (detectionResult.CommunitySetupExecutablePath.IsNotNullOrWhiteSpace())
+                {
+                    SupportsCustomSetup = true;
+                    CustomSetupExecutable =
+                        AvailableExecutables.FirstOrDefault(e => e == detectionResult.CommunitySetupExecutablePath);
+                }
+                else
+                {
+                    SupportsCustomSetup = false;
+                }
+            }
         }
     }
 
@@ -157,6 +162,10 @@ public class LaunchOptionsDialogViewModel : DialogViewModel
     {
         var vm = AvailableEngines.FirstOrDefault(e => e.Value == engine);
         return vm?.Value ?? GameEngine.Unknown;
+    }
+
+    protected virtual void OnPropertyChanging(global::System.ComponentModel.PropertyChangingEventArgs e)
+    {
     }
 
 }

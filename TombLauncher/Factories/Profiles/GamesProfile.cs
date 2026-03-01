@@ -31,7 +31,7 @@ internal class GamesProfile : Profile
             .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(dto => ImageUtils.ToBitmap(dto.TitlePic)));
 
         CreateMap<GameMetadataViewModel, GameMetadataDto>()
-            .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)));
+            .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => vm.TitlePic != null ? ImageUtils.ToByteArray(vm.TitlePic) : null));
 
         CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
 

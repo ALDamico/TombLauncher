@@ -22,23 +22,26 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         Sources = new ObservableCollection<IGameSearchResultMetadata>();
         InstallCmd = new AsyncRelayCommand(Install, CanInstall);
         CancelInstallCmd = new AsyncRelayCommand(CancelInstall);
+        _reviewsLink = string.Empty;
+        _downloadLink = string.Empty;
+        _walkthroughLink = string.Empty;
     }
 
     private readonly GameSearchResultService _gameSearchResultService;
 
-    [ObservableProperty] private string _author;
-    [ObservableProperty] private string _authorFullName;
-    [ObservableProperty] private string _title;
+    [ObservableProperty] private string _author = string.Empty;
+    [ObservableProperty] private string _authorFullName = string.Empty;
+    [ObservableProperty] private string _title = string.Empty;
     [ObservableProperty] private GameDifficulty _difficulty;
     [ObservableProperty] private GameLength _length;
-    [ObservableProperty] private string _setting;
+    [ObservableProperty] private string _setting = string.Empty;
     [ObservableProperty] private GameEngine _engine;
-    [ObservableProperty] private string _detailsLink;
-    [ObservableProperty] private string _baseUrl;
-    [ObservableProperty] private string _titlePic;
-    [ObservableProperty] private string _sourceSiteDisplayName;
-    [ObservableProperty] private string _description;
-    [ObservableProperty] private InstallProgressViewModel _installProgress;
+    [ObservableProperty] private string _detailsLink = string.Empty;
+    [ObservableProperty] private string _baseUrl = string.Empty;
+    [ObservableProperty] private string _titlePic = string.Empty;
+    [ObservableProperty] private string _sourceSiteDisplayName = string.Empty;
+    [ObservableProperty] private string _description = string.Empty;
+    [ObservableProperty] private InstallProgressViewModel? _installProgress;
     [ObservableProperty][NotifyPropertyChangedFor(nameof(HasReviews))] private string _reviewsLink;
     public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
     [ObservableProperty] private string _downloadLink;
@@ -49,7 +52,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     public int ReviewCount => Sources.Sum(s => s.ReviewCount);
     [ObservableProperty] private DateTime? _releaseDate;
     [ObservableProperty] private ObservableCollection<IGameSearchResultMetadata> _sources;
-    [ObservableProperty] private GameWithStatsViewModel _installedGame;
+    [ObservableProperty] private GameWithStatsViewModel? _installedGame;
     [ObservableProperty] private bool _isNewlyAdded;
     [ObservableProperty] private bool _isRecentlyUpdated;
 

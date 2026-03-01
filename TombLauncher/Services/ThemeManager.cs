@@ -9,19 +9,6 @@ namespace TombLauncher.Services;
 
 public class ThemeManager
 {
-
-    public ThemeManager()
-    {
-        // Load themes from assets
-        // Since we created them as ResourceDictionaries in Assets/Themes/, we can load them via ResourceInclude logic 
-        // or just constructing them if we had code behind. 
-        // For XAML-only, we usually use styles. But here they are ResourceDictionaries.
-        // We will simple create StyleIncludes or ResourceIncludes dynamically.
-
-        // Actually, the cleanest way in Avalonia is to use Styles for themes if they contain resources.
-        // But let's stick to ResourceDictionary management in App.Resources.MergedDictionaries.
-    }
-
     public void ApplyTheme(string themeName)
     {
         var app = Application.Current;

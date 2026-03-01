@@ -103,9 +103,9 @@ public class RandomGameService
                         await _gameSearchResultService.Install(
                             mapped);
 
-                        vm.Game.GameMetadata.InstallDirectory = mapped.InstalledGame.GameMetadata.InstallDirectory;
-                        vm.Game.GameMetadata.ExecutablePath = mapped.InstalledGame.GameMetadata.ExecutablePath;
-                        vm.Game.GameMetadata.Id = mapped.InstalledGame.GameMetadata.Id;
+                        vm.Game.GameMetadata.InstallDirectory = mapped.InstalledGame!.GameMetadata.InstallDirectory;
+                        vm.Game.GameMetadata.ExecutablePath = mapped.InstalledGame!.GameMetadata.ExecutablePath;
+                        vm.Game.GameMetadata.Id = mapped.InstalledGame!.GameMetadata.Id;
                         vm.Game.RaiseCanExecuteChanged(vm.Game.PlayCmd);
                         vm.Game.RaiseCanExecuteChanged(vm.Game.LaunchSetupCmd);
                         vm.Game.RaiseCanExecuteChanged(vm.Game.OpenCmd);

@@ -91,9 +91,9 @@ public class SavegameCommandService
         var dialogViewModel = new RestoreSavegameDialogViewModel()
         {
             Slots = availableSlots,
-            SelectedSlot = availableSlots.FirstOrDefault(s => s.SaveSlot == savegame.SlotNumber),
+            SelectedSlot = availableSlots.FirstOrDefault(s => s.SaveSlot == savegame.SlotNumber) ?? availableSlots.First(),
             Data = savegame.Data,
-            TargetDirectory = Path.GetDirectoryName(savegame.FileName),
+            TargetDirectory = Path.GetDirectoryName(savegame.FileName) ?? string.Empty,
             BaseFileName = Path.GetFileNameWithoutExtension(savegame.FileName)
         };
         _dialogService.ShowDialog(dialogViewModel, ExecuteRestore);

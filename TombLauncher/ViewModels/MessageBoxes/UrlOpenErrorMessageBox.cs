@@ -37,28 +37,28 @@ public class UrlOpenErrorMessageBox : ViewModelBase, IMsgBoxViewModel
     {
         OnRequestCloseDialog(new RequestCloseDialogEventArgs(false));
     }
-    public event EventHandler<RequestCloseDialogEventArgs> RequestCloseDialog;
+    public event EventHandler<RequestCloseDialogEventArgs>? RequestCloseDialog;
     public bool CheckBoxResult { get; set; } = false;
     public bool ShowCheckBox => CheckBoxText != null;
-    public string CheckBoxText { get; set; } = null;
+    public string? CheckBoxText { get; set; } = null;
     public bool HasIcon => false;
     public MsgBoxImage MsgBoxImage { get; set; }
     public MsgBoxButtonResult Result { get; set; }
     public MsgBoxButton Buttons { get; set; } = MsgBoxButton.YesNo;
     public WindowStartupLocation WindowStartupLocation { get; set; } = WindowStartupLocation.CenterOwner;
     public bool Topmost { get; set; }
-    public Bitmap Icon { get; set; }
-    public string AcceptCommandText { get; set; } = "Yes".GetLocalizedString();
-    public ICommand NoCommand { get; set; }
-    public string CancelCommandText { get; set; }
-    public string Message { get; set; }
-    public string MsgBoxTitle { get; set; }
-    public string NoCommandText { get; set; } = "No".GetLocalizedString();
+    public Bitmap? Icon { get; set; }
+    public string? AcceptCommandText { get; set; } = "Yes".GetLocalizedString();
+    public ICommand NoCommand { get; set; } = null!;
+    public string? CancelCommandText { get; set; } = string.Empty;
+    public string? Message { get; set; } = string.Empty;
+    public string? MsgBoxTitle { get; set; } = string.Empty;
+    public string? NoCommandText { get; set; } = "No".GetLocalizedString();
     public bool ShowNoButton { get; set; } = true;
     public bool ShowYesButton { get; set; } = true;
     public bool ShowOkButton { get; set; } = false;
     public bool ShowCancelButton { get; set; } = false;
-    public string TargetUrl { get; set; }
+    public string TargetUrl { get; set; } = string.Empty;
 
 
     protected virtual void OnRequestCloseDialog(RequestCloseDialogEventArgs e)

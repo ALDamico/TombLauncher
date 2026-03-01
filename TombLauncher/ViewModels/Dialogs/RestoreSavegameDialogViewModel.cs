@@ -20,14 +20,14 @@ public partial class RestoreSavegameDialogViewModel : DialogViewModel
         InvokeRequestCloseDialog(eventArgs);
     }
 
-    private ObservableCollection<SavegameSlotViewModel> _slots;
+    private ObservableCollection<SavegameSlotViewModel> _slots = null!;
 
     public ObservableCollection<SavegameSlotViewModel> Slots
     {
         get => _slots;
         set => RaiseAndSetIfChanged(ref _slots, value);
     }
-    private SavegameSlotViewModel _selectedSlot;
+    private SavegameSlotViewModel _selectedSlot = null!;
 
     public SavegameSlotViewModel SelectedSlot
     {
@@ -35,7 +35,7 @@ public partial class RestoreSavegameDialogViewModel : DialogViewModel
         set => RaiseAndSetIfChanged(ref _selectedSlot, value);
     }
 
-    private byte[] _data;
+    private byte[] _data = null!;
 
     public byte[] Data
     {
@@ -43,7 +43,7 @@ public partial class RestoreSavegameDialogViewModel : DialogViewModel
         set => RaiseAndSetIfChanged(ref _data, value);
     }
 
-    private string _targetDirectory;
+    private string _targetDirectory = null!;
 
     public string TargetDirectory
     {
@@ -51,7 +51,7 @@ public partial class RestoreSavegameDialogViewModel : DialogViewModel
         set => RaiseAndSetIfChanged(ref _targetDirectory, value);
     }
 
-    private string _baseFileName;
+    private string _baseFileName = null!;
 
     public string BaseFileName
     {

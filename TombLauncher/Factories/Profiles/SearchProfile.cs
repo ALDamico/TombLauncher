@@ -15,17 +15,17 @@ public class SearchProfile : Profile
         CreateMap<IGameSearchResultMetadata, GameSearchResultMetadataViewModel>();
         CreateMap<GameSearchResultMetadataViewModel, IGameSearchResultMetadata>()
             .ConstructUsing(vm => new GameSearchResultMetadataDto())
-            .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => ImageUtils.ToByteArray(vm.TitlePic)))
+            .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => vm.TitlePic != null ? ImageUtils.ToByteArray(vm.TitlePic) : null))
             .ForMember(dto => dto.SourceSiteDisplayName, opt => opt.Ignore());
-        CreateMap<IMultiSourceSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
+        CreateMap<IMergedGameSearchResultMetadata, MultiSourceGameSearchResultMetadataViewModel>()
             .ConstructUsing((src, ctx) =>
                 new MultiSourceGameSearchResultMetadataViewModel((GameSearchResultService)serviceFactory(typeof(GameSearchResultService))))
             .ForMember(vm => vm.InstallProgress, m => m.Ignore())
             .ForMember(vm => vm.InstalledGame, m => m.Ignore())
             .ForMember(vm => vm.IsNewlyAdded, m => m.Ignore())
             .ForMember(vm => vm.IsRecentlyUpdated, m => m.Ignore());
-        CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMultiSourceSearchResultMetadata>()
-            .ConstructUsing(vm => new MultiSourceSearchResultMetadataDto());
+        CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMergedGameSearchResultMetadata>()
+            .ConstructUsing(vm => new MergedGameSearchResultDto());
         CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>();
 
         CreateMap<DownloaderSearchPayload, DownloaderSearchPayloadViewModel>()

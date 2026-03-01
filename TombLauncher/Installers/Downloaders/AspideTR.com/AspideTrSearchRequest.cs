@@ -2,8 +2,8 @@
 
 public class AspideTrSearchRequest
 {
-    public string Classes { get; set; }
+    public string? Classes { get; set; }
     public int? LType { get; set; }
-    public string LTitle { get; set; }
-    public string LAuthor { get; set; }
+    public string? LTitle { get; set; }
+    public string? LAuthor { get; set; }
 }

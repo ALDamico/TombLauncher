@@ -6,29 +6,29 @@ namespace TombLauncher.Core.Dtos;
 
 public class GameSearchResultMetadataDto : IGameSearchResultMetadata, IEquatable<GameSearchResultMetadataDto>
 {
-    public string Author { get; set; }
-    public string AuthorFullName { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
+    public string Author { get; set; } = string.Empty;
+    public string AuthorFullName { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     public GameDifficulty Difficulty { get; set; }
     public GameLength Length { get; set; }
-    public string Setting { get; set; }
+    public string Setting { get; set; } = string.Empty;
     public GameEngine Engine { get; set; }
-    public string DetailsLink { get; set; }
-    public string BaseUrl { get; set; }
-    public string SourceSiteDisplayName { get; set; }
-    public string TitlePic { get; set; }
-    public string ReviewsLink { get; set; }
+    public string DetailsLink { get; set; } = string.Empty;
+    public string BaseUrl { get; set; } = string.Empty;
+    public string SourceSiteDisplayName { get; set; } = string.Empty;
+    public string TitlePic { get; set; } = string.Empty;
+    public string ReviewsLink { get; set; } = string.Empty;
     public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
-    public string DownloadLink { get; set; }
-    public string WalkthroughLink { get; set; }
+    public string DownloadLink { get; set; } = string.Empty;
+    public string WalkthroughLink { get; set; } = string.Empty;
     public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     public int? SizeInMb { get; set; }
     public double? Rating { get; set; }
     public int ReviewCount { get; set; }
     public DateTime? ReleaseDate { get; set; }
 
-    public bool Equals(GameSearchResultMetadataDto other)
+    public bool Equals(GameSearchResultMetadataDto? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -42,7 +42,7 @@ public class GameSearchResultMetadataDto : IGameSearchResultMetadata, IEquatable
                Nullable.Equals(ReleaseDate, other.ReleaseDate);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;

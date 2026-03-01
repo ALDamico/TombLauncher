@@ -6,9 +6,9 @@ public abstract class CheckableItem
     public bool CanUserCheck { get; set; } = true;
 }
 
-public class CheckableItem<T> : CheckableItem, IEquatable<T> where T: IEquatable<T>
+public class CheckableItem<T> : CheckableItem, IEquatable<T> where T : IEquatable<T>
 {
-    public T Value { get; set; }
+    public required T Value { get; set; }
 
     protected bool Equals(CheckableItem<T> other)
     {
@@ -20,7 +20,7 @@ public class CheckableItem<T> : CheckableItem, IEquatable<T> where T: IEquatable
         return EqualityComparer<T>.Default.Equals(Value, other);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;

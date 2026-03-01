@@ -5,6 +5,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Savegames.HeaderReaders;
+using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Core.Savegames;
 
@@ -15,8 +16,8 @@ public class SavegameHeaderProcessor : IDisposable
     // Create an AutoResetEvent EventWaitHandle
     private EventWaitHandle _eventWaitHandle = new AutoResetEvent(false);
     private readonly Thread _worker;
-    private readonly ConcurrentQueue<string> fileNamesQueue = new();
-    public ISavegameHeaderReader SavegameHeaderReader { get; set; }
+    private readonly ConcurrentQueue<string> _fileNamesQueue = new();
+    public ISavegameHeaderReader SavegameHeaderReader { get; set; } = null!;
     public List<SavegameBackupDto> ProcessedFiles { get; }
     public int Delay { get; set; } = 500;
     public bool ErrorOccurred { get; private set; }
@@ -41,7 +42,7 @@ public class SavegameHeaderProcessor : IDisposable
         }
         // Enqueue the file name
         // This statement is secured by lock to prevent other thread to mess with queue while enqueuing file name
-        fileNamesQueue.Enqueue(fileName);
+        _fileNamesQueue.Enqueue(fileName);
         // Signal worker that file name is enqueued and that it can be processed
         if (_eventWaitHandle.SafeWaitHandle.IsClosed)
         {
@@ -60,9 +61,9 @@ public class SavegameHeaderProcessor : IDisposable
 
             // Dequeue the file name
             //lock (locker)
-            if (fileNamesQueue.Count > 0)
+            if (_fileNamesQueue.Count > 0)
             {
-                fileNamesQueue.TryDequeue(out fileName);
+                _fileNamesQueue.TryDequeue(out fileName);
                 // If file name is null then stop worker thread
                 if (fileName == null) return;
             }
@@ -101,19 +102,22 @@ public class SavegameHeaderProcessor : IDisposable
             _logger.LogError("An error occurred while processing file {Filename}: {Exception}", e, ex);
             ErrorOccurred = true;
         }
-        
+
         if (header == null)
             return;
 
+        var fileBytes = File.ReadAllBytes(e);
+        var md5 = Md5Utils.ComputeMd5Hash(fileBytes).GetAwaiter().GetResult();
         var dto = new SavegameBackupDto()
         {
-            Data = File.ReadAllBytes(e),
+            Data = fileBytes,
             FileName = e,
             FileType = FileType.Savegame,
             BackedUpOn = DateTime.Now,
             LevelName = header.LevelName,
             SaveNumber = header.SaveNumber,
-            SlotNumber = header.SlotNumber
+            SlotNumber = header.SlotNumber,
+            Md5 = md5
         };
         ProcessedFiles.Add(dto);
         _logger.LogInformation("Added file {Filename} to queue", e);

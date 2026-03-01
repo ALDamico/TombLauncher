@@ -2,7 +2,7 @@
 
 namespace TombLauncher.ViewModels;
 
-public partial class InstallProgressViewModel: ViewModelBase
+public partial class InstallProgressViewModel : ViewModelBase
 {
     public InstallProgressViewModel()
     {
@@ -12,8 +12,8 @@ public partial class InstallProgressViewModel: ViewModelBase
     [ObservableProperty] private double _currentBytes;
     [ObservableProperty] private double _downloadSpeed;
     [ObservableProperty] private double _installPercentage;
-    [ObservableProperty] private string _currentFileName;
-    [ObservableProperty] private string _message;
+    [ObservableProperty] private string _currentFileName = string.Empty;
+    [ObservableProperty] private string _message = string.Empty;
     [ObservableProperty] private bool _isDownloading;
     [ObservableProperty] private bool _isInstalling;
     [ObservableProperty] private bool _installCompleted;

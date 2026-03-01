@@ -16,7 +16,7 @@ namespace TombLauncher.Installers;
 public class TombRaiderLevelInstaller
 {
     public async Task<string> Install(string containingFolder, IGameMetadata gameDto, CancellationToken cancellationToken,
-        IProgress<CopyProgressInfo> copyProgress = null)
+        IProgress<CopyProgressInfo>? copyProgress = null)
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (!Directory.Exists(containingFolder) && !File.Exists(containingFolder))
@@ -65,7 +65,7 @@ public class TombRaiderLevelInstaller
         return System.Text.RegularExpressions.Regex.Replace(name, invalidRegStr, "_");
     }
 
-    private static void CopyDirectory(string sourceDir, string destinationDir, bool recursive, IProgress<CopyProgressInfo> progress = null)
+    private static void CopyDirectory(string sourceDir, string destinationDir, bool recursive, IProgress<CopyProgressInfo>? progress = null)
     {
         // Get information about the source directory
         var dir = new DirectoryInfo(sourceDir);

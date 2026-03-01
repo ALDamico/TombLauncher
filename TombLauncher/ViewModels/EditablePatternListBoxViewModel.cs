@@ -30,6 +30,6 @@ public class EditablePatternListBoxViewModel : EditableListBoxViewModel
                 return new ValidationResult("The pattern PATTERN is not allowed".GetLocalizedString(newValue));
         }
 
-        return ValidationResult.Success;
+        return ValidationResult.Success!;
     }
 }

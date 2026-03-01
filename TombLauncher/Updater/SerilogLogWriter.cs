@@ -5,7 +5,7 @@ namespace TombLauncher.Updater;
 
 public class SerilogLogWriter : ILogger
 {
-    public void PrintMessage(string message, params object[] arguments)
+    public void PrintMessage(string message, params object[]? arguments)
     {
         Log.Logger.Information(message, arguments);
     }

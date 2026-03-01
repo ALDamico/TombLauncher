@@ -11,7 +11,7 @@ namespace TombLauncher.ValueConverters;
 
 public class DateTimeToStringConverter : IValueConverter
 {
-    private Func<string, object[], string> StringGenerator(ILocalizationManager localizationManager)
+    private Func<string, object[], string> StringGenerator(ILocalizationManager? localizationManager)
     {
         if (localizationManager != null)
         {
@@ -20,13 +20,13 @@ public class DateTimeToStringConverter : IValueConverter
 
         return string.Format;
     }
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var localizationManager = Ioc.Default.GetService<ILocalizationManager>();
         var func = StringGenerator(localizationManager);
         if (value == null)
         {
-            return func("Never", null);
+            return func("Never", Array.Empty<object>());
         }
 
         if (value is not DateTime dateTime) return string.Empty;
@@ -34,12 +34,12 @@ public class DateTimeToStringConverter : IValueConverter
         var today = DateTime.Today;
         if (dateTimeAtMidnight == today)
         {
-            return func("Today", null);
+            return func("Today", Array.Empty<object>());
         }
 
         if (dateTimeAtMidnight.IsYesterday())
         {
-            return func("Yesterday", null);
+            return func("Yesterday", Array.Empty<object>());
         }
 
         var differenceInDays = (today - dateTimeAtMidnight).Days;
@@ -52,7 +52,7 @@ public class DateTimeToStringConverter : IValueConverter
         switch (weeksElapsed)
         {
             case 1:
-                return func("Last week", null);
+                return func("Last week", Array.Empty<object>());
             case < 4:
                 return func("weeks ago", [weeksElapsed]);
         }
@@ -60,20 +60,20 @@ public class DateTimeToStringConverter : IValueConverter
         switch (differenceInDays)
         {
             case <= 31:
-                return func("Last month", null);
+                return func("Last month", Array.Empty<object>());
             case <= 365:
-            {
-                var monthsElapsed = differenceInDays % 365;
-                return func("months ago", [monthsElapsed]);
-            }
+                {
+                    var monthsElapsed = differenceInDays % 365;
+                    return func("months ago", [monthsElapsed]);
+                }
         }
 
         var yearsElapsed = today.Year - dateTimeAtMidnight.Year;
-        return yearsElapsed == 1 ? func("Last year", null) : func("years ago", [yearsElapsed]);
+        return yearsElapsed == 1 ? func("Last year", Array.Empty<object>()) : func("years ago", [yearsElapsed]);
 
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

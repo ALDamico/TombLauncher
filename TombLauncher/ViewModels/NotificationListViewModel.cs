@@ -17,7 +17,7 @@ public partial class NotificationListViewModel : ViewModelBase
         MarkNoNewElementsCmd = new RelayCommand(MarkNoNewElements);
     }
 
-    private void OnNotificationsChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void OnNotificationsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems?.Count > 0)
         {

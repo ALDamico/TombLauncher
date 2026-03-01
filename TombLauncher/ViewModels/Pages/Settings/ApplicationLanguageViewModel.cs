@@ -5,8 +5,8 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class ApplicationLanguageViewModel : ObservableObject
 {
-    [ObservableProperty] private CultureInfo _cultureInfo;
-    [ObservableProperty] private string _countryIso2Code;
-    [ObservableProperty] private string _dictionaryName;
-    [ObservableProperty] private string _displayName;
+    [ObservableProperty] private CultureInfo? _cultureInfo;
+    [ObservableProperty] private string _countryIso2Code = string.Empty;
+    [ObservableProperty] private string _dictionaryName = string.Empty;
+    [ObservableProperty] private string _displayName = string.Empty;
 }

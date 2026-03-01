@@ -12,6 +12,6 @@ public partial class LanguageSettingsViewModel : SettingsSectionViewModelBase
         InfoTipHeader = "Want to localize Tomb Launcher?".GetLocalizedString();
     }
 
-    [ObservableProperty] private ApplicationLanguageViewModel _applicationLanguage;
-    [ObservableProperty] private ObservableCollection<ApplicationLanguageViewModel> _availableLanguages;
+    [ObservableProperty] private ApplicationLanguageViewModel? _applicationLanguage;
+    [ObservableProperty] private ObservableCollection<ApplicationLanguageViewModel> _availableLanguages = new ObservableCollection<ApplicationLanguageViewModel>();
 }

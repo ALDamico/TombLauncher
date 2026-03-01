@@ -23,9 +23,9 @@ public class GameDownloadManager
     private CancellationTokenSource _cancellationTokenSource;
     private readonly IGameMerger _merger;
 
-    public async Task<List<IMultiSourceSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload)
+    public async Task<List<IMergedGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload)
     {
-        var outputList = new List<IMultiSourceSearchResultMetadata>();
+        var outputList = new List<IMergedGameSearchResultMetadata>();
         var tasks = new List<Task<List<IGameSearchResultMetadata>>>();
         foreach (var downloader in Downloaders)
         {
@@ -67,7 +67,7 @@ public class GameDownloadManager
             {
                 continue;
             }
-            
+
             outputList.AddRange(completedTask.Result);
         }
 
@@ -82,10 +82,10 @@ public class GameDownloadManager
             return await downloader.FetchDetails(game, _cancellationTokenSource.Token);
         }
 
-        return null;
+        return null!;
     }
 
-    public async Task<IMultiSourceSearchResultMetadata> FetchAllDetails(IMultiSourceSearchResultMetadata game)
+    public async Task<IMergedGameSearchResultMetadata> FetchAllDetails(IMergedGameSearchResultMetadata game)
     {
         var searchPayload = new DownloaderSearchPayload()
         {
@@ -101,7 +101,7 @@ public class GameDownloadManager
         await Task.WhenAll(tasks);
         var allResults = tasks.SelectMany(t => t.Result).ToList();
 
-        var gameClone = new MultiSourceSearchResultMetadataDto()
+        var gameClone = new MergedGameSearchResultDto()
         {
             Author = game.Author,
             Difficulty = game.Difficulty,
@@ -122,8 +122,8 @@ public class GameDownloadManager
             SizeInMb = game.SizeInMb,
             SourceSiteDisplayName = game.SourceSiteDisplayName
         };
-        
-        Merge(new List<IMultiSourceSearchResultMetadata>(){gameClone}, allResults);
+
+        Merge(new List<IMergedGameSearchResultMetadata>() { gameClone }, allResults);
 
         return gameClone;
     }
@@ -139,7 +139,7 @@ public class GameDownloadManager
         return Downloaders.Any(d => d.HasMorePages());
     }
 
-    public void Merge(ICollection<IMultiSourceSearchResultMetadata> fullList,
+    public void Merge(ICollection<IMergedGameSearchResultMetadata> fullList,
         ICollection<IGameSearchResultMetadata> newElements)
     {
         _merger.Merge(fullList, newElements);
@@ -150,6 +150,8 @@ public class GameDownloadManager
         cancellationToken.ThrowIfCancellationRequested();
         var baseUrl = metadata.BaseUrl;
         var downloader = Downloaders.FirstOrDefault(d => d.BaseUrl == baseUrl);
+        if (downloader == null) throw new InvalidOperationException($"Downloader for {baseUrl} not found.");
+
         var downloadPath = PathUtils.GetRandomTempDirectory();
         var tempZipName = Path.GetRandomFileName();
         var fullFilePath = Path.Combine(downloadPath, tempZipName);

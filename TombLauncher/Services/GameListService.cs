@@ -56,7 +56,8 @@ public class GameListService : IViewService
             if (!args.DialogResult) return;
             target.SetBusy(true, "Uninstalling".GetLocalizedString(game.GameMetadata.Title));
             var installDir = game.GameMetadata.InstallDirectory;
-            Directory.Delete(installDir, true);
+            if (installDir != null)
+                Directory.Delete(installDir, true);
             _gamesUnitOfWork.MarkGameAsUninstalled(game.GameMetadata.Id);
             await _gamesUnitOfWork.Save();
             target.ClearBusy();

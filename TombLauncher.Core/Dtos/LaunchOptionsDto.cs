@@ -6,7 +6,7 @@ public class LaunchOptionsDto
 {
     public int GameId { get; set; }
     public GameEngine GameEngine { get; set; }
-    public FileBackupDto GameExecutable { get; set; }
-    public FileBackupDto SetupExecutable { get; set; }
-    public FileBackupDto CommunitySetupExecutable { get; set; }
+    public required FileBackupDto GameExecutable { get; set; }
+    public FileBackupDto? SetupExecutable { get; set; }
+    public FileBackupDto? CommunitySetupExecutable { get; set; }
 }

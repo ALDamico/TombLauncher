@@ -32,11 +32,11 @@ public partial class StatisticsPageViewModel : PageViewModel
     private readonly StatisticsService _statisticsService;
     private readonly GameWithStatsService _gameWithStatsService;
 
-    [ObservableProperty] private Version _applicationVersion;
+    [ObservableProperty] private Version? _applicationVersion;
     [ObservableProperty] private long _databaseSize;
     [ObservableProperty] private long _gamesSize;
-    [ObservableProperty] private Version _netVersion;
-    [ObservableProperty] private StatisticsViewModel _statistics;
+    [ObservableProperty] private Version? _netVersion;
+    [ObservableProperty] private StatisticsViewModel? _statistics;
 
     public override async Task OnNavigatedTo(object parameter)
     {

@@ -164,8 +164,8 @@ public class StatisticsService
             {
                 Series = statistics.SpaceUsedStatistics.AsPieSeries((dto, series) =>
                 {
-                    series.ToolTipLabelFormatter = point => point.Model.Title + Environment.NewLine + (string)new FileSizeFormatter().Convert(
-                        point.Model.SpaceUsedBytes, typeof(string), null,
+                    series.ToolTipLabelFormatter = point => point.Model?.Title + Environment.NewLine + (string?)new FileSizeFormatter().Convert(
+                        point.Model?.SpaceUsedBytes ?? 0, typeof(string), null!,
                         CultureInfo.InvariantCulture);
                     LiveCharts.Configure(config => config
                         .HasMap<GameSpaceUsedDto>((point, index) => new(index, point.SpaceUsedBytes)));

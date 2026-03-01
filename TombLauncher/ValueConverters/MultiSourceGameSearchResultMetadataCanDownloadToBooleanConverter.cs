@@ -9,7 +9,7 @@ namespace TombLauncher.ValueConverters;
 
 public class MultiSourceGameSearchResultMetadataCanDownloadToBooleanConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value == null)
             return false;
@@ -27,7 +27,7 @@ public class MultiSourceGameSearchResultMetadataCanDownloadToBooleanConverter : 
         return !castedValue.DownloadLink.IsNullOrWhiteSpace();
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

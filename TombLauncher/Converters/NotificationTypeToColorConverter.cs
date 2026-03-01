@@ -8,8 +8,6 @@ using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Converters;
 
-#nullable enable
-
 public class NotificationTypeToColorConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

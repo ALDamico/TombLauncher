@@ -10,9 +10,9 @@ public partial class MainMenuItemViewModel : ViewModelBase
 {
     [ObservableProperty] private MaterialIconKind _icon;
 
-    [ObservableProperty] private string _text;
+    [ObservableProperty] private string _text = string.Empty;
 
-    [ObservableProperty] private string _toolTip;
+    [ObservableProperty] private string _toolTip = string.Empty;
 
-    [ObservableProperty] private Type _viewModelType;
+    [ObservableProperty] private Type? _viewModelType;
 }

@@ -19,8 +19,8 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 {
     public DownloaderSettingsViewModel(PageViewModel settingsPage, ISettingsProvider settingsProvider, IAppFileOperationsService appFileOperations, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage)
     {
-        MoveUpCmd = new RelayCommand<DownloaderViewModel>(MoveUp, CanMoveUp);
-        MoveDownCmd = new RelayCommand<DownloaderViewModel>(MoveDown, CanMoveDown);
+        MoveUpCmd = new RelayCommand<DownloaderViewModel?>(MoveUp, CanMoveUp);
+        MoveDownCmd = new RelayCommand<DownloaderViewModel?>(MoveDown, CanMoveDown);
         InfoTipContent = "Downloaders infotip content".GetLocalizedString();
         _settingsProvider = settingsProvider;
         _appFileOperations = appFileOperations;
@@ -36,8 +36,8 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         CleanUpTempFilesCmd = new AsyncRelayCommand(CleanUpTempFiles);
     }
 
-    [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders;
-    [ObservableProperty] private DownloaderViewModel _selectedDownloader;
+    [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders = new ObservableCollection<DownloaderViewModel>();
+    [ObservableProperty] private DownloaderViewModel? _selectedDownloader;
     [ObservableProperty] private ObservableCollection<UnzipBackendViewModel> _availableUnzipFallbackMethods;
     [ObservableProperty] private UnzipBackendViewModel _selectedUnzipFallbackMethod;
     private readonly ISettingsProvider _settingsProvider;
@@ -46,8 +46,9 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 
     public ICommand MoveUpCmd { get; }
 
-    private void MoveUp(DownloaderViewModel downloaderViewModel)
+    private void MoveUp(DownloaderViewModel? downloaderViewModel)
     {
+        if (downloaderViewModel == null) return;
         var targetPriority = --downloaderViewModel.Priority;
         if (targetPriority < 0)
             targetPriority = 0;
@@ -64,7 +65,7 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         RaiseCanExecuteChanged<DownloaderViewModel>(MoveDownCmd);
     }
 
-    private bool CanMoveUp(DownloaderViewModel downloaderViewModel)
+    private bool CanMoveUp(DownloaderViewModel? downloaderViewModel)
     {
         if (downloaderViewModel == null) return false;
         return downloaderViewModel.Priority > 1;
@@ -72,8 +73,9 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 
     public ICommand MoveDownCmd { get; }
 
-    private void MoveDown(DownloaderViewModel downloaderViewModel)
+    private void MoveDown(DownloaderViewModel? downloaderViewModel)
     {
+        if (downloaderViewModel == null) return;
         var targetPriority = ++downloaderViewModel.Priority;
         var prioritiesToBump = AvailableDownloaders.Where(dl => dl.Priority == targetPriority);
         AvailableDownloaders.Move(downloaderViewModel.Priority, targetPriority);
@@ -87,7 +89,7 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         RaiseCanExecuteChanged<DownloaderViewModel>(MoveDownCmd);
     }
 
-    private bool CanMoveDown(DownloaderViewModel downloaderViewModel)
+    private bool CanMoveDown(DownloaderViewModel? downloaderViewModel)
     {
         if (downloaderViewModel == null) return false;
         return downloaderViewModel.Priority < AvailableDownloaders.Count;

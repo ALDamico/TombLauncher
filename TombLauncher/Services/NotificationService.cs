@@ -78,7 +78,7 @@ public class NotificationService
         await AddNotificationAsync(notificationViewModel);
     }
 
-    private async Task DismissNotification(NotificationViewModel thisNotification)
+    private async Task DismissNotification(NotificationViewModel? thisNotification)
     {
         if (thisNotification == null) return;
         await Dispatcher.UIThread.InvokeAsync(() => thisNotification.IsClosing = true);

@@ -2,17 +2,17 @@
 
 public static class GenericUtils
 {
-    public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable)
+    public static bool IsNullOrEmpty<T>(this IEnumerable<T>? enumerable)
     {
         return enumerable == null || !enumerable.Any();
     }
 
-    public static bool IsNotNullOrEmpty<T>(this IEnumerable<T> enumerable)
+    public static bool IsNotNullOrEmpty<T>(this IEnumerable<T>? enumerable)
     {
         return !enumerable.IsNullOrEmpty();
     }
 
-    public static List<T> ToEmptyListIfNull<T>(this IEnumerable<T> enumerable)
+    public static List<T> ToEmptyListIfNull<T>(this IEnumerable<T>? enumerable)
     {
         if (enumerable.IsNullOrEmpty())
             return new List<T>();
@@ -20,7 +20,7 @@ public static class GenericUtils
         return enumerable.ToList();
     }
 
-    public static T Coalesce<T>(this T first, params T[] elements)
+    public static T? Coalesce<T>(this T? first, params T?[] elements)
     {
         var enumerator = elements.GetEnumerator();
         if (!first?.Equals((T)default) == true)
@@ -38,7 +38,7 @@ public static class GenericUtils
         return default;
     }
 
-    public static T DefaultIfEquals<T>(this T first, T second)
+    public static T? DefaultIfEquals<T>(this T? first, T? second)
     {
         if (first?.Equals(second) == true)
             return default;

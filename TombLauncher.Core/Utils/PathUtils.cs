@@ -45,7 +45,7 @@ public class PathUtils
         return Directory.GetFiles(path, file, SearchOption.AllDirectories).Length > 0;
     }
 
-    public static string GetRelativePath(string containingFolder, string fileName)
+    public static string? GetRelativePath(string containingFolder, string fileName)
     {
         var file = Directory.GetFiles(containingFolder, fileName, SearchOption.AllDirectories);
         if (file.Length == 0)
@@ -63,7 +63,7 @@ public class PathUtils
                 '\u0016', '\u0017', '\u0018', '\u0019', '\u001a', '\u001b', '\u001c', '\u001d', '\u001e', '\u001f', ':',
                 '*', '?', '\\', '/'
             ];
-        
+
         return
         [
             '"', '<', '>', '|', '\0', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\a', '\b', '\t',

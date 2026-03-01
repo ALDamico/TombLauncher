@@ -12,7 +12,7 @@ public partial class DayOfWeekAverageTimeStatisticsViewModel : ObservableObject,
     [ObservableProperty] private DayOfWeek _dayOfWeek;
     [ObservableProperty] private TimeSpan _averageTimePlayed;
     [ObservableProperty] private int _index;
-    public ChartEntityMetaData MetaData { get; set; }
+    public ChartEntityMetaData? MetaData { get; set; }
     public Coordinate Coordinate { get; set; }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

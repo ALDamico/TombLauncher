@@ -7,7 +7,7 @@ namespace TombLauncher.ValueConverters;
 
 public class FileSizeFormatter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var multiples = new string[]
         {
@@ -29,7 +29,7 @@ public class FileSizeFormatter : IValueConverter
         }
         else
         {
-            return null;
+            return string.Empty;
         }
 
         var tmpVal = d;
@@ -53,7 +53,7 @@ public class FileSizeFormatter : IValueConverter
         return $"{tmpVal:F} {unit}";
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

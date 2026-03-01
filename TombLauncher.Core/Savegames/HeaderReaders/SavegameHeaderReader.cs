@@ -1,6 +1,7 @@
 ﻿using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;
+using TombLauncher.Core.Exceptions;
 
 namespace TombLauncher.Core.Savegames.HeaderReaders;
 
@@ -8,7 +9,7 @@ public class SavegameHeaderReader : ISavegameHeaderReader
 {
     public SavegameHeaderReader()
     {
-        
+
     }
     private const int MaxLevelNameLength = 75;
     private const int SaveNumberOffset = 75;
@@ -18,7 +19,7 @@ public class SavegameHeaderReader : ISavegameHeaderReader
         var buf = new byte[80];
         var bytesRead = fs.Read(buf, 0, buf.Length);
         if (bytesRead < 80)
-            return null;
+            throw new SavegameParseException("Could not read enough bytes from file");
 
         return ReadHeader(filepath, buf);
     }
@@ -26,7 +27,7 @@ public class SavegameHeaderReader : ISavegameHeaderReader
     public SavegameHeader ReadHeader(string filepath, byte[] buf)
     {
         if (buf.Length < 80)
-            return null;
+            throw new SavegameParseException("Buffer is too small");
         var levelName = StringExtensions.GetNullTerminatedString(buf, MaxLevelNameLength).Replace('*', ' ');
         var saveNo = BitConverter.ToInt32(buf, SaveNumberOffset);
         var slotNumber = SavegameUtils.GetSlotNumber(filepath);

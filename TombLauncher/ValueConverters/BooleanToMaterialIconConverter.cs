@@ -9,7 +9,7 @@ public class BooleanToMaterialIconConverter : IValueConverter
 {
     public MaterialIconKind? TrueValue { get; set; }
     public MaterialIconKind? FalseValue { get; set; }
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool b)
         {
@@ -19,7 +19,7 @@ public class BooleanToMaterialIconConverter : IValueConverter
         return null;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value == null)
             return false;

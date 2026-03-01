@@ -41,9 +41,9 @@ public class AppCrashHostService : IViewService
                     }
                 }
             }, "json");
-        if (filePath.IsNullOrWhiteSpace()) return;
+        if (string.IsNullOrWhiteSpace(filePath)) return;
         await File.WriteAllTextAsync(filePath,
-            JsonSerializer.Serialize(crash, new JsonSerializerOptions() { WriteIndented = true }));
+            JsonSerializer.Serialize(crash, new JsonSerializerOptions() { WriteIndented = true }) ?? string.Empty);
     }
 
     public void Copy(object param)
@@ -51,11 +51,11 @@ public class AppCrashHostService : IViewService
         string serialized;
         try
         {
-            serialized = JsonSerializer.Serialize(param);
+            serialized = JsonSerializer.Serialize(param) ?? string.Empty;
         }
         catch (JsonException)
         {
-            serialized = param?.ToString();
+            serialized = param?.ToString() ?? string.Empty;
         }
 
         AppUtils.SetClipboardTextAsync(serialized);

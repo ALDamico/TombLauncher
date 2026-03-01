@@ -16,14 +16,14 @@ public partial class GameSearchViewModel : PageViewModel
     private GameSearchService _gameSearchService;
 
     [ObservableProperty] private DownloaderSearchPayloadViewModel _searchPayload;
-    [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults;
+    [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
     [ObservableProperty] private bool _hasMoreResults;
     [ObservableProperty] private Vector _scrollViewerOffset;
     [ObservableProperty] private bool _hasSearched;
     [ObservableProperty] private int _resultCount;
     [ObservableProperty] private bool _showEmptyState;
     [ObservableProperty] private bool _showResults;
-    [ObservableProperty] private string _loadMoreFeedback;
+    [ObservableProperty] private string _loadMoreFeedback = string.Empty;
 
     public GameSearchViewModel(GameSearchService gameSearchService)
     {
@@ -31,8 +31,8 @@ public partial class GameSearchViewModel : PageViewModel
         SearchPayload = new DownloaderSearchPayloadViewModel();
         SearchPayload.PropertyChanged += OnSearchPayloadPropertyChanged;
         SearchCmd = new AsyncRelayCommand(Search);
-        HandleKeyUpCmd = new AsyncRelayCommand<KeyEventArgs>(HandleKeyUp);
-        OpenCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel>(Open);
+        HandleKeyUpCmd = new AsyncRelayCommand<KeyEventArgs?>(HandleKeyUp);
+        OpenCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel?>(Open);
         LoadMoreCmd = new AsyncRelayCommand(LoadMore);
         ClearFiltersCmd = new RelayCommand(ClearFilters, CanClearFilters);
         IsCancelable = true;
@@ -58,14 +58,14 @@ public partial class GameSearchViewModel : PageViewModel
         ResultCount = FetchedResults?.Count ?? 0;
         ShowEmptyState = HasSearched && ResultCount == 0;
         ShowResults = ResultCount > 0;
-        LoadMoreFeedback = null;
+        LoadMoreFeedback = string.Empty;
     }
 
     [ObservableProperty] private ICommand _handleKeyUpCmd;
 
-    private async Task HandleKeyUp(KeyEventArgs keyEventArgs)
+    private async Task HandleKeyUp(KeyEventArgs? keyEventArgs)
     {
-        if (keyEventArgs.Key == Key.Enter)
+        if (keyEventArgs?.Key == Key.Enter)
             await Search();
     }
 
@@ -81,9 +81,10 @@ public partial class GameSearchViewModel : PageViewModel
 
     [ObservableProperty] private ICommand _openCmd;
 
-    private async Task Open(MultiSourceGameSearchResultMetadataViewModel gameToOpen)
+    private async Task Open(MultiSourceGameSearchResultMetadataViewModel? gameToOpen)
     {
-        await _gameSearchService.Open(this, gameToOpen);
+        if (gameToOpen != null)
+            await _gameSearchService.Open(this, gameToOpen);
     }
 
     [ObservableProperty] private ICommand _clearFiltersCmd;
@@ -98,7 +99,7 @@ public partial class GameSearchViewModel : PageViewModel
         return SearchPayload?.HasActiveFilters == true;
     }
 
-    private void OnSearchPayloadPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void OnSearchPayloadPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(DownloaderSearchPayloadViewModel.HasActiveFilters))
         {

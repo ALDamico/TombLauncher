@@ -10,7 +10,7 @@ namespace TombLauncher.ValueConverters;
 
 public class DateTimeFormatter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
         if (value is DateTime dateTime)
@@ -19,15 +19,15 @@ public class DateTimeFormatter : IValueConverter
                 return string.Empty;
             if (DesiredFormat.IsNullOrWhiteSpace())
             {
-                return dateTime.ToString(localizationManager.CurrentCulture.DateTimeFormat);
+                return dateTime.ToString(localizationManager.CurrentCulture?.DateTimeFormat);
             }
-            return dateTime.ToString(localizationManager[DesiredFormat]);
+            return dateTime.ToString(localizationManager[DesiredFormat!]);
         }
 
         return null;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
         if (targetType == typeof(DateTime))
@@ -42,5 +42,5 @@ public class DateTimeFormatter : IValueConverter
         return null;
     }
 
-    public string DesiredFormat { get; set; }
+    public string? DesiredFormat { get; set; } = null!;
 }

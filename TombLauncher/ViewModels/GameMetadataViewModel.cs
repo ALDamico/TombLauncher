@@ -9,23 +9,23 @@ namespace TombLauncher.ViewModels;
 public partial class GameMetadataViewModel : ViewModelBase
 {
     public int Id { get; set; }
-    [ObservableProperty] private string _title;
-    [ObservableProperty] private string _author;
+    [ObservableProperty] private string _title = string.Empty;
+    [ObservableProperty] private string _author = string.Empty;
     [ObservableProperty] private DateTime? _releaseDate;
     [ObservableProperty] private DateTime? _installDate;
     [ObservableProperty] private GameEngine _gameEngine;
-    [ObservableProperty] private string _setting;
+    [ObservableProperty] private string? _setting;
     [ObservableProperty] private GameLength _length;
     [ObservableProperty] private GameDifficulty _difficulty;
-    [ObservableProperty] private string _installDirectory;
-    [ObservableProperty] private string _executablePath;
-    [ObservableProperty] private string _description;
-    [ObservableProperty] private Bitmap _titlePic;
-    [ObservableProperty] private string _authorFullName;
+    [ObservableProperty] private string? _installDirectory;
+    [ObservableProperty] private string? _executablePath;
+    [ObservableProperty] private string _description = string.Empty;
+    [ObservableProperty] private Bitmap? _titlePic;
+    [ObservableProperty] private string? _authorFullName;
     [ObservableProperty] private bool _isInstalled;
-    [ObservableProperty] private string _setupExecutable;
-    [ObservableProperty] private string _setupExecutableArgs;
-    [ObservableProperty] private string _communitySetupExecutable;
+    [ObservableProperty] private string? _setupExecutable;
+    [ObservableProperty] private string? _setupExecutableArgs;
+    [ObservableProperty] private string? _communitySetupExecutable;
     [ObservableProperty] private bool _isCompleted;
     [ObservableProperty] private bool _isFavourite;
     public Guid Guid { get; set; }

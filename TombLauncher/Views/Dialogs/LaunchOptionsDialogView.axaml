@@ -17,7 +17,7 @@
                              Text="{DynamicResource 'Auto detect'}" 
                              ToolTip.Tip="{DynamicResource 'Auto detect tooltip'}"
                 HorizontalAlignment="Right"
-                Command="{Binding AutoDetectCmd}"/>
+                Command="{Binding AutoDetectCommand}"/>
         <ScrollViewer>
         <StackPanel Orientation="Vertical">
             <TextBlock Classes="small" Text="{DynamicResource 'Engine type'}"/>

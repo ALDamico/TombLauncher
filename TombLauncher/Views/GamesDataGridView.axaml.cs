@@ -17,18 +17,18 @@ public partial class GamesDataGridView : UserControl
             row.PointerEntered += (o, eventArgs) =>
             {
                 var dataContext = row.DataContext as GameWithStatsViewModel;
-                dataContext.AreCommandsVisible = true;
+                if (dataContext != null) dataContext.AreCommandsVisible = true;
             };
             row.PointerExited += (o, eventArgs) =>
             {
                 var dataContext = row.DataContext as GameWithStatsViewModel;
-                dataContext.AreCommandsVisible = false;
+                if (dataContext != null) dataContext.AreCommandsVisible = false;
             };
 
             row.DoubleTapped += (o, eventArgs) =>
             {
                 var dataContext = row.DataContext as GameWithStatsViewModel;
-                dataContext.PlayCmd.Execute(null);
+                dataContext?.PlayCmd.Execute(null);
             };
         };
     }

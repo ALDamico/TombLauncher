@@ -58,45 +58,48 @@ public partial class SavegameListViewModel : PageViewModel
         }
     }
 
-    [ObservableProperty] private string _gameTitle;
+    [ObservableProperty] private string _gameTitle = string.Empty;
     [ObservableProperty] private int _gameId;
     [ObservableProperty] private GameEngine _gameEngine;
-    [ObservableProperty] private string _installLocation;
+    [ObservableProperty] private string? _installLocation;
 
     [ObservableProperty]
     private ObservableCollection<SavegameViewModel> _savegames = new ObservableCollection<SavegameViewModel>();
 
-    [ObservableProperty] private ObservableCollection<SavegameViewModel> _filteredSaves;
-    [ObservableProperty] private ObservableCollection<SavegameSlotViewModel> _slots;
-    [ObservableProperty] private SavegameSlotViewModel _selectedSlot;
+    [ObservableProperty] private ObservableCollection<SavegameViewModel> _filteredSaves = new ObservableCollection<SavegameViewModel>();
+    [ObservableProperty] private ObservableCollection<SavegameSlotViewModel> _slots = new ObservableCollection<SavegameSlotViewModel>();
+    [ObservableProperty] private SavegameSlotViewModel? _selectedSlot;
     [ObservableProperty] private SaveGameListFilter _savegameFilter;
     private SavegameQueryService _savegameQueryService;
     private SavegameCommandService _savegameCommandService;
 
     [ObservableProperty] public ICommand _filterCmd;
 
-    private async Task Filter(SaveGameListFilter slotNumber)
+    private async Task Filter(SaveGameListFilter? slotNumber)
     {
         if (_savegameQueryService == null)
             return;
-        await _savegameQueryService.ApplyFilter(this, slotNumber);
+        if (slotNumber != null)
+            await _savegameQueryService.ApplyFilter(this, slotNumber);
     }
 
     public ICommand UpdateStartOfLevelStateCmd { get; private set; }
 
-    private async Task UpdateStartOfLevelState(SavegameViewModel targetSaveGame)
+    private async Task UpdateStartOfLevelState(SavegameViewModel? targetSaveGame)
     {
-        await _savegameCommandService.UpdateStartOfLevelState(this, targetSaveGame);
+        if (targetSaveGame != null)
+            await _savegameCommandService.UpdateStartOfLevelState(this, targetSaveGame);
     }
 
     public IRelayCommand DeleteSaveCmd { get; private set; }
 
-    private async Task DeleteSave(SavegameViewModel target)
+    private async Task DeleteSave(SavegameViewModel? target)
     {
-        await _savegameCommandService.DeleteSavegame(this, target);
+        if (target != null)
+            await _savegameCommandService.DeleteSavegame(this, target);
     }
 
-    private bool CanDelete(SavegameViewModel obj)
+    private bool CanDelete(SavegameViewModel? obj)
     {
         if (obj == null) return false;
         return !obj.IsStartOfLevel;

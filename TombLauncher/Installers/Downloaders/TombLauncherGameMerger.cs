@@ -21,7 +21,7 @@ public class TombLauncherGameMerger : IGameMerger
     }
 
     public GameSearchResultMetadataDistanceCalculator Comparer { get; }
-    public int Merge(ICollection<IMultiSourceSearchResultMetadata> fullList, ICollection<IGameSearchResultMetadata> addedElements)
+    public int Merge(ICollection<IMergedGameSearchResultMetadata> fullList, ICollection<IGameSearchResultMetadata> addedElements)
     {
         var unmatched = new List<IGameSearchResultMetadata>(addedElements);
         var mergedCount = 0;
@@ -85,14 +85,14 @@ public class TombLauncherGameMerger : IGameMerger
                 {
                     element.ReleaseDate = match.ReleaseDate;
                 }
-                
+
                 element.Sources.Add(match);
             }
         }
 
         foreach (var element in unmatched)
         {
-            fullList.Add(new MultiSourceSearchResultMetadataDto()
+            fullList.Add(new MergedGameSearchResultDto()
             {
                 Author = element.Author,
                 Difficulty = element.Difficulty,
@@ -101,7 +101,7 @@ public class TombLauncherGameMerger : IGameMerger
                 Length = element.Length,
                 Rating = element.Rating,
                 Setting = element.Setting,
-                Sources = new HashSet<IGameSearchResultMetadata>(){element},
+                Sources = new HashSet<IGameSearchResultMetadata>() { element },
                 Title = element.Title,
                 BaseUrl = element.BaseUrl,
                 SourceSiteDisplayName = element.SourceSiteDisplayName,

@@ -84,12 +84,17 @@ public class SettingsPageService : IViewService
         var randomGameSettings = viewModel.Sections.OfType<RandomGameSettingsViewModel>().First();
         var backupSettings = viewModel.Sections.OfType<SavegameSettingsViewModel>().First();
 
-        _appConfiguration.ApplicationLanguage =
-            languageSettings.ApplicationLanguage.CultureInfo.IetfLanguageTag;
-        LocalizationManager.ChangeLanguage(languageSettings.ApplicationLanguage.CultureInfo);
-        _appConfiguration.ApplicationTheme = appearanceSettings.SelectedTheme.Value;
-        _themeManager.ApplyTheme(appearanceSettings.SelectedTheme.Value);
-        AppUtils.ChangeTheme(appearanceSettings.SelectedTheme.BaseVariant);
+        if (languageSettings.ApplicationLanguage?.CultureInfo != null)
+        {
+            _appConfiguration.ApplicationLanguage = languageSettings.ApplicationLanguage.CultureInfo.IetfLanguageTag;
+            LocalizationManager.ChangeLanguage(languageSettings.ApplicationLanguage.CultureInfo);
+        }
+        if (appearanceSettings.SelectedTheme != null)
+        {
+            _appConfiguration.ApplicationTheme = appearanceSettings.SelectedTheme.Value;
+            _themeManager.ApplyTheme(appearanceSettings.SelectedTheme.Value);
+            AppUtils.ChangeTheme(appearanceSettings.SelectedTheme.BaseVariant);
+        }
         _appConfiguration.DefaultToGridView = appearanceSettings.DefaultToGridView;
         var mappedDownloaderConfigs =
             _mapper.Map<List<DownloaderConfiguration>>(downloaderSettings.AvailableDownloaders);
@@ -97,7 +102,8 @@ public class SettingsPageService : IViewService
         _appConfiguration.AskForConfirmationBeforeWalkthrough =
             gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _appConfiguration.WinePath = gameDetailsSettings.WinePath;
-        _appConfiguration.DocumentationPatterns = gameDetailsSettings.DocumentationPatterns.TargetCollection.ToList();
+        _appConfiguration.DocumentationPatterns = gameDetailsSettings.DocumentationPatterns?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
+        _appConfiguration.DocumentationFolderExclusions = gameDetailsSettings.FolderExclusions?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
         _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
         _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
         _appConfiguration.NumberOfVersionsToKeep =

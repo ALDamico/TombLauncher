@@ -26,7 +26,7 @@ public class TrCustomsGameDownloader : IGameDownloader
 {
     public string DisplayName => "TRCustoms.org";
     public string BaseUrl => "https://trcustoms.org/";
-    public DownloaderSearchPayload DownloaderSearchPayload { get; private set; }
+    public DownloaderSearchPayload DownloaderSearchPayload { get; private set; } = new();
 
     public TrCustomsGameDownloader()
     {
@@ -68,10 +68,10 @@ public class TrCustomsGameDownloader : IGameDownloader
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
-    private Dictionary<int, GameEngine> _enginesMap;
-    private Dictionary<GameEngine, int> _reverseEnginesMap;
-    private Dictionary<string, LevelTagResponse> _tagsMap;
-    private Dictionary<string, LevelGenreResponse> _genresMap;
+    private Dictionary<int, GameEngine> _enginesMap = new();
+    private Dictionary<GameEngine, int> _reverseEnginesMap = new();
+    private Dictionary<string, LevelTagResponse> _tagsMap = new();
+    private Dictionary<string, LevelGenreResponse> _genresMap = new();
     private readonly Dictionary<string, int> _ratingMap;
 
     public async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
@@ -94,10 +94,10 @@ public class TrCustomsGameDownloader : IGameDownloader
         return await FetchNextPage(cancellationToken);
     }
 
-    private async Task<TrCustomsPagedResponse<T>> GetPagedResponse<T>(string endpoint, IEnumerable<KeyValuePair<string, string>> trCustomsRequest = null,
+    private async Task<TrCustomsPagedResponse<T>> GetPagedResponse<T>(string endpoint, IEnumerable<KeyValuePair<string, string?>>? trCustomsRequest = null,
         CancellationToken cancellationToken = default)
     {
-        var relativeUri = new UriBuilder(_httpClient.BaseAddress);
+        var relativeUri = new UriBuilder(_httpClient.BaseAddress!);
         relativeUri.Path = $"api/{endpoint}/";
         var completeUri = relativeUri.Uri.ToString();
         if (trCustomsRequest != null)
@@ -114,7 +114,7 @@ public class TrCustomsGameDownloader : IGameDownloader
 
         var pagedResponse = JsonConvert.DeserializeObject<TrCustomsPagedResponse<T>>(
             await response.Content.ReadAsStringAsync(cancellationToken), _jsonSerializerSettings);
-        return pagedResponse;
+        return pagedResponse ?? new TrCustomsPagedResponse<T>();
     }
 
     private async Task<Dictionary<string, LevelTagResponse>> FetchTags(CancellationToken cancellationToken)
@@ -127,7 +127,7 @@ public class TrCustomsGameDownloader : IGameDownloader
         var dictified = RequestUtils.DictifyRequest(request);
 
         var tags = await GetPagedResponse<LevelTagResponse>("level_tags", dictified, cancellationToken);
-        return tags.Results.ToDictionary(t => t.Name.ToUpperInvariant(), t => t);
+        return tags?.Results?.ToDictionary(t => t.Name?.ToUpperInvariant() ?? string.Empty, t => t) ?? new Dictionary<string, LevelTagResponse>();
     }
 
     private async Task<Dictionary<string, LevelGenreResponse>> FetchGenres(CancellationToken cancellationToken)
@@ -138,7 +138,7 @@ public class TrCustomsGameDownloader : IGameDownloader
         };
         var dictified = RequestUtils.DictifyRequest(request);
         var genres = await GetPagedResponse<LevelGenreResponse>("level_genres", dictified, cancellationToken);
-        return genres.Results.ToDictionary(g => g.Name.ToUpperInvariant(), g => g);
+        return genres?.Results?.ToDictionary(g => g.Name?.ToUpperInvariant() ?? string.Empty, g => g) ?? new Dictionary<string, LevelGenreResponse>();
     }
 
     private async Task<Dictionary<int, GameEngine>> FetchSupportedEngines(CancellationToken cancellationToken)
@@ -200,15 +200,14 @@ public class TrCustomsGameDownloader : IGameDownloader
         cancellationToken.ThrowIfCancellationRequested();
         foreach (var summary in levelSummaries)
         {
-            string authors = null;
+            string? authors = null;
             if (summary.Authors.IsNotNullOrEmpty())
             {
                 authors = string.Join(", ", summary.Authors.Select(a => a.Username));
             }
 
-            var tags = summary.Tags.Select(t => t.Name);
-
-            string settingString = string.Join(", ", tags);
+            var tags = summary.Tags?.Select(t => t.Name) ?? [];
+            string? settingString = tags.Any() ? string.Join(", ", tags) : null;
 
             var rating = ParseRating(summary.RatingClass);
 
@@ -220,30 +219,30 @@ public class TrCustomsGameDownloader : IGameDownloader
             {
                 BaseUrl = BaseUrl,
                 SourceSiteDisplayName = DisplayName,
-                Author = authors,
+                Author = authors ?? string.Empty,
                 Rating = rating,
-                Description = summary.Description,
+                Description = summary.Description ?? string.Empty,
                 Difficulty = difficulty,
                 Engine = gameEngine,
                 Length = ParseDuration(summary.Duration),
-                Setting = settingString,
-                Title = summary.Name,
+                Setting = settingString ?? string.Empty,
+                Title = summary.Name ?? string.Empty,
                 ReleaseDate = summary.Created,
-                TitlePic = summary.Cover.Url,
+                TitlePic = summary.Cover?.Url ?? string.Empty,
                 SizeInMb = summary.LastFile?.Size != null ? (int)Math.Ceiling(summary.LastFile.Size / (1024.0 * 1024.0)) : null,
-                DownloadLink = summary.LastFile?.Url,
                 ReviewCount = summary.ReviewCount,
                 ReviewsLink = $"levels/{summary.Id}/reviews",
-                DetailsLink = $"levels/{summary.Id}"
+                DetailsLink = $"levels/{summary.Id}",
+                DownloadLink = summary.LastFile?.Url ?? string.Empty
             };
             result.Add(metadata);
         }
     }
 
-    private double? ParseRating(RatingClassResponse ratingClass)
+    private double? ParseRating(RatingClassResponse? ratingClass)
     {
         double? rating = null;
-        if (ratingClass != null)
+        if (ratingClass != null && ratingClass.Name != null && _ratingMap.ContainsKey(ratingClass.Name))
         {
             rating = _ratingMap[ratingClass.Name];
         }
@@ -279,6 +278,7 @@ public class TrCustomsGameDownloader : IGameDownloader
             return GameLength.Unknown;
 
         var durationName = levelDurationResponse.Name;
+        if (durationName == null) return GameLength.Unknown;
 
         if (durationName.StartsWith("Short", StringComparison.InvariantCultureIgnoreCase))
         {
@@ -311,9 +311,9 @@ public class TrCustomsGameDownloader : IGameDownloader
 
         searchRequest.Page = currentPage;
 
-        searchRequest.Search = DownloaderSearchPayload.AuthorName;
+        searchRequest.Search = DownloaderSearchPayload.AuthorName ?? string.Empty;
         if (downloaderSearchPayload.LevelName != null)
-            searchRequest.Search = downloaderSearchPayload.LevelName;
+            searchRequest.Search = downloaderSearchPayload.LevelName ?? string.Empty;
 
         var rating = downloaderSearchPayload.Rating;
         if (rating > 0)
@@ -337,15 +337,15 @@ public class TrCustomsGameDownloader : IGameDownloader
 
         if (downloaderSearchPayload.Setting.IsNotNullOrWhiteSpace())
         {
-            var tokens = downloaderSearchPayload.Setting.ToUpperInvariant().Split(",");
+            var tokens = downloaderSearchPayload.Setting?.ToUpperInvariant().Split(",") ?? [];
             foreach (var token in tokens)
             {
-                if (tagLookup.TryGetValue(token, out var targetTag))
+                if (tagLookup != null && tagLookup.TryGetValue(token, out var targetTag))
                 {
                     searchRequest.Tags.Add(targetTag.Id);
                 }
 
-                if (genreLookup.TryGetValue(token, out var targetGenre))
+                if (genreLookup != null && genreLookup.TryGetValue(token, out var targetGenre))
                 {
                     searchRequest.Genres.Add(targetGenre.Id);
                 }
@@ -382,15 +382,15 @@ public class TrCustomsGameDownloader : IGameDownloader
         return new GameMetadataDto()
         {
             Author = game.Author,
-            Description = game.Description,
+            Description = game.Description ?? string.Empty,
             Difficulty = game.Difficulty,
             Length = game.Length,
             Setting = game.Setting,
             GameEngine = game.Engine,
             ReleaseDate = game.ReleaseDate,
-            AuthorFullName = game.AuthorFullName,
-            TitlePic = await _httpClient.GetByteArrayAsync(game.TitlePic, cancellationToken),
-            Title = game.Title,
+            AuthorFullName = game.AuthorFullName ?? string.Empty,
+            TitlePic = game.TitlePic != null ? await _httpClient.GetByteArrayAsync(game.TitlePic!, cancellationToken) : Array.Empty<byte>(),
+            Title = game.Title ?? string.Empty,
         };
     }
 

@@ -14,8 +14,8 @@ public partial class DownloaderSearchPayloadViewModel : ObservableValidator
         AvailableDifficulties = EnumUtils.GetEnumViewModels<GameDifficulty>().ToObservableCollection();
         AvailableEngines = EnumUtils.GetEnumViewModels<GameEngine>().ToObservableCollection();
     }
-    [ObservableProperty] private string _levelName;
-    [ObservableProperty] private string _authorName;
+    [ObservableProperty] private string _levelName = null!;
+    [ObservableProperty] private string _authorName = null!;
     [ObservableProperty] private GameEngine? _gameEngine;
     [ObservableProperty] private GameDifficulty? _gameDifficulty;
     [ObservableProperty] private GameLength? _duration;
@@ -40,8 +40,8 @@ public partial class DownloaderSearchPayloadViewModel : ObservableValidator
 
     public void ClearFilters()
     {
-        LevelName = null;
-        AuthorName = null;
+        LevelName = string.Empty;
+        AuthorName = string.Empty;
         GameEngine = null;
         GameDifficulty = null;
         Duration = null;

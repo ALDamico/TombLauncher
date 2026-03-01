@@ -11,7 +11,7 @@ public partial class DailyStatisticsViewModel : ObservableObject, IChartEntity
     [ObservableProperty] private int _differentGamesPlayed;
     [ObservableProperty] private TimeSpan _averageGameDuration;
     [ObservableProperty] private TimeSpan _totalPlayTime;
-    public ChartEntityMetaData MetaData { get; set; }
+    public ChartEntityMetaData? MetaData { get; set; }
     public Coordinate Coordinate { get; set; }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

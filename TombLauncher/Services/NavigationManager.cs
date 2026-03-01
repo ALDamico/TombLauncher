@@ -9,8 +9,6 @@ using TombLauncher.Contracts.Navigation;
 
 namespace TombLauncher.Services;
 
-#nullable enable
-
 public partial class NavigationManager : ObservableObject
 {
     private readonly IServiceProvider _serviceProvider;
@@ -81,7 +79,7 @@ public partial class NavigationManager : ObservableObject
         // We do this outside the lock to avoid deadlocks and allow UI to render the new page (likely in "Busy" state)
         try
         {
-            await nextViewModel.OnNavigatedTo(parameter);
+            await nextViewModel.OnNavigatedTo(parameter!);
         }
         catch (Exception ex)
         {
@@ -122,7 +120,7 @@ public partial class NavigationManager : ObservableObject
             // Re-activating the previous page
             try
             {
-                await previousPage.OnNavigatedTo(null);
+                await previousPage.OnNavigatedTo(null!);
             }
             catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during GoBack for {ViewModelType}", previousPage.GetType().Name); }
         }
@@ -158,7 +156,7 @@ public partial class NavigationManager : ObservableObject
 
         try
         {
-            await nextViewModel.OnNavigatedTo(parameter);
+            await nextViewModel.OnNavigatedTo(parameter!);
         }
         catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during NavigateToRoot for {ViewModelType}", nextViewModel.GetType().Name); }
     }
@@ -195,7 +193,7 @@ public partial class NavigationManager : ObservableObject
 
         try
         {
-            await nextViewModel.OnNavigatedTo(parameter);
+            await nextViewModel.OnNavigatedTo(parameter!);
         }
         catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during NavigateTo(Type) for {ViewModelType}", nextViewModel.GetType().Name); }
     }
@@ -230,7 +228,7 @@ public partial class NavigationManager : ObservableObject
 
         try
         {
-            await nextViewModel.OnNavigatedTo(parameter);
+            await nextViewModel.OnNavigatedTo(parameter!);
         }
         catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during NavigateToRoot(Type) for {ViewModelType}", nextViewModel.GetType().Name); }
     }

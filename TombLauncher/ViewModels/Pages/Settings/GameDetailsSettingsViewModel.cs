@@ -12,10 +12,10 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 
     public bool IsWinePathOptionVisible => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
-    [ObservableProperty] private string _winePath;
-    private EditablePatternListBoxViewModel _documentationPatterns;
+    [ObservableProperty] private string _winePath = string.Empty;
+    private EditablePatternListBoxViewModel? _documentationPatterns;
 
-    public EditablePatternListBoxViewModel DocumentationPatterns
+    public EditablePatternListBoxViewModel? DocumentationPatterns
     {
         get => _documentationPatterns;
         set
@@ -27,15 +27,15 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
             _documentationPatterns = value;
             if (value != null)
             {
-                _documentationPatterns.PropertyChanged += OnChildPropertyChanged;
+                value.PropertyChanged += OnChildPropertyChanged;
             }
             OnPropertyChanged();
         }
     }
-    
-    private EditableFolderExclusionsListBoxViewModel _folderExclusions;
 
-    public EditableFolderExclusionsListBoxViewModel FolderExclusions
+    private EditableFolderExclusionsListBoxViewModel? _folderExclusions;
+
+    public EditableFolderExclusionsListBoxViewModel? FolderExclusions
     {
         get => _folderExclusions;
         set
@@ -47,13 +47,13 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
             _folderExclusions = value;
             if (value != null)
             {
-                _folderExclusions.PropertyChanged += OnChildPropertyChanged;
+                value.PropertyChanged += OnChildPropertyChanged;
             }
             OnPropertyChanged();
         }
     }
 
-    private void OnChildPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void OnChildPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         string propertyName = "";
         if (sender == DocumentationPatterns)

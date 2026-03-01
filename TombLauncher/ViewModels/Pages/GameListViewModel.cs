@@ -12,8 +12,8 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameListViewModel : PageViewModel
 {
-    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games;
-    [ObservableProperty] private GameWithStatsViewModel _selectedGame;
+    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games = new ObservableCollection<GameWithStatsViewModel>();
+    [ObservableProperty] private GameWithStatsViewModel? _selectedGame;
     [ObservableProperty] private bool _showAsGrid;
 
     private GameListService _gameListService;
@@ -44,64 +44,67 @@ public partial class GameListViewModel : PageViewModel
         TopBarCommands.Clear();
         TopBarCommands.Add(new CommandViewModel()
         {
-            Command = OpenSearchCmd,
+            Command = OpenSearchCmd!,
             Icon = MaterialIconKind.Search,
             Tooltip = "Open search".GetLocalizedString()
         });
         TopBarCommands.Add(new CommandViewModel()
         {
-            Command = AddGameCmd,
+            Command = AddGameCmd!,
             Icon = MaterialIconKind.Plus,
             Tooltip = "Add".GetLocalizedString()
         });
     }
 
-    public IAsyncRelayCommand AddGameCmd { get; private set; }
+    public IAsyncRelayCommand? AddGameCmd { get; private set; }
 
     private async Task AddGame()
     {
         await _gameListService.AddGame();
     }
 
-    public ICommand OpenSearchCmd { get; private set; }
+    public ICommand? OpenSearchCmd { get; private set; }
 
     private async Task OpenSearch()
     {
         await _gameListService.OpenSearch();
     }
 
-    public ICommand PlayCmd { get; private set; }
+    public ICommand? PlayCmd { get; private set; }
 
-    private void Play(GameWithStatsViewModel game)
+    private void Play(GameWithStatsViewModel? game)
     {
-        game.PlayCmd.Execute(null);
+        game?.PlayCmd?.Execute(null);
     }
 
-    public ICommand OpenCmd { get; private set; }
+    public ICommand? OpenCmd { get; private set; }
 
-    private void Open(GameWithStatsViewModel game)
+    private void Open(GameWithStatsViewModel? game)
     {
-        game.OpenCmd.Execute(null);
+        game?.OpenCmd?.Execute(null);
     }
 
-    public ICommand UninstallCmd { get; private set; }
+    public ICommand? UninstallCmd { get; private set; }
 
-    private async void Uninstall(GameWithStatsViewModel game)
+    private async void Uninstall(GameWithStatsViewModel? game)
     {
-        await _gameListService.Uninstall(this, game);
+        if (game != null)
+            await _gameListService.Uninstall(this, game);
     }
 
-    public ICommand AddToFavouritesCmd { get; private set; }
+    public ICommand? AddToFavouritesCmd { get; private set; }
 
-    private async Task AddToFavourites(GameWithStatsViewModel game)
+    private async Task AddToFavourites(GameWithStatsViewModel? game)
     {
-        await game.MarkGameAsFavouriteCmd.ExecuteAsync(null);
+        if (game?.MarkGameAsFavouriteCmd != null)
+            await game.MarkGameAsFavouriteCmd.ExecuteAsync(null);
     }
 
-    public ICommand MarkUnmarkCompletedCmd { get; private set; }
+    public ICommand? MarkUnmarkCompletedCmd { get; private set; }
 
-    private async Task MarkUnmarkCompleted(GameWithStatsViewModel game)
+    private async Task MarkUnmarkCompleted(GameWithStatsViewModel? game)
     {
-        await game.MarkGameAsCompletedCmd.ExecuteAsync(null);
+        if (game?.MarkGameAsCompletedCmd != null)
+            await game.MarkGameAsCompletedCmd.ExecuteAsync(null);
     }
 }

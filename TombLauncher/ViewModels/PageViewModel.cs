@@ -28,7 +28,7 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
         _progress = new Progress<PageBusyState>(state =>
         {
             IsBusy = state.IsBusy;
-            BusyMessage = state.BusyMessage;
+            BusyMessage = state.BusyMessage ?? string.Empty;
         });
         SaveCmd = new AsyncRelayCommand(Save, CanSave);
         CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
@@ -36,8 +36,8 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
     }
 
     [ObservableProperty] private bool _isBusy;
-    [ObservableProperty] private string _busyMessage;
-    [ObservableProperty] private string _currentFileName;
+    [ObservableProperty] private string _busyMessage = string.Empty;
+    [ObservableProperty] private string _currentFileName = string.Empty;
     [ObservableProperty] private double? _percentageComplete;
     [ObservableProperty] private bool _isCancelable;
     [ObservableProperty] private ObservableCollection<ITopBarCommand> _topBarCommands;
@@ -49,7 +49,7 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
 
     }
 
-    public void SetBusy(bool isBusy, string busyMessage = null)
+    public void SetBusy(bool isBusy, string? busyMessage = null)
     {
         var busyState = new PageBusyState() { IsBusy = isBusy, BusyMessage = busyMessage };
         _progress.Report(busyState);

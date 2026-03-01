@@ -59,7 +59,7 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    private SparkleUpdater _sparkle;
+    private SparkleUpdater _sparkle = null!;
 
     public override async void OnFrameworkInitializationCompleted()
     {
@@ -98,7 +98,7 @@ public partial class App : Application
 
     private void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        AppCrashUnitOfWork appCrashUow = null;
+        AppCrashUnitOfWork? appCrashUow = null;
         try
         {
             appCrashUow = Ioc.Default.GetRequiredService<AppCrashUnitOfWork>();
@@ -118,9 +118,13 @@ public partial class App : Application
             exception = tie.InnerException;
         }
 
+        Console.Error.WriteLine("--- ORIGINAL FATAL CRASH ---");
+        Console.Error.WriteLine(exception);
+        Console.Error.WriteLine("----------------------------");
+
         if (appCrashUow != null)
         {
-            appCrashUow.InsertAppCrash(exception);
+            if (exception != null) appCrashUow.InsertAppCrash(exception);
             var welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
             welcomePageService.HandleNotNotifiedCrashes();
         }
@@ -180,7 +184,7 @@ public partial class App : Application
                 return new LinuxPlatformSpecificFeatures();
             }
 
-            return null;
+            throw new PlatformNotSupportedException("This platform is not supported.");
         });
         ConfigureLogging(serviceCollection);
         ConfigureMappings(serviceCollection);
@@ -191,7 +195,7 @@ public partial class App : Application
         serviceCollection.AddTransient<SavegameCommandService>();
         ConfigurePageServices(serviceCollection);
         ConfigureViewModels(serviceCollection);
-        serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current));
+        serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current!));
         ConfigureDatabaseAccess(serviceCollection, appConfiguration);
         serviceCollection.AddSingleton(sp => new NavigationManager(sp));
         serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
@@ -251,7 +255,7 @@ public partial class App : Application
     {
         var updateWorkers = UpdateUtils.AppCastWorkersFactory(appConfiguration);
 
-        _sparkle = new SparkleUpdater(appConfiguration.AppCastUrl,
+        _sparkle = new SparkleUpdater(appConfiguration.AppCastUrl ?? string.Empty,
             new Ed25519Checker(SecurityMode.Strict, appConfiguration.AppCastPublicKey))
         {
             UIFactory = updateWorkers.UiFactory(),
@@ -269,7 +273,7 @@ public partial class App : Application
             notificationService.AddNotification(new NotificationViewModel()
             {
                 Content = new StringNotificationViewModel()
-                { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion.Version) },
+                { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion?.Version ?? "") },
                 IsDismissable = true,
                 IsCancelable = false,
                 IsOpenable = true,
@@ -374,11 +378,11 @@ public partial class App : Application
 
     private static void ConfigureMappings(ServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton(sp => MapperConfigurationFactory.GetMapperConfiguration(sp.GetService));
+        serviceCollection.AddSingleton(sp => MapperConfigurationFactory.GetMapperConfiguration(t => sp.GetService(t)!));
         serviceCollection.AddSingleton<IMapper>(sp =>
         {
             var config = sp.GetRequiredService<MapperConfiguration>();
-            return config.CreateMapper(sp.GetService);
+            return config.CreateMapper(t => sp.GetService(t)!);
         });
     }
 }

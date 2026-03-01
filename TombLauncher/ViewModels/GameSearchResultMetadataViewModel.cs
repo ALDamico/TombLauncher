@@ -10,20 +10,20 @@ namespace TombLauncher.ViewModels;
 
 public partial class GameSearchResultMetadataViewModel : ViewModelBase
 {
-    [ObservableProperty] private string _author;
-    [ObservableProperty] private string _authorFullName;
-    [ObservableProperty] private string _title;
+    [ObservableProperty] private string _author = string.Empty;
+    [ObservableProperty] private string? _authorFullName;
+    [ObservableProperty] private string _title = string.Empty;
     [ObservableProperty] private GameDifficulty _difficulty;
     [ObservableProperty] private GameLength _length;
-    [ObservableProperty] private string _setting;
+    [ObservableProperty] private string _setting = string.Empty;
     [ObservableProperty] private GameEngine _engine;
-    [ObservableProperty] private string _detailsLink;
-    [ObservableProperty] private string _baseUrl;
-    [ObservableProperty] private Bitmap _titlePic;
-    [ObservableProperty] private string _description;
-    private string _reviewsLink;
+    [ObservableProperty] private string? _detailsLink;
+    [ObservableProperty] private string _baseUrl = string.Empty;
+    [ObservableProperty] private Bitmap? _titlePic;
+    [ObservableProperty] private string? _description;
+    private string? _reviewsLink;
 
-    public string ReviewsLink
+    public string? ReviewsLink
     {
         get => _reviewsLink;
         set
@@ -34,11 +34,11 @@ public partial class GameSearchResultMetadataViewModel : ViewModelBase
     }
 
     public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
-    
-    [ObservableProperty] private string _downloadLink;
-    private string _walkthroughLink;
 
-    public string WalkthroughLink
+    [ObservableProperty] private string _downloadLink = string.Empty;
+    private string? _walkthroughLink;
+
+    public string? WalkthroughLink
     {
         get => _walkthroughLink;
         set

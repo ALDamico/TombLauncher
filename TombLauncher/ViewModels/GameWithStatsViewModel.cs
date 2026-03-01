@@ -15,6 +15,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
     }
     public GameWithStatsViewModel(GameWithStatsService gameWithStatsService)
     {
+        _gameMetadata = null!;
         _gameWithStatsService = gameWithStatsService;
         PlayCmd = new RelayCommand(Play, CanPlay);
         OpenCmd = new AsyncRelayCommand(Open);

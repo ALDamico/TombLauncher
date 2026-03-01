@@ -23,12 +23,12 @@ public class AppCrashHostViewModel : DialogViewModel
 
     private AppCrashHostService _appCrashHostService;
 
-    private bool CanCopy(object obj)
+    private bool CanCopy(object? obj)
     {
-        return AppUtils.GetClipboard() != null;
+        return true;
     }
 
-    private AppCrashDto _crash;
+    private AppCrashDto _crash = null!;
 
     public AppCrashDto Crash
     {
@@ -45,9 +45,12 @@ public class AppCrashHostViewModel : DialogViewModel
 
     public ICommand CopyCmd { get; }
 
-    private void Copy(object param)
+    private void Copy(object? param)
     {
-        _appCrashHostService.Copy(param);
+        if (param != null)
+        {
+            _appCrashHostService.Copy(param);
+        }
     }
 
     private void InvokeRestart()

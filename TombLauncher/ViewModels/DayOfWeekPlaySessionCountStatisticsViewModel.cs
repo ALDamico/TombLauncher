@@ -7,12 +7,12 @@ using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.ViewModels;
 
-public partial class DayOfWeekPlaySessionCountStatisticsViewModel: ObservableObject, IChartEntity
+public partial class DayOfWeekPlaySessionCountStatisticsViewModel : ObservableObject, IChartEntity
 {
     [ObservableProperty] private DayOfWeek _dayOfWeek;
     [ObservableProperty] private int _playCount;
     [ObservableProperty] private int _index;
-    public ChartEntityMetaData MetaData { get; set; }
+    public ChartEntityMetaData? MetaData { get; set; }
     public Coordinate Coordinate { get; set; }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

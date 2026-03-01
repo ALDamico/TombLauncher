@@ -6,9 +6,9 @@ namespace TombLauncher.Installers.Downloaders.TRCustoms.org.Utils;
 
 internal static class RequestUtils
 {
-    internal static IEnumerable<KeyValuePair<string, string>> DictifyRequest(SearchRequest request)
+    internal static IEnumerable<KeyValuePair<string, string?>> DictifyRequest(SearchRequest request)
     {
-        var tempRequest = (Dictionary<string, string>)DictifyRequest((TrCustomsBaseRequest)request);
+        var tempRequest = (Dictionary<string, string?>)DictifyRequest((TrCustomsBaseRequest)request);
 
         if (request != null)
         {
@@ -50,15 +50,15 @@ internal static class RequestUtils
 
         return tempRequest;
     }
-    internal static IEnumerable<KeyValuePair<string, string>> DictifyRequest(TrCustomsBaseRequest baseRequest)
+    internal static IEnumerable<KeyValuePair<string, string?>> DictifyRequest(TrCustomsBaseRequest baseRequest)
     {
-        var dictionary = new Dictionary<string, string>();
+        var dictionary = new Dictionary<string, string?>();
         dictionary["format"] = "json";
         if (baseRequest != null)
         {
             if (baseRequest.Page.HasValue)
             {
-                dictionary["page"] = baseRequest.Page.ToString();
+                dictionary["page"] = baseRequest.Page.Value.ToString();
             }
 
             if (baseRequest.Search != null)
@@ -73,7 +73,7 @@ internal static class RequestUtils
 
             if (baseRequest.PageSize != null)
             {
-                dictionary["page_size"] = baseRequest.PageSize.ToString();
+                dictionary["page_size"] = baseRequest.PageSize?.ToString();
             }
         }
 

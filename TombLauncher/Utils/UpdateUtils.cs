@@ -31,7 +31,7 @@ public static class UpdateUtils
         {
             _uiFactories = new Dictionary<string, Func<IUIFactory>>()
             {
-                { PortableChannel, () => null },
+                { PortableChannel, () => null! },
                 { StableChannel, () => new UIFactory() }
             };
         }
@@ -43,7 +43,12 @@ public static class UpdateUtils
                 {
                     StableChannel,
                     new RelayCommand<UpdateCommandPayload>(payload =>
-                        payload.Sparkle.ShowUpdateNeededUI(payload.Args.AppCastItems))
+                    {
+                        if (payload != null && payload.Args != null)
+                        {
+                            payload.Sparkle?.ShowUpdateNeededUI(payload.Args.AppCastItems);
+                        }
+                    })
                 },
                 {
                     PortableChannel, new RelayCommand<UpdateCommandPayload>(payload =>
@@ -67,7 +72,7 @@ public static class UpdateUtils
         }
     }
 
-    private static Func<IUIFactory> GetUiFactory(string channelName)
+    private static Func<IUIFactory>? GetUiFactory(string? channelName)
     {
         if (channelName == null)
         {
@@ -79,7 +84,7 @@ public static class UpdateUtils
         return func;
     }
 
-    private static ICommand GetUpdateCommand(string channelName)
+    private static ICommand? GetUpdateCommand(string? channelName)
     {
         if (channelName == null)
         {
@@ -91,7 +96,7 @@ public static class UpdateUtils
         return cmd;
     }
 
-    private static MaterialIconKind GetNotificationIcon(string channelName)
+    private static MaterialIconKind GetNotificationIcon(string? channelName)
     {
         if (channelName == null)
         {
@@ -124,7 +129,7 @@ public static class UpdateUtils
         {
             var appCastFilter = new ChannelAppCastFilter(updateWorkers.LoggerToUse)
             {
-                ChannelSearchNames = [appConfiguration.UpdateChannelName],
+                ChannelSearchNames = [appConfiguration.UpdateChannelName!],
             };
             var helper = new AppCastHelper()
             {
@@ -133,8 +138,8 @@ public static class UpdateUtils
             updateWorkers.AppCastHelper = helper;
         }
 
-        updateWorkers.UiFactory = GetUiFactory(appConfiguration.UpdateChannelName);
-        updateWorkers.UpdateCommand = GetUpdateCommand(appConfiguration.UpdateChannelName);
+        updateWorkers.UiFactory = GetUiFactory(appConfiguration.UpdateChannelName)!;
+        updateWorkers.UpdateCommand = GetUpdateCommand(appConfiguration.UpdateChannelName)!;
         updateWorkers.UpdateIcon = GetNotificationIcon(appConfiguration.UpdateChannelName);
 
         return updateWorkers;

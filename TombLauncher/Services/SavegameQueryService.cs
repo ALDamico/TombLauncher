@@ -136,6 +136,7 @@ public class SavegameQueryService
     public async Task CheckSavegamesNotBackedUp(SavegameListViewModel savegameListView)
     {
         var installDir = savegameListView.InstallLocation;
+        if (installDir == null) return;
 
         var savegames = Directory.GetFiles(installDir, "save*.*", SearchOption.AllDirectories)
             .Where(f => Path.GetExtension(f).TrimStart('.').All(char.IsDigit) || Path.GetExtension(f).TrimStart('.') == "dat")

@@ -55,14 +55,14 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly MapperConfiguration _mapperConfiguration;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
-    private void SectionPropertyChanged(object sender, PropertyChangedEventArgs args)
+    private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
         if (args.PropertyName == nameof(IsChanged))
             return;
         RaiseCanExecuteChanged(SaveCmd);
     }
 
-    private void SectionErrorChanged(object sender, DataErrorsChangedEventArgs args)
+    private void SectionErrorChanged(object? sender, DataErrorsChangedEventArgs args)
     {
         OnPropertyChanged(nameof(IsChanged));
         OnPropertyChanged(nameof(HasPendingEdits));
@@ -86,7 +86,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         {
             AvailableLanguages = supportedLanguages.ToObservableCollection(),
             ApplicationLanguage = supportedLanguages.FirstOrDefault(l =>
-                _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo))
+                _settingsService.LocalizationManager.CurrentCulture?.Equals(l.CultureInfo) == true)
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();

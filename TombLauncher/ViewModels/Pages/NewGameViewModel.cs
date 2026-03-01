@@ -32,7 +32,7 @@ public partial class NewGameViewModel : PageViewModel
                 PercentageComplete = copyProgressInfo.Percentage;
             }
 
-            CurrentFileName = copyProgressInfo.CurrentFileName;
+            CurrentFileName = copyProgressInfo.CurrentFileName ?? string.Empty;
             if (copyProgressInfo.Message != null)
             {
                 BusyMessage = copyProgressInfo.Message;
@@ -45,7 +45,7 @@ public partial class NewGameViewModel : PageViewModel
 
     private readonly NewGameService _newGameService;
     [ObservableProperty] private GameMetadataViewModel _gameMetadata;
-    [ObservableProperty] private string _source;
+    [ObservableProperty] private string _source = string.Empty;
     public ObservableCollection<EnumViewModel<GameLength>> AvailableLengths { get; }
     public ObservableCollection<EnumViewModel<GameDifficulty>> AvailableDifficulties { get; }
     public IProgress<CopyProgressInfo> InstallProgress { get; }

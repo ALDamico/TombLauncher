@@ -58,12 +58,12 @@ public class NewGameService : IViewService
             }
         });
 
-        return file;
+        return file ?? string.Empty;
     }
 
     public async Task<string> PickFolder()
     {
-        return await DialogService.OpenFolder(LocalizationManager["Select a folder"]);
+        return await DialogService.OpenFolder(LocalizationManager["Select a folder"]) ?? string.Empty;
     }
 
     public async Task InstallGame(GameMetadataViewModel gameMetadata, IProgress<CopyProgressInfo> progress, string source)
