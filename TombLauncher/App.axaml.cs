@@ -47,7 +47,7 @@ using StringNotificationViewModel = TombLauncher.ViewModels.Notifications.String
 
 namespace TombLauncher;
 
-public partial class App : Application
+public class App : Application
 {
     public App()
     {
@@ -63,37 +63,44 @@ public partial class App : Application
 
     public override async void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        try
         {
-            // Line below is needed to remove Avalonia data validation.
-            // Without this line you will get duplicate validations from both Avalonia and CT
-            BindingPlugins.DataValidators.RemoveAt(0);
-            var splashScreen = new SplashScreen();
-            splashScreen.Show();
-            desktop.ShutdownRequested += (sender, args) =>
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                Log.Logger.Information("Application is shutting down");
-                ((IDisposable)Log.Logger).Dispose();
-            };
+                // Line below is needed to remove Avalonia data validation.
+                // Without this line you will get duplicate validations from both Avalonia and CT
+                BindingPlugins.DataValidators.RemoveAt(0);
+                var splashScreen = new SplashScreen();
+                splashScreen.Show();
+                desktop.ShutdownRequested += (_, _) =>
+                {
+                    Log.Logger.Information("Application is shutting down");
+                    ((IDisposable)Log.Logger).Dispose();
+                };
 
-            Dispatcher.UIThread.UnhandledException += OnUnhandledException;
+                Dispatcher.UIThread.UnhandledException += OnUnhandledException;
 
-            // Run initialization in background to allow Splash Screen to render
-            await Task.Run(async () =>
-            {
-                await InitializeServices();
-                // Trigger DB migration explicitly in background
-                using var scope = Ioc.Default.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<TombLauncherDbContext>();
-                await dbContext.Database.MigrateAsync();
-            });
+                // Run initialization in background to allow Splash Screen to render
+                await Task.Run(async () =>
+                {
+                    await InitializeServices();
+                    // Trigger DB migration explicitly in background
+                    using var scope = Ioc.Default.CreateScope();
+                    var dbContext = scope.ServiceProvider.GetRequiredService<TombLauncherDbContext>();
+                    await dbContext.Database.MigrateAsync();
+                });
 
-            await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(desktop, splashScreen));
+                await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(desktop, splashScreen));
 
 
+            }
+
+            base.OnFrameworkInitializationCompleted();
         }
-
-        base.OnFrameworkInitializationCompleted();
+        catch (Exception e)
+        {
+            Log.Logger.Fatal(e, "Unhandled exception occurred before OnFrameworkInitializationCompleted");
+        }
     }
 
     private void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -174,7 +181,7 @@ public partial class App : Application
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton<IAppConfigurationWrapper>(appConfiguration);
-        serviceCollection.AddSingleton<IPlatformSpecificFeatures>(sp =>
+        serviceCollection.AddSingleton<IPlatformSpecificFeatures>(_ =>
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -266,7 +273,7 @@ public partial class App : Application
             UserInteractionMode = UserInteractionMode.NotSilent,
             AppCastHelper = updateWorkers.AppCastHelper
         };
-        _sparkle.UpdateDetected += (sender, args) =>
+        _sparkle.UpdateDetected += (_, args) =>
         {
             var payload = new UpdateCommandPayload(_sparkle, args);
             var notificationService = Ioc.Default.GetRequiredService<NotificationService>();
@@ -274,7 +281,7 @@ public partial class App : Application
             notificationService.AddNotification(new NotificationViewModel()
             {
                 Content = new StringNotificationViewModel()
-                { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion?.Version ?? "") },
+                { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion.Version ?? "") },
                 IsDismissable = true,
                 IsCancelable = false,
                 IsOpenable = true,
