@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TombLauncher\TombLauncher.csproj" />
+      <ProjectReference Include="..\..\src\TombLauncher\TombLauncher.csproj" />
     </ItemGroup>
 
 </Project>

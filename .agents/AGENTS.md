@@ -87,13 +87,13 @@ Types: `feat`, `fix`, `refactor`, `style`, `docs`, `test`, `chore`
 ## Build and Verification
 
 Before every commit or PR:
-1. `dotnet build TombLauncher.sln` must pass without errors
-2. `dotnet test TombLauncher.Tests/TombLauncher.Tests.csproj` must pass
+1. `dotnet build TombLauncher.slnx` must pass without errors
+2. `dotnet test tests/TombLauncher.Tests/TombLauncher.Tests.csproj` must pass
 
 ---
 
 ## Deployment
 
-- **Linux**: PupNet (config in `TombLauncher.pupnet.conf`), supports AppImage/Flatpak/DEB/RPM
-- **Windows**: Inno Setup (`installer-script.iss`)
-- Version must be kept in sync between `TombLauncher.csproj` and `TombLauncher.pupnet.conf`
+- **Linux**: PupNet (config in `deploy/TombLauncher.pupnet.conf`), supports AppImage/Flatpak/DEB/RPM
+- **Windows**: Inno Setup (`deploy/installer-script.iss`)
+- Version must be kept in sync between `src/TombLauncher/TombLauncher.csproj` and `deploy/TombLauncher.pupnet.conf`
