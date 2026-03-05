@@ -23,7 +23,7 @@ using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.Services;
 
-public class GameWithStatsService : IViewService
+public class GameWithStatsService : IViewService, IDisposable
 {
     public GameWithStatsService(
         ViewServiceContext viewContext,
@@ -87,8 +87,9 @@ public class GameWithStatsService : IViewService
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
         InitFileSystemWatcher(game);
+        _headerProcessor?.Start();
 
-        if (game.GameMetadata.ExecutablePath != null) 
+        if (game.GameMetadata.ExecutablePath != null)
         {
             LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
         }
@@ -195,23 +196,10 @@ public class GameWithStatsService : IViewService
             {
                 _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
                 _headerProcessor?.ClearProcessedFiles();
-
-                try
-                {
-                    errorOccurred = _headerProcessor?.ErrorOccurred ?? false;
-                    _headerProcessor?.Dispose();
-                    _watcher?.Dispose();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Shit happens
-                }
-                finally
-                {
-                    _headerProcessor = null;
-                    _watcher = null;
-                }
             }
+
+            errorOccurred = _headerProcessor?.ErrorOccurred ?? false;
+            CleanupWatcherAndProcessor();
 
             await _gamesUnitOfWork.Save();
             await _savegameRepository.Save();
@@ -318,5 +306,28 @@ public class GameWithStatsService : IViewService
         _gamesUnitOfWork.MarkGameAsUninstalled(gameId);
         await _gamesUnitOfWork.Save();
         await NavigationManager.GoBack();
+    }
+
+    private void CleanupWatcherAndProcessor()
+    {
+        try
+        {
+            _headerProcessor?.Dispose();
+            _watcher?.Dispose();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Already disposed
+        }
+        finally
+        {
+            _headerProcessor = null;
+            _watcher = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        CleanupWatcherAndProcessor();
     }
 }

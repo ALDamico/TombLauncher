@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
@@ -11,25 +10,36 @@ namespace TombLauncher.Core.Savegames;
 
 public class SavegameHeaderProcessor : IDisposable
 {
-    private ILogger<SavegameHeaderProcessor> _logger =
-        Ioc.Default.GetRequiredService<ILogger<SavegameHeaderProcessor>>();
+    private readonly ILogger<SavegameHeaderProcessor> _logger;
     // Create an AutoResetEvent EventWaitHandle
     private EventWaitHandle _eventWaitHandle = new AutoResetEvent(false);
-    private readonly Thread _worker;
+    private Thread? _worker;
     private readonly ConcurrentQueue<string> _fileNamesQueue = new();
     public ISavegameHeaderReader SavegameHeaderReader { get; set; } = null!;
     public List<SavegameBackupDto> ProcessedFiles { get; }
-    public int Delay { get; set; } = 500;
+    public int Delay { get; init; } = 500;
     public bool ErrorOccurred { get; private set; }
+    private bool _isRunning;
+    private bool _disposed;
+    private volatile bool _stopRequested;
 
-    public SavegameHeaderProcessor()
+    public SavegameHeaderProcessor(ILogger<SavegameHeaderProcessor> logger)
     {
+        _logger = logger;
         _logger.LogInformation("Header processor initialized");
         ProcessedFiles = new List<SavegameBackupDto>();
-        // Create worker thread
+    }
+
+    /// <summary>
+    /// Starts the background worker thread. Should only be called when a game is launched.
+    /// </summary>
+    public void Start()
+    {
+        if (_isRunning) return;
+        _stopRequested = false;
         _worker = new Thread(Work);
-        // Start worker thread
         _worker.Start();
+        _isRunning = true;
         _logger.LogInformation("Savegame header processor worker started");
     }
 
@@ -55,20 +65,10 @@ public class SavegameHeaderProcessor : IDisposable
 
     private void Work()
     {
-        while (true)
+        while (!_stopRequested)
         {
-            string fileName = null;
-
             // Dequeue the file name
-            //lock (locker)
-            if (_fileNamesQueue.Count > 0)
-            {
-                _fileNamesQueue.TryDequeue(out fileName);
-                // If file name is null then stop worker thread
-                if (fileName == null) return;
-            }
-
-            if (fileName != null)
+            if (_fileNamesQueue.TryDequeue(out var fileName))
             {
                 if (ErrorOccurred)
                     continue;
@@ -92,7 +92,7 @@ public class SavegameHeaderProcessor : IDisposable
     private void ProcessFile(string e)
     {
         Task.Delay(Delay).GetAwaiter().GetResult();
-        SavegameHeader header = null;
+        SavegameHeader? header = null;
         try
         {
             header = SavegameHeaderReader.ReadHeader(e);
@@ -133,10 +133,19 @@ public class SavegameHeaderProcessor : IDisposable
 
     public void Dispose()
     {
-        // Signal the FileProcessor to exit
-        EnqueueFileName(null);
-        // Wait for the FileProcessor's thread to finish
-        _worker.Join();
+        if (_disposed) return;
+        _disposed = true;
+
+        if (_worker != null && _isRunning)
+        {
+            // Signal the worker thread to stop
+            _stopRequested = true;
+            _eventWaitHandle.Set();
+            // Wait for the worker thread to finish
+            _worker.Join();
+        }
+
+        _isRunning = false;
         // Release any OS resources
         _eventWaitHandle.Close();
     }

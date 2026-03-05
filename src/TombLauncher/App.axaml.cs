@@ -246,7 +246,8 @@ public class App : Application
         {
             var settingsProvider = sp.GetRequiredService<ISettingsProvider>();
             var delay = settingsProvider.GetSavegameSettings().ProcessingDelay;
-            return new SavegameHeaderProcessor()
+            var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+            return new SavegameHeaderProcessor(loggerFactory.CreateLogger<SavegameHeaderProcessor>())
             {
                 Delay = delay
             };
