@@ -7,7 +7,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Navigation;
-using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Localization;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Utils;
@@ -16,13 +16,13 @@ namespace TombLauncher.Services;
 
 public class AppCrashHostService : IViewService
 {
-    public AppCrashHostService(ViewServiceContext viewContext, AppCrashUnitOfWork appCrashUnitOfWork)
+    public AppCrashHostService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService)
     {
         ViewContext = viewContext;
-        AppCrashUnitOfWork = appCrashUnitOfWork;
+        AppCrashDataService = appCrashDataService;
     }
     public ViewServiceContext ViewContext { get; }
-    public AppCrashUnitOfWork AppCrashUnitOfWork { get; }
+    public AppCrashDataService AppCrashDataService { get; }
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
@@ -68,6 +68,6 @@ public class AppCrashHostService : IViewService
 
     public async Task MarkAsNotified(int id)
     {
-        await AppCrashUnitOfWork.MarkAsNotified(id);
+        await AppCrashDataService.MarkAsNotified(id);
     }
 }

@@ -10,6 +10,6 @@ public class TombLauncherDbContext : DbContext
     }
 
     internal DbSet<Game> Games { get; set; }
-    internal DbSet<AppCrash> AppCrashes { get; set; }
+    public DbSet<AppCrash> AppCrashes { get; set; }
     internal DbSet<FileBackup> FileBackups { get; set; }
 }

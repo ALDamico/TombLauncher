@@ -29,6 +29,7 @@ using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Factories;
 using TombLauncher.Installers;
@@ -105,10 +106,10 @@ public class App : Application
 
     private void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        AppCrashUnitOfWork? appCrashUow = null;
+        AppCrashDataService? appCrashDataService = null;
         try
         {
-            appCrashUow = Ioc.Default.GetRequiredService<AppCrashUnitOfWork>();
+            appCrashDataService = Ioc.Default.GetRequiredService<AppCrashDataService>();
         }
         catch (InvalidOperationException)
         {
@@ -129,9 +130,9 @@ public class App : Application
         Console.Error.WriteLine(exception);
         Console.Error.WriteLine("----------------------------");
 
-        if (appCrashUow != null)
+        if (appCrashDataService != null)
         {
-            if (exception != null) appCrashUow.InsertAppCrash(exception);
+            if (exception != null) appCrashDataService.InsertAppCrash(exception);
             var welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
             welcomePageService.HandleNotNotifiedCrashes();
         }
@@ -367,7 +368,7 @@ public class App : Application
         });
         serviceCollection.AddScoped<ISavegameRepository, SavegameRepository>();
         serviceCollection.AddScoped<GamesUnitOfWork>();
-        serviceCollection.AddScoped<AppCrashUnitOfWork>();
+        serviceCollection.AddScoped<AppCrashDataService>();
     }
 
     private static void ConfigureLogging(ServiceCollection serviceCollection)

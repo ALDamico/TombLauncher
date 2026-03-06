@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Navigation;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
@@ -12,15 +13,15 @@ namespace TombLauncher.Services;
 
 public class WelcomePageService : IViewService
 {
-    public WelcomePageService(ViewServiceContext viewContext, AppCrashUnitOfWork appCrashUnitOfWork, GamesUnitOfWork gamesUnitOfWork, AppCrashHostService appCrashHostService)
+    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GamesUnitOfWork gamesUnitOfWork, AppCrashHostService appCrashHostService)
     {
         ViewContext = viewContext;
-        AppCrashUnitOfWork = appCrashUnitOfWork;
+        AppCrashDataService = appCrashDataService;
         _gamesUnitOfWork = gamesUnitOfWork;
         _appCrashHostService = appCrashHostService;
     }
     public ViewServiceContext ViewContext { get; }
-    public AppCrashUnitOfWork AppCrashUnitOfWork { get; }
+    public AppCrashDataService AppCrashDataService { get; }
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
@@ -31,7 +32,7 @@ public class WelcomePageService : IViewService
 
     internal void HandleNotNotifiedCrashes()
     {
-        var unnotifiedCrash = AppCrashUnitOfWork.GetNotNotifiedCrashes();
+        var unnotifiedCrash = AppCrashDataService.GetNotNotifiedCrashes();
         if (unnotifiedCrash == null) return;
         var appCrashHostViewModel = new AppCrashHostViewModel(_appCrashHostService) { Crash = unnotifiedCrash };
 
