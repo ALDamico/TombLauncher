@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -15,6 +15,7 @@ using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
@@ -27,6 +28,7 @@ public class GameWithStatsService : IViewService, IDisposable
 {
     public GameWithStatsService(
         ViewServiceContext viewContext,
+        GameDataService gameDataService,
         GamesUnitOfWork gamesUnitOfWork,
         ISavegameRepository savegameRepository,
         ISettingsProvider settingsProvider,
@@ -36,6 +38,7 @@ public class GameWithStatsService : IViewService, IDisposable
         SavegameHeaderProcessor headerProcessor)
     {
         ViewContext = viewContext;
+        _gameDataService = gameDataService;
         _gamesUnitOfWork = gamesUnitOfWork;
         _savegameRepository = savegameRepository;
         var savegameSettings = settingsProvider.GetSavegameSettings();
@@ -56,6 +59,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private SavegameHeaderProcessor? _headerProcessor;
     private IMapper _mapper => ViewContext.Mapper;
 
+    private readonly GameDataService _gameDataService;
     private readonly GamesUnitOfWork _gamesUnitOfWork;
     private readonly ISavegameRepository _savegameRepository;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
@@ -135,7 +139,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
     private async Task<GameWithStatsViewModel> GetGameById(int gameId)
     {
-        var game = await _gamesUnitOfWork.GetGameWithStats(gameId);
+        var game = await _gameDataService.GetGameWithStats(gameId);
         return _mapper.Map<GameWithStatsViewModel>(game);
     }
 
@@ -276,7 +280,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
         metadata.IsFavourite = !metadata.IsFavourite;
-        await _gamesUnitOfWork.UpsertGame(metadata);
+        await _gameDataService.UpsertGame(metadata);
         gameWithStatsViewModel.GameMetadata.IsFavourite = metadata.IsFavourite;
     }
 
@@ -284,7 +288,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
         metadata.IsCompleted = !metadata.IsCompleted;
-        await _gamesUnitOfWork.UpsertGame(metadata);
+        await _gameDataService.UpsertGame(metadata);
         gameWithStatsViewModel.GameMetadata.IsCompleted = metadata.IsCompleted;
     }
 
@@ -295,7 +299,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
     public async Task Uninstall(int gameId)
     {
-        var game = await _gamesUnitOfWork.GetGameWithStats(gameId);
+        var game = await _gameDataService.GetGameWithStats(gameId);
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy("UNINSTALLING_1".GetLocalizedString());
         var installDir = game.GameMetadata.InstallDirectory;
@@ -303,8 +307,7 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             Directory.Delete(installDir, true);
         }
-        _gamesUnitOfWork.MarkGameAsUninstalled(gameId);
-        await _gamesUnitOfWork.Save();
+        await _gameDataService.MarkGameAsUninstalled(gameId);
         await NavigationManager.GoBack();
     }
 

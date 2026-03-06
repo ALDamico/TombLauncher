@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Navigation;
-using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
@@ -17,16 +17,16 @@ namespace TombLauncher.Services;
 public class GameListService : IViewService
 {
     public GameListService(ViewServiceContext viewContext,
-        GamesUnitOfWork gamesUnitOfWork,
+        GameDataService gameDataService,
         ISettingsProvider settingsProvider)
     {
         ViewContext = viewContext;
-        _gamesUnitOfWork = gamesUnitOfWork;
+        _gameDataService = gameDataService;
         _settingsProvider = settingsProvider;
     }
 
     public ViewServiceContext ViewContext { get; }
-    private readonly GamesUnitOfWork _gamesUnitOfWork;
+    private readonly GameDataService _gameDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
@@ -38,7 +38,7 @@ public class GameListService : IViewService
     {
         host.SetBusy(true, "LOADING_GAMES".GetLocalizedString());
 
-        var gamesWithStats = await _gamesUnitOfWork.GetGamesWithStats(true);
+        var gamesWithStats = await _gameDataService.GetGamesWithStats(true);
 
         return _mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
     }
@@ -58,8 +58,7 @@ public class GameListService : IViewService
             var installDir = game.GameMetadata.InstallDirectory;
             if (installDir != null)
                 Directory.Delete(installDir, true);
-            _gamesUnitOfWork.MarkGameAsUninstalled(game.GameMetadata.Id);
-            await _gamesUnitOfWork.Save();
+            await _gameDataService.MarkGameAsUninstalled(game.GameMetadata.Id);
             target.ClearBusy();
             // Refresh logic:
             await NavigationManager.NavigateTo<GameListViewModel>();

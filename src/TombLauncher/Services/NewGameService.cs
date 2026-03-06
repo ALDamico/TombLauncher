@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +13,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Navigation;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
@@ -22,13 +23,14 @@ namespace TombLauncher.Services;
 
 public class NewGameService : IViewService
 {
-    public NewGameService(ViewServiceContext viewContext, GamesUnitOfWork gamesUnitOfWork,
+    public NewGameService(ViewServiceContext viewContext, GameDataService gameDataService, GamesUnitOfWork gamesUnitOfWork,
         GameFileHashCalculator hashCalculator,
         TombRaiderLevelInstaller levelInstaller,
         TombRaiderEngineDetector engineDetector,
         ILogger<NewGameService> logger)
     {
         ViewContext = viewContext;
+        _gameDataService = gameDataService;
         GamesUnitOfWork = gamesUnitOfWork;
         GameFileHashCalculator = hashCalculator;
         LevelInstaller = levelInstaller;
@@ -38,6 +40,7 @@ public class NewGameService : IViewService
 
     public ViewServiceContext ViewContext { get; }
     private readonly ILogger<NewGameService> _logger;
+    private readonly GameDataService _gameDataService;
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
@@ -110,7 +113,7 @@ public class NewGameService : IViewService
         gameMetadata.IsInstalled = true;
 
         var dto = _mapper.Map<GameMetadataDto>(gameMetadata);
-        await GamesUnitOfWork.UpsertGame(dto);
+        await _gameDataService.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
         await GamesUnitOfWork.SaveHashes(hashes);
         _logger.LogInformation("Game {GameTitle} installed successfully", gameMetadata.Title);

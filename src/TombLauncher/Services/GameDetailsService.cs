@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -14,6 +14,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
@@ -27,11 +28,12 @@ namespace TombLauncher.Services;
 
 public class GameDetailsService : IViewService
 {
-    public GameDetailsService(ViewServiceContext viewContext, GamesUnitOfWork gamesUnitOfWork,
+    public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GamesUnitOfWork gamesUnitOfWork,
         IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider,
         TombRaiderEngineDetector engineDetector)
     {
         ViewContext = viewContext;
+        _gameDataService = gameDataService;
         GamesUnitOfWork = gamesUnitOfWork;
         _platformSpecificFeatures = platformSpecificFeatures;
         _settingsProvider = settingsProvider;
@@ -39,6 +41,7 @@ public class GameDetailsService : IViewService
     }
 
     public ViewServiceContext ViewContext { get; }
+    private readonly GameDataService _gameDataService;
     public GamesUnitOfWork GamesUnitOfWork { get; set; }
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
@@ -124,7 +127,7 @@ public class GameDetailsService : IViewService
         gameMetadata.SetupExecutableArgs = vm.SetupArgs;
         gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
 
-        await GamesUnitOfWork.UpdateLaunchOptions(launchOptionsDto);
+        await _gameDataService.UpdateLaunchOptions(launchOptionsDto);
 
         currentPage?.ClearBusy();
     }

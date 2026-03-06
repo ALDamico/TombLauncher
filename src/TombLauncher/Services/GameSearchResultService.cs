@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,6 +20,7 @@ using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Navigation;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
@@ -30,7 +31,7 @@ namespace TombLauncher.Services;
 
 public class GameSearchResultService : IViewService
 {
-    public GameSearchResultService(ViewServiceContext viewContext, GamesUnitOfWork gamesUnitOfWork,
+    public GameSearchResultService(ViewServiceContext viewContext, GameDataService gameDataService, GamesUnitOfWork gamesUnitOfWork,
         TombRaiderLevelInstaller levelInstaller,
         TombRaiderEngineDetector engineDetector,
         GameDownloadManager downloadManager,
@@ -40,6 +41,7 @@ public class GameSearchResultService : IViewService
     {
         ViewContext = viewContext;
         GameDownloadManager = downloadManager;
+        _gameDataService = gameDataService;
         GamesUnitOfWork = gamesUnitOfWork;
         LevelInstaller = levelInstaller;
         EngineDetector = engineDetector;
@@ -58,6 +60,7 @@ public class GameSearchResultService : IViewService
     private readonly GameWithStatsService _gameWithStatsService;
     private CancellationTokenSource _cancellationTokenSource;
     public GameDownloadManager GameDownloadManager { get; }
+    private readonly GameDataService _gameDataService;
     public GamesUnitOfWork GamesUnitOfWork { get; }
     public TombRaiderLevelInstaller LevelInstaller { get; }
     public TombRaiderEngineDetector EngineDetector { get; }
@@ -181,7 +184,7 @@ public class GameSearchResultService : IViewService
             dto.Length = gameToInstall.Length;
             DetectGameEngine(installLocation, dto);
             _logger.LogInformation("Saving data for {GameTitle} to database", gameToInstall.Title);
-            await GamesUnitOfWork.UpsertGame(dto);
+            await _gameDataService.UpsertGame(dto);
             _installedGameId = dto.Id;
             if (_installPath.IsNotNullOrWhiteSpace())
             {
@@ -222,7 +225,7 @@ public class GameSearchResultService : IViewService
         await GamesUnitOfWork.Save();
         await AfterInstallCleanup();
         gameToInstall.InstalledGame =
-            _mapper.Map<GameWithStatsViewModel>(await GamesUnitOfWork.GetGameWithStats(dto.Id));
+            _mapper.Map<GameWithStatsViewModel>(await _gameDataService.GetGameWithStats(dto.Id));
         _notificationViewModel = null;
         _installedGameId = null;
         _downloadPath = null;

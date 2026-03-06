@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 
@@ -13,11 +12,11 @@ namespace TombLauncher.Services;
 
 public class WelcomePageService : IViewService
 {
-    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GamesUnitOfWork gamesUnitOfWork, AppCrashHostService appCrashHostService)
+    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GameDataService gameDataService, AppCrashHostService appCrashHostService)
     {
         ViewContext = viewContext;
         AppCrashDataService = appCrashDataService;
-        _gamesUnitOfWork = gamesUnitOfWork;
+        _gameDataService = gameDataService;
         _appCrashHostService = appCrashHostService;
     }
     public ViewServiceContext ViewContext { get; }
@@ -27,7 +26,7 @@ public class WelcomePageService : IViewService
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
     public IDialogService DialogService => ViewContext.DialogService;
     private IMapper _mapper => ViewContext.Mapper;
-    private GamesUnitOfWork _gamesUnitOfWork;
+    private GameDataService _gameDataService;
     private AppCrashHostService _appCrashHostService;
 
     internal void HandleNotNotifiedCrashes()
@@ -46,7 +45,7 @@ public class WelcomePageService : IViewService
 
     internal async Task<GameWithStatsViewModel> GetLatestPlayedGame()
     {
-        var latestPlayedGame = _gamesUnitOfWork.GetLatestPlayedGame();
+        var latestPlayedGame = _gameDataService.GetLatestPlayedGame();
         var viewModel = _mapper.Map<GameWithStatsViewModel>(latestPlayedGame);
         return await Task.FromResult(viewModel);
     }
