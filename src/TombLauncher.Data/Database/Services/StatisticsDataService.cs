@@ -24,7 +24,7 @@ public class StatisticsDataService
     {
         var output = new StatisticsDto();
 
-        var playSessionsRepo = _dbContext.PlaySessions.Include(ps => ps.Game);
+        var playSessionsRepo = _dbContext.PlaySession.Include(ps => ps.Game);
 
         var groupedByGame = playSessionsRepo.ToLookup(ps => ps.GameId);
         var latestPlayedGame = GetLatestPlayedGame(playSessionsRepo);

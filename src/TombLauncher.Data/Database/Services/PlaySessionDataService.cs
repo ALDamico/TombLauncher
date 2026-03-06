@@ -23,13 +23,13 @@ public class PlaySessionDataService
             StartDate = startDate,
             EndDate = endDate
         };
-        _dbContext.PlaySessions.Add(playSession);
+        _dbContext.PlaySession.Add(playSession);
         await _dbContext.SaveChangesAsync();
     }
 
     public PlaySessionDto GetLastPlaySession(GameMetadataDto dto)
     {
-        var lastPlaySession = _dbContext.PlaySessions
+        var lastPlaySession = _dbContext.PlaySession
             .Where(ps => ps.GameId == dto.Id)
             .OrderByDescending(ps => ps.EndDate)
             .FirstOrDefault();
@@ -38,7 +38,7 @@ public class PlaySessionDataService
 
     public List<PlaySessionDto> GetPlaySessionsByGameId(int gameId)
     {
-        var playSessions = _dbContext.PlaySessions
+        var playSessions = _dbContext.PlaySession
             .Where(ps => ps.GameId == gameId)
             .ToList();
         return _mapper.Map<List<PlaySessionDto>>(playSessions);

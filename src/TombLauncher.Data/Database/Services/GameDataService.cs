@@ -76,7 +76,7 @@ public class GameDataService
     public async Task<List<GameWithStatsDto>> GetGamesWithStats(bool installedOnly = false)
     {
         var outputList = new List<GameWithStatsDto>();
-        var playSessions = _dbContext.PlaySessions.ToLookup(ps => ps.GameId);
+        var playSessions = _dbContext.PlaySession.ToLookup(ps => ps.GameId);
 
         var targetFileTypes = new List<FileType>()
         {
@@ -117,7 +117,7 @@ public class GameDataService
 
     public async Task<GameWithStatsDto> GetGameWithStats(int id)
     {
-        var playSessions = _dbContext.PlaySessions.Where(ps => ps.GameId == id).ToList();
+        var playSessions = _dbContext.PlaySession.Where(ps => ps.GameId == id).ToList();
         var gameWithStatsDto = new GameWithStatsDto()
         {
             GameMetadata = await GetGameWithExecutables(id),
@@ -136,7 +136,7 @@ public class GameDataService
 
     public GameWithStatsDto? GetLatestPlayedGame()
     {
-        var playSessionsQuery = _dbContext.PlaySessions
+        var playSessionsQuery = _dbContext.PlaySession
             .Include(ps => ps.Game).ThenInclude(g => g.FileBackups);
         var entity = playSessionsQuery
             .FirstOrDefault(ps => ps.StartDate == playSessionsQuery.Max(p => p.StartDate));

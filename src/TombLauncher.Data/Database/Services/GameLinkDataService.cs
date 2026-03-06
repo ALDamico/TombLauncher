@@ -19,7 +19,7 @@ public class GameLinkDataService
 
     public List<GameLinkDto> GetLinks(int gameId, LinkType? linkType = null)
     {
-        IQueryable<GameLink> query = _dbContext.GameLinks.Where(l => l.GameId == gameId);
+        IQueryable<GameLink> query = _dbContext.GameLink.Where(l => l.GameId == gameId);
         if (linkType != null)
             query = query.Where(g => g.LinkType == linkType);
         return _mapper.Map<List<GameLinkDto>>(query.ToList());
@@ -29,19 +29,19 @@ public class GameLinkDataService
     {
         if (dto.Id != 0) return;
 
-        var entity = await _dbContext.GameLinks
+        var entity = await _dbContext.GameLink
             .Where(l => l.Link == dto.Link && l.LinkType == dto.LinkType && l.BaseUrl == dto.BaseUrl)
             .FirstOrDefaultAsync();
 
         if (entity == null)
         {
             entity = _mapper.Map<GameLink>(dto);
-            _dbContext.GameLinks.Add(entity);
+            _dbContext.GameLink.Add(entity);
         }
         else
         {
             _mapper.Map(dto, entity);
-            _dbContext.GameLinks.Update(entity);
+            _dbContext.GameLink.Update(entity);
         }
 
         await _dbContext.SaveChangesAsync();
@@ -56,7 +56,7 @@ public class GameLinkDataService
             FileType.CommunitySetupExecutable
         };
 
-        var gameIds = _dbContext.GameLinks
+        var gameIds = _dbContext.GameLink
             .Where(l => links.Contains(l.Link) && l.LinkType == linkType)
             .Select(l => l.GameId)
             .Distinct()
@@ -76,7 +76,7 @@ public class GameLinkDataService
 
     public List<GameMetadataDto> GetGamesByLinks(LinkType linkType, List<string> links)
     {
-        var queryResult = _dbContext.GameLinks
+        var queryResult = _dbContext.GameLink
             .Where(l => links.Contains(l.Link) && l.LinkType == linkType)
             .Select(l => l.GameId)
             .Join(_dbContext.Games, i => i, game => game.Id, (i, game) => game);
@@ -87,7 +87,7 @@ public class GameLinkDataService
     public async Task<Dictionary<string, GameWithStatsDto>> GetGamesByLinksDictionary(
         LinkType linkType, List<string> links, List<GameWithStatsDto> gamesWithStats)
     {
-        var matchingLinks = await _dbContext.GameLinks
+        var matchingLinks = await _dbContext.GameLink
             .Where(l => links.Contains(l.Link) && l.LinkType == linkType)
             .ToListAsync();
 
