@@ -1,10 +1,7 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Data.Database.UnitOfWork;
-using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages.Settings;

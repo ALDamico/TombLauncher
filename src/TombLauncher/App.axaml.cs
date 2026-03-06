@@ -30,7 +30,6 @@ using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Factories;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
@@ -92,8 +91,6 @@ public class App : Application
                 });
 
                 await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(desktop, splashScreen));
-
-
             }
 
             base.OnFrameworkInitializationCompleted();
@@ -101,6 +98,7 @@ public class App : Application
         catch (Exception e)
         {
             Log.Logger.Fatal(e, "Unhandled exception occurred before OnFrameworkInitializationCompleted");
+            Environment.Exit(-1);
         }
     }
 
@@ -367,7 +365,6 @@ public class App : Application
             opts.UseSqlite(connectionString);
         });
         serviceCollection.AddScoped<ISavegameRepository, SavegameRepository>();
-        serviceCollection.AddScoped<GamesUnitOfWork>();
         serviceCollection.AddScoped<GameDataService>();
         serviceCollection.AddScoped<PlaySessionDataService>();
         serviceCollection.AddScoped<GameLinkDataService>();
