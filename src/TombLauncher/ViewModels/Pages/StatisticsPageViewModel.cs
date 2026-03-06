@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -19,13 +16,14 @@ public partial class StatisticsPageViewModel : PageViewModel
     {
         _statisticsService = statisticsService;
         _gameWithStatsService = gameWithStatsService;
-        TopBarCommands = new ObservableCollection<ITopBarCommand>()
-        {
+        TopBarCommands =
+        [
             new CommandViewModel()
             {
-                Command = new AsyncRelayCommand(Initialize), Icon = MaterialIconKind.Reload, Tooltip = "RELOAD".GetLocalizedString()
+                Command = new AsyncRelayCommand(Initialize), Icon = MaterialIconKind.Reload,
+                Tooltip = "RELOAD".GetLocalizedString()
             }
-        };
+        ];
         OpenGameCmd = new AsyncRelayCommand<int>(OpenGame);
     }
 
@@ -53,10 +51,11 @@ public partial class StatisticsPageViewModel : PageViewModel
         // Assuming Services handle thread safety.
         var t2 = Task.Run(() => DatabaseSize = _statisticsService.GetDatabaseSize());
         var t3 = Task.Run(() => GamesSize = _statisticsService.GetGamesSize());
-        var t4 = Task.Run(() => Statistics = _statisticsService.GetStatistics());
+        var t4 = _statisticsService.GetStatistics();
         var t5 = Task.Run(() => NetVersion = AppUtils.GetDotNetVersion());
 
         await Task.WhenAll(t1, t2, t3, t4, t5);
+        Statistics = t4.Result;
         SetBusy(false);
     }
 

@@ -38,12 +38,12 @@ public class GameSearchResultService : IViewService
         IAppFileOperationsService appFileOperations)
     {
         ViewContext = viewContext;
-        GameDownloadManager = downloadManager;
+        _gameDownloadManager = downloadManager;
         _gameDataService = gameDataService;
         _gameLinkDataService = gameLinkDataService;
         _gameHashDataService = gameHashDataService;
-        LevelInstaller = levelInstaller;
-        EngineDetector = engineDetector;
+        _levelInstaller = levelInstaller;
+        _engineDetector = engineDetector;
         _cancellationTokenSource = new CancellationTokenSource();
         _notificationService = notificationService;
         _gameWithStatsService = gameWithStatsService;
@@ -53,17 +53,17 @@ public class GameSearchResultService : IViewService
     }
 
     public ViewServiceContext ViewContext { get; }
-    private ILogger<GameSearchResultService> _logger;
+    private readonly ILogger<GameSearchResultService> _logger;
 
-    private NotificationService _notificationService;
+    private readonly NotificationService _notificationService;
     private readonly GameWithStatsService _gameWithStatsService;
     private CancellationTokenSource _cancellationTokenSource;
-    public GameDownloadManager GameDownloadManager { get; }
+    private readonly GameDownloadManager _gameDownloadManager;
     private readonly GameDataService _gameDataService;
     private readonly GameLinkDataService _gameLinkDataService;
     private readonly GameHashDataService _gameHashDataService;
-    public TombRaiderLevelInstaller LevelInstaller { get; }
-    public TombRaiderEngineDetector EngineDetector { get; }
+    private readonly TombRaiderLevelInstaller _levelInstaller;
+    private readonly TombRaiderEngineDetector _engineDetector;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
@@ -79,7 +79,6 @@ public class GameSearchResultService : IViewService
 
     public bool CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
     {
-        if (obj == null) return false;
         if (obj.DownloadLink.IsNullOrWhiteSpace())
             return false;
         var links = obj.Sources.Select(s => s.DownloadLink).Where(downloadLink => downloadLink.IsNotNullOrWhiteSpace()).ToList();
@@ -106,7 +105,7 @@ public class GameSearchResultService : IViewService
         {
             try
             {
-                _downloadPath = await GameDownloadManager.DownloadGame(source,
+                _downloadPath = await _gameDownloadManager.DownloadGame(source,
                     new Progress<DownloadProgressInfo>(
                         p =>
                         {
@@ -143,8 +142,13 @@ public class GameSearchResultService : IViewService
         if (await CheckGameAlreadyInstalled(gameToInstall, hashes))
             return;
 
-        var allDetails = await GameDownloadManager.FetchAllDetails(gameToInstallDto);
-        var dto = await GameDownloadManager.FetchDetails(gameToInstallDto);
+        var allDetails = await _gameDownloadManager.FetchAllDetails(gameToInstallDto);
+        var dto = await _gameDownloadManager.FetchDetails(gameToInstallDto);
+        if (dto == null)
+        {
+            _logger.LogWarning("Download Manager failed to fetch details for game {GameTitle}", gameToInstall.Title);
+            return;
+        }
         _installedGameId = dto.Id;
         if (dto.InstallDirectory.IsNotNullOrWhiteSpace())
         {
@@ -166,7 +170,7 @@ public class GameSearchResultService : IViewService
         _logger.LogInformation("Starting install for {GameTitle}", gameToInstall.Title);
         try
         {
-            var installLocation = await LevelInstaller.Install(_downloadPath!, dto, _cancellationTokenSource.Token,
+            var installLocation = await _levelInstaller.Install(_downloadPath!, dto, _cancellationTokenSource.Token,
                 new Progress<CopyProgressInfo>(a =>
                 {
                     if (_installProgress == null) return;
@@ -179,7 +183,7 @@ public class GameSearchResultService : IViewService
 
             dto.InstallDate = DateTime.Now;
             dto.IsInstalled = true;
-            dto.InstallDirectory = installLocation!;
+            dto.InstallDirectory = installLocation;
             dto.Difficulty = gameToInstall.Difficulty;
             dto.Length = gameToInstall.Length;
             DetectGameEngine(installLocation, dto);
@@ -355,7 +359,7 @@ public class GameSearchResultService : IViewService
 
     private void DetectGameEngine(string installLocation, IGameMetadata dto)
     {
-        var detectionResult = EngineDetector.Detect(installLocation);
+        var detectionResult = _engineDetector.Detect(installLocation);
         dto.ExecutablePath = detectionResult.ExecutablePath;
         dto.GameEngine = detectionResult.GameEngine;
         dto.SetupExecutable = detectionResult.SetupExecutablePath;

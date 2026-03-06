@@ -1,6 +1,5 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="using:TombLauncher.Localization"
              x:Class="TombLauncher.App"
              xmlns:local="using:TombLauncher"
              RequestedThemeVariant="Default"
@@ -9,8 +8,6 @@
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:valueConverters1="clr-namespace:TombLauncher.Core.ValueConverters;assembly=TombLauncher.Core"
              xmlns:valueConverters2="clr-namespace:TombLauncher.Controls.ValueConverters;assembly=TombLauncher.Controls">
-    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>

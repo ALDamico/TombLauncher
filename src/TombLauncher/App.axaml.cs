@@ -372,6 +372,7 @@ public class App : Application
         serviceCollection.AddScoped<PlaySessionDataService>();
         serviceCollection.AddScoped<GameLinkDataService>();
         serviceCollection.AddScoped<GameHashDataService>();
+        serviceCollection.AddScoped<StatisticsDataService>();
         serviceCollection.AddScoped<AppCrashDataService>();
     }
 

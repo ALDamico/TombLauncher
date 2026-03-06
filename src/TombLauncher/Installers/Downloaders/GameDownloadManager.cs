@@ -17,7 +17,7 @@ public class GameDownloadManager
     {
         _cancellationTokenSource = cancellationTokenSource;
         _merger = merger;
-        Downloaders = new List<IGameDownloader>();
+        Downloaders = [];
     }
     public List<IGameDownloader> Downloaders { get; init; }
     private CancellationTokenSource _cancellationTokenSource;
@@ -26,21 +26,11 @@ public class GameDownloadManager
     public async Task<List<IMergedGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload)
     {
         var outputList = new List<IMergedGameSearchResultMetadata>();
-        var tasks = new List<Task<List<IGameSearchResultMetadata>>>();
-        foreach (var downloader in Downloaders)
-        {
-            var gamesByDownloader = downloader.GetGames(searchPayload, _cancellationTokenSource.Token);
-            tasks.Add(gamesByDownloader);
-        }
+        var tasks = Downloaders.Select(downloader => downloader.GetGames(searchPayload, _cancellationTokenSource.Token)).ToList();
 
         await Task.WhenAll(tasks);
-        foreach (var completedTask in tasks)
+        foreach (var completedTask in tasks.Where(t => t.IsCompleted))
         {
-            if (!completedTask.IsCompleted)
-            {
-                continue;
-            }
-
             var fetchedResults = completedTask.Result;
             _merger.Merge(outputList, fetchedResults.ToList());
         }
@@ -51,23 +41,13 @@ public class GameDownloadManager
     public async Task<List<IGameSearchResultMetadata>> FetchNextPage()
     {
         var outputList = new List<IGameSearchResultMetadata>();
-        var tasks = new List<Task<List<IGameSearchResultMetadata>>>();
-        foreach (var downloader in Downloaders.Where(d => d.HasMorePages()))
-        {
-            var gamesByDownloader = downloader.FetchNextPage(_cancellationTokenSource.Token);
-            tasks.Add(gamesByDownloader);
-            // TODO Merge games somehow
-            //outputList.AddRange(gamesByDownloader);
-        }
+        var tasks = Downloaders.Where(d => d.HasMorePages())
+            .Select(downloader => downloader.FetchNextPage(_cancellationTokenSource.Token))
+            .ToList();
 
         await Task.WhenAll(tasks);
-        foreach (var completedTask in tasks)
+        foreach (var completedTask in tasks.Where(completedTask => completedTask.IsCompleted))
         {
-            if (!completedTask.IsCompleted)
-            {
-                continue;
-            }
-
             outputList.AddRange(completedTask.Result);
         }
 
@@ -91,12 +71,7 @@ public class GameDownloadManager
         {
             LevelName = game.Title
         };
-        var tasks = new List<Task<List<IGameSearchResultMetadata>>>();
-        foreach (var downloader in Downloaders)
-        {
-            var searchResult = downloader.GetGames(searchPayload, CancellationToken.None);
-            tasks.Add(searchResult);
-        }
+        var tasks = Downloaders.Select(downloader => downloader.GetGames(searchPayload, CancellationToken.None)).ToList();
 
         await Task.WhenAll(tasks);
         var allResults = tasks.SelectMany(t => t.Result).ToList();
@@ -109,7 +84,7 @@ public class GameDownloadManager
             Length = game.Length,
             Rating = game.Rating,
             Setting = game.Setting,
-            Sources = new HashSet<IGameSearchResultMetadata>(),
+            Sources = [],
             Title = game.Title,
             BaseUrl = game.BaseUrl,
             DetailsLink = game.DetailsLink,
@@ -123,7 +98,7 @@ public class GameDownloadManager
             SourceSiteDisplayName = game.SourceSiteDisplayName
         };
 
-        Merge(new List<IMergedGameSearchResultMetadata>() { gameClone }, allResults);
+        Merge([gameClone], allResults);
 
         return gameClone;
     }

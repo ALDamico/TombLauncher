@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
@@ -29,8 +28,9 @@ public class GameDetailsService : IViewService
 {
     public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GameLinkDataService gameLinkDataService,
         IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider,
-        TombRaiderEngineDetector engineDetector)
+        TombRaiderEngineDetector engineDetector, ILogger<GameDetailsService> logger)
     {
+        _logger = logger;
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _gameLinkDataService = gameLinkDataService;
@@ -39,6 +39,8 @@ public class GameDetailsService : IViewService
         _engineDetector = engineDetector;
     }
 
+    private readonly ILogger<GameDetailsService> _logger;
+
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
     private readonly GameLinkDataService _gameLinkDataService;
@@ -46,10 +48,10 @@ public class GameDetailsService : IViewService
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
     public IDialogService DialogService => ViewContext.DialogService;
-    private IMapper _mapper => ViewContext.Mapper;
+    private IMapper Mapper => ViewContext.Mapper;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
-    private ISettingsProvider _settingsProvider;
-    private TombRaiderEngineDetector _engineDetector;
+    private readonly ISettingsProvider _settingsProvider;
+    private readonly TombRaiderEngineDetector _engineDetector;
 
     public void InitializeSettings(GameDetailsViewModel target)
     {
@@ -70,7 +72,7 @@ public class GameDetailsService : IViewService
         var links = await tf.StartNew(() =>
         {
             var links = _gameLinkDataService.GetLinks(game.Game.GameMetadata.Id, linkType);
-            return _mapper.Map<List<GameLinkViewModel>>(links);
+            return Mapper.Map<List<GameLinkViewModel>>(links);
         });
         game.WalkthroughLinks = links.ToObservableCollection();
     }
@@ -115,20 +117,27 @@ public class GameDetailsService : IViewService
 
     private async void SaveLaunchOptions(LaunchOptionsDialogViewModel vm)
     {
-        var gameMetadata = vm.TargetGame;
-        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy("Saving launch options...");
+        try
+        {
+            var gameMetadata = vm.TargetGame;
+            var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+            currentPage?.SetBusy("Saving launch options...");
 
-        var launchOptionsDto = _mapper.Map<LaunchOptionsDto>(vm);
+            var launchOptionsDto = Mapper.Map<LaunchOptionsDto>(vm);
 
-        gameMetadata.ExecutablePath = vm.GameExecutable;
-        gameMetadata.SetupExecutable = vm.SetupExecutable;
-        gameMetadata.SetupExecutableArgs = vm.SetupArgs;
-        gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
+            gameMetadata.ExecutablePath = vm.GameExecutable;
+            gameMetadata.SetupExecutable = vm.SetupExecutable;
+            gameMetadata.SetupExecutableArgs = vm.SetupArgs;
+            gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
 
-        await _gameDataService.UpdateLaunchOptions(launchOptionsDto);
+            await _gameDataService.UpdateLaunchOptions(launchOptionsDto);
 
-        currentPage?.ClearBusy();
+            currentPage?.ClearBusy();
+        }
+        catch (Exception e)
+        {
+            _logger.LogWarning(e, "Error saving launch options.");
+        }
     }
 
     public List<FileInfo> GetDocumentationFiles(string containingFolder, List<string> patterns, List<string> excludedFolders)

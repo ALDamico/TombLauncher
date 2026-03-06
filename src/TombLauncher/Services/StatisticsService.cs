@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,7 @@ using LiveChartsCore.SkiaSharpView.Extensions;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;
-using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ValueConverters;
 using TombLauncher.ViewModels;
@@ -24,16 +25,16 @@ public class StatisticsService
 {
     public StatisticsService(
         ISettingsProvider settingsProvider,
-        GamesUnitOfWork gamesUnitOfWork,
+        StatisticsDataService statisticsDataService,
         MapperConfiguration mapperConfiguration)
     {
         _settingsProvider = settingsProvider;
-        _gamesUnitOfWork = gamesUnitOfWork;
+        _statisticsDataService = statisticsDataService;
         _mapper = mapperConfiguration.CreateMapper();
     }
 
     private readonly ISettingsProvider _settingsProvider;
-    private readonly GamesUnitOfWork _gamesUnitOfWork;
+    private readonly StatisticsDataService _statisticsDataService;
     private readonly IMapper _mapper;
 
     public long GetDatabaseSize()
@@ -49,9 +50,9 @@ public class StatisticsService
         return PathUtils.GetDirectorySize(gamesFolder);
     }
 
-    public StatisticsViewModel GetStatistics()
+    public async Task<StatisticsViewModel> GetStatistics()
     {
-        var statistics = _gamesUnitOfWork.GetStatistics();
+        var statistics = await _statisticsDataService.GetStatistics();
         return new StatisticsViewModel()
         {
             MostLaunches = _mapper.Map<GameStatisticsViewModel>(statistics.MostLaunches),

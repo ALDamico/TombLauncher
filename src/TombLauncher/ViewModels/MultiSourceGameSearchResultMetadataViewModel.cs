@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
-using System.Security.Authentication;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -70,14 +68,8 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         }
     }
 
-    private bool CanInstall()
-    {
-        return _gameSearchResultService.CanInstall(this);
-    }
+    private bool CanInstall() => _gameSearchResultService.CanInstall(this);
     public ICommand CancelInstallCmd { get; }
 
-    private async Task CancelInstall()
-    {
-        await _gameSearchResultService.CancelInstall();
-    }
+    private async Task CancelInstall() => await _gameSearchResultService.CancelInstall();
 }
