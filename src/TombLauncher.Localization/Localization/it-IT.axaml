@@ -4,8 +4,8 @@
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <!-- Miscellaneous -->
     <!-- These strings SHOULD ALWAYS exist -->
-    <system:String x:Key="DATEONLYFORMAT">dd/MM/yyyy</system:String>
-    <system:String x:Key="DATETIMEFORMAT">dd/MM/yyyy hh:mm</system:String>
+    <system:String x:Key="DateOnlyFormat">dd/MM/yyyy</system:String>
+    <system:String x:Key="DateTimeFormat">dd/MM/yyyy hh:mm</system:String>
     <!-- ReSharper disable InconsistentNaming -->
     <system:String x:Key="CLICK_TO_CHANGE">Fare clic per modificare</system:String>
     <system:String x:Key="LOADING_GAMES">Caricamento giochi in corso...</system:String>

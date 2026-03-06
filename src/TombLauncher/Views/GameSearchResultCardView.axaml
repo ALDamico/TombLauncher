@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,6 +11,7 @@
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              xmlns:downloaders="clr-namespace:TombLauncher.Contracts.Downloaders;assembly=TombLauncher.Contracts"
+             xmlns:views="clr-namespace:TombLauncher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameSearchResultCardView"
              x:DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
@@ -26,7 +27,7 @@
         <!-- Entrance animation -->
         <Style Selector="Border.result-card">
             <Style.Animations>
-                <Animation Duration="0:0:0.35" Easing="CubicEaseOut" FillMode="Forward">
+                <Animation Duration="0:0:0.95" Easing="CubicEaseOut" FillMode="Forward">
                     <KeyFrame Cue="0%">
                         <Setter Property="Opacity" Value="0.0"/>
                         <Setter Property="TranslateTransform.Y" Value="16"/>
@@ -93,11 +94,26 @@
         <Style Selector="Border.status-updated TextBlock">
             <Setter Property="Foreground" Value="White"/>
         </Style>
+        
+        <!-- Hover animation: target UserControl:pointerover because Border doesn't receive pointerover inside ItemsRepeater -->
+        <Style Selector="views|GameSearchResultCardView">
+            <Setter Property="RenderTransform" Value="scale(1)"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="CubicEaseOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="views|GameSearchResultCardView:pointerover">
+            <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        </Style>
     </UserControl.Styles>
 
     <Border CornerRadius="8"
             Padding="12"
             Margin="4, 4"
+            Cursor="Hand"
+            Tapped="OnCardTapped"
             Classes="card-background interactive-card result-card">
         <Border.RenderTransform>
             <TranslateTransform/>
