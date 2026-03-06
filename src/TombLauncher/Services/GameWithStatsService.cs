@@ -16,7 +16,6 @@ using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
@@ -29,7 +28,7 @@ public class GameWithStatsService : IViewService, IDisposable
     public GameWithStatsService(
         ViewServiceContext viewContext,
         GameDataService gameDataService,
-        GamesUnitOfWork gamesUnitOfWork,
+        PlaySessionDataService playSessionDataService,
         ISavegameRepository savegameRepository,
         ISettingsProvider settingsProvider,
         ILogger<GameWithStatsService> logger,
@@ -39,7 +38,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
-        _gamesUnitOfWork = gamesUnitOfWork;
+        _playSessionDataService = playSessionDataService;
         _savegameRepository = savegameRepository;
         var savegameSettings = settingsProvider.GetSavegameSettings();
         _backupEnabled = savegameSettings.IsBackupEnabled;
@@ -60,7 +59,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private IMapper _mapper => ViewContext.Mapper;
 
     private readonly GameDataService _gameDataService;
-    private readonly GamesUnitOfWork _gamesUnitOfWork;
+    private readonly PlaySessionDataService _playSessionDataService;
     private readonly ISavegameRepository _savegameRepository;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
@@ -185,7 +184,7 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             currentPage?.SetBusy(true, "SAVING_PLAY_SESSION".GetLocalizedString());
             var gameMetadataDto = _mapper.Map<GameMetadataDto>(game.GameMetadata);
-            _gamesUnitOfWork.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
+            await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
             currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
             var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
 
@@ -205,7 +204,7 @@ public class GameWithStatsService : IViewService, IDisposable
             errorOccurred = _headerProcessor?.ErrorOccurred ?? false;
             CleanupWatcherAndProcessor();
 
-            await _gamesUnitOfWork.Save();
+
             await _savegameRepository.Save();
 
             // NavigationManager.RequestRefresh(); // Not available in V2? Need to handle refresh.

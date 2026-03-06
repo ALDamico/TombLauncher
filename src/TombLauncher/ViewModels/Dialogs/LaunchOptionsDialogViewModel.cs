@@ -1,22 +1,19 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs.ViewModels;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Utils;
+using System.ComponentModel;
 
 namespace TombLauncher.ViewModels.Dialogs;
 
 public partial class LaunchOptionsDialogViewModel : DialogViewModel
 {
-    private TombRaiderEngineDetector _engineDetector;
+    private readonly TombRaiderEngineDetector _engineDetector;
 
     public LaunchOptionsDialogViewModel(TombRaiderEngineDetector engineDetector)
     {
@@ -25,14 +22,13 @@ public partial class LaunchOptionsDialogViewModel : DialogViewModel
         AvailableEngines = EnumUtils.GetEnumViewModels<GameEngine>().ToObservableCollection();
         AvailableEngines = EnumUtils.GetEnumViewModels<GameEngine>().ToObservableCollection();
     }
-    private GameMetadataViewModel _targetGame = null!;
 
     public GameMetadataViewModel TargetGame
     {
-        get => _targetGame;
-        set
+        get;
+        init
         {
-            RaiseAndSetIfChanged(ref _targetGame, value);
+            RaiseAndSetIfChanged(ref field, value);
             SelectedEngine = GetSelectedEngine(value.GameEngine);
             if (!string.IsNullOrWhiteSpace(value.InstallDirectory))
             {
@@ -44,6 +40,7 @@ public partial class LaunchOptionsDialogViewModel : DialogViewModel
             {
                 AvailableExecutables = new ObservableCollection<string>();
             }
+
             GameExecutable = AvailableExecutables.FirstOrDefault(exe => exe == value.ExecutablePath);
             SetupArgs = value.SetupExecutableArgs;
             SetupExecutable = AvailableExecutables.FirstOrDefault(exe => exe == value.SetupExecutable);
@@ -58,7 +55,7 @@ public partial class LaunchOptionsDialogViewModel : DialogViewModel
                 SupportsCustomSetup = true;
             }
         }
-    }
+    } = null!;
 
     private ObservableCollection<string>? _availableExecutables;
     public ObservableCollection<string>? AvailableExecutables
@@ -164,7 +161,7 @@ public partial class LaunchOptionsDialogViewModel : DialogViewModel
         return vm?.Value ?? GameEngine.Unknown;
     }
 
-    protected virtual void OnPropertyChanging(global::System.ComponentModel.PropertyChangingEventArgs e)
+    protected virtual void OnPropertyChanging(PropertyChangingEventArgs e)
     {
     }
 

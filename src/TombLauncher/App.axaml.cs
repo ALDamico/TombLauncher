@@ -369,6 +369,9 @@ public class App : Application
         serviceCollection.AddScoped<ISavegameRepository, SavegameRepository>();
         serviceCollection.AddScoped<GamesUnitOfWork>();
         serviceCollection.AddScoped<GameDataService>();
+        serviceCollection.AddScoped<PlaySessionDataService>();
+        serviceCollection.AddScoped<GameLinkDataService>();
+        serviceCollection.AddScoped<GameHashDataService>();
         serviceCollection.AddScoped<AppCrashDataService>();
     }
 

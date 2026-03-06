@@ -15,7 +15,6 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Localization.Extensions;
@@ -28,13 +27,13 @@ namespace TombLauncher.Services;
 
 public class GameDetailsService : IViewService
 {
-    public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GamesUnitOfWork gamesUnitOfWork,
+    public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GameLinkDataService gameLinkDataService,
         IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider,
         TombRaiderEngineDetector engineDetector)
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
-        GamesUnitOfWork = gamesUnitOfWork;
+        _gameLinkDataService = gameLinkDataService;
         _platformSpecificFeatures = platformSpecificFeatures;
         _settingsProvider = settingsProvider;
         _engineDetector = engineDetector;
@@ -42,7 +41,7 @@ public class GameDetailsService : IViewService
 
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
-    public GamesUnitOfWork GamesUnitOfWork { get; set; }
+    private readonly GameLinkDataService _gameLinkDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
@@ -70,7 +69,7 @@ public class GameDetailsService : IViewService
         var tf = new TaskFactory();
         var links = await tf.StartNew(() =>
         {
-            var links = GamesUnitOfWork.GetLinks(game.Game.GameMetadata.Id, linkType);
+            var links = _gameLinkDataService.GetLinks(game.Game.GameMetadata.Id, linkType);
             return _mapper.Map<List<GameLinkViewModel>>(links);
         });
         game.WalkthroughLinks = links.ToObservableCollection();

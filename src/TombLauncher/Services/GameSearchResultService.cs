@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
@@ -19,9 +18,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Data.Database.UnitOfWork;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
@@ -31,7 +28,8 @@ namespace TombLauncher.Services;
 
 public class GameSearchResultService : IViewService
 {
-    public GameSearchResultService(ViewServiceContext viewContext, GameDataService gameDataService, GamesUnitOfWork gamesUnitOfWork,
+    public GameSearchResultService(ViewServiceContext viewContext, GameDataService gameDataService,
+        GameLinkDataService gameLinkDataService, GameHashDataService gameHashDataService,
         TombRaiderLevelInstaller levelInstaller,
         TombRaiderEngineDetector engineDetector,
         GameDownloadManager downloadManager,
@@ -42,7 +40,8 @@ public class GameSearchResultService : IViewService
         ViewContext = viewContext;
         GameDownloadManager = downloadManager;
         _gameDataService = gameDataService;
-        GamesUnitOfWork = gamesUnitOfWork;
+        _gameLinkDataService = gameLinkDataService;
+        _gameHashDataService = gameHashDataService;
         LevelInstaller = levelInstaller;
         EngineDetector = engineDetector;
         _cancellationTokenSource = new CancellationTokenSource();
@@ -61,15 +60,16 @@ public class GameSearchResultService : IViewService
     private CancellationTokenSource _cancellationTokenSource;
     public GameDownloadManager GameDownloadManager { get; }
     private readonly GameDataService _gameDataService;
-    public GamesUnitOfWork GamesUnitOfWork { get; }
+    private readonly GameLinkDataService _gameLinkDataService;
+    private readonly GameHashDataService _gameHashDataService;
     public TombRaiderLevelInstaller LevelInstaller { get; }
     public TombRaiderEngineDetector EngineDetector { get; }
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
     public IDialogService DialogService => ViewContext.DialogService;
-    private IMapper _mapper => ViewContext.Mapper;
-    private GameFileHashCalculator _hashCalculator;
+    private IMapper Mapper => ViewContext.Mapper;
+    private readonly GameFileHashCalculator _hashCalculator;
     private readonly IAppFileOperationsService _appFileOperations;
     private string? _downloadPath;
     private string? _installPath;
@@ -87,7 +87,7 @@ public class GameSearchResultService : IViewService
         {
             return false;
         }
-        var gameDto = GamesUnitOfWork.GetGameByLinks(LinkType.Download, links).GetAwaiter().GetResult();
+        var gameDto = _gameLinkDataService.GetGameByLinks(LinkType.Download, links).GetAwaiter().GetResult();
         return gameDto is not { IsInstalled: true };
     }
 
@@ -98,7 +98,7 @@ public class GameSearchResultService : IViewService
         await InitNotificationViewModel(gameToInstall);
 
         gameToInstall.InstallProgress = _installProgress;
-        var gameToInstallDto = _mapper.Map<MergedGameSearchResultDto>(gameToInstall);
+        var gameToInstallDto = Mapper.Map<MergedGameSearchResultDto>(gameToInstall);
 
         _logger.LogInformation("Started downloading {GameTitle} from {DownloadUrl}", gameToInstall.Title,
             gameToInstall.DownloadLink);
@@ -192,7 +192,7 @@ public class GameSearchResultService : IViewService
             }
 
             hashes.ForEach(h => h.GameId = dto.Id);
-            await GamesUnitOfWork.SaveHashes(hashes);
+            await _gameHashDataService.SaveHashes(hashes);
             await SaveLinks(allDetails, dto);
         }
         catch (TaskCanceledException)
@@ -222,10 +222,10 @@ public class GameSearchResultService : IViewService
             _notificationViewModel.IsDismissable = true;
         }
 
-        await GamesUnitOfWork.Save();
+
         await AfterInstallCleanup();
         gameToInstall.InstalledGame =
-            _mapper.Map<GameWithStatsViewModel>(await _gameDataService.GetGameWithStats(dto.Id));
+            Mapper.Map<GameWithStatsViewModel>(await _gameDataService.GetGameWithStats(dto.Id));
         _notificationViewModel = null;
         _installedGameId = null;
         _downloadPath = null;
@@ -234,7 +234,7 @@ public class GameSearchResultService : IViewService
 
     private async Task<bool> CheckGameAlreadyInstalled(MultiSourceGameSearchResultMetadataViewModel gameToInstall, List<GameHashDto> hashes)
     {
-        if (GamesUnitOfWork.ExistsHashes(hashes, out var foundGameId))
+        if (_gameHashDataService.ExistsHashes(hashes, out var foundGameId))
         {
             _logger.LogWarning("Game {GameTitle} already installed", gameToInstall.Title);
             var gameId = foundGameId.GetValueOrDefault();
@@ -247,7 +247,7 @@ public class GameSearchResultService : IViewService
             if (result.ButtonResult == MsgBoxButtonResult.No)
             {
                 _logger.LogInformation("Won't install already existing game {GameTitle}", gameToInstall.Title);
-                await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                await _gameLinkDataService.SaveLink(new GameLinkDto()
                 {
                     Link = gameToInstall.DownloadLink,
                     LinkType = LinkType.Download,
@@ -255,7 +255,7 @@ public class GameSearchResultService : IViewService
                     BaseUrl = gameToInstall.BaseUrl,
                     DisplayName = gameToInstall.SourceSiteDisplayName
                 });
-                await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                await _gameLinkDataService.SaveLink(new GameLinkDto()
                 {
                     Link = gameToInstall.DetailsLink,
                     LinkType = LinkType.Details,
@@ -265,7 +265,7 @@ public class GameSearchResultService : IViewService
                 });
                 if (gameToInstall.HasReviews)
                 {
-                    await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                    await _gameLinkDataService.SaveLink(new GameLinkDto()
                     {
                         Link = gameToInstall.ReviewsLink,
                         LinkType = LinkType.Reviews,
@@ -277,7 +277,7 @@ public class GameSearchResultService : IViewService
 
                 if (gameToInstall.HasWalkthrough)
                 {
-                    await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                    await _gameLinkDataService.SaveLink(new GameLinkDto()
                     {
                         Link = gameToInstall.WalkthroughLink,
                         LinkType = LinkType.Walkthrough,
@@ -367,7 +367,7 @@ public class GameSearchResultService : IViewService
     {
         foreach (var detail in allDetails.Sources)
         {
-            await GamesUnitOfWork.SaveLink(new GameLinkDto()
+            await _gameLinkDataService.SaveLink(new GameLinkDto()
             {
                 Link = detail.DownloadLink,
                 LinkType = LinkType.Download,
@@ -377,7 +377,7 @@ public class GameSearchResultService : IViewService
             });
             if (detail.DetailsLink.IsNotNullOrWhiteSpace())
             {
-                await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                await _gameLinkDataService.SaveLink(new GameLinkDto()
                 {
                     Link = detail.DetailsLink!,
                     LinkType = LinkType.Details,
@@ -388,7 +388,7 @@ public class GameSearchResultService : IViewService
             }
             if (detail.HasReviews && detail.ReviewsLink.IsNotNullOrWhiteSpace())
             {
-                await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                await _gameLinkDataService.SaveLink(new GameLinkDto()
                 {
                     Link = detail.ReviewsLink!,
                     LinkType = LinkType.Reviews,
@@ -400,7 +400,7 @@ public class GameSearchResultService : IViewService
 
             if (detail.HasWalkthrough && detail.WalkthroughLink.IsNotNullOrWhiteSpace())
             {
-                await GamesUnitOfWork.SaveLink(new GameLinkDto()
+                await _gameLinkDataService.SaveLink(new GameLinkDto()
                 {
                     Link = detail.WalkthroughLink!,
                     LinkType = LinkType.Walkthrough,

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
 using AvaloniaEdit.Utils;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
@@ -14,8 +13,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Navigation;
-using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
@@ -26,14 +24,16 @@ namespace TombLauncher.Services;
 
 public class GameSearchService : IViewService
 {
-    public GameSearchService(ViewServiceContext viewContext, GameDownloadManager gameDownloadManager, GamesUnitOfWork gamesUnitOfWork,
+    public GameSearchService(ViewServiceContext viewContext, GameDownloadManager gameDownloadManager,
+        GameLinkDataService gameLinkDataService, GameDataService gameDataService,
         NotificationService notificationService, GameListService gameListService,
         ILogger<GameSearchService> logger, ISettingsProvider settingsProvider,
         GameWithStatsService gameWithStatsService)
     {
         ViewContext = viewContext;
-        GameDownloadManager = gameDownloadManager;
-        GamesUnitOfWork = gamesUnitOfWork;
+        _gameDownloadManager = gameDownloadManager;
+        _gameLinkDataService = gameLinkDataService;
+        _gameDataService = gameDataService;
         _notificationService = notificationService;
         _gameListService = gameListService;
         _logger = logger;
@@ -46,20 +46,21 @@ public class GameSearchService : IViewService
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
     public IDialogService DialogService => ViewContext.DialogService;
-    private IMapper _mapper => ViewContext.Mapper;
-    private NotificationService _notificationService;
-    private GameListService _gameListService;
-    private ILogger<GameSearchService> _logger;
-    private ISettingsProvider _settingsProvider;
-    private GameWithStatsService _gameWithStatsService;
+    private IMapper Mapper => ViewContext.Mapper;
+    private readonly NotificationService _notificationService;
+    private readonly GameListService _gameListService;
+    private readonly ILogger<GameSearchService> _logger;
+    private readonly ISettingsProvider _settingsProvider;
+    private readonly GameWithStatsService _gameWithStatsService;
 
-    public GameDownloadManager GameDownloadManager { get; }
-    public GamesUnitOfWork GamesUnitOfWork { get; }
+    private readonly GameDownloadManager _gameDownloadManager;
+    private readonly GameLinkDataService _gameLinkDataService;
+    private readonly GameDataService _gameDataService;
 
     private Task<List<IMergedGameSearchResultMetadata>> InvokeMerger(GameSearchViewModel target, List<IGameSearchResultMetadata> nextPage)
     {
-        var fetchedResults = _mapper.Map<List<IMergedGameSearchResultMetadata>>(target.FetchedResults);
-        GameDownloadManager.Merge(fetchedResults, nextPage);
+        var fetchedResults = Mapper.Map<List<IMergedGameSearchResultMetadata>>(target.FetchedResults);
+        _gameDownloadManager.Merge(fetchedResults, nextPage);
         return Task.FromResult(fetchedResults);
     }
 
@@ -67,22 +68,23 @@ public class GameSearchService : IViewService
     {
         _logger.LogInformation("Loading more results");
         target.SetBusy("LOADING_IN_PROGRESS".GetLocalizedString());
-        var nextPage = await GameDownloadManager.FetchNextPage();
+        var nextPage = await _gameDownloadManager.FetchNextPage();
 
         var fetchedResults = await InvokeMerger(target, nextPage);
 
+        var gamesWithStats = await _gameDataService.GetGamesWithStats();
         var gamesByLinks = await
-            GamesUnitOfWork.GetGamesByLinksDictionary(LinkType.Download, nextPage.Select(p => p.DownloadLink).ToList());
+            _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPage.Select(p => p.DownloadLink).ToList(), gamesWithStats);
         foreach (var game in Enumerable.Where(target.FetchedResults, r => r.InstalledGame == null))
         {
             if (gamesByLinks.TryGetValue(game.DownloadLink, out var dto))
             {
-                game.InstalledGame = _mapper.Map<GameWithStatsViewModel>(dto);
+                game.InstalledGame = Mapper.Map<GameWithStatsViewModel>(dto);
             }
         }
 
         var mappedResults = await new TaskFactory().StartNew(() =>
-            _mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(fetchedResults));
+            Mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(fetchedResults));
         var addedCount = 0;
         var updatedCount = 0;
 
@@ -136,21 +138,21 @@ public class GameSearchService : IViewService
         }
     }
 
-    public bool CanLoadMore() => GameDownloadManager.HasMoreResults();
+    public bool CanLoadMore() => _gameDownloadManager.HasMoreResults();
 
     public async Task Open(GameSearchViewModel target, MultiSourceGameSearchResultMetadataViewModel gameToOpen)
     {
         target.SetBusy(true);
         _logger.LogInformation("Opening game {GameName}", gameToOpen.Title);
-        var gameToOpenDto = _mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
+        var gameToOpenDto = Mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
 
-        var details = await GameDownloadManager.FetchDetails(gameToOpenDto);
+        var details = await _gameDownloadManager.FetchDetails(gameToOpenDto);
 
         if (details != null)
         {
-            var detailsViewModel = _mapper.Map<GameMetadataViewModel>(details);
+            var detailsViewModel = Mapper.Map<GameMetadataViewModel>(details);
             var installedGame = await
-                GamesUnitOfWork.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink).ToList());
+                _gameLinkDataService.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink).ToList());
             if (installedGame != null)
             {
                 detailsViewModel.InstallDirectory = installedGame.InstallDirectory;
@@ -210,23 +212,24 @@ public class GameSearchService : IViewService
         target.SetBusy("SEARCH_STARTING".GetLocalizedString());
         _logger.LogInformation("Started search with parameters: {Target}", target);
         var downloaders = _settingsProvider.GetActiveDownloaders();
-        GameDownloadManager.Downloaders.Clear();
-        GameDownloadManager.Downloaders.AddRange(downloaders);
+        _gameDownloadManager.Downloaders.Clear();
+        _gameDownloadManager.Downloaders.AddRange(downloaders);
         target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
         try
         {
-            var searchPayloadDto = _mapper.Map<DownloaderSearchPayload>(target.SearchPayload);
-            var games = await GameDownloadManager.GetGames(searchPayloadDto);
-            var mappedGames = _mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);
+            var searchPayloadDto = Mapper.Map<DownloaderSearchPayload>(target.SearchPayload);
+            var games = await _gameDownloadManager.GetGames(searchPayloadDto);
+            var mappedGames = Mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);
             var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink) /*TODO Remove this*/
                 .Where(s => s.IsNotNullOrWhiteSpace()).ToList();
-            var installedGames = await GamesUnitOfWork.GetGamesByLinksDictionary(LinkType.Download, downloadLinks);
+            var allGamesWithStats = await _gameDataService.GetGamesWithStats();
+            var installedGames = await _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, downloadLinks, allGamesWithStats);
             foreach (var game in mappedGames)
             {
                 if (game.DownloadLink == null) continue;
                 if (installedGames.TryGetValue(game.DownloadLink, out var installedGame))
                 {
-                    game.InstalledGame = _mapper.Map<GameWithStatsViewModel>(installedGame);
+                    game.InstalledGame = Mapper.Map<GameWithStatsViewModel>(installedGame);
                 }
             }
 
@@ -235,7 +238,7 @@ public class GameSearchService : IViewService
                 target.FetchedResults.Clear();
                 target.FetchedResults.AddRange(mappedGames);
             });
-            target.HasMoreResults = GameDownloadManager.HasMoreResults();
+            target.HasMoreResults = _gameDownloadManager.HasMoreResults();
         }
         catch (OperationCanceledException ex)
         {
@@ -255,6 +258,6 @@ public class GameSearchService : IViewService
 
     public void Cancel()
     {
-        GameDownloadManager.CancelCurrentAction();
+        _gameDownloadManager.CancelCurrentAction();
     }
 }

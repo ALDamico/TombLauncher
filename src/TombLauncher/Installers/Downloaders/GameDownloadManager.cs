@@ -74,7 +74,7 @@ public class GameDownloadManager
         return outputList;
     }
 
-    public async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game)
+    public async Task<IGameMetadata?> FetchDetails(IGameSearchResultMetadata game)
     {
         var downloader = Downloaders.FirstOrDefault(d => d.BaseUrl == game.BaseUrl);
         if (downloader != null)
@@ -82,7 +82,7 @@ public class GameDownloadManager
             return await downloader.FetchDetails(game, _cancellationTokenSource.Token);
         }
 
-        return null!;
+        return null;
     }
 
     public async Task<IMergedGameSearchResultMetadata> FetchAllDetails(IMergedGameSearchResultMetadata game)

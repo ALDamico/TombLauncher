@@ -1,15 +1,13 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Navigation;
-using TombLauncher.Data.Database.UnitOfWork;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
@@ -21,7 +19,7 @@ public class RandomGameService
 {
     public RandomGameService(
         ISettingsProvider settingsProvider,
-        GamesUnitOfWork gamesUnitOfWork,
+        GameLinkDataService gameLinkDataService,
         GameDownloadManager gameDownloadManager,
         NavigationManager navigationManager,
         MapperConfiguration mapperConfiguration,
@@ -29,7 +27,7 @@ public class RandomGameService
         GameWithStatsService gameWithStatsService)
     {
         _settingsProvider = settingsProvider;
-        _gamesUnitOfWork = gamesUnitOfWork;
+        _gameLinkDataService = gameLinkDataService;
         _gameDownloadManager = gameDownloadManager;
         _navigationManager = navigationManager;
         _mapper = mapperConfiguration.CreateMapper();
@@ -37,13 +35,13 @@ public class RandomGameService
         _gameWithStatsService = gameWithStatsService;
     }
 
-    private ISettingsProvider _settingsProvider;
-    private GamesUnitOfWork _gamesUnitOfWork;
-    private GameDownloadManager _gameDownloadManager;
-    private NavigationManager _navigationManager;
-    private IMapper _mapper;
-    private GameSearchResultService _gameSearchResultService;
-    private GameWithStatsService _gameWithStatsService;
+    private readonly ISettingsProvider _settingsProvider;
+    private readonly GameLinkDataService _gameLinkDataService;
+    private readonly GameDownloadManager _gameDownloadManager;
+    private readonly NavigationManager _navigationManager;
+    private readonly IMapper _mapper;
+    private readonly GameSearchResultService _gameSearchResultService;
+    private readonly GameWithStatsService _gameWithStatsService;
 
     public async Task PickRandomGame(RandomGameViewModel target)
     {
@@ -84,7 +82,7 @@ public class RandomGameService
                 continue;
             }
 
-            var installedGame = await _gamesUnitOfWork.GetGameByLinks(LinkType.Download,
+            var installedGame = await _gameLinkDataService.GetGameByLinks(LinkType.Download,
                 candidate.Sources.Select(s => s.DownloadLink).ToList());
             if (installedGame == null)
             {
