@@ -220,10 +220,9 @@ public class App : Application
         ConfigureDownloaders(serviceCollection);
         serviceCollection.AddTransient(sp =>
         {
-            var cts = new CancellationTokenSource();
-            var downloadManager = new GameDownloadManager(cts, sp.GetRequiredService<IGameMerger>())
+            var downloadManager = new GameDownloadManager(sp.GetRequiredService<IGameMerger>())
             {
-                Downloaders = Ioc.Default.GetRequiredService<ISettingsProvider>().GetActiveDownloaders()
+                Downloaders = sp.GetRequiredService<ISettingsProvider>().GetActiveDownloaders()
             };
 
 

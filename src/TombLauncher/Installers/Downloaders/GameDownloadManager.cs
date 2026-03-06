@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,14 +13,13 @@ namespace TombLauncher.Installers.Downloaders;
 
 public class GameDownloadManager
 {
-    public GameDownloadManager(CancellationTokenSource cancellationTokenSource, IGameMerger merger)
+    public GameDownloadManager(IGameMerger merger)
     {
-        _cancellationTokenSource = cancellationTokenSource;
         _merger = merger;
         Downloaders = [];
     }
     public List<IGameDownloader> Downloaders { get; init; }
-    private CancellationTokenSource _cancellationTokenSource;
+    private CancellationTokenSource _cancellationTokenSource = new();
     private readonly IGameMerger _merger;
 
     public async Task<List<IMergedGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload)
@@ -71,7 +70,7 @@ public class GameDownloadManager
         {
             LevelName = game.Title
         };
-        var tasks = Downloaders.Select(downloader => downloader.GetGames(searchPayload, CancellationToken.None)).ToList();
+        var tasks = Downloaders.Select(downloader => downloader.GetGames(searchPayload, _cancellationTokenSource.Token)).ToList();
 
         await Task.WhenAll(tasks);
         var allResults = tasks.SelectMany(t => t.Result).ToList();
@@ -106,6 +105,7 @@ public class GameDownloadManager
     public void CancelCurrentAction()
     {
         _cancellationTokenSource.Cancel();
+        _cancellationTokenSource.Dispose();
         _cancellationTokenSource = new CancellationTokenSource();
     }
 

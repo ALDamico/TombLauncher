@@ -1,11 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Services;
 
@@ -13,10 +13,10 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameSearchViewModel : PageViewModel
 {
-    private GameSearchService _gameSearchService;
+    private readonly GameSearchService _gameSearchService;
 
     [ObservableProperty] private DownloaderSearchPayloadViewModel _searchPayload;
-    [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
+    [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults = new();
     [ObservableProperty] private bool _hasMoreResults;
     [ObservableProperty] private Vector _scrollViewerOffset;
     [ObservableProperty] private bool _hasSearched;
@@ -55,7 +55,7 @@ public partial class GameSearchViewModel : PageViewModel
     {
         await _gameSearchService.Search(this);
         HasSearched = true;
-        ResultCount = FetchedResults?.Count ?? 0;
+        ResultCount = FetchedResults.Count;
         ShowEmptyState = HasSearched && ResultCount == 0;
         ShowResults = ResultCount > 0;
         LoadMoreFeedback = string.Empty;
@@ -73,10 +73,19 @@ public partial class GameSearchViewModel : PageViewModel
 
     private async Task LoadMore()
     {
-        await _gameSearchService.LoadMore(this);
-        ResultCount = FetchedResults?.Count ?? 0;
-        ShowEmptyState = HasSearched && ResultCount == 0;
-        ShowResults = ResultCount > 0;
+        try
+        {
+            await _gameSearchService.LoadMore(this);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        finally
+        {
+            ResultCount = FetchedResults.Count;
+            ShowEmptyState = HasSearched && ResultCount == 0;
+            ShowResults = ResultCount > 0;
+        }
     }
 
     [ObservableProperty] private ICommand _openCmd;
@@ -91,12 +100,12 @@ public partial class GameSearchViewModel : PageViewModel
 
     private void ClearFilters()
     {
-        SearchPayload?.ClearFilters();
+        SearchPayload.ClearFilters();
     }
 
     private bool CanClearFilters()
     {
-        return SearchPayload?.HasActiveFilters == true;
+        return SearchPayload.HasActiveFilters;
     }
 
     private void OnSearchPayloadPropertyChanged(object? sender, PropertyChangedEventArgs e)
