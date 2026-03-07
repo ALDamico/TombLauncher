@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using Avalonia.Data.Converters;
 
 namespace TombLauncher.ValueConverters;
 
-public class FileSizeFormatter : IValueConverter
+public class FileSizeConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
@@ -50,7 +50,7 @@ public class FileSizeFormatter : IValueConverter
             }
         }
 
-        return $"{tmpVal:F} {unit}";
+        return $"{tmpVal:F2} {unit}";
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

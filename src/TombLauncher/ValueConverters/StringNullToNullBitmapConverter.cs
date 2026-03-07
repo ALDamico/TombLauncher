@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Styling;
@@ -43,7 +43,7 @@ public class StringNullToNullBitmapConverter : IValueConverter
     {
         if (value is string str)
         {
-            if (str == null || str == LightThemeVariantValue || str == DarkThemeVariantValue)
+            if (str == LightThemeVariantValue || str == DarkThemeVariantValue)
                 return string.Empty;
             return str;
         }

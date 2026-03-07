@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using TombLauncher.Contracts.Downloaders;
@@ -11,20 +11,13 @@ public class MultiSourceGameSearchResultMetadataCanDownloadToBooleanConverter : 
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value == null)
+        if (value is not MultiSourceGameSearchResultMetadataViewModel vm)
             return false;
-        var castedValue = value as MultiSourceGameSearchResultMetadataViewModel;
-        if (castedValue == null)
-            return false;
-        if (castedValue.InstalledGame != null)
-        {
-            if (castedValue.InstalledGame.GameMetadata != null)
-            {
-                return castedValue.InstalledGame.GameMetadata.IsInstalled;
-            }
-        }
 
-        return !castedValue.DownloadLink.IsNullOrWhiteSpace();
+        if (vm.InstalledGame?.GameMetadata is { IsInstalled: true })
+            return true;
+
+        return !vm.DownloadLink.IsNullOrWhiteSpace();
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

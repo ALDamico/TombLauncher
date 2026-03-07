@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -8,7 +8,7 @@ using TombLauncher.Localization;
 
 namespace TombLauncher.ValueConverters;
 
-public class DateTimeFormatter : IValueConverter
+public class DateTimeFormatConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

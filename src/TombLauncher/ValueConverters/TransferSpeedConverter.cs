@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using Avalonia.Data.Converters;
 
 namespace TombLauncher.ValueConverters;
 
-public class TransferSpeedFormatter : IValueConverter
+public class TransferSpeedConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
@@ -36,8 +36,7 @@ public class TransferSpeedFormatter : IValueConverter
                 }
             }
 
-            return $"{tmpVal:F} {unit}";
-
+            return $"{tmpVal:F2} {unit}";
         }
 
         return null;

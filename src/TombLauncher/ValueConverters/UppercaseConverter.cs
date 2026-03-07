@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using TombLauncher.Core.Extensions;
@@ -10,7 +10,7 @@ public class UppercaseConverter : IValueConverter
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is string str)
-            return str?.RemoveDiacritics().ToUpper();
+            return str.RemoveDiacritics().ToUpper();
         return value;
     }
 

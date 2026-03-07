@@ -83,11 +83,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaXaml Remove="Localization\en-US.axaml" />
-      <AvaloniaXaml Remove="Localization\it-IT.axaml" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\TombLauncher.Controls\TombLauncher.Controls.csproj" />
       <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
       <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />

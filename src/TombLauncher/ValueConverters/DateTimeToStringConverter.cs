@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -63,7 +63,7 @@ public class DateTimeToStringConverter : IValueConverter
                 return func("Last month", Array.Empty<object>());
             case <= 365:
                 {
-                    var monthsElapsed = differenceInDays % 365;
+                    var monthsElapsed = differenceInDays / 30;
                     return func("months ago", [monthsElapsed]);
                 }
         }

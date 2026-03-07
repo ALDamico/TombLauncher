@@ -18,23 +18,23 @@
             <valueConverters:GameIsInstallingToBooleanConverter x:Key="GameIsInstallingToBooleanConverter"/>
             <valueConverters:GameMetadataIsNotInstalledToBooleanConverter x:Key="GameNotInstalledToBooleanConverter"/>
             <valueConverters:GameMetadataIsInstalledToBooleanConverter x:Key="GameInstalledToBooleanConverter"/>
-            <valueConverters:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
-            <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" />
+            <valueConverters:CollectionToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
+            <valueConverters:CollectionToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" Invert="True" />
             <valueConverters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
             <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />
             <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
             <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter" />
             <valueConverters:LocalizedStringConverter x:Key="LocalizedStringConverter" />
             <valueConverters:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
-            <valueConverters:DateTimeFormatter x:Key="DateOnlyFormatter">
-                <valueConverters:DateTimeFormatter.DesiredFormat>DateOnlyFormat</valueConverters:DateTimeFormatter.DesiredFormat>
-            </valueConverters:DateTimeFormatter>
-            <valueConverters:DateTimeFormatter x:Key="DateTimeFormatter">
-                <valueConverters:DateTimeFormatter.DesiredFormat>DateTimeFormat</valueConverters:DateTimeFormatter.DesiredFormat>
-            </valueConverters:DateTimeFormatter>
+            <valueConverters:DateTimeFormatConverter x:Key="DateOnlyFormatter">
+                <valueConverters:DateTimeFormatConverter.DesiredFormat>DateOnlyFormat</valueConverters:DateTimeFormatConverter.DesiredFormat>
+            </valueConverters:DateTimeFormatConverter>
+            <valueConverters:DateTimeFormatConverter x:Key="DateTimeFormatter">
+                <valueConverters:DateTimeFormatConverter.DesiredFormat>DateTimeFormat</valueConverters:DateTimeFormatConverter.DesiredFormat>
+            </valueConverters:DateTimeFormatConverter>
             <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter"/>
-            <valueConverters:TransferSpeedFormatter x:Key="TransferSpeedFormatter"/>
-            <valueConverters:FileSizeFormatter x:Key="FileSizeFormatter"/>
+            <valueConverters:TransferSpeedConverter x:Key="TransferSpeedFormatter"/>
+            <valueConverters:FileSizeConverter x:Key="FileSizeFormatter"/>
             <valueConverters:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>
             <valueConverters:StringNullToNullBitmapConverter x:Key="StringNullToNullBitmap">
                 <valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
