@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
-using TombLauncher.Core.Utils;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Localization.Extensions;
 
 namespace TombLauncher.Extensions;

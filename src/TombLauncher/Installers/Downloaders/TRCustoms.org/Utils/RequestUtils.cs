@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using Tmds.DBus.Protocol;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;
 using TombLauncher.Installers.Downloaders.TRCustoms.org.Requests;
 
@@ -6,46 +8,45 @@ namespace TombLauncher.Installers.Downloaders.TRCustoms.org.Utils;
 
 internal static class RequestUtils
 {
-    internal static IEnumerable<KeyValuePair<string, string?>> DictifyRequest(SearchRequest request)
+    internal static IEnumerable<KeyValuePair<string, string?>> DictifyRequest(SearchRequest? request)
     {
+        if (request == null)
+            return new Dictionary<string, string?>();
         var tempRequest = (Dictionary<string, string?>)DictifyRequest((TrCustomsBaseRequest)request);
 
-        if (request != null)
+        if (request.Sort != null)
         {
-            if (request.Sort != null)
-            {
-                tempRequest["sort"] = request.Sort;
-            }
+            tempRequest["sort"] = request.Sort;
+        }
 
-            if (request.Tags.IsNotNullOrEmpty())
-            {
-                tempRequest["tags"] = string.Join(",", request.Tags);
-            }
+        if (request.Tags.IsNotNullOrEmpty())
+        {
+            tempRequest["tags"] = string.Join(",", request.Tags);
+        }
 
-            if (request.Genres.IsNotNullOrEmpty())
-            {
-                tempRequest["genres"] = string.Join(",", request.Genres);
-            }
+        if (request.Genres.IsNotNullOrEmpty())
+        {
+            tempRequest["genres"] = string.Join(",", request.Genres);
+        }
 
-            if (request.Engines.IsNotNullOrEmpty())
-            {
-                tempRequest["engines"] = string.Join(",", request.Engines);
-            }
+        if (request.Engines.IsNotNullOrEmpty())
+        {
+            tempRequest["engines"] = string.Join(",", request.Engines);
+        }
 
-            if (request.Difficulties.IsNotNullOrEmpty())
-            {
-                tempRequest["difficulties"] = string.Join(",", request.Difficulties);
-            }
+        if (request.Difficulties.IsNotNullOrEmpty())
+        {
+            tempRequest["difficulties"] = string.Join(",", request.Difficulties);
+        }
 
-            if (request.Durations.IsNotNullOrEmpty())
-            {
-                tempRequest["durations"] = string.Join(",", request.Difficulties);
-            }
+        if (request.Durations.IsNotNullOrEmpty())
+        {
+            tempRequest["durations"] = string.Join(",", request.Difficulties);
+        }
 
-            if (request.Ratings.IsNotNullOrEmpty())
-            {
-                tempRequest["ratings"] = string.Join(",", request.Ratings);
-            }
+        if (request.Ratings.IsNotNullOrEmpty())
+        {
+            tempRequest["ratings"] = string.Join(",", request.Ratings);
         }
 
         return tempRequest;

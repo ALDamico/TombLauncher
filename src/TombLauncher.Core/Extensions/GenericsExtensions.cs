@@ -1,6 +1,6 @@
-﻿namespace TombLauncher.Core.Utils;
+namespace TombLauncher.Core.Extensions;
 
-public static class GenericUtils
+public static class GenericsExtensions
 {
     public static bool IsNullOrEmpty<T>(this IEnumerable<T>? enumerable)
     {
@@ -14,28 +14,21 @@ public static class GenericUtils
 
     public static List<T> ToEmptyListIfNull<T>(this IEnumerable<T>? enumerable)
     {
-        if (enumerable.IsNullOrEmpty())
+        // ReSharper disable PossibleMultipleEnumeration
+        if (enumerable!.IsNullOrEmpty())
             return new List<T>();
 
-        return enumerable.ToList();
+        return enumerable!.ToList();
     }
 
     public static T? Coalesce<T>(this T? first, params T?[] elements)
     {
-        var enumerator = elements.GetEnumerator();
-        if (!first?.Equals((T)default) == true)
+        if (!Equals(first, default(T)))
         {
             return first;
         }
 
-        while (enumerator.MoveNext())
-        {
-            var current = (T)enumerator.Current;
-            if (!current?.Equals(default) == true)
-                return current;
-        }
-
-        return default;
+        return elements.FirstOrDefault(e => !Equals(e, default(T)));
     }
 
     public static T? DefaultIfEquals<T>(this T? first, T? second)
