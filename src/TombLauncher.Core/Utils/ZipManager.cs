@@ -1,4 +1,3 @@
-using System.Collections;
 using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Extensions;
@@ -13,16 +12,21 @@ public class ZipManager : IDisposable
         _zipFile = new ZipFile(path, stringCodec);
     }
 
-    private ZipFile _zipFile;
-    private IEnumerator? _zipFileEnumerator;
+    private readonly ZipFile _zipFile;
 
     public IEnumerable<ZipEntry> GetEntries()
     {
-        if (_zipFileEnumerator == null)
-            _zipFileEnumerator = _zipFile.GetEnumerator();
-        while (_zipFileEnumerator.MoveNext())
+        var enumerator = _zipFile.GetEnumerator();
+        try
         {
-            yield return (ZipEntry)_zipFileEnumerator.Current;
+            while (enumerator.MoveNext())
+            {
+                yield return (ZipEntry)enumerator.Current;
+            }
+        }
+        finally
+        {
+            (enumerator as IDisposable)?.Dispose();
         }
     }
 
@@ -34,15 +38,16 @@ public class ZipManager : IDisposable
     public async Task ExtractAll(string targetPath, CancellationToken cancellationToken = default, IProgress<CopyProgressInfo>? progress = null)
     {
         Directory.CreateDirectory(targetPath);
-        var zipFileEnumerator = _zipFile.GetEnumerator();
-        using var zipFileEnumerator1 = zipFileEnumerator as IDisposable;
-        var runningSize = 0L;
+        var enumerator = _zipFile.GetEnumerator();
+        using var enumeratorDisposable = enumerator as IDisposable;
+        var currentEntry = 0L;
+        var buffer = new byte[4096 * 16];
 
-        while (zipFileEnumerator.MoveNext())
+        while (enumerator.MoveNext())
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var current = (ZipEntry)zipFileEnumerator.Current;
-            runningSize++;
+            var current = (ZipEntry)enumerator.Current;
+            currentEntry++;
 
             if (current.IsDirectory)
             {
@@ -58,25 +63,22 @@ public class ZipManager : IDisposable
 
             if (progress != null)
             {
-                var copyProgress = new CopyProgressInfo()
+                progress.Report(new CopyProgressInfo
                 {
                     CurrentFileName = current.Name,
                     TotalFiles = _zipFile.Count,
-                    CurrentFile = runningSize
-                };
-                progress.Report(copyProgress);
+                    CurrentFile = currentEntry
+                });
             }
 
-            var inputStream = _zipFile.GetInputStream(current);
+            await using var inputStream = _zipFile.GetInputStream(current);
             var targetFileName = Path.Combine(targetPath, current.Name);
-            await using var streamWriter = File.Create(targetFileName);
-            var size = 4096 * 16;
-            var buffer = new byte[size];
+            await using var outputStream = File.Create(targetFileName);
             int bytesRead;
 
             while ((bytesRead = await inputStream.ReadAsync(buffer, cancellationToken)) > 0)
             {
-                await streamWriter.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
+                await outputStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
             }
         }
     }
@@ -84,6 +86,5 @@ public class ZipManager : IDisposable
     public void Dispose()
     {
         ((IDisposable)_zipFile)?.Dispose();
-        _zipFileEnumerator = null;
     }
 }
