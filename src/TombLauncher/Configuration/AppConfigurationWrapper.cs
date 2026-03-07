@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Configuration;
@@ -113,13 +114,13 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
 
     public List<CheckableItem<string>>? DocumentationPatterns
     {
-        get => CollectionUtils.GetSharedItems(Defaults.DocumentationPatterns ?? new(), User.DocumentationPatterns ?? new());
+        get => (Defaults.DocumentationPatterns ?? new()).MergeWithOverrides(User.DocumentationPatterns ?? new());
         set => User.DocumentationPatterns = value!.Except(Defaults.DocumentationPatterns ?? new()).ToList();
     }
 
     public List<CheckableItem<string>>? DocumentationFolderExclusions
     {
-        get => CollectionUtils.GetSharedItems(Defaults.DocumentationFolderExclusions ?? new(),
+        get => (Defaults.DocumentationFolderExclusions ?? new()).MergeWithOverrides(
             User.DocumentationFolderExclusions ?? new());
         set => User.DocumentationFolderExclusions = value!.Except(Defaults.DocumentationFolderExclusions ?? new()).ToList();
     }
