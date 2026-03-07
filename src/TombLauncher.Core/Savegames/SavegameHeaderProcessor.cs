@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
@@ -107,7 +107,7 @@ public class SavegameHeaderProcessor : IDisposable
             return;
 
         var fileBytes = File.ReadAllBytes(e);
-        var md5 = Md5Utils.ComputeMd5Hash(fileBytes).GetAwaiter().GetResult();
+        var md5 = Md5Utils.ComputeMd5Hash(fileBytes);
         var dto = new SavegameBackupDto()
         {
             Data = fileBytes,

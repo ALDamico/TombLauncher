@@ -190,7 +190,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
             foreach (var file in filesToProcess)
             {
-                file.Md5 = Md5Utils.ComputeMd5Hash(file.Data).GetAwaiter().GetResult();
+                file.Md5 = Md5Utils.ComputeMd5Hash(file.Data);
             }
 
             filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
