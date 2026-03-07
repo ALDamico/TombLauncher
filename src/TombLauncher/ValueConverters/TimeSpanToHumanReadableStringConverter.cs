@@ -6,20 +6,14 @@ using System.Text;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Helpers;
 
 namespace TombLauncher.ValueConverters;
 
 public class TimeSpanToHumanReadableStringConverter : IValueConverter
 {
-    private Func<string, object[], string> StringGenerator(ILocalizationManager? localizationManager)
-    {
-        if (localizationManager != null)
-        {
-            return localizationManager.GetLocalizedString;
-        }
-
-        return string.Format;
-    }
+    private static Func<string, object[], string> StringGenerator(ILocalizationManager? localizationManager)
+        => LocalizationHelper.GetStringGenerator(localizationManager);
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var localizationManager = Ioc.Default.GetService<ILocalizationManager>();
@@ -86,11 +80,12 @@ public class TimeSpanToHumanReadableStringConverter : IValueConverter
                 }
 
                 lastPart = part;
+                i++;
             }
 
             if (!lastPart.EndsWith(' '))
                 sb.Append(' ');
-            sb.Append(func("and formattable", new object[] { parts.Last() }));
+            sb.Append(func("and formattable", [parts.Last()]));
 
             return sb.ToString();
         }
@@ -98,7 +93,7 @@ public class TimeSpanToHumanReadableStringConverter : IValueConverter
         return null;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

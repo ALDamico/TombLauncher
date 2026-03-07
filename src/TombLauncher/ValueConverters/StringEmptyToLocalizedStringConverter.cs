@@ -11,7 +11,7 @@ public class StringEmptyToLocalizedStringConverter : IValueConverter
     public string EmptyValue { get; set; } = string.Empty;
     public string NotEmptyValue { get; set; } = string.Empty;
 
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value == null)
             return EmptyValue.GetLocalizedString();
@@ -25,7 +25,7 @@ public class StringEmptyToLocalizedStringConverter : IValueConverter
         return string.Empty;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

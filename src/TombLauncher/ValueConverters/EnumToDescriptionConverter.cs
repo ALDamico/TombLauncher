@@ -2,13 +2,12 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Utils;
 
 namespace TombLauncher.ValueConverters;
 
 public class EnumToDescriptionConverter : IValueConverter
 {
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is Enum e)
         {
@@ -34,6 +33,6 @@ public class EnumToDescriptionConverter : IValueConverter
             return e.ToString();
         }
 
-        return default;
+        return null;
     }
 }

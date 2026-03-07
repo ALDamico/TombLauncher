@@ -1,48 +1,25 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using Avalonia.Data.Converters;
+using TombLauncher.Helpers;
 
 namespace TombLauncher.ValueConverters;
 
 public class TransferSpeedConverter : IValueConverter
 {
+    private static readonly string[] Units = ["B/s", "kB/s", "MB/s", "GB/s"];
+
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        var multiples = new string[]
-        {
-            "B/s",
-            "kB/s",
-            "MB/s",
-            "GB/s",
-        };
         if (value is double d)
         {
-            var tmpVal = d;
-            var unit = string.Empty;
-            
-            foreach (var multiple in multiples.Select((m, i) => (m, i)))
-            {
-                if (multiple.i > 0)
-                {
-                    tmpVal /= 1024;
-                }
-
-                unit = multiple.m;
-
-                if (tmpVal <= 1024)
-                {
-                    break;
-                }
-            }
-
-            return $"{tmpVal:F2} {unit}";
+            return ByteSizeFormatHelper.Format(d, Units);
         }
 
         return null;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

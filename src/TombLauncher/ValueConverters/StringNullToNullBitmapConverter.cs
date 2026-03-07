@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Globalization;
+using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Styling;
 using TombLauncher.Core.Extensions;
@@ -8,9 +9,9 @@ namespace TombLauncher.ValueConverters;
 
 public class StringNullToNullBitmapConverter : IValueConverter
 {
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        var themeVariant = App.Current?.ActualThemeVariant;
+        var themeVariant = Application.Current?.ActualThemeVariant;
         if (value is string str)
         {
             if (str.IsNullOrWhiteSpace())

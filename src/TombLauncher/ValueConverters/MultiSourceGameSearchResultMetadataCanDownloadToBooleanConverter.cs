@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Extensions;
 using TombLauncher.ViewModels;
 

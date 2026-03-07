@@ -1,10 +1,9 @@
-using System;
+﻿using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Localization;
 
 namespace TombLauncher.ValueConverters;
 
@@ -19,7 +18,7 @@ public class DateTimeFormatConverter : IValueConverter
                 return string.Empty;
             if (DesiredFormat.IsNullOrWhiteSpace())
             {
-                return dateTime.ToString(localizationManager.CurrentCulture?.DateTimeFormat);
+                return dateTime.ToString(localizationManager.CurrentCulture.DateTimeFormat);
             }
             return dateTime.ToString(localizationManager[DesiredFormat!]);
         }
@@ -42,5 +41,5 @@ public class DateTimeFormatConverter : IValueConverter
         return null;
     }
 
-    public string? DesiredFormat { get; set; } = null!;
+    public string? DesiredFormat { get; set; }
 }

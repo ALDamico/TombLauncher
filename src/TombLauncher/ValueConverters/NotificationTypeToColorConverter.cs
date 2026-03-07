@@ -6,7 +6,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Media;
 using TombLauncher.Contracts.Enums;
 
-namespace TombLauncher.Converters;
+namespace TombLauncher.ValueConverters;
 
 public class NotificationTypeToColorConverter : IValueConverter
 {
