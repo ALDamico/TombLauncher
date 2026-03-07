@@ -6,8 +6,7 @@
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
-             xmlns:valueConverters1="clr-namespace:TombLauncher.Core.ValueConverters;assembly=TombLauncher.Core"
-             xmlns:valueConverters2="clr-namespace:TombLauncher.Controls.ValueConverters;assembly=TombLauncher.Controls">
+             >
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
@@ -19,14 +18,14 @@
             <valueConverters:GameIsInstallingToBooleanConverter x:Key="GameIsInstallingToBooleanConverter"/>
             <valueConverters:GameMetadataIsNotInstalledToBooleanConverter x:Key="GameNotInstalledToBooleanConverter"/>
             <valueConverters:GameMetadataIsInstalledToBooleanConverter x:Key="GameInstalledToBooleanConverter"/>
-            <valueConverters1:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
+            <valueConverters:CollectionEmptyToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
             <valueConverters:CollectionNotEmptyToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" />
             <valueConverters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
             <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />
             <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
             <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter" />
             <valueConverters:LocalizedStringConverter x:Key="LocalizedStringConverter" />
-            <valueConverters1:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
+            <valueConverters:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
             <valueConverters:DateTimeFormatter x:Key="DateOnlyFormatter">
                 <valueConverters:DateTimeFormatter.DesiredFormat>DateOnlyFormat</valueConverters:DateTimeFormatter.DesiredFormat>
             </valueConverters:DateTimeFormatter>
@@ -36,7 +35,7 @@
             <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter"/>
             <valueConverters:TransferSpeedFormatter x:Key="TransferSpeedFormatter"/>
             <valueConverters:FileSizeFormatter x:Key="FileSizeFormatter"/>
-            <valueConverters2:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>
+            <valueConverters:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>
             <valueConverters:StringNullToNullBitmapConverter x:Key="StringNullToNullBitmap">
                 <valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
                     <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm-light.png</system:String>

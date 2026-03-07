@@ -1,11 +1,12 @@
-﻿using System.Globalization;
+using System;
+using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace TombLauncher.Controls.ValueConverters;
+namespace TombLauncher.ValueConverters;
 
 public sealed class CountryIdToFlagImageSourceConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var countryId = value as string;
 
@@ -22,7 +23,7 @@ public sealed class CountryIdToFlagImageSourceConverter : IValueConverter
         }
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }

@@ -1,12 +1,13 @@
-﻿using System.Collections;
+using System;
+using System.Collections;
 using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace TombLauncher.Core.ValueConverters;
+namespace TombLauncher.ValueConverters;
 
 public class CollectionEmptyToVisibilityConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is ICollection collection)
         {
@@ -16,7 +17,7 @@ public class CollectionEmptyToVisibilityConverter : IValueConverter
         return false;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }

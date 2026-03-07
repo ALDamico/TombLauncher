@@ -1,14 +1,16 @@
-﻿using System.Globalization;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace TombLauncher.Core.ValueConverters
+namespace TombLauncher.ValueConverters
 {
     /// <summary>
     /// A converter that compares two integers and returns true if the first number is smaller or equal to the second number
     /// </summary>
     public class IsSmallerOrEqualConverter : IMultiValueConverter
     {
-        public object Convert(IList<object> values, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
         {
             if (values.Count != 2)
             {
