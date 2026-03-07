@@ -1,10 +1,10 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace TombLauncher.Core.Extensions;
 
-public static class StringExtensions
+public static partial class StringExtensions
 {
     public static string Remove(this string s, string toRemove)
     {
@@ -33,9 +33,11 @@ public static class StringExtensions
 
     public static string RemoveIncidentals(this string text)
     {
-        var regex = new Regex(@"[\{\[\(].*[\}\]\)]");
-        return regex.Replace(text, String.Empty);
+        return IncidentalsRegex().Replace(text, string.Empty);
     }
+
+    [GeneratedRegex(@"\(.*?\)|\[.*?\]|\{.*?\}")]
+    private static partial Regex IncidentalsRegex();
 
     public static string? NullIfEmpty(this string s)
     {
@@ -62,17 +64,12 @@ public static class StringExtensions
         return !s.IsNullOrWhiteSpace();
     }
 
-    public static string GetNullTerminatedString(byte[] arr, int sliceEnd = -1)
+    public static string GetNullTerminatedString(this byte[] arr, int sliceEnd = -1)
     {
         var indexOfNullCharacter = Array.IndexOf(arr, byte.MinValue);
         if (indexOfNullCharacter < 0)
         {
-            if (sliceEnd >= 0)
-            {
-                indexOfNullCharacter = sliceEnd;
-            }
-            else
-                indexOfNullCharacter = arr.Length;
+            indexOfNullCharacter = sliceEnd >= 0 ? Math.Min(sliceEnd, arr.Length) : arr.Length;
         }
 
         return Encoding.ASCII.GetString(arr, 0, indexOfNullCharacter);
@@ -80,12 +77,6 @@ public static class StringExtensions
 
     public static bool EndsWithAny(this string s, params char[] chars)
     {
-        foreach (var c in chars)
-        {
-            if (s.EndsWith(c))
-                return true;
-        }
-
-        return false;
+        return chars.Any(c => s.EndsWith(c));
     }
 }
