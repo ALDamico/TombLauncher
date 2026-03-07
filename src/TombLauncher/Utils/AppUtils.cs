@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -7,6 +7,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input.Platform;
 using Avalonia.Styling;
 using LiveChartsCore;
+using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
 using TombLauncher.Core.PlatformSpecific;
 
@@ -32,14 +33,10 @@ public static class AppUtils
         {
             Application.Current.RequestedThemeVariant = themeVariant;
         }
-        if (themeVariant == ThemeVariant.Dark)
-        {
-            LiveCharts.Configure(config => config.AddDarkTheme());
-        }
-        else
-        {
-            LiveCharts.Configure(config => config.AddLightTheme());
-        }
+        var applyTheme = themeVariant == ThemeVariant.Dark
+            ? (Action<LiveChartsSettings>)(config => config.AddDarkTheme())
+            : config => config.AddLightTheme();
+        LiveCharts.Configure(applyTheme);
     }
 
     public static Version? GetApplicationVersion() => Assembly.GetEntryAssembly()?.GetName().Version;
