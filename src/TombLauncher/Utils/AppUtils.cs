@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -7,6 +8,7 @@ using Avalonia.Input.Platform;
 using Avalonia.Styling;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
+using TombLauncher.Core.PlatformSpecific;
 
 namespace TombLauncher.Utils;
 
@@ -43,4 +45,23 @@ public static class AppUtils
     public static Version? GetApplicationVersion() => Assembly.GetEntryAssembly()?.GetName().Version;
 
     public static Version GetDotNetVersion() => Environment.Version;
+
+    public static IPlatformSpecificFeatures InitPlatformSpecificFeatures()
+    {
+        IPlatformSpecificFeatures platformSpecificFeatures;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            platformSpecificFeatures = new WindowsPlatformSpecificFeatures();
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            platformSpecificFeatures = new LinuxPlatformSpecificFeatures();
+        }
+        else
+        {
+            throw new PlatformNotSupportedException("This platform is not supported.");
+        }
+
+        return platformSpecificFeatures;
+    }
 }

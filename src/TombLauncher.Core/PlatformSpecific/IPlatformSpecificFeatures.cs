@@ -14,4 +14,5 @@ public interface IPlatformSpecificFeatures
 
     NotifyFilters GetSavegameWatcherNotifyFilters();
     List<UnzipBackendDto> GetPlatformSpecificZipFallbackPrograms();
+    string GetAppDataDirectory();
 }

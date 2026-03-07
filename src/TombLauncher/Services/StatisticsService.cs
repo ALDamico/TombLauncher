@@ -13,6 +13,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Extensions;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Localization.Extensions;
@@ -26,16 +27,19 @@ public class StatisticsService
     public StatisticsService(
         ISettingsProvider settingsProvider,
         StatisticsDataService statisticsDataService,
-        MapperConfiguration mapperConfiguration)
+        MapperConfiguration mapperConfiguration,
+        IPlatformSpecificFeatures platformSpecificFeatures)
     {
         _settingsProvider = settingsProvider;
         _statisticsDataService = statisticsDataService;
         _mapper = mapperConfiguration.CreateMapper();
+        _platformSpecificFeatures = platformSpecificFeatures;
     }
 
     private readonly ISettingsProvider _settingsProvider;
     private readonly StatisticsDataService _statisticsDataService;
     private readonly IMapper _mapper;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public long GetDatabaseSize()
     {
@@ -46,7 +50,7 @@ public class StatisticsService
 
     public long GetGamesSize()
     {
-        var gamesFolder = PathUtils.GetGamesFolder();
+        var gamesFolder = PathUtils.GetGamesFolder(_platformSpecificFeatures.GetAppDataDirectory());
         return PathUtils.GetDirectorySize(gamesFolder);
     }
 

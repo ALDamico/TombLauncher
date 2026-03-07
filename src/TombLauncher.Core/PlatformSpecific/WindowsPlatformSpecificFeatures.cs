@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Core.PlatformSpecific;
@@ -49,5 +50,10 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
             new UnzipBackendDto() { Name = "tar", Command = "tar", CommandLineArguments = @"-xf ""{0}"" -C ""{1}""" },
             new UnzipBackendDto() { Name = "7-zip", Command = "7z", CommandLineArguments = @"x ""{0}"" -o""{1}""" }
         ];
+    }
+
+    public string GetAppDataDirectory()
+    {
+        return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
     }
 }

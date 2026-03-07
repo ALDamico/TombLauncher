@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -39,7 +39,8 @@ public class SettingsPageService : IViewService
         ThemeManager themeManager,
         IServiceProvider serviceProvider,
         IAppFileOperationsService appFileOperations,
-        ISettingsProvider settingsProvider)
+        ISettingsProvider settingsProvider,
+        IPlatformSpecificFeatures platformSpecificFeatures)
     {
         ViewContext = viewContext;
         _appConfiguration = appConfiguration;
@@ -48,6 +49,7 @@ public class SettingsPageService : IViewService
         _serviceProvider = serviceProvider;
         _appFileOperations = appFileOperations;
         _settingsProvider = settingsProvider;
+        _platformSpecificFeatures = platformSpecificFeatures;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -62,6 +64,7 @@ public class SettingsPageService : IViewService
     private readonly ThemeManager _themeManager;
     private readonly IAppFileOperationsService _appFileOperations;
     private readonly ISettingsProvider _settingsProvider;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
     {
@@ -108,7 +111,8 @@ public class SettingsPageService : IViewService
         _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
         _appConfiguration.NumberOfVersionsToKeep =
             backupSettings.LimitNumberOfVersions ? backupSettings.NumberOfVersionsToKeep : null;
-        await File.WriteAllTextAsync("appsettings.user.json",
+        var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
+        await File.WriteAllTextAsync(userConfigPath,
             JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
                 new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
         viewModel.ClearBusy();

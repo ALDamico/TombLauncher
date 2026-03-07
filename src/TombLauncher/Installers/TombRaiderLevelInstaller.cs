@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -8,6 +8,7 @@ using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Progress;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Services;
 
@@ -15,6 +16,13 @@ namespace TombLauncher.Installers;
 
 public class TombRaiderLevelInstaller
 {
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
+
+    public TombRaiderLevelInstaller(IPlatformSpecificFeatures platformSpecificFeatures)
+    {
+        _platformSpecificFeatures = platformSpecificFeatures;
+    }
+
     public async Task<string> Install(string containingFolder, IGameMetadata gameDto, CancellationToken cancellationToken,
         IProgress<CopyProgressInfo>? copyProgress = null)
     {
@@ -24,7 +32,7 @@ public class TombRaiderLevelInstaller
             throw new ArgumentException("The source folder does not exist!", nameof(containingFolder));
         }
         var installFolder =
-            Path.Combine(PathUtils.GetGamesFolder(), gameDto.Guid.ToString());
+            PathUtils.GetGameInstallFolder(_platformSpecificFeatures.GetAppDataDirectory(), gameDto.Guid);
 
         if (Directory.Exists(containingFolder))
         {

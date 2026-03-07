@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Extensions;
@@ -33,7 +33,7 @@ public class ZipManager : IDisposable
 
     public async Task ExtractAll(string targetPath, CancellationToken cancellationToken = default, IProgress<CopyProgressInfo>? progress = null)
     {
-        PathUtils.EnsureFolderExists(targetPath);
+        Directory.CreateDirectory(targetPath);
         var zipFileEnumerator = _zipFile.GetEnumerator();
         using var zipFileEnumerator1 = zipFileEnumerator as IDisposable;
         var runningSize = 0L;
@@ -46,14 +46,14 @@ public class ZipManager : IDisposable
 
             if (current.IsDirectory)
             {
-                PathUtils.EnsureFolderExists(Path.Combine(targetPath, current.Name));
+                Directory.CreateDirectory(Path.Combine(targetPath, current.Name));
                 continue;
             }
 
             var relativePath = Path.GetDirectoryName(current.Name);
             if (relativePath.IsNotNullOrWhiteSpace())
             {
-                PathUtils.EnsureFolderExists(Path.Combine(targetPath, relativePath!));
+                Directory.CreateDirectory(Path.Combine(targetPath, relativePath!));
             }
 
             if (progress != null)

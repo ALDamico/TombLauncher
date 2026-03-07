@@ -52,4 +52,16 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
             new UnzipBackendDto() { Name = "unzip", Command = "unzip", CommandLineArguments = @"""{0}"" -d ""{1}""" }
         ];
     }
+
+    public string GetAppDataDirectory()
+    {
+        var configHome = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME")
+            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
+        var appDir = Path.Combine(configHome, "TombLauncher");
+        if (!Directory.Exists(appDir))
+        {
+            Directory.CreateDirectory(appDir);
+        }
+        return appDir;
+    }
 }

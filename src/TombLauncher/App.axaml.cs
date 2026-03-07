@@ -1,9 +1,8 @@
 using System;
 using AutoMapper;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -167,33 +166,26 @@ public class App : Application
 
     private async Task InitializeServices()
     {
+        var platformSpecificFeatures = AppUtils.InitPlatformSpecificFeatures();
+
+        var appDataDirectory = platformSpecificFeatures.GetAppDataDirectory();
+
         var appConfiguration = new AppConfigurationWrapper();
         IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false)
             .AddJsonFile("appsettings.Development.json", optional: true)
             .Build();
         configuration.Bind(appConfiguration.Defaults);
+        var userConfigPath = Path.Combine(appDataDirectory, "appsettings.user.json");
         IConfiguration userConfiguration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.user.json", optional: true)
+            .AddJsonFile(userConfigPath, optional: true)
             .Build();
         userConfiguration.Bind(appConfiguration.User);
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton<IAppConfigurationWrapper>(appConfiguration);
-        serviceCollection.AddSingleton<IPlatformSpecificFeatures>(_ =>
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return new WindowsPlatformSpecificFeatures();
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return new LinuxPlatformSpecificFeatures();
-            }
-
-            throw new PlatformNotSupportedException("This platform is not supported.");
-        });
-        ConfigureLogging(serviceCollection);
+        serviceCollection.AddSingleton(platformSpecificFeatures);
+        ConfigureLogging(serviceCollection, appDataDirectory);
         ConfigureMappings(serviceCollection);
         serviceCollection.AddSingleton<IAppFileOperationsService, AppFileOperationsService>();
         serviceCollection.AddSingleton<ThemeManager>();
@@ -203,7 +195,7 @@ public class App : Application
         ConfigurePageServices(serviceCollection);
         ConfigureViewModels(serviceCollection);
         serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current!));
-        ConfigureDatabaseAccess(serviceCollection, appConfiguration);
+        ConfigureDatabaseAccess(serviceCollection, appConfiguration, appDataDirectory);
         serviceCollection.AddSingleton(sp => new NavigationManager(sp));
         serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
         {
@@ -355,11 +347,15 @@ public class App : Application
         serviceCollection.AddTransient<GameDetailsViewModel>();
     }
 
-    private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection, IAppConfiguration appConfiguration)
+    private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection, IAppConfiguration appConfiguration, string appDataDirectory)
     {
         serviceCollection.AddDbContext<TombLauncherDbContext>(opts =>
         {
             var databasePath = appConfiguration.DatabasePath;
+            if (databasePath != null && !Path.IsPathRooted(databasePath))
+            {
+                databasePath = Path.Combine(appDataDirectory, databasePath);
+            }
             var connectionString = $"Data Source={databasePath}";
             opts.UseSqlite(connectionString);
         });
@@ -372,12 +368,13 @@ public class App : Application
         serviceCollection.AddScoped<AppCrashDataService>();
     }
 
-    private static void ConfigureLogging(ServiceCollection serviceCollection)
+    private static void ConfigureLogging(ServiceCollection serviceCollection, string appDataDirectory)
     {
+        var logPath = Path.Combine(appDataDirectory, "TombLauncher_App.log");
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo
-            .File("TombLauncher_App.log", LogEventLevel.Information)
+            .File(logPath, LogEventLevel.Information)
             .CreateLogger();
         serviceCollection.AddLogging(opts =>
         {
