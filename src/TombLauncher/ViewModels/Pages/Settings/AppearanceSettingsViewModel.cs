@@ -1,14 +1,13 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia;
+using System.Collections.ObjectModel;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.ViewModels;
+using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class AppearanceSettingsViewModel : SettingsSectionViewModelBase
 {
-    public AppearanceSettingsViewModel(PageViewModel settingsPage) : base("APPEARANCE", settingsPage)
+    public AppearanceSettingsViewModel(PageViewModel settingsPage) : base("APPEARANCE", settingsPage, PackIconRemixIconKind.PaletteLine)
     {
         AvailableThemes = new ObservableCollection<ApplicationTheme>()
         {

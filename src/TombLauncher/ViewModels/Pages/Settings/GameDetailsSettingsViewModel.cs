@@ -1,12 +1,13 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.ComponentModel;
+using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 {
-    public GameDetailsSettingsViewModel(PageViewModel settingsPage) : base("GAME_DETAILS", settingsPage)
+    public GameDetailsSettingsViewModel(PageViewModel settingsPage) : base("GAME_DETAILS", settingsPage, PackIconRemixIconKind.GamepadLine)
     {
     }
 

@@ -12,11 +12,13 @@
     <Design.DataContext>
         <settings:SavegameSettingsViewModel/>
     </Design.DataContext>
-    <StackPanel Orientation="Vertical">
-        <TextBlock Text="{loc:Translate ALLOW_TOMB_LAUNCHER_TO_BACKUP_YOUR_SAVED_GAMES}"/>
-        <CheckBox IsChecked="{Binding SavegameBackupEnabled}"/>
-        <TextBlock Text="{loc:Translate LIMIT_THE_NUMBER_OF_VERSIONS_TO_KEEP}"/>
-        <CheckBox IsChecked="{Binding LimitNumberOfVersions}"/>
+    <StackPanel Orientation="Vertical" Spacing="8">
+        <ToggleSwitch IsChecked="{Binding SavegameBackupEnabled}"
+                      OnContent="{loc:Translate ALLOW_TOMB_LAUNCHER_TO_BACKUP_YOUR_SAVED_GAMES}"
+                      OffContent="{loc:Translate ALLOW_TOMB_LAUNCHER_TO_BACKUP_YOUR_SAVED_GAMES}" />
+        <ToggleSwitch IsChecked="{Binding LimitNumberOfVersions}"
+                      OnContent="{loc:Translate LIMIT_THE_NUMBER_OF_VERSIONS_TO_KEEP}"
+                      OffContent="{loc:Translate LIMIT_THE_NUMBER_OF_VERSIONS_TO_KEEP}" />
         <TextBlock Text="{loc:Translate NUMBER_OF_VERSIONS_TO_KEEP}" 
                    IsEnabled="{Binding LimitNumberOfVersions}"/>
         <NumericUpDown Minimum="1" 

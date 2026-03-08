@@ -34,13 +34,14 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <DockPanel Grid.Row="1" LastChildFill="False">
+        <DockPanel Grid.Row="1" LastChildFill="False" Margin="0,8,30,0">
             <controls:IconButton DockPanel.Dock="Right"
+                                 Classes="btn-primary"
                                  Margin="10"
+                                 Padding="16,8"
                                  Icon="Save3Line"
                                  Text="{loc:Translate SAVE}"
                                  Command="{Binding SaveCmd}" />
-
         </DockPanel>
     </Grid>
 

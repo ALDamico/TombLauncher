@@ -3,6 +3,7 @@
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:converters="using:TombLauncher.Localization.Converters"
@@ -16,15 +17,24 @@
     <UserControl.Resources>
         <converters:StringCasingConverter x:Key="StringCasingConverter" />
     </UserControl.Resources>
-    <StackPanel Orientation="Vertical">
-        <DockPanel LastChildFill="True">
-            <controls:Infotip IsVisible="{Binding InfoTipContent, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" 
-                              DockPanel.Dock="Right"
-                              VerticalAlignment="Center"
-                              Header="{Binding InfoTipHeader}"
-                              ToolTipContent="{Binding InfoTipContent}"/>
-            <TextBlock Classes="settings-h1" Text="{Binding SectionTitle, Converter={StaticResource StringCasingConverter}, ConverterParameter=Upper}" />
-        </DockPanel>
-        <ContentControl Content="{Binding }"></ContentControl>
-    </StackPanel>
+    <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+        <StackPanel Orientation="Vertical" Spacing="12">
+            <DockPanel LastChildFill="True">
+                <controls:Infotip IsVisible="{Binding InfoTipContent, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" 
+                                  DockPanel.Dock="Right"
+                                  VerticalAlignment="Center"
+                                  Header="{Binding InfoTipHeader}"
+                                  ToolTipContent="{Binding InfoTipContent}"/>
+                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                    <iconPacks:PackIconRemixIcon Kind="{Binding SectionIcon}"
+                                                 Width="20" Height="20"
+                                                 Foreground="{DynamicResource PrimaryBrush}" />
+                    <TextBlock Text="{Binding SectionTitle, Converter={StaticResource StringCasingConverter}, ConverterParameter=Upper}"
+                               FontSize="16" FontWeight="DemiBold"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </DockPanel>
+            <ContentControl Content="{Binding }"></ContentControl>
+        </StackPanel>
+    </Border>
 </UserControl>

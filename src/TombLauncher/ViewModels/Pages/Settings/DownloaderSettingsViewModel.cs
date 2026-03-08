@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using IconPacks.Avalonia.RemixIcon;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Core.PlatformSpecific;
@@ -15,7 +16,7 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 {
-    public DownloaderSettingsViewModel(PageViewModel settingsPage, ISettingsProvider settingsProvider, IAppFileOperationsService appFileOperations, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage)
+    public DownloaderSettingsViewModel(PageViewModel settingsPage, ISettingsProvider settingsProvider, IAppFileOperationsService appFileOperations, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage, PackIconRemixIconKind.DownloadLine)
     {
         InfoTipContent = "DOWNLOADERS_INFOTIP_CONTENT".GetLocalizedString();
         _settingsProvider = settingsProvider;

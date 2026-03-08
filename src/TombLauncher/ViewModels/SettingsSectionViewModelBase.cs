@@ -2,21 +2,23 @@ using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Localization.Extensions;
 
 namespace TombLauncher.ViewModels;
 
 public abstract partial class SettingsSectionViewModelBase : ObservableValidator, IChangeTracking
 {
-    protected SettingsSectionViewModelBase(string sectionTitle, PageViewModel settingsPage)
+    protected SettingsSectionViewModelBase(string sectionTitle, PageViewModel settingsPage, PackIconRemixIconKind sectionIcon = default)
     {
         SectionTitle = sectionTitle.GetLocalizedString();
         SettingsPage = settingsPage;
+        SectionIcon = sectionIcon;
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(IsChanged) or nameof(SectionTitle) or nameof(InfoTipContent) or nameof(InfoTipHeader))
+        if (e.PropertyName is nameof(IsChanged) or nameof(SectionTitle) or nameof(SectionIcon) or nameof(InfoTipContent) or nameof(InfoTipHeader))
             return;
         if (e.PropertyName != nameof(EditInProgress) || !EditInProgress)
             IsChanged = true;
@@ -24,6 +26,7 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     }
 
     [ObservableProperty] private string _sectionTitle;
+    [ObservableProperty] private PackIconRemixIconKind _sectionIcon;
     [ObservableProperty] private string _infoTipHeader = string.Empty;
     [ObservableProperty] private string _infoTipContent = string.Empty;
     [ObservableProperty] private PageViewModel _settingsPage;

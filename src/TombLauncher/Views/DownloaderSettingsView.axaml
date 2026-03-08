@@ -11,7 +11,7 @@
     <Design.DataContext>
         <settings:DownloaderSettingsViewModel />
     </Design.DataContext>
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" Spacing="8">
         <DockPanel LastChildFill="True">
             <StackPanel DockPanel.Dock="Right"
                         Orientation="Vertical"

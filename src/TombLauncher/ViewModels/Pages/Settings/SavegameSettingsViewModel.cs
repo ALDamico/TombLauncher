@@ -2,13 +2,14 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
 {
-    public SavegameSettingsViewModel(PageViewModel settingsPage, SettingsPageService settingsService) : base("SAVEGAMES", settingsPage)
+    public SavegameSettingsViewModel(PageViewModel settingsPage, SettingsPageService settingsService) : base("SAVEGAMES", settingsPage, PackIconRemixIconKind.Save3Line)
     {
         _settingsService = settingsService;
         SyncSavegamesInfoCmd = new AsyncRelayCommand(SyncSavegamesInfo);

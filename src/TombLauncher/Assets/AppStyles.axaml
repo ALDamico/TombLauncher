@@ -30,6 +30,84 @@
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"></Setter>
     </Style>
 
+    <!-- Interactive Controls: custom sizing, shape, and PrimaryBrush for checked states -->
+    
+    <!-- CheckBox: rounded, larger indicator -->
+    <Style Selector="CheckBox">
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="12,0,0,0" />
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+    </Style>
+    <Style Selector="CheckBox /template/ Border#NormalRectangle">
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Width" Value="22" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="CheckBox:pointerover /template/ Border#NormalRectangle">
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+    <Style Selector="CheckBox:checked /template/ Border#NormalRectangle">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+    <Style Selector="CheckBox:checked:pointerover /template/ Border#NormalRectangle">
+        <Setter Property="Background" Value="{DynamicResource PrimaryPointerOverBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryPointerOverBrush}" />
+    </Style>
+
+    <!-- ToggleSwitch: smoother transitions, PrimaryBrush colors -->
+    <Style Selector="ToggleSwitch">
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+    </Style>
+    <Style Selector="ToggleSwitch /template/ Border#OuterBorder">
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="ToggleSwitch:pointerover /template/ Border#OuterBorder">
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+    <Style Selector="ToggleSwitch:checked /template/ Border#OuterBorder">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+    <Style Selector="ToggleSwitch:checked:pointerover /template/ Border#OuterBorder">
+        <Setter Property="Background" Value="{DynamicResource PrimaryPointerOverBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryPointerOverBrush}" />
+    </Style>
+
+    <!-- RadioButton: PrimaryBrush for all states -->
+    <Style Selector="RadioButton">
+        <Setter Property="Padding" Value="12,0,0,0" />
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+    </Style>
+    <!-- Unchecked: hover highlight on outer ring -->
+    <Style Selector="RadioButton:pointerover /template/ Ellipse#OuterEllipse">
+        <Setter Property="Stroke" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+    <!-- Checked: the visible outer circle switches to CheckOuterEllipse -->
+    <Style Selector="RadioButton:checked /template/ Ellipse#CheckOuterEllipse">
+        <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Stroke" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+    <Style Selector="RadioButton:checked:pointerover /template/ Ellipse#CheckOuterEllipse">
+        <Setter Property="Fill" Value="{DynamicResource PrimaryPointerOverBrush}" />
+        <Setter Property="Stroke" Value="{DynamicResource PrimaryPointerOverBrush}" />
+    </Style>
+
     <Style Selector=":is(Button).round-button">
         <Setter Property="Margin" Value="9,3,9,3" />
         <Setter Property="Width" Value="24" />
