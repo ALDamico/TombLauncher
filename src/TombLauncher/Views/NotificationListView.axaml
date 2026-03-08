@@ -88,7 +88,8 @@
                     <!-- Empty State -->
                     <Grid Grid.Row="1" IsVisible="{Binding !Notifications.Count}">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
-                            <iconPacks:PackIconRemixIcon Kind="NotificationLine" Width="48" Height="48" Opacity="0.5"/>
+                            <iconPacks:PackIconRemixIcon Kind="NotificationLine" Width="48" Height="48" Opacity="0.5"
+                                                         HorizontalAlignment="Center"/>
                             <TextBlock Text="{loc:Translate NO_NOTIFICATIONS}" 
                                        HorizontalAlignment="Center" 
                                        Opacity="0.6"
