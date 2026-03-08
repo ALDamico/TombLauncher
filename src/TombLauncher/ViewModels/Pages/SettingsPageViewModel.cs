@@ -104,7 +104,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         var welcomePageSettings = new WelcomePageSettingsViewModel(this)
         {
             ShowQuickStats = _settingsService.GetShowQuickStats(),
-            ShowQuickActions = _settingsService.GetShowQuickActions()
+            ShowQuickActions = _settingsService.GetShowQuickActions(),
+            ShowRecentlyPlayed = _settingsService.GetShowRecentlyPlayed()
         };
 
         Sections.Add(appearanceSettings);

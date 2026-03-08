@@ -157,6 +157,32 @@ public class GameDataService
         };
     }
 
+    public List<GameWithStatsDto> GetRecentlyPlayedGames(int count)
+    {
+        var playSessions = _dbContext.PlaySession
+            .Include(ps => ps.Game).ThenInclude(g => g.FileBackups)
+            .AsEnumerable()
+            .GroupBy(ps => ps.GameId)
+            .Select(g => new
+            {
+                GameId = g.Key,
+                Game = g.First().Game,
+                LastPlayed = g.Max(ps => ps.StartDate),
+                TotalPlayedTime = TimeSpan.FromTicks(g.Sum(ps => (ps.EndDate - ps.StartDate).Ticks))
+            })
+            .OrderByDescending(g => g.LastPlayed)
+            .Skip(1) // Skip the latest (already shown in "Resume Last Game")
+            .Take(count)
+            .ToList();
+
+        return playSessions.Select(g => new GameWithStatsDto
+        {
+            GameMetadata = _mapper.Map<GameMetadataDto>(g.Game),
+            LastPlayed = g.LastPlayed,
+            TotalPlayedTime = g.TotalPlayedTime
+        }).ToList();
+    }
+
     public async Task UpdateLaunchOptions(LaunchOptionsDto launchOptionsDto)
     {
         var targetFileTypes = new List<FileType>()

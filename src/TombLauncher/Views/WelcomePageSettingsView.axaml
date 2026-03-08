@@ -14,5 +14,8 @@
         <ToggleSwitch IsChecked="{Binding ShowQuickActions}"
                       OnContent="{loc:Translate SHOW_QUICK_ACTIONS}"
                       OffContent="{loc:Translate SHOW_QUICK_ACTIONS}" />
+        <ToggleSwitch IsChecked="{Binding ShowRecentlyPlayed}"
+                      OnContent="{loc:Translate SHOW_RECENTLY_PLAYED}"
+                      OffContent="{loc:Translate SHOW_RECENTLY_PLAYED}" />
     </StackPanel>
 </UserControl>

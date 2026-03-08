@@ -153,4 +153,10 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         get => User.ShowQuickActions.Coalesce(Defaults.ShowQuickActions);
         set => User.ShowQuickActions = value.DefaultIfEquals(Defaults.ShowQuickActions);
     }
+
+    public bool? ShowRecentlyPlayed
+    {
+        get => User.ShowRecentlyPlayed.Coalesce(Defaults.ShowRecentlyPlayed);
+        set => User.ShowRecentlyPlayed = value.DefaultIfEquals(Defaults.ShowRecentlyPlayed);
+    }
 }

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -63,24 +63,10 @@
         <!-- Results Area -->
         <Panel Grid.Row="3">
             <!-- Empty State: shown when searched but no results -->
-            <StackPanel HorizontalAlignment="Center" 
-                        VerticalAlignment="Center"
-                        Spacing="8"
-                        IsVisible="{Binding ShowEmptyState}">
-                <iconPacks:PackIconRemixIcon Kind="SearchLine" 
-                                       Width="64" Height="64"
-                                       Foreground="{DynamicResource MutedTextBrush}"
-                                       HorizontalAlignment="Center"/>
-                <TextBlock FontSize="18" FontWeight="DemiBold" 
-                           TextAlignment="Center"
-                           HorizontalAlignment="Center"
-                           Text="{loc:Translate NO_RESULTS_FOUND}"/>
-                <TextBlock FontStyle="Italic" FontSize="13"
-                           TextAlignment="Center"
-                           HorizontalAlignment="Center" 
-                           Foreground="{DynamicResource MutedTextBrush}"
-                           Text="{loc:Translate TRY_DIFFERENT_SEARCH_TERMS}"/>
-            </StackPanel>
+            <controls:EmptyStateView Icon="SearchLine"
+                                      Title="{loc:Translate NO_RESULTS_FOUND}"
+                                      Subtitle="{loc:Translate TRY_DIFFERENT_SEARCH_TERMS}"
+                                      IsVisible="{Binding ShowEmptyState}" />
             
             <!-- Results List -->
             <ScrollViewer Offset="{Binding ScrollViewerOffset, Mode=TwoWay}"

@@ -8,8 +8,10 @@
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:converters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.WelcomePageView"
+             x:Name="Root"
              x:DataType="pages:WelcomePageViewModel">
     <Design.DataContext>
         <pages:WelcomePageViewModel />
@@ -97,6 +99,86 @@
                     </StackPanel>
                     <views:GameCardView DataContext="{Binding LatestPlayedGame}"
                                         HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
+
+            <!-- Recently Played -->
+            <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
+                    IsVisible="{Binding ShowRecentlyPlayed}">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <iconPacks:PackIconRemixIcon Kind="HistoryLine" Width="20" Height="20"
+                                                      Foreground="{DynamicResource PrimaryBrush}"
+                                                      VerticalAlignment="Center" />
+                        <TextBlock Text="{loc:Translate RECENTLY_PLAYED}"
+                                   FontSize="16" FontWeight="DemiBold"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Empty state -->
+                    <controls:EmptyStateView Icon="HistoryLine"
+                                              Subtitle="{loc:Translate NO_RECENTLY_PLAYED_GAMES}"
+                                              IsVisible="{Binding !HasRecentlyPlayedGames}"
+                                              Margin="0,16" />
+
+                    <!-- Carousel -->
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                          IsVisible="{Binding HasRecentlyPlayedGames}">
+                        <Button Grid.Column="0" Command="{Binding PreviousRecentGameCommand}"
+                                VerticalAlignment="Center" Padding="8" Margin="0,0,8,0">
+                            <iconPacks:PackIconRemixIcon Kind="ArrowLeftSLine" Width="20" Height="20" />
+                        </Button>
+                        <Carousel Grid.Column="1"
+                                  ItemsSource="{Binding RecentlyPlayedGames}"
+                                  SelectedIndex="{Binding RecentlyPlayedIndex}">
+                            <Carousel.ItemTemplate>
+                                <DataTemplate>
+                                    <views:GameCardView HorizontalAlignment="Center" />
+                                </DataTemplate>
+                            </Carousel.ItemTemplate>
+                        </Carousel>
+                        <Button Grid.Column="2" Command="{Binding NextRecentGameCommand}"
+                                VerticalAlignment="Center" Padding="8" Margin="8,0,0,0">
+                            <iconPacks:PackIconRemixIcon Kind="ArrowRightSLine" Width="20" Height="20" />
+                        </Button>
+                    </Grid>
+
+                    <!-- Pagination dots -->
+                    <!-- Brush providers (hidden) -->
+                    <Border x:Name="ActiveBrushProvider" Background="{DynamicResource PrimaryBrush}"
+                            IsVisible="False" Width="0" Height="0" />
+                    <Border x:Name="InactiveBrushProvider" Background="{DynamicResource MutedTextBrush}"
+                            IsVisible="False" Width="0" Height="0" />
+                    <ItemsControl ItemsSource="{Binding PaginationIndices}"
+                                  HorizontalAlignment="Center"
+                                  IsVisible="{Binding HasRecentlyPlayedGames}"
+                                  Margin="0,4,0,0">
+                        <ItemsControl.Resources>
+                            <converters:IndexMatchToBrushConverter x:Key="DotFillConverter" />
+                        </ItemsControl.Resources>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="6" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="x:Int32">
+                                <Ellipse Width="8" Height="8" VerticalAlignment="Center">
+                                    <Ellipse.Fill>
+                                        <MultiBinding Converter="{StaticResource DotFillConverter}">
+                                            <Binding Path="." />
+                                            <Binding Path="DataContext.RecentlyPlayedIndex"
+                                                     ElementName="Root" />
+                                            <Binding Path="Background"
+                                                     ElementName="ActiveBrushProvider" />
+                                            <Binding Path="Background"
+                                                     ElementName="InactiveBrushProvider" />
+                                        </MultiBinding>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Border>
 

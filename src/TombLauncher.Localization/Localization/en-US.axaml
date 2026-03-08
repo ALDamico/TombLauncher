@@ -331,5 +331,8 @@
     <system:String x:Key="SHOW_QUICK_ACTIONS">Show quick actions</system:String>
     <system:String x:Key="ADD_GAME">Add local game</system:String>
     <system:String x:Key="SEARCH_ONLINE">Search online</system:String>
+    <system:String x:Key="RECENTLY_PLAYED">Recently played</system:String>
+    <system:String x:Key="SHOW_RECENTLY_PLAYED">Show recently played</system:String>
+    <system:String x:Key="NO_RECENTLY_PLAYED_GAMES">No recently played games yet. Start playing to see them here!</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

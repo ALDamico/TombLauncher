@@ -9,4 +9,5 @@ public partial class WelcomePageSettingsViewModel : SettingsSectionViewModelBase
 
     [ObservableProperty] private bool _showQuickStats;
     [ObservableProperty] private bool _showQuickActions;
+    [ObservableProperty] private bool _showRecentlyPlayed;
 }

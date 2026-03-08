@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using TombLauncher.Core.Dtos;
@@ -59,6 +61,13 @@ public class WelcomePageService : IViewService
 
     internal bool GetShowQuickStats() => _settingsPageService.GetShowQuickStats();
     internal bool GetShowQuickActions() => _settingsPageService.GetShowQuickActions();
+    internal bool GetShowRecentlyPlayed() => _settingsPageService.GetShowRecentlyPlayed();
+
+    internal List<GameWithStatsViewModel> GetRecentlyPlayedGames(int count = 5)
+    {
+        var dtos = _gameDataService.GetRecentlyPlayedGames(count);
+        return dtos.Select(Mapper.Map<GameWithStatsViewModel>).ToList();
+    }
 
     internal async Task NavigateToNewGame() => await NavigationManager.NavigateTo<NewGameViewModel>();
     internal async Task NavigateToSearch() => await NavigationManager.NavigateTo<GameSearchViewModel>();

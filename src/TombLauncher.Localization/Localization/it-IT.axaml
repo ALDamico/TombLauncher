@@ -330,5 +330,8 @@
     <system:String x:Key="SHOW_QUICK_ACTIONS">Mostra azioni rapide</system:String>
     <system:String x:Key="ADD_GAME">Aggiungi gioco locale</system:String>
     <system:String x:Key="SEARCH_ONLINE">Cerca online</system:String>
+    <system:String x:Key="RECENTLY_PLAYED">Giocati di recente</system:String>
+    <system:String x:Key="SHOW_RECENTLY_PLAYED">Mostra giocati di recente</system:String>
+    <system:String x:Key="NO_RECENTLY_PLAYED_GAMES">Nessun gioco giocato di recente. Inizia a giocare per vederli qui!</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

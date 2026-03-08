@@ -28,4 +28,5 @@ public interface IAppConfiguration
     string? UnzipFallbackMethod { get; set; }
     bool? ShowQuickStats { get; set; }
     bool? ShowQuickActions { get; set; }
+    bool? ShowRecentlyPlayed { get; set; }
 }
