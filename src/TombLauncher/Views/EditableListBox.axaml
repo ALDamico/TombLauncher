@@ -7,6 +7,7 @@
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:dtos="clr-namespace:TombLauncher.Core.Dtos;assembly=TombLauncher.Core"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.EditableListBox"
              x:DataType="viewModels:EditableListBoxViewModel"
@@ -15,7 +16,15 @@
         <viewModels:EditableListBoxViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="{Binding Header}"/>
+        <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,0,4">
+            <iconPacks:PackIconRemixIcon Kind="{Binding HeaderIcon}"
+                                         Width="16" Height="16"
+                                         VerticalAlignment="Center"
+                                         Foreground="{DynamicResource PrimaryBrush}"
+                                         IsVisible="{Binding HeaderIcon, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            <TextBlock Text="{Binding Header}"
+                       FontWeight="DemiBold" />
+        </StackPanel>
         <DockPanel LastChildFill="True">
             <controls:IconOnlyButton Icon="EraserLine" 
                                      ToolTip.Tip="{loc:Translate CLEAR}" 

@@ -40,54 +40,17 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
     private readonly IAppFileOperationsService _appFileOperations;
     private readonly IMessageBoxService _messageBoxService;
 
-    [RelayCommand(CanExecute = nameof(CanMoveUp))]
-    private void MoveUp(DownloaderViewModel? downloaderViewModel)
+    public void Reorder(int oldIndex, int newIndex)
     {
-        if (downloaderViewModel == null) return;
-        var currentIndex = AvailableDownloaders.IndexOf(downloaderViewModel);
-        var targetIndex = currentIndex - 1;
-        if (targetIndex < 0)
-            return;
-        AvailableDownloaders.Move(currentIndex, targetIndex);
-        // Recalculate priorities based on position
+        if (oldIndex == newIndex) return;
+        if (oldIndex < 0 || oldIndex >= AvailableDownloaders.Count) return;
+        if (newIndex < 0 || newIndex >= AvailableDownloaders.Count) return;
+
+        AvailableDownloaders.Move(oldIndex, newIndex);
         for (var i = 0; i < AvailableDownloaders.Count; i++)
         {
             AvailableDownloaders[i].Priority = i + 1;
         }
-
-        MoveUpCommand.NotifyCanExecuteChanged();
-        MoveDownCommand.NotifyCanExecuteChanged();
-    }
-
-    private bool CanMoveUp(DownloaderViewModel? downloaderViewModel)
-    {
-        if (downloaderViewModel == null) return false;
-        return downloaderViewModel.Priority > 1;
-    }
-
-    [RelayCommand(CanExecute = nameof(CanMoveDown))]
-    private void MoveDown(DownloaderViewModel? downloaderViewModel)
-    {
-        if (downloaderViewModel == null) return;
-        var currentIndex = AvailableDownloaders.IndexOf(downloaderViewModel);
-        var targetIndex = currentIndex + 1;
-        if (targetIndex >= AvailableDownloaders.Count)
-            return;
-        AvailableDownloaders.Move(currentIndex, targetIndex);
-        // Recalculate priorities based on position
-        for (var i = 0; i < AvailableDownloaders.Count; i++)
-        {
-            AvailableDownloaders[i].Priority = i + 1;
-        }
-
-        MoveUpCommand.NotifyCanExecuteChanged();
-        MoveDownCommand.NotifyCanExecuteChanged();
-    }
-
-    private bool CanMoveDown(DownloaderViewModel? downloaderViewModel)
-    {
-        if (downloaderViewModel == null) return false;
-        return downloaderViewModel.Priority < AvailableDownloaders.Count;
     }
 
     [RelayCommand]

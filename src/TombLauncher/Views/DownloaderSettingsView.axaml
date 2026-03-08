@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.DownloaderSettingsView"
              x:DataType="settings:DownloaderSettingsViewModel">
@@ -12,45 +13,80 @@
         <settings:DownloaderSettingsViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical" Spacing="8">
-        <DockPanel LastChildFill="True">
-            <StackPanel DockPanel.Dock="Right"
-                        Orientation="Vertical"
-                        HorizontalAlignment="Center">
-                <controls:IconButton Icon="ArrowUpLine"
-                                     ToolTip.Tip="{loc:Translate MOVE_UP}"
-                                     Command="{Binding MoveUpCommand}"
-                                     CommandParameter="{Binding SelectedDownloader}" />
-                <Border Margin="20" />
-                <controls:IconButton Icon="ArrowDownLine"
-                                     ToolTip.Tip="{loc:Translate MOVE_DOWN}"
-                                     Command="{Binding MoveDownCommand}"
-                                     CommandParameter="{Binding SelectedDownloader}" />
-            </StackPanel>
-            <ListBox ItemsSource="{Binding AvailableDownloaders}"
-                     SelectedItem="{Binding SelectedDownloader}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsChecked}" />
-                            <StackPanel Orientation="Vertical">
+        <ListBox ItemsSource="{Binding AvailableDownloaders}"
+                 SelectedItem="{Binding SelectedDownloader}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 DragDrop.AllowDrop="True"
+                 x:Name="DownloaderList">
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+                <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+                <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
+                </Style>
+                <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
+                </Style>
+                <Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+            </ListBox.Styles>
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="settings:DownloaderViewModel">
+                    <Border Padding="12,10" Margin="0,2"
+                            Background="{DynamicResource CardBackgroundBrush}"
+                            BorderBrush="{DynamicResource CardBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8">
+                        <DockPanel>
+                            <!-- Drag handle -->
+                            <iconPacks:PackIconRemixIcon Kind="Draggable"
+                                                         DockPanel.Dock="Left"
+                                                         Width="16" Height="16"
+                                                         VerticalAlignment="Center"
+                                                         Foreground="{DynamicResource SecondaryBrush}"
+                                                         Cursor="Hand"
+                                                         Margin="0,0,12,0" />
+                            <!-- Enable/Disable toggle -->
+                            <CheckBox DockPanel.Dock="Right"
+                                      IsChecked="{Binding IsChecked}"
+                                      VerticalAlignment="Center"
+                                      Margin="12,0,0,0" />
+                            <!-- Content -->
+                            <StackPanel Orientation="Vertical" Spacing="2"
+                                        VerticalAlignment="Center">
                                 <TextBlock Text="{Binding DisplayName}"
-                                           FontWeight="DemiBold" />
+                                           FontWeight="DemiBold"
+                                           FontSize="14" />
                                 <TextBlock Text="{Binding BaseUrl}"
-                                           FontStyle="Italic" />
-                                <TextBlock>
-                                    <Run FontWeight="DemiBold"
-                                         Text="{loc:Translate SUPPORTED_FEATURES}" />
-                                    <Run FontStyle="Italic"
-                                         Text="{Binding SupportedFeatures}" />
-                                </TextBlock>
+                                           Classes="text-muted"
+                                           FontSize="12" />
+                                <StackPanel Orientation="Horizontal" Spacing="6"
+                                            Margin="0,4,0,0">
+                                    <Border Classes="filter-chip"
+                                            Padding="6,2">
+                                        <TextBlock FontSize="11">
+                                            <Run FontWeight="DemiBold"
+                                                 Text="{loc:Translate SUPPORTED_FEATURES}" />
+                                            <Run Text="{Binding SupportedFeatures}" />
+                                        </TextBlock>
+                                    </Border>
+                                </StackPanel>
                             </StackPanel>
-                            <TextBlock Text="{Binding Priority}"
-                                       HorizontalAlignment="Right" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </DockPanel>
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <controls:IconButton Icon="DeleteBin2Line"
                              Text="{loc:Translate CLEAN_UP_TEMPORARY_FILES}"
                              ToolTip.Tip="{loc:Translate CLEAN_UP_TOMB_LAUNCHER_S_TEMPORARY_FOLDER_MANUALLY}"

@@ -3,25 +3,18 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using Avalonia.Styling;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using TombLauncher.Configuration;
-using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Contracts.Enums;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
-using TombLauncher.Core.Utils;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
@@ -138,8 +131,8 @@ public class SettingsPageService : IViewService
         {
             AskForConfirmationBeforeWalkthrough =
                 _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
-            DocumentationPatterns = new EditablePatternListBoxViewModel() { TargetCollection = settings.EnabledPatterns.ToObservableCollection() },
-            FolderExclusions = new EditableFolderExclusionsListBoxViewModel() { TargetCollection = settings.ExcludedFolders.ToObservableCollection() },
+            DocumentationPatterns = new EditablePatternListBoxViewModel() { TargetCollection = settings.EnabledPatterns.ToObservableCollection(), HeaderIcon = PackIconRemixIconKind.FileTextLine },
+            FolderExclusions = new EditableFolderExclusionsListBoxViewModel() { TargetCollection = settings.ExcludedFolders.ToObservableCollection(), HeaderIcon = PackIconRemixIconKind.FolderLine },
             WinePath = settings.WinePath
         };
     }

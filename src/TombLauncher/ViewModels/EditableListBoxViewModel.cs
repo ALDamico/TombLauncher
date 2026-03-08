@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using Avalonia.Input;
@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.ViewModels;
 
@@ -51,6 +52,7 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
 
     [ObservableProperty] private string _watermark = null!;
     [ObservableProperty] private string _header = null!;
+    [ObservableProperty] private PackIconRemixIconKind? _headerIcon;
 
     public IRelayCommand AddValueCmd { get; }
 
