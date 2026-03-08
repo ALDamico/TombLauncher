@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
         xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
@@ -10,7 +11,6 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
-        xmlns:li="using:LoadingIndicators.Avalonia"
         Icon="/Assets/tomb-launcher-icon.ico"
         Title="{Binding Title}"
         Background="{DynamicResource PageBackgroundBrush}"
@@ -52,7 +52,7 @@
                         <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
                             <StackPanel Spacing="20" 
                                         Orientation="Horizontal">
-                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
                                 <TextBlock Text="{Binding Text}"/>
                             </StackPanel>
                         </DataTemplate>
@@ -72,7 +72,7 @@
                         <DataTemplate DataType="{x:Type viewModels:CommandViewModel}">
                             <StackPanel Spacing="20" 
                                         Orientation="Horizontal">
-                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
                                 <TextBlock Text="{Binding Text}"/>
                             </StackPanel>
                         </DataTemplate>
@@ -94,7 +94,7 @@
                         <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
                             <StackPanel Spacing="20" 
                                         Orientation="Horizontal">
-                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
                                 <TextBlock Text="{Binding Text}"/>
                             </StackPanel>
                         </DataTemplate>

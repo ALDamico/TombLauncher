@@ -16,10 +16,10 @@
     </Design.DataContext>
     <UserControl.Resources>
         <valueConverters:BooleanToMaterialIconConverter x:Key="FavouriteToMaterialIconConverter" 
-                                                        TrueValue="Heart" 
-                                                        FalseValue="HeartOutline"/>
+                                                        TrueValue="HeartFill" 
+                                                        FalseValue="HeartLine"/>
         <valueConverters:BooleanToMaterialIconConverter x:Key="CompletedToMaterialIconConverter"
-                                                        TrueValue="Trophy"/>
+                                                        TrueValue="TrophyFill"/>
         <valueConverters:BooleanToStringConverter x:Key="FavouriteToToolTipConverter"
                                                   TrueValue="Favourite"/>
     </UserControl.Resources>

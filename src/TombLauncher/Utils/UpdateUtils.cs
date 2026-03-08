@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Downloaders;
 using NetSparkleUpdater.Interfaces;
@@ -20,7 +20,7 @@ public static class UpdateUtils
 {
     private static Dictionary<string, Func<IUIFactory>> _uiFactories;
     private static Dictionary<string, IRelayCommand<UpdateCommandPayload>> _notificationCmds;
-    private static Dictionary<string, MaterialIconKind> _notificationIcons;
+    private static Dictionary<string, PackIconRemixIconKind> _notificationIcons;
 
     private const string StableChannel = "stable";
     private const string PortableChannel = "portable";
@@ -64,10 +64,10 @@ public static class UpdateUtils
 
         if (_notificationIcons == null)
         {
-            _notificationIcons = new Dictionary<string, MaterialIconKind>()
+            _notificationIcons = new Dictionary<string, PackIconRemixIconKind>()
             {
-                { StableChannel, MaterialIconKind.Download },
-                { PortableChannel, MaterialIconKind.Github }
+                { StableChannel, PackIconRemixIconKind.Download2Line },
+                { PortableChannel, PackIconRemixIconKind.GithubLine }
             };
         }
     }
@@ -96,14 +96,14 @@ public static class UpdateUtils
         return cmd;
     }
 
-    private static MaterialIconKind GetNotificationIcon(string? channelName)
+    private static PackIconRemixIconKind GetNotificationIcon(string? channelName)
     {
         if (channelName == null)
         {
             channelName = StableChannel;
         }
         if (!_notificationIcons.TryGetValue(channelName, out var icon))
-            icon = MaterialIconKind.Download;
+            icon = PackIconRemixIconKind.Download2Line;
         return icon;
     }
 

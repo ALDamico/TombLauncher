@@ -10,7 +10,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
@@ -313,7 +313,7 @@ public class GameSearchResultService : IViewService
             }
             await _notificationService.AddErrorNotificationAsync(gameToInstall.Title,
                 "Download failed from all sources. This is likely due to a download link redirecting to an external website.",
-                MaterialIconKind.Warning);
+                PackIconRemixIconKind.ErrorWarningLine);
             return false;
         }
 
@@ -326,7 +326,7 @@ public class GameSearchResultService : IViewService
         {
             Title = gameToInstall.Title,
             Content = _installProgress!,
-            OpenIcon = MaterialIconKind.Play,
+            OpenIcon = PackIconRemixIconKind.PlayLargeFill,
             CancelCommand = new AsyncRelayCommand(async () =>
             {
                 await CancelInstall();

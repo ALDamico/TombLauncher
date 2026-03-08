@@ -4,7 +4,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
@@ -45,13 +45,13 @@ public partial class GameListViewModel : PageViewModel
         TopBarCommands.Add(new CommandViewModel()
         {
             Command = OpenSearchCmd!,
-            Icon = MaterialIconKind.Search,
+            Icon = PackIconRemixIconKind.Search2Line,
             Tooltip = "OPEN_SEARCH".GetLocalizedString()
         });
         TopBarCommands.Add(new CommandViewModel()
         {
             Command = AddGameCmd!,
-            Icon = MaterialIconKind.Plus,
+            Icon = PackIconRemixIconKind.AddLargeLine,
             Tooltip = "ADD".GetLocalizedString()
         });
     }

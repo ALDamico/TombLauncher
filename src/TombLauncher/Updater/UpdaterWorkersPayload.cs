@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Interfaces;
 
@@ -14,5 +14,5 @@ public class UpdaterWorkersPayload
     public AppCastHelper AppCastHelper { get; set; } = null!;
     public Func<IUIFactory> UiFactory { get; set; } = null!;
     public ICommand UpdateCommand { get; set; } = null!;
-    public MaterialIconKind UpdateIcon { get; set; }
+    public PackIconRemixIconKind UpdateIcon { get; set; }
 }

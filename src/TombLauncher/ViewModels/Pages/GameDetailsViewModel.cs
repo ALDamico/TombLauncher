@@ -6,7 +6,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Localization.Extensions;
@@ -102,7 +102,7 @@ public partial class GameDetailsViewModel : PageViewModel
             setupCommands.Add(new CommandViewModel()
             {
                 Command = Game.LaunchSetupCmd,
-                Icon = MaterialIconKind.Settings,
+                Icon = PackIconRemixIconKind.Settings3Line,
                 Text = "SETUP".GetLocalizedString()
             });
         }
@@ -112,7 +112,7 @@ public partial class GameDetailsViewModel : PageViewModel
             setupCommands.Add(new CommandViewModel()
             {
                 Command = Game.LaunchCommunitySetupCmd,
-                Icon = MaterialIconKind.SettingsPlay,
+                Icon = PackIconRemixIconKind.PlayLargeLine,
                 Text = "COMMUNITY_PATCH_SETUP".GetLocalizedString()
             });
         }

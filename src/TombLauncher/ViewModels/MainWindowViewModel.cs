@@ -4,10 +4,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Material.Icons;
-using TombLauncher.ViewModels.Notifications;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
@@ -18,12 +16,11 @@ namespace TombLauncher.ViewModels;
 
 public partial class MainWindowViewModel : WindowViewModelBase
 {
-    public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel, NotificationService notificationService, ISettingsProvider settingsProvider, IPlatformSpecificFeatures platformSpecificFeatures)
+    public MainWindowViewModel(NavigationManager navigationManager, NotificationListViewModel notificationListViewModel, ISettingsProvider settingsProvider, IPlatformSpecificFeatures platformSpecificFeatures)
     {
         _navigationManager = navigationManager;
         _navigationManager.PropertyChanged += NavigationManagerOnPropertyChanged;
         NotificationListViewModel = notificationListViewModel;
-        _notificationService = notificationService;
         _settingsProvider = settingsProvider;
         _platformSpecificFeatures = platformSpecificFeatures;
         TogglePaneCmd = new RelayCommand(TogglePane);
@@ -34,35 +31,35 @@ public partial class MainWindowViewModel : WindowViewModelBase
             new MainMenuItemViewModel()
             {
                 ToolTip = "WELCOME".GetLocalizedString(),
-                Icon = MaterialIconKind.HomeOutline,
+                Icon = PackIconRemixIconKind.HomeLine,
                 Text = "WELCOME".GetLocalizedString(),
                 ViewModelType = typeof(WelcomePageViewModel)
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "MY_MODS".GetLocalizedString(),
-                Icon = MaterialIconKind.Games,
+                Icon = PackIconRemixIconKind.Game2Line,
                 Text = "MY_MODS".GetLocalizedString(),
                 ViewModelType = typeof(GameListViewModel)
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "SEARCH".GetLocalizedString(),
-                Icon = MaterialIconKind.Magnify,
+                Icon = PackIconRemixIconKind.Search2Line,
                 Text = "SEARCH".GetLocalizedString(),
                 ViewModelType = typeof(GameSearchViewModel)
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "RANDOM".GetLocalizedString(),
-                Icon = MaterialIconKind.Gambling,
+                Icon = PackIconRemixIconKind.Dice6Line,
                 Text = "RANDOM_GAME".GetLocalizedString(),
                 ViewModelType = typeof(RandomGameViewModel)
             },
             new MainMenuItemViewModel()
             {
                 ToolTip = "STATISTICS".GetLocalizedString(),
-                Icon = MaterialIconKind.ChartBar,
+                Icon = PackIconRemixIconKind.BarChart2Line,
                 Text = "STATISTICS".GetLocalizedString(),
                 ViewModelType = typeof(StatisticsPageViewModel)
             }
@@ -71,7 +68,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
         SettingsItem = new MainMenuItemViewModel()
         {
             ToolTip = "SETTINGS".GetLocalizedString(),
-            Icon = MaterialIconKind.Settings,
+            Icon = PackIconRemixIconKind.SettingsLine,
             Text = "SETTINGS".GetLocalizedString(),
             ViewModelType = typeof(SettingsPageViewModel)
         };
@@ -79,7 +76,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
         GitHubLinkItem = new CommandViewModel()
         {
             Tooltip = "OPEN_TOMB_LAUNCHER_S_GITHUB_PAGE".GetLocalizedString(),
-            Icon = MaterialIconKind.Github,
+            Icon = PackIconRemixIconKind.GithubLine,
             Text = "GitHub",
             Command = new RelayCommand(OpenGithub)
         };
@@ -132,23 +129,22 @@ public partial class MainWindowViewModel : WindowViewModelBase
     }
 
     public ObservableCollection<MainMenuItemViewModel> MenuItems { get; }
-    private MainMenuItemViewModel _selectedMenuItem = null!;
 
-    public MainMenuItemViewModel SelectedMenuItem
+    public MainMenuItemViewModel? SelectedMenuItem
     {
-        get => _selectedMenuItem;
+        get;
         set
         {
             if (value != SettingsItem)
                 IsSettingsOpen = false;
-            SetProperty(ref _selectedMenuItem, value);
+            SetProperty(ref field, value);
             if (value != null)
             {
                 // Using NavigateToRoot for main menu items to clear history stack
                 _ = _navigationManager.NavigateToRoot(value.ViewModelType!);
             }
         }
-    }
+    } = null!;
 
 
     public INavigationTarget? CurrentPage => _navigationManager.CurrentPage as INavigationTarget;
@@ -168,5 +164,4 @@ public partial class MainWindowViewModel : WindowViewModelBase
         SelectedMenuItem = SettingsItem;
         IsSettingsOpen = true;
     }
-    private readonly NotificationService _notificationService;
 }

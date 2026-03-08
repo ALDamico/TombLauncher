@@ -19,7 +19,7 @@
     </UserControl.Styles>
     <UserControl.Resources>
         <valueConverters:ObjectNotNullToMaterialIconConverter x:Key="ObjectNotNullToMaterialIconConverter"
-                                                              TrueValue="Check" FalseValue="Close" />
+                                                              TrueValue="CheckFill" FalseValue="CloseFill" />
         <valueConverters:ObjectNotNullToBrushConverter x:Key="ObjectNotNullToBrushConverter" TrueValue="Green"
                                                        FalseValue="Red" />
     </UserControl.Resources>

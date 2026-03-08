@@ -15,8 +15,8 @@
     </Design.DataContext>
     <UserControl.Resources>
         <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
-                                                        TrueValue="Grid"
-                                                        FalseValue="Table" />
+                                                        TrueValue="GridLine"
+                                                        FalseValue="TableLine" />
         <valueConverters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
                                                   TrueValue="Grid view" 
                                                   FalseValue="Table view"/>

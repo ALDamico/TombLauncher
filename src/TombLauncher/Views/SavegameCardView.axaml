@@ -15,8 +15,8 @@
     </Design.DataContext>
     <UserControl.Resources>
         <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
-                                                        TrueValue="FlagOutline"
-                                                        FalseValue="FlagOffOutline" />
+                                                        TrueValue="FlagFill"
+                                                        FalseValue="FlagLine" />
     </UserControl.Resources>
     <Border CornerRadius="3" 
             Padding="10" 

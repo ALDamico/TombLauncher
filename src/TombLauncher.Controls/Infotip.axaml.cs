@@ -1,10 +1,7 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using Material.Icons;
-using Material.Icons.Avalonia;
+using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.Controls;
 
@@ -21,25 +18,25 @@ public partial class Infotip : UserControl
         set => SetValue(HeaderProperty, value);
     }
 
-    public object ToolTipContent
+    public object? ToolTipContent
     {
         get => GetValue(ToolTipContentProperty);
         set => SetValue(ToolTipContentProperty, value);
     }
 
-    public MaterialIconKind Icon
+    public PackIconRemixIconKind Icon
     {
         get => GetValue(IconProperty);
         set => SetValue(IconProperty, value);
     }
 
     public static readonly StyledProperty<string> HeaderProperty =
-        AvaloniaProperty.Register<Infotip, string>(nameof(Header), default, false, BindingMode.TwoWay);
+        AvaloniaProperty.Register<Infotip, string>(nameof(Header), "", false, BindingMode.TwoWay);
 
-    public static readonly StyledProperty<object> ToolTipContentProperty =
-        AvaloniaProperty.Register<Infotip, object>(nameof(ToolTipContent), default, false, BindingMode.TwoWay);
+    public static readonly StyledProperty<object?> ToolTipContentProperty =
+        AvaloniaProperty.Register<Infotip, object?>(nameof(ToolTipContent), null, false, BindingMode.TwoWay);
 
-    public static readonly StyledProperty<MaterialIconKind> IconProperty =
-        AvaloniaProperty.Register<Infotip, MaterialIconKind>(nameof(Icon), MaterialIconKind.QuestionMarkCircle, false,
+    public static readonly StyledProperty<PackIconRemixIconKind> IconProperty =
+        AvaloniaProperty.Register<Infotip, PackIconRemixIconKind>(nameof(Icon), PackIconRemixIconKind.QuestionLine, false,
             BindingMode.TwoWay);
 }

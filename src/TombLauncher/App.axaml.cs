@@ -150,7 +150,7 @@ public class App : Application
         var mainWindow = new MainWindow
         {
             DataContext = new MainWindowViewModel(navigationManager,
-                Ioc.Default.GetRequiredService<NotificationListViewModel>(), Ioc.Default.GetRequiredService<NotificationService>(),
+                Ioc.Default.GetRequiredService<NotificationListViewModel>(),
                 Ioc.Default.GetRequiredService<ISettingsProvider>(), Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>()),
         };
 

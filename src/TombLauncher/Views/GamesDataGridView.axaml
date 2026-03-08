@@ -15,14 +15,14 @@
     </Design.DataContext>
     <UserControl.Resources>
         <valueConverters:BooleanToMaterialIconConverter x:Key="AddToFavouritesBooleanToMaterialIconConverter" 
-                                                        TrueValue="Heart" 
-                                                        FalseValue="HeartOutline"/>
+                                                        TrueValue="HeartFill" 
+                                                        FalseValue="HeartLine"/>
         <valueConverters:BooleanToStringConverter x:Key="AddRemoveFromFavouritesBooleanConverter" 
                                                   TrueValue="Remove from favourites" 
                                                   FalseValue="Add to favourites"/>
         <valueConverters:BooleanToMaterialIconConverter x:Key="MarkAsCompletedBooleanToMaterialIconConverter" 
-                                                        TrueValue="Trophy" 
-                                                        FalseValue="TrophyBroken"/>
+                                                        TrueValue="TrophyFill" 
+                                                        FalseValue="TrophyLine"/>
         <valueConverters:BooleanToStringConverter x:Key="MarkUnmarkCompletedBooleanConverter" 
                                                   TrueValue="Unmark as completed" 
                                                   FalseValue="Mark as completed"/>
