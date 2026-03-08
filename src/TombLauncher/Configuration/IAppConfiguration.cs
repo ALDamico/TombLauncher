@@ -27,4 +27,5 @@ public interface IAppConfiguration
     string? WinePath { get; set; }
     string? UnzipFallbackMethod { get; set; }
     bool? ShowQuickStats { get; set; }
+    bool? ShowQuickActions { get; set; }
 }

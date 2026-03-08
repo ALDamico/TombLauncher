@@ -8,4 +8,5 @@ public partial class WelcomePageSettingsViewModel : SettingsSectionViewModelBase
         : base("WELCOME_PAGE", settingsPage) { }
 
     [ObservableProperty] private bool _showQuickStats;
+    [ObservableProperty] private bool _showQuickActions;
 }

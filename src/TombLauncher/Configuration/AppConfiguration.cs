@@ -27,4 +27,5 @@ public class AppConfiguration : IAppConfiguration
     public string? WinePath { get; set; }
     public string? UnzipFallbackMethod { get; set; }
     public bool? ShowQuickStats { get; set; }
+    public bool? ShowQuickActions { get; set; }
 }

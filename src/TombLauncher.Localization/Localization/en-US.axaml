@@ -328,5 +328,8 @@
     <system:String x:Key="WHATS_NEW">What's new</system:String>
     <system:String x:Key="WELCOME_PAGE">Welcome page</system:String>
     <system:String x:Key="SHOW_QUICK_STATS">Show quick stats</system:String>
+    <system:String x:Key="SHOW_QUICK_ACTIONS">Show quick actions</system:String>
+    <system:String x:Key="ADD_GAME">Add local game</system:String>
+    <system:String x:Key="SEARCH_ONLINE">Search online</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

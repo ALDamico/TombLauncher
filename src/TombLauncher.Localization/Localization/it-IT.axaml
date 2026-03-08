@@ -327,5 +327,8 @@
     <system:String x:Key="WHATS_NEW">Novità</system:String>
     <system:String x:Key="WELCOME_PAGE">Pagina di benvenuto</system:String>
     <system:String x:Key="SHOW_QUICK_STATS">Mostra statistiche rapide</system:String>
+    <system:String x:Key="SHOW_QUICK_ACTIONS">Mostra azioni rapide</system:String>
+    <system:String x:Key="ADD_GAME">Aggiungi gioco locale</system:String>
+    <system:String x:Key="SEARCH_ONLINE">Cerca online</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

@@ -108,7 +108,7 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
     public bool DefaultToGridView
     {
         get => User.DefaultToGridView.Coalesce(Defaults.DefaultToGridView);
-        set => User.DefaultToGridView = value.DefaultIfEquals(DefaultToGridView);
+        set => User.DefaultToGridView = value.DefaultIfEquals(Defaults.DefaultToGridView);
     }
 
     public List<CheckableItem<string>>? DocumentationPatterns
@@ -146,5 +146,11 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
     {
         get => User.ShowQuickStats.Coalesce(Defaults.ShowQuickStats);
         set => User.ShowQuickStats = value.DefaultIfEquals(Defaults.ShowQuickStats);
+    }
+
+    public bool? ShowQuickActions
+    {
+        get => User.ShowQuickActions.Coalesce(Defaults.ShowQuickActions);
+        set => User.ShowQuickActions = value.DefaultIfEquals(Defaults.ShowQuickActions);
     }
 }

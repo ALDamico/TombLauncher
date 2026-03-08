@@ -113,6 +113,7 @@ public class SettingsPageService : IViewService
         _appConfiguration.NumberOfVersionsToKeep =
             backupSettings.LimitNumberOfVersions ? backupSettings.NumberOfVersionsToKeep : null;
         _appConfiguration.ShowQuickStats = welcomePageSettings.ShowQuickStats;
+        _appConfiguration.ShowQuickActions = welcomePageSettings.ShowQuickActions;
         var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
         await File.WriteAllTextAsync(userConfigPath,
             JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
@@ -165,4 +166,5 @@ public class SettingsPageService : IViewService
     }
 
     public bool GetShowQuickStats() => _appConfiguration.ShowQuickStats.GetValueOrDefault(true);
+    public bool GetShowQuickActions() => _appConfiguration.ShowQuickActions.GetValueOrDefault(true);
 }

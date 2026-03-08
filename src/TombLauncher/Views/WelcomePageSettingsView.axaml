@@ -11,5 +11,8 @@
         <ToggleSwitch IsChecked="{Binding ShowQuickStats}"
                       OnContent="{loc:Translate SHOW_QUICK_STATS}"
                       OffContent="{loc:Translate SHOW_QUICK_STATS}" />
+        <ToggleSwitch IsChecked="{Binding ShowQuickActions}"
+                      OnContent="{loc:Translate SHOW_QUICK_ACTIONS}"
+                      OffContent="{loc:Translate SHOW_QUICK_ACTIONS}" />
     </StackPanel>
 </UserControl>
