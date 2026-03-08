@@ -177,4 +177,10 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         get => User.FavouritesCount.Coalesce(Defaults.FavouritesCount);
         set => User.FavouritesCount = value.DefaultIfEquals(Defaults.FavouritesCount);
     }
+
+    public bool? ShowRandomSuggestion
+    {
+        get => User.ShowRandomSuggestion.Coalesce(Defaults.ShowRandomSuggestion);
+        set => User.ShowRandomSuggestion = value.DefaultIfEquals(Defaults.ShowRandomSuggestion);
+    }
 }

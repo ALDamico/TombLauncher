@@ -32,4 +32,5 @@ public interface IAppConfiguration
     bool? ShowFavourites { get; set; }
     int? RecentlyPlayedCount { get; set; }
     int? FavouritesCount { get; set; }
+    bool? ShowRandomSuggestion { get; set; }
 }

@@ -118,6 +118,7 @@ public class SettingsPageService : IViewService
         _appConfiguration.ShowFavourites = welcomePageSettings.ShowFavourites;
         _appConfiguration.RecentlyPlayedCount = welcomePageSettings.RecentlyPlayedCount;
         _appConfiguration.FavouritesCount = welcomePageSettings.FavouritesCount;
+        _appConfiguration.ShowRandomSuggestion = welcomePageSettings.ShowRandomSuggestion;
         var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
         await File.WriteAllTextAsync(userConfigPath,
             JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
@@ -175,4 +176,5 @@ public class SettingsPageService : IViewService
     public bool GetShowFavourites() => _appConfiguration.ShowFavourites.GetValueOrDefault(true);
     public int GetRecentlyPlayedCount() => _appConfiguration.RecentlyPlayedCount.GetValueOrDefault(5);
     public int GetFavouritesCount() => _appConfiguration.FavouritesCount.GetValueOrDefault(5);
+    public bool GetShowRandomSuggestion() => _appConfiguration.ShowRandomSuggestion.GetValueOrDefault(true);
 }

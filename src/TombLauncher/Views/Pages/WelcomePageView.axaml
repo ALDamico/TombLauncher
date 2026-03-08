@@ -95,7 +95,8 @@
                                                       VerticalAlignment="Center" />
                         <TextBlock Text="{loc:Translate RESUME_YOUR_LAST_GAME}"
                                    FontSize="16" FontWeight="DemiBold"
-                                   VerticalAlignment="Center" />
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"/>
                     </StackPanel>
                     <views:GameCardView DataContext="{Binding LatestPlayedGame}"
                                         HorizontalAlignment="Left" />
@@ -322,6 +323,56 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Random Game Suggestion -->
+            <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
+                    IsVisible="{Binding ShowRandomSuggestion}">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <iconPacks:PackIconRemixIcon Kind="ShuffleLine" Width="20" Height="20"
+                                                      Foreground="{DynamicResource PrimaryBrush}"
+                                                      VerticalAlignment="Center" />
+                        <TextBlock Text="{loc:Translate RANDOM_GAME_SUGGESTION}"
+                                   FontSize="16" FontWeight="Bold"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Loading spinner -->
+                    <controls:RingLoader Width="40" Height="40"
+                                         HorizontalAlignment="Center"
+                                         Margin="0,16"
+                                         IsVisible="{Binding IsLoadingRandomSuggestion}" />
+
+                    <!-- Error state -->
+                    <controls:EmptyStateView Icon="ErrorWarningLine"
+                                              Subtitle="{loc:Translate RANDOM_SUGGESTION_FAILED}"
+                                              IsVisible="{Binding RandomSuggestionFailed}"
+                                              Margin="0,16" />
+
+                    <!-- Game suggestion -->
+                    <ContentControl Content="{Binding RandomSuggestion}"
+                                    IsVisible="{Binding HasRandomSuggestion}"
+                                    HorizontalAlignment="Center">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <views:GameSearchResultCardView TapCommand="{Binding DataContext.OpenRandomSuggestionCommand, ElementName=Root}" />
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+
+                    <!-- Shuffle button -->
+                    <Button Command="{Binding ShuffleRandomSuggestionCommand}"
+                            HorizontalAlignment="Center"
+                            Margin="0,4,0,0">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <iconPacks:PackIconRemixIcon Kind="RefreshLine" Width="16" Height="16"
+                                                          VerticalAlignment="Center" />
+                            <TextBlock Text="{loc:Translate SHUFFLE}"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Border>
 

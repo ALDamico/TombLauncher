@@ -13,4 +13,5 @@ public partial class WelcomePageSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private bool _showFavourites;
     [ObservableProperty] private int _recentlyPlayedCount;
     [ObservableProperty] private int _favouritesCount;
+    [ObservableProperty] private bool _showRandomSuggestion;
 }

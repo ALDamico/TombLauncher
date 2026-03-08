@@ -30,5 +30,8 @@
                        IsVisible="{Binding ShowFavourites}"
                        Watermark="{loc:Translate FAVOURITES_COUNT}"
                        Margin="24,0,0,0" />
+        <ToggleSwitch IsChecked="{Binding ShowRandomSuggestion}"
+                      OnContent="{loc:Translate SHOW_RANDOM_SUGGESTION}"
+                      OffContent="{loc:Translate SHOW_RANDOM_SUGGESTION}" />
     </StackPanel>
 </UserControl>

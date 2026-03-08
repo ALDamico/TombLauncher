@@ -336,6 +336,10 @@
     <system:String x:Key="NO_RECENTLY_PLAYED_GAMES">Nessuna partita giocata di recente. Inizia a giocare per vederle qui!</system:String>
     <system:String x:Key="SHOW_FAVOURITES">Mostra preferiti</system:String>
     <system:String x:Key="FAVOURITES_COUNT">Numero di livelli preferiti</system:String>
-    <system:String x:Key="NO_FAVOURITE_GAMES">Nessun gioco preferito. Aggiungi dei livelli ai preferiti per vederli qui!</system:String>
+    <system:String x:Key="NO_FAVOURITE_GAMES">Nessun gioco preferito. Segna dei giochi come preferiti per vederli qui!</system:String>
+    <system:String x:Key="SHOW_RANDOM_SUGGESTION">Mostra suggerimento gioco casuale</system:String>
+    <system:String x:Key="RANDOM_GAME_SUGGESTION">Suggerimento gioco casuale</system:String>
+    <system:String x:Key="RANDOM_SUGGESTION_FAILED">Impossibile ottenere un gioco casuale. Riprova!</system:String>
+    <system:String x:Key="SHUFFLE">Cambia</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

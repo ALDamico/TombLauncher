@@ -151,7 +151,7 @@
                         Content="{Binding Title}"
                         FontSize="17"
                         FontWeight="Bold"
-                        Command="{Binding Path=((pages:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=pages1:GameSearchView}}"
+                        Command="{Binding TapCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchResultCardView}}"
                         CommandParameter="{Binding Path=.}" />
 
                 <!-- Author -->

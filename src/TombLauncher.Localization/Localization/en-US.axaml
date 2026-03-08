@@ -338,5 +338,9 @@
     <system:String x:Key="SHOW_FAVOURITES">Show favourites</system:String>
     <system:String x:Key="FAVOURITES_COUNT">Number of favourite games</system:String>
     <system:String x:Key="NO_FAVOURITE_GAMES">No favourite games yet. Mark games as favourites to see them here!</system:String>
+    <system:String x:Key="SHOW_RANDOM_SUGGESTION">Show random game suggestion</system:String>
+    <system:String x:Key="RANDOM_GAME_SUGGESTION">Random game suggestion</system:String>
+    <system:String x:Key="RANDOM_SUGGESTION_FAILED">Could not fetch a random game. Try again!</system:String>
+    <system:String x:Key="SHUFFLE">Shuffle</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

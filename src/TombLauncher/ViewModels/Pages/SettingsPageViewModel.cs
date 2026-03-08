@@ -108,7 +108,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             ShowRecentlyPlayed = _settingsService.GetShowRecentlyPlayed(),
             ShowFavourites = _settingsService.GetShowFavourites(),
             RecentlyPlayedCount = _settingsService.GetRecentlyPlayedCount(),
-            FavouritesCount = _settingsService.GetFavouritesCount()
+            FavouritesCount = _settingsService.GetFavouritesCount(),
+            ShowRandomSuggestion = _settingsService.GetShowRandomSuggestion()
         };
 
         Sections.Add(appearanceSettings);

@@ -32,4 +32,5 @@ public class AppConfiguration : IAppConfiguration
     public bool? ShowFavourites { get; set; }
     public int? RecentlyPlayedCount { get; set; }
     public int? FavouritesCount { get; set; }
+    public bool? ShowRandomSuggestion { get; set; }
 }

@@ -52,6 +52,14 @@ public partial class WelcomePageViewModel : PageViewModel
     public bool HasFavouriteGames => FavouriteGames.Count > 0;
     [ObservableProperty] private List<int> _favouritePaginationIndices = new();
 
+    [ObservableProperty] private bool _showRandomSuggestion = true;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasRandomSuggestion))]
+    private MultiSourceGameSearchResultMetadataViewModel? _randomSuggestion;
+    [ObservableProperty] private bool _isLoadingRandomSuggestion;
+    [ObservableProperty] private bool _randomSuggestionFailed;
+    public bool HasRandomSuggestion => RandomSuggestion != null;
+
     protected override async Task RaiseInitialize()
     {
         _welcomePageService.HandleNotNotifiedCrashes();
@@ -59,6 +67,7 @@ public partial class WelcomePageViewModel : PageViewModel
         ShowQuickActions = _welcomePageService.GetShowQuickActions();
         ShowRecentlyPlayed = _welcomePageService.GetShowRecentlyPlayed();
         ShowFavourites = _welcomePageService.GetShowFavourites();
+        ShowRandomSuggestion = _welcomePageService.GetShowRandomSuggestion();
         var latestPlayedGame = await _welcomePageService.GetLatestPlayedGame();
         LatestPlayedGame = latestPlayedGame;
         QuickStats = await _welcomePageService.GetQuickStatsAsync();
@@ -70,6 +79,10 @@ public partial class WelcomePageViewModel : PageViewModel
             _welcomePageService.GetFavouriteGames(_welcomePageService.GetFavouritesCount()));
         FavouritePaginationIndices = Enumerable.Range(0, FavouriteGames.Count).ToList();
         FavouriteIndex = 0;
+        if (ShowRandomSuggestion)
+        {
+            _ = LoadRandomSuggestionAsync();
+        }
         await base.RaiseInitialize();
     }
 
@@ -99,6 +112,41 @@ public partial class WelcomePageViewModel : PageViewModel
 
     private bool CanGoPreviousFavourite() => FavouriteIndex > 0;
     private bool CanGoNextFavourite() => FavouriteIndex < FavouriteGames.Count - 1;
+
+    [RelayCommand]
+    private async Task ShuffleRandomSuggestion() => await LoadRandomSuggestionAsync();
+
+    [RelayCommand]
+    private async Task OpenRandomSuggestion()
+    {
+        if (RandomSuggestion != null)
+        {
+            await _welcomePageService.OpenRandomGameSuggestionAsync(RandomSuggestion);
+        }
+    }
+
+    private async Task LoadRandomSuggestionAsync()
+    {
+        IsLoadingRandomSuggestion = true;
+        RandomSuggestionFailed = false;
+        RandomSuggestion = null;
+        try
+        {
+            RandomSuggestion = await _welcomePageService.FetchRandomGameSuggestionAsync();
+            if (RandomSuggestion == null)
+            {
+                RandomSuggestionFailed = true;
+            }
+        }
+        catch
+        {
+            RandomSuggestionFailed = true;
+        }
+        finally
+        {
+            IsLoadingRandomSuggestion = false;
+        }
+    }
 
     [ObservableProperty] private string _changeLogPath = string.Empty;
 }
