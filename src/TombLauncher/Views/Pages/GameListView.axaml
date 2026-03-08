@@ -18,8 +18,8 @@
                                                         TrueValue="GridLine"
                                                         FalseValue="TableLine" />
         <valueConverters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
-                                                  TrueValue="Grid view" 
-                                                  FalseValue="Table view"/>
+                                                  TrueValue="{loc:Translate GRID_VIEW}" 
+                                                  FalseValue="{loc:Translate TABLE_VIEW}"/>
     </UserControl.Resources>
 
     <Interaction.Behaviors>

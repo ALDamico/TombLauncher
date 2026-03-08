@@ -73,7 +73,7 @@
                             
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
                                 <controls:RoundIconButton Width="32" Height="32" Icon="CheckDoubleLine"
-                                                          ToolTip.Tip="Mark all as read"
+                                                          ToolTip.Tip="{loc:Translate MARK_ALL_AS_READ}"
                                                           Command="{Binding MarkNoNewElementsCmd}"
                                                           IsVisible="{Binding HasNewItems}"/>
                                 

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,7 +12,7 @@
     </Design.DataContext>
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
         <TextBlock>
-            <Run Text="{Binding Game.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Are you sure you want to uninstall GAMENAME?', Mode=OneWay}"/>
+            <Run Text="{Binding Game.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='ARE_YOU_SURE_YOU_WANT_TO_UNINSTALL_GAMENAME', Mode=OneWay}"/>
             <Run Text="{loc:Translate ALL_ASSOCIATED_DATA_WILL_BE_REMOVED}"/>
         </TextBlock>
     </StackPanel>

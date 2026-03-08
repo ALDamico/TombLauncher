@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
@@ -231,6 +231,9 @@
     <system:String x:Key="ADD_TO_FAVOURITES">Aggiungi ai preferiti</system:String>
     <system:String x:Key="REMOVE_FROM_FAVOURITES">Rimuovi dai preferiti</system:String>
     <system:String x:Key="COMPLETED">Completato</system:String>
+    <system:String x:Key="MARK_AS_COMPLETED">Segna come completato</system:String>
+    <system:String x:Key="UNMARK_AS_COMPLETED">Rimuovi come completato</system:String>
+    <system:String x:Key="MARK_ALL_AS_READ">Segna tutto come letto</system:String>
     <system:String x:Key="RESUME_YOUR_LAST_GAME">Riprendi l'ultima partita</system:String>
     <system:String x:Key="CLEAN_UP_TEMPORARY_FILES">Esegui pulizia dei file temporanei</system:String>
     <system:String x:Key="CLEAN_UP_TOMB_LAUNCHER_S_TEMPORARY_FOLDER_MANUALLY">Esegui manualmente la pulizia dei file temporanei di Tomb Launcher per recuperare spazio su disco.</system:String>

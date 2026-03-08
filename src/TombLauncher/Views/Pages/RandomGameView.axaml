@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -27,7 +27,7 @@
                    TextAlignment="Center">
             <Run Text="{loc:Translate MAXIMUM_ATTEMPTS_REACHED_LINE}"/>
             <LineBreak/>
-            <Run Text="{Binding MaxRetries, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Maximum attempts reached line 2', Mode=OneWay}"/>
+            <Run Text="{Binding MaxRetries, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='MAXIMUM_ATTEMPTS_REACHED_LINE_2', Mode=OneWay}"/>
             <LineBreak/>
             <Run Text="{loc:Translate MAXIMUM_ATTEMPTS_REACHED_LINE_3}"/>
         </TextBlock>

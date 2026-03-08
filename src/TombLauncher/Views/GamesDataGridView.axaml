@@ -18,14 +18,14 @@
                                                         TrueValue="HeartFill" 
                                                         FalseValue="HeartLine"/>
         <valueConverters:BooleanToStringConverter x:Key="AddRemoveFromFavouritesBooleanConverter" 
-                                                  TrueValue="Remove from favourites" 
-                                                  FalseValue="Add to favourites"/>
+                                                  TrueValue="{loc:Translate REMOVE_FROM_FAVOURITES}" 
+                                                  FalseValue="{loc:Translate ADD_TO_FAVOURITES}"/>
         <valueConverters:BooleanToMaterialIconConverter x:Key="MarkAsCompletedBooleanToMaterialIconConverter" 
                                                         TrueValue="TrophyFill" 
                                                         FalseValue="TrophyLine"/>
         <valueConverters:BooleanToStringConverter x:Key="MarkUnmarkCompletedBooleanConverter" 
-                                                  TrueValue="Unmark as completed" 
-                                                  FalseValue="Mark as completed"/>
+                                                  TrueValue="{loc:Translate UNMARK_AS_COMPLETED}" 
+                                                  FalseValue="{loc:Translate MARK_AS_COMPLETED}"/>
     </UserControl.Resources>
     <DataGrid ItemsSource="{Binding Games}" 
               IsReadOnly="True" 
@@ -76,7 +76,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" IsVisible="{Binding AreCommandsVisible}">
                                 <controls:IconButton Icon="PlayLargeFill"
-                                                     ToolTip.Tip="{Binding GameMetadata.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Play GAMENAME'}"
+                                                     ToolTip.Tip="{Binding GameMetadata.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='PLAY_GAMENAME'}"
                                                      Command="{Binding PlayCmd}" />
                                 <controls:IconButton Icon="FileListLine" ToolTip.Tip="{loc:Translate VIEW_DETAILS}"
                                                      Command="{Binding OpenCmd}">

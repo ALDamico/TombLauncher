@@ -56,7 +56,7 @@
                                               BasedOn="{StaticResource {x:Type MenuItem}}"
                                               x:DataType="viewModels:GameLinkViewModel">
                                     <Setter Property="Header"
-                                            Value="{Binding DisplayName, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='From SITENAME'}">
+                                            Value="{Binding DisplayName, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='FROM_SITENAME'}">
                                     </Setter>
                                     <Setter Property="Command"
                                             Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).ReadWalkthroughCmd}" />

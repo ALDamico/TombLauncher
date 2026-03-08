@@ -1,4 +1,4 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,22 +12,22 @@
              x:Class="TombLauncher.Views.GameSearchForm"
              x:DataType="viewModels:DownloaderSearchPayloadViewModel">
     <Design.DataContext>
-        <viewModels:DownloaderSearchPayloadViewModel/>
+        <viewModels:DownloaderSearchPayloadViewModel />
     </Design.DataContext>
-    
+
     <StackPanel Spacing="12">
         <!-- Search Bar -->
         <Border Classes="search-bar">
             <Grid ColumnDefinitions="Auto, *, Auto">
-                <iconPacks:PackIconRemixIcon Grid.Column="0" Kind="Search2Line" 
-                                       Width="22" Height="22" 
-                                       Foreground="{DynamicResource MutedTextBrush}"
-                                       VerticalAlignment="Center"
-                                       Margin="4, 0, 8, 0"/>
-                <TextBox Grid.Column="1" 
+                <iconPacks:PackIconRemixIcon Grid.Column="0" Kind="Search2Line"
+                                             Width="22" Height="22"
+                                             Foreground="{DynamicResource MutedTextBrush}"
+                                             VerticalAlignment="Center"
+                                             Margin="4, 0, 8, 0" />
+                <TextBox Grid.Column="1"
                          Text="{Binding LevelName}"
                          Watermark="{loc:Translate TITLE}"
-                         VerticalAlignment="Center"/>
+                         VerticalAlignment="Center" />
                 <controls:IconButton Grid.Column="2"
                                      Icon="Search2Line"
                                      Text="{loc:Translate SEARCH}"
@@ -37,10 +37,10 @@
                                      HorizontalContentAlignment="Center"
                                      VerticalContentAlignment="Center"
                                      VerticalAlignment="Center"
-                                     Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=SearchCommand}"/>
+                                     Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=SearchCommand}" />
             </Grid>
         </Border>
-        
+
         <!-- Filters Toggle Row -->
         <StackPanel Orientation="Horizontal" Spacing="8">
             <ToggleButton x:Name="FiltersToggle"
@@ -48,11 +48,11 @@
                           Padding="10, 6"
                           Width="NaN">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                    <iconPacks:PackIconRemixIcon Kind="FilterLine" Width="16" Height="16"/>
-                    <TextBlock Text="{loc:Translate MORE_FILTERS}" FontSize="13" VerticalAlignment="Center"/>
+                    <iconPacks:PackIconRemixIcon Kind="FilterLine" Width="16" Height="16" />
+                    <TextBlock Text="{loc:Translate MORE_FILTERS}" FontSize="13" VerticalAlignment="Center" />
                 </StackPanel>
             </ToggleButton>
-            
+
             <!-- Clear Filters -->
             <Button HorizontalAlignment="Left"
                     Padding="10, 6"
@@ -60,94 +60,96 @@
                     Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=ClearFiltersCommand}">
                 <Button.Styles>
                     <Style Selector="Button">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Cursor" Value="Hand"/>
-                        <Setter Property="CornerRadius" Value="12"/>
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="CornerRadius" Value="12" />
                     </Style>
                     <Style Selector="Button /template/ ContentPresenter">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="CornerRadius" Value="12"/>
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="CornerRadius" Value="12" />
                     </Style>
                     <Style Selector="Button:pointerover /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#20808080"/>
+                        <Setter Property="Background" Value="#20808080" />
                     </Style>
                     <Style Selector="Button:pointerover iconPacks|PackIconRemixIcon">
-                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
                     </Style>
                     <Style Selector="Button:pointerover TextBlock">
-                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
                     </Style>
                     <Style Selector="Button:disabled">
-                        <Setter Property="Opacity" Value="0.35"/>
-                        <Setter Property="Cursor" Value="Arrow"/>
+                        <Setter Property="Opacity" Value="0.35" />
+                        <Setter Property="Cursor" Value="Arrow" />
                     </Style>
                 </Button.Styles>
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <iconPacks:PackIconRemixIcon Kind="FilterOffLine" Width="16" Height="16"
-                                           Foreground="{DynamicResource MutedTextBrush}"/>
-                    <TextBlock Text="{loc:Translate CLEAR}" 
+                                                 Foreground="{DynamicResource MutedTextBrush}" />
+                    <TextBlock Text="{loc:Translate CLEAR}"
                                Foreground="{DynamicResource MutedTextBrush}"
                                FontSize="12"
-                               VerticalAlignment="Center"/>
+                               VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
         </StackPanel>
-        
+
         <!-- Filter Chips (animated slide) -->
         <Border x:Name="FilterPanel"
                 MaxHeight="0" Opacity="0" ClipToBounds="True"
                 helpers:AnimatedCollapse.IsOpen="{Binding #FiltersToggle.IsChecked}">
             <WrapPanel Orientation="Horizontal">
-            <!-- Author -->
-            <Border Classes="filter-chip" Margin="0, 0, 8, 8">
-                <StackPanel Spacing="4">
-                    <TextBlock Text="{loc:Translate AUTHOR}" Classes="small" 
-                               Foreground="{DynamicResource MutedTextBrush}"/>
-                    <TextBox Text="{Binding AuthorName}" 
-                             MinWidth="200" 
-                             Background="Transparent"
-                             BorderThickness="0"
-                             Watermark="{loc:Translate AUTHOR}"/>
-                </StackPanel>
-            </Border>
-            
-            <!-- Engine -->
-            <Border Classes="filter-chip" Margin="0, 0, 8, 8">
-                <StackPanel Spacing="4">
-                    <TextBlock Text="{loc:Translate ENGINE}" Classes="small"
-                               Foreground="{DynamicResource MutedTextBrush}"/>
-                    <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableEngines}" 
-                              SelectedValue="{Binding GameEngine}"
-                              DisplayMemberBinding="{Binding Description}"
-                              SelectedValueBinding="{Binding Value}"
-                              MinWidth="200"/>
-                </StackPanel>
-            </Border>
-            
-            <!-- Difficulty -->
-            <Border Classes="filter-chip" Margin="0, 0, 8, 8">
-                <StackPanel Spacing="4">
-                    <TextBlock Text="{loc:Translate DIFFICULTY}" Classes="small"
-                               Foreground="{DynamicResource MutedTextBrush}"/>
-                    <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableDifficulties}" 
-                              SelectedValue="{Binding GameDifficulty}" 
-                              DisplayMemberBinding="{Binding Description}" 
-                              SelectedValueBinding="{Binding Value}"
-                              MinWidth="200"/>
-                </StackPanel>
-            </Border>
-            
-            <!-- Rating -->
-            <Border Classes="filter-chip" Margin="0, 0, 8, 8">
-                <StackPanel Spacing="4">
-                    <TextBlock Text="{loc:Translate RATING}" Classes="small"
-                               Foreground="{DynamicResource MutedTextBrush}"/>
-                    <NumericUpDown Value="{Binding Rating}" 
-                                   Minimum="0" Maximum="10"
-                                   MinWidth="200"/>
-                </StackPanel>
-            </Border>
+                <!-- Author -->
+                <Border Classes="filter-chip" Margin="0, 0, 8, 8">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{loc:Translate AUTHOR}" Classes="small"
+                                   Foreground="{DynamicResource MutedTextBrush}" />
+                        <TextBox Text="{Binding AuthorName}"
+                                 MinWidth="200"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Watermark="{loc:Translate AUTHOR}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Engine -->
+                <Border Classes="filter-chip" Margin="0, 0, 8, 8">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{loc:Translate ENGINE}" Classes="small"
+                                   Foreground="{DynamicResource MutedTextBrush}" />
+                        <ComboBox
+                            ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableEngines}"
+                            SelectedValue="{Binding GameEngine}"
+                            DisplayMemberBinding="{Binding Description}"
+                            SelectedValueBinding="{Binding Value}"
+                            MinWidth="200" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Difficulty -->
+                <Border Classes="filter-chip" Margin="0, 0, 8, 8">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{loc:Translate DIFFICULTY}" Classes="small"
+                                   Foreground="{DynamicResource MutedTextBrush}" />
+                        <ComboBox
+                            ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=views:GameSearchForm}, Path=AvailableDifficulties}"
+                            SelectedValue="{Binding GameDifficulty}"
+                            DisplayMemberBinding="{Binding Description}"
+                            SelectedValueBinding="{Binding Value}"
+                            MinWidth="200" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Rating -->
+                <Border Classes="filter-chip" Margin="0, 0, 8, 8">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{loc:Translate RATING}" Classes="small"
+                                   Foreground="{DynamicResource MutedTextBrush}" />
+                        <NumericUpDown Value="{Binding Rating}"
+                                       Minimum="0" Maximum="10"
+                                       MinWidth="200" />
+                    </StackPanel>
+                </Border>
             </WrapPanel>
         </Border>
     </StackPanel>
