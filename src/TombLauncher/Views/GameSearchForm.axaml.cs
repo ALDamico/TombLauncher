@@ -2,10 +2,7 @@
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.Markup.Xaml;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Data.Models;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Views;

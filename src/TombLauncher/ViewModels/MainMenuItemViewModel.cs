@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Core.Navigation;
 
 namespace TombLauncher.ViewModels;
 
 public partial class MainMenuItemViewModel : ViewModelBase
 {
-    [ObservableProperty] private MaterialIconKind _icon;
+    [ObservableProperty] private PackIconRemixIconKind _icon;
 
     [ObservableProperty] private string _text = string.Empty;
 

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:io="clr-namespace:System.IO;assembly=System.Runtime"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -23,7 +23,7 @@
                                  Margin="5 5 10 5"
                                  Padding="0 5"
                                  FontSize="28"
-                                 Icon="DotsHorizontal"
+                                 Icon="More2Line"
                                  IsTextVisible="False"
                                  CornerRadius="50">
                 <controls:IconButton.Flyout>
@@ -32,21 +32,21 @@
                                   Command="{Binding OpenLaunchOptionsCmd}"
                                   ToolTip.Tip="{loc:Translate LAUNCH_OPTIONS_TOOLTIP}">
                             <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="Terminal"></avalonia:MaterialIcon>
+                                <iconPacks:PackIconRemixIcon Kind="TerminalLine"></iconPacks:PackIconRemixIcon>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="{loc:Translate SAVEGAMES}" 
                                   Command="{Binding ManageSaveGamesCmd}"
                                   IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
                             <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="Floppy"></avalonia:MaterialIcon>
+                                <iconPacks:PackIconRemixIcon Kind="Save3Line"></iconPacks:PackIconRemixIcon>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="{loc:Translate BROWSE_FILES}" 
                                   IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
                                   Command="{Binding BrowseFolderCmd}">
                             <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="FolderOpen"></avalonia:MaterialIcon>
+                                <iconPacks:PackIconRemixIcon Kind="FolderOpenLine"></iconPacks:PackIconRemixIcon>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem ItemsSource="{Binding WalkthroughLinks}" 
@@ -56,7 +56,7 @@
                                               BasedOn="{StaticResource {x:Type MenuItem}}"
                                               x:DataType="viewModels:GameLinkViewModel">
                                     <Setter Property="Header"
-                                            Value="{Binding DisplayName, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='From SITENAME'}">
+                                            Value="{Binding DisplayName, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='FROM_SITENAME'}">
                                     </Setter>
                                     <Setter Property="Command"
                                             Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).ReadWalkthroughCmd}" />
@@ -69,7 +69,7 @@
                                 </ControlTheme>
                             </MenuItem.ItemContainerTheme>
                             <MenuItem.Icon>
-                                <avalonia:MaterialIcon Kind="Map"></avalonia:MaterialIcon>
+                                <iconPacks:PackIconRemixIcon Kind="MapLine"></iconPacks:PackIconRemixIcon>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="{loc:Translate DOCUMENTATION}" ItemsSource="{Binding DocumentationFiles}" 
@@ -101,7 +101,7 @@
                                      FontSize="28"
                                      IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNull}}"
                                      Command="{Binding InstallCmd}"
-                                     Icon="Download"
+                                     Icon="Download2Line"
                                      Text="{loc:Translate DOWNLOAD}"
                                      Classes="btn-success" />
                 <controls:IconButton
@@ -109,7 +109,7 @@
                     FontSize="28"
                     IsVisible="{Binding Game.GameMetadata.IsInstalled, Converter={x:Static ObjectConverters.IsNotNull}}"
                     Classes="btn-success"
-                    Icon="Play"
+                    Icon="PlayLargeFill"
                     Text="{loc:Translate PLAY}"
                     Margin="10 5"
                     Padding="0 5"
@@ -117,7 +117,7 @@
                     <controls:SplitIconButton.Flyout>
                     </controls:SplitIconButton.Flyout>
                 </controls:IconButton>
-                <controls:IconButton Icon="Gear" ToolTip.Tip="{loc:Translate CONFIGURE}" Classes="btn-primary"
+                <controls:IconButton Icon="Settings3Line" ToolTip.Tip="{loc:Translate CONFIGURE}" Classes="btn-primary"
                                      FontSize="28" Height="65"
                                      IsTextVisible="False"
                                      IsVisible="{Binding SetupCommands, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
@@ -140,7 +140,7 @@
                                     <MenuItem Header="{Binding Text}"
                                               Command="{Binding Command}">
                                         <MenuItem.Icon>
-                                            <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                            <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </DataTemplate>
@@ -148,12 +148,12 @@
                         </MenuFlyout>
                     </Button.Flyout>
                 </controls:IconButton>
-                <avalonia:MaterialIcon Kind="Trophy"
+                <iconPacks:PackIconRemixIcon Kind="TrophyLine"
                                        Height="28"
                                        Width="28"
                                        IsVisible="{Binding Game.GameMetadata.IsCompleted}"
                                        ToolTip.Tip="{StaticResource 'Game completed'}" />
-                <avalonia:MaterialIcon Kind="Heart"
+                <iconPacks:PackIconRemixIcon Kind="HeartLine"
                                        Height="28"
                                        Width="28"
                                        IsVisible="{Binding Game.GameMetadata.IsFavourite}"

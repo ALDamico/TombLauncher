@@ -1,8 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Material.Icons;
-using Material.Icons.Avalonia;
+using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.Views;
 
@@ -13,10 +11,10 @@ public partial class RadioButtonDetailView : UserControl
         InitializeComponent();
     }
 
-    public static readonly StyledProperty<MaterialIconKind> IconProperty = AvaloniaProperty.Register<RadioButtonDetailView, MaterialIconKind>(
+    public static readonly StyledProperty<PackIconRemixIconKind> IconProperty = AvaloniaProperty.Register<RadioButtonDetailView, PackIconRemixIconKind>(
         nameof(Icon));
 
-    public MaterialIconKind Icon
+    public PackIconRemixIconKind Icon
     {
         get => GetValue(IconProperty);
         set => SetValue(IconProperty, value);

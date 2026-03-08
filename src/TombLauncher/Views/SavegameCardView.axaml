@@ -1,11 +1,11 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.SavegameCardView"
@@ -14,9 +14,9 @@
         <viewModels:SavegameViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
-                                                        TrueValue="FlagOutline"
-                                                        FalseValue="FlagOffOutline" />
+        <valueConverters:BooleanToIconConverter x:Key="BooleanToIconConverter"
+                                                        TrueValue="FlagFill"
+                                                        FalseValue="FlagLine" />
     </UserControl.Resources>
     <Border CornerRadius="3" 
             Padding="10" 
@@ -61,7 +61,7 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Orientation="Horizontal">
-                <controls:IconOnlyButton Icon="Restore"
+                <controls:IconOnlyButton Icon="HistoryLine"
                                          ToolTip.Tip="{loc:Translate RESTORE}"
                                          Command="{Binding RestoreSavegameCmd}"
                                          CommandParameter="{Binding Id}">
@@ -72,11 +72,11 @@
                               CommandParameter="{Binding .}"
                               ToolTip.Tip="{loc:Translate MARK_UNMARK_AS_START_OF_LEVEL_SAVE}">
                     <ToggleButton.Content>
-                        <avalonia:MaterialIcon
-                            Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToMaterialIconConverter}}"/>
+                        <iconPacks:PackIconRemixIcon
+                            Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToIconConverter}}"/>
                     </ToggleButton.Content>
                 </ToggleButton>
-                <controls:IconOnlyButton Icon="Delete"
+                <controls:IconOnlyButton Icon="DeleteBinLine"
                                          Command="{Binding DeleteSavegameCmd}"
                                          CommandParameter="{Binding .}"
                                          IsVisible="{Binding !IsStartOfLevel}"

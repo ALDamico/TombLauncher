@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using TombLauncher.ViewModels;
 
 namespace TombLauncher.Views.Pages;
 

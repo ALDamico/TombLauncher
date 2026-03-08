@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -20,7 +20,7 @@ public partial class StatisticsPageViewModel : PageViewModel
         [
             new CommandViewModel()
             {
-                Command = new AsyncRelayCommand(Initialize), Icon = MaterialIconKind.Reload,
+                Command = new AsyncRelayCommand(Initialize), Icon = PackIconRemixIconKind.RefreshLine,
                 Tooltip = "RELOAD".GetLocalizedString()
             }
         ];

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -26,41 +26,41 @@ public class TimeSpanToHumanReadableStringConverter : IValueConverter
             if (days > 0)
             {
                 if (days == 1)
-                    parts.Add(func("1 day", Array.Empty<object>()));
+                    parts.Add(func("1_DAY", Array.Empty<object>()));
                 else
-                    parts.Add(func("days formattable", new object[] { days }));
+                    parts.Add(func("DAYS_FORMATTABLE", new object[] { days }));
             }
 
             var hours = timeSpan.Hours;
             if (hours > 0)
             {
                 if (hours == 1)
-                    parts.Add(func("1 hour", Array.Empty<object>()));
+                    parts.Add(func("1_HOUR", Array.Empty<object>()));
                 else
-                    parts.Add(func("hours formattable", new object[] { hours }));
+                    parts.Add(func("HOURS_FORMATTABLE", new object[] { hours }));
             }
 
             var minutes = timeSpan.Minutes;
             if (minutes > 0)
             {
                 if (minutes == 1)
-                    parts.Add(func("1 minute", Array.Empty<object>()));
+                    parts.Add(func("1_MINUTE", Array.Empty<object>()));
                 else
-                    parts.Add(func("minutes formattable", new object[] { minutes }));
+                    parts.Add(func("MINUTES_FORMATTABLE", new object[] { minutes }));
             }
 
             var seconds = timeSpan.Seconds;
             if (seconds > 0)
             {
                 if (seconds == 1)
-                    parts.Add(func("1 second", Array.Empty<object>()));
+                    parts.Add(func("1_SECOND", Array.Empty<object>()));
                 else
-                    parts.Add(func("seconds formattable", new object[] { seconds }));
+                    parts.Add(func("SECONDS_FORMATTABLE", new object[] { seconds }));
             }
 
             if (parts.Count == 0)
             {
-                return func("N/A", Array.Empty<object>());
+                return func("NA", Array.Empty<object>());
             }
 
             if (parts.Count == 1)
@@ -85,7 +85,7 @@ public class TimeSpanToHumanReadableStringConverter : IValueConverter
 
             if (!lastPart.EndsWith(' '))
                 sb.Append(' ');
-            sb.Append(func("and formattable", [parts.Last()]));
+            sb.Append(func("AND_FORMATTABLE", [parts.Last()]));
 
             return sb.ToString();
         }

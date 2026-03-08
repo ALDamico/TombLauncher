@@ -150,7 +150,7 @@ public class App : Application
         var mainWindow = new MainWindow
         {
             DataContext = new MainWindowViewModel(navigationManager,
-                Ioc.Default.GetRequiredService<NotificationListViewModel>(), Ioc.Default.GetRequiredService<NotificationService>(),
+                Ioc.Default.GetRequiredService<NotificationListViewModel>(),
                 Ioc.Default.GetRequiredService<ISettingsProvider>(), Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>()),
         };
 
@@ -351,11 +351,7 @@ public class App : Application
     {
         serviceCollection.AddDbContext<TombLauncherDbContext>(opts =>
         {
-            var databasePath = appConfiguration.DatabasePath;
-            if (databasePath != null && !Path.IsPathRooted(databasePath))
-            {
-                databasePath = Path.Combine(appDataDirectory, databasePath);
-            }
+            var databasePath = Path.Combine(appDataDirectory, appConfiguration.DatabasePath ?? "TombLauncher.sqlite");
             var connectionString = $"Data Source={databasePath}";
             opts.UseSqlite(connectionString);
         });

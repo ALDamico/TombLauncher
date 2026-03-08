@@ -7,10 +7,10 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameSearchView"
-             x:Name="root"
+             x:Name="Root"
              x:DataType="pages:GameSearchViewModel">
     <Design.DataContext>
         <pages:GameSearchViewModel />
@@ -40,15 +40,15 @@
         <!-- Page Title -->
         <TextBlock Grid.Row="0"
                    Classes="h1"
-                   Text="{loc:Translate SEARCH}" />
+                   Text="{loc:Translate SEARCH, Casing=Upper}" />
 
         <!-- Search Form (now contains the Search button) -->
         <views:GameSearchForm Grid.Row="1"
                               DataContext="{Binding SearchPayload}"
                               AvailableDifficulties="{Binding AvailableDifficulties}"
                               AvailableEngines="{Binding AvailableEngines}"
-                              SearchCommand="{Binding #root.((pages:GameSearchViewModel)DataContext).SearchCmd}"
-                              ClearFiltersCommand="{Binding #root.((pages:GameSearchViewModel)DataContext).ClearFiltersCmd}"
+                              SearchCommand="{Binding #Root.((pages:GameSearchViewModel)DataContext).SearchCmd}"
+                              ClearFiltersCommand="{Binding #Root.((pages:GameSearchViewModel)DataContext).ClearFiltersCmd}"
                               Margin="0, 0, 0, 8"/>
 
         <!-- Result Count -->
@@ -67,7 +67,7 @@
                         VerticalAlignment="Center"
                         Spacing="8"
                         IsVisible="{Binding ShowEmptyState}">
-                <avalonia:MaterialIcon Kind="MagnifyClose" 
+                <iconPacks:PackIconRemixIcon Kind="SearchLine" 
                                        Width="64" Height="64"
                                        Foreground="{DynamicResource MutedTextBrush}"
                                        HorizontalAlignment="Center"/>
@@ -99,7 +99,7 @@
         <controls:IconButton Grid.Row="4"
                              HorizontalAlignment="Center"
                              Margin="0, 8"
-                             Icon="ChevronDown"
+                             Icon="ArrowDownSLine"
                              Text="{loc:Translate LOAD_MORE}"
                              Classes="btn-primary"
                              MinWidth="160"

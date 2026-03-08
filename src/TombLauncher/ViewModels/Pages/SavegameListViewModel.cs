@@ -5,7 +5,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
@@ -31,13 +31,13 @@ public partial class SavegameListViewModel : PageViewModel
         TopBarCommands.Add(new CommandViewModel()
         {
             Command = DeleteAllCmd,
-            Icon = MaterialIconKind.Delete,
+            Icon = PackIconRemixIconKind.DeleteBinLine,
             Tooltip = "DELETE_ALL".GetLocalizedString()
         });
         TopBarCommands.Add(new CommandViewModel()
         {
             Command = CheckNonBackedUpSavegamesCmd,
-            Icon = MaterialIconKind.Import,
+            Icon = PackIconRemixIconKind.ImportLine,
             Tooltip = "IMPORT_MISSING_SAVEGAMES".GetLocalizedString()
         });
     }

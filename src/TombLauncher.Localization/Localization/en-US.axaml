@@ -134,8 +134,8 @@
     <system:String x:Key="MAXIMUM_ATTEMPTS_REACHED_LINE_2">that's not installed for you {0} times, </system:String>
     <system:String x:Key="MAXIMUM_ATTEMPTS_REACHED_LINE_3">but failed.</system:String>
     <system:String x:Key="TRY_AGAIN">Try again</system:String>
-    <system:String x:Key="RANDOM_GAME">RANDOM GAME</system:String>
-    <system:String x:Key="STATISTICS">STATISTICS</system:String>
+    <system:String x:Key="RANDOM_GAME">Random game</system:String>
+    <system:String x:Key="STATISTICS">Statistics</system:String>
     <system:String x:Key="AVERAGE_PLAYTIME_BY_DAY_OF_WEEK">Average playtime by day of week</system:String>
     <system:String x:Key="TOTAL_GAMES_PLAYED_BY_DAY_OF_WEEK">Total games played by day of week</system:String>
     <system:String x:Key="APPLICATION_VERSION">Application version</system:String>
@@ -232,6 +232,9 @@
     <system:String x:Key="ADD_TO_FAVOURITES">Add to favourites</system:String>
     <system:String x:Key="REMOVE_FROM_FAVOURITES">Remove from favourites</system:String>
     <system:String x:Key="COMPLETED">Completed</system:String>
+    <system:String x:Key="MARK_AS_COMPLETED">Mark as completed</system:String>
+    <system:String x:Key="UNMARK_AS_COMPLETED">Unmark as completed</system:String>
+    <system:String x:Key="MARK_ALL_AS_READ">Mark all as read</system:String>
     <system:String x:Key="RESUME_YOUR_LAST_GAME">Resume your last game</system:String>
     <system:String x:Key="CLEAN_UP_TEMPORARY_FILES">Clean up temporary files</system:String>
     <system:String x:Key="CLEAN_UP_TOMB_LAUNCHER_S_TEMPORARY_FOLDER_MANUALLY">Clean up Tomb Launcher's temporary folder manually to reclaim some disk space.</system:String>

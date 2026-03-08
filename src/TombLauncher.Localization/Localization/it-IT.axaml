@@ -134,8 +134,8 @@
     <system:String x:Key="MAXIMUM_ATTEMPTS_REACHED_LINE_2">un gioco non installato {0} volte,.</system:String>
     <system:String x:Key="MAXIMUM_ATTEMPTS_REACHED_LINE_3">ma non ci è riuscito.</system:String>
     <system:String x:Key="TRY_AGAIN">Riprova</system:String>
-    <system:String x:Key="RANDOM_GAME">GIOCO CASUALE</system:String>
-    <system:String x:Key="STATISTICS">STATISTICHE</system:String>
+    <system:String x:Key="RANDOM_GAME">Gioco casuale</system:String>
+    <system:String x:Key="STATISTICS">Statistiche</system:String>
     <system:String x:Key="AVERAGE_PLAYTIME_BY_DAY_OF_WEEK">Tempo di gioco medio per giorno della settimana</system:String>
     <system:String x:Key="TOTAL_GAMES_PLAYED_BY_DAY_OF_WEEK">Partite giocate per giorno della settimana</system:String>
     <system:String x:Key="APPLICATION_VERSION">Versione dell'applicazione</system:String>
@@ -205,8 +205,8 @@
     <system:String x:Key="LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME">Avvio dell'utility di configurazione della patch della community per {0}</system:String>
     <system:String x:Key="COMMUNITY_PATCH_SETUP">Setup patch della community</system:String>
     <system:String x:Key="OPEN_TOMB_LAUNCHER_S_GITHUB_PAGE">Apri la pagina GitHub di Tomb Launcher</system:String>
-    <system:String x:Key="GRID_VIEW">Visualizzazione griglia</system:String>
-    <system:String x:Key="TABLE_VIEW">Visualizzazione tabella</system:String>
+    <system:String x:Key="GRID_VIEW">Vista griglia</system:String>
+    <system:String x:Key="TABLE_VIEW">Vista tabella</system:String>
     <system:String x:Key="SHOW_GAMES_AS">Visualizza i giochi come</system:String>
     <system:String x:Key="TABLE">Tabella</system:String>
     <system:String x:Key="THE_LIST_OF_GAMES_WILL_BE_DISPLAYED_AS_A_TABLE">La lista dei giochi verrà visualizzata come una tabella.</system:String>
@@ -231,6 +231,9 @@
     <system:String x:Key="ADD_TO_FAVOURITES">Aggiungi ai preferiti</system:String>
     <system:String x:Key="REMOVE_FROM_FAVOURITES">Rimuovi dai preferiti</system:String>
     <system:String x:Key="COMPLETED">Completato</system:String>
+    <system:String x:Key="MARK_AS_COMPLETED">Segna come completato</system:String>
+    <system:String x:Key="UNMARK_AS_COMPLETED">Rimuovi come completato</system:String>
+    <system:String x:Key="MARK_ALL_AS_READ">Segna tutto come letto</system:String>
     <system:String x:Key="RESUME_YOUR_LAST_GAME">Riprendi l'ultima partita</system:String>
     <system:String x:Key="CLEAN_UP_TEMPORARY_FILES">Esegui pulizia dei file temporanei</system:String>
     <system:String x:Key="CLEAN_UP_TOMB_LAUNCHER_S_TEMPORARY_FOLDER_MANUALLY">Esegui manualmente la pulizia dei file temporanei di Tomb Launcher per recuperare spazio su disco.</system:String>

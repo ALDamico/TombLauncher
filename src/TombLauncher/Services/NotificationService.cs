@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
@@ -35,7 +35,7 @@ public class NotificationService
         AddNotificationAsync(notificationViewModel).GetAwaiter().GetResult();
     }
 
-    public async Task AddErrorNotificationAsync(string title, string errorMessage, MaterialIconKind icon)
+    public async Task AddErrorNotificationAsync(string title, string errorMessage, PackIconRemixIconKind icon)
     {
         var notificationViewModel = new NotificationViewModel()
         {
@@ -49,17 +49,17 @@ public class NotificationService
         await AddNotificationAsync(notificationViewModel);
     }
 
-    public void AddErrorNotification(string title, string errorMessage, MaterialIconKind icon)
+    public void AddErrorNotification(string title, string errorMessage, PackIconRemixIconKind icon)
     {
         AddErrorNotificationAsync(title, errorMessage, icon).GetAwaiter().GetResult();
     }
 
-    public async Task AddErrorNotificationAsync(string errorMessage, MaterialIconKind icon)
+    public async Task AddErrorNotificationAsync(string errorMessage, PackIconRemixIconKind icon)
     {
         await AddErrorNotificationAsync("AN_ERROR_OCCURRED".GetLocalizedString(), errorMessage, icon);
     }
 
-    public void AddErrorNotification(string errorMessage, MaterialIconKind icon)
+    public void AddErrorNotification(string errorMessage, PackIconRemixIconKind icon)
     {
         AddErrorNotificationAsync(errorMessage, icon).GetAwaiter().GetResult();
     }

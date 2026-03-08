@@ -3,7 +3,6 @@
              x:Class="TombLauncher.App"
              xmlns:local="using:TombLauncher"
              RequestedThemeVariant="Default"
-             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              >
@@ -50,14 +49,14 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://TombLauncher/Assets/Themes/ScionTheme.axaml" />
                 <ResourceInclude Source="../Assets/RatingStyles.axaml" />
-
                 <ResourceInclude Source="avares://LoadingIndicators.Avalonia/LoadingIndicators.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
     <Application.Styles>
         <FluentTheme />
-        <materialIcons:MaterialIconStyles />
+        <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
+        <StyleInclude Source="avares://IconPacks.Avalonia.RemixIcon/RemixIcon.axaml" />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
         <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/MsgBoxStyles.axaml" />
         <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ChildStyle.axaml" />
@@ -68,7 +67,7 @@
         <Style Selector="CalendarDatePicker">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
-        <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
+        
         <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
         
     </Application.Styles>

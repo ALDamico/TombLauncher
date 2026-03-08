@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using TombLauncher.Localization.Converters;
@@ -24,6 +25,16 @@ public class TranslateExtension : MarkupExtension
             return Key;
         }
 
+        // Check if the target property supports bindings (i.e. is an AvaloniaProperty).
+        // If not (e.g. a plain CLR string property like BooleanToStringConverter.TrueValue),
+        // return the resolved string directly to avoid InvalidCastException.
+        var provideValueTarget = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
+        if (provideValueTarget?.TargetProperty is not AvaloniaProperty)
+        {
+            var value = localizationManager[Key];
+            return ApplyCasing(value);
+        }
+
         // Return a binding to the LocalizationManager indexer.
         // Because LocalizationManager implements INotifyPropertyChanged and raises for Binding.IndexerName,
         // this binding will automatically update when the language changes.
@@ -35,5 +46,15 @@ public class TranslateExtension : MarkupExtension
         };
 
         return binding;
+    }
+
+    private string ApplyCasing(string value)
+    {
+        return Casing switch
+        {
+            StringCasing.Upper => value.ToUpperInvariant(),
+            StringCasing.Lower => value.ToLowerInvariant(),
+            _ => value
+        };
     }
 }

@@ -1,11 +1,11 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:avalonia="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
-             xmlns:avalonia1="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.StatisticsPageView"
              x:DataType="pages:StatisticsPageViewModel">
@@ -26,7 +26,7 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
     <Grid RowDefinitions="Auto, *">
-        <TextBlock Grid.Row="0" Text="{loc:Translate STATISTICS}" Classes="h1" />
+        <TextBlock Grid.Row="0" Text="{loc:Translate STATISTICS, Casing=Upper}" Classes="h1" />
         <ScrollViewer Grid.Row="1">
             <StackPanel Orientation="Vertical">
 
@@ -50,15 +50,15 @@
                     <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ApplicationVersion}" />
                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{loc:Translate DOTNET_VERSION}" />
                     <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NetVersion}" />
-                    <avalonia1:MaterialIcon Height="24" Width="24" HorizontalAlignment="Center"
-                                            VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Kind="Database"
+                    <iconPacks:PackIconRemixIcon Height="24" Width="24" HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Kind="Database2Line"
                                             Classes="text-muted" />
                     <TextBlock Grid.Row="2" Grid.Column="1" 
                                Text="{loc:Translate DATABASE_SIZE}" />
                     <TextBlock Grid.Row="2" Grid.Column="2" 
                                Text="{Binding DatabaseSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}" />
-                    <avalonia1:MaterialIcon Height="24" Width="24" HorizontalAlignment="Center"
-                                            VerticalAlignment="Center" Grid.Row="3" Grid.Column="0" Kind="Harddisk"
+                    <iconPacks:PackIconRemixIcon Height="24" Width="24" HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" Grid.Row="3" Grid.Column="0" Kind="HardDriveLine"
                                             Classes="text-muted" />
                     <TextBlock Grid.Row="3" Grid.Column="1" 
                                Text="{loc:Translate GAMES_SIZE}">
@@ -101,7 +101,7 @@
                                 CommandParameter="{Binding Statistics.MostLaunches.Id}"/>
                         <TextBlock Margin="10, 0">
                             <Run Text="("/>
-                            <Run Text="{Binding Statistics.MostLaunches.TotalSessions, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Played NUMBER times', Mode=OneWay}"/>
+                            <Run Text="{Binding Statistics.MostLaunches.TotalSessions, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='PLAYED_NUMBER_TIMES', Mode=OneWay}"/>
                             <Run Text=")"></Run>
                         </TextBlock>
                     </StackPanel>

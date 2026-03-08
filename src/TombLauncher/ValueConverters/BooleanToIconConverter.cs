@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.ValueConverters;
 
-public class BooleanToMaterialIconConverter : IValueConverter
+public class BooleanToIconConverter : IValueConverter
 {
-    public MaterialIconKind? TrueValue { get; set; }
-    public MaterialIconKind? FalseValue { get; set; }
+    public PackIconRemixIconKind? TrueValue { get; set; }
+    public PackIconRemixIconKind? FalseValue { get; set; }
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool b)
@@ -25,7 +25,7 @@ public class BooleanToMaterialIconConverter : IValueConverter
             return false;
         if (targetType == typeof(bool))
         {
-            return (MaterialIconKind)value == TrueValue;
+            return (PackIconRemixIconKind)value == TrueValue;
         }
 
         return false;

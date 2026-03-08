@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
         xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
@@ -10,7 +10,6 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
-        xmlns:li="using:LoadingIndicators.Avalonia"
         Icon="/Assets/tomb-launcher-icon.ico"
         Title="{Binding Title}"
         Background="{DynamicResource PageBackgroundBrush}"
@@ -35,7 +34,7 @@
                 <controls:IconButton Grid.Row="0" 
                                      Classes="icon-only"
                                      ToolTip.Tip="Menu" 
-                                     Icon="Menu" 
+                                     Icon="MenuLine" 
                                      Command="{Binding TogglePaneCmd}"/>
 
                 <ListBox Grid.Row="1" 
@@ -52,7 +51,7 @@
                         <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
                             <StackPanel Spacing="20" 
                                         Orientation="Horizontal">
-                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
                                 <TextBlock Text="{Binding Text}"/>
                             </StackPanel>
                         </DataTemplate>
@@ -72,7 +71,7 @@
                         <DataTemplate DataType="{x:Type viewModels:CommandViewModel}">
                             <StackPanel Spacing="20" 
                                         Orientation="Horizontal">
-                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
                                 <TextBlock Text="{Binding Text}"/>
                             </StackPanel>
                         </DataTemplate>
@@ -94,7 +93,7 @@
                         <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
                             <StackPanel Spacing="20" 
                                         Orientation="Horizontal">
-                                <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
                                 <TextBlock Text="{Binding Text}"/>
                             </StackPanel>
                         </DataTemplate>
@@ -110,7 +109,7 @@
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0" LastChildFill="False">
                 <controls:IconOnlyButton Command="{Binding GoBackCmd}"
-                                     Icon="ArrowBack" />
+                                     Icon="ArrowLeftLine" />
                 <ContentControl Content="{Binding NotificationListViewModel}" 
                                 DockPanel.Dock="Right"/>
                 <ItemsControl DockPanel.Dock="Right"

@@ -44,6 +44,7 @@ public class StatisticsService
     public long GetDatabaseSize()
     {
         var databasePath = _settingsProvider.GetApplicationSettings().DatabasePath;
+        databasePath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), databasePath);
         var fileInfo = new FileInfo(databasePath);
         return fileInfo.Length;
     }

@@ -20,7 +20,7 @@
         <RadioButton GroupName="ViewModeGroup" 
                      IsChecked="{Binding !DefaultToGridView}">
             <RadioButton.Content>
-                <views:RadioButtonDetailView Icon="Table" 
+                <views:RadioButtonDetailView Icon="TableLine" 
                                              Text="{loc:Translate TABLE}" 
                                              DetailsLine1="{loc:Translate THE_LIST_OF_GAMES_WILL_BE_DISPLAYED_AS_A_TABLE}"
                                              DetailsLine2="{loc:Translate YOU_CAN_PLAY_A_GAME_BY_DOUBLE_CLICKING_A_ROW}"/>
@@ -28,7 +28,7 @@
         </RadioButton>
         <RadioButton GroupName="ViewModeGroup" IsChecked="{Binding DefaultToGridView}">
             <RadioButton.Content>
-                <views:RadioButtonDetailView Icon="Grid" 
+                <views:RadioButtonDetailView Icon="GridLine" 
                                              Text="{loc:Translate GRID}"
                                              DetailsLine1="{loc:Translate THE_LIST_OF_GAMES_WILL_BE_DISPLAYED_AS_CARDS_ARRAN}"
                                              DetailsLine2="{loc:Translate YOU_CAN_PLAY_A_GAME_BY_DOUBLE_CLICKING_ITS_CARD_OR}"/>

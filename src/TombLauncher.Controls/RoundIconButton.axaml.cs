@@ -1,8 +1,7 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
-using Avalonia.Markup.Xaml;
-using Material.Icons;
+using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.Controls;
 
@@ -12,13 +11,13 @@ public partial class RoundIconButton : Button
     {
         InitializeComponent();
     }
-    
+
     protected override Type StyleKeyOverride => typeof(Button);
 
-    public static readonly StyledProperty<MaterialIconKind> IconProperty =
-        AvaloniaProperty.Register<IconButton, MaterialIconKind>(nameof(Icon), default, false, BindingMode.OneTime);
+    public static readonly StyledProperty<PackIconRemixIconKind> IconProperty =
+        AvaloniaProperty.Register<RoundIconButton, PackIconRemixIconKind>(nameof(Icon), default, false, BindingMode.OneTime);
 
-    public MaterialIconKind Icon
+    public PackIconRemixIconKind Icon
     {
         get => GetValue(IconProperty);
         set => SetValue(IconProperty, value);

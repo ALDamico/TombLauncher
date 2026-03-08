@@ -1,11 +1,11 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.NotificationListView"
              x:DataType="viewModels:NotificationListViewModel">
@@ -24,7 +24,7 @@
         </Style>
     </UserControl.Styles>
 
-    <controls:BadgedIconButton DockPanel.Dock="Right" Icon="Notifications"
+    <controls:BadgedIconButton DockPanel.Dock="Right" Icon="NotificationLine"
                                IsBadgeVisible="{Binding HasNewItems}"
                                ToolTip.Tip="{loc:Translate NOTIFICATIONS}" 
                                x:Name="NotificationButtonFlyout">
@@ -72,12 +72,12 @@
                                        Text="{loc:Translate NOTIFICATIONS}"/>
                             
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
-                                <controls:RoundIconButton Width="32" Height="32" Icon="CheckAll"
-                                                          ToolTip.Tip="Mark all as read"
+                                <controls:RoundIconButton Width="32" Height="32" Icon="CheckDoubleLine"
+                                                          ToolTip.Tip="{loc:Translate MARK_ALL_AS_READ}"
                                                           Command="{Binding MarkNoNewElementsCmd}"
                                                           IsVisible="{Binding HasNewItems}"/>
                                 
-                                <controls:RoundIconButton Width="32" Height="32" Icon="Close" 
+                                <controls:RoundIconButton Width="32" Height="32" Icon="CloseLine" 
                                                           ToolTip.Tip="{loc:Translate CLEAR_ALL}"
                                                           Command="{Binding ClearAllCmd}">
                                 </controls:RoundIconButton>
@@ -88,7 +88,8 @@
                     <!-- Empty State -->
                     <Grid Grid.Row="1" IsVisible="{Binding !Notifications.Count}">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
-                            <avalonia:MaterialIcon Kind="NotificationsNone" Width="48" Height="48" Opacity="0.5"/>
+                            <iconPacks:PackIconRemixIcon Kind="NotificationLine" Width="48" Height="48" Opacity="0.5"
+                                                         HorizontalAlignment="Center"/>
                             <TextBlock Text="{loc:Translate NO_NOTIFICATIONS}" 
                                        HorizontalAlignment="Center" 
                                        Opacity="0.6"

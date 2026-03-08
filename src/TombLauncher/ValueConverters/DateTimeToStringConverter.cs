@@ -18,7 +18,7 @@ public class DateTimeToStringConverter : IValueConverter
         var func = StringGenerator(localizationManager);
         if (value == null)
         {
-            return func("Never", Array.Empty<object>());
+            return func("NEVER", Array.Empty<object>());
         }
 
         if (value is not DateTime dateTime) return string.Empty;
@@ -26,42 +26,42 @@ public class DateTimeToStringConverter : IValueConverter
         var today = DateTime.Today;
         if (dateTimeAtMidnight == today)
         {
-            return func("Today", Array.Empty<object>());
+            return func("TODAY", Array.Empty<object>());
         }
 
         if (dateTimeAtMidnight.IsYesterday())
         {
-            return func("Yesterday", Array.Empty<object>());
+            return func("YESTERDAY", Array.Empty<object>());
         }
 
         var differenceInDays = (today - dateTimeAtMidnight).Days;
         if (differenceInDays is > 1 and < 7)
         {
-            return func("days ago", [differenceInDays]);
+            return func("DAYS_AGO", [differenceInDays]);
         }
 
         var weeksElapsed = differenceInDays / 7;
         switch (weeksElapsed)
         {
             case 1:
-                return func("Last week", Array.Empty<object>());
+                return func("LAST_WEEK", Array.Empty<object>());
             case < 4:
-                return func("weeks ago", [weeksElapsed]);
+                return func("WEEKS_AGO", [weeksElapsed]);
         }
 
         switch (differenceInDays)
         {
             case <= 31:
-                return func("Last month", Array.Empty<object>());
+                return func("LAST_MONTH", Array.Empty<object>());
             case <= 365:
                 {
                     var monthsElapsed = differenceInDays / 30;
-                    return func("months ago", [monthsElapsed]);
+                    return func("MONTHS_AGO", [monthsElapsed]);
                 }
         }
 
         var yearsElapsed = today.Year - dateTimeAtMidnight.Year;
-        return yearsElapsed == 1 ? func("Last year", Array.Empty<object>()) : func("years ago", [yearsElapsed]);
+        return yearsElapsed == 1 ? func("LAST_YEAR", Array.Empty<object>()) : func("YEARS_AGO", [yearsElapsed]);
 
     }
 

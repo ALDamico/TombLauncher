@@ -102,12 +102,12 @@
                                              IsVisible="{Binding IsOpenable}" Classes="btn-success"
                                              ToolTip.Tip="Open"/>
                         
-                        <controls:RoundIconButton Icon="Cancel" Command="{Binding CancelCommand}" 
+                        <controls:RoundIconButton Icon="CloseLine" Command="{Binding CancelCommand}" 
                                                   IsVisible="{Binding IsCancelable}"
                                                   Classes="btn-danger"
                                                   ToolTip.Tip="Cancel"/>
                         
-                        <controls:RoundIconButton Icon="Close" Command="{Binding DismissCmd}"
+                        <controls:RoundIconButton Icon="CloseLine" Command="{Binding DismissCmd}"
                                                   CommandParameter="{Binding .}"
                                                   IsVisible="{Binding IsDismissable}"
                                                   Classes="round-button" 
