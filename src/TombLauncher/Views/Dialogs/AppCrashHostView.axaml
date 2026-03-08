@@ -18,7 +18,7 @@
         </Style>
     </UserControl.Styles>
     <UserControl.Resources>
-        <valueConverters:ObjectNotNullToMaterialIconConverter x:Key="ObjectNotNullToMaterialIconConverter"
+        <valueConverters:ObjectNotNullToIconConverter x:Key="ObjectNotNullToIconConverter"
                                                               TrueValue="CheckFill" FalseValue="CloseFill" />
         <valueConverters:ObjectNotNullToBrushConverter x:Key="ObjectNotNullToBrushConverter" TrueValue="Green"
                                                        FalseValue="Red" />
@@ -74,7 +74,7 @@
                                    HorizontalAlignment="Left"
                                    FontSize="16"
                                    Foreground="{Binding Crash.ExceptionDto.InnerException, Converter={StaticResource ObjectNotNullToBrushConverter}}"
-                                   Kind="{Binding Crash.ExceptionDto.InnerException, Converter={StaticResource ObjectNotNullToMaterialIconConverter}}" />
+                                   Kind="{Binding Crash.ExceptionDto.InnerException, Converter={StaticResource ObjectNotNullToIconConverter}}" />
         </Grid>
 
     </StackPanel>

@@ -1,6 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
         xmlns:views="clr-namespace:TombLauncher.Views">
     <Design.PreviewWith>
@@ -181,10 +181,10 @@
     <Style Selector="TextBlock:disabled">
         <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"></Setter>
     </Style>
-    <Style Selector="avalonia|MaterialIcon.text-muted">
+    <Style Selector="iconPacks|PackIconRemixIcon.text-muted">
         <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"></Setter>
     </Style>
-    <Style Selector="avalonia|MaterialIcon.warning">
+    <Style Selector="iconPacks|PackIconRemixIcon.warning">
         <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"></Setter>
     </Style>
 

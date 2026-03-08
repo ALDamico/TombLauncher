@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.ValueConverters;
 
-public class ObjectNotNullToMaterialIconConverter : IValueConverter
+public class ObjectNotNullToIconConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

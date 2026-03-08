@@ -14,7 +14,7 @@
         <viewModels:SavegameViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
+        <valueConverters:BooleanToIconConverter x:Key="BooleanToIconConverter"
                                                         TrueValue="FlagFill"
                                                         FalseValue="FlagLine" />
     </UserControl.Resources>
@@ -73,7 +73,7 @@
                               ToolTip.Tip="{loc:Translate MARK_UNMARK_AS_START_OF_LEVEL_SAVE}">
                     <ToggleButton.Content>
                         <iconPacks:PackIconRemixIcon
-                            Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToMaterialIconConverter}}"/>
+                            Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToIconConverter}}"/>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <controls:IconOnlyButton Icon="DeleteBinLine"

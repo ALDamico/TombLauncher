@@ -14,13 +14,13 @@
         <pages:GameListViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="AddToFavouritesBooleanToMaterialIconConverter" 
+        <valueConverters:BooleanToIconConverter x:Key="AddToFavouritesBooleanToIconConverter" 
                                                         TrueValue="HeartFill" 
                                                         FalseValue="HeartLine"/>
         <valueConverters:BooleanToStringConverter x:Key="AddRemoveFromFavouritesBooleanConverter" 
                                                   TrueValue="{loc:Translate REMOVE_FROM_FAVOURITES}" 
                                                   FalseValue="{loc:Translate ADD_TO_FAVOURITES}"/>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="MarkAsCompletedBooleanToMaterialIconConverter" 
+        <valueConverters:BooleanToIconConverter x:Key="MarkAsCompletedBooleanToIconConverter" 
                                                         TrueValue="TrophyFill" 
                                                         FalseValue="TrophyLine"/>
         <valueConverters:BooleanToStringConverter x:Key="MarkUnmarkCompletedBooleanConverter" 
@@ -50,14 +50,14 @@
                               Command="{Binding AddToFavouritesCmd}"
                               CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
-                            <iconPacks:PackIconRemixIcon Kind="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
+                            <iconPacks:PackIconRemixIcon Kind="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToIconConverter}}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}"
                               Command="{Binding MarkUnmarkCompletedCmd}"
                               CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
-                            <iconPacks:PackIconRemixIcon Kind="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
+                            <iconPacks:PackIconRemixIcon Kind="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToIconConverter}}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
@@ -96,7 +96,7 @@
                             <ToggleButton Classes="icon-only" 
                                           Command="{Binding MarkGameAsFavouriteCmd}" 
                                           ToolTip.Tip="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}">
-                                <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
+                                <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToIconConverter}}"/>
                             </ToggleButton>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -111,7 +111,7 @@
                             <ToggleButton Classes="icon-only" 
                                           Command="{Binding MarkGameAsCompletedCmd}" 
                                           ToolTip.Tip="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}">
-                                <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
+                                <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToIconConverter}}"/>
                             </ToggleButton>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

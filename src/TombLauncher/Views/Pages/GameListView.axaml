@@ -14,7 +14,7 @@
         <pages:GameListViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <valueConverters:BooleanToMaterialIconConverter x:Key="BooleanToMaterialIconConverter"
+        <valueConverters:BooleanToIconConverter x:Key="BooleanToIconConverter"
                                                         TrueValue="GridLine"
                                                         FalseValue="TableLine" />
         <valueConverters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
@@ -40,7 +40,7 @@
             <ToggleButton IsChecked="{Binding ShowAsGrid}">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconRemixIcon Kind="{Binding ShowAsGrid, Converter={StaticResource BooleanToMaterialIconConverter}}" 
+                        <iconPacks:PackIconRemixIcon Kind="{Binding ShowAsGrid, Converter={StaticResource BooleanToIconConverter}}" 
                                                Margin="5, 0"></iconPacks:PackIconRemixIcon>
                         <TextBlock Text="{Binding ShowAsGrid, Converter={StaticResource BooleanToStringConverter}}"/>
                     </StackPanel>

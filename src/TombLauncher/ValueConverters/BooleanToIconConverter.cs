@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.ValueConverters;
 
-public class BooleanToMaterialIconConverter : IValueConverter
+public class BooleanToIconConverter : IValueConverter
 {
     public PackIconRemixIconKind? TrueValue { get; set; }
     public PackIconRemixIconKind? FalseValue { get; set; }
