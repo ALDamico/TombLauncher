@@ -159,4 +159,22 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
         get => User.ShowRecentlyPlayed.Coalesce(Defaults.ShowRecentlyPlayed);
         set => User.ShowRecentlyPlayed = value.DefaultIfEquals(Defaults.ShowRecentlyPlayed);
     }
+
+    public bool? ShowFavourites
+    {
+        get => User.ShowFavourites.Coalesce(Defaults.ShowFavourites);
+        set => User.ShowFavourites = value.DefaultIfEquals(Defaults.ShowFavourites);
+    }
+
+    public int? RecentlyPlayedCount
+    {
+        get => User.RecentlyPlayedCount.Coalesce(Defaults.RecentlyPlayedCount);
+        set => User.RecentlyPlayedCount = value.DefaultIfEquals(Defaults.RecentlyPlayedCount);
+    }
+
+    public int? FavouritesCount
+    {
+        get => User.FavouritesCount.Coalesce(Defaults.FavouritesCount);
+        set => User.FavouritesCount = value.DefaultIfEquals(Defaults.FavouritesCount);
+    }
 }

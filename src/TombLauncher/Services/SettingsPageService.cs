@@ -115,6 +115,9 @@ public class SettingsPageService : IViewService
         _appConfiguration.ShowQuickStats = welcomePageSettings.ShowQuickStats;
         _appConfiguration.ShowQuickActions = welcomePageSettings.ShowQuickActions;
         _appConfiguration.ShowRecentlyPlayed = welcomePageSettings.ShowRecentlyPlayed;
+        _appConfiguration.ShowFavourites = welcomePageSettings.ShowFavourites;
+        _appConfiguration.RecentlyPlayedCount = welcomePageSettings.RecentlyPlayedCount;
+        _appConfiguration.FavouritesCount = welcomePageSettings.FavouritesCount;
         var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
         await File.WriteAllTextAsync(userConfigPath,
             JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
@@ -169,4 +172,7 @@ public class SettingsPageService : IViewService
     public bool GetShowQuickStats() => _appConfiguration.ShowQuickStats.GetValueOrDefault(true);
     public bool GetShowQuickActions() => _appConfiguration.ShowQuickActions.GetValueOrDefault(true);
     public bool GetShowRecentlyPlayed() => _appConfiguration.ShowRecentlyPlayed.GetValueOrDefault(true);
+    public bool GetShowFavourites() => _appConfiguration.ShowFavourites.GetValueOrDefault(true);
+    public int GetRecentlyPlayedCount() => _appConfiguration.RecentlyPlayedCount.GetValueOrDefault(5);
+    public int GetFavouritesCount() => _appConfiguration.FavouritesCount.GetValueOrDefault(5);
 }

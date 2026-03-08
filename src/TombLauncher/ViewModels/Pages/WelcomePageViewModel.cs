@@ -22,6 +22,7 @@ public partial class WelcomePageViewModel : PageViewModel
     [ObservableProperty] private bool _showQuickStats = true;
     [ObservableProperty] private bool _showQuickActions = true;
     [ObservableProperty] private bool _showRecentlyPlayed = true;
+    [ObservableProperty] private bool _showFavourites = true;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasRecentlyPlayedGames))]
     [NotifyCanExecuteChangedFor(nameof(PreviousRecentGameCommand))]
@@ -38,19 +39,37 @@ public partial class WelcomePageViewModel : PageViewModel
     [NotifyCanExecuteChangedFor(nameof(NextRecentGameCommand))]
     private List<int> _paginationIndices = new();
 
+    // Favourites carousel
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasFavouriteGames))]
+    [NotifyCanExecuteChangedFor(nameof(PreviousFavouriteCommand))]
+    [NotifyCanExecuteChangedFor(nameof(NextFavouriteCommand))]
+    private ObservableCollection<GameWithStatsViewModel> _favouriteGames = new();
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PreviousFavouriteCommand))]
+    [NotifyCanExecuteChangedFor(nameof(NextFavouriteCommand))]
+    private int _favouriteIndex;
+    public bool HasFavouriteGames => FavouriteGames.Count > 0;
+    [ObservableProperty] private List<int> _favouritePaginationIndices = new();
+
     protected override async Task RaiseInitialize()
     {
         _welcomePageService.HandleNotNotifiedCrashes();
         ShowQuickStats = _welcomePageService.GetShowQuickStats();
         ShowQuickActions = _welcomePageService.GetShowQuickActions();
         ShowRecentlyPlayed = _welcomePageService.GetShowRecentlyPlayed();
+        ShowFavourites = _welcomePageService.GetShowFavourites();
         var latestPlayedGame = await _welcomePageService.GetLatestPlayedGame();
         LatestPlayedGame = latestPlayedGame;
         QuickStats = await _welcomePageService.GetQuickStatsAsync();
         RecentlyPlayedGames = new ObservableCollection<GameWithStatsViewModel>(
-            _welcomePageService.GetRecentlyPlayedGames());
+            _welcomePageService.GetRecentlyPlayedGames(_welcomePageService.GetRecentlyPlayedCount()));
         PaginationIndices = Enumerable.Range(0, RecentlyPlayedGames.Count).ToList();
-        RecentlyPlayedIndex = 0; // Force notification for initial dot selection
+        RecentlyPlayedIndex = 0;
+        FavouriteGames = new ObservableCollection<GameWithStatsViewModel>(
+            _welcomePageService.GetFavouriteGames(_welcomePageService.GetFavouritesCount()));
+        FavouritePaginationIndices = Enumerable.Range(0, FavouriteGames.Count).ToList();
+        FavouriteIndex = 0;
         await base.RaiseInitialize();
     }
 
@@ -71,6 +90,15 @@ public partial class WelcomePageViewModel : PageViewModel
 
     private bool CanGoPrevious() => RecentlyPlayedIndex > 0;
     private bool CanGoNext() => RecentlyPlayedIndex < RecentlyPlayedGames.Count - 1;
+
+    [RelayCommand(CanExecute = nameof(CanGoPreviousFavourite))]
+    private void PreviousFavourite() => FavouriteIndex--;
+
+    [RelayCommand(CanExecute = nameof(CanGoNextFavourite))]
+    private void NextFavourite() => FavouriteIndex++;
+
+    private bool CanGoPreviousFavourite() => FavouriteIndex > 0;
+    private bool CanGoNextFavourite() => FavouriteIndex < FavouriteGames.Count - 1;
 
     [ObservableProperty] private string _changeLogPath = string.Empty;
 }

@@ -29,4 +29,7 @@ public interface IAppConfiguration
     bool? ShowQuickStats { get; set; }
     bool? ShowQuickActions { get; set; }
     bool? ShowRecentlyPlayed { get; set; }
+    bool? ShowFavourites { get; set; }
+    int? RecentlyPlayedCount { get; set; }
+    int? FavouritesCount { get; set; }
 }

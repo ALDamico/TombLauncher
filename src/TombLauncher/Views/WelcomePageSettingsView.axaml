@@ -17,5 +17,18 @@
         <ToggleSwitch IsChecked="{Binding ShowRecentlyPlayed}"
                       OnContent="{loc:Translate SHOW_RECENTLY_PLAYED}"
                       OffContent="{loc:Translate SHOW_RECENTLY_PLAYED}" />
+        <NumericUpDown Value="{Binding RecentlyPlayedCount}"
+                       Minimum="1" Maximum="10" Increment="1"
+                       IsVisible="{Binding ShowRecentlyPlayed}"
+                       Watermark="{loc:Translate RECENTLY_PLAYED_COUNT}"
+                       Margin="24,0,0,0" />
+        <ToggleSwitch IsChecked="{Binding ShowFavourites}"
+                      OnContent="{loc:Translate SHOW_FAVOURITES}"
+                      OffContent="{loc:Translate SHOW_FAVOURITES}" />
+        <NumericUpDown Value="{Binding FavouritesCount}"
+                       Minimum="1" Maximum="10" Increment="1"
+                       IsVisible="{Binding ShowFavourites}"
+                       Watermark="{loc:Translate FAVOURITES_COUNT}"
+                       Margin="24,0,0,0" />
     </StackPanel>
 </UserControl>

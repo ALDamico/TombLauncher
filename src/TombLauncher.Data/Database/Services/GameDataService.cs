@@ -183,6 +183,38 @@ public class GameDataService
         }).ToList();
     }
 
+    public List<GameWithStatsDto> GetFavouriteGames(int count)
+    {
+        var favouriteGames = _dbContext.Games
+            .Include(g => g.FileBackups)
+            .Where(g => g.IsFavourite)
+            .ToList();
+
+        var gameIds = favouriteGames.Select(g => g.Id).ToHashSet();
+
+        var playSessionStats = _dbContext.PlaySession
+            .Where(ps => gameIds.Contains(ps.GameId))
+            .AsEnumerable()
+            .GroupBy(ps => ps.GameId)
+            .ToDictionary(
+                g => g.Key,
+                g => new
+                {
+                    LastPlayed = g.Max(ps => ps.StartDate),
+                    TotalPlayedTime = TimeSpan.FromTicks(g.Sum(ps => (ps.EndDate - ps.StartDate).Ticks))
+                });
+
+        return favouriteGames
+            .OrderByDescending(g => playSessionStats.ContainsKey(g.Id) ? playSessionStats[g.Id].LastPlayed : DateTime.MinValue)
+            .Take(count)
+            .Select(g => new GameWithStatsDto
+            {
+                GameMetadata = _mapper.Map<GameMetadataDto>(g),
+                LastPlayed = playSessionStats.ContainsKey(g.Id) ? playSessionStats[g.Id].LastPlayed : null,
+                TotalPlayedTime = playSessionStats.ContainsKey(g.Id) ? playSessionStats[g.Id].TotalPlayedTime : TimeSpan.Zero
+            }).ToList();
+    }
+
     public async Task UpdateLaunchOptions(LaunchOptionsDto launchOptionsDto)
     {
         var targetFileTypes = new List<FileType>()
