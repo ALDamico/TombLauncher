@@ -1,0 +1,62 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d"
+             x:Class="TombLauncher.Views.RandomGameSuggestionWidget"
+             x:Name="WidgetRoot"
+             x:DataType="pages:WelcomePageViewModel">
+    <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
+            IsVisible="{Binding ShowRandomSuggestion}">
+        <StackPanel Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <iconPacks:PackIconRemixIcon Kind="ShuffleLine" Width="20" Height="20"
+                                              Foreground="{DynamicResource PrimaryBrush}"
+                                              VerticalAlignment="Center" />
+                <TextBlock Text="{loc:Translate RANDOM_GAME_SUGGESTION}"
+                           FontSize="16" FontWeight="Bold"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+
+            <!-- Loading spinner -->
+            <controls:RingLoader Width="40" Height="40"
+                                 HorizontalAlignment="Center"
+                                 Margin="0,16"
+                                 IsVisible="{Binding IsLoadingRandomSuggestion}" />
+
+            <!-- Error state -->
+            <controls:EmptyStateView Icon="ErrorWarningLine"
+                                      Subtitle="{loc:Translate RANDOM_SUGGESTION_FAILED}"
+                                      IsVisible="{Binding RandomSuggestionFailed}"
+                                      Margin="0,16" />
+
+            <!-- Game suggestion -->
+            <ContentControl Content="{Binding RandomSuggestion}"
+                            IsVisible="{Binding HasRandomSuggestion}"
+                            HorizontalAlignment="Center">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate>
+                        <views:GameSearchResultCardView TapCommand="{Binding DataContext.OpenRandomSuggestionCommand, ElementName=WidgetRoot}" />
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+
+            <!-- Shuffle button -->
+            <Button Command="{Binding ShuffleRandomSuggestionCommand}"
+                    HorizontalAlignment="Center"
+                    Margin="0,4,0,0">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <iconPacks:PackIconRemixIcon Kind="RefreshLine" Width="16" Height="16"
+                                                  VerticalAlignment="Center" />
+                    <TextBlock Text="{loc:Translate SHUFFLE}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>

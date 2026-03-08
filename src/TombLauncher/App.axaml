@@ -49,7 +49,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://TombLauncher/Assets/Themes/ScionTheme.axaml" />
                 <ResourceInclude Source="../Assets/RatingStyles.axaml" />
-                <ResourceInclude Source="avares://LoadingIndicators.Avalonia/LoadingIndicators.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
