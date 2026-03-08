@@ -131,6 +131,9 @@
                         <Carousel Grid.Column="1"
                                   ItemsSource="{Binding RecentlyPlayedGames}"
                                   SelectedIndex="{Binding RecentlyPlayedIndex}">
+                            <Carousel.PageTransition>
+                                <CrossFade Duration="0:0:0.3" />
+                            </Carousel.PageTransition>
                             <Carousel.ItemTemplate>
                                 <DataTemplate>
                                     <views:GameCardView HorizontalAlignment="Center" />
@@ -155,6 +158,7 @@
                                   Margin="0,4,0,0">
                         <ItemsControl.Resources>
                             <converters:IndexMatchToBrushConverter x:Key="DotFillConverter" />
+                            <converters:IndexMatchToDoubleConverter x:Key="DotSizeConverter" />
                         </ItemsControl.Resources>
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -163,7 +167,35 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="x:Int32">
-                                <Ellipse Width="8" Height="8" VerticalAlignment="Center">
+                                <Ellipse VerticalAlignment="Center">
+                                    <Ellipse.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Width" Duration="0:0:0.2" />
+                                            <DoubleTransition Property="Height" Duration="0:0:0.2" />
+                                            <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                                        </Transitions>
+                                    </Ellipse.Transitions>
+                                    <Ellipse.Width>
+                                        <MultiBinding Converter="{StaticResource DotSizeConverter}" ConverterParameter="12|8">
+                                            <Binding Path="." />
+                                            <Binding Path="DataContext.RecentlyPlayedIndex"
+                                                     ElementName="Root" />
+                                        </MultiBinding>
+                                    </Ellipse.Width>
+                                    <Ellipse.Height>
+                                        <MultiBinding Converter="{StaticResource DotSizeConverter}" ConverterParameter="12|8">
+                                            <Binding Path="." />
+                                            <Binding Path="DataContext.RecentlyPlayedIndex"
+                                                     ElementName="Root" />
+                                        </MultiBinding>
+                                    </Ellipse.Height>
+                                    <Ellipse.Opacity>
+                                        <MultiBinding Converter="{StaticResource DotSizeConverter}" ConverterParameter="1|0.4">
+                                            <Binding Path="." />
+                                            <Binding Path="DataContext.RecentlyPlayedIndex"
+                                                     ElementName="Root" />
+                                        </MultiBinding>
+                                    </Ellipse.Opacity>
                                     <Ellipse.Fill>
                                         <MultiBinding Converter="{StaticResource DotFillConverter}">
                                             <Binding Path="." />
