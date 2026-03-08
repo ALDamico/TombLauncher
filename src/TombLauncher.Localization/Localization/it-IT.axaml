@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
@@ -319,5 +319,11 @@
     <system:String x:Key="GAME_COMPLETED">Gioco completato</system:String>
     <system:String x:Key="PLAY_TIME">Tempo di gioco</system:String>
     <system:String x:Key="SETTINGS">Impostazioni</system:String>
+    <system:String x:Key="GAMES_INSTALLED">Giochi installati</system:String>
+    <system:String x:Key="TOTAL_TIME_PLAYED">Tempo di gioco totale</system:String>
+    <system:String x:Key="COMPLETED_GAMES">Giochi completati</system:String>
+    <system:String x:Key="FAVOURITE_GAMES">Giochi preferiti</system:String>
+    <system:String x:Key="WELCOME_SUBTITLE">Un gestore per i livelli Tomb Raider Level Editor</system:String>
+    <system:String x:Key="WHATS_NEW">Novità</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

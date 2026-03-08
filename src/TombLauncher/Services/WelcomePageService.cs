@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Core.Dtos;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
@@ -15,23 +14,23 @@ public class WelcomePageService : IViewService
     public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GameDataService gameDataService, AppCrashHostService appCrashHostService)
     {
         ViewContext = viewContext;
-        AppCrashDataService = appCrashDataService;
+        _appCrashDataService = appCrashDataService;
         _gameDataService = gameDataService;
         _appCrashHostService = appCrashHostService;
     }
     public ViewServiceContext ViewContext { get; }
-    public AppCrashDataService AppCrashDataService { get; }
+    private readonly AppCrashDataService _appCrashDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
     public IDialogService DialogService => ViewContext.DialogService;
-    private IMapper _mapper => ViewContext.Mapper;
-    private GameDataService _gameDataService;
-    private AppCrashHostService _appCrashHostService;
+    private IMapper Mapper => ViewContext.Mapper;
+    private readonly GameDataService _gameDataService;
+    private readonly AppCrashHostService _appCrashHostService;
 
     internal void HandleNotNotifiedCrashes()
     {
-        var unnotifiedCrash = AppCrashDataService.GetNotNotifiedCrashes();
+        var unnotifiedCrash = _appCrashDataService.GetNotNotifiedCrashes();
         if (unnotifiedCrash == null) return;
         var appCrashHostViewModel = new AppCrashHostViewModel(_appCrashHostService) { Crash = unnotifiedCrash };
 
@@ -46,7 +45,12 @@ public class WelcomePageService : IViewService
     internal async Task<GameWithStatsViewModel> GetLatestPlayedGame()
     {
         var latestPlayedGame = _gameDataService.GetLatestPlayedGame();
-        var viewModel = _mapper.Map<GameWithStatsViewModel>(latestPlayedGame);
+        var viewModel = Mapper.Map<GameWithStatsViewModel>(latestPlayedGame);
         return await Task.FromResult(viewModel);
+    }
+
+    internal async Task<QuickStatsDto> GetQuickStatsAsync()
+    {
+        return await _gameDataService.GetQuickStatsAsync();
     }
 }

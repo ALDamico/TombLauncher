@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
@@ -14,12 +14,14 @@ public partial class WelcomePageViewModel : PageViewModel
 
     private readonly WelcomePageService _welcomePageService;
     [ObservableProperty] private GameWithStatsViewModel? _latestPlayedGame;
+    [ObservableProperty] private QuickStatsDto? _quickStats;
 
     protected override async Task RaiseInitialize()
     {
         _welcomePageService.HandleNotNotifiedCrashes();
         var latestPlayedGame = await _welcomePageService.GetLatestPlayedGame();
         LatestPlayedGame = latestPlayedGame;
+        QuickStats = await _welcomePageService.GetQuickStatsAsync();
         await base.RaiseInitialize();
     }
 

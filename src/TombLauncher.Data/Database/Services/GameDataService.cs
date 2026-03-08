@@ -231,6 +231,22 @@ public class GameDataService
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task<QuickStatsDto> GetQuickStatsAsync()
+    {
+        var games = await _dbContext.Games.ToListAsync();
+        var playSessions = await _dbContext.PlaySession.ToListAsync();
+        var totalPlayTime = playSessions.Aggregate(TimeSpan.Zero,
+            (sum, ps) => sum + (ps.EndDate - ps.StartDate));
+
+        return new QuickStatsDto
+        {
+            InstalledGamesCount = games.Count(g => g.IsInstalled),
+            CompletedGamesCount = games.Count(g => g.IsCompleted),
+            FavouriteGamesCount = games.Count(g => g.IsFavourite),
+            TotalPlayTime = totalPlayTime
+        };
+    }
+
     private async Task<GameMetadataDto> GetGameWithExecutables(int id)
     {
         var targetFileTypes = new List<FileType>()

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,6 +6,8 @@
              xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.WelcomePageView"
              x:DataType="pages:WelcomePageViewModel">
@@ -20,17 +22,63 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
     <ScrollViewer>
-        <StackPanel>
-            <TextBlock FontSize="20" FontWeight="DemiBold">Welcome to Tomb Launcher</TextBlock>
-            <TextBlock>Tomb Launcher is a Tomb Raider Level Editor manager.</TextBlock>
-            <TextBlock FontSize="16"  FontWeight="DemiBold"
-                       Margin="0, 10"
-                       Text="{loc:Translate RESUME_YOUR_LAST_GAME}" 
-                       IsVisible="{Binding LatestPlayedGame, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-            <views:GameCardView DataContext="{Binding LatestPlayedGame}" 
-                                HorizontalAlignment="Left"
-                                IsVisible="{Binding ., Converter={x:Static ObjectConverters.IsNotNull}}"/>
-            <mdxaml:MarkdownScrollViewer ScrollViewer.IsScrollChainingEnabled="True" Source="{Binding ChangeLogPath}" />
+        <StackPanel Margin="16">
+            <!-- Hero Section -->
+            <TextBlock Classes="h1" Text="TOMB LAUNCHER" FontSize="48" Margin="0,8,0,4" />
+            <TextBlock Text="{loc:Translate WELCOME_SUBTITLE}"
+                       HorizontalAlignment="Center"
+                       Foreground="{DynamicResource SecondaryBrush}"
+                       FontSize="14"
+                       Margin="0,0,0,16" />
+
+            <!-- Quick Stats -->
+            <UniformGrid Columns="4" Margin="0,0,0,16">
+                <controls:StatCard Icon="GamepadLine"
+                                   Value="{Binding QuickStats.InstalledGamesCount}"
+                                   Label="{loc:Translate GAMES_INSTALLED}" />
+                <controls:StatCard Icon="TimeLine"
+                                   Value="{Binding QuickStats.TotalPlayTime, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"
+                                   Label="{loc:Translate TOTAL_TIME_PLAYED}" />
+                <controls:StatCard Icon="TrophyLine"
+                                   Value="{Binding QuickStats.CompletedGamesCount}"
+                                   Label="{loc:Translate COMPLETED_GAMES}" />
+                <controls:StatCard Icon="HeartLine"
+                                   Value="{Binding QuickStats.FavouriteGamesCount}"
+                                   Label="{loc:Translate FAVOURITE_GAMES}" />
+            </UniformGrid>
+
+            <!-- Resume Last Game -->
+            <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
+                    IsVisible="{Binding LatestPlayedGame, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <iconPacks:PackIconRemixIcon Kind="PlayLargeFill" Width="20" Height="20"
+                                                      Foreground="{DynamicResource PrimaryBrush}"
+                                                      VerticalAlignment="Center" />
+                        <TextBlock Text="{loc:Translate RESUME_YOUR_LAST_GAME}"
+                                   FontSize="16" FontWeight="DemiBold"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                    <views:GameCardView DataContext="{Binding LatestPlayedGame}"
+                                        HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
+
+            <!-- What's New -->
+            <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <iconPacks:PackIconRemixIcon Kind="FileTextLine" Width="20" Height="20"
+                                                      Foreground="{DynamicResource PrimaryBrush}"
+                                                      VerticalAlignment="Center" />
+                        <TextBlock Text="{loc:Translate WHATS_NEW}"
+                                   FontSize="16" FontWeight="DemiBold"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                    <mdxaml:MarkdownScrollViewer ScrollViewer.IsScrollChainingEnabled="True"
+                                                 Source="{Binding ChangeLogPath}" />
+                </StackPanel>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
