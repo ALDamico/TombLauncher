@@ -8,7 +8,7 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              xmlns:downloaders="clr-namespace:TombLauncher.Contracts.Downloaders;assembly=TombLauncher.Contracts"
              xmlns:views="clr-namespace:TombLauncher.Views"
@@ -57,7 +57,7 @@
         <Style Selector="StackPanel.meta-item">
             <Setter Property="Orientation" Value="Horizontal"/>
         </Style>
-        <Style Selector="StackPanel.meta-item > avalonia|MaterialIcon">
+        <Style Selector="StackPanel.meta-item > iconPacks|PackIconRemixIcon">
             <Setter Property="Width" Value="14"/>
             <Setter Property="Height" Value="14"/>
             <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
@@ -166,26 +166,26 @@
                     <!-- Release Date -->
                     <StackPanel Classes="meta-item" Margin="0, 0, 12, 4"
                                 IsVisible="{Binding ReleaseDate, Converter={x:Static ObjectConverters.IsNotNull}}">
-                        <avalonia:MaterialIcon Kind="Calendar"/>
+                        <iconPacks:PackIconRemixIcon Kind="CalendarLine"/>
                         <TextBlock Text="{Binding ReleaseDate, Mode=OneWay, Converter={StaticResource DateOnlyFormatter}}"/>
                     </StackPanel>
                     
                     <!-- Engine -->
                     <StackPanel Classes="meta-item" Margin="0, 0, 12, 4">
-                        <avalonia:MaterialIcon Kind="Cog"/>
+                        <iconPacks:PackIconRemixIcon Kind="Settings3Line"/>
                         <TextBlock Text="{Binding Engine, Converter={StaticResource EnumToDescriptionConverter}}"/>
                     </StackPanel>
                     
                     <!-- Difficulty -->
                     <StackPanel Classes="meta-item" Margin="0, 0, 12, 4">
-                        <avalonia:MaterialIcon Kind="Signal"/>
+                        <iconPacks:PackIconRemixIcon Kind="SignalWifiLine"/>
                         <TextBlock Text="{Binding Difficulty, Converter={StaticResource EnumToDescriptionConverter}}"/>
                     </StackPanel>
                     
                     <!-- Rating -->
                     <StackPanel Classes="meta-item" Margin="0, 0, 12, 4"
                                 IsVisible="{Binding Rating, Converter={x:Static ObjectConverters.IsNotNull}}">
-                        <avalonia:MaterialIcon Kind="Star" Foreground="{DynamicResource AccentBrush}"/>
+                        <iconPacks:PackIconRemixIcon Kind="StarLine" Foreground="{DynamicResource AccentBrush}"/>
                         <TextBlock Text="{Binding Rating, StringFormat='{}{0:0.0}'}" 
                                    Foreground="{DynamicResource AccentBrush}"/>
                     </StackPanel>
@@ -193,7 +193,7 @@
                     <!-- Size -->
                     <StackPanel Classes="meta-item" Margin="0, 0, 12, 4"
                                 IsVisible="{Binding SizeInMb, Converter={x:Static ObjectConverters.IsNotNull}}">
-                        <avalonia:MaterialIcon Kind="HarddiskPlus"/>
+                        <iconPacks:PackIconRemixIcon Kind="HardDriveLine"/>
                         <TextBlock>
                             <Run Text="{Binding SizeInMb}"/>
                             <Run Text="MB"/>
@@ -222,7 +222,7 @@
 
             <!-- Actions -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top" Spacing="4" Margin="0, 4, 0, 0">
-                <controls:IconOnlyButton Icon="Play" Classes="btn-success"
+                <controls:IconOnlyButton Icon="PlayLargeFill" Classes="btn-success"
                                          Command="{Binding InstalledGame.PlayCmd}"
                                          IsVisible="{Binding InstalledGame, Converter={StaticResource GameInstalledToBooleanConverter}, Mode=OneWay}" />
                 <Button Command="{Binding InstallCmd}"
@@ -232,9 +232,9 @@
                         IsEnabled="{Binding ., Converter={StaticResource SearchResultCanDownloadToBooleanConverter}}"
                         ToolTip.Tip="{Binding DownloadLink, Converter={StaticResource DownloadToolTipConverter}}"
                         ToolTip.ShowOnDisabled="True">
-                    <avalonia:MaterialIcon Kind="Download" />
+                    <iconPacks:PackIconRemixIcon Kind="Download2Line" />
                 </Button>
-                <controls:IconOnlyButton Icon="Cancel"
+                <controls:IconOnlyButton Icon="CloseLine"
                                          Classes="btn-danger"
                                          ToolTip.Tip="{loc:Translate CANCEL}"
                                          IsVisible="{Binding InstallProgress, Converter={StaticResource GameIsInstallingToBooleanConverter}}"

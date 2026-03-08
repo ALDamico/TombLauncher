@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -23,7 +23,7 @@
                        Value="{Binding NumberOfVersionsToKeep}" 
                        IsEnabled="{Binding LimitNumberOfVersions}"/>
         <DockPanel LastChildFill="True">
-            <controls:Infotip DockPanel.Dock="Right" Icon="Dangerous" Foreground="{DynamicResource DangerBrush}"
+            <controls:Infotip DockPanel.Dock="Right" Icon="ErrorWarningLine" Foreground="{DynamicResource DangerBrush}"
                               Header="{loc:Translate POTENTIALLY_DANGEROUS_SETTING}" 
                               ToolTipContent="{loc:Translate SAVEGAME_BACKUP_MILLISECOND_DELAY_WARNING}"/>
             <TextBlock Text="{loc:Translate SAVEGAME_BACKUP_DELAY_MS}"></TextBlock>
@@ -34,7 +34,7 @@
                               ToolTipContent="{loc:Translate RESCANS_YOUR_BACKED_UP_SAVEGAMES_AND_SYNCS_THEIR_C}"/>
             <TextBlock Text="{loc:Translate SYNC_SAVEGAME_METADATA}"/>    
         </DockPanel>
-        <controls:IconButton Icon="Sync" 
+        <controls:IconButton Icon="RefreshLine" 
                              Text="{loc:Translate SYNC_NOW}" Command="{Binding SyncSavegamesInfoCmd}"/>
         
     </StackPanel>

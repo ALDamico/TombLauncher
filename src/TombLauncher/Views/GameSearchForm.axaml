@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:helpers="clr-namespace:TombLauncher.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameSearchForm"
@@ -19,7 +19,7 @@
         <!-- Search Bar -->
         <Border Classes="search-bar">
             <Grid ColumnDefinitions="Auto, *, Auto">
-                <avalonia:MaterialIcon Grid.Column="0" Kind="Magnify" 
+                <iconPacks:PackIconRemixIcon Grid.Column="0" Kind="Search2Line" 
                                        Width="22" Height="22" 
                                        Foreground="{DynamicResource MutedTextBrush}"
                                        VerticalAlignment="Center"
@@ -29,7 +29,7 @@
                          Watermark="{loc:Translate TITLE}"
                          VerticalAlignment="Center"/>
                 <controls:IconButton Grid.Column="2"
-                                     Icon="Search"
+                                     Icon="Search2Line"
                                      Text="{loc:Translate SEARCH}"
                                      Classes="btn-primary"
                                      MinWidth="100"
@@ -48,7 +48,7 @@
                           Padding="10, 6"
                           Width="NaN">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                    <avalonia:MaterialIcon Kind="FilterVariant" Width="16" Height="16"/>
+                    <iconPacks:PackIconRemixIcon Kind="FilterLine" Width="16" Height="16"/>
                     <TextBlock Text="{loc:Translate MORE_FILTERS}" FontSize="13" VerticalAlignment="Center"/>
                 </StackPanel>
             </ToggleButton>
@@ -72,7 +72,7 @@
                     <Style Selector="Button:pointerover /template/ ContentPresenter">
                         <Setter Property="Background" Value="#20808080"/>
                     </Style>
-                    <Style Selector="Button:pointerover avalonia|MaterialIcon">
+                    <Style Selector="Button:pointerover iconPacks|PackIconRemixIcon">
                         <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
                     </Style>
                     <Style Selector="Button:pointerover TextBlock">
@@ -84,7 +84,7 @@
                     </Style>
                 </Button.Styles>
                 <StackPanel Orientation="Horizontal" Spacing="4">
-                    <avalonia:MaterialIcon Kind="FilterRemove" Width="16" Height="16"
+                    <iconPacks:PackIconRemixIcon Kind="FilterOffLine" Width="16" Height="16"
                                            Foreground="{DynamicResource MutedTextBrush}"/>
                     <TextBlock Text="{loc:Translate CLEAR}" 
                                Foreground="{DynamicResource MutedTextBrush}"

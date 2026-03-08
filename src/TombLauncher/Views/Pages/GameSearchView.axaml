@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,7 +7,7 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameSearchView"
              x:Name="root"
@@ -67,7 +67,7 @@
                         VerticalAlignment="Center"
                         Spacing="8"
                         IsVisible="{Binding ShowEmptyState}">
-                <avalonia:MaterialIcon Kind="MagnifyClose" 
+                <iconPacks:PackIconRemixIcon Kind="SearchLine" 
                                        Width="64" Height="64"
                                        Foreground="{DynamicResource MutedTextBrush}"
                                        HorizontalAlignment="Center"/>
@@ -99,7 +99,7 @@
         <controls:IconButton Grid.Row="4"
                              HorizontalAlignment="Center"
                              Margin="0, 8"
-                             Icon="ChevronDown"
+                             Icon="ArrowDownSLine"
                              Text="{loc:Translate LOAD_MORE}"
                              Classes="btn-primary"
                              MinWidth="160"

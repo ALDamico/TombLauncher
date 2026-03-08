@@ -35,7 +35,7 @@
                 <controls:IconButton Grid.Row="0" 
                                      Classes="icon-only"
                                      ToolTip.Tip="Menu" 
-                                     Icon="Menu" 
+                                     Icon="MenuLine" 
                                      Command="{Binding TogglePaneCmd}"/>
 
                 <ListBox Grid.Row="1" 
@@ -110,7 +110,7 @@
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0" LastChildFill="False">
                 <controls:IconOnlyButton Command="{Binding GoBackCmd}"
-                                     Icon="ArrowBack" />
+                                     Icon="ArrowLeftLine" />
                 <ContentControl Content="{Binding NotificationListViewModel}" 
                                 DockPanel.Dock="Right"/>
                 <ItemsControl DockPanel.Dock="Right"

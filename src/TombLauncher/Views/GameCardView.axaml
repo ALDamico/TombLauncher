@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameCardView"
@@ -39,7 +39,7 @@
                     <MenuItem Header="{loc:Translate PLAY}" 
                               Command="{Binding PlayCmd}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="Play"/>
+                            <iconPacks:PackIconRemixIcon Kind="PlayLargeFill"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{loc:Translate VIEW_DETAILS}" 
@@ -48,20 +48,20 @@
                     <MenuItem Header="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}" 
                               Command="{Binding MarkGameAsFavouriteCmd}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
+                            <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}"
                               Command="{Binding MarkGameAsCompletedCmd}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
+                            <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="{loc:Translate UNINSTALL}" 
                               Command="{Binding UninstallCmd}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="TrashCan" Foreground="{DynamicResource DangerBrush}"/>
+                            <iconPacks:PackIconRemixIcon Kind="DeleteBinLine" Foreground="{DynamicResource DangerBrush}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>

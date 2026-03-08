@@ -1,10 +1,10 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
@@ -40,8 +40,8 @@
             <ToggleButton IsChecked="{Binding ShowAsGrid}">
                 <ToggleButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <avalonia:MaterialIcon Kind="{Binding ShowAsGrid, Converter={StaticResource BooleanToMaterialIconConverter}}" 
-                                               Margin="5, 0"></avalonia:MaterialIcon>
+                        <iconPacks:PackIconRemixIcon Kind="{Binding ShowAsGrid, Converter={StaticResource BooleanToMaterialIconConverter}}" 
+                                               Margin="5, 0"></iconPacks:PackIconRemixIcon>
                         <TextBlock Text="{Binding ShowAsGrid, Converter={StaticResource BooleanToStringConverter}}"/>
                     </StackPanel>
                 </ToggleButton.Content>

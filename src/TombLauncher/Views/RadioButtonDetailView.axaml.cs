@@ -1,7 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using IconPacks.Avalonia.RemixIcon;
 using IconPacks.Avalonia.RemixIcon;
 
 namespace TombLauncher.Views;

@@ -1,10 +1,10 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Dialogs.AppCrashHostView"
@@ -39,10 +39,10 @@
             <Button DockPanel.Dock="Right" ToolTip.Tip="{loc:Translate COPY}"
                     Command="{Binding CopyCmd}"
                     CommandParameter="{Binding Crash}">
-                <avalonia:MaterialIcon Kind="ContentCopy"></avalonia:MaterialIcon>
+                <iconPacks:PackIconRemixIcon Kind="FileCopyLine"></iconPacks:PackIconRemixIcon>
             </Button>
             <Button DockPanel.Dock="Right" ToolTip.Tip="{loc:Translate SAVE}" Command="{Binding SaveCmd}">
-                <avalonia:MaterialIcon Kind="FloppyDisc" />
+                <iconPacks:PackIconRemixIcon Kind="Save3Line" />
             </Button>
         </DockPanel>
         <Grid>
@@ -70,7 +70,7 @@
                      Text="{Binding Crash.ExceptionDto.StackTrace}" />
             <TextBlock Grid.Row="4" Grid.Column="0"
                        Text="{loc:Translate HAS_INNER_EXCEPTION}" />
-            <avalonia:MaterialIcon Grid.Row="4" Grid.Column="1"
+            <iconPacks:PackIconRemixIcon Grid.Row="4" Grid.Column="1"
                                    HorizontalAlignment="Left"
                                    FontSize="16"
                                    Foreground="{Binding Crash.ExceptionDto.InnerException, Converter={StaticResource ObjectNotNullToBrushConverter}}"

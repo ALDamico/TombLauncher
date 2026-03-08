@@ -1,10 +1,10 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -39,7 +39,7 @@
                               Command="{Binding PlayCmd}"
                               CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="Play"/>
+                            <iconPacks:PackIconRemixIcon Kind="PlayLargeFill"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{loc:Translate VIEW_DETAILS}" 
@@ -50,14 +50,14 @@
                               Command="{Binding AddToFavouritesCmd}"
                               CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
+                            <iconPacks:PackIconRemixIcon Kind="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}"
                               Command="{Binding MarkUnmarkCompletedCmd}"
                               CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
+                            <iconPacks:PackIconRemixIcon Kind="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
@@ -65,7 +65,7 @@
                               Command="{Binding UninstallCmd}" 
                               CommandParameter="{Binding SelectedGame}">
                         <MenuItem.Icon>
-                            <avalonia:MaterialIcon Kind="TrashCan" Foreground="{DynamicResource DangerBrush}"/>
+                            <iconPacks:PackIconRemixIcon Kind="DeleteBinLine" Foreground="{DynamicResource DangerBrush}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
@@ -75,10 +75,10 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" IsVisible="{Binding AreCommandsVisible}">
-                                <controls:IconButton Icon="Play"
+                                <controls:IconButton Icon="PlayLargeFill"
                                                      ToolTip.Tip="{Binding GameMetadata.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='Play GAMENAME'}"
                                                      Command="{Binding PlayCmd}" />
-                                <controls:IconButton Icon="Details" ToolTip.Tip="{loc:Translate VIEW_DETAILS}"
+                                <controls:IconButton Icon="FileListLine" ToolTip.Tip="{loc:Translate VIEW_DETAILS}"
                                                      Command="{Binding OpenCmd}">
                                 </controls:IconButton>
                             </StackPanel>
@@ -88,30 +88,30 @@
                 <DataGridTextColumn Header="{loc:Translate TITLE}" Binding="{Binding GameMetadata.Title}" />
                 <DataGridTemplateColumn >
                     <DataGridTemplateColumn.Header>
-                        <avalonia:MaterialIcon ToolTip.Tip="{loc:Translate FAVOURITE}" 
-                                               Kind="Heart"/>
+                        <iconPacks:PackIconRemixIcon ToolTip.Tip="{loc:Translate FAVOURITE}" 
+                                               Kind="HeartLine"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ToggleButton Classes="icon-only" 
                                           Command="{Binding MarkGameAsFavouriteCmd}" 
                                           ToolTip.Tip="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}">
-                                <avalonia:MaterialIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
+                                <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToMaterialIconConverter}}"/>
                             </ToggleButton>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn >
                     <DataGridTemplateColumn.Header>
-                        <avalonia:MaterialIcon ToolTip.Tip="{loc:Translate COMPLETED}" 
-                                               Kind="Trophy"/>
+                        <iconPacks:PackIconRemixIcon ToolTip.Tip="{loc:Translate COMPLETED}" 
+                                               Kind="TrophyLine"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ToggleButton Classes="icon-only" 
                                           Command="{Binding MarkGameAsCompletedCmd}" 
                                           ToolTip.Tip="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}">
-                                <avalonia:MaterialIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
+                                <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToMaterialIconConverter}}"/>
                             </ToggleButton>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
