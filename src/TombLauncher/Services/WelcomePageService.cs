@@ -145,5 +145,4 @@ public class WelcomePageService : IViewService
 
     internal async Task NavigateToNewGame() => await NavigationManager.NavigateTo<NewGameViewModel>();
     internal async Task NavigateToSearch() => await NavigationManager.NavigateTo<GameSearchViewModel>();
-    internal async Task NavigateToRandomGame() => await NavigationManager.NavigateToRoot<RandomGameViewModel>();
 }

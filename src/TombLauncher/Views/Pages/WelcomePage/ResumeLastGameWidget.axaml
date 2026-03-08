@@ -7,8 +7,11 @@
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d"
-             x:Class="TombLauncher.Views.ResumeLastGameWidget"
+             x:Class="TombLauncher.Views.Pages.WelcomePage.ResumeLastGameWidget"
              x:DataType="pages:WelcomePageViewModel">
+    <Design.DataContext>
+        <pages:WelcomePageViewModel></pages:WelcomePageViewModel>
+    </Design.DataContext>
     <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
             IsVisible="{Binding LatestPlayedGame, Converter={x:Static ObjectConverters.IsNotNull}}">
         <StackPanel Spacing="8">

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
@@ -124,6 +124,30 @@
       </Compile>
       <Compile Update="Views\Notifications\StringNotificationView.axaml.cs">
         <DependentUpon>StringNotificationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\RandomGameSuggestionWidget.axaml.cs">
+        <DependentUpon>RandomGameSuggestionWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\QuickStatsWidget.axaml.cs">
+        <DependentUpon>QuickStatsWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\QuickActionsWidget.axaml.cs">
+        <DependentUpon>QuickActionsWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\RecentlyPlayedWidget.axaml.cs">
+        <DependentUpon>RecentlyPlayedWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\ResumeLastGameWidget.axaml.cs">
+        <DependentUpon>ResumeLastGameWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\FavouritesWidget.axaml.cs">
+        <DependentUpon>FavouritesWidget.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

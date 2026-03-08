@@ -7,6 +7,7 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:welcomePage="clr-namespace:TombLauncher.Views.Pages.WelcomePage"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.WelcomePageView"
              x:Name="Root"
@@ -32,12 +33,12 @@
                        Margin="0,0,0,16" />
 
             <!-- Widgets -->
-            <views:QuickStatsWidget />
-            <views:QuickActionsWidget />
-            <views:ResumeLastGameWidget />
-            <views:RecentlyPlayedWidget />
-            <views:FavouritesWidget />
-            <views:RandomGameSuggestionWidget />
+            <welcomePage:QuickStatsWidget />
+            <welcomePage:QuickActionsWidget />
+            <welcomePage:ResumeLastGameWidget />
+            <welcomePage:RecentlyPlayedWidget />
+            <welcomePage:FavouritesWidget />
+            <welcomePage:RandomGameSuggestionWidget x:Name="RandomSuggestionSection" />
 
             <!-- What's New -->
             <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16">

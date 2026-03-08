@@ -6,8 +6,11 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d"
-             x:Class="TombLauncher.Views.QuickActionsWidget"
+             x:Class="TombLauncher.Views.Pages.WelcomePage.QuickActionsWidget"
              x:DataType="pages:WelcomePageViewModel">
+    <Design.DataContext>
+        <pages:WelcomePageViewModel></pages:WelcomePageViewModel>
+    </Design.DataContext>
     <UniformGrid Columns="3" Margin="0,0,0,16"
                  IsVisible="{Binding ShowQuickActions}">
         <Button Command="{Binding AddGameCommand}" Margin="4" Padding="16"
@@ -30,7 +33,7 @@
                            HorizontalAlignment="Center" />
             </StackPanel>
         </Button>
-        <Button Command="{Binding RandomGameCommand}" Margin="4" Padding="16"
+        <Button Command="{Binding ShuffleRandomSuggestionCommand}" Margin="4" Padding="16"
                 Classes="card-background" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
             <StackPanel Spacing="8" HorizontalAlignment="Center">
                 <iconPacks:PackIconRemixIcon Kind="ShuffleLine" Width="24" Height="24"

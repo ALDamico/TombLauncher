@@ -5,10 +5,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d"
-             x:Class="TombLauncher.Views.QuickStatsWidget"
+             x:Class="TombLauncher.Views.Pages.WelcomePage.QuickStatsWidget"
              x:DataType="pages:WelcomePageViewModel">
+    <Design.DataContext>
+        <pages:WelcomePageViewModel></pages:WelcomePageViewModel>
+    </Design.DataContext>
     <UniformGrid Columns="4" Margin="0,0,0,16"
                  IsVisible="{Binding ShowQuickStats}">
         <controls:StatCard Icon="GamepadLine"

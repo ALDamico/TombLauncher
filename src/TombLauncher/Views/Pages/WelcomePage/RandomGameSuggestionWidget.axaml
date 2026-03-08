@@ -8,9 +8,12 @@
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d"
-             x:Class="TombLauncher.Views.RandomGameSuggestionWidget"
+             x:Class="TombLauncher.Views.Pages.WelcomePage.RandomGameSuggestionWidget"
              x:Name="WidgetRoot"
              x:DataType="pages:WelcomePageViewModel">
+    <Design.DataContext>
+        <pages:WelcomePageViewModel></pages:WelcomePageViewModel>
+    </Design.DataContext>
     <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
             IsVisible="{Binding ShowRandomSuggestion}">
         <StackPanel Spacing="8">

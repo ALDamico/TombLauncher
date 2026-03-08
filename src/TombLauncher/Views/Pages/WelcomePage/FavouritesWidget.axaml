@@ -9,37 +9,37 @@
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:converters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d"
-             x:Class="TombLauncher.Views.RecentlyPlayedWidget"
+             x:Class="TombLauncher.Views.Pages.WelcomePage.FavouritesWidget"
              x:Name="WidgetRoot"
              x:DataType="pages:WelcomePageViewModel">
     <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
-            IsVisible="{Binding ShowRecentlyPlayed}">
+            IsVisible="{Binding ShowFavourites}">
         <StackPanel Spacing="8">
             <StackPanel Orientation="Horizontal" Spacing="8">
-                <iconPacks:PackIconRemixIcon Kind="HistoryLine" Width="20" Height="20"
+                <iconPacks:PackIconRemixIcon Kind="Heart3Line" Width="20" Height="20"
                                               Foreground="{DynamicResource PrimaryBrush}"
                                               VerticalAlignment="Center" />
-                <TextBlock Text="{loc:Translate RECENTLY_PLAYED}"
-                           FontSize="16" FontWeight="DemiBold"
+                <TextBlock Text="{loc:Translate FAVOURITE_GAMES}"
+                           FontSize="16" FontWeight="Bold"
                            VerticalAlignment="Center" />
             </StackPanel>
 
             <!-- Empty state -->
-            <controls:EmptyStateView Icon="HistoryLine"
-                                      Subtitle="{loc:Translate NO_RECENTLY_PLAYED_GAMES}"
-                                      IsVisible="{Binding !HasRecentlyPlayedGames}"
-                                      Margin="0,16" />
+            <controls:EmptyStateView Icon="Heart3Line"
+                                     Subtitle="{loc:Translate NO_FAVOURITE_GAMES}"
+                                     IsVisible="{Binding !HasFavouriteGames}"
+                                     Margin="0,16" />
 
             <!-- Carousel -->
             <Grid ColumnDefinitions="Auto,*,Auto"
-                  IsVisible="{Binding HasRecentlyPlayedGames}">
-                <Button Grid.Column="0" Command="{Binding PreviousRecentGameCommand}"
+                  IsVisible="{Binding HasFavouriteGames}">
+                <Button Grid.Column="0" Command="{Binding PreviousFavouriteCommand}"
                         VerticalAlignment="Center" Padding="8" Margin="0,0,8,0">
                     <iconPacks:PackIconRemixIcon Kind="ArrowLeftSLine" Width="20" Height="20" />
                 </Button>
                 <Carousel Grid.Column="1"
-                          ItemsSource="{Binding RecentlyPlayedGames}"
-                          SelectedIndex="{Binding RecentlyPlayedIndex}">
+                          ItemsSource="{Binding FavouriteGames}"
+                          SelectedIndex="{Binding FavouriteIndex}">
                     <Carousel.PageTransition>
                         <CrossFade Duration="0:0:0.3" />
                     </Carousel.PageTransition>
@@ -49,24 +49,24 @@
                         </DataTemplate>
                     </Carousel.ItemTemplate>
                 </Carousel>
-                <Button Grid.Column="2" Command="{Binding NextRecentGameCommand}"
+                <Button Grid.Column="2" Command="{Binding NextFavouriteCommand}"
                         VerticalAlignment="Center" Padding="8" Margin="8,0,0,0">
                     <iconPacks:PackIconRemixIcon Kind="ArrowRightSLine" Width="20" Height="20" />
                 </Button>
             </Grid>
 
             <!-- Pagination dots -->
-            <Border x:Name="ActiveBrushProvider" Background="{DynamicResource PrimaryBrush}"
+            <Border x:Name="FavActiveBrushProvider" Background="{DynamicResource PrimaryBrush}"
                     IsVisible="False" Width="0" Height="0" />
-            <Border x:Name="InactiveBrushProvider" Background="{DynamicResource MutedTextBrush}"
+            <Border x:Name="FavInactiveBrushProvider" Background="{DynamicResource MutedTextBrush}"
                     IsVisible="False" Width="0" Height="0" />
-            <ItemsControl ItemsSource="{Binding PaginationIndices}"
+            <ItemsControl ItemsSource="{Binding FavouritePaginationIndices}"
                           HorizontalAlignment="Center"
-                          IsVisible="{Binding HasRecentlyPlayedGames}"
+                          IsVisible="{Binding HasFavouriteGames}"
                           Margin="0,4,0,0">
                 <ItemsControl.Resources>
-                    <converters:IndexMatchToBrushConverter x:Key="DotFillConverter" />
-                    <converters:IndexMatchToDoubleConverter x:Key="DotSizeConverter" />
+                    <converters:IndexMatchToBrushConverter x:Key="FavDotFillConverter" />
+                    <converters:IndexMatchToDoubleConverter x:Key="FavDotSizeConverter" />
                 </ItemsControl.Resources>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -84,35 +84,35 @@
                                 </Transitions>
                             </Ellipse.Transitions>
                             <Ellipse.Width>
-                                <MultiBinding Converter="{StaticResource DotSizeConverter}" ConverterParameter="12|8">
+                                <MultiBinding Converter="{StaticResource FavDotSizeConverter}" ConverterParameter="10|8">
                                     <Binding Path="." />
-                                    <Binding Path="DataContext.RecentlyPlayedIndex"
+                                    <Binding Path="DataContext.FavouriteIndex"
                                              ElementName="WidgetRoot" />
                                 </MultiBinding>
                             </Ellipse.Width>
                             <Ellipse.Height>
-                                <MultiBinding Converter="{StaticResource DotSizeConverter}" ConverterParameter="12|8">
+                                <MultiBinding Converter="{StaticResource FavDotSizeConverter}" ConverterParameter="10|8">
                                     <Binding Path="." />
-                                    <Binding Path="DataContext.RecentlyPlayedIndex"
+                                    <Binding Path="DataContext.FavouriteIndex"
                                              ElementName="WidgetRoot" />
                                 </MultiBinding>
                             </Ellipse.Height>
                             <Ellipse.Opacity>
-                                <MultiBinding Converter="{StaticResource DotSizeConverter}" ConverterParameter="1|0.4">
+                                <MultiBinding Converter="{StaticResource FavDotSizeConverter}" ConverterParameter="1|0.4">
                                     <Binding Path="." />
-                                    <Binding Path="DataContext.RecentlyPlayedIndex"
+                                    <Binding Path="DataContext.FavouriteIndex"
                                              ElementName="WidgetRoot" />
                                 </MultiBinding>
                             </Ellipse.Opacity>
                             <Ellipse.Fill>
-                                <MultiBinding Converter="{StaticResource DotFillConverter}">
+                                <MultiBinding Converter="{StaticResource FavDotFillConverter}">
                                     <Binding Path="." />
-                                    <Binding Path="DataContext.RecentlyPlayedIndex"
+                                    <Binding Path="DataContext.FavouriteIndex"
                                              ElementName="WidgetRoot" />
                                     <Binding Path="Background"
-                                             ElementName="ActiveBrushProvider" />
+                                             ElementName="FavActiveBrushProvider" />
                                     <Binding Path="Background"
-                                             ElementName="InactiveBrushProvider" />
+                                             ElementName="FavInactiveBrushProvider" />
                                 </MultiBinding>
                             </Ellipse.Fill>
                         </Ellipse>

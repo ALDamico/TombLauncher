@@ -51,13 +51,6 @@ public partial class MainWindowViewModel : WindowViewModelBase
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = "RANDOM".GetLocalizedString(),
-                Icon = PackIconRemixIconKind.Dice6Line,
-                Text = "RANDOM_GAME".GetLocalizedString(),
-                ViewModelType = typeof(RandomGameViewModel)
-            },
-            new MainMenuItemViewModel()
-            {
                 ToolTip = "STATISTICS".GetLocalizedString(),
                 Icon = PackIconRemixIconKind.BarChart2Line,
                 Text = "STATISTICS".GetLocalizedString(),

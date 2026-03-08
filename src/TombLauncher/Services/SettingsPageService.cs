@@ -84,7 +84,6 @@ public class SettingsPageService : IViewService
         var appearanceSettings = viewModel.Sections.OfType<AppearanceSettingsViewModel>().First();
         var downloaderSettings = viewModel.Sections.OfType<DownloaderSettingsViewModel>().First();
         var gameDetailsSettings = viewModel.Sections.OfType<GameDetailsSettingsViewModel>().First();
-        var randomGameSettings = viewModel.Sections.OfType<RandomGameSettingsViewModel>().First();
         var backupSettings = viewModel.Sections.OfType<SavegameSettingsViewModel>().First();
         var welcomePageSettings = viewModel.Sections.OfType<WelcomePageSettingsViewModel>().First();
 
@@ -108,7 +107,7 @@ public class SettingsPageService : IViewService
         _appConfiguration.WinePath = gameDetailsSettings.WinePath;
         _appConfiguration.DocumentationPatterns = gameDetailsSettings.DocumentationPatterns?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
         _appConfiguration.DocumentationFolderExclusions = gameDetailsSettings.FolderExclusions?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
-        _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
+        _appConfiguration.RandomGameMaxRerolls = welcomePageSettings.MaxRerolls;
         _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
         _appConfiguration.NumberOfVersionsToKeep =
             backupSettings.LimitNumberOfVersions ? backupSettings.NumberOfVersionsToKeep : null;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -92,9 +93,6 @@ public partial class WelcomePageViewModel : PageViewModel
     [RelayCommand]
     private async Task SearchOnline() => await _welcomePageService.NavigateToSearch();
 
-    [RelayCommand]
-    private async Task RandomGame() => await _welcomePageService.NavigateToRandomGame();
-
     [RelayCommand(CanExecute = nameof(CanGoPrevious))]
     private void PreviousRecentGame() => RecentlyPlayedIndex--;
 
@@ -113,8 +111,14 @@ public partial class WelcomePageViewModel : PageViewModel
     private bool CanGoPreviousFavourite() => FavouriteIndex > 0;
     private bool CanGoNextFavourite() => FavouriteIndex < FavouriteGames.Count - 1;
 
+    public event Action? ScrollToRandomSuggestionRequested;
+
     [RelayCommand]
-    private async Task ShuffleRandomSuggestion() => await LoadRandomSuggestionAsync();
+    private async Task ShuffleRandomSuggestion()
+    {
+        ScrollToRandomSuggestionRequested?.Invoke();
+        await LoadRandomSuggestionAsync();
+    }
 
     [RelayCommand]
     private async Task OpenRandomSuggestion()

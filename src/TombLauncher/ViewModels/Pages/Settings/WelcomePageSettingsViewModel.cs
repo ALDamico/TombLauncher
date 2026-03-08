@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
@@ -14,4 +15,8 @@ public partial class WelcomePageSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private int _recentlyPlayedCount;
     [ObservableProperty] private int _favouritesCount;
     [ObservableProperty] private bool _showRandomSuggestion;
+
+    [ObservableProperty]
+    [Range(1, 15, ErrorMessage = "Allowed values: 1-15")]
+    private int _maxRerolls;
 }

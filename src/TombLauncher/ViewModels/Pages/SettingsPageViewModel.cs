@@ -95,10 +95,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             AvailableDownloaders = downloaders.ToObservableCollection()
         };
         var gameDetailsSettings = _settingsService.GetGameDetailsSettings(this);
-        var randomGameSettings = new RandomGameSettingsViewModel(this)
-        {
-            MaxRerolls = _settingsProvider.GetApplicationSettings().RandomGameMaxRerolls
-        };
         var savegameSettings = _settingsService.GetSavegameSettings(this);
 
         var welcomePageSettings = new WelcomePageSettingsViewModel(this)
@@ -109,14 +105,14 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             ShowFavourites = _settingsService.GetShowFavourites(),
             RecentlyPlayedCount = _settingsService.GetRecentlyPlayedCount(),
             FavouritesCount = _settingsService.GetFavouritesCount(),
-            ShowRandomSuggestion = _settingsService.GetShowRandomSuggestion()
+            ShowRandomSuggestion = _settingsService.GetShowRandomSuggestion(),
+            MaxRerolls = _settingsProvider.GetApplicationSettings().RandomGameMaxRerolls
         };
 
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);
         Sections.Add(downloaderSettings);
         Sections.Add(gameDetailsSettings);
-        Sections.Add(randomGameSettings);
         Sections.Add(savegameSettings);
         Sections.Add(welcomePageSettings);
         AcceptChanges();

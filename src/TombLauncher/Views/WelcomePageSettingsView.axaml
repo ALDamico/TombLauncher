@@ -33,5 +33,12 @@
         <ToggleSwitch IsChecked="{Binding ShowRandomSuggestion}"
                       OnContent="{loc:Translate SHOW_RANDOM_SUGGESTION}"
                       OffContent="{loc:Translate SHOW_RANDOM_SUGGESTION}" />
+        <StackPanel Orientation="Vertical" Spacing="4"
+                    IsVisible="{Binding ShowRandomSuggestion}"
+                    Margin="24,0,0,0">
+            <TextBlock Text="{loc:Translate MAX_RETRIES}" />
+            <NumericUpDown Value="{Binding MaxRerolls}"
+                           Minimum="1" Maximum="15" Increment="1" />
+        </StackPanel>
     </StackPanel>
 </UserControl>
