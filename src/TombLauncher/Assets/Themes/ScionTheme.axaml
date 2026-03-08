@@ -1,0 +1,36 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Scion Theme: Deep Teal & Gold -->
+    <!-- Primary Backgrounds -->
+    <Color x:Key="CardBackgroundColor">#CC1A2626</Color>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Dark Teal -->
+    <SolidColorBrush x:Key="CardBorderBrush">#33FFFFFF</SolidColorBrush>
+    <SolidColorBrush x:Key="PageBackgroundBrush">#0F1515</SolidColorBrush>
+    <!-- Fluent Theme Overrides -->
+    <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource CardBackgroundColor}" />
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{StaticResource CardBackgroundColor}" />
+    
+    <Color x:Key="CardBorderColor">#33FFFFFF</Color>
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource CardBorderColor}" />
+    <!-- Primary Actions -->
+    <Color x:Key="PrimaryColor">#008080</Color>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" /> <!-- Teal -->
+    <SolidColorBrush x:Key="PrimaryPointerOverBrush">#009999</SolidColorBrush>
+    <SolidColorBrush x:Key="ColoredButtonTextBrush">#FFFFFF</SolidColorBrush>
+
+    <!-- Accents -->
+    <SolidColorBrush x:Key="AccentBrush">#FFD700</SolidColorBrush> <!-- Gold -->
+    
+    <!-- Status -->
+    <SolidColorBrush x:Key="SuccessBrush">#198754</SolidColorBrush>
+    <SolidColorBrush x:Key="SuccessPointerOverBrush">#157347</SolidColorBrush>
+    <SolidColorBrush x:Key="DangerBrush">#dc3545</SolidColorBrush>
+    <SolidColorBrush x:Key="DangerPointerOverBrush">#b02a37</SolidColorBrush>
+    <SolidColorBrush x:Key="WarningBrush">#ffc107</SolidColorBrush>
+    <SolidColorBrush x:Key="WarningPointerOverBrush">#ffcd39</SolidColorBrush>
+    
+    <!-- Text -->
+    <SolidColorBrush x:Key="TextBrush">#E0E0E0</SolidColorBrush>
+    <SolidColorBrush x:Key="MutedTextBrush">#A0A0A0</SolidColorBrush>
+    <SolidColorBrush x:Key="SecondaryBrush">#A0A0A0</SolidColorBrush>
+</ResourceDictionary>

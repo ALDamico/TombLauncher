@@ -1,0 +1,75 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="TombLauncher.App"
+             xmlns:local="using:TombLauncher"
+             RequestedThemeVariant="Default"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             >
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+    
+    <Application.Resources>
+        <ResourceDictionary>
+            <valueConverters:MultiSourceGameSearchResultMetadataCanDownloadToBooleanConverter 
+                x:Key="SearchResultCanDownloadToBooleanConverter"/>
+            <valueConverters:GameIsInstallingToBooleanConverter x:Key="GameIsInstallingToBooleanConverter"/>
+            <valueConverters:GameMetadataIsNotInstalledToBooleanConverter x:Key="GameNotInstalledToBooleanConverter"/>
+            <valueConverters:GameMetadataIsInstalledToBooleanConverter x:Key="GameInstalledToBooleanConverter"/>
+            <valueConverters:CollectionToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
+            <valueConverters:CollectionToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" Invert="True" />
+            <valueConverters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+            <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />
+            <valueConverters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+            <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter" />
+            <valueConverters:LocalizedStringConverter x:Key="LocalizedStringConverter" />
+            <valueConverters:IsSmallerOrEqualConverter x:Key="IsSmallerOrEqualConverter" />
+            <valueConverters:DateTimeFormatConverter x:Key="DateOnlyFormatter">
+                <valueConverters:DateTimeFormatConverter.DesiredFormat>DateOnlyFormat</valueConverters:DateTimeFormatConverter.DesiredFormat>
+            </valueConverters:DateTimeFormatConverter>
+            <valueConverters:DateTimeFormatConverter x:Key="DateTimeFormatter">
+                <valueConverters:DateTimeFormatConverter.DesiredFormat>DateTimeFormat</valueConverters:DateTimeFormatConverter.DesiredFormat>
+            </valueConverters:DateTimeFormatConverter>
+            <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter"/>
+            <valueConverters:TransferSpeedConverter x:Key="TransferSpeedFormatter"/>
+            <valueConverters:FileSizeConverter x:Key="FileSizeFormatter"/>
+            <valueConverters:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>
+            <valueConverters:StringNullToNullBitmapConverter x:Key="StringNullToNullBitmap">
+                <valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
+                    <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm-light.png</system:String>
+                </valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
+                <valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
+                    <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm.png</system:String>
+                </valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
+            </valueConverters:StringNullToNullBitmapConverter>
+            <valueConverters:UppercaseConverter x:Key="UppercaseConverter"/>
+            <valueConverters:FilenameConverter x:Key="FilenameConverter"/>
+            
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://TombLauncher/Assets/Themes/ScionTheme.axaml" />
+                <ResourceInclude Source="../Assets/RatingStyles.axaml" />
+
+                <ResourceInclude Source="avares://LoadingIndicators.Avalonia/LoadingIndicators.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    <Application.Styles>
+        <FluentTheme />
+        <materialIcons:MaterialIconStyles />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/MsgBoxStyles.axaml" />
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ChildStyle.axaml" />
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ModalStyle.axaml" />
+        <Style Selector="ComboBox">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="CalendarDatePicker">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
+        <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
+        
+    </Application.Styles>
+</Application>

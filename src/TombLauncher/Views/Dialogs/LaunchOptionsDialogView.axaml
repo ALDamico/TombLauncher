@@ -1,0 +1,64 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Dialogs.LaunchOptionsDialogView"
+             x:DataType="dialogs:LaunchOptionsDialogViewModel"
+             Width="600">
+    <Design.DataContext>
+        <dialogs:LaunchOptionsDialogViewModel/>
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <TextBlock Text="{loc:Translate LAUNCH_OPTIONS}" Classes="h1"></TextBlock>
+        <controls:IconButton Icon="Sync" 
+                             Text="{loc:Translate AUTO_DETECT}" 
+                             ToolTip.Tip="{loc:Translate AUTO_DETECT_TOOLTIP}"
+                HorizontalAlignment="Right"
+                Command="{Binding AutoDetectCommand}"/>
+        <ScrollViewer>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Classes="small" Text="{loc:Translate ENGINE_TYPE}"/>
+            <ComboBox ItemsSource="{Binding AvailableEngines}"
+                      SelectedValue="{Binding SelectedEngine}"
+                      SelectedValueBinding="{Binding Value, Mode=TwoWay}"
+                      AutoScrollToSelectedItem="True"
+                      DisplayMemberBinding="{Binding Description}"/>
+            <TextBlock Classes="small" Text="{loc:Translate GAME_EXECUTABLE}"/>
+            <ComboBox ItemsSource="{Binding AvailableExecutables}" 
+                      SelectedItem="{Binding GameExecutable,Mode=TwoWay}"/>
+            <CheckBox Classes="small" IsChecked="{Binding SupportsSetup}" 
+                      Content="{loc:Translate CAN_LAUNCH_SETUP}"></CheckBox>
+            <TextBlock Classes="small" 
+                       IsEnabled="{Binding SupportsSetup}"
+                       Text="{loc:Translate SETUP_EXECUTABLE}"/>
+            <DockPanel IsEnabled="{Binding SupportsSetup}" LastChildFill="True">
+                <controls:Infotip DockPanel.Dock="Right" 
+                                  ToolTipContent="{loc:Translate SETUP_EXECUTABLE_TOOLTIP}" />
+                <ComboBox ItemsSource="{Binding AvailableExecutables}" 
+                          SelectedItem="{Binding SetupExecutable}"/>
+            </DockPanel>
+            
+            <controls:LabeledTextBox IsEnabled="{Binding SupportsSetup}" 
+                                     Label="{loc:Translate SETUP_EXECUTABLE_ARGS}" 
+                                     Text="{Binding SetupArgs}">
+                <controls:LabeledTextBox.Infotip>
+                    <controls:Infotip ToolTipContent="{loc:Translate SETUP_EXECUTABLE_ARGS_TOOLTIP}"/>
+                </controls:LabeledTextBox.Infotip>
+            </controls:LabeledTextBox>
+            <CheckBox Classes="small" IsChecked="{Binding SupportsCustomSetup}" 
+                      Content="{loc:Translate USES_COMMUNITY_PATCH}"/>
+            <TextBlock Classes="small" Text="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE}"></TextBlock>
+            <DockPanel IsEnabled="{Binding SupportsCustomSetup}" LastChildFill="True">
+                <controls:Infotip DockPanel.Dock="Right" 
+                                  ToolTipContent="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP}" />
+                <ComboBox ItemsSource="{Binding AvailableExecutables}" 
+                          SelectedItem="{Binding CustomSetupExecutable}"/>
+            </DockPanel>
+        </StackPanel>
+    </ScrollViewer>
+        </StackPanel>
+</UserControl>

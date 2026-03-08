@@ -1,0 +1,120 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoMapper;
+using Avalonia.Platform.Storage;
+using Avalonia.Threading;
+using JamSoft.AvaloniaUI.Dialogs;
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Progress;
+using TombLauncher.Core.Dtos;
+using TombLauncher.Data.Database.Services;
+using TombLauncher.Extensions;
+using TombLauncher.Installers;
+using TombLauncher.ViewModels;
+
+namespace TombLauncher.Services;
+
+public class NewGameService : IViewService
+{
+    public NewGameService(ViewServiceContext viewContext, GameDataService gameDataService, GameHashDataService gameHashDataService,
+        GameFileHashCalculator hashCalculator,
+        TombRaiderLevelInstaller levelInstaller,
+        TombRaiderEngineDetector engineDetector,
+        ILogger<NewGameService> logger)
+    {
+        ViewContext = viewContext;
+        _gameDataService = gameDataService;
+        _gameHashDataService = gameHashDataService;
+        _gameFileHashCalculator = hashCalculator;
+        _levelInstaller = levelInstaller;
+        _engineDetector = engineDetector;
+        _logger = logger;
+    }
+
+    public ViewServiceContext ViewContext { get; }
+    private readonly ILogger<NewGameService> _logger;
+    private readonly GameDataService _gameDataService;
+    private readonly GameHashDataService _gameHashDataService;
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
+    public IDialogService DialogService => ViewContext.DialogService;
+    private IMapper Mapper => ViewContext.Mapper;
+    private readonly GameFileHashCalculator _gameFileHashCalculator;
+    private readonly TombRaiderLevelInstaller _levelInstaller;
+    private readonly TombRaiderEngineDetector _engineDetector;
+
+    public async Task<string> PickZipArchive()
+    {
+        var file = await DialogService.OpenFile(LocalizationManager["Select a ZIP file"], new List<FilePickerFileType>()
+        {
+            new FilePickerFileType(LocalizationManager["ZIP files"])
+            {
+                Patterns = new List<string>() { "*.zip" }
+            }
+        });
+
+        return file ?? string.Empty;
+    }
+
+    public async Task<string> PickFolder()
+    {
+        return await DialogService.OpenFolder(LocalizationManager["Select a folder"]) ?? string.Empty;
+    }
+
+    public async Task InstallGame(GameMetadataViewModel gameMetadata, IProgress<CopyProgressInfo> progress, string source)
+    {
+        _logger.LogInformation("Installing game {GameTitle}", gameMetadata.Title);
+        progress.Report(new CopyProgressInfo() { Message = LocalizationManager.GetLocalizedString("Installing GAMENAME", gameMetadata.Title) });
+        var hashes = await _gameFileHashCalculator.CalculateHashes(source);
+        if (_gameHashDataService.ExistsHashes(hashes, out _))
+        {
+            _logger.LogWarning("Game {GameTitle} is already installed", gameMetadata.Title);
+            var messageBoxResult = await Dispatcher.UIThread.InvokeAsync(() =>
+                MessageBoxService.ShowLocalized("The same mod is already installed",
+                    "The same mod is already installed TEXT",
+                    MsgBoxButton.YesNo,
+                    MsgBoxImage.Error,
+                    noButtonText: "Cancel",
+                    yesButtonText: "Install anyway"));
+            if (messageBoxResult.ButtonResult == MsgBoxButtonResult.No)
+            {
+                _logger.LogInformation("Will not install");
+                return;
+            }
+            else
+            {
+                _logger.LogWarning("Will install anyway");
+            }
+        }
+
+        gameMetadata.InstallDate = DateTime.Now;
+        var guid = Guid.NewGuid();
+        gameMetadata.Guid = guid;
+
+        var gameMetadataDto = Mapper.Map<GameMetadataDto>(gameMetadata);
+
+        var installLocation = await _levelInstaller.Install(source, gameMetadataDto, CancellationToken.None, progress);
+        progress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
+        gameMetadata.InstallDirectory = installLocation;
+        var gameEngineResult = _engineDetector.Detect(installLocation);
+        gameMetadata.GameEngine = gameEngineResult.GameEngine;
+        gameMetadata.ExecutablePath = gameEngineResult.ExecutablePath;
+        gameMetadata.SetupExecutable = gameEngineResult.SetupExecutablePath;
+        gameMetadata.SetupExecutableArgs = gameEngineResult.SetupArgs;
+        gameMetadata.CommunitySetupExecutable = gameEngineResult.CommunitySetupExecutablePath;
+        gameMetadata.IsInstalled = true;
+
+        var dto = Mapper.Map<GameMetadataDto>(gameMetadata);
+        await _gameDataService.UpsertGame(dto);
+        hashes.ForEach(h => h.GameId = dto.Id);
+        await _gameHashDataService.SaveHashes(hashes);
+        _logger.LogInformation("Game {GameTitle} installed successfully", gameMetadata.Title);
+
+        await NavigationManager.GoBack();
+    }
+}

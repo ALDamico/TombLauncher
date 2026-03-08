@@ -1,0 +1,245 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             xmlns:downloaders="clr-namespace:TombLauncher.Contracts.Downloaders;assembly=TombLauncher.Contracts"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.GameSearchResultCardView"
+             x:DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
+    <Design.DataContext>
+        <viewModels:MultiSourceGameSearchResultMetadataViewModel />
+    </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:StringEmptyToLocalizedStringConverter x:Key="DownloadToolTipConverter" NotEmptyValue="Download" 
+                                                               EmptyValue="This level was found by one or more downloaders, but no download link is available."/>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <!-- Entrance animation -->
+        <Style Selector="Border.result-card">
+            <Style.Animations>
+                <Animation Duration="0:0:0.95" Easing="CubicEaseOut" FillMode="Forward">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0.0"/>
+                        <Setter Property="TranslateTransform.Y" Value="16"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                        <Setter Property="TranslateTransform.Y" Value="0"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+        
+        <!-- Source badge style -->
+        <Style Selector="Border.source-badge">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="8, 3"/>
+        </Style>
+        <Style Selector="Border.source-badge TextBlock">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        
+        <!-- Metadata label style -->
+        <Style Selector="StackPanel.meta-item">
+            <Setter Property="Orientation" Value="Horizontal"/>
+        </Style>
+        <Style Selector="StackPanel.meta-item > avalonia|MaterialIcon">
+            <Setter Property="Width" Value="14"/>
+            <Setter Property="Height" Value="14"/>
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+            <Setter Property="Margin" Value="0, 0, 4, 0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="StackPanel.meta-item > TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        
+        <!-- Status badge styles -->
+        <Style Selector="Border.status-badge">
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="6, 2"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+        <Style Selector="Border.status-badge TextBlock">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style Selector="Border.status-new">
+            <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+        </Style>
+        <Style Selector="Border.status-new TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Border.status-updated">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+        </Style>
+        <Style Selector="Border.status-updated TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <!-- Hover animation: target UserControl:pointerover because Border doesn't receive pointerover inside ItemsRepeater -->
+        <Style Selector="views|GameSearchResultCardView">
+            <Setter Property="RenderTransform" Value="scale(1)"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="CubicEaseOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="views|GameSearchResultCardView:pointerover">
+            <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Border CornerRadius="8"
+            Padding="12"
+            Margin="4, 4"
+            Cursor="Hand"
+            Tapped="OnCardTapped"
+            Classes="card-background interactive-card result-card">
+        <Border.RenderTransform>
+            <TranslateTransform/>
+        </Border.RenderTransform>
+        <Grid>
+            <!-- Status badges -->
+            <Border Classes="status-badge status-new"
+                    IsVisible="{Binding IsNewlyAdded}"
+                    Margin="0, -4, -4, 0">
+                <TextBlock Text="NEW"/>
+            </Border>
+            <Border Classes="status-badge status-updated"
+                    IsVisible="{Binding IsRecentlyUpdated}"
+                    Margin="0, -4, -4, 0">
+                <TextBlock Text="UPDATED"/>
+            </Border>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MaxWidth="480" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Title Image -->
+            <asyncImageLoader:AdvancedImage Grid.Column="0"
+                                            MaxWidth="200"
+                                            MaxHeight="150"
+                                            CornerRadius="6"
+                                            Source="{Binding TitlePic, Converter={StaticResource StringNullToNullBitmap}}" />
+
+            <!-- Info Section -->
+            <StackPanel Grid.Column="1" Margin="12, 0, 8, 0" Spacing="4">
+                <!-- Title -->
+                <Button Classes="hyperlink"
+                        ToolTip.Tip="{Binding Title}"
+                        Content="{Binding Title}"
+                        FontSize="17"
+                        FontWeight="Bold"
+                        Command="{Binding Path=((pages:GameSearchViewModel)DataContext).OpenCmd, RelativeSource={RelativeSource FindAncestor, AncestorType=pages1:GameSearchView}}"
+                        CommandParameter="{Binding Path=.}" />
+
+                <!-- Author -->
+                <TextBlock IsVisible="{Binding Author, Converter={x:Static ObjectConverters.IsNotNull}}"
+                           FontSize="13" Margin="0">
+                    <Run Text="{loc:Translate BY}" />
+                    <Run Text="{Binding Author}" FontWeight="SemiBold" />
+                </TextBlock>
+
+                <!-- Metadata Row -->
+                <WrapPanel Orientation="Horizontal" Margin="0, 4, 0, 0">
+                    <!-- Release Date -->
+                    <StackPanel Classes="meta-item" Margin="0, 0, 12, 4"
+                                IsVisible="{Binding ReleaseDate, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <avalonia:MaterialIcon Kind="Calendar"/>
+                        <TextBlock Text="{Binding ReleaseDate, Mode=OneWay, Converter={StaticResource DateOnlyFormatter}}"/>
+                    </StackPanel>
+                    
+                    <!-- Engine -->
+                    <StackPanel Classes="meta-item" Margin="0, 0, 12, 4">
+                        <avalonia:MaterialIcon Kind="Cog"/>
+                        <TextBlock Text="{Binding Engine, Converter={StaticResource EnumToDescriptionConverter}}"/>
+                    </StackPanel>
+                    
+                    <!-- Difficulty -->
+                    <StackPanel Classes="meta-item" Margin="0, 0, 12, 4">
+                        <avalonia:MaterialIcon Kind="Signal"/>
+                        <TextBlock Text="{Binding Difficulty, Converter={StaticResource EnumToDescriptionConverter}}"/>
+                    </StackPanel>
+                    
+                    <!-- Rating -->
+                    <StackPanel Classes="meta-item" Margin="0, 0, 12, 4"
+                                IsVisible="{Binding Rating, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <avalonia:MaterialIcon Kind="Star" Foreground="{DynamicResource AccentBrush}"/>
+                        <TextBlock Text="{Binding Rating, StringFormat='{}{0:0.0}'}" 
+                                   Foreground="{DynamicResource AccentBrush}"/>
+                    </StackPanel>
+                    
+                    <!-- Size -->
+                    <StackPanel Classes="meta-item" Margin="0, 0, 12, 4"
+                                IsVisible="{Binding SizeInMb, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <avalonia:MaterialIcon Kind="HarddiskPlus"/>
+                        <TextBlock>
+                            <Run Text="{Binding SizeInMb}"/>
+                            <Run Text="MB"/>
+                        </TextBlock>
+                    </StackPanel>
+                </WrapPanel>
+
+                <!-- Source Badges -->
+                <ItemsRepeater ItemsSource="{Binding Sources}" Margin="0, 2, 0, 0">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Orientation="Horizontal" Spacing="4"/>
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate DataType="downloaders:IGameSearchResultMetadata">
+                            <Border Classes="source-badge">
+                                <TextBlock Text="{Binding SourceSiteDisplayName}"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+                
+                <!-- Install Progress -->
+                <ContentControl Content="{Binding InstallProgress}" Margin="0, 4, 0, 0"
+                                IsVisible="{Binding InstallProgress, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            </StackPanel>
+
+            <!-- Actions -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top" Spacing="4" Margin="0, 4, 0, 0">
+                <controls:IconOnlyButton Icon="Play" Classes="btn-success"
+                                         Command="{Binding InstalledGame.PlayCmd}"
+                                         IsVisible="{Binding InstalledGame, Converter={StaticResource GameInstalledToBooleanConverter}, Mode=OneWay}" />
+                <Button Command="{Binding InstallCmd}"
+                        Classes="btn-primary"
+                        CommandParameter="{Binding .}"
+                        IsVisible="{Binding InstalledGame, Converter={StaticResource GameNotInstalledToBooleanConverter}}"
+                        IsEnabled="{Binding ., Converter={StaticResource SearchResultCanDownloadToBooleanConverter}}"
+                        ToolTip.Tip="{Binding DownloadLink, Converter={StaticResource DownloadToolTipConverter}}"
+                        ToolTip.ShowOnDisabled="True">
+                    <avalonia:MaterialIcon Kind="Download" />
+                </Button>
+                <controls:IconOnlyButton Icon="Cancel"
+                                         Classes="btn-danger"
+                                         ToolTip.Tip="{loc:Translate CANCEL}"
+                                         IsVisible="{Binding InstallProgress, Converter={StaticResource GameIsInstallingToBooleanConverter}}"
+                                         Command="{Binding CancelInstallCmd}" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

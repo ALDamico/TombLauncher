@@ -1,0 +1,32 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Scion Light Theme -->
+    <!-- Primary Backgrounds -->
+    <Color x:Key="CardBackgroundColor">#CCF0F8F8</Color>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Light Teal -->
+    <SolidColorBrush x:Key="CardBorderBrush">#33000000</SolidColorBrush>
+    <SolidColorBrush x:Key="PageBackgroundBrush">#FFFFFF</SolidColorBrush>
+    <SolidColorBrush x:Key="SidebarBackgroundBrush">#F8FDFD</SolidColorBrush>
+    
+    <!-- Primary Actions -->
+    <Color x:Key="PrimaryColor">#008080</Color>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" /> <!-- Teal -->
+    <SolidColorBrush x:Key="PrimaryPointerOverBrush">#006666</SolidColorBrush>
+    <SolidColorBrush x:Key="ColoredButtonTextBrush">#FFFFFF</SolidColorBrush>
+
+    <!-- Accents -->
+    <SolidColorBrush x:Key="AccentBrush">#B8860B</SolidColorBrush> <!-- Dark Gold for visibility on light -->
+    
+    <!-- Status -->
+    <SolidColorBrush x:Key="SuccessBrush">#198754</SolidColorBrush>
+    <SolidColorBrush x:Key="SuccessPointerOverBrush">#157347</SolidColorBrush>
+    <SolidColorBrush x:Key="DangerBrush">#dc3545</SolidColorBrush>
+    <SolidColorBrush x:Key="DangerPointerOverBrush">#b02a37</SolidColorBrush>
+    <SolidColorBrush x:Key="WarningBrush">#ffc107</SolidColorBrush>
+    <SolidColorBrush x:Key="WarningPointerOverBrush">#ffcd39</SolidColorBrush>
+    
+    <!-- Text -->
+    <SolidColorBrush x:Key="TextBrush">#212529</SolidColorBrush>
+    <SolidColorBrush x:Key="MutedTextBrush">#6c757d</SolidColorBrush>
+    <SolidColorBrush x:Key="SecondaryBrush">#6c757d</SolidColorBrush>
+</ResourceDictionary>
