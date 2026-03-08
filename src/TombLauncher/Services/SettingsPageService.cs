@@ -84,8 +84,8 @@ public class SettingsPageService : IViewService
         var appearanceSettings = viewModel.Sections.OfType<AppearanceSettingsViewModel>().First();
         var downloaderSettings = viewModel.Sections.OfType<DownloaderSettingsViewModel>().First();
         var gameDetailsSettings = viewModel.Sections.OfType<GameDetailsSettingsViewModel>().First();
-        var randomGameSettings = viewModel.Sections.OfType<RandomGameSettingsViewModel>().First();
         var backupSettings = viewModel.Sections.OfType<SavegameSettingsViewModel>().First();
+        var welcomePageSettings = viewModel.Sections.OfType<WelcomePageSettingsViewModel>().First();
 
         if (languageSettings.ApplicationLanguage?.CultureInfo != null)
         {
@@ -107,10 +107,17 @@ public class SettingsPageService : IViewService
         _appConfiguration.WinePath = gameDetailsSettings.WinePath;
         _appConfiguration.DocumentationPatterns = gameDetailsSettings.DocumentationPatterns?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
         _appConfiguration.DocumentationFolderExclusions = gameDetailsSettings.FolderExclusions?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
-        _appConfiguration.RandomGameMaxRerolls = randomGameSettings.MaxRerolls;
+        _appConfiguration.RandomGameMaxRerolls = welcomePageSettings.MaxRerolls;
         _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
         _appConfiguration.NumberOfVersionsToKeep =
             backupSettings.LimitNumberOfVersions ? backupSettings.NumberOfVersionsToKeep : null;
+        _appConfiguration.ShowQuickStats = welcomePageSettings.ShowQuickStats;
+        _appConfiguration.ShowQuickActions = welcomePageSettings.ShowQuickActions;
+        _appConfiguration.ShowRecentlyPlayed = welcomePageSettings.ShowRecentlyPlayed;
+        _appConfiguration.ShowFavourites = welcomePageSettings.ShowFavourites;
+        _appConfiguration.RecentlyPlayedCount = welcomePageSettings.RecentlyPlayedCount;
+        _appConfiguration.FavouritesCount = welcomePageSettings.FavouritesCount;
+        _appConfiguration.ShowRandomSuggestion = welcomePageSettings.ShowRandomSuggestion;
         var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
         await File.WriteAllTextAsync(userConfigPath,
             JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
@@ -161,4 +168,12 @@ public class SettingsPageService : IViewService
     {
         await _appFileOperations.CleanUpTempFiles();
     }
+
+    public bool GetShowQuickStats() => _appConfiguration.ShowQuickStats.GetValueOrDefault(true);
+    public bool GetShowQuickActions() => _appConfiguration.ShowQuickActions.GetValueOrDefault(true);
+    public bool GetShowRecentlyPlayed() => _appConfiguration.ShowRecentlyPlayed.GetValueOrDefault(true);
+    public bool GetShowFavourites() => _appConfiguration.ShowFavourites.GetValueOrDefault(true);
+    public int GetRecentlyPlayedCount() => _appConfiguration.RecentlyPlayedCount.GetValueOrDefault(5);
+    public int GetFavouritesCount() => _appConfiguration.FavouritesCount.GetValueOrDefault(5);
+    public bool GetShowRandomSuggestion() => _appConfiguration.ShowRandomSuggestion.GetValueOrDefault(true);
 }

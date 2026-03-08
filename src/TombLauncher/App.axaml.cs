@@ -327,7 +327,6 @@ public class App : Application
         serviceCollection.AddTransient<GameSearchResultService>();
         serviceCollection.AddSingleton<ISettingsProvider, SettingsProvider>();
         serviceCollection.AddSingleton<SettingsPageService>();
-        serviceCollection.AddTransient<RandomGameService>();
         serviceCollection.AddScoped<StatisticsService>();
     }
 
@@ -341,7 +340,6 @@ public class App : Application
         serviceCollection.AddTransient<NewGameViewModel>();
         serviceCollection.AddSingleton<SettingsPageViewModel>();
         serviceCollection.AddSingleton<NotificationListViewModel>();
-        serviceCollection.AddTransient<RandomGameViewModel>();
         serviceCollection.AddScoped<StatisticsPageViewModel>();
         serviceCollection.AddTransient<SavegameListViewModel>();
         serviceCollection.AddTransient<GameDetailsViewModel>();

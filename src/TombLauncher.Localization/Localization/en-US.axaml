@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
@@ -320,5 +320,27 @@
     <system:String x:Key="GAME_COMPLETED">Game completed</system:String>
     <system:String x:Key="PLAY_TIME">Play time</system:String>
     <system:String x:Key="SETTINGS">Settings</system:String>
+    <system:String x:Key="GAMES_INSTALLED">Games installed</system:String>
+    <system:String x:Key="TOTAL_TIME_PLAYED">Total time played</system:String>
+    <system:String x:Key="COMPLETED_GAMES">Completed games</system:String>
+    <system:String x:Key="FAVOURITE_GAMES">Favourite games</system:String>
+    <system:String x:Key="WELCOME_SUBTITLE">A Tomb Raider Level Editor manager</system:String>
+    <system:String x:Key="WHATS_NEW">What's new</system:String>
+    <system:String x:Key="WELCOME_PAGE">Welcome page</system:String>
+    <system:String x:Key="SHOW_QUICK_STATS">Show quick stats</system:String>
+    <system:String x:Key="SHOW_QUICK_ACTIONS">Show quick actions</system:String>
+    <system:String x:Key="ADD_GAME">Add local game</system:String>
+    <system:String x:Key="SEARCH_ONLINE">Search online</system:String>
+    <system:String x:Key="RECENTLY_PLAYED">Recently played</system:String>
+    <system:String x:Key="SHOW_RECENTLY_PLAYED">Show recently played</system:String>
+    <system:String x:Key="RECENTLY_PLAYED_COUNT">Number of recently played games</system:String>
+    <system:String x:Key="NO_RECENTLY_PLAYED_GAMES">No recently played games yet. Start playing to see them here!</system:String>
+    <system:String x:Key="SHOW_FAVOURITES">Show favourites</system:String>
+    <system:String x:Key="FAVOURITES_COUNT">Number of favourite games</system:String>
+    <system:String x:Key="NO_FAVOURITE_GAMES">No favourite games yet. Mark games as favourites to see them here!</system:String>
+    <system:String x:Key="SHOW_RANDOM_SUGGESTION">Show random game suggestion</system:String>
+    <system:String x:Key="RANDOM_GAME_SUGGESTION">Random game suggestion</system:String>
+    <system:String x:Key="RANDOM_SUGGESTION_FAILED">Could not fetch a random game. Try again!</system:String>
+    <system:String x:Key="SHUFFLE">Shuffle</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

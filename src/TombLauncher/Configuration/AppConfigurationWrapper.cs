@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Configuration;
 
@@ -109,7 +108,7 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
     public bool DefaultToGridView
     {
         get => User.DefaultToGridView.Coalesce(Defaults.DefaultToGridView);
-        set => User.DefaultToGridView = value.DefaultIfEquals(DefaultToGridView);
+        set => User.DefaultToGridView = value.DefaultIfEquals(Defaults.DefaultToGridView);
     }
 
     public List<CheckableItem<string>>? DocumentationPatterns
@@ -141,5 +140,47 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
     {
         get => User.UnzipFallbackMethod?.Coalesce(Defaults.UnzipFallbackMethod) ?? string.Empty;
         set => User.UnzipFallbackMethod = value.DefaultIfEquals(Defaults.UnzipFallbackMethod);
+    }
+
+    public bool? ShowQuickStats
+    {
+        get => User.ShowQuickStats.Coalesce(Defaults.ShowQuickStats);
+        set => User.ShowQuickStats = value.DefaultIfEquals(Defaults.ShowQuickStats);
+    }
+
+    public bool? ShowQuickActions
+    {
+        get => User.ShowQuickActions.Coalesce(Defaults.ShowQuickActions);
+        set => User.ShowQuickActions = value.DefaultIfEquals(Defaults.ShowQuickActions);
+    }
+
+    public bool? ShowRecentlyPlayed
+    {
+        get => User.ShowRecentlyPlayed.Coalesce(Defaults.ShowRecentlyPlayed);
+        set => User.ShowRecentlyPlayed = value.DefaultIfEquals(Defaults.ShowRecentlyPlayed);
+    }
+
+    public bool? ShowFavourites
+    {
+        get => User.ShowFavourites.Coalesce(Defaults.ShowFavourites);
+        set => User.ShowFavourites = value.DefaultIfEquals(Defaults.ShowFavourites);
+    }
+
+    public int? RecentlyPlayedCount
+    {
+        get => User.RecentlyPlayedCount.Coalesce(Defaults.RecentlyPlayedCount);
+        set => User.RecentlyPlayedCount = value.DefaultIfEquals(Defaults.RecentlyPlayedCount);
+    }
+
+    public int? FavouritesCount
+    {
+        get => User.FavouritesCount.Coalesce(Defaults.FavouritesCount);
+        set => User.FavouritesCount = value.DefaultIfEquals(Defaults.FavouritesCount);
+    }
+
+    public bool? ShowRandomSuggestion
+    {
+        get => User.ShowRandomSuggestion.Coalesce(Defaults.ShowRandomSuggestion);
+        set => User.ShowRandomSuggestion = value.DefaultIfEquals(Defaults.ShowRandomSuggestion);
     }
 }

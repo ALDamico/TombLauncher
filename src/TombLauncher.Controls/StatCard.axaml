@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d"
+             x:Class="TombLauncher.Controls.StatCard"
+             x:Name="StatCardRoot">
+    <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="4">
+        <DockPanel>
+            <iconPacks:PackIconRemixIcon DockPanel.Dock="Top"
+                                          Kind="{Binding ElementName=StatCardRoot, Path=Icon}"
+                                          Width="24" Height="24"
+                                          HorizontalAlignment="Center" Margin="0,0,0,4"
+                                          Foreground="{DynamicResource PrimaryBrush}" />
+            <TextBlock DockPanel.Dock="Bottom"
+                       Text="{Binding ElementName=StatCardRoot, Path=Label}"
+                       Foreground="{DynamicResource SecondaryBrush}"
+                       FontSize="12"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       Margin="0,4,0,0" />
+            <Viewbox StretchDirection="DownOnly" MaxHeight="36">
+                <TextBlock Text="{Binding ElementName=StatCardRoot, Path=Value}"
+                           FontSize="24" FontWeight="Bold"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Viewbox>
+        </DockPanel>
+    </Border>
+</UserControl>

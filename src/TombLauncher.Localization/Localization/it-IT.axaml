@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
@@ -319,5 +319,27 @@
     <system:String x:Key="GAME_COMPLETED">Gioco completato</system:String>
     <system:String x:Key="PLAY_TIME">Tempo di gioco</system:String>
     <system:String x:Key="SETTINGS">Impostazioni</system:String>
+    <system:String x:Key="GAMES_INSTALLED">Giochi installati</system:String>
+    <system:String x:Key="TOTAL_TIME_PLAYED">Tempo di gioco totale</system:String>
+    <system:String x:Key="COMPLETED_GAMES">Giochi completati</system:String>
+    <system:String x:Key="FAVOURITE_GAMES">Giochi preferiti</system:String>
+    <system:String x:Key="WELCOME_SUBTITLE">Un gestore per i livelli Tomb Raider Level Editor</system:String>
+    <system:String x:Key="WHATS_NEW">Novità</system:String>
+    <system:String x:Key="WELCOME_PAGE">Pagina di benvenuto</system:String>
+    <system:String x:Key="SHOW_QUICK_STATS">Mostra statistiche rapide</system:String>
+    <system:String x:Key="SHOW_QUICK_ACTIONS">Mostra azioni rapide</system:String>
+    <system:String x:Key="ADD_GAME">Aggiungi gioco locale</system:String>
+    <system:String x:Key="SEARCH_ONLINE">Cerca online</system:String>
+    <system:String x:Key="RECENTLY_PLAYED">Giocati di recente</system:String>
+    <system:String x:Key="SHOW_RECENTLY_PLAYED">Mostra giocati di recente</system:String>
+    <system:String x:Key="RECENTLY_PLAYED_COUNT">Numero di partite recenti</system:String>
+    <system:String x:Key="NO_RECENTLY_PLAYED_GAMES">Nessuna partita giocata di recente. Inizia a giocare per vederle qui!</system:String>
+    <system:String x:Key="SHOW_FAVOURITES">Mostra preferiti</system:String>
+    <system:String x:Key="FAVOURITES_COUNT">Numero di livelli preferiti</system:String>
+    <system:String x:Key="NO_FAVOURITE_GAMES">Nessun gioco preferito. Segna dei giochi come preferiti per vederli qui!</system:String>
+    <system:String x:Key="SHOW_RANDOM_SUGGESTION">Mostra suggerimento gioco casuale</system:String>
+    <system:String x:Key="RANDOM_GAME_SUGGESTION">Suggerimento gioco casuale</system:String>
+    <system:String x:Key="RANDOM_SUGGESTION_FAILED">Impossibile ottenere un gioco casuale. Riprova!</system:String>
+    <system:String x:Key="SHUFFLE">Cambia</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

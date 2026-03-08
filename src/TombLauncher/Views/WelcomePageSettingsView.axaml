@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
+             mc:Ignorable="d"
+             x:Class="TombLauncher.Views.WelcomePageSettingsView"
+             x:DataType="settings:WelcomePageSettingsViewModel">
+    <StackPanel Orientation="Vertical" Spacing="8">
+        <ToggleSwitch IsChecked="{Binding ShowQuickStats}"
+                      OnContent="{loc:Translate SHOW_QUICK_STATS}"
+                      OffContent="{loc:Translate SHOW_QUICK_STATS}" />
+        <ToggleSwitch IsChecked="{Binding ShowQuickActions}"
+                      OnContent="{loc:Translate SHOW_QUICK_ACTIONS}"
+                      OffContent="{loc:Translate SHOW_QUICK_ACTIONS}" />
+        <ToggleSwitch IsChecked="{Binding ShowRecentlyPlayed}"
+                      OnContent="{loc:Translate SHOW_RECENTLY_PLAYED}"
+                      OffContent="{loc:Translate SHOW_RECENTLY_PLAYED}" />
+        <NumericUpDown Value="{Binding RecentlyPlayedCount}"
+                       Minimum="1" Maximum="10" Increment="1"
+                       IsVisible="{Binding ShowRecentlyPlayed}"
+                       Watermark="{loc:Translate RECENTLY_PLAYED_COUNT}"
+                       Margin="24,0,0,0" />
+        <ToggleSwitch IsChecked="{Binding ShowFavourites}"
+                      OnContent="{loc:Translate SHOW_FAVOURITES}"
+                      OffContent="{loc:Translate SHOW_FAVOURITES}" />
+        <NumericUpDown Value="{Binding FavouritesCount}"
+                       Minimum="1" Maximum="10" Increment="1"
+                       IsVisible="{Binding ShowFavourites}"
+                       Watermark="{loc:Translate FAVOURITES_COUNT}"
+                       Margin="24,0,0,0" />
+        <ToggleSwitch IsChecked="{Binding ShowRandomSuggestion}"
+                      OnContent="{loc:Translate SHOW_RANDOM_SUGGESTION}"
+                      OffContent="{loc:Translate SHOW_RANDOM_SUGGESTION}" />
+        <StackPanel Orientation="Vertical" Spacing="4"
+                    IsVisible="{Binding ShowRandomSuggestion}"
+                    Margin="24,0,0,0">
+            <TextBlock Text="{loc:Translate MAX_RETRIES}" />
+            <NumericUpDown Value="{Binding MaxRerolls}"
+                           Minimum="1" Maximum="15" Increment="1" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -157,6 +157,64 @@ public class GameDataService
         };
     }
 
+    public List<GameWithStatsDto> GetRecentlyPlayedGames(int count)
+    {
+        var playSessions = _dbContext.PlaySession
+            .Include(ps => ps.Game).ThenInclude(g => g.FileBackups)
+            .AsEnumerable()
+            .GroupBy(ps => ps.GameId)
+            .Select(g => new
+            {
+                GameId = g.Key,
+                Game = g.First().Game,
+                LastPlayed = g.Max(ps => ps.StartDate),
+                TotalPlayedTime = TimeSpan.FromTicks(g.Sum(ps => (ps.EndDate - ps.StartDate).Ticks))
+            })
+            .OrderByDescending(g => g.LastPlayed)
+            .Skip(1) // Skip the latest (already shown in "Resume Last Game")
+            .Take(count)
+            .ToList();
+
+        return playSessions.Select(g => new GameWithStatsDto
+        {
+            GameMetadata = _mapper.Map<GameMetadataDto>(g.Game),
+            LastPlayed = g.LastPlayed,
+            TotalPlayedTime = g.TotalPlayedTime
+        }).ToList();
+    }
+
+    public List<GameWithStatsDto> GetFavouriteGames(int count)
+    {
+        var favouriteGames = _dbContext.Games
+            .Include(g => g.FileBackups)
+            .Where(g => g.IsFavourite)
+            .ToList();
+
+        var gameIds = favouriteGames.Select(g => g.Id).ToHashSet();
+
+        var playSessionStats = _dbContext.PlaySession
+            .Where(ps => gameIds.Contains(ps.GameId))
+            .AsEnumerable()
+            .GroupBy(ps => ps.GameId)
+            .ToDictionary(
+                g => g.Key,
+                g => new
+                {
+                    LastPlayed = g.Max(ps => ps.StartDate),
+                    TotalPlayedTime = TimeSpan.FromTicks(g.Sum(ps => (ps.EndDate - ps.StartDate).Ticks))
+                });
+
+        return favouriteGames
+            .OrderByDescending(g => playSessionStats.ContainsKey(g.Id) ? playSessionStats[g.Id].LastPlayed : DateTime.MinValue)
+            .Take(count)
+            .Select(g => new GameWithStatsDto
+            {
+                GameMetadata = _mapper.Map<GameMetadataDto>(g),
+                LastPlayed = playSessionStats.ContainsKey(g.Id) ? playSessionStats[g.Id].LastPlayed : null,
+                TotalPlayedTime = playSessionStats.ContainsKey(g.Id) ? playSessionStats[g.Id].TotalPlayedTime : TimeSpan.Zero
+            }).ToList();
+    }
+
     public async Task UpdateLaunchOptions(LaunchOptionsDto launchOptionsDto)
     {
         var targetFileTypes = new List<FileType>()
@@ -229,6 +287,22 @@ public class GameDataService
         }
 
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<QuickStatsDto> GetQuickStatsAsync()
+    {
+        var games = await _dbContext.Games.ToListAsync();
+        var playSessions = await _dbContext.PlaySession.ToListAsync();
+        var totalPlayTime = playSessions.Aggregate(TimeSpan.Zero,
+            (sum, ps) => sum + (ps.EndDate - ps.StartDate));
+
+        return new QuickStatsDto
+        {
+            InstalledGamesCount = games.Count(g => g.IsInstalled),
+            CompletedGamesCount = games.Count(g => g.IsCompleted),
+            FavouriteGamesCount = games.Count(g => g.IsFavourite),
+            TotalPlayTime = totalPlayTime
+        };
     }
 
     private async Task<GameMetadataDto> GetGameWithExecutables(int id)

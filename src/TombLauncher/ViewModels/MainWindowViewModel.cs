@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -51,13 +51,6 @@ public partial class MainWindowViewModel : WindowViewModelBase
             },
             new MainMenuItemViewModel()
             {
-                ToolTip = "RANDOM".GetLocalizedString(),
-                Icon = PackIconRemixIconKind.Dice6Line,
-                Text = "RANDOM_GAME".GetLocalizedString(),
-                ViewModelType = typeof(RandomGameViewModel)
-            },
-            new MainMenuItemViewModel()
-            {
                 ToolTip = "STATISTICS".GetLocalizedString(),
                 Icon = PackIconRemixIconKind.BarChart2Line,
                 Text = "STATISTICS".GetLocalizedString(),
@@ -86,11 +79,24 @@ public partial class MainWindowViewModel : WindowViewModelBase
         SelectedMenuItem = MenuItems.First();
     }
 
+    private bool _isSyncingSelection;
     private void NavigationManagerOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(NavigationManager.CurrentPage))
         {
             OnPropertyChanged(nameof(CurrentPage));
+            // Sync sidebar selection when navigation happens programmatically
+            if (!_isSyncingSelection)
+            {
+                var currentPageType = _navigationManager.CurrentPage?.GetType();
+                var matchingItem = MenuItems.FirstOrDefault(m => m.ViewModelType == currentPageType);
+                if (matchingItem != null && matchingItem != SelectedMenuItem)
+                {
+                    _isSyncingSelection = true;
+                    SelectedMenuItem = matchingItem;
+                    _isSyncingSelection = false;
+                }
+            }
         }
 
         if (e.PropertyName == nameof(NavigationManager.CanGoBack))
@@ -138,7 +144,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
             if (value != SettingsItem)
                 IsSettingsOpen = false;
             SetProperty(ref field, value);
-            if (value != null)
+            if (value != null && !_isSyncingSelection)
             {
                 // Using NavigateToRoot for main menu items to clear history stack
                 _ = _navigationManager.NavigateToRoot(value.ViewModelType!);

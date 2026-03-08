@@ -24,13 +24,15 @@
                        IsEnabled="{Binding LimitNumberOfVersions}"/>
         <DockPanel LastChildFill="True">
             <controls:Infotip DockPanel.Dock="Right" Icon="ErrorWarningLine" Foreground="{DynamicResource DangerBrush}"
+                              VerticalAlignment="Center"
                               Header="{loc:Translate POTENTIALLY_DANGEROUS_SETTING}" 
                               ToolTipContent="{loc:Translate SAVEGAME_BACKUP_MILLISECOND_DELAY_WARNING}"/>
             <TextBlock Text="{loc:Translate SAVEGAME_BACKUP_DELAY_MS}"></TextBlock>
         </DockPanel>
         <NumericUpDown Minimum="1" Maximum="800" Value="{Binding SavegameProcessingDelay}"></NumericUpDown>
         <DockPanel LastChildFill="True">
-            <controls:Infotip DockPanel.Dock="Right" 
+            <controls:Infotip DockPanel.Dock="Right"
+                              VerticalAlignment="Center"
                               ToolTipContent="{loc:Translate RESCANS_YOUR_BACKED_UP_SAVEGAMES_AND_SYNCS_THEIR_C}"/>
             <TextBlock Text="{loc:Translate SYNC_SAVEGAME_METADATA}"/>    
         </DockPanel>

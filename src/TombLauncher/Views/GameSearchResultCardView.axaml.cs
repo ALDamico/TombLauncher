@@ -1,15 +1,22 @@
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
-using TombLauncher.ViewModels;
-using TombLauncher.ViewModels.Pages;
-using TombLauncher.Views.Pages;
 
 namespace TombLauncher.Views;
 
 public partial class GameSearchResultCardView : UserControl
 {
+    public static readonly StyledProperty<ICommand?> TapCommandProperty =
+        AvaloniaProperty.Register<GameSearchResultCardView, ICommand?>(nameof(TapCommand));
+
+    public ICommand? TapCommand
+    {
+        get => GetValue(TapCommandProperty);
+        set => SetValue(TapCommandProperty, value);
+    }
+
     public GameSearchResultCardView()
     {
         InitializeComponent();
@@ -21,13 +28,9 @@ public partial class GameSearchResultCardView : UserControl
         if (e.Source is Visual visual && visual.FindAncestorOfType<Button>(includeSelf: true) != null)
             return;
 
-        var gameSearchView = this.FindAncestorOfType<GameSearchView>();
-        if (gameSearchView?.DataContext is GameSearchViewModel vm && DataContext is MultiSourceGameSearchResultMetadataViewModel card)
+        if (TapCommand != null && TapCommand.CanExecute(DataContext))
         {
-            if (vm.OpenCmd.CanExecute(card))
-            {
-                vm.OpenCmd.Execute(card);
-            }
+            TapCommand.Execute(DataContext);
         }
     }
 }

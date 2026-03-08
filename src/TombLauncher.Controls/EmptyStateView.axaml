@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:controls="clr-namespace:TombLauncher.Controls"
+             mc:Ignorable="d"
+             x:Class="TombLauncher.Controls.EmptyStateView"
+             x:DataType="controls:EmptyStateView"
+             x:Name="Root">
+    <StackPanel HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="8">
+        <iconPacks:PackIconRemixIcon Kind="{Binding #Root.Icon}"
+                                      Width="64" Height="64"
+                                      Foreground="{DynamicResource MutedTextBrush}"
+                                      HorizontalAlignment="Center" />
+        <TextBlock FontSize="18" FontWeight="DemiBold"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Text="{Binding #Root.Title}"
+                   IsVisible="{Binding #Root.Title, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        <TextBlock FontStyle="Italic" FontSize="13"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Foreground="{DynamicResource MutedTextBrush}"
+                   Text="{Binding #Root.Subtitle}"
+                   IsVisible="{Binding #Root.Subtitle, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+</UserControl>

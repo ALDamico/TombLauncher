@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,18 +95,26 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             AvailableDownloaders = downloaders.ToObservableCollection()
         };
         var gameDetailsSettings = _settingsService.GetGameDetailsSettings(this);
-        var randomGameSettings = new RandomGameSettingsViewModel(this)
+        var savegameSettings = _settingsService.GetSavegameSettings(this);
+
+        var welcomePageSettings = new WelcomePageSettingsViewModel(this)
         {
+            ShowQuickStats = _settingsService.GetShowQuickStats(),
+            ShowQuickActions = _settingsService.GetShowQuickActions(),
+            ShowRecentlyPlayed = _settingsService.GetShowRecentlyPlayed(),
+            ShowFavourites = _settingsService.GetShowFavourites(),
+            RecentlyPlayedCount = _settingsService.GetRecentlyPlayedCount(),
+            FavouritesCount = _settingsService.GetFavouritesCount(),
+            ShowRandomSuggestion = _settingsService.GetShowRandomSuggestion(),
             MaxRerolls = _settingsProvider.GetApplicationSettings().RandomGameMaxRerolls
         };
-        var savegameSettings = _settingsService.GetSavegameSettings(this);
 
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);
         Sections.Add(downloaderSettings);
         Sections.Add(gameDetailsSettings);
-        Sections.Add(randomGameSettings);
         Sections.Add(savegameSettings);
+        Sections.Add(welcomePageSettings);
         AcceptChanges();
         return Task.CompletedTask;
     }
