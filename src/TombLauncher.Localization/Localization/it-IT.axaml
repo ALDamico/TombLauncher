@@ -1,4 +1,4 @@
-<ResourceDictionary xmlns="https://github.com/avaloniaui"
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
@@ -134,8 +134,8 @@
     <system:String x:Key="MAXIMUM_ATTEMPTS_REACHED_LINE_2">un gioco non installato {0} volte,.</system:String>
     <system:String x:Key="MAXIMUM_ATTEMPTS_REACHED_LINE_3">ma non ci è riuscito.</system:String>
     <system:String x:Key="TRY_AGAIN">Riprova</system:String>
-    <system:String x:Key="RANDOM_GAME">GIOCO CASUALE</system:String>
-    <system:String x:Key="STATISTICS">STATISTICHE</system:String>
+    <system:String x:Key="RANDOM_GAME">Gioco casuale</system:String>
+    <system:String x:Key="STATISTICS">Statistiche</system:String>
     <system:String x:Key="AVERAGE_PLAYTIME_BY_DAY_OF_WEEK">Tempo di gioco medio per giorno della settimana</system:String>
     <system:String x:Key="TOTAL_GAMES_PLAYED_BY_DAY_OF_WEEK">Partite giocate per giorno della settimana</system:String>
     <system:String x:Key="APPLICATION_VERSION">Versione dell'applicazione</system:String>
