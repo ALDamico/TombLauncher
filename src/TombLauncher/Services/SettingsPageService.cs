@@ -86,6 +86,7 @@ public class SettingsPageService : IViewService
         var gameDetailsSettings = viewModel.Sections.OfType<GameDetailsSettingsViewModel>().First();
         var randomGameSettings = viewModel.Sections.OfType<RandomGameSettingsViewModel>().First();
         var backupSettings = viewModel.Sections.OfType<SavegameSettingsViewModel>().First();
+        var welcomePageSettings = viewModel.Sections.OfType<WelcomePageSettingsViewModel>().First();
 
         if (languageSettings.ApplicationLanguage?.CultureInfo != null)
         {
@@ -111,6 +112,7 @@ public class SettingsPageService : IViewService
         _appConfiguration.BackupSavegamesEnabled = backupSettings.SavegameBackupEnabled;
         _appConfiguration.NumberOfVersionsToKeep =
             backupSettings.LimitNumberOfVersions ? backupSettings.NumberOfVersionsToKeep : null;
+        _appConfiguration.ShowQuickStats = welcomePageSettings.ShowQuickStats;
         var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
         await File.WriteAllTextAsync(userConfigPath,
             JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
@@ -161,4 +163,6 @@ public class SettingsPageService : IViewService
     {
         await _appFileOperations.CleanUpTempFiles();
     }
+
+    public bool GetShowQuickStats() => _appConfiguration.ShowQuickStats.GetValueOrDefault(true);
 }

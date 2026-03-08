@@ -32,7 +32,8 @@
                        Margin="0,0,0,16" />
 
             <!-- Quick Stats -->
-            <UniformGrid Columns="4" Margin="0,0,0,16">
+            <UniformGrid Columns="4" Margin="0,0,0,16"
+                         IsVisible="{Binding ShowQuickStats}">
                 <controls:StatCard Icon="GamepadLine"
                                    Value="{Binding QuickStats.InstalledGamesCount}"
                                    Label="{loc:Translate GAMES_INSTALLED}" />

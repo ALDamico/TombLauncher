@@ -15,10 +15,12 @@ public partial class WelcomePageViewModel : PageViewModel
     private readonly WelcomePageService _welcomePageService;
     [ObservableProperty] private GameWithStatsViewModel? _latestPlayedGame;
     [ObservableProperty] private QuickStatsDto? _quickStats;
+    [ObservableProperty] private bool _showQuickStats = true;
 
     protected override async Task RaiseInitialize()
     {
         _welcomePageService.HandleNotNotifiedCrashes();
+        ShowQuickStats = _welcomePageService.GetShowQuickStats();
         var latestPlayedGame = await _welcomePageService.GetLatestPlayedGame();
         LatestPlayedGame = latestPlayedGame;
         QuickStats = await _welcomePageService.GetQuickStatsAsync();

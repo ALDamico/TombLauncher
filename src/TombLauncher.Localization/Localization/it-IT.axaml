@@ -325,5 +325,7 @@
     <system:String x:Key="FAVOURITE_GAMES">Giochi preferiti</system:String>
     <system:String x:Key="WELCOME_SUBTITLE">Un gestore per i livelli Tomb Raider Level Editor</system:String>
     <system:String x:Key="WHATS_NEW">Novità</system:String>
+    <system:String x:Key="WELCOME_PAGE">Pagina di benvenuto</system:String>
+    <system:String x:Key="SHOW_QUICK_STATS">Mostra statistiche rapide</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

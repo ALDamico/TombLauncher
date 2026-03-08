@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Core.Dtos;
 
@@ -26,4 +26,5 @@ public interface IAppConfiguration
     string? UpdateChannelName { get; set; }
     string? WinePath { get; set; }
     string? UnzipFallbackMethod { get; set; }
+    bool? ShowQuickStats { get; set; }
 }

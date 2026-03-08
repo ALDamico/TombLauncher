@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -101,12 +101,18 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
         var savegameSettings = _settingsService.GetSavegameSettings(this);
 
+        var welcomePageSettings = new WelcomePageSettingsViewModel(this)
+        {
+            ShowQuickStats = _settingsService.GetShowQuickStats()
+        };
+
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);
         Sections.Add(downloaderSettings);
         Sections.Add(gameDetailsSettings);
         Sections.Add(randomGameSettings);
         Sections.Add(savegameSettings);
+        Sections.Add(welcomePageSettings);
         AcceptChanges();
         return Task.CompletedTask;
     }

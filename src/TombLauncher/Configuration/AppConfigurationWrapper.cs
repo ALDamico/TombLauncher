@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Configuration;
 
@@ -141,5 +140,11 @@ public class AppConfigurationWrapper : IAppConfigurationWrapper
     {
         get => User.UnzipFallbackMethod?.Coalesce(Defaults.UnzipFallbackMethod) ?? string.Empty;
         set => User.UnzipFallbackMethod = value.DefaultIfEquals(Defaults.UnzipFallbackMethod);
+    }
+
+    public bool? ShowQuickStats
+    {
+        get => User.ShowQuickStats.Coalesce(Defaults.ShowQuickStats);
+        set => User.ShowQuickStats = value.DefaultIfEquals(Defaults.ShowQuickStats);
     }
 }

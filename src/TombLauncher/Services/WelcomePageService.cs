@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using AutoMapper;
+using TombLauncher.Configuration;
 using TombLauncher.Core.Dtos;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
@@ -11,15 +12,17 @@ namespace TombLauncher.Services;
 
 public class WelcomePageService : IViewService
 {
-    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GameDataService gameDataService, AppCrashHostService appCrashHostService)
+    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GameDataService gameDataService, AppCrashHostService appCrashHostService, IAppConfigurationWrapper appConfiguration)
     {
         ViewContext = viewContext;
         _appCrashDataService = appCrashDataService;
         _gameDataService = gameDataService;
         _appCrashHostService = appCrashHostService;
+        _appConfiguration = appConfiguration;
     }
     public ViewServiceContext ViewContext { get; }
     private readonly AppCrashDataService _appCrashDataService;
+    private readonly IAppConfigurationWrapper _appConfiguration;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
@@ -53,4 +56,6 @@ public class WelcomePageService : IViewService
     {
         return await _gameDataService.GetQuickStatsAsync();
     }
+
+    internal bool GetShowQuickStats() => _appConfiguration.ShowQuickStats.GetValueOrDefault(true);
 }

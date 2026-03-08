@@ -326,5 +326,7 @@
     <system:String x:Key="FAVOURITE_GAMES">Favourite games</system:String>
     <system:String x:Key="WELCOME_SUBTITLE">A Tomb Raider Level Editor manager</system:String>
     <system:String x:Key="WHATS_NEW">What's new</system:String>
+    <system:String x:Key="WELCOME_PAGE">Welcome page</system:String>
+    <system:String x:Key="SHOW_QUICK_STATS">Show quick stats</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
