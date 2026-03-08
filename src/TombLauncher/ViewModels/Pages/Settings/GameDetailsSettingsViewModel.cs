@@ -6,56 +6,57 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
 {
-    public GameDetailsSettingsViewModel(PageViewModel settingsPage) : base("GAME DETAILS", settingsPage)
+    public GameDetailsSettingsViewModel(PageViewModel settingsPage) : base("GAME_DETAILS", settingsPage)
     {
     }
 
     public bool IsWinePathOptionVisible => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
     [ObservableProperty] private string _winePath = string.Empty;
-    private EditablePatternListBoxViewModel? _documentationPatterns;
 
     public EditablePatternListBoxViewModel? DocumentationPatterns
     {
-        get => _documentationPatterns;
+        get;
         set
         {
-            if (_documentationPatterns != null)
+            if (field != null)
             {
-                _documentationPatterns.PropertyChanged -= OnChildPropertyChanged;
+                field.PropertyChanged -= OnChildPropertyChanged;
             }
-            _documentationPatterns = value;
+
+            field = value;
             if (value != null)
             {
                 value.PropertyChanged += OnChildPropertyChanged;
             }
+
             OnPropertyChanged();
         }
     }
 
-    private EditableFolderExclusionsListBoxViewModel? _folderExclusions;
-
     public EditableFolderExclusionsListBoxViewModel? FolderExclusions
     {
-        get => _folderExclusions;
+        get;
         set
         {
-            if (_folderExclusions != null)
+            if (field != null)
             {
-                _folderExclusions.PropertyChanged -= OnChildPropertyChanged;
+                field.PropertyChanged -= OnChildPropertyChanged;
             }
-            _folderExclusions = value;
+
+            field = value;
             if (value != null)
             {
                 value.PropertyChanged += OnChildPropertyChanged;
             }
+
             OnPropertyChanged();
         }
     }
 
     private void OnChildPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        string propertyName = "";
+        var propertyName = "";
         if (sender == DocumentationPatterns)
             propertyName = nameof(DocumentationPatterns);
         if (sender == FolderExclusions)

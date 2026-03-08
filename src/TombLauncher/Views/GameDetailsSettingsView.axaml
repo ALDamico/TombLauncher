@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -15,10 +15,11 @@
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <DockPanel LastChildFill="True" IsVisible="{Binding IsWinePathOptionVisible}">
-            <controls:Infotip DockPanel.Dock="Right" 
+            <controls:Infotip DockPanel.Dock="Right"
+                              VerticalAlignment="Bottom"
                               Header="{loc:Translate WINE_EXECUTABLE_PATH}" 
                               ToolTipContent="{loc:Translate WINE_TOOLTIP_CONTENT}" />
-            <controls:LabeledTextBox Label="{loc:Translate WINE_EXECUTABLE_PATH}" 
+            <controls:LabeledTextBox VerticalAlignment="Center" Label="{loc:Translate WINE_EXECUTABLE_PATH}" 
                                      Text="{Binding WinePath}" />
         </DockPanel>
         

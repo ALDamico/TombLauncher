@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,6 +8,7 @@
              x:Name="InfotipRoot">
     
     <iconPacks:PackIconRemixIcon Height="24" Width="24" Kind="{Binding ElementName=InfotipRoot, Path=Icon}" 
+                           Background="Transparent"
                            Foreground="{Binding ElementName=InfotipRoot, Path=Foreground, TargetNullValue={StaticResource SystemControlForegroundBaseHighBrush}}">
         <ToolTip.Tip>
             <StackPanel Orientation="Vertical">
