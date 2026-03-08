@@ -18,12 +18,12 @@
                         HorizontalAlignment="Center">
                 <controls:IconButton Icon="ArrowUpLine"
                                      ToolTip.Tip="{loc:Translate MOVE_UP}"
-                                     Command="{Binding MoveUpCmd}"
+                                     Command="{Binding MoveUpCommand}"
                                      CommandParameter="{Binding SelectedDownloader}" />
                 <Border Margin="20" />
                 <controls:IconButton Icon="ArrowDownLine"
                                      ToolTip.Tip="{loc:Translate MOVE_DOWN}"
-                                     Command="{Binding MoveDownCmd}"
+                                     Command="{Binding MoveDownCommand}"
                                      CommandParameter="{Binding SelectedDownloader}" />
             </StackPanel>
             <ListBox ItemsSource="{Binding AvailableDownloaders}"
@@ -54,7 +54,7 @@
         <controls:IconButton Icon="DeleteBin2Line"
                              Text="{loc:Translate CLEAN_UP_TEMPORARY_FILES}"
                              ToolTip.Tip="{loc:Translate CLEAN_UP_TOMB_LAUNCHER_S_TEMPORARY_FOLDER_MANUALLY}"
-                             Command="{Binding CleanUpTempFilesCmd}"
+                             Command="{Binding CleanUpTempFilesCommand}"
                              Margin="0, 15" />
 
         <Grid>

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -50,7 +50,7 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     public void AcceptChanges()
     {
         if (HasErrors)
-            IsChanged = false;
+            return;
         IsChanged = false;
     }
 

@@ -32,18 +32,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <!--
-            <StackPanel Orientation="Vertical" Margin="0, 0, 10, 0">
-                <ContentControl Content="{Binding AppearanceSettings}"></ContentControl>
-                <views:AppearanceSettingsView DataContext="{Binding AppearanceSettings}"/>
-                <views:LanguageSettingsView DataContext="{Binding LanguageSettings}"/>
-                <views:DownloaderSettingsView DataContext="{Binding DownloaderSettings}"/>
-                
-                <views:GameDetailsSettingsView DataContext="{Binding GameDetailsSettings}"/>
-                <views:RandomGameSettingsView DataContext="{Binding RandomGameSettings}"></views:RandomGameSettingsView>
-                
-            </StackPanel>
-            -->
         </ScrollViewer>
 
         <DockPanel Grid.Row="1" LastChildFill="False">

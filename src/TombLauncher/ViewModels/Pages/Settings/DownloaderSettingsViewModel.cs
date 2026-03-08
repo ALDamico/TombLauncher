@@ -1,10 +1,8 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
@@ -19,8 +17,6 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 {
     public DownloaderSettingsViewModel(PageViewModel settingsPage, ISettingsProvider settingsProvider, IAppFileOperationsService appFileOperations, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage)
     {
-        MoveUpCmd = new RelayCommand<DownloaderViewModel?>(MoveUp, CanMoveUp);
-        MoveDownCmd = new RelayCommand<DownloaderViewModel?>(MoveDown, CanMoveDown);
         InfoTipContent = "DOWNLOADERS_INFOTIP_CONTENT".GetLocalizedString();
         _settingsProvider = settingsProvider;
         _appFileOperations = appFileOperations;
@@ -33,7 +29,6 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
             AvailableUnzipFallbackMethods!.FirstOrDefault(m => m.Name == _settingsProvider.GetGameDetailsSettings().UnzipFallbackMethod)!;
         if (SelectedUnzipFallbackMethod == null)
             SelectedUnzipFallbackMethod = AvailableUnzipFallbackMethods.FirstOrDefault()!;
-        CleanUpTempFilesCmd = new AsyncRelayCommand(CleanUpTempFiles);
     }
 
     [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders = new ObservableCollection<DownloaderViewModel>();
@@ -44,25 +39,23 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
     private readonly IAppFileOperationsService _appFileOperations;
     private readonly IMessageBoxService _messageBoxService;
 
-    public ICommand MoveUpCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(CanMoveUp))]
     private void MoveUp(DownloaderViewModel? downloaderViewModel)
     {
         if (downloaderViewModel == null) return;
-        var targetPriority = --downloaderViewModel.Priority;
-        if (targetPriority < 0)
-            targetPriority = 0;
-        var prioritiesToBump = AvailableDownloaders.Where(dl => dl.Priority == targetPriority);
-        AvailableDownloaders.Move(downloaderViewModel.Priority, targetPriority);
-        foreach (var downloader in prioritiesToBump)
+        var currentIndex = AvailableDownloaders.IndexOf(downloaderViewModel);
+        var targetIndex = currentIndex - 1;
+        if (targetIndex < 0)
+            return;
+        AvailableDownloaders.Move(currentIndex, targetIndex);
+        // Recalculate priorities based on position
+        for (var i = 0; i < AvailableDownloaders.Count; i++)
         {
-            downloader.Priority++;
+            AvailableDownloaders[i].Priority = i + 1;
         }
 
-
-        downloaderViewModel.Priority = targetPriority;
-        RaiseCanExecuteChanged<DownloaderViewModel>(MoveUpCmd);
-        RaiseCanExecuteChanged<DownloaderViewModel>(MoveDownCmd);
+        MoveUpCommand.NotifyCanExecuteChanged();
+        MoveDownCommand.NotifyCanExecuteChanged();
     }
 
     private bool CanMoveUp(DownloaderViewModel? downloaderViewModel)
@@ -71,22 +64,23 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         return downloaderViewModel.Priority > 1;
     }
 
-    public ICommand MoveDownCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(CanMoveDown))]
     private void MoveDown(DownloaderViewModel? downloaderViewModel)
     {
         if (downloaderViewModel == null) return;
-        var targetPriority = ++downloaderViewModel.Priority;
-        var prioritiesToBump = AvailableDownloaders.Where(dl => dl.Priority == targetPriority);
-        AvailableDownloaders.Move(downloaderViewModel.Priority, targetPriority);
-        foreach (var downloader in prioritiesToBump)
+        var currentIndex = AvailableDownloaders.IndexOf(downloaderViewModel);
+        var targetIndex = currentIndex + 1;
+        if (targetIndex >= AvailableDownloaders.Count)
+            return;
+        AvailableDownloaders.Move(currentIndex, targetIndex);
+        // Recalculate priorities based on position
+        for (var i = 0; i < AvailableDownloaders.Count; i++)
         {
-            downloader.Priority--;
+            AvailableDownloaders[i].Priority = i + 1;
         }
 
-        downloaderViewModel.Priority = targetPriority;
-        RaiseCanExecuteChanged<DownloaderViewModel>(MoveUpCmd);
-        RaiseCanExecuteChanged<DownloaderViewModel>(MoveDownCmd);
+        MoveUpCommand.NotifyCanExecuteChanged();
+        MoveDownCommand.NotifyCanExecuteChanged();
     }
 
     private bool CanMoveDown(DownloaderViewModel? downloaderViewModel)
@@ -95,12 +89,11 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         return downloaderViewModel.Priority < AvailableDownloaders.Count;
     }
 
-    public ICommand CleanUpTempFilesCmd { get; }
-
+    [RelayCommand]
     private async Task CleanUpTempFiles()
     {
         await _appFileOperations.CleanUpTempFiles();
-        await _messageBoxService.ShowLocalized("Clean up completed!", "The clean up process has completed successfully!",
+        await _messageBoxService.ShowLocalized("CLEAN_UP_COMPLETED", "THE_CLEAN_UP_PROCESS_HAS_COMPLETED_SUCCESSFULLY",
             MsgBoxButton.Ok, MsgBoxImage.Information);
     }
 }

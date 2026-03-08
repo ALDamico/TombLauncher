@@ -102,6 +102,7 @@ public class SettingsPageService : IViewService
         var mappedDownloaderConfigs =
             _mapper.Map<List<DownloaderConfiguration>>(downloaderSettings.AvailableDownloaders);
         _appConfiguration.Downloaders = mappedDownloaderConfigs;
+        _appConfiguration.UnzipFallbackMethod = downloaderSettings.SelectedUnzipFallbackMethod?.Name;
         _appConfiguration.AskForConfirmationBeforeWalkthrough =
             gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         _appConfiguration.WinePath = gameDetailsSettings.WinePath;
