@@ -158,7 +158,7 @@ public class App : Application
         desktop.ShutdownMode = Avalonia.Controls.ShutdownMode.OnMainWindowClose;
         mainWindow.Show();
         splashScreen.Close();
-        var appConfiguration = Ioc.Default.GetRequiredService<IAppConfigurationWrapper>();
+        var appConfiguration = Ioc.Default.GetRequiredService<ILayeredAppConfiguration>();
         await InitNetSparkle(appConfiguration);
         await _sparkle.CheckForUpdatesQuietly();
         await Task.CompletedTask;
@@ -170,7 +170,7 @@ public class App : Application
 
         var appDataDirectory = platformSpecificFeatures.GetAppDataDirectory();
 
-        var appConfiguration = new AppConfigurationWrapper();
+        var appConfiguration = new LayeredAppConfiguration();
         IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false)
             .AddJsonFile("appsettings.Development.json", optional: true)
@@ -183,7 +183,8 @@ public class App : Application
         userConfiguration.Bind(appConfiguration.User);
 
         var serviceCollection = new ServiceCollection();
-        serviceCollection.AddSingleton<IAppConfigurationWrapper>(appConfiguration);
+        serviceCollection.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
+        serviceCollection.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
         serviceCollection.AddSingleton(platformSpecificFeatures);
         ConfigureLogging(serviceCollection, appDataDirectory);
         ConfigureMappings(serviceCollection);
@@ -250,12 +251,12 @@ public class App : Application
         await Task.CompletedTask;
     }
 
-    private async Task InitNetSparkle(IAppConfigurationWrapper appConfiguration)
+    private async Task InitNetSparkle(IAppConfiguration appConfiguration)
     {
         var updateWorkers = UpdateUtils.AppCastWorkersFactory(appConfiguration);
 
-        _sparkle = new SparkleUpdater(appConfiguration.AppCastUrl ?? string.Empty,
-            new Ed25519Checker(SecurityMode.Strict, appConfiguration.AppCastPublicKey))
+        _sparkle = new SparkleUpdater(appConfiguration.Updater.AppCastUrl ?? string.Empty,
+            new Ed25519Checker(SecurityMode.Strict, appConfiguration.Updater.AppCastPublicKey))
         {
             UIFactory = updateWorkers.UiFactory(),
             AppCastDataDownloader = updateWorkers.AppCastDataDownloader,
@@ -349,7 +350,7 @@ public class App : Application
     {
         serviceCollection.AddDbContext<TombLauncherDbContext>(opts =>
         {
-            var databasePath = Path.Combine(appDataDirectory, appConfiguration.DatabasePath ?? "TombLauncher.sqlite");
+            var databasePath = Path.Combine(appDataDirectory, appConfiguration.Application.DatabasePath ?? "TombLauncher.sqlite");
             var connectionString = $"Data Source={databasePath}";
             opts.UseSqlite(connectionString);
         });

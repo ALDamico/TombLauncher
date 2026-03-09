@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +8,8 @@ using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using TombLauncher.Configuration;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
@@ -22,9 +25,9 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         _settingsProvider = settingsProvider;
         _appFileOperations = appFileOperations;
         _messageBoxService = messageBoxService;
-        var mapper = new Mapper(mapperConfiguration);
+        _mapper = mapperConfiguration.CreateMapper();
         AvailableUnzipFallbackMethods =
-            mapper.Map<ObservableCollection<UnzipBackendViewModel>>(platformSpecificFeatures
+            _mapper.Map<ObservableCollection<UnzipBackendViewModel>>(platformSpecificFeatures
                 .GetPlatformSpecificZipFallbackPrograms()) ?? new ObservableCollection<UnzipBackendViewModel>();
         SelectedUnzipFallbackMethod =
             AvailableUnzipFallbackMethods!.FirstOrDefault(m => m.Name == _settingsProvider.GetGameDetailsSettings().UnzipFallbackMethod)!;
@@ -32,13 +35,31 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
             SelectedUnzipFallbackMethod = AvailableUnzipFallbackMethods.FirstOrDefault()!;
     }
 
-    [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders = new ObservableCollection<DownloaderViewModel>();
-    [ObservableProperty] private DownloaderViewModel? _selectedDownloader;
+    [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders = [];
+
+    partial void OnAvailableDownloadersChanged(ObservableCollection<DownloaderViewModel>? oldValue, ObservableCollection<DownloaderViewModel> newValue)
+    {
+        if (oldValue != null)
+            foreach (var item in oldValue)
+                item.PropertyChanged -= OnDownloaderPropertyChanged;
+
+        foreach (var item in newValue)
+            item.PropertyChanged += OnDownloaderPropertyChanged;
+    }
+
+    private void OnDownloaderPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(AvailableDownloaders));
+    }
+    [ObservableProperty]
+    [IgnoreChanges]
+    private DownloaderViewModel? _selectedDownloader;
     [ObservableProperty] private ObservableCollection<UnzipBackendViewModel> _availableUnzipFallbackMethods;
     [ObservableProperty] private UnzipBackendViewModel _selectedUnzipFallbackMethod;
     private readonly ISettingsProvider _settingsProvider;
     private readonly IAppFileOperationsService _appFileOperations;
     private readonly IMessageBoxService _messageBoxService;
+    private readonly IMapper _mapper;
 
     public void Reorder(int oldIndex, int newIndex)
     {
@@ -51,6 +72,8 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         {
             AvailableDownloaders[i].Priority = i + 1;
         }
+
+        OnPropertyChanged(nameof(AvailableDownloaders));
     }
 
     [RelayCommand]
@@ -59,5 +82,11 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         await _appFileOperations.CleanUpTempFiles();
         await _messageBoxService.ShowLocalized("CLEAN_UP_COMPLETED", "THE_CLEAN_UP_PROCESS_HAS_COMPLETED_SUCCESSFULLY",
             MsgBoxButton.Ok, MsgBoxImage.Information);
+    }
+
+    public override void ApplyTo(AppConfiguration userConfig)
+    {
+        userConfig.Downloaders.Sources = _mapper.Map<List<DownloaderConfiguration>>(AvailableDownloaders);
+        userConfig.Downloaders.UnzipFallbackMethod = SelectedUnzipFallbackMethod?.Name;
     }
 }

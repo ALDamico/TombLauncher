@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -107,13 +107,13 @@ public static class UpdateUtils
         return icon;
     }
 
-    public static UpdaterWorkersPayload AppCastWorkersFactory(IAppConfigurationWrapper appConfiguration)
+    public static UpdaterWorkersPayload AppCastWorkersFactory(IAppConfiguration appConfiguration)
     {
         UpdaterWorkersPayload updateWorkers = new UpdaterWorkersPayload()
         {
             LoggerToUse = new SerilogLogWriter()
         };
-        if (appConfiguration.UpdaterUseLocalPaths)
+        if (appConfiguration.Updater.UpdaterUseLocalPaths)
         {
             updateWorkers.AppCastDataDownloader = new LocalFileAppCastDownloader() { UseLocalUriPath = true };
             updateWorkers.UpdateDownloader = new LocalFileDownloader(updateWorkers.LoggerToUse)
@@ -125,11 +125,11 @@ public static class UpdateUtils
             updateWorkers.UpdateDownloader = new WebFileDownloader(updateWorkers.LoggerToUse);
         }
 
-        if (appConfiguration.UpdateChannelName.IsNotNullOrWhiteSpace())
+        if (appConfiguration.Updater.UpdateChannelName.IsNotNullOrWhiteSpace())
         {
             var appCastFilter = new ChannelAppCastFilter(updateWorkers.LoggerToUse)
             {
-                ChannelSearchNames = [appConfiguration.UpdateChannelName!],
+                ChannelSearchNames = [appConfiguration.Updater.UpdateChannelName!],
             };
             var helper = new AppCastHelper()
             {
@@ -138,9 +138,9 @@ public static class UpdateUtils
             updateWorkers.AppCastHelper = helper;
         }
 
-        updateWorkers.UiFactory = GetUiFactory(appConfiguration.UpdateChannelName)!;
-        updateWorkers.UpdateCommand = GetUpdateCommand(appConfiguration.UpdateChannelName)!;
-        updateWorkers.UpdateIcon = GetNotificationIcon(appConfiguration.UpdateChannelName);
+        updateWorkers.UiFactory = GetUiFactory(appConfiguration.Updater.UpdateChannelName)!;
+        updateWorkers.UpdateCommand = GetUpdateCommand(appConfiguration.Updater.UpdateChannelName)!;
+        updateWorkers.UpdateIcon = GetNotificationIcon(appConfiguration.Updater.UpdateChannelName);
 
         return updateWorkers;
     }

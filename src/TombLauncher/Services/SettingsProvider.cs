@@ -17,12 +17,12 @@ namespace TombLauncher.Services;
 
 public class SettingsProvider : ISettingsProvider
 {
-    private readonly IAppConfigurationWrapper _appConfiguration;
+    private readonly ILayeredAppConfiguration _appConfiguration;
     private readonly IServiceProvider _serviceProvider;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public SettingsProvider(
-        IAppConfigurationWrapper appConfiguration,
+        ILayeredAppConfiguration appConfiguration,
         IServiceProvider serviceProvider,
         IPlatformSpecificFeatures platformSpecificFeatures)
     {
@@ -33,19 +33,22 @@ public class SettingsProvider : ISettingsProvider
 
     public ApplicationCoreSettings GetApplicationSettings()
     {
+        var app = _appConfiguration.Application;
+        var wp = _appConfiguration.WelcomePage;
         return new ApplicationCoreSettings(
-            _appConfiguration.GitHubLink ?? string.Empty,
-            new CultureInfo(_appConfiguration.ApplicationLanguage ?? "en-US"),
-            _appConfiguration.RandomGameMaxRerolls.GetValueOrDefault(),
-            _appConfiguration.DatabasePath ?? "TombLauncher.sqlite"
+            app.GitHubLink ?? string.Empty,
+            new CultureInfo(app.ApplicationLanguage ?? "en-US"),
+            wp.RandomGameMaxRerolls.GetValueOrDefault(),
+            app.DatabasePath ?? "TombLauncher.sqlite"
         );
     }
 
     public AppearanceCoreSettings GetAppearanceSettings()
     {
+        var appearance = _appConfiguration.Appearance;
         return new AppearanceCoreSettings(
-            _appConfiguration.ApplicationTheme ?? string.Empty,
-            _appConfiguration.DefaultToGridView
+            appearance.ApplicationTheme ?? string.Empty,
+            appearance.DefaultToGridView
         );
     }
 
@@ -55,7 +58,7 @@ public class SettingsProvider : ISettingsProvider
         var downloaders = ReflectionUtils.GetImplementors<IGameDownloader>(BindingFlags.NonPublic).ToList();
         var priority = downloaders.Count();
 
-        var configCustomizations = _appConfiguration.Downloaders?.Where(d => d.ClassName != null).ToDictionary(d => d.ClassName!) ?? new Dictionary<string, DownloaderConfiguration>();
+        var configCustomizations = _appConfiguration.Downloaders.Sources?.Where(d => d.ClassName != null).ToDictionary(d => d.ClassName!) ?? new Dictionary<string, DownloaderConfiguration>();
         foreach (var downloader in downloaders)
         {
             var className = downloader.GetType().FullName;
@@ -109,24 +112,27 @@ public class SettingsProvider : ISettingsProvider
 
     public GameDetailsCoreSettings GetGameDetailsSettings()
     {
+        var gd = _appConfiguration.GameDetails;
+        var dl = _appConfiguration.Downloaders;
         var methodToUse = _platformSpecificFeatures.GetPlatformSpecificZipFallbackPrograms()
-            .FirstOrDefault(m => m.Name == _appConfiguration.UnzipFallbackMethod);
+            .FirstOrDefault(m => m.Name == dl.UnzipFallbackMethod);
         return new GameDetailsCoreSettings(
-            _appConfiguration.WinePath ?? string.Empty,
-            _appConfiguration.UnzipFallbackMethod ?? string.Empty,
+            gd.WinePath ?? string.Empty,
+            dl.UnzipFallbackMethod ?? string.Empty,
             methodToUse != null ? (methodToUse.Command, methodToUse.CommandLineArguments) : (string.Empty, string.Empty),
-            _appConfiguration.DocumentationPatterns?.ToList() ?? new List<CheckableItem<string>>(),
-            _appConfiguration.DocumentationFolderExclusions?.ToList() ?? new List<CheckableItem<string>>(),
-            _appConfiguration.AskForConfirmationBeforeWalkthrough.GetValueOrDefault()
+            gd.DocumentationPatterns?.ToList() ?? new List<CheckableItem<string>>(),
+            gd.DocumentationFolderExclusions?.ToList() ?? new List<CheckableItem<string>>(),
+            gd.AskForConfirmationBeforeWalkthrough.GetValueOrDefault()
         );
     }
 
     public SavegameCoreSettings GetSavegameSettings()
     {
+        var sg = _appConfiguration.Savegames;
         return new SavegameCoreSettings(
-            _appConfiguration.BackupSavegamesEnabled.GetValueOrDefault(),
-            _appConfiguration.NumberOfVersionsToKeep,
-            _appConfiguration.SavegameProcessingDelay
+            sg.BackupSavegamesEnabled.GetValueOrDefault(),
+            sg.NumberOfVersionsToKeep,
+            sg.SavegameProcessingDelay
         );
     }
 }

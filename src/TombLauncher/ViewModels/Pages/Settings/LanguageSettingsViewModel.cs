@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IconPacks.Avalonia.RemixIcon;
+using TombLauncher.Configuration;
 using TombLauncher.Localization.Extensions;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
@@ -15,4 +16,10 @@ public partial class LanguageSettingsViewModel : SettingsSectionViewModelBase
 
     [ObservableProperty] private ApplicationLanguageViewModel? _applicationLanguage;
     [ObservableProperty] private ObservableCollection<ApplicationLanguageViewModel> _availableLanguages = new ObservableCollection<ApplicationLanguageViewModel>();
+
+    public override void ApplyTo(AppConfiguration userConfig)
+    {
+        if (ApplicationLanguage?.CultureInfo != null)
+            userConfig.Application.ApplicationLanguage = ApplicationLanguage.CultureInfo.IetfLanguageTag;
+    }
 }

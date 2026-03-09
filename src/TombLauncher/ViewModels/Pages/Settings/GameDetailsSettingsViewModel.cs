@@ -1,7 +1,11 @@
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IconPacks.Avalonia.RemixIcon;
+using TombLauncher.Configuration;
+using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
@@ -63,5 +67,13 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
         if (sender == FolderExclusions)
             propertyName = nameof(FolderExclusions);
         OnPropertyChanged(propertyName);
+    }
+
+    public override void ApplyTo(AppConfiguration userConfig)
+    {
+        userConfig.GameDetails.AskForConfirmationBeforeWalkthrough = AskForConfirmationBeforeWalkthrough;
+        userConfig.GameDetails.WinePath = WinePath;
+        userConfig.GameDetails.DocumentationPatterns = DocumentationPatterns?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
+        userConfig.GameDetails.DocumentationFolderExclusions = FolderExclusions?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
@@ -19,20 +20,20 @@ namespace TombLauncher.Services;
 
 public class WelcomePageService : IViewService
 {
-    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GameDataService gameDataService, AppCrashHostService appCrashHostService, SettingsPageService settingsPageService, ISettingsProvider settingsProvider, GameDownloadManager gameDownloadManager, GameWithStatsService gameWithStatsService)
+    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GameDataService gameDataService, AppCrashHostService appCrashHostService, IAppConfiguration appConfiguration, ISettingsProvider settingsProvider, GameDownloadManager gameDownloadManager, GameWithStatsService gameWithStatsService)
     {
         ViewContext = viewContext;
         _appCrashDataService = appCrashDataService;
         _gameDataService = gameDataService;
         _appCrashHostService = appCrashHostService;
-        _settingsPageService = settingsPageService;
+        _appConfiguration = appConfiguration;
         _settingsProvider = settingsProvider;
         _gameDownloadManager = gameDownloadManager;
         _gameWithStatsService = gameWithStatsService;
     }
     public ViewServiceContext ViewContext { get; }
     private readonly AppCrashDataService _appCrashDataService;
-    private readonly SettingsPageService _settingsPageService;
+    private readonly IAppConfiguration _appConfiguration;
     private readonly ISettingsProvider _settingsProvider;
     private readonly GameDownloadManager _gameDownloadManager;
     private readonly GameWithStatsService _gameWithStatsService;
@@ -70,13 +71,13 @@ public class WelcomePageService : IViewService
         return await _gameDataService.GetQuickStatsAsync();
     }
 
-    internal bool GetShowQuickStats() => _settingsPageService.GetShowQuickStats();
-    internal bool GetShowQuickActions() => _settingsPageService.GetShowQuickActions();
-    internal bool GetShowRecentlyPlayed() => _settingsPageService.GetShowRecentlyPlayed();
-    internal bool GetShowFavourites() => _settingsPageService.GetShowFavourites();
-    internal int GetRecentlyPlayedCount() => _settingsPageService.GetRecentlyPlayedCount();
-    internal int GetFavouritesCount() => _settingsPageService.GetFavouritesCount();
-    internal bool GetShowRandomSuggestion() => _settingsPageService.GetShowRandomSuggestion();
+    internal bool GetShowQuickStats() => _appConfiguration.WelcomePage.ShowQuickStats.GetValueOrDefault(true);
+    internal bool GetShowQuickActions() => _appConfiguration.WelcomePage.ShowQuickActions.GetValueOrDefault(true);
+    internal bool GetShowRecentlyPlayed() => _appConfiguration.WelcomePage.ShowRecentlyPlayed.GetValueOrDefault(true);
+    internal bool GetShowFavourites() => _appConfiguration.WelcomePage.ShowFavourites.GetValueOrDefault(true);
+    internal int GetRecentlyPlayedCount() => _appConfiguration.WelcomePage.RecentlyPlayedCount.GetValueOrDefault(5);
+    internal int GetFavouritesCount() => _appConfiguration.WelcomePage.FavouritesCount.GetValueOrDefault(5);
+    internal bool GetShowRandomSuggestion() => _appConfiguration.WelcomePage.ShowRandomSuggestion.GetValueOrDefault(true);
 
     internal List<GameWithStatsViewModel> GetRecentlyPlayedGames(int count = 5)
     {
