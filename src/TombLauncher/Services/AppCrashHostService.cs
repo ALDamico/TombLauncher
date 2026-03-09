@@ -5,10 +5,7 @@ using Avalonia.Platform.Storage;
 using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
-using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Localization;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Utils;
 
