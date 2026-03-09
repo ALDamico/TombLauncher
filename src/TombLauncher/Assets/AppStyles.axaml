@@ -455,6 +455,7 @@
         <Setter Property="Padding" Value="4" />
     </Style>
 
+
     <!-- Search Bar -->
     <Style Selector="Border.search-bar">
         <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>

@@ -4,6 +4,8 @@ description: How to commit changes following project conventions
 
 # Commit
 
+> **IMPORTANT**: NEVER commit unless the user explicitly asks you to. Do NOT commit proactively after making changes — always wait for the user to say "commit", "committa", or similar.
+
 The project uses **Conventional Commits**.
 
 ## Format
