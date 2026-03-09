@@ -40,8 +40,6 @@ refactor(navigation): simplify NavigationManager locking
 
 ## Steps
 
-// turbo-all
-
 1. Check status:
 ```bash
 git status
