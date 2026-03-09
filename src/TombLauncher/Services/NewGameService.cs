@@ -14,6 +14,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services;
@@ -50,9 +51,9 @@ public class NewGameService : IViewService
 
     public async Task<string> PickZipArchive()
     {
-        var file = await DialogService.OpenFile(LocalizationManager["Select a ZIP file"], new List<FilePickerFileType>()
+        var file = await DialogService.OpenFile("SELECT_A_ZIP_FILE".GetLocalizedString(), new List<FilePickerFileType>()
         {
-            new FilePickerFileType(LocalizationManager["ZIP files"])
+            new FilePickerFileType("ZIP_FILES".GetLocalizedString())
             {
                 Patterns = new List<string>() { "*.zip" }
             }
@@ -63,13 +64,13 @@ public class NewGameService : IViewService
 
     public async Task<string> PickFolder()
     {
-        return await DialogService.OpenFolder(LocalizationManager["Select a folder"]) ?? string.Empty;
+        return await DialogService.OpenFolder("SELECT_A_FOLDER".GetLocalizedString()) ?? string.Empty;
     }
 
     public async Task InstallGame(GameMetadataViewModel gameMetadata, IProgress<CopyProgressInfo> progress, string source)
     {
         _logger.LogInformation("Installing game {GameTitle}", gameMetadata.Title);
-        progress.Report(new CopyProgressInfo() { Message = LocalizationManager.GetLocalizedString("Installing GAMENAME", gameMetadata.Title) });
+        progress.Report(new CopyProgressInfo() { Message = "INSTALLING_GAMENAME".GetLocalizedString(gameMetadata.Title) });
         var hashes = await _gameFileHashCalculator.CalculateHashes(source);
         if (_gameHashDataService.ExistsHashes(hashes, out _))
         {
@@ -99,7 +100,7 @@ public class NewGameService : IViewService
         var gameMetadataDto = Mapper.Map<GameMetadataDto>(gameMetadata);
 
         var installLocation = await _levelInstaller.Install(source, gameMetadataDto, CancellationToken.None, progress);
-        progress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
+        progress.Report(new CopyProgressInfo() { Message = "FINISHING_UP".GetLocalizedString() });
         gameMetadata.InstallDirectory = installLocation;
         var gameEngineResult = _engineDetector.Detect(installLocation);
         gameMetadata.GameEngine = gameEngineResult.GameEngine;

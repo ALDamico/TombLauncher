@@ -88,7 +88,7 @@ public class GameWithStatsService : IViewService, IDisposable
     public void PlayGame(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
+        currentPage?.SetBusy("STARTING_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         InitFileSystemWatcher(game);
         _headerProcessor?.Start();
 
@@ -225,7 +225,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy(
-            LocalizationManager.GetLocalizedString("Launching setup for GAMENAME", game.GameMetadata.Title));
+            "LAUNCHING_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.SetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
@@ -236,7 +236,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy(
-            LocalizationManager.GetLocalizedString("Launching community patch setup for GAMENAME", game.GameMetadata.Title));
+            "LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.CommunitySetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
