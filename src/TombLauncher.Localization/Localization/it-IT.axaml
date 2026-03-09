@@ -341,5 +341,13 @@
     <system:String x:Key="RANDOM_GAME_SUGGESTION">Suggerimento gioco casuale</system:String>
     <system:String x:Key="RANDOM_SUGGESTION_FAILED">Impossibile ottenere un gioco casuale. Riprova!</system:String>
     <system:String x:Key="SHUFFLE">Cambia</system:String>
+    <system:String x:Key="RESTORING_SAVEGAME">Ripristino del salvataggio in corso...</system:String>
+    <system:String x:Key="DELETING_SAVEGAMES">Eliminazione dei salvataggi in corso...</system:String>
+    <system:String x:Key="SYNCING_SAVEGAMES">Sincronizzazione dei salvataggi in corso...</system:String>
+    <system:String x:Key="SEARCH_COMPLETED">Ricerca completata</system:String>
+    <system:String x:Key="IMPORTING_SAVEGAMES">Importazione dei salvataggi in corso...</system:String>
+    <system:String x:Key="SAVING_LAUNCH_OPTIONS">Salvataggio opzioni di avvio in corso...</system:String>
+    <system:String x:Key="NO_SAVEGAME_BACKUPS_FOUND">Nessun backup dei salvataggi trovato</system:String>
+    <system:String x:Key="SAVEGAME_BACKUPS_FOUND_IMPORT">Non sono stati trovati backup dei salvataggi nel database di Tomb Launcher, ma sono stati trovati {0} file di salvataggio. Vuoi importarli?</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

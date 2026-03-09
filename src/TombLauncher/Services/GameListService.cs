@@ -36,11 +36,11 @@ public class GameListService : IViewService
 
     public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
-        host.SetBusy(true, "LOADING_GAMES".GetLocalizedString());
-
-        var gamesWithStats = await _gameDataService.GetGamesWithStats(true);
-
-        return _mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
+        using (host.BusyScope("LOADING_GAMES".GetLocalizedString()))
+        {
+            var gamesWithStats = await _gameDataService.GetGamesWithStats(true);
+            return _mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
+        }
     }
 
     public async Task AddGame()
@@ -54,12 +54,13 @@ public class GameListService : IViewService
         confirmDialogViewModel.RequestCloseDialog += async (_, args) =>
         {
             if (!args.DialogResult) return;
-            target.SetBusy(true, "UNINSTALLING".GetLocalizedString(game.GameMetadata.Title));
-            var installDir = game.GameMetadata.InstallDirectory;
-            if (installDir != null)
-                Directory.Delete(installDir, true);
-            await _gameDataService.MarkGameAsUninstalled(game.GameMetadata.Id);
-            target.ClearBusy();
+            using (target.BusyScope("UNINSTALLING".GetLocalizedString(game.GameMetadata.Title)))
+            {
+                var installDir = game.GameMetadata.InstallDirectory;
+                if (installDir != null)
+                    Directory.Delete(installDir, true);
+                await _gameDataService.MarkGameAsUninstalled(game.GameMetadata.Id);
+            }
             // Refresh logic:
             await NavigationManager.NavigateTo<GameListViewModel>();
         };

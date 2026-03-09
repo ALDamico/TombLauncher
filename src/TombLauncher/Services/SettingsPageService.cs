@@ -71,18 +71,18 @@ public class SettingsPageService : IViewService
 
     public async Task Save(SettingsPageViewModel viewModel)
     {
-        viewModel.SetBusy(true, "SAVING_APPLICATION_SETTINGS".GetLocalizedString());
+        using (viewModel.BusyScope("SAVING_APPLICATION_SETTINGS".GetLocalizedString()))
+        {
+            foreach (var section in viewModel.Sections)
+                section.ApplyTo(_appConfiguration.User);
 
-        foreach (var section in viewModel.Sections)
-            section.ApplyTo(_appConfiguration.User);
+            ApplySideEffects(viewModel);
 
-        ApplySideEffects(viewModel);
-
-        var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
-        await File.WriteAllTextAsync(userConfigPath,
-            JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
-                new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
-        viewModel.ClearBusy();
+            var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
+            await File.WriteAllTextAsync(userConfigPath,
+                JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
+                    new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
+        }
     }
 
     private void ApplySideEffects(SettingsPageViewModel viewModel)

@@ -120,19 +120,21 @@ public class GameDetailsService : IViewService
         try
         {
             var gameMetadata = vm.TargetGame;
-            var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-            currentPage?.SetBusy("Saving launch options...");
+            var currentPage = NavigationManager.CurrentPage as PageViewModel;
+            if (currentPage != null)
+            {
+                using (currentPage.BusyScope("SAVING_LAUNCH_OPTIONS".GetLocalizedString()))
+                {
+                    var launchOptionsDto = Mapper.Map<LaunchOptionsDto>(vm);
 
-            var launchOptionsDto = Mapper.Map<LaunchOptionsDto>(vm);
+                    gameMetadata.ExecutablePath = vm.GameExecutable;
+                    gameMetadata.SetupExecutable = vm.SetupExecutable;
+                    gameMetadata.SetupExecutableArgs = vm.SetupArgs;
+                    gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
 
-            gameMetadata.ExecutablePath = vm.GameExecutable;
-            gameMetadata.SetupExecutable = vm.SetupExecutable;
-            gameMetadata.SetupExecutableArgs = vm.SetupArgs;
-            gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
-
-            await _gameDataService.UpdateLaunchOptions(launchOptionsDto);
-
-            currentPage?.ClearBusy();
+                    await _gameDataService.UpdateLaunchOptions(launchOptionsDto);
+                }
+            }
         }
         catch (Exception e)
         {

@@ -300,13 +300,18 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var game = await _gameDataService.GetGameWithStats(gameId);
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy("UNINSTALLING_1".GetLocalizedString());
-        var installDir = game.GameMetadata.InstallDirectory;
-        if (installDir != null)
+        if (currentPage is PageViewModel pageVm)
         {
-            Directory.Delete(installDir, true);
+            using (pageVm.BusyScope("UNINSTALLING".GetLocalizedString(game.GameMetadata.Title)))
+            {
+                var installDir = game.GameMetadata.InstallDirectory;
+                if (installDir != null)
+                {
+                    Directory.Delete(installDir, true);
+                }
+                await _gameDataService.MarkGameAsUninstalled(gameId);
+            }
         }
-        await _gameDataService.MarkGameAsUninstalled(gameId);
         await NavigationManager.GoBack();
     }
 

@@ -48,10 +48,11 @@ public class SavegameCommandService
         SavegameViewModel targetSaveGame)
     {
         _logger.LogInformation("Setting savegame number {Savegame} as start of level...", targetSaveGame.SaveNumber);
-        savegameListViewModel.SetBusy("Update in progress...");
-        var dto = _mapper.Map<FileBackupDto>(targetSaveGame);
-        await _savegameRepository.UpdateSavegameStartOfLevel(dto);
-        savegameListViewModel.SetBusy(false);
+        using (savegameListViewModel.BusyScope("UPDATE_IN_PROGRESS".GetLocalizedString()))
+        {
+            var dto = _mapper.Map<FileBackupDto>(targetSaveGame);
+            await _savegameRepository.UpdateSavegameStartOfLevel(dto);
+        }
     }
 
     public async Task DeleteSavegame(SavegameListViewModel savegameListViewModel, SavegameViewModel savegameViewModel)
@@ -65,39 +66,41 @@ public class SavegameCommandService
             return;
         }
 
-        savegameListViewModel.SetBusy("Deleting savegame...");
-
-        await _savegameRepository.DeleteFileBackupById(savegameViewModel.Id);
-        savegameListViewModel.FilteredSaves.Remove(savegameViewModel);
-        savegameListViewModel.Savegames.Remove(savegameViewModel);
-        savegameListViewModel.SetBusy(false);
+        using (savegameListViewModel.BusyScope("DELETING_SAVEGAME".GetLocalizedString()))
+        {
+            await _savegameRepository.DeleteFileBackupById(savegameViewModel.Id);
+            savegameListViewModel.FilteredSaves.Remove(savegameViewModel);
+            savegameListViewModel.Savegames.Remove(savegameViewModel);
+        }
     }
 
     public async Task Restore(SavegameListViewModel savegameListViewModel, int savegameId, int max)
     {
-        savegameListViewModel.SetBusy("Restoring savegame...");
-        var savegame = _savegameRepository.GetSavegameById(savegameId);
-        var availableSlots = new ObservableCollection<SavegameSlotViewModel>();
-        for (var i = 0; i < max; i++)
+        using (savegameListViewModel.BusyScope("RESTORING_SAVEGAME".GetLocalizedString()))
         {
-            var slotViewModel = new SavegameSlotViewModel()
+            var savegame = _savegameRepository.GetSavegameById(savegameId);
+            var availableSlots = new ObservableCollection<SavegameSlotViewModel>();
+            for (var i = 0; i < max; i++)
             {
-                Header = "Slot #" + (i + 1),
-                SaveSlot = i
+                var slotViewModel = new SavegameSlotViewModel()
+                {
+                    Header = "Slot #" + (i + 1),
+                    SaveSlot = i
+                };
+                availableSlots.Add(slotViewModel);
+            }
+
+            var dialogViewModel = new RestoreSavegameDialogViewModel()
+            {
+                Slots = availableSlots,
+                SelectedSlot = availableSlots.FirstOrDefault(s => s.SaveSlot == savegame.SlotNumber) ?? availableSlots.First(),
+                Data = savegame.Data,
+                TargetDirectory = Path.GetDirectoryName(savegame.FileName) ?? string.Empty,
+                BaseFileName = Path.GetFileNameWithoutExtension(savegame.FileName)
             };
-            availableSlots.Add(slotViewModel);
+            _dialogService.ShowDialog(dialogViewModel, ExecuteRestore);
         }
 
-        var dialogViewModel = new RestoreSavegameDialogViewModel()
-        {
-            Slots = availableSlots,
-            SelectedSlot = availableSlots.FirstOrDefault(s => s.SaveSlot == savegame.SlotNumber) ?? availableSlots.First(),
-            Data = savegame.Data,
-            TargetDirectory = Path.GetDirectoryName(savegame.FileName) ?? string.Empty,
-            BaseFileName = Path.GetFileNameWithoutExtension(savegame.FileName)
-        };
-        _dialogService.ShowDialog(dialogViewModel, ExecuteRestore);
-        savegameListViewModel.SetBusy(false);
         await Task.CompletedTask;
     }
 
@@ -119,24 +122,24 @@ public class SavegameCommandService
 
         if (result.ButtonResult == MsgBoxButtonResult.Ok)
         {
-            savegameListViewModel.SetBusy("Deleting savegames...");
-            var deleteStartOfLevel = result.CheckBoxResult;
-            var targetTypes = new List<FileType>() { FileType.Savegame };
-            if (deleteStartOfLevel)
+            using (savegameListViewModel.BusyScope("DELETING_SAVEGAMES".GetLocalizedString()))
             {
-                targetTypes.Add(FileType.SavegameStartOfLevel);
-            }
+                var deleteStartOfLevel = result.CheckBoxResult;
+                var targetTypes = new List<FileType>() { FileType.Savegame };
+                if (deleteStartOfLevel)
+                {
+                    targetTypes.Add(FileType.SavegameStartOfLevel);
+                }
 
-            _savegameRepository.DeleteFileBackupsByGameId(gameId, targetTypes);
-            savegameListViewModel.SetBusy(false);
+                _savegameRepository.DeleteFileBackupsByGameId(gameId, targetTypes);
+            }
         }
     }
 
     public async Task SyncSavegames(PageViewModel page)
     {
-        try
+        using (page.BusyScope("SYNCING_SAVEGAMES".GetLocalizedString()))
         {
-            page.SetBusy("Syncing savegames...");
             var allGamesWithSaves = await _savegameRepository.GetSavegameBackups();
 
             foreach (var savegame in allGamesWithSaves)
@@ -157,11 +160,5 @@ public class SavegameCommandService
             await _messageBoxService.ShowLocalized("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
                 MsgBoxImage.Success);
         }
-        finally
-        {
-            page.SetBusy(false);
-        }
-
-        await Task.CompletedTask;
     }
 }

@@ -342,5 +342,13 @@
     <system:String x:Key="RANDOM_GAME_SUGGESTION">Random game suggestion</system:String>
     <system:String x:Key="RANDOM_SUGGESTION_FAILED">Could not fetch a random game. Try again!</system:String>
     <system:String x:Key="SHUFFLE">Shuffle</system:String>
+    <system:String x:Key="RESTORING_SAVEGAME">Restoring savegame...</system:String>
+    <system:String x:Key="DELETING_SAVEGAMES">Deleting savegames...</system:String>
+    <system:String x:Key="SYNCING_SAVEGAMES">Syncing savegames...</system:String>
+    <system:String x:Key="SEARCH_COMPLETED">Search completed</system:String>
+    <system:String x:Key="IMPORTING_SAVEGAMES">Importing your saved games...</system:String>
+    <system:String x:Key="SAVING_LAUNCH_OPTIONS">Saving launch options...</system:String>
+    <system:String x:Key="NO_SAVEGAME_BACKUPS_FOUND">No savegame backups found</system:String>
+    <system:String x:Key="SAVEGAME_BACKUPS_FOUND_IMPORT">There were no savegame backups in Tomb Launcher's database, but we found {0} savegame files. Would you like to import them?</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
