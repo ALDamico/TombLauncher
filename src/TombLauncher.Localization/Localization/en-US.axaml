@@ -169,6 +169,7 @@
     <system:String x:Key="SAVEGAME_BACKUP_MILLISECOND_DELAY_WARNING">Tomb Launcher waits for some time before backing up your savegames in order to make sure the game has finished writing the save file. If you notice the application is corrupting some of your save files (i.e., if a previously saved game shows up as 'Empty slot' in the menu) you can try and set this to a higher value.</system:String>
     <system:String x:Key="SAVEGAME_BACKUP_DELAY_MS">Savegame backup delay (ms)</system:String>
     <system:String x:Key="RESTORE">Restore</system:String>
+    <system:String x:Key="RESTORE_SAVEGAME">Restore savegame</system:String>
     <system:String x:Key="SIZE">Size</system:String>
     <system:String x:Key="DELETE_ALL">Delete all</system:String>
     <system:String x:Key="DELETE_ALL_SAVEGAMES">Delete all savegames</system:String>
