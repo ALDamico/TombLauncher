@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
 using AvaloniaEdit.Utils;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
@@ -44,8 +44,6 @@ public class GameSearchService : IViewService
     public ViewServiceContext ViewContext { get; }
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
     private IMapper Mapper => ViewContext.Mapper;
     private readonly NotificationService _notificationService;
     private readonly GameListService _gameListService;

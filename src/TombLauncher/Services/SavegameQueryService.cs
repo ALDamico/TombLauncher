@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
@@ -23,18 +23,18 @@ public class SavegameQueryService
 {
     private readonly ISavegameRepository _savegameRepository;
     private readonly ISavegameHeaderProvider _headerProvider;
-    private readonly IMessageBoxService _messageBoxService;
+    private readonly IPopupService _popupService;
     private readonly int? _numberOfVersionsToKeep;
 
     public SavegameQueryService(
         ISavegameRepository savegameRepository,
         ISavegameHeaderProvider headerProvider,
-        IMessageBoxService messageBoxService,
+        IPopupService popupService,
         ISettingsProvider settingsProvider)
     {
         _savegameRepository = savegameRepository;
         _headerProvider = headerProvider;
-        _messageBoxService = messageBoxService;
+        _popupService = popupService;
         _numberOfVersionsToKeep = settingsProvider.GetSavegameSettings()?.NumberOfVersionsToKeep;
     }
 
@@ -155,12 +155,12 @@ public class SavegameQueryService
         var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys).ToList();
         if (missingSaveGames.Count == 0)
         {
-            await _messageBoxService.ShowLocalized("Scan complete",
+            await _popupService.ShowLocalized("Scan complete",
                 "There were no savegames to import.", MsgBoxButton.Ok, MsgBoxImage.Information);
             return;
         }
 
-        var userResponse = await _messageBoxService.Show("NO_SAVEGAME_BACKUPS_FOUND".GetLocalizedString(),
+        var userResponse = await _popupService.Show("NO_SAVEGAME_BACKUPS_FOUND".GetLocalizedString(),
             "SAVEGAME_BACKUPS_FOUND_IMPORT".GetLocalizedString(missingSaveGames.Count),
             MsgBoxButton.YesNo, MsgBoxImage.Folder, "NO".GetLocalizedString(), "YES".GetLocalizedString());
         if (userResponse.ButtonResult == MsgBoxButtonResult.Yes)

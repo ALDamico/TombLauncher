@@ -198,13 +198,14 @@ public class App : Application
         serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current!));
         ConfigureDatabaseAccess(serviceCollection, appConfiguration, appDataDirectory);
         serviceCollection.AddSingleton(sp => new NavigationManager(sp));
-        serviceCollection.AddScoped(_ => DialogServiceFactory.Create(new DialogServiceConfiguration()
-        {
-            ApplicationName = "Tomb Launcher",
-            UseApplicationNameInTitle = true,
-            ViewsAssemblyName = Assembly.GetExecutingAssembly().GetName().Name
-        }));
-        serviceCollection.AddScoped(_ => DialogServiceFactory.CreateMessageBoxService());
+        serviceCollection.AddSingleton<IPopupService>(_ => new PopupService(
+            DialogServiceFactory.CreateMessageBoxService(),
+            DialogServiceFactory.Create(new DialogServiceConfiguration()
+            {
+                ApplicationName = "Tomb Launcher",
+                UseApplicationNameInTitle = true,
+                ViewsAssemblyName = Assembly.GetExecutingAssembly().GetName().Name
+            })));
         serviceCollection.AddScoped<TombRaiderLevelInstaller>();
         serviceCollection.AddScoped<TombRaiderEngineDetector>();
         serviceCollection.AddTransient<IGameMerger>(_ =>

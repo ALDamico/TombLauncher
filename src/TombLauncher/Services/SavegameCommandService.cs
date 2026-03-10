@@ -23,24 +23,21 @@ public class SavegameCommandService
 {
     private readonly ISavegameRepository _savegameRepository;
     private readonly ISavegameHeaderProvider _headerProvider;
-    private readonly IMessageBoxService _messageBoxService;
+    private readonly IPopupService _popupService;
     private readonly IMapper _mapper;
-    private readonly IDialogService _dialogService;
     private readonly ILogger<SavegameCommandService> _logger;
 
     public SavegameCommandService(
         ISavegameRepository savegameRepository,
         ISavegameHeaderProvider headerProvider,
-        IMessageBoxService messageBoxService,
+        IPopupService popupService,
         MapperConfiguration mapperConfiguration,
-        IDialogService dialogService,
         ILogger<SavegameCommandService> logger)
     {
         _savegameRepository = savegameRepository;
         _headerProvider = headerProvider;
-        _messageBoxService = messageBoxService;
+        _popupService = popupService;
         _mapper = mapperConfiguration.CreateMapper();
-        _dialogService = dialogService;
         _logger = logger;
     }
 
@@ -57,7 +54,7 @@ public class SavegameCommandService
 
     public async Task DeleteSavegame(SavegameListViewModel savegameListViewModel, SavegameViewModel savegameViewModel)
     {
-        var userIsSure = await _messageBoxService.Show("CONFIRM_DELETE".GetLocalizedString(),
+        var userIsSure = await _popupService.Show("CONFIRM_DELETE".GetLocalizedString(),
             "ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_SAVEGAME_THIS".GetLocalizedString(),
             MsgBoxButton.YesNo,
             MsgBoxImage.Question);
@@ -98,7 +95,7 @@ public class SavegameCommandService
                 TargetDirectory = Path.GetDirectoryName(savegame.FileName) ?? string.Empty,
                 BaseFileName = Path.GetFileNameWithoutExtension(savegame.FileName)
             };
-            _dialogService.ShowDialog(dialogViewModel, ExecuteRestore);
+            _popupService.ShowDialog(dialogViewModel, ExecuteRestore);
         }
 
         await Task.CompletedTask;
@@ -115,7 +112,7 @@ public class SavegameCommandService
 
     public async Task DeleteAllSavegamesByGameId(SavegameListViewModel savegameListViewModel, int gameId)
     {
-        var result = await _messageBoxService.Show("DELETE_ALL_SAVEGAMES".GetLocalizedString(),
+        var result = await _popupService.Show("DELETE_ALL_SAVEGAMES".GetLocalizedString(),
             "ARE_YOU_SURE_YOU_WANT_TO_DELETE_ALL_SAVEGAMES_THIS".GetLocalizedString(),
             MsgBoxButton.OkCancel, MsgBoxImage.Warning,
             checkBoxText: "DELETE_SAVEGAMES_MARKED_AS_START_OF_LEVEL".GetLocalizedString());
@@ -157,7 +154,7 @@ public class SavegameCommandService
             }
 
             await _savegameRepository.SyncSavegameMetadata(allGamesWithSaves);
-            await _messageBoxService.ShowLocalized("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
+            await _popupService.ShowLocalized("Sync completed", "Synchronization completed successfully!", MsgBoxButton.Ok,
                 MsgBoxImage.Success);
         }
     }

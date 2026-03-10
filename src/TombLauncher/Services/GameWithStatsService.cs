@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
@@ -63,8 +63,6 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly ISavegameRepository _savegameRepository;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
     private FileSystemWatcher? _watcher;
     private readonly bool _backupEnabled;
     private readonly int? _numberOfSavesToKeep;
@@ -214,7 +212,7 @@ public class GameWithStatsService : IViewService, IDisposable
             currentPage?.ClearBusy();
             if (errorOccurred)
             {
-                await MessageBoxService.ShowLocalized("Savegame parse error",
+                await ViewContext.PopupService.ShowLocalized("Savegame parse error",
                     "An error occurred while processing a savegame. Savegames have not been backed up.",
                     MsgBoxButton.Ok, MsgBoxImage.Error);
             }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
@@ -15,11 +15,11 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 {
-    public SettingsPageViewModel(SettingsPageService settingsService, ISettingsProvider settingsProvider, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration, IAppFileOperationsService appFileOperationsService, ILayeredAppConfiguration appConfiguration)
+    public SettingsPageViewModel(SettingsPageService settingsService, ISettingsProvider settingsProvider, IPopupService popupService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration, IAppFileOperationsService appFileOperationsService, ILayeredAppConfiguration appConfiguration)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
-        _messageBoxService = messageBoxService;
+        _popupService = popupService;
         _platformSpecificFeatures = platformSpecificFeatures;
         _mapperConfiguration = mapperConfiguration;
         _appFileOperationsService = appFileOperationsService;
@@ -52,7 +52,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
     private readonly SettingsPageService _settingsService;
     private readonly ISettingsProvider _settingsProvider;
-    private readonly IMessageBoxService _messageBoxService;
+    private readonly IPopupService _popupService;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly MapperConfiguration _mapperConfiguration;
     private readonly IAppFileOperationsService _appFileOperationsService;
@@ -94,7 +94,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();
-        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _messageBoxService, _platformSpecificFeatures, _mapperConfiguration)
+        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _popupService, _platformSpecificFeatures, _mapperConfiguration)
         {
             AvailableDownloaders = downloaders.ToObservableCollection()
         };

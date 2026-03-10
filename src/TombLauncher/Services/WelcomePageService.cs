@@ -8,7 +8,6 @@ using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Installers.Downloaders;
@@ -37,11 +36,9 @@ public class WelcomePageService : IViewService
     private readonly ISettingsProvider _settingsProvider;
     private readonly GameDownloadManager _gameDownloadManager;
     private readonly GameWithStatsService _gameWithStatsService;
+    private IMapper Mapper => ViewContext.Mapper;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
-    private IMapper Mapper => ViewContext.Mapper;
     private readonly GameDataService _gameDataService;
     private readonly AppCrashHostService _appCrashHostService;
 
@@ -56,7 +53,7 @@ public class WelcomePageService : IViewService
             await _appCrashHostService.MarkAsNotified(model.Crash);
         }
 
-        DialogService.ShowDialog(appCrashHostViewModel, MarkAsNotified);
+        ViewContext.PopupService.ShowDialog(appCrashHostViewModel, MarkAsNotified);
     }
 
     internal async Task<GameWithStatsViewModel> GetLatestPlayedGame()

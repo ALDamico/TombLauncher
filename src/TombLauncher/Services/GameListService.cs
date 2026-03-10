@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.Services;
@@ -29,8 +29,6 @@ public class GameListService : IViewService
     private readonly GameDataService _gameDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
     private IMapper _mapper => ViewContext.Mapper;
     private readonly ISettingsProvider _settingsProvider;
 
@@ -64,7 +62,7 @@ public class GameListService : IViewService
             // Refresh logic:
             await NavigationManager.NavigateTo<GameListViewModel>();
         };
-        DialogService.ShowDialog(confirmDialogViewModel, _ => { });
+        ViewContext.PopupService.ShowDialog(confirmDialogViewModel, _ => { });
         await Task.CompletedTask;
     }
 

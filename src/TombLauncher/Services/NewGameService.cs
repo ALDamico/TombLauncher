@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
@@ -42,8 +42,6 @@ public class NewGameService : IViewService
     private readonly GameHashDataService _gameHashDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
     private IMapper Mapper => ViewContext.Mapper;
     private readonly GameFileHashCalculator _gameFileHashCalculator;
     private readonly TombRaiderLevelInstaller _levelInstaller;
@@ -51,7 +49,7 @@ public class NewGameService : IViewService
 
     public async Task<string> PickZipArchive()
     {
-        var file = await DialogService.OpenFile("SELECT_A_ZIP_FILE".GetLocalizedString(), new List<FilePickerFileType>()
+        var file = await ViewContext.PopupService.OpenFile("SELECT_A_ZIP_FILE".GetLocalizedString(), new List<FilePickerFileType>()
         {
             new FilePickerFileType("ZIP_FILES".GetLocalizedString())
             {
@@ -64,7 +62,7 @@ public class NewGameService : IViewService
 
     public async Task<string> PickFolder()
     {
-        return await DialogService.OpenFolder("SELECT_A_FOLDER".GetLocalizedString()) ?? string.Empty;
+        return await ViewContext.PopupService.OpenFolder("SELECT_A_FOLDER".GetLocalizedString()) ?? string.Empty;
     }
 
     public async Task InstallGame(GameMetadataViewModel gameMetadata, IProgress<CopyProgressInfo> progress, string source)
@@ -76,7 +74,7 @@ public class NewGameService : IViewService
         {
             _logger.LogWarning("Game {GameTitle} is already installed", gameMetadata.Title);
             var messageBoxResult = await Dispatcher.UIThread.InvokeAsync(() =>
-                MessageBoxService.ShowLocalized("The same mod is already installed",
+                ViewContext.PopupService.ShowLocalized("The same mod is already installed",
                     "The same mod is already installed TEXT",
                     MsgBoxButton.YesNo,
                     MsgBoxImage.Error,
