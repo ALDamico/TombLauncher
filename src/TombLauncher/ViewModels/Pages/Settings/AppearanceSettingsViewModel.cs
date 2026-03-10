@@ -1,14 +1,14 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia;
+using System.Collections.ObjectModel;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.ViewModels;
+using IconPacks.Avalonia.RemixIcon;
+using TombLauncher.Configuration;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class AppearanceSettingsViewModel : SettingsSectionViewModelBase
 {
-    public AppearanceSettingsViewModel(PageViewModel settingsPage) : base("APPEARANCE", settingsPage)
+    public AppearanceSettingsViewModel(PageViewModel settingsPage) : base("APPEARANCE", settingsPage, PackIconRemixIconKind.PaletteLine)
     {
         AvailableThemes = new ObservableCollection<ApplicationTheme>()
         {
@@ -24,4 +24,11 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private ApplicationTheme _selectedTheme;
     [ObservableProperty] private ObservableCollection<ApplicationTheme> _availableThemes;
     [ObservableProperty] private bool _defaultToGridView;
+
+    public override void ApplyTo(AppConfiguration userConfig)
+    {
+        if (SelectedTheme != null)
+            userConfig.Appearance.ApplicationTheme = SelectedTheme.Value;
+        userConfig.Appearance.DefaultToGridView = DefaultToGridView;
+    }
 }

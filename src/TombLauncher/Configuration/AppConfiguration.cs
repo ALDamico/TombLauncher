@@ -1,36 +1,23 @@
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using TombLauncher.Core.Dtos;
+using TombLauncher.Configuration.Sections;
 
 namespace TombLauncher.Configuration;
 
 public class AppConfiguration : IAppConfiguration
 {
-    public string? ApplicationLanguage { get; set; }
-    public string? DatabasePath { get; set; }
-    public string? ApplicationTheme { get; set; }
-    public bool? AskForConfirmationBeforeWalkthrough { get; set; }
-    public List<DownloaderConfiguration>? Downloaders { get; set; }
-    public LogLevel? MinimumLogLevel { get; set; }
-    public string? AppCastUrl { get; set; }
-    public string? AppCastPublicKey { get; set; }
-    public bool UpdaterUseLocalPaths { get; set; }
-    public int? RandomGameMaxRerolls { get; set; }
-    public bool? BackupSavegamesEnabled { get; set; }
-    public int? NumberOfVersionsToKeep { get; set; }
-    public int SavegameProcessingDelay { get; set; }
-    public string? GitHubLink { get; set; }
-    public bool DefaultToGridView { get; set; }
-    public List<CheckableItem<string>>? DocumentationPatterns { get; set; }
-    public List<CheckableItem<string>>? DocumentationFolderExclusions { get; set; }
-    public string? UpdateChannelName { get; set; }
-    public string? WinePath { get; set; }
-    public string? UnzipFallbackMethod { get; set; }
-    public bool? ShowQuickStats { get; set; }
-    public bool? ShowQuickActions { get; set; }
-    public bool? ShowRecentlyPlayed { get; set; }
-    public bool? ShowFavourites { get; set; }
-    public int? RecentlyPlayedCount { get; set; }
-    public int? FavouritesCount { get; set; }
-    public bool? ShowRandomSuggestion { get; set; }
+    public ApplicationConfig Application { get; set; } = new();
+    public AppearanceConfig Appearance { get; set; } = new();
+    public DownloadersConfig Downloaders { get; set; } = new();
+    public GameDetailsConfig GameDetails { get; set; } = new();
+    public SavegamesConfig Savegames { get; set; } = new();
+    public WelcomePageConfig WelcomePage { get; set; } = new();
+    public UpdaterConfig Updater { get; set; } = new();
+
+    // Explicit interface implementation — returns the same objects as read-only interfaces
+    IApplicationConfig IAppConfiguration.Application => Application;
+    IAppearanceConfig IAppConfiguration.Appearance => Appearance;
+    IDownloadersConfig IAppConfiguration.Downloaders => Downloaders;
+    IGameDetailsConfig IAppConfiguration.GameDetails => GameDetails;
+    ISavegamesConfig IAppConfiguration.Savegames => Savegames;
+    IWelcomePageConfig IAppConfiguration.WelcomePage => WelcomePage;
+    IUpdaterConfig IAppConfiguration.Updater => Updater;
 }

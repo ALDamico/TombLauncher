@@ -54,12 +54,13 @@
     </Application.Resources>
     <Application.Styles>
         <FluentTheme />
-        <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
         <StyleInclude Source="avares://IconPacks.Avalonia.RemixIcon/RemixIcon.axaml" />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
         <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/MsgBoxStyles.axaml" />
         <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ChildStyle.axaml" />
         <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ModalStyle.axaml" />
+        <StyleInclude Source="avares://TombLauncher/Assets/JamSoftOverrides.axaml" />
+        <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
         <Style Selector="ComboBox">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>

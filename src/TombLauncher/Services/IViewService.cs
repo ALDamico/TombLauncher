@@ -1,4 +1,3 @@
-﻿using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Navigation;
 
@@ -9,6 +8,4 @@ public interface IViewService
     ViewServiceContext ViewContext { get; }
     ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     NavigationManager NavigationManager => ViewContext.NavigationManager;
-    IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    IDialogService DialogService => ViewContext.DialogService;
 }

@@ -5,60 +5,104 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Dialogs.LaunchOptionsDialogView"
              x:DataType="dialogs:LaunchOptionsDialogViewModel"
              Width="600">
     <Design.DataContext>
-        <dialogs:LaunchOptionsDialogViewModel/>
+        <dialogs:LaunchOptionsDialogViewModel />
     </Design.DataContext>
-    <StackPanel Orientation="Vertical">
-        <TextBlock Text="{loc:Translate LAUNCH_OPTIONS}" Classes="h1"></TextBlock>
-        <controls:IconButton Icon="RefreshLine" 
-                             Text="{loc:Translate AUTO_DETECT}" 
-                             ToolTip.Tip="{loc:Translate AUTO_DETECT_TOOLTIP}"
-                HorizontalAlignment="Right"
-                Command="{Binding AutoDetectCommand}"/>
-        <ScrollViewer>
-        <StackPanel Orientation="Vertical">
-            <TextBlock Classes="small" Text="{loc:Translate ENGINE_TYPE}"/>
-            <ComboBox ItemsSource="{Binding AvailableEngines}"
-                      SelectedValue="{Binding SelectedEngine}"
-                      SelectedValueBinding="{Binding Value, Mode=TwoWay}"
-                      AutoScrollToSelectedItem="True"
-                      DisplayMemberBinding="{Binding Description}"/>
-            <TextBlock Classes="small" Text="{loc:Translate GAME_EXECUTABLE}"/>
-            <ComboBox ItemsSource="{Binding AvailableExecutables}" 
-                      SelectedItem="{Binding GameExecutable,Mode=TwoWay}"/>
-            <CheckBox Classes="small" IsChecked="{Binding SupportsSetup}" 
-                      Content="{loc:Translate CAN_LAUNCH_SETUP}"></CheckBox>
-            <TextBlock Classes="small" 
-                       IsEnabled="{Binding SupportsSetup}"
-                       Text="{loc:Translate SETUP_EXECUTABLE}"/>
-            <DockPanel IsEnabled="{Binding SupportsSetup}" LastChildFill="True">
-                <controls:Infotip DockPanel.Dock="Right" 
-                                  ToolTipContent="{loc:Translate SETUP_EXECUTABLE_TOOLTIP}" />
-                <ComboBox ItemsSource="{Binding AvailableExecutables}" 
-                          SelectedItem="{Binding SetupExecutable}"/>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Orientation="Vertical" Spacing="12" Margin="0,0,0,8">
+
+            <!-- Header -->
+            <DockPanel LastChildFill="True">
+                <controls:IconButton DockPanel.Dock="Right"
+                                     Icon="RefreshLine"
+                                     Text="{loc:Translate AUTO_DETECT}"
+                                     ToolTip.Tip="{loc:Translate AUTO_DETECT_TOOLTIP}"
+                                     Command="{Binding AutoDetectCommand}" />
+                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                    <iconPacks:PackIconRemixIcon Kind="TerminalLine"
+                                                 Width="24" Height="24"
+                                                 Foreground="{DynamicResource PrimaryBrush}" />
+                    <TextBlock Text="{loc:Translate LAUNCH_OPTIONS, Casing=Upper}"
+                               FontSize="18" FontWeight="DemiBold"
+                               VerticalAlignment="Center" />
+                </StackPanel>
             </DockPanel>
-            
-            <controls:LabeledTextBox IsEnabled="{Binding SupportsSetup}" 
-                                     Label="{loc:Translate SETUP_EXECUTABLE_ARGS}" 
-                                     Text="{Binding SetupArgs}">
-                <controls:LabeledTextBox.Infotip>
-                    <controls:Infotip ToolTipContent="{loc:Translate SETUP_EXECUTABLE_ARGS_TOOLTIP}"/>
-                </controls:LabeledTextBox.Infotip>
-            </controls:LabeledTextBox>
-            <CheckBox Classes="small" IsChecked="{Binding SupportsCustomSetup}" 
-                      Content="{loc:Translate USES_COMMUNITY_PATCH}"/>
-            <TextBlock Classes="small" Text="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE}"></TextBlock>
-            <DockPanel IsEnabled="{Binding SupportsCustomSetup}" LastChildFill="True">
-                <controls:Infotip DockPanel.Dock="Right" 
-                                  ToolTipContent="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP}" />
-                <ComboBox ItemsSource="{Binding AvailableExecutables}" 
-                          SelectedItem="{Binding CustomSetupExecutable}"/>
-            </DockPanel>
+
+            <!-- General Section -->
+            <Border Classes="card-background" CornerRadius="8" Padding="16">
+                <StackPanel Orientation="Vertical" Spacing="8">
+                    <TextBlock Text="{loc:Translate ENGINE_TYPE}"
+                               Classes="small" Opacity="0.7" />
+                    <ComboBox ItemsSource="{Binding AvailableEngines}"
+                              SelectedValue="{Binding SelectedEngine}"
+                              SelectedValueBinding="{Binding Value, Mode=TwoWay}"
+                              AutoScrollToSelectedItem="True"
+                              DisplayMemberBinding="{Binding Description}" />
+
+                    <TextBlock Text="{loc:Translate GAME_EXECUTABLE}"
+                               Classes="small" Opacity="0.7"
+                               Margin="0,8,0,0" />
+                    <ComboBox ItemsSource="{Binding AvailableExecutables}"
+                              SelectedItem="{Binding GameExecutable, Mode=TwoWay}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Setup Section -->
+            <Border Classes="card-background" CornerRadius="8" Padding="16">
+                <StackPanel Orientation="Vertical" Spacing="8">
+                    <CheckBox IsChecked="{Binding SupportsSetup}"
+                              Content="{loc:Translate CAN_LAUNCH_SETUP}" />
+
+                    <StackPanel Orientation="Vertical" Spacing="8"
+                                IsEnabled="{Binding SupportsSetup}">
+                        <StackPanel Orientation="Vertical" Spacing="4">
+                            <TextBlock Text="{loc:Translate SETUP_EXECUTABLE}"
+                                       Classes="small" Opacity="0.7" />
+                            <DockPanel LastChildFill="True">
+                                <controls:Infotip DockPanel.Dock="Right" VerticalAlignment="Center"
+                                                  ToolTipContent="{loc:Translate SETUP_EXECUTABLE_TOOLTIP}" Margin="8, 0, 0, 0" />
+                                <ComboBox ItemsSource="{Binding AvailableExecutables}"
+                                          SelectedItem="{Binding SetupExecutable}" />
+                            </DockPanel>
+                        </StackPanel>
+
+                        <controls:LabeledTextBox Label="{loc:Translate SETUP_EXECUTABLE_ARGS}"
+                                                 Text="{Binding SetupArgs}">
+                            <controls:LabeledTextBox.Infotip>
+                                <controls:Infotip ToolTipContent="{loc:Translate SETUP_EXECUTABLE_ARGS_TOOLTIP}" />
+                            </controls:LabeledTextBox.Infotip>
+                        </controls:LabeledTextBox>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Community Patch Section -->
+            <Border Classes="card-background" CornerRadius="8" Padding="16">
+                <StackPanel Orientation="Vertical" Spacing="8">
+                    <DockPanel LastChildFill="True">
+                        <controls:Infotip DockPanel.Dock="Right"
+                                          VerticalAlignment="Center"
+                                          ToolTipContent="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP}" />
+                        <CheckBox IsChecked="{Binding SupportsCustomSetup}"
+                                  Content="{loc:Translate USES_COMMUNITY_PATCH}" />
+                    </DockPanel>
+
+                    <StackPanel Orientation="Vertical" Spacing="4"
+                                IsEnabled="{Binding SupportsCustomSetup}">
+                        <TextBlock Text="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE}"
+                                   Classes="small" Opacity="0.7" />
+                        <ComboBox ItemsSource="{Binding AvailableExecutables}"
+                                  SelectedItem="{Binding CustomSetupExecutable}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
         </StackPanel>
     </ScrollViewer>
-        </StackPanel>
 </UserControl>

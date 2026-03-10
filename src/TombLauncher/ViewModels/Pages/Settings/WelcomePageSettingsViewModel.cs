@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
+using IconPacks.Avalonia.RemixIcon;
+using TombLauncher.Configuration;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class WelcomePageSettingsViewModel : SettingsSectionViewModelBase
 {
     public WelcomePageSettingsViewModel(PageViewModel settingsPage)
-        : base("WELCOME_PAGE", settingsPage) { }
+        : base("WELCOME_PAGE", settingsPage, PackIconRemixIconKind.Home4Line) { }
 
     [ObservableProperty] private bool _showQuickStats;
     [ObservableProperty] private bool _showQuickActions;
@@ -19,4 +21,16 @@ public partial class WelcomePageSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty]
     [Range(1, 15, ErrorMessage = "Allowed values: 1-15")]
     private int _maxRerolls;
+
+    public override void ApplyTo(AppConfiguration userConfig)
+    {
+        userConfig.WelcomePage.ShowQuickStats = ShowQuickStats;
+        userConfig.WelcomePage.ShowQuickActions = ShowQuickActions;
+        userConfig.WelcomePage.ShowRecentlyPlayed = ShowRecentlyPlayed;
+        userConfig.WelcomePage.ShowFavourites = ShowFavourites;
+        userConfig.WelcomePage.RecentlyPlayedCount = RecentlyPlayedCount;
+        userConfig.WelcomePage.FavouritesCount = FavouritesCount;
+        userConfig.WelcomePage.ShowRandomSuggestion = ShowRandomSuggestion;
+        userConfig.WelcomePage.RandomGameMaxRerolls = MaxRerolls;
+    }
 }

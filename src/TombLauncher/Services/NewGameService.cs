@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
@@ -14,6 +14,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services;
@@ -41,8 +42,6 @@ public class NewGameService : IViewService
     private readonly GameHashDataService _gameHashDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
     private IMapper Mapper => ViewContext.Mapper;
     private readonly GameFileHashCalculator _gameFileHashCalculator;
     private readonly TombRaiderLevelInstaller _levelInstaller;
@@ -50,9 +49,9 @@ public class NewGameService : IViewService
 
     public async Task<string> PickZipArchive()
     {
-        var file = await DialogService.OpenFile(LocalizationManager["Select a ZIP file"], new List<FilePickerFileType>()
+        var file = await ViewContext.PopupService.OpenFile("SELECT_A_ZIP_FILE".GetLocalizedString(), new List<FilePickerFileType>()
         {
-            new FilePickerFileType(LocalizationManager["ZIP files"])
+            new FilePickerFileType("ZIP_FILES".GetLocalizedString())
             {
                 Patterns = new List<string>() { "*.zip" }
             }
@@ -63,19 +62,19 @@ public class NewGameService : IViewService
 
     public async Task<string> PickFolder()
     {
-        return await DialogService.OpenFolder(LocalizationManager["Select a folder"]) ?? string.Empty;
+        return await ViewContext.PopupService.OpenFolder("SELECT_A_FOLDER".GetLocalizedString()) ?? string.Empty;
     }
 
     public async Task InstallGame(GameMetadataViewModel gameMetadata, IProgress<CopyProgressInfo> progress, string source)
     {
         _logger.LogInformation("Installing game {GameTitle}", gameMetadata.Title);
-        progress.Report(new CopyProgressInfo() { Message = LocalizationManager.GetLocalizedString("Installing GAMENAME", gameMetadata.Title) });
+        progress.Report(new CopyProgressInfo() { Message = "INSTALLING_GAMENAME".GetLocalizedString(gameMetadata.Title) });
         var hashes = await _gameFileHashCalculator.CalculateHashes(source);
         if (_gameHashDataService.ExistsHashes(hashes, out _))
         {
             _logger.LogWarning("Game {GameTitle} is already installed", gameMetadata.Title);
             var messageBoxResult = await Dispatcher.UIThread.InvokeAsync(() =>
-                MessageBoxService.ShowLocalized("The same mod is already installed",
+                ViewContext.PopupService.ShowLocalized("The same mod is already installed",
                     "The same mod is already installed TEXT",
                     MsgBoxButton.YesNo,
                     MsgBoxImage.Error,
@@ -99,7 +98,7 @@ public class NewGameService : IViewService
         var gameMetadataDto = Mapper.Map<GameMetadataDto>(gameMetadata);
 
         var installLocation = await _levelInstaller.Install(source, gameMetadataDto, CancellationToken.None, progress);
-        progress.Report(new CopyProgressInfo() { Message = "Finishing up..." });
+        progress.Report(new CopyProgressInfo() { Message = "FINISHING_UP".GetLocalizedString() });
         gameMetadata.InstallDirectory = installLocation;
         var gameEngineResult = _engineDetector.Detect(installLocation);
         gameMetadata.GameEngine = gameEngineResult.GameEngine;

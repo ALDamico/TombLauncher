@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.Services;
@@ -29,18 +29,16 @@ public class GameListService : IViewService
     private readonly GameDataService _gameDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
     private IMapper _mapper => ViewContext.Mapper;
     private readonly ISettingsProvider _settingsProvider;
 
     public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
-        host.SetBusy(true, "LOADING_GAMES".GetLocalizedString());
-
-        var gamesWithStats = await _gameDataService.GetGamesWithStats(true);
-
-        return _mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
+        using (host.BusyScope("LOADING_GAMES".GetLocalizedString()))
+        {
+            var gamesWithStats = await _gameDataService.GetGamesWithStats(true);
+            return _mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
+        }
     }
 
     public async Task AddGame()
@@ -54,16 +52,17 @@ public class GameListService : IViewService
         confirmDialogViewModel.RequestCloseDialog += async (_, args) =>
         {
             if (!args.DialogResult) return;
-            target.SetBusy(true, "UNINSTALLING".GetLocalizedString(game.GameMetadata.Title));
-            var installDir = game.GameMetadata.InstallDirectory;
-            if (installDir != null)
-                Directory.Delete(installDir, true);
-            await _gameDataService.MarkGameAsUninstalled(game.GameMetadata.Id);
-            target.ClearBusy();
+            using (target.BusyScope("UNINSTALLING".GetLocalizedString(game.GameMetadata.Title)))
+            {
+                var installDir = game.GameMetadata.InstallDirectory;
+                if (installDir != null)
+                    Directory.Delete(installDir, true);
+                await _gameDataService.MarkGameAsUninstalled(game.GameMetadata.Id);
+            }
             // Refresh logic:
             await NavigationManager.NavigateTo<GameListViewModel>();
         };
-        DialogService.ShowDialog(confirmDialogViewModel, _ => { });
+        ViewContext.PopupService.ShowDialog(confirmDialogViewModel, _ => { });
         await Task.CompletedTask;
     }
 

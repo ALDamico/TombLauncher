@@ -127,7 +127,13 @@
                                 <ControlTheme TargetType="MenuItem"
                                               BasedOn="{StaticResource {x:Type MenuItem}}"
                                               x:DataType="viewModels:CommandViewModel">
+                                    <Setter Property="Header" Value="{Binding Text}" />
                                     <Setter Property="Command" Value="{Binding Command}" />
+                                    <Setter Property="Icon">
+                                        <Template>
+                                            <iconPacks:PackIconRemixIcon Kind="{Binding ((viewModels:CommandViewModel)DataContext).Icon, RelativeSource={RelativeSource AncestorType=MenuItem}}" />
+                                        </Template>
+                                    </Setter>
                                     
                                     <!-- Visual Overrides for Dynamic Items -->
                                     <Setter Property="Background" Value="Transparent" />
@@ -135,16 +141,6 @@
                                     <Setter Property="CornerRadius" Value="4" />
                                 </ControlTheme>
                             </MenuFlyout.ItemContainerTheme>
-                            <MenuFlyout.ItemTemplate>
-                                <DataTemplate DataType="viewModels:CommandViewModel">
-                                    <MenuItem Header="{Binding Text}"
-                                              Command="{Binding Command}">
-                                        <MenuItem.Icon>
-                                            <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                </DataTemplate>
-                            </MenuFlyout.ItemTemplate>
                         </MenuFlyout>
                     </Button.Flyout>
                 </controls:IconButton>

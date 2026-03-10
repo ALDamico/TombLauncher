@@ -32,27 +32,16 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <!--
-            <StackPanel Orientation="Vertical" Margin="0, 0, 10, 0">
-                <ContentControl Content="{Binding AppearanceSettings}"></ContentControl>
-                <views:AppearanceSettingsView DataContext="{Binding AppearanceSettings}"/>
-                <views:LanguageSettingsView DataContext="{Binding LanguageSettings}"/>
-                <views:DownloaderSettingsView DataContext="{Binding DownloaderSettings}"/>
-                
-                <views:GameDetailsSettingsView DataContext="{Binding GameDetailsSettings}"/>
-                <views:RandomGameSettingsView DataContext="{Binding RandomGameSettings}"></views:RandomGameSettingsView>
-                
-            </StackPanel>
-            -->
         </ScrollViewer>
 
-        <DockPanel Grid.Row="1" LastChildFill="False">
+        <DockPanel Grid.Row="1" LastChildFill="False" Margin="0,8,30,0">
             <controls:IconButton DockPanel.Dock="Right"
+                                 Classes="btn-primary"
                                  Margin="10"
+                                 Padding="16,8"
                                  Icon="Save3Line"
                                  Text="{loc:Translate SAVE}"
                                  Command="{Binding SaveCmd}" />
-
         </DockPanel>
     </Grid>
 

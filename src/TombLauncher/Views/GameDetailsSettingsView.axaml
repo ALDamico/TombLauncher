@@ -13,14 +13,17 @@
     <Design.DataContext>
         <settings:GameDetailsSettingsViewModel />
     </Design.DataContext>
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" Spacing="8">
         <DockPanel LastChildFill="True" IsVisible="{Binding IsWinePathOptionVisible}">
-            <controls:Infotip DockPanel.Dock="Right"
-                              VerticalAlignment="Bottom"
-                              Header="{loc:Translate WINE_EXECUTABLE_PATH}" 
-                              ToolTipContent="{loc:Translate WINE_TOOLTIP_CONTENT}" />
+            
             <controls:LabeledTextBox VerticalAlignment="Center" Label="{loc:Translate WINE_EXECUTABLE_PATH}" 
-                                     Text="{Binding WinePath}" />
+                                     Text="{Binding WinePath}">
+                <controls:LabeledTextBox.Infotip>
+                    <controls:Infotip DockPanel.Dock="Right"
+                                      Header="{loc:Translate WINE_EXECUTABLE_PATH}" 
+                                      ToolTipContent="{loc:Translate WINE_TOOLTIP_CONTENT}" />
+                </controls:LabeledTextBox.Infotip>
+            </controls:LabeledTextBox>
         </DockPanel>
         
         <ToggleSwitch IsChecked="{Binding AskForConfirmationBeforeWalkthrough}"

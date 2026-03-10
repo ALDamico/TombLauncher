@@ -1,14 +1,10 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
-using JamSoft.AvaloniaUI.Dialogs;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
-using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Localization;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Utils;
 
@@ -25,12 +21,10 @@ public class AppCrashHostService : IViewService
     public AppCrashDataService AppCrashDataService { get; }
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
 
     public async Task Save(AppCrashDto crash)
     {
-        var filePath = await DialogService.SaveFile("SAVE_ERROR_DETAILS".GetLocalizedString(),
+        var filePath = await ViewContext.PopupService.SaveFile("SAVE_ERROR_DETAILS".GetLocalizedString(),
             new FilePickerFileType[]
             {
                 new FilePickerFileType("JSON_FILES".GetLocalizedString())

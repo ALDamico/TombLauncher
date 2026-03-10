@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using IconPacks.Avalonia.RemixIcon;
 using Microsoft.Extensions.Logging;
@@ -66,8 +66,6 @@ public class GameSearchResultService : IViewService
     private readonly TombRaiderEngineDetector _engineDetector;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
     private IMapper Mapper => ViewContext.Mapper;
     private readonly GameFileHashCalculator _hashCalculator;
     private readonly IAppFileOperationsService _appFileOperations;
@@ -242,7 +240,7 @@ public class GameSearchResultService : IViewService
         {
             _logger.LogWarning("Game {GameTitle} already installed", gameToInstall.Title);
             var gameId = foundGameId.GetValueOrDefault();
-            var result = await MessageBoxService.ShowLocalized("The same mod is already installed",
+            var result = await ViewContext.PopupService.ShowLocalized("The same mod is already installed",
                 "The same mod is already installed TEXT",
                 MsgBoxButton.YesNo,
                 MsgBoxImage.Error,

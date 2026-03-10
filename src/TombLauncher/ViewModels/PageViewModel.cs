@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -64,6 +64,17 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
     public void ClearBusy()
     {
         _progress.Report(new PageBusyState());
+    }
+
+    public IDisposable BusyScope(string busyMessage)
+    {
+        SetBusy(true, busyMessage);
+        return new BusyDisposable(this);
+    }
+
+    private sealed class BusyDisposable(PageViewModel vm) : IDisposable
+    {
+        public void Dispose() => vm.ClearBusy();
     }
 
     public ICommand SaveCmd { get; protected set; }

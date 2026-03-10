@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,7 +11,7 @@
     <Design.DataContext>
         <settings:LanguageSettingsViewModel />
     </Design.DataContext>
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" Spacing="8">
         <TextBlock Text="{loc:Translate APPLICATION_LANGUAGE}"/>
         <ComboBox ItemsSource="{Binding AvailableLanguages}"
                   SelectedItem="{Binding ApplicationLanguage, UpdateSourceTrigger=PropertyChanged}">

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -44,7 +44,7 @@
         <DockPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" LastChildFill="True">
             <controls:ImagePicker DockPanel.Dock="Right"
                                   Source="{Binding GameMetadata.TitlePic, TargetNullValue={x:Static utils:ImageUtils.NullBitmap}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                  DialogService="{Binding DialogService}"
+                                  DialogService="{Binding PopupService}"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   MaxHeight="240"

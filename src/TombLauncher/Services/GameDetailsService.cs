@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
@@ -46,8 +46,6 @@ public class GameDetailsService : IViewService
     private readonly GameLinkDataService _gameLinkDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
     private IMapper Mapper => ViewContext.Mapper;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly ISettingsProvider _settingsProvider;
@@ -81,7 +79,7 @@ public class GameDetailsService : IViewService
     {
         if (askConfirmation)
         {
-            var confirmation = await MessageBoxService.ShowLocalized("Confirm",
+            var confirmation = await ViewContext.PopupService.ShowLocalized("Confirm",
                 "Are you sure you want to read the walkthrough?",
                  MsgBoxButton.YesNo, MsgBoxImage.Question);
             if (confirmation.ButtonResult == MsgBoxButtonResult.No)
@@ -94,7 +92,7 @@ public class GameDetailsService : IViewService
         }
         catch (SystemException)
         {
-            await MessageBoxService.Show(new UrlOpenErrorMessageBox()
+            await ViewContext.PopupService.Show(new UrlOpenErrorMessageBox()
             {
                 MsgBoxImage = MsgBoxImage.Error,
                 Message =
@@ -112,7 +110,7 @@ public class GameDetailsService : IViewService
 
     public void OpenLaunchOptions(GameDetailsViewModel gameDetailsViewModel)
     {
-        DialogService.ShowDialog(new LaunchOptionsDialogViewModel(_engineDetector) { TargetGame = gameDetailsViewModel.Game.GameMetadata }, SaveLaunchOptions);
+        ViewContext.PopupService.ShowDialog(new LaunchOptionsDialogViewModel(_engineDetector) { TargetGame = gameDetailsViewModel.Game.GameMetadata }, SaveLaunchOptions);
     }
 
     private async void SaveLaunchOptions(LaunchOptionsDialogViewModel vm)
@@ -120,19 +118,21 @@ public class GameDetailsService : IViewService
         try
         {
             var gameMetadata = vm.TargetGame;
-            var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-            currentPage?.SetBusy("Saving launch options...");
+            var currentPage = NavigationManager.CurrentPage as PageViewModel;
+            if (currentPage != null)
+            {
+                using (currentPage.BusyScope("SAVING_LAUNCH_OPTIONS".GetLocalizedString()))
+                {
+                    var launchOptionsDto = Mapper.Map<LaunchOptionsDto>(vm);
 
-            var launchOptionsDto = Mapper.Map<LaunchOptionsDto>(vm);
+                    gameMetadata.ExecutablePath = vm.GameExecutable;
+                    gameMetadata.SetupExecutable = vm.SetupExecutable;
+                    gameMetadata.SetupExecutableArgs = vm.SetupArgs;
+                    gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
 
-            gameMetadata.ExecutablePath = vm.GameExecutable;
-            gameMetadata.SetupExecutable = vm.SetupExecutable;
-            gameMetadata.SetupExecutableArgs = vm.SetupArgs;
-            gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
-
-            await _gameDataService.UpdateLaunchOptions(launchOptionsDto);
-
-            currentPage?.ClearBusy();
+                    await _gameDataService.UpdateLaunchOptions(launchOptionsDto);
+                }
+            }
         }
         catch (Exception e)
         {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
@@ -63,8 +63,6 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly ISavegameRepository _savegameRepository;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    public IMessageBoxService MessageBoxService => ViewContext.MessageBoxService;
-    public IDialogService DialogService => ViewContext.DialogService;
     private FileSystemWatcher? _watcher;
     private readonly bool _backupEnabled;
     private readonly int? _numberOfSavesToKeep;
@@ -88,7 +86,7 @@ public class GameWithStatsService : IViewService, IDisposable
     public void PlayGame(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy(LocalizationManager.GetLocalizedString("Starting GAMENAME", game.GameMetadata.Title));
+        currentPage?.SetBusy("STARTING_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         InitFileSystemWatcher(game);
         _headerProcessor?.Start();
 
@@ -214,7 +212,7 @@ public class GameWithStatsService : IViewService, IDisposable
             currentPage?.ClearBusy();
             if (errorOccurred)
             {
-                await MessageBoxService.ShowLocalized("Savegame parse error",
+                await ViewContext.PopupService.ShowLocalized("Savegame parse error",
                     "An error occurred while processing a savegame. Savegames have not been backed up.",
                     MsgBoxButton.Ok, MsgBoxImage.Error);
             }
@@ -225,7 +223,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy(
-            LocalizationManager.GetLocalizedString("Launching setup for GAMENAME", game.GameMetadata.Title));
+            "LAUNCHING_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.SetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
@@ -236,7 +234,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy(
-            LocalizationManager.GetLocalizedString("Launching community patch setup for GAMENAME", game.GameMetadata.Title));
+            "LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.CommunitySetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
@@ -300,13 +298,18 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var game = await _gameDataService.GetGameWithStats(gameId);
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy("UNINSTALLING_1".GetLocalizedString());
-        var installDir = game.GameMetadata.InstallDirectory;
-        if (installDir != null)
+        if (currentPage is PageViewModel pageVm)
         {
-            Directory.Delete(installDir, true);
+            using (pageVm.BusyScope("UNINSTALLING".GetLocalizedString(game.GameMetadata.Title)))
+            {
+                var installDir = game.GameMetadata.InstallDirectory;
+                if (installDir != null)
+                {
+                    Directory.Delete(installDir, true);
+                }
+                await _gameDataService.MarkGameAsUninstalled(gameId);
+            }
         }
-        await _gameDataService.MarkGameAsUninstalled(gameId);
         await NavigationManager.GoBack();
     }
 

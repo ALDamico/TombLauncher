@@ -12,13 +12,11 @@ public class GameUninstallConfirmDialogViewModel : DialogViewModel
         CancelCommand = new RelayCommand(() => InvokeRequestCloseDialog(new RequestCloseDialogEventArgs(false)));
     }
 
-    private GameMetadataViewModel _game = null!;
-
     public GameMetadataViewModel Game
     {
-        get => _game;
-        set => RaiseAndSetIfChanged(ref _game, value);
-    }
+        get;
+        init => RaiseAndSetIfChanged(ref field, value);
+    } = null!;
 
     private void Accept()
     {

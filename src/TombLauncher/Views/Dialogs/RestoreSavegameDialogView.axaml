@@ -1,26 +1,45 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="200"
              x:Class="TombLauncher.Views.Dialogs.RestoreSavegameDialogView"
              x:DataType="dialogs:RestoreSavegameDialogViewModel"
-             >
+             Width="400">
     <Design.DataContext>
-        <dialogs:RestoreSavegameDialogViewModel/>
+        <dialogs:RestoreSavegameDialogViewModel />
     </Design.DataContext>
-    <StackPanel Orientation="Vertical">
-        <TextBlock Text="{loc:Translate SLOT}"></TextBlock>
-        <ComboBox ItemsSource="{Binding Slots}" SelectedItem="{Binding SelectedSlot}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Header}"
-                               IsEnabled="{Binding IsEnabled}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-        
+
+    <StackPanel Orientation="Vertical" Spacing="12" Margin="8">
+
+        <!-- Header -->
+        <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+            <iconPacks:PackIconRemixIcon Kind="HistoryLine"
+                                         Width="28" Height="28"
+                                         Foreground="{DynamicResource PrimaryBrush}"
+                                         VerticalAlignment="Center" />
+            <TextBlock Text="{loc:Translate RESTORE_SAVEGAME, Casing=Upper}"
+                       FontSize="16" FontWeight="DemiBold"
+                       VerticalAlignment="Center" />
+        </StackPanel>
+
+        <!-- Slot selection -->
+        <Border Classes="card-background" CornerRadius="8" Padding="16">
+            <StackPanel Orientation="Vertical" Spacing="8">
+                <TextBlock Text="{loc:Translate SLOT}" Classes="small" Opacity="0.7" />
+                <ComboBox ItemsSource="{Binding Slots}" SelectedItem="{Binding SelectedSlot}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Header}"
+                                       IsEnabled="{Binding IsEnabled}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+        </Border>
+
     </StackPanel>
 </UserControl>

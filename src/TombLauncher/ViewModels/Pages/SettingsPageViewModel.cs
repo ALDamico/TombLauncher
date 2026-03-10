@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using JamSoft.AvaloniaUI.Dialogs;
+
+using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Services;
@@ -15,13 +15,15 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 {
-    public SettingsPageViewModel(SettingsPageService settingsService, ISettingsProvider settingsProvider, IMessageBoxService messageBoxService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration)
+    public SettingsPageViewModel(SettingsPageService settingsService, ISettingsProvider settingsProvider, IPopupService popupService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration, IAppFileOperationsService appFileOperationsService, ILayeredAppConfiguration appConfiguration)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
-        _messageBoxService = messageBoxService;
+        _popupService = popupService;
         _platformSpecificFeatures = platformSpecificFeatures;
         _mapperConfiguration = mapperConfiguration;
+        _appFileOperationsService = appFileOperationsService;
+        _appConfiguration = appConfiguration;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (sender, args) =>
@@ -50,9 +52,11 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
     private readonly SettingsPageService _settingsService;
     private readonly ISettingsProvider _settingsProvider;
-    private readonly IMessageBoxService _messageBoxService;
+    private readonly IPopupService _popupService;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly MapperConfiguration _mapperConfiguration;
+    private readonly IAppFileOperationsService _appFileOperationsService;
+    private readonly ILayeredAppConfiguration _appConfiguration;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -90,23 +94,24 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();
-        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, Ioc.Default.GetRequiredService<IAppFileOperationsService>(), _messageBoxService, _platformSpecificFeatures, _mapperConfiguration)
+        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _popupService, _platformSpecificFeatures, _mapperConfiguration)
         {
             AvailableDownloaders = downloaders.ToObservableCollection()
         };
         var gameDetailsSettings = _settingsService.GetGameDetailsSettings(this);
         var savegameSettings = _settingsService.GetSavegameSettings(this);
 
+        var wp = _appConfiguration.WelcomePage;
         var welcomePageSettings = new WelcomePageSettingsViewModel(this)
         {
-            ShowQuickStats = _settingsService.GetShowQuickStats(),
-            ShowQuickActions = _settingsService.GetShowQuickActions(),
-            ShowRecentlyPlayed = _settingsService.GetShowRecentlyPlayed(),
-            ShowFavourites = _settingsService.GetShowFavourites(),
-            RecentlyPlayedCount = _settingsService.GetRecentlyPlayedCount(),
-            FavouritesCount = _settingsService.GetFavouritesCount(),
-            ShowRandomSuggestion = _settingsService.GetShowRandomSuggestion(),
-            MaxRerolls = _settingsProvider.GetApplicationSettings().RandomGameMaxRerolls
+            ShowQuickStats = wp.ShowQuickStats.GetValueOrDefault(true),
+            ShowQuickActions = wp.ShowQuickActions.GetValueOrDefault(true),
+            ShowRecentlyPlayed = wp.ShowRecentlyPlayed.GetValueOrDefault(true),
+            ShowFavourites = wp.ShowFavourites.GetValueOrDefault(true),
+            RecentlyPlayedCount = wp.RecentlyPlayedCount.GetValueOrDefault(5),
+            FavouritesCount = wp.FavouritesCount.GetValueOrDefault(5),
+            ShowRandomSuggestion = wp.ShowRandomSuggestion.GetValueOrDefault(true),
+            MaxRerolls = wp.RandomGameMaxRerolls.GetValueOrDefault(10)
         };
 
         Sections.Add(appearanceSettings);

@@ -4,16 +4,47 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="250"
              x:Class="TombLauncher.Views.Dialogs.GameUninstallConfirmDialogView"
-             x:DataType="dialogs:GameUninstallConfirmDialogViewModel">
+             x:DataType="dialogs:GameUninstallConfirmDialogViewModel"
+             Width="450">
     <Design.DataContext>
-        <dialogs:GameUninstallConfirmDialogViewModel/>
+        <dialogs:GameUninstallConfirmDialogViewModel />
     </Design.DataContext>
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-        <TextBlock>
-            <Run Text="{Binding Game.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='ARE_YOU_SURE_YOU_WANT_TO_UNINSTALL_GAMENAME', Mode=OneWay}"/>
-            <Run Text="{loc:Translate ALL_ASSOCIATED_DATA_WILL_BE_REMOVED}"/>
-        </TextBlock>
+
+    <StackPanel Orientation="Vertical" Spacing="16" Margin="8">
+
+        <!-- Warning icon -->
+        <iconPacks:PackIconRemixIcon Kind="ErrorWarningFill"
+                                     Width="48" Height="48"
+                                     HorizontalAlignment="Center"
+                                     Foreground="{DynamicResource WarningBrush}" />
+
+        <!-- Main message -->
+        <TextBlock Text="{Binding Game.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='ARE_YOU_SURE_YOU_WANT_TO_UNINSTALL_GAMENAME', Mode=OneWay}"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   FontSize="16"
+                   FontWeight="DemiBold"
+                   HorizontalAlignment="Center" />
+
+        <!-- Warning message -->
+        <Border Background="{DynamicResource DangerBrush}"
+                CornerRadius="8"
+                Padding="12"
+                Opacity="0.85">
+            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                <iconPacks:PackIconRemixIcon Kind="DeleteBinLine"
+                                             Width="18" Height="18"
+                                             VerticalAlignment="Center"
+                                             Foreground="{DynamicResource ColoredButtonTextBrush}" />
+                <TextBlock Text="{loc:Translate ALL_ASSOCIATED_DATA_WILL_BE_REMOVED}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource ColoredButtonTextBrush}"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
     </StackPanel>
 </UserControl>

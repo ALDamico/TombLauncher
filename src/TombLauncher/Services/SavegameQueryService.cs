@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
@@ -23,53 +23,55 @@ public class SavegameQueryService
 {
     private readonly ISavegameRepository _savegameRepository;
     private readonly ISavegameHeaderProvider _headerProvider;
-    private readonly IMessageBoxService _messageBoxService;
+    private readonly IPopupService _popupService;
     private readonly int? _numberOfVersionsToKeep;
 
     public SavegameQueryService(
         ISavegameRepository savegameRepository,
         ISavegameHeaderProvider headerProvider,
-        IMessageBoxService messageBoxService,
+        IPopupService popupService,
         ISettingsProvider settingsProvider)
     {
         _savegameRepository = savegameRepository;
         _headerProvider = headerProvider;
-        _messageBoxService = messageBoxService;
+        _popupService = popupService;
         _numberOfVersionsToKeep = settingsProvider.GetSavegameSettings()?.NumberOfVersionsToKeep;
     }
 
     public async Task LoadSaveGames(SavegameListViewModel targetViewModel)
     {
-        targetViewModel.SetBusy("FETCHING_SAVEGAMES_FOR_GAMETITLE".GetLocalizedString(targetViewModel.GameTitle));
-        var observableCollection = new ObservableCollection<SavegameViewModel>();
-        var knownSavegames = await _savegameRepository.GetSavegamesByGameId(targetViewModel.GameId);
-        var headerParser = _headerProvider.GetHeaderReader(targetViewModel.GameEngine);
-        foreach (var savegame in knownSavegames)
+        using (targetViewModel.BusyScope("FETCHING_SAVEGAMES_FOR_GAMETITLE".GetLocalizedString(targetViewModel.GameTitle)))
         {
-            var savegameHeader = headerParser.ReadHeader(savegame.FileName, savegame.Data);
-            var viewModel = new SavegameViewModel()
+            var observableCollection = new ObservableCollection<SavegameViewModel>();
+            var knownSavegames = await _savegameRepository.GetSavegamesByGameId(targetViewModel.GameId);
+            var headerParser = _headerProvider.GetHeaderReader(targetViewModel.GameEngine);
+            foreach (var savegame in knownSavegames)
             {
-                UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd,
-                DeleteSavegameCmd = targetViewModel.DeleteSaveCmd,
-                RestoreSavegameCmd = targetViewModel.RestoreSavegameCmd,
-                Id = savegame.Id,
-                Filename = savegame.FileName,
-                LevelName = savegameHeader.LevelName,
-                SaveNumber = savegameHeader.SaveNumber,
-                IsStartOfLevel = savegame.FileType == FileType.SavegameStartOfLevel,
-                SlotNumber = savegameHeader.SlotNumber,
-                Length = savegame.Data.LongLength,
-                BackedUpOn = savegame.BackedUpOn
-            };
-            observableCollection.Add(viewModel);
+                var savegameHeader = headerParser.ReadHeader(savegame.FileName, savegame.Data);
+                var viewModel = new SavegameViewModel()
+                {
+                    UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd,
+                    DeleteSavegameCmd = targetViewModel.DeleteSaveCmd,
+                    RestoreSavegameCmd = targetViewModel.RestoreSavegameCmd,
+                    Id = savegame.Id,
+                    Filename = savegame.FileName,
+                    LevelName = savegameHeader.LevelName,
+                    SaveNumber = savegameHeader.SaveNumber,
+                    IsStartOfLevel = savegame.FileType == FileType.SavegameStartOfLevel,
+                    SlotNumber = savegameHeader.SlotNumber,
+                    Length = savegame.Data.LongLength,
+                    BackedUpOn = savegame.BackedUpOn
+                };
+                observableCollection.Add(viewModel);
+            }
+
+            observableCollection = observableCollection.OrderBy(f => f.SlotNumber)
+                .ThenBy(f => f.BackedUpOn)
+                .ToObservableCollection();
+
+            targetViewModel.Savegames = observableCollection;
+            targetViewModel.FilteredSaves = observableCollection;
         }
-
-        observableCollection = observableCollection.OrderBy(f => f.SlotNumber)
-            .ThenBy(f => f.BackedUpOn)
-            .ToObservableCollection();
-
-        targetViewModel.Savegames = observableCollection;
-        targetViewModel.FilteredSaves = observableCollection;
     }
 
     public Task InitSlots(SavegameListViewModel savegameListViewModel)
@@ -109,28 +111,28 @@ public class SavegameQueryService
 
     public Task ApplyFilter(SavegameListViewModel savegameListViewModel, SaveGameListFilter filter)
     {
-        savegameListViewModel.SetBusy("FILTERING_SAVEGAMES".GetLocalizedString());
-        var slotNumber = filter.SlotNumber;
-        var startOfLevelOnly = filter.StartOfLevelOnly;
-        var savegameEnumerable = savegameListViewModel.Savegames.AsEnumerable();
-        if (startOfLevelOnly)
+        using (savegameListViewModel.BusyScope("FILTERING_SAVEGAMES".GetLocalizedString()))
         {
-            savegameEnumerable = savegameEnumerable.Where(sg => sg.IsStartOfLevel);
-        }
+            var slotNumber = filter.SlotNumber;
+            var startOfLevelOnly = filter.StartOfLevelOnly;
+            var savegameEnumerable = savegameListViewModel.Savegames.AsEnumerable();
+            if (startOfLevelOnly)
+            {
+                savegameEnumerable = savegameEnumerable.Where(sg => sg.IsStartOfLevel);
+            }
 
-        if (slotNumber == null)
-        {
-            savegameListViewModel.FilteredSaves = savegameEnumerable.ToObservableCollection();
-            savegameListViewModel.SetBusy(false);
+            if (slotNumber == null)
+            {
+                savegameListViewModel.FilteredSaves = savegameEnumerable.ToObservableCollection();
+                return Task.CompletedTask;
+            }
+
+            var savegamesBySlot = savegameEnumerable.Where(sg => sg.SlotNumber == slotNumber)
+                .OrderBy(sg => sg.BackedUpOn)
+                .ToObservableCollection();
+            savegameListViewModel.FilteredSaves = savegamesBySlot;
             return Task.CompletedTask;
         }
-
-        var savegamesBySlot = savegameEnumerable.Where(sg => sg.SlotNumber == slotNumber)
-            .OrderBy(sg => sg.BackedUpOn)
-            .ToObservableCollection();
-        savegameListViewModel.FilteredSaves = savegamesBySlot;
-        savegameListViewModel.SetBusy(false);
-        return Task.CompletedTask;
     }
 
     public async Task CheckSavegamesNotBackedUp(SavegameListViewModel savegameListView)
@@ -153,47 +155,44 @@ public class SavegameQueryService
         var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys).ToList();
         if (missingSaveGames.Count == 0)
         {
-            await _messageBoxService.ShowLocalized("Scan complete",
+            await _popupService.ShowLocalized("Scan complete",
                 "There were no savegames to import.", MsgBoxButton.Ok, MsgBoxImage.Information);
             return;
         }
 
-        var userResponse = await _messageBoxService.Show("No savegame backups found",
-            $"There were no savegame backups in Tomb Launcher's database, but we found {missingSaveGames.Count()} savegame files. Would you like to import them?",
+        var userResponse = await _popupService.Show("NO_SAVEGAME_BACKUPS_FOUND".GetLocalizedString(),
+            "SAVEGAME_BACKUPS_FOUND_IMPORT".GetLocalizedString(missingSaveGames.Count),
             MsgBoxButton.YesNo, MsgBoxImage.Folder, "NO".GetLocalizedString(), "YES".GetLocalizedString());
         if (userResponse.ButtonResult == MsgBoxButtonResult.Yes)
         {
-            savegameListView.SetBusy("Importing your saved games...");
-            var headerReader = _headerProvider.GetHeaderReader(savegameListView.GameEngine);
-            var dataToBackup = new List<SavegameBackupDto>();
-            foreach (var file in savegames)
+            using (savegameListView.BusyScope("IMPORTING_SAVEGAMES".GetLocalizedString()))
             {
-                var data = headerReader.ReadHeader(file);
-                if (data != null)
+                var headerReader = _headerProvider.GetHeaderReader(savegameListView.GameEngine);
+                var dataToBackup = new List<SavegameBackupDto>();
+                foreach (var file in savegames)
                 {
-                    var savegameBytes = await File.ReadAllBytesAsync(file);
-                    var dto = new SavegameBackupDto()
+                    var data = headerReader.ReadHeader(file);
+                    if (data != null)
                     {
-                        Data = savegameBytes,
-                        FileName = file,
-                        FileType = FileType.Savegame,
-                        BackedUpOn = DateTime.Now,
-                        Md5 = Md5Utils.ComputeMd5Hash(savegameBytes),
-                        LevelName = data.LevelName,
-                        SaveNumber = data.SaveNumber,
-                        SlotNumber = data.SlotNumber
-                    };
-                    dataToBackup.Add(dto);
+                        var savegameBytes = await File.ReadAllBytesAsync(file);
+                        var dto = new SavegameBackupDto()
+                        {
+                            Data = savegameBytes,
+                            FileName = file,
+                            FileType = FileType.Savegame,
+                            BackedUpOn = DateTime.Now,
+                            Md5 = Md5Utils.ComputeMd5Hash(savegameBytes),
+                            LevelName = data.LevelName,
+                            SaveNumber = data.SaveNumber,
+                            SlotNumber = data.SlotNumber
+                        };
+                        dataToBackup.Add(dto);
+                    }
                 }
-            }
 
-            _savegameRepository.BackupSavegames(savegameListView.GameId, savegameListView.GameEngine, dataToBackup, _numberOfVersionsToKeep);
-            await _savegameRepository.Save();
-            savegameListView.SetBusy(false);
-        }
-        else
-        {
-            savegameListView.SetBusy(false);
+                _savegameRepository.BackupSavegames(savegameListView.GameId, savegameListView.GameEngine, dataToBackup, _numberOfVersionsToKeep);
+                await _savegameRepository.Save();
+            }
         }
     }
 }

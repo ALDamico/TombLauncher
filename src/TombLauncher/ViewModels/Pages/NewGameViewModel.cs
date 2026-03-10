@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using JamSoft.AvaloniaUI.Dialogs;
+
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Extensions;
@@ -76,5 +76,5 @@ public partial class NewGameViewModel : PageViewModel
         return GameMetadata.Title.IsNotNullOrWhiteSpace() && Source.IsNotNullOrWhiteSpace();
     }
 
-    public IDialogService DialogService => _newGameService.DialogService;
+    public IPopupService PopupService => _newGameService.ViewContext.PopupService;
 }

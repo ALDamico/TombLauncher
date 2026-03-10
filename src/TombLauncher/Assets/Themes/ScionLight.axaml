@@ -14,6 +14,17 @@
     <SolidColorBrush x:Key="PrimaryPointerOverBrush">#006666</SolidColorBrush>
     <SolidColorBrush x:Key="ColoredButtonTextBrush">#FFFFFF</SolidColorBrush>
 
+    <!-- Interactive Controls: use PrimaryColor for checked/on states -->
+    <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{StaticResource PrimaryColor}" Opacity="0.85" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{StaticResource PrimaryColor}" Opacity="0.7" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{StaticResource PrimaryColor}" Opacity="0.85" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="{StaticResource PrimaryColor}" Opacity="0.7" />
+    <SolidColorBrush x:Key="RadioButtonOuterEllipseFillChecked" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="RadioButtonOuterEllipseFillCheckedPointerOver" Color="{StaticResource PrimaryColor}" Opacity="0.85" />
+    <SolidColorBrush x:Key="RadioButtonOuterEllipseFillCheckedPressed" Color="{StaticResource PrimaryColor}" Opacity="0.7" />
+
     <!-- Accents -->
     <SolidColorBrush x:Key="AccentBrush">#B8860B</SolidColorBrush> <!-- Dark Gold for visibility on light -->
     
