@@ -1,8 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
-        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-        xmlns:views="clr-namespace:TombLauncher.Views">
+        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls">
     <Design.PreviewWith>
         <Border Padding="20">
             <!-- Add Controls for Previewer Here -->

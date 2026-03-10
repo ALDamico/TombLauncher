@@ -59,7 +59,7 @@
         <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/MsgBoxStyles.axaml" />
         <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ChildStyle.axaml" />
         <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ModalStyle.axaml" />
-        <StyleInclude Source="avares://TombLauncher/Assets/MsgBoxOverrides.axaml" />
+        <StyleInclude Source="avares://TombLauncher/Assets/JamSoftOverrides.axaml" />
         <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
         <Style Selector="ComboBox">
             <Setter Property="HorizontalAlignment" Value="Stretch" />

@@ -21,8 +21,9 @@
         
         <TextBlock Grid.Row="0" Classes="small" Text="{Binding ElementName=LabeledTextBoxRoot, Path=Label}"/>
         <DockPanel Grid.Row="1" LastChildFill="True">
-            <ContentControl DockPanel.Dock="Right" 
+            <ContentControl DockPanel.Dock="Right" Margin="8, 0, 0, 0"
                             Content="{Binding ElementName=LabeledTextBoxRoot, Path=Infotip}" 
+                            VerticalAlignment="Center"
                             IsVisible="{Binding ElementName=LabeledTextBoxRoot, Path=Infotip, Converter={x:Static ObjectConverters.IsNotNull}}"/>
             <TextBox Text="{Binding ElementName=LabeledTextBoxRoot, Path=Text}"/>
         </DockPanel>
