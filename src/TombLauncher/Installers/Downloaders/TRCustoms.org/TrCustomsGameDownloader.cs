@@ -22,23 +22,20 @@ using TombLauncher.Installers.Downloaders.TRCustoms.org.Utils;
 
 namespace TombLauncher.Installers.Downloaders.TRCustoms.org;
 
-public class TrCustomsGameDownloader : IGameDownloader
+public class TrCustomsGameDownloader : GameDownloaderBase
 {
     public string DisplayName => "TRCustoms.org";
     public string BaseUrl => "https://trcustoms.org/";
     public DownloaderSearchPayload DownloaderSearchPayload { get; private set; } = new();
 
-    public TrCustomsGameDownloader()
+    public TrCustomsGameDownloader(HttpClient httpClient) : base(httpClient)
     {
-        _httpClient = new HttpClient()
+        _httpClient.BaseAddress = new Uri(BaseUrl);
+        _httpClient.DefaultRequestHeaders =
         {
-            BaseAddress = new Uri(BaseUrl),
-            DefaultRequestHeaders =
+            Accept =
             {
-                Accept =
-                {
-                    new MediaTypeWithQualityHeaderValue("application/json")
-                }
+                new MediaTypeWithQualityHeaderValue("application/json")
             }
         };
         _jsonSerializerSettings = new JsonSerializerSettings()
@@ -65,7 +62,7 @@ public class TrCustomsGameDownloader : IGameDownloader
         };
     }
 
-    private readonly HttpClient _httpClient;
+
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
     private Dictionary<int, GameEngine> _enginesMap = new();
@@ -394,14 +391,9 @@ public class TrCustomsGameDownloader : IGameDownloader
         };
     }
 
-    public bool HasMorePages()
-    {
-        if (TotalPages == null) return false;
-        return CurrentPage < TotalPages;
-    }
 
-    public int? TotalPages { get; private set; }
-    public int CurrentPage { get; private set; }
+
+
 
     public DownloaderFeatures SupportedFeatures => DownloaderFeatures.Rating | DownloaderFeatures.LevelName |
                                                    DownloaderFeatures.GameEngine | DownloaderFeatures.GameLength |
