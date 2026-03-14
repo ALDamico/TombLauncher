@@ -11,7 +11,6 @@ using HtmlAgilityPack;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
-using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
@@ -21,11 +20,6 @@ namespace TombLauncher.Installers.Downloaders.AspideTR.com;
 
 public class AspideTrGameDownloader : GameDownloaderBase
 {
-    public AspideTrGameDownloader(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
-    {
-        _classMappings = new Dictionary<string, string>();
-    }
-
     public AspideTrGameDownloader(IHttpClientFactory httpClientFactory, Dictionary<string, string> classMappings) : base(httpClientFactory)
     {
         _classMappings = classMappings;
@@ -168,7 +162,7 @@ public class AspideTrGameDownloader : GameDownloaderBase
         var queryString = await urlEncodedContent.ReadAsStringAsync(cancellationToken);
         var url = GetPageUrl(pageNumber, queryString);
         var requestMessage = new HttpRequestMessage(HttpMethod.Get, url) { Content = urlEncodedContent };
-        var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
+        var response = await HttpClient.SendAsync(requestMessage, cancellationToken);
         var content = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         var htmlDocument = new HtmlDocument();
@@ -196,14 +190,14 @@ public class AspideTrGameDownloader : GameDownloaderBase
     public override Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
         IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
-        return _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
+        return HttpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
     public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         var detailsLink = game.DetailsLink;
-        var page = await _httpClient.GetStreamAsync(detailsLink, cancellationToken);
+        var page = await HttpClient.GetStreamAsync(detailsLink, cancellationToken);
         var htmlDocument = new HtmlDocument();
         htmlDocument.Load(page);
         var dto = new GameMetadataDto()
@@ -214,7 +208,7 @@ public class AspideTrGameDownloader : GameDownloaderBase
             Setting = game.Setting,
             Title = game.Title,
             ReleaseDate = game.ReleaseDate,
-            TitlePic = await _httpClient.GetByteArrayAsync(game.TitlePic, cancellationToken),
+            TitlePic = await HttpClient.GetByteArrayAsync(game.TitlePic, cancellationToken),
             GameEngine = game.Engine,
             AuthorFullName = game.AuthorFullName
         };
@@ -283,7 +277,7 @@ public class AspideTrGameDownloader : GameDownloaderBase
 
     private IEnumerable<KeyValuePair<string, string>> ConvertRequest(AspideTrSearchRequest convertedSearchRequest)
     {
-        return ReflectionUtils.GetPropertiesAsKeyValuePairs(convertedSearchRequest, k => k.ToLowerInvariant());
+        return convertedSearchRequest.ToQueryParams();
     }
 
     private int GetTotalPages(HtmlDocument htmlDocument)

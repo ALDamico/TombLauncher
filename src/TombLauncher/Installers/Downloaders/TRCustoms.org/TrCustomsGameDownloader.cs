@@ -84,7 +84,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
     private async Task<TrCustomsPagedResponse<T>> GetPagedResponse<T>(string endpoint, IEnumerable<KeyValuePair<string, string?>>? trCustomsRequest = null,
         CancellationToken cancellationToken = default)
     {
-        var relativeUri = new UriBuilder(_httpClient.BaseAddress!);
+        var relativeUri = new UriBuilder(HttpClient.BaseAddress!);
         relativeUri.Path = $"api/{endpoint}/";
         var completeUri = relativeUri.Uri.ToString();
         if (trCustomsRequest != null)
@@ -96,7 +96,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
             Method = HttpMethod.Get,
             RequestUri = new Uri(completeUri)
         };
-        using var response = await _httpClient.SendAsync(request, cancellationToken);
+        using var response = await HttpClient.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 
         var pagedResponse = JsonConvert.DeserializeObject<TrCustomsPagedResponse<T>>(
@@ -330,7 +330,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
         IProgress<DownloadProgressInfo> downloadProgress,
         CancellationToken cancellationToken)
     {
-        await _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
+        await HttpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
     public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken)
@@ -345,7 +345,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
             GameEngine = game.Engine,
             ReleaseDate = game.ReleaseDate,
             AuthorFullName = game.AuthorFullName ?? string.Empty,
-            TitlePic = game.TitlePic != null ? await _httpClient.GetByteArrayAsync(game.TitlePic!, cancellationToken) : Array.Empty<byte>(),
+            TitlePic = game.TitlePic != null ? await HttpClient.GetByteArrayAsync(game.TitlePic!, cancellationToken) : Array.Empty<byte>(),
             Title = game.Title ?? string.Empty,
         };
     }

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
-using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Installers.Downloaders;
 
@@ -15,10 +14,10 @@ public abstract class GameDownloaderBase : IGameDownloader
 {
     protected GameDownloaderBase(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = httpClientFactory.CreateClient(GetType().Name);
+        HttpClient = httpClientFactory.CreateClient(GetType().Name);
     }
 
-    protected readonly HttpClient _httpClient;
+    protected readonly HttpClient HttpClient;
 
     public abstract string DisplayName { get; }
     public abstract string BaseUrl { get; }

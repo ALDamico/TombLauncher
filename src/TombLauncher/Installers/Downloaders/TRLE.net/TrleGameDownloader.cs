@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +11,6 @@ using HtmlAgilityPack;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
-using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
@@ -99,12 +97,12 @@ public class TrleGameDownloader : GameDownloaderBase
         if (pageNumber > TotalPages) return new List<IGameSearchResultMetadata>();
         var result = new List<IGameSearchResultMetadata>();
         var request = ConvertRequest(DownloaderSearchPayload, pageNumber);
-        var requestStrng = ConvertRequest(request);
+        var requestStrng = request.ToQueryParams();
         var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
         requestMessage.Content = urlEncodedContent;
 
-        var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
+        var response = await HttpClient.SendAsync(requestMessage, cancellationToken);
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
         var htmlDocument = new HtmlDocument();
         htmlDocument.LoadHtml(content);
@@ -228,14 +226,14 @@ public class TrleGameDownloader : GameDownloaderBase
     public override Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
         IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
-        return _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
+        return HttpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
     public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         var detailsUrl = game.DetailsLink;
-        var page = await _httpClient.GetStreamAsync(detailsUrl, cancellationToken);
+        var page = await HttpClient.GetStreamAsync(detailsUrl, cancellationToken);
         var htmlDocument = new HtmlDocument();
         htmlDocument.Load(page);
         var metadata = new GameMetadataDto
@@ -254,7 +252,7 @@ public class TrleGameDownloader : GameDownloaderBase
         if (imageNode != null)
         {
             var uri = imageNode.Attributes["src"].Value;
-            var byteArr = await _httpClient.GetByteArrayAsync(uri, cancellationToken);
+            var byteArr = await HttpClient.GetByteArrayAsync(uri, cancellationToken);
             if (game.TitlePic.IsNullOrWhiteSpace())
             {
                 game.TitlePic = new Uri(new Uri(game.BaseUrl), uri).ToString();
@@ -305,10 +303,5 @@ public class TrleGameDownloader : GameDownloaderBase
             SortIdx = 8,
             Idx = (pageNumber - 1) * RowsPerPage
         };
-    }
-
-    private IEnumerable<KeyValuePair<string, string>> ConvertRequest(TrleSearchRequest convertedSearchRequest)
-    {
-        return ReflectionUtils.GetPropertiesAsKeyValuePairs(convertedSearchRequest, k => k.ToLowerInvariant());
     }
 }
