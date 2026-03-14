@@ -1,0 +1,25 @@
+using Microsoft.Extensions.DependencyInjection;
+using TombLauncher.Services;
+using TombLauncher.ViewModels;
+using TombLauncher.ViewModels.Pages;
+
+namespace TombLauncher.Extensions;
+
+public static class ViewModelsServiceCollectionExtensions
+{
+    public static IServiceCollection AddViewModels(this IServiceCollection services)
+    {
+        services.AddSingleton(sp =>
+            new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>())
+            { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
+        services.AddScoped<GameListViewModel>();
+        services.AddScoped<GameSearchViewModel>();
+        services.AddTransient<NewGameViewModel>();
+        services.AddSingleton<SettingsPageViewModel>();
+        services.AddSingleton<NotificationListViewModel>();
+        services.AddScoped<StatisticsPageViewModel>();
+        services.AddTransient<SavegameListViewModel>();
+        services.AddTransient<GameDetailsViewModel>();
+        return services;
+    }
+}

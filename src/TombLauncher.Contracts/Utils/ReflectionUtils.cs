@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 namespace TombLauncher.Contracts.Utils;
 
@@ -33,6 +33,8 @@ public class ReflectionUtils
         return AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes())
             .Where(p => p != type)
+            .Where(p => !p.IsAbstract)
+            .Where(p => !p.IsInterface)
             .Where(p => type.IsAssignableFrom(p));
     }
 

@@ -6,7 +6,7 @@ namespace TombLauncher.Core.Dtos;
 
 public class GameSearchResultMetadataDto : IGameSearchResultMetadata, IEquatable<GameSearchResultMetadataDto>
 {
-    public string Author { get; set; } = string.Empty;
+    public string? Author { get; set; }
     public string AuthorFullName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

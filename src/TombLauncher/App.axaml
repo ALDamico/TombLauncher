@@ -45,7 +45,7 @@
             </valueConverters:StringNullToNullBitmapConverter>
             <valueConverters:UppercaseConverter x:Key="UppercaseConverter"/>
             <valueConverters:FilenameConverter x:Key="FilenameConverter"/>
-            
+            <valueConverters:MarkdownDescriptionConverter x:Key="MarkdownDescriptionConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://TombLauncher/Assets/Themes/ScionTheme.axaml" />
                 <ResourceInclude Source="../Assets/RatingStyles.axaml" />

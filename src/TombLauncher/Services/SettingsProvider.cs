@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
@@ -10,7 +9,6 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Core.Dtos;
-using TombLauncher.Contracts.Utils;
 using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Services;
@@ -55,8 +53,8 @@ public class SettingsProvider : ISettingsProvider
     public List<DownloaderConfiguration> GetDownloaderConfigurations()
     {
         var dtos = new List<DownloaderConfiguration>();
-        var downloaders = ReflectionUtils.GetImplementors<IGameDownloader>(BindingFlags.NonPublic).ToList();
-        var priority = downloaders.Count();
+        var downloaders = _serviceProvider.GetServices<IGameDownloader>().ToList();
+        var priority = downloaders.Count;
 
         var configCustomizations = _appConfiguration.Downloaders.Sources?.Where(d => d.ClassName != null).ToDictionary(d => d.ClassName!) ?? new Dictionary<string, DownloaderConfiguration>();
         foreach (var downloader in downloaders)
@@ -92,22 +90,14 @@ public class SettingsProvider : ISettingsProvider
 
     public List<IGameDownloader> GetActiveDownloaders()
     {
-        var downloaderConfigs = GetDownloaderConfigurations().Where(dl => dl.IsChecked);
-        var output = new List<IGameDownloader>();
-        foreach (var config in downloaderConfigs)
-        {
-            if (config.ClassName == null) continue;
-            var downloaderImpl = ReflectionUtils.GetTypeByName(config.ClassName);
-            if (downloaderImpl == null)
-            {
-                continue;
-            }
+        var activeClassNames = GetDownloaderConfigurations()
+            .Where(dl => dl.IsChecked)
+            .Select(dl => dl.ClassName)
+            .ToHashSet();
 
-            var downloader = (IGameDownloader)_serviceProvider.GetRequiredService(downloaderImpl);
-            output.Add(downloader);
-        }
-
-        return output;
+        return _serviceProvider.GetServices<IGameDownloader>()
+            .Where(d => activeClassNames.Contains(d.GetType().FullName))
+            .ToList();
     }
 
     public GameDetailsCoreSettings GetGameDetailsSettings()
