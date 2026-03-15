@@ -35,7 +35,7 @@ public class GameSearchResultService : IViewService
         GameDownloadManager downloadManager,
         NotificationService notificationService, GameWithStatsService gameWithStatsService,
         ILogger<GameSearchResultService> logger, GameFileHashCalculator hashCalculator,
-        IAppFileOperationsService appFileOperations)
+        IAppFileOperationsService appFileOperations, ISettingsProvider settingsProvider)
     {
         ViewContext = viewContext;
         _gameDownloadManager = downloadManager;
@@ -50,6 +50,7 @@ public class GameSearchResultService : IViewService
         _logger = logger;
         _hashCalculator = hashCalculator;
         _appFileOperations = appFileOperations;
+        _settingsProvider = settingsProvider;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -69,6 +70,7 @@ public class GameSearchResultService : IViewService
     private IMapper Mapper => ViewContext.Mapper;
     private readonly GameFileHashCalculator _hashCalculator;
     private readonly IAppFileOperationsService _appFileOperations;
+    private readonly ISettingsProvider _settingsProvider;
     private string? _downloadPath;
     private string? _installPath;
     private int? _installedGameId;
@@ -140,7 +142,7 @@ public class GameSearchResultService : IViewService
         if (await CheckGameAlreadyInstalled(gameToInstall, hashes))
             return;
 
-        var allDetails = await _gameDownloadManager.FetchAllDetails(gameToInstallDto);
+        var allDetails = await _gameDownloadManager.FetchAllDetails( _settingsProvider.GetActiveDownloaders(), gameToInstallDto);
         var dto = await _gameDownloadManager.FetchDetails(gameToInstallDto);
         if (dto == null)
         {
