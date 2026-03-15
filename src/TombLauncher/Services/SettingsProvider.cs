@@ -112,7 +112,8 @@ public class SettingsProvider : ISettingsProvider
             methodToUse != null ? (methodToUse.Command, methodToUse.CommandLineArguments) : (string.Empty, string.Empty),
             gd.DocumentationPatterns?.ToList() ?? new List<CheckableItem<string>>(),
             gd.DocumentationFolderExclusions?.ToList() ?? new List<CheckableItem<string>>(),
-            gd.AskForConfirmationBeforeWalkthrough.GetValueOrDefault()
+            gd.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
+            gd.DescriptionFontSize ?? 18
         );
     }
 

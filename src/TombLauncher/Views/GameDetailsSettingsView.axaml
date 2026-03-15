@@ -28,6 +28,16 @@
         
         <ToggleSwitch IsChecked="{Binding AskForConfirmationBeforeWalkthrough}"
                       Content="{loc:Translate ASK_FOR_CONFIRMATION_BEFORE_OPENING_A_WALKTHROUGH}" />
+        <DockPanel LastChildFill="True">
+            <controls:Infotip DockPanel.Dock="Right"
+                              Header="{loc:Translate DESCRIPTION_FONT_SIZE}"
+                              ToolTipContent="{loc:Translate DESCRIPTION_FONT_SIZE_TOOLTIP}" />
+            <TextBlock VerticalAlignment="Center" Margin="0 0 8 0"
+                       Text="{loc:Translate DESCRIPTION_FONT_SIZE}" />
+            <ComboBox ItemsSource="{Binding AvailableFontSizes}"
+                      SelectedItem="{Binding DescriptionFontSize}"
+                      HorizontalAlignment="Left" Width="80" />
+        </DockPanel>
         <views:EditableListBox DataContext="{Binding DocumentationPatterns}"/>
         <views:EditableListBox DataContext="{Binding FolderExclusions}"/>
     </StackPanel>

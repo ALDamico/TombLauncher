@@ -57,6 +57,7 @@ public class GameDetailsService : IViewService
         target.AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         target.EnabledPatterns = gameDetailsSettings.EnabledPatterns.Select(p => p.Value).ToList();
         target.IgnoredFolders = gameDetailsSettings.ExcludedFolders.Select(p => p.Value).ToList();
+        target.DescriptionFontSize = gameDetailsSettings.DescriptionFontSize;
     }
 
     public void OpenGameFolder(string gameFolder)
