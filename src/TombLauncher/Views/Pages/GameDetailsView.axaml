@@ -7,6 +7,7 @@
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
+              xmlns:ctb="clr-namespace:ColorTextBlock.Avalonia;assembly=ColorTextBlock.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameDetailsView"
              x:Name="GameDetailsViewRoot"
@@ -72,7 +73,53 @@
                                           DockPanel.Dock="Bottom"
                                           Margin="0 8 0 0"
                                           Markdown="{Binding Game.GameMetadata.Description,
-                                                     Converter={StaticResource MarkdownDescriptionConverter}}"/>
+                                                     Converter={StaticResource MarkdownDescriptionConverter}}">
+                <mdxaml:MarkdownScrollViewer.Styles>
+                    <!-- Base: paragraph body text (base = 18) -->
+                    <Style Selector="ctb|CTextBlock">
+                        <Setter Property="FontFamily" Value="{StaticResource Spectral}" />
+                        <Setter Property="FontSize"   Value="18" />
+                    </Style>
+                    <!-- Headings: proportional scale from 18px -->
+                    <Style Selector="ctb|CTextBlock.Heading1">
+                        <Setter Property="FontFamily"  Value="{StaticResource Spectral}" />
+                        <Setter Property="FontSize"    Value="36" />
+                        <Setter Property="FontWeight"  Value="Bold" />
+                    </Style>
+                    <Style Selector="ctb|CTextBlock.Heading2">
+                        <Setter Property="FontFamily"  Value="{StaticResource Spectral}" />
+                        <Setter Property="FontSize"    Value="28" />
+                        <Setter Property="FontWeight"  Value="SemiBold" />
+                    </Style>
+                    <Style Selector="ctb|CTextBlock.Heading3">
+                        <Setter Property="FontFamily"  Value="{StaticResource Spectral}" />
+                        <Setter Property="FontSize"    Value="24" />
+                        <Setter Property="FontWeight"  Value="SemiBold" />
+                    </Style>
+                    <Style Selector="ctb|CTextBlock.Heading4">
+                        <Setter Property="FontFamily"  Value="{StaticResource Spectral}" />
+                        <Setter Property="FontSize"    Value="22" />
+                        <Setter Property="FontWeight"  Value="Medium" />
+                    </Style>
+                    <Style Selector="ctb|CTextBlock.Heading5">
+                        <Setter Property="FontFamily"  Value="{StaticResource Spectral}" />
+                        <Setter Property="FontSize"    Value="20" />
+                        <Setter Property="FontWeight"  Value="Medium" />
+                    </Style>
+                    <Style Selector="ctb|CTextBlock.Heading6">
+                        <Setter Property="FontFamily"  Value="{StaticResource Spectral}" />
+                        <Setter Property="FontSize"    Value="18" />
+                        <Setter Property="FontWeight"  Value="Medium" />
+                    </Style>
+                    <!-- Blockquote: italic, slightly smaller -->
+                    <Style Selector=".Blockquote ctb|CTextBlock">
+                        <Setter Property="FontFamily"  Value="{StaticResource Spectral}" />
+                        <Setter Property="FontSize"    Value="16" />
+                        <Setter Property="FontStyle"   Value="Italic" />
+                    </Style>
+                </mdxaml:MarkdownScrollViewer.Styles>
+            </mdxaml:MarkdownScrollViewer>
+
         </DockPanel>
     </Grid>
 </UserControl>

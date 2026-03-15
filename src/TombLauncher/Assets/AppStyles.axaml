@@ -23,6 +23,7 @@
             <!-- Font families -->
             <FontFamily x:Key="TombRaiderFont">avares://TombLauncher/Assets#Tomb_Raider</FontFamily>
             <FontFamily x:Key="Figtree">avares://TombLauncher/Assets/Figtree-VariableFont_wght.ttf</FontFamily>
+            <FontFamily x:Key="Spectral">avares://TombLauncher/Assets/Spectral#Spectral</FontFamily>
             <!-- Shared theme for MenuFlyout items built from CommandViewModel -->
             <ControlTheme x:Key="CommandMenuItemContainerTheme"
                           TargetType="MenuItem"
