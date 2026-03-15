@@ -110,7 +110,7 @@ public class WelcomePageService : IViewService
                 var pickedGame = gamePage.Results.ToList().PickOneAtRandom();
 
                 var searchResult = await _gameDownloadManager.GetGames(
-                    new DownloaderSearchPayload() { LevelName = pickedGame.Title }, 1);
+                    downloaders, new DownloaderSearchPayload() { LevelName = pickedGame.Title }, 1);
                 var allGamesResult = searchResult.Results;
 
                 var candidate = allGamesResult.FirstOrDefault();

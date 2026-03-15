@@ -66,7 +66,8 @@ public class GameSearchService : IViewService
         using (target.BusyScope("LOADING_IN_PROGRESS".GetLocalizedString()))
         {
             var nextPage = target.CurrentPage + 1;
-            var (nextPageResults, _) = await _gameDownloadManager.GetGames(target.LastSearchPayload!, nextPage);
+            var (nextPageResults, _) = await _gameDownloadManager.GetGames(
+                target.LastSearchDownloaders!, target.LastSearchPayload!, nextPage);
 
             var fetchedResults = await InvokeMerger(target, nextPageResults.SelectMany(r => r.Sources).Cast<IGameSearchResultMetadata>().ToList());
 
@@ -184,14 +185,13 @@ public class GameSearchService : IViewService
         {
             _logger.LogInformation("Started search with parameters: {Target}", target);
             var downloaders = _settingsProvider.GetActiveDownloaders();
-            _gameDownloadManager.Downloaders.Clear();
-            _gameDownloadManager.Downloaders.AddRange(downloaders);
             target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
             try
             {
                 var searchPayloadDto = Mapper.Map<DownloaderSearchPayload>(target.SearchPayload);
-                var (games, maxTotalPages) = await _gameDownloadManager.GetGames(searchPayloadDto, 1);
+                var (games, maxTotalPages) = await _gameDownloadManager.GetGames(downloaders, searchPayloadDto, 1);
                 target.LastSearchPayload = searchPayloadDto;
+                target.LastSearchDownloaders = downloaders;
                 target.CurrentPage = 1;
                 target.MaxTotalPages = maxTotalPages ?? 0;
                 var mappedGames = Mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ public partial class GameSearchViewModel : PageViewModel
     [ObservableProperty] private int _currentPage;
     [ObservableProperty] private int _maxTotalPages;
     internal DownloaderSearchPayload? LastSearchPayload;
+    internal IReadOnlyList<IGameDownloader>? LastSearchDownloaders;
 
     public GameSearchViewModel(GameSearchService gameSearchService)
     {

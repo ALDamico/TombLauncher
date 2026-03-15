@@ -24,10 +24,11 @@ public class GameDownloadManager
     private readonly IGameMerger _merger;
 
     public async Task<(List<IMergedGameSearchResultMetadata> Results, int? MaxTotalPages)> GetGames(
+        IReadOnlyList<IGameDownloader> downloaders,
         DownloaderSearchPayload searchPayload, int page)
     {
         var outputList = new List<IMergedGameSearchResultMetadata>();
-        var tasks = Downloaders
+        var tasks = downloaders
             .Select(d => d.Search.GetGames(searchPayload, page, _cancellationTokenSource.Token))
             .ToList();
 
@@ -54,10 +55,12 @@ public class GameDownloadManager
         return null;
     }
 
-    public async Task<IMergedGameSearchResultMetadata> FetchAllDetails(IMergedGameSearchResultMetadata game)
+    public async Task<IMergedGameSearchResultMetadata> FetchAllDetails(
+        IReadOnlyList<IGameDownloader> downloaders,
+        IMergedGameSearchResultMetadata game)
     {
         var searchPayload = new DownloaderSearchPayload() { LevelName = game.Title };
-        var tasks = Downloaders
+        var tasks = downloaders
             .Select(d => d.Search.GetGames(searchPayload, 1, _cancellationTokenSource.Token))
             .ToList();
 
