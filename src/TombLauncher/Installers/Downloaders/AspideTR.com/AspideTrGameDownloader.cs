@@ -151,12 +151,11 @@ public class AspideTrGameDownloader : GameDownloaderBase
     }
 
 
-    public override async Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
+    protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         var result = new List<IGameSearchResultMetadata>();
-        if (pageNumber > TotalPages) return result;
-        var convertedRequest = ConvertRequest(DownloaderSearchPayload);
-        var kvpList = ConvertRequest(convertedRequest);
+        var convertedRequest = ConvertRequest(payload);
+        var kvpList = convertedRequest.ToQueryParams();
 
         var urlEncodedContent = new FormUrlEncodedContent(kvpList);
         var queryString = await urlEncodedContent.ReadAsStringAsync(cancellationToken);
@@ -167,13 +166,10 @@ public class AspideTrGameDownloader : GameDownloaderBase
 
         var htmlDocument = new HtmlDocument();
         htmlDocument.Load(content);
-        if (TotalPages == null)
-        {
-            TotalPages = GetTotalPages(htmlDocument);
-        }
+        var totalPages = GetTotalPages(htmlDocument);
 
         await ParsePage(htmlDocument, result);
-        return result;
+        return new SearchResultPage(result, totalPages);
     }
 
     private string GetPageUrl(int pageNumber, string queryString)

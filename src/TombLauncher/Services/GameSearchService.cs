@@ -35,7 +35,6 @@ public class GameSearchService : IViewService
         _gameLinkDataService = gameLinkDataService;
         _gameDataService = gameDataService;
         _notificationService = notificationService;
-        _gameListService = gameListService;
         _logger = logger;
         _settingsProvider = settingsProvider;
         _gameWithStatsService = gameWithStatsService;
@@ -46,7 +45,6 @@ public class GameSearchService : IViewService
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private IMapper Mapper => ViewContext.Mapper;
     private readonly NotificationService _notificationService;
-    private readonly GameListService _gameListService;
     private readonly ILogger<GameSearchService> _logger;
     private readonly ISettingsProvider _settingsProvider;
     private readonly GameWithStatsService _gameWithStatsService;
@@ -67,13 +65,14 @@ public class GameSearchService : IViewService
         _logger.LogInformation("Loading more results");
         using (target.BusyScope("LOADING_IN_PROGRESS".GetLocalizedString()))
         {
-            var nextPage = await _gameDownloadManager.FetchNextPage();
+            var nextPage = target.CurrentPage + 1;
+            var (nextPageResults, _) = await _gameDownloadManager.GetGames(target.LastSearchPayload!, nextPage);
 
-            var fetchedResults = await InvokeMerger(target, nextPage);
+            var fetchedResults = await InvokeMerger(target, nextPageResults.SelectMany(r => r.Sources).Cast<IGameSearchResultMetadata>().ToList());
 
             var gamesWithStats = await _gameDataService.GetGamesWithStats();
             var gamesByLinks = await
-                _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPage.Select(p => p.DownloadLink).ToList(), gamesWithStats);
+                _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPageResults.SelectMany(g => g.Sources).Select(s => s.DownloadLink).ToList(), gamesWithStats);
             foreach (var game in Enumerable.Where(target.FetchedResults, r => r.InstalledGame == null))
             {
                 if (gamesByLinks.TryGetValue(game.DownloadLink, out var dto))
@@ -117,7 +116,8 @@ public class GameSearchService : IViewService
                 }
             }
 
-            target.HasMoreResults = CanLoadMore();
+            target.CurrentPage = nextPage;
+            target.HasMoreResults = CanLoadMore(target);
             _logger.LogInformation("Loading finished. Has more results: {MoreResults}", target.HasMoreResults);
 
             // Show feedback
@@ -137,7 +137,7 @@ public class GameSearchService : IViewService
         }
     }
 
-    public bool CanLoadMore() => _gameDownloadManager.HasMoreResults();
+    public bool CanLoadMore(GameSearchViewModel target) => target.CurrentPage < target.MaxTotalPages;
 
     public async Task Open(GameSearchViewModel target, MultiSourceGameSearchResultMetadataViewModel gameToOpen)
     {
@@ -190,9 +190,12 @@ public class GameSearchService : IViewService
             try
             {
                 var searchPayloadDto = Mapper.Map<DownloaderSearchPayload>(target.SearchPayload);
-                var games = await _gameDownloadManager.GetGames(searchPayloadDto);
+                var (games, maxTotalPages) = await _gameDownloadManager.GetGames(searchPayloadDto, 1);
+                target.LastSearchPayload = searchPayloadDto;
+                target.CurrentPage = 1;
+                target.MaxTotalPages = maxTotalPages ?? 0;
                 var mappedGames = Mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);
-                var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink) /*TODO Remove this*/
+                var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink)
                     .Where(s => s.IsNotNullOrWhiteSpace()).ToList();
                 var allGamesWithStats = await _gameDataService.GetGamesWithStats();
                 var installedGames = await _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, downloadLinks, allGamesWithStats);
@@ -210,7 +213,7 @@ public class GameSearchService : IViewService
                     target.FetchedResults.Clear();
                     target.FetchedResults.AddRange(mappedGames);
                 });
-                target.HasMoreResults = _gameDownloadManager.HasMoreResults();
+                target.HasMoreResults = CanLoadMore(target);
             }
             catch (OperationCanceledException ex)
             {

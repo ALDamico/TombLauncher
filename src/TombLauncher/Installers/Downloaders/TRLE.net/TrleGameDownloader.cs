@@ -62,55 +62,34 @@ public class TrleGameDownloader : GameDownloaderBase
         return -1;
     }
 
-    public override async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
-        CancellationToken cancellationToken = default)
-    {
-        DownloaderSearchPayload = searchPayload;
-        cancellationToken.ThrowIfCancellationRequested();
-        CurrentPage = 0;
-        TotalPages = null;
 
-        var result = await FetchNextPage(cancellationToken);
-
-        return result;
-    }
-
-    public override async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
+    protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (CurrentPage >= TotalPages) return new List<IGameSearchResultMetadata>();
-        CurrentPage++;
-        try
-        {
-            return await FetchPage(CurrentPage, cancellationToken);
-        }
-        catch (HttpRequestException)
-        {
-            CurrentPage--;
-            return new List<IGameSearchResultMetadata>();
-        }
-    }
-
-    public override async Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        if (pageNumber > TotalPages) return new List<IGameSearchResultMetadata>();
         var result = new List<IGameSearchResultMetadata>();
-        var request = ConvertRequest(DownloaderSearchPayload, pageNumber);
+        var request = ConvertRequest(payload, pageNumber);
         var requestStrng = request.ToQueryParams();
         var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
         requestMessage.Content = urlEncodedContent;
 
-        var response = await HttpClient.SendAsync(requestMessage, cancellationToken);
+        HttpResponseMessage response;
+        try
+        {
+            response = await HttpClient.SendAsync(requestMessage, cancellationToken);
+        }
+        catch (HttpRequestException)
+        {
+            return new SearchResultPage(result, null);
+        }
+
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
         var htmlDocument = new HtmlDocument();
         htmlDocument.LoadHtml(content);
-        if (TotalPages == null)
-            TotalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
+        var totalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
 
         ParseResultPage(htmlDocument, result, cancellationToken);
-        return result;
+        return new SearchResultPage(result, totalPages);
     }
 
     private void ParseResultPage(HtmlDocument htmlDocument, List<IGameSearchResultMetadata> result,

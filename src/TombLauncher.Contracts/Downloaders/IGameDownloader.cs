@@ -1,20 +1,18 @@
-﻿using TombLauncher.Contracts.Enums;
-using TombLauncher.Contracts.Progress;
+using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Contracts.Downloaders;
 
+/// <summary>
+/// Aggregates all downloader capabilities via composition (HAS-A).
+/// Concrete classes implement IGameSearchProvider, IGameDetailProvider and IGameInstaller
+/// and expose themselves via the Search, Details and Installer properties.
+/// </summary>
 public interface IGameDownloader
 {
     string DisplayName { get; }
     string BaseUrl { get; }
-    DownloaderSearchPayload DownloaderSearchPayload { get; }
-    Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload, CancellationToken cancellationToken);
-    Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken);
-    Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken);
-    Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream, IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken);
-    Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken);
-    bool HasMorePages();
-    int? TotalPages { get; }
-    int CurrentPage { get; }
     DownloaderFeatures SupportedFeatures { get; }
+    IGameSearchProvider Search { get; }
+    IGameDetailProvider Details { get; }
+    IGameInstaller Installer { get; }
 }

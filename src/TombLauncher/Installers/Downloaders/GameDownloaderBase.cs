@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -10,7 +9,7 @@ using TombLauncher.Contracts.Progress;
 
 namespace TombLauncher.Installers.Downloaders;
 
-public abstract class GameDownloaderBase : IGameDownloader
+public abstract class GameDownloaderBase : IGameDownloader, IGameSearchProvider, IGameDetailProvider, IGameInstaller
 {
     protected GameDownloaderBase(IHttpClientFactory httpClientFactory)
     {
@@ -23,35 +22,24 @@ public abstract class GameDownloaderBase : IGameDownloader
     public abstract string BaseUrl { get; }
     public abstract DownloaderFeatures SupportedFeatures { get; }
 
-    public DownloaderSearchPayload DownloaderSearchPayload { get; protected set; } = new();
-    public int? TotalPages { get; protected set; }
-    public int CurrentPage { get; protected set; }
+    // IGameDownloader composition via self-reference
+    IGameSearchProvider IGameDownloader.Search => this;
+    IGameDetailProvider IGameDownloader.Details => this;
+    IGameInstaller IGameDownloader.Installer => this;
 
-    public virtual async Task<List<IGameSearchResultMetadata>> GetGames(
-        DownloaderSearchPayload searchPayload, CancellationToken cancellationToken)
+    // IGameSearchProvider — stateless: all state passed as parameters
+    public virtual Task<ISearchResultPage> GetGames(DownloaderSearchPayload payload, int page, CancellationToken cancellationToken)
     {
-        DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
-        CurrentPage = 0;
-        TotalPages = null;
-        return await FetchNextPage(cancellationToken);
+        return FetchPage(payload, page, cancellationToken);
     }
 
-    public virtual async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
-    {
-        if (CurrentPage >= TotalPages) return new List<IGameSearchResultMetadata>();
-        CurrentPage++;
-        return await FetchPage(CurrentPage, cancellationToken);
-    }
+    protected abstract Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken);
 
-    public bool HasMorePages()
-    {
-        if (TotalPages == null) return false;
-        return CurrentPage < TotalPages;
-    }
-
-    public abstract Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken);
+    // IGameDetailProvider
     public abstract Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken);
+
+    // IGameInstaller
     public abstract Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
         IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken);
 }

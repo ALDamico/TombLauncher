@@ -60,25 +60,23 @@ public class TrCustomsGameDownloader : GameDownloaderBase
     private Dictionary<string, LevelGenreResponse> _genresMap = new();
     private readonly Dictionary<string, int> _ratingMap;
 
-    public override async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
-        CancellationToken cancellationToken)
+    public override async Task<ISearchResultPage> GetGames(DownloaderSearchPayload payload, int page, CancellationToken cancellationToken)
     {
-        DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
 
-        var engineMapTask = FetchSupportedEngines(cancellationToken);
-        var genreMapTask = FetchGenres(cancellationToken);
-        var tagMapTask = FetchTags(cancellationToken);
+        if (_enginesMap.Count == 0)
+        {
+            var engineMapTask = FetchSupportedEngines(cancellationToken);
+            var genreMapTask = FetchGenres(cancellationToken);
+            var tagMapTask = FetchTags(cancellationToken);
+            await Task.WhenAll(engineMapTask, genreMapTask, tagMapTask);
+            _enginesMap = engineMapTask.Result;
+            _reverseEnginesMap = _enginesMap.ToDictionary(k => k.Value, k => k.Key);
+            _tagsMap = tagMapTask.Result;
+            _genresMap = genreMapTask.Result;
+        }
 
-        await Task.WhenAll(engineMapTask, genreMapTask, tagMapTask);
-        _enginesMap = engineMapTask.Result;
-        _reverseEnginesMap = _enginesMap.ToDictionary(k => k.Value, k => k.Key);
-        _tagsMap = tagMapTask.Result;
-        _genresMap = genreMapTask.Result;
-
-        CurrentPage = 0;
-        TotalPages = null;
-        return await FetchNextPage(cancellationToken);
+        return await FetchPage(payload, page, cancellationToken);
     }
 
     private async Task<TrCustomsPagedResponse<T>> GetPagedResponse<T>(string endpoint, IEnumerable<KeyValuePair<string, string?>>? trCustomsRequest = null,
@@ -265,7 +263,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
 
         searchRequest.Page = currentPage;
 
-        searchRequest.Search = DownloaderSearchPayload.AuthorName ?? string.Empty;
+        searchRequest.Search = downloaderSearchPayload.AuthorName ?? string.Empty;
         if (downloaderSearchPayload.LevelName != null)
             searchRequest.Search = downloaderSearchPayload.LevelName ?? string.Empty;
 
@@ -314,16 +312,14 @@ public class TrCustomsGameDownloader : GameDownloaderBase
         return searchRequest;
     }
 
-    public override async Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
+    protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         var result = new List<IGameSearchResultMetadata>();
-        var searchRequest = ConvertRequest(DownloaderSearchPayload, pageNumber, _tagsMap, _genresMap);
+        var searchRequest = ConvertRequest(payload, pageNumber, _tagsMap, _genresMap);
         var dictified = RequestUtils.DictifyRequest(searchRequest);
         var response = await GetPagedResponse<LevelSummaryResponse>("levels", dictified, cancellationToken);
-        if (TotalPages == null)
-            TotalPages = response.LastPage;
         ParseResultPage(response.Results, result, cancellationToken);
-        return result;
+        return new SearchResultPage(result, response.LastPage);
     }
 
     public override async Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
