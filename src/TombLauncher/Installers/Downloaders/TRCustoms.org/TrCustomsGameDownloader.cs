@@ -264,7 +264,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
         searchRequest.Page = currentPage;
 
         searchRequest.Search = downloaderSearchPayload.AuthorName ?? string.Empty;
-        if (downloaderSearchPayload.LevelName != null)
+        if (downloaderSearchPayload.LevelName.IsNotNullOrWhiteSpace())
             searchRequest.Search = downloaderSearchPayload.LevelName ?? string.Empty;
 
         var rating = downloaderSearchPayload.Rating;
