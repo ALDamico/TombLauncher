@@ -25,7 +25,7 @@
     <ScrollViewer>
         <StackPanel Margin="16">
             <!-- Hero Section -->
-            <TextBlock Classes="h1" Text="TOMB LAUNCHER" FontSize="48" Margin="0,8,0,4" />
+            <TextBlock Classes="h1" Text="TOMB LAUNCHER" Margin="0,8,0,4" />
             <TextBlock Text="{loc:Translate WELCOME_SUBTITLE}"
                        HorizontalAlignment="Center"
                        Foreground="{DynamicResource SecondaryBrush}"

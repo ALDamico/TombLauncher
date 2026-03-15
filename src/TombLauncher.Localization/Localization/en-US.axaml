@@ -357,5 +357,9 @@
     <system:String x:Key="NO_SAVEGAME_BACKUPS_FOUND">No savegame backups found</system:String>
     <system:String x:Key="SAVEGAME_BACKUPS_FOUND_IMPORT">There were no savegame backups in Tomb Launcher's database, but we found {0} savegame files. Would you like to import them?</system:String>
     <system:String x:Key="OPEN_SEARCH">Open search</system:String>
+    <system:String x:Key="SYSTEM_LANGUAGE">System language</system:String>
+    <system:String x:Key="RESTART_REQUIRED_CAPTION">Restart required</system:String>
+    <system:String x:Key="RESTART_REQUIRED_MESSAGE">The language has been changed. Please restart the application to apply the new language.</system:String>
+    <system:String x:Key="DAILY_STATISTICS">Daily statistics</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

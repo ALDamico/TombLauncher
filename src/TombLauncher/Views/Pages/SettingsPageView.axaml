@@ -21,10 +21,14 @@
     </Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0">
+        <TextBlock Grid.Row="0" Classes="page-title"
+                   Margin="0,8,0,0"
+                   Text="{loc:Translate SETTINGS, Casing=Upper}" />
+        <ScrollViewer Grid.Row="1">
             <ItemsControl ItemsSource="{Binding Sections}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -34,7 +38,7 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <DockPanel Grid.Row="1" LastChildFill="False" Margin="0,8,30,0">
+        <DockPanel Grid.Row="2" LastChildFill="False" Margin="0,8,30,0">
             <controls:IconButton DockPanel.Dock="Right"
                                  Classes="btn-primary"
                                  Margin="10"
