@@ -26,7 +26,6 @@ public static class MarkdownTypography
     private const double H6Ratio        = 1.00;
     private const double BlockquoteRatio = 0.88;
 
-
     // ── Attached properties ──────────────────────────────────────────────────
 
     public static readonly AttachedProperty<double> BaseFontSizeProperty =
