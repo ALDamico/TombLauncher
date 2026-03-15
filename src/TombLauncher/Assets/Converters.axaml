@@ -1,0 +1,60 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <Styles.Resources>
+
+        <!-- ── Game state ── -->
+        <valueConverters:MultiSourceGameSearchResultMetadataCanDownloadToBooleanConverter
+            x:Key="SearchResultCanDownloadToBooleanConverter" />
+        <valueConverters:GameIsInstallingToBooleanConverter       x:Key="GameIsInstallingToBooleanConverter" />
+        <valueConverters:GameMetadataIsNotInstalledToBooleanConverter x:Key="GameNotInstalledToBooleanConverter" />
+        <valueConverters:GameMetadataIsInstalledToBooleanConverter x:Key="GameInstalledToBooleanConverter" />
+
+        <!-- ── Collections ── -->
+        <valueConverters:CollectionToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
+        <valueConverters:CollectionToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" Invert="True" />
+
+        <!-- ── Enums ── -->
+        <valueConverters:EnumToDescriptionConverter  x:Key="EnumToDescriptionConverter" />
+        <valueConverters:EnumIsNotDefaultConverter   x:Key="EnumIsNotDefaultConverter" />
+
+        <!-- ── Date / time ── -->
+        <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />
+        <valueConverters:DateTimeToStringConverter              x:Key="DateTimeToStringConverter" />
+        <valueConverters:DateTimeFormatConverter x:Key="DateOnlyFormatter">
+            <valueConverters:DateTimeFormatConverter.DesiredFormat>DateOnlyFormat</valueConverters:DateTimeFormatConverter.DesiredFormat>
+        </valueConverters:DateTimeFormatConverter>
+        <valueConverters:DateTimeFormatConverter x:Key="DateTimeFormatter">
+            <valueConverters:DateTimeFormatConverter.DesiredFormat>DateTimeFormat</valueConverters:DateTimeFormatConverter.DesiredFormat>
+        </valueConverters:DateTimeFormatConverter>
+
+        <!-- ── Localization ── -->
+        <valueConverters:LocalizedFallbackValueConverter x:Key="LocalizedFallbackValueConverter" />
+        <valueConverters:LocalizedStringConverter        x:Key="LocalizedStringConverter" />
+
+        <!-- ── Numbers / sizes ── -->
+        <valueConverters:IsSmallerOrEqualConverter      x:Key="IsSmallerOrEqualConverter" />
+        <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter" />
+        <valueConverters:TransferSpeedConverter         x:Key="TransferSpeedFormatter" />
+        <valueConverters:FileSizeConverter              x:Key="FileSizeFormatter" />
+
+        <!-- ── Icons ── -->
+        <valueConverters:IconKindToNullableIconConverter x:Key="IconKindToNullableIconConverter" />
+
+        <!-- ── Strings / files / images ── -->
+        <valueConverters:UppercaseConverter              x:Key="UppercaseConverter" />
+        <valueConverters:FilenameConverter               x:Key="FilenameConverter" />
+        <valueConverters:MarkdownDescriptionConverter    x:Key="MarkdownDescriptionConverter" />
+        <valueConverters:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter" />
+        <valueConverters:StringNullToNullBitmapConverter x:Key="StringNullToNullBitmap">
+            <valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
+                <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm-light.png</system:String>
+            </valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
+            <valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
+                <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm.png</system:String>
+            </valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
+        </valueConverters:StringNullToNullBitmapConverter>
+
+    </Styles.Resources>
+</Styles>
