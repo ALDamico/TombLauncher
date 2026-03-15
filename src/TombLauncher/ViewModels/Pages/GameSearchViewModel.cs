@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Avalonia;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages;
@@ -24,6 +26,12 @@ public partial class GameSearchViewModel : PageViewModel
     [ObservableProperty] private bool _showEmptyState;
     [ObservableProperty] private bool _showResults;
     [ObservableProperty] private string _loadMoreFeedback = string.Empty;
+
+    // Pagination state — owned by the ViewModel, populated by GameSearchService
+    [ObservableProperty] private int _currentPage;
+    [ObservableProperty] private int _maxTotalPages;
+    internal DownloaderSearchPayload? LastSearchPayload;
+    internal IReadOnlyList<IGameDownloader>? LastSearchDownloaders;
 
     public GameSearchViewModel(GameSearchService gameSearchService)
     {

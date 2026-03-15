@@ -4,7 +4,7 @@ description: How to commit changes following project conventions
 
 # Commit
 
-> **IMPORTANT**: NEVER commit unless the user explicitly asks you to. Do NOT commit proactively after making changes — always wait for the user to say "commit", "committa", or similar.
+> **IMPORTANT**: NEVER commit unless the user explicitly asks you to. Do NOT commit proactively after making changes — always wait for the user to say "commit", "committa", or similar. Do NOT suggest or ask "Committiamo?" at the end of your work — the user will decide when to commit.
 
 The project uses **Conventional Commits**.
 

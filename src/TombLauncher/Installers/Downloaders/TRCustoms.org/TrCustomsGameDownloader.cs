@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
@@ -14,7 +14,6 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Utils;
 using TombLauncher.Extensions;
 using TombLauncher.Installers.Downloaders.TRCustoms.org.Requests;
 using TombLauncher.Installers.Downloaders.TRCustoms.org.Responses;
@@ -22,25 +21,13 @@ using TombLauncher.Installers.Downloaders.TRCustoms.org.Utils;
 
 namespace TombLauncher.Installers.Downloaders.TRCustoms.org;
 
-public class TrCustomsGameDownloader : IGameDownloader
+public class TrCustomsGameDownloader : GameDownloaderBase
 {
-    public string DisplayName => "TRCustoms.org";
-    public string BaseUrl => "https://trcustoms.org/";
-    public DownloaderSearchPayload DownloaderSearchPayload { get; private set; } = new();
+    public override string DisplayName => "TRCustoms.org";
+    public override string BaseUrl => "https://trcustoms.org/";
 
-    public TrCustomsGameDownloader()
+    public TrCustomsGameDownloader(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
     {
-        _httpClient = new HttpClient()
-        {
-            BaseAddress = new Uri(BaseUrl),
-            DefaultRequestHeaders =
-            {
-                Accept =
-                {
-                    new MediaTypeWithQualityHeaderValue("application/json")
-                }
-            }
-        };
         _jsonSerializerSettings = new JsonSerializerSettings()
         {
             ContractResolver = new DefaultContractResolver
@@ -65,7 +52,6 @@ public class TrCustomsGameDownloader : IGameDownloader
         };
     }
 
-    private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
     private Dictionary<int, GameEngine> _enginesMap = new();
@@ -74,30 +60,29 @@ public class TrCustomsGameDownloader : IGameDownloader
     private Dictionary<string, LevelGenreResponse> _genresMap = new();
     private readonly Dictionary<string, int> _ratingMap;
 
-    public async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
-        CancellationToken cancellationToken)
+    public override async Task<ISearchResultPage> GetGames(DownloaderSearchPayload payload, int page, CancellationToken cancellationToken)
     {
-        DownloaderSearchPayload = searchPayload;
         cancellationToken.ThrowIfCancellationRequested();
 
-        var engineMapTask = FetchSupportedEngines(cancellationToken);
-        var genreMapTask = FetchGenres(cancellationToken);
-        var tagMapTask = FetchTags(cancellationToken);
+        if (_enginesMap.Count == 0)
+        {
+            var engineMapTask = FetchSupportedEngines(cancellationToken);
+            var genreMapTask = FetchGenres(cancellationToken);
+            var tagMapTask = FetchTags(cancellationToken);
+            await Task.WhenAll(engineMapTask, genreMapTask, tagMapTask);
+            _enginesMap = engineMapTask.Result;
+            _reverseEnginesMap = _enginesMap.ToDictionary(k => k.Value, k => k.Key);
+            _tagsMap = tagMapTask.Result;
+            _genresMap = genreMapTask.Result;
+        }
 
-        await Task.WhenAll(engineMapTask, genreMapTask, tagMapTask);
-        _enginesMap = engineMapTask.Result;
-        _reverseEnginesMap = _enginesMap.ToDictionary(k => k.Value, k => k.Key);
-        _tagsMap = tagMapTask.Result;
-        _genresMap = genreMapTask.Result;
-
-        CurrentPage = 0;
-        return await FetchNextPage(cancellationToken);
+        return await FetchPage(payload, page, cancellationToken);
     }
 
     private async Task<TrCustomsPagedResponse<T>> GetPagedResponse<T>(string endpoint, IEnumerable<KeyValuePair<string, string?>>? trCustomsRequest = null,
         CancellationToken cancellationToken = default)
     {
-        var relativeUri = new UriBuilder(_httpClient.BaseAddress!);
+        var relativeUri = new UriBuilder(HttpClient.BaseAddress!);
         relativeUri.Path = $"api/{endpoint}/";
         var completeUri = relativeUri.Uri.ToString();
         if (trCustomsRequest != null)
@@ -109,7 +94,7 @@ public class TrCustomsGameDownloader : IGameDownloader
             Method = HttpMethod.Get,
             RequestUri = new Uri(completeUri)
         };
-        using var response = await _httpClient.SendAsync(request, cancellationToken);
+        using var response = await HttpClient.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 
         var pagedResponse = JsonConvert.DeserializeObject<TrCustomsPagedResponse<T>>(
@@ -146,52 +131,26 @@ public class TrCustomsGameDownloader : IGameDownloader
         var engines = await GetPagedResponse<LevelEngineResponse>("level_engines", cancellationToken: cancellationToken);
 
         var dict = new Dictionary<int, GameEngine>();
-        if (engines == null)
+        if (engines.TotalCount < 1)
             return dict;
 
         foreach (var response in engines.Results)
         {
-            GameEngine engine = GameEngine.Unknown;
-            switch (response.Name)
+            var engine = response.Name switch
             {
-                case "TR1":
-                    engine = GameEngine.TombRaider1;
-                    break;
-                case "TR2":
-                    engine = GameEngine.TombRaider2;
-                    break;
-                case "TR3":
-                    engine = GameEngine.TombRaider3;
-                    break;
-                case "TR4":
-                    engine = GameEngine.TombRaider4;
-                    break;
-                case "TR5":
-                    engine = GameEngine.TombRaider5;
-                    break;
-                case "TEN":
-                    engine = GameEngine.Ten;
-                    break;
-            }
+                "TR1" => GameEngine.TombRaider1,
+                "TR2" => GameEngine.TombRaider2,
+                "TR3" => GameEngine.TombRaider3,
+                "TR4" => GameEngine.TombRaider4,
+                "TR5" => GameEngine.TombRaider5,
+                "TEN" => GameEngine.Ten,
+                _ => GameEngine.Unknown
+            };
 
             dict[response.Id] = engine;
         }
 
         return dict;
-    }
-
-    public async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
-    {
-        if (CurrentPage > TotalPages) return new List<IGameSearchResultMetadata>();
-        CurrentPage++;
-        var result = new List<IGameSearchResultMetadata>();
-        var searchRequest = ConvertRequest(DownloaderSearchPayload, CurrentPage, _tagsMap, _genresMap);
-        var dictified = RequestUtils.DictifyRequest(searchRequest);
-        var response = await GetPagedResponse<LevelSummaryResponse>("levels", dictified, cancellationToken);
-        if (TotalPages == null)
-            TotalPages = response.LastPage;
-        ParseResultPage(response.Results, result, cancellationToken);
-        return result;
     }
 
     private void ParseResultPage(List<LevelSummaryResponse> levelSummaries, List<IGameSearchResultMetadata> result,
@@ -206,8 +165,8 @@ public class TrCustomsGameDownloader : IGameDownloader
                 authors = string.Join(", ", summary.Authors.Select(a => a.Username));
             }
 
-            var tags = summary.Tags?.Select(t => t.Name) ?? [];
-            string? settingString = tags.Any() ? string.Join(", ", tags) : null;
+            var tags = summary.Tags?.Select(t => t.Name)?.ToArray() ?? [];
+            var settingString = tags.Length == 0 ? string.Join(", ", tags) : null;
 
             var rating = ParseRating(summary.RatingClass);
 
@@ -250,7 +209,7 @@ public class TrCustomsGameDownloader : IGameDownloader
         return rating;
     }
 
-    private GameDifficulty ParseDifficulty(LevelDifficultyResponse difficultyResponse)
+    private GameDifficulty ParseDifficulty(LevelDifficultyResponse? difficultyResponse)
     {
         var difficulty = GameDifficulty.Unknown;
         if (difficultyResponse != null)
@@ -261,7 +220,7 @@ public class TrCustomsGameDownloader : IGameDownloader
         return difficulty;
     }
 
-    private GameEngine ParseGameEngine(LevelEngineResponse engine)
+    private GameEngine ParseGameEngine(LevelEngineResponse? engine)
     {
         var gameEngine = GameEngine.Unknown;
         if (engine != null)
@@ -272,13 +231,11 @@ public class TrCustomsGameDownloader : IGameDownloader
         return gameEngine;
     }
 
-    private GameLength ParseDuration(LevelDurationResponse levelDurationResponse)
+    private GameLength ParseDuration(LevelDurationResponse? levelDurationResponse)
     {
-        if (levelDurationResponse == null)
+        var durationName = levelDurationResponse?.Name;
+        if (durationName == null) 
             return GameLength.Unknown;
-
-        var durationName = levelDurationResponse.Name;
-        if (durationName == null) return GameLength.Unknown;
 
         if (durationName.StartsWith("Short", StringComparison.InvariantCultureIgnoreCase))
         {
@@ -295,12 +252,7 @@ public class TrCustomsGameDownloader : IGameDownloader
             return GameLength.Long;
         }
 
-        if (durationName.StartsWith("very long", StringComparison.InvariantCultureIgnoreCase))
-        {
-            return GameLength.VeryLong;
-        }
-
-        return GameLength.Unknown;
+        return durationName.StartsWith("very long", StringComparison.InvariantCultureIgnoreCase) ? GameLength.VeryLong : GameLength.Unknown;
     }
 
     private SearchRequest ConvertRequest(DownloaderSearchPayload downloaderSearchPayload, int currentPage,
@@ -311,7 +263,7 @@ public class TrCustomsGameDownloader : IGameDownloader
 
         searchRequest.Page = currentPage;
 
-        searchRequest.Search = DownloaderSearchPayload.AuthorName ?? string.Empty;
+        searchRequest.Search = downloaderSearchPayload.AuthorName ?? string.Empty;
         if (downloaderSearchPayload.LevelName != null)
             searchRequest.Search = downloaderSearchPayload.LevelName ?? string.Empty;
 
@@ -360,24 +312,24 @@ public class TrCustomsGameDownloader : IGameDownloader
         return searchRequest;
     }
 
-    public async Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
+    protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         var result = new List<IGameSearchResultMetadata>();
-        var searchRequest = ConvertRequest(DownloaderSearchPayload, pageNumber, _tagsMap, _genresMap);
+        var searchRequest = ConvertRequest(payload, pageNumber, _tagsMap, _genresMap);
         var dictified = RequestUtils.DictifyRequest(searchRequest);
         var response = await GetPagedResponse<LevelSummaryResponse>("levels", dictified, cancellationToken);
         ParseResultPage(response.Results, result, cancellationToken);
-        return result;
+        return new SearchResultPage(result, response.LastPage);
     }
 
-    public async Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
+    public override async Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
         IProgress<DownloadProgressInfo> downloadProgress,
         CancellationToken cancellationToken)
     {
-        await _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
+        await HttpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
-    public async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken)
+    public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken)
     {
         return new GameMetadataDto()
         {
@@ -389,21 +341,12 @@ public class TrCustomsGameDownloader : IGameDownloader
             GameEngine = game.Engine,
             ReleaseDate = game.ReleaseDate,
             AuthorFullName = game.AuthorFullName ?? string.Empty,
-            TitlePic = game.TitlePic != null ? await _httpClient.GetByteArrayAsync(game.TitlePic!, cancellationToken) : Array.Empty<byte>(),
+            TitlePic = game.TitlePic != null ? await HttpClient.GetByteArrayAsync(game.TitlePic!, cancellationToken) : Array.Empty<byte>(),
             Title = game.Title ?? string.Empty,
         };
     }
 
-    public bool HasMorePages()
-    {
-        if (TotalPages == null) return false;
-        return CurrentPage < TotalPages;
-    }
-
-    public int? TotalPages { get; private set; }
-    public int CurrentPage { get; private set; }
-
-    public DownloaderFeatures SupportedFeatures => DownloaderFeatures.Rating | DownloaderFeatures.LevelName |
+    public override DownloaderFeatures SupportedFeatures => DownloaderFeatures.Rating | DownloaderFeatures.LevelName |
                                                    DownloaderFeatures.GameEngine | DownloaderFeatures.GameLength |
                                                    DownloaderFeatures.Setting;
 }

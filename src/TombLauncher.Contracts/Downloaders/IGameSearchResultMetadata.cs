@@ -4,7 +4,7 @@ namespace TombLauncher.Contracts.Downloaders;
 
 public interface IGameSearchResultMetadata
 {
-    string Author { get; set; }
+    string? Author { get; set; }
     string? AuthorFullName { get; set; }
     string? Description { get; set; }
     string Title { get; set; }

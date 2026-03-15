@@ -97,15 +97,21 @@ public class WelcomePageService : IViewService
             {
                 var downloaders = _settingsProvider.GetActiveDownloaders();
                 var downloaderToUse = downloaders.PickOneAtRandom();
-                await downloaderToUse.GetGames(new DownloaderSearchPayload(), CancellationToken.None);
+                var emptyPayload = new DownloaderSearchPayload();
+
+                // Fetch page 1 to discover TotalPages
+                var firstPage = await downloaderToUse.Search.GetGames(emptyPayload, 1, CancellationToken.None);
 
                 var random = new Random();
-                var pageToFetch = random.Next(downloaderToUse.TotalPages.GetValueOrDefault() - 1);
-                var gamePage = await downloaderToUse.FetchPage(pageToFetch, CancellationToken.None);
-                var pickedGame = gamePage.PickOneAtRandom();
+                var pageToFetch = random.Next(firstPage.TotalPages.GetValueOrDefault(1));
+                var gamePage = pageToFetch > 1
+                    ? await downloaderToUse.Search.GetGames(emptyPayload, pageToFetch, CancellationToken.None)
+                    : firstPage;
+                var pickedGame = gamePage.Results.ToList().PickOneAtRandom();
 
-                var allGamesResult = await _gameDownloadManager.GetGames(new DownloaderSearchPayload()
-                    { LevelName = pickedGame.Title });
+                var searchResult = await _gameDownloadManager.GetGames(
+                    downloaders, new DownloaderSearchPayload() { LevelName = pickedGame.Title }, 1);
+                var allGamesResult = searchResult.Results;
 
                 var candidate = allGamesResult.FirstOrDefault();
                 if (candidate != null)

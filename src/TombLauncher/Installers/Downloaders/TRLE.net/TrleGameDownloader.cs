@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,36 +11,16 @@ using HtmlAgilityPack;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
-using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
 
 namespace TombLauncher.Installers.Downloaders.TRLE.net;
 
-public class TrleGameDownloader : IGameDownloader
+public class TrleGameDownloader : GameDownloaderBase
 {
-    public TrleGameDownloader()
+    public TrleGameDownloader(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
     {
-        _httpClient = new HttpClient()
-        {
-            BaseAddress = new Uri(BaseUrl),
-            DefaultRequestHeaders =
-            {
-                Accept =
-                {
-                    new MediaTypeWithQualityHeaderValue("text/html"),
-                    new MediaTypeWithQualityHeaderValue("application/xhtml+xml"),
-                    new MediaTypeWithQualityHeaderValue("application/xml"),
-                    new MediaTypeWithQualityHeaderValue("image/avif"),
-                    new MediaTypeWithQualityHeaderValue("image/webp"),
-                    new MediaTypeWithQualityHeaderValue("image/apng"),
-                    new MediaTypeWithQualityHeaderValue("application/signed-exchange"),
-                },
-                Host = "trle.net",
-                Referrer = new Uri("https://trle.net/pFind.php")
-            }
-        };
         _gameEngineMapping = new Dictionary<GameEngine, string>()
         {
             { GameEngine.Unknown, string.Empty },
@@ -58,13 +37,9 @@ public class TrleGameDownloader : IGameDownloader
     private const int RowsPerPage = 20;
 
 
-    public string DisplayName => "TRLE.net";
-    public string BaseUrl => "https://trle.net";
-    public DownloaderSearchPayload DownloaderSearchPayload { get; set; } = new();
-    private HttpClient _httpClient;
-
+    public override string DisplayName => "TRLE.net";
+    public override string BaseUrl => "https://trle.net";
     private readonly Dictionary<GameEngine, string> _gameEngineMapping;
-
     private readonly Dictionary<string, GameEngine> _inverseGameEngineMapping;
 
     private int GetTotalRows(HtmlDocument htmlDocument)
@@ -87,74 +62,34 @@ public class TrleGameDownloader : IGameDownloader
         return -1;
     }
 
-    public async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
-        CancellationToken cancellationToken = default)
-    {
-        DownloaderSearchPayload = searchPayload;
-        cancellationToken.ThrowIfCancellationRequested();
-        CurrentPage = 0;
 
-        var result = await FetchNextPage(cancellationToken);
-
-        return result;
-    }
-
-    public async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
+    protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (CurrentPage > TotalPages) return new List<IGameSearchResultMetadata>();
-        CurrentPage++;
         var result = new List<IGameSearchResultMetadata>();
-        var request = ConvertRequest(DownloaderSearchPayload, CurrentPage);
-        var requestStrng = ConvertRequest(request);
+        var request = ConvertRequest(payload, pageNumber);
+        var requestStrng = request.ToQueryParams();
         var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
         requestMessage.Content = urlEncodedContent;
 
+        HttpResponseMessage response;
         try
         {
-            var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
-            var content = await response.Content.ReadAsStringAsync(cancellationToken);
-            var htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(content);
-            if (TotalPages == null)
-                TotalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
-
-            ParseResultPage(htmlDocument, result, cancellationToken);
+            response = await HttpClient.SendAsync(requestMessage, cancellationToken);
         }
         catch (HttpRequestException)
         {
-            CurrentPage--;
+            return new SearchResultPage(result, null);
         }
-        return result;
-    }
 
-    public async Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        if (pageNumber > TotalPages) return new List<IGameSearchResultMetadata>();
-        var result = new List<IGameSearchResultMetadata>();
-        var request = ConvertRequest(DownloaderSearchPayload, pageNumber);
-        var requestStrng = ConvertRequest(request);
-        var urlEncodedContent = new FormUrlEncodedContent(requestStrng);
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/pFind.php");
-        requestMessage.Content = urlEncodedContent;
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.LoadHtml(content);
+        var totalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
 
-        try
-        {
-            var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
-            var content = await response.Content.ReadAsStringAsync(cancellationToken);
-            var htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(content);
-            if (TotalPages == null)
-                TotalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
-
-            ParseResultPage(htmlDocument, result, cancellationToken);
-        }
-        catch (HttpRequestException)
-        {
-        }
-        return result;
+        ParseResultPage(htmlDocument, result, cancellationToken);
+        return new SearchResultPage(result, totalPages);
     }
 
     private void ParseResultPage(HtmlDocument htmlDocument, List<IGameSearchResultMetadata> result,
@@ -267,17 +202,17 @@ public class TrleGameDownloader : IGameDownloader
         }
     }
 
-    public async Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
+    public override Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
         IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
-        await _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
+        return HttpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
-    public async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
+    public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         var detailsUrl = game.DetailsLink;
-        var page = await _httpClient.GetStreamAsync(detailsUrl, cancellationToken);
+        var page = await HttpClient.GetStreamAsync(detailsUrl, cancellationToken);
         var htmlDocument = new HtmlDocument();
         htmlDocument.Load(page);
         var metadata = new GameMetadataDto
@@ -296,7 +231,7 @@ public class TrleGameDownloader : IGameDownloader
         if (imageNode != null)
         {
             var uri = imageNode.Attributes["src"].Value;
-            var byteArr = await _httpClient.GetByteArrayAsync(uri, cancellationToken);
+            var byteArr = await HttpClient.GetByteArrayAsync(uri, cancellationToken);
             if (game.TitlePic.IsNullOrWhiteSpace())
             {
                 game.TitlePic = new Uri(new Uri(game.BaseUrl), uri).ToString();
@@ -314,16 +249,7 @@ public class TrleGameDownloader : IGameDownloader
         return metadata;
     }
 
-    public bool HasMorePages()
-    {
-        if (TotalPages == null) return false;
-        return CurrentPage < TotalPages;
-    }
-
-    public int? TotalPages { get; private set; }
-    public int CurrentPage { get; private set; }
-
-    public DownloaderFeatures SupportedFeatures => DownloaderFeatures.Author | DownloaderFeatures.LevelName |
+    public override DownloaderFeatures SupportedFeatures => DownloaderFeatures.Author | DownloaderFeatures.LevelName |
                                                    DownloaderFeatures.GameEngine | DownloaderFeatures.GameDifficulty |
                                                    DownloaderFeatures.Rating | DownloaderFeatures.GameLength;
 
@@ -356,10 +282,5 @@ public class TrleGameDownloader : IGameDownloader
             SortIdx = 8,
             Idx = (pageNumber - 1) * RowsPerPage
         };
-    }
-
-    private IEnumerable<KeyValuePair<string, string>> ConvertRequest(TrleSearchRequest convertedSearchRequest)
-    {
-        return ReflectionUtils.GetPropertiesAsKeyValuePairs(convertedSearchRequest, k => k.ToLowerInvariant());
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using AutoMapper;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -20,27 +19,21 @@ using NetSparkleUpdater;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.SignatureVerifiers;
 using Serilog;
-using Serilog.Events;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
-using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Factories;
+using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
-using TombLauncher.Installers.Downloaders.AspideTR.com;
-using TombLauncher.Installers.Downloaders.TRCustoms.org;
-using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Localization;
 using TombLauncher.Services;
 using TombLauncher.Updater;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
-using TombLauncher.ViewModels.Pages;
 using TombLauncher.Views;
 using StringNotificationViewModel = TombLauncher.ViewModels.Notifications.StringNotificationViewModel;
 
@@ -186,17 +179,17 @@ public class App : Application
         serviceCollection.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
         serviceCollection.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
         serviceCollection.AddSingleton(platformSpecificFeatures);
-        ConfigureLogging(serviceCollection, appDataDirectory);
-        ConfigureMappings(serviceCollection);
+        serviceCollection.AddTombLauncherLogging(appDataDirectory);
+        serviceCollection.AddTombLauncherMappings();
         serviceCollection.AddSingleton<IAppFileOperationsService, AppFileOperationsService>();
         serviceCollection.AddSingleton<ThemeManager>();
         serviceCollection.AddSingleton<ISavegameHeaderProvider, SavegameHeaderProvider>();
         serviceCollection.AddTransient<SavegameQueryService>();
         serviceCollection.AddTransient<SavegameCommandService>();
-        ConfigurePageServices(serviceCollection);
-        ConfigureViewModels(serviceCollection);
+        serviceCollection.AddPageServices();
+        serviceCollection.AddViewModels();
         serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current!));
-        ConfigureDatabaseAccess(serviceCollection, appConfiguration, appDataDirectory);
+        serviceCollection.AddDatabaseAccess(appConfiguration, appDataDirectory);
         serviceCollection.AddSingleton(sp => new NavigationManager(sp));
         serviceCollection.AddSingleton<IPopupService>(_ => new PopupService(
             DialogServiceFactory.CreateMessageBoxService(),
@@ -211,7 +204,7 @@ public class App : Application
         serviceCollection.AddTransient<IGameMerger>(_ =>
             new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator()
             { UseAuthor = true, IgnoreSubTitle = true }));
-        ConfigureDownloaders(serviceCollection);
+        serviceCollection.AddDownloaders();
         serviceCollection.AddTransient(sp =>
         {
             var downloadManager = new GameDownloadManager(sp.GetRequiredService<IGameMerger>())
@@ -308,85 +301,4 @@ public class App : Application
         return Task.CompletedTask;
     }
 
-    private void ConfigureDownloaders(ServiceCollection serviceCollection)
-    {
-        serviceCollection.AddTransient<TrleGameDownloader>();
-        serviceCollection.AddTransient(sp => new AspideTrGameDownloader(sp.GetRequiredService<ILocalizationManager>()
-            .GetSubsetInvertedByPrefix("ATR")));
-        serviceCollection.AddTransient<TrCustomsGameDownloader>();
-    }
-
-    private static void ConfigurePageServices(ServiceCollection serviceCollection)
-    {
-        serviceCollection.AddSingleton<ViewServiceContext>();
-        serviceCollection.AddScoped<GameDetailsService>();
-        serviceCollection.AddScoped<NewGameService>();
-        serviceCollection.AddScoped<GameListService>();
-        serviceCollection.AddScoped<GameWithStatsService>();
-        serviceCollection.AddScoped<AppCrashHostService>();
-        serviceCollection.AddSingleton<WelcomePageService>();
-        serviceCollection.AddTransient<GameSearchService>();
-        serviceCollection.AddTransient<GameSearchResultService>();
-        serviceCollection.AddSingleton<ISettingsProvider, SettingsProvider>();
-        serviceCollection.AddSingleton<SettingsPageService>();
-        serviceCollection.AddScoped<StatisticsService>();
-    }
-
-    private static void ConfigureViewModels(ServiceCollection serviceCollection)
-    {
-        serviceCollection.AddSingleton(sp =>
-            new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>())
-            { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
-        serviceCollection.AddScoped<GameListViewModel>();
-        serviceCollection.AddScoped<GameSearchViewModel>();
-        serviceCollection.AddTransient<NewGameViewModel>();
-        serviceCollection.AddSingleton<SettingsPageViewModel>();
-        serviceCollection.AddSingleton<NotificationListViewModel>();
-        serviceCollection.AddScoped<StatisticsPageViewModel>();
-        serviceCollection.AddTransient<SavegameListViewModel>();
-        serviceCollection.AddTransient<GameDetailsViewModel>();
-    }
-
-    private static void ConfigureDatabaseAccess(ServiceCollection serviceCollection, IAppConfiguration appConfiguration, string appDataDirectory)
-    {
-        serviceCollection.AddDbContext<TombLauncherDbContext>(opts =>
-        {
-            var databasePath = Path.Combine(appDataDirectory, appConfiguration.Application.DatabasePath ?? "TombLauncher.sqlite");
-            var connectionString = $"Data Source={databasePath}";
-            opts.UseSqlite(connectionString);
-        });
-        serviceCollection.AddScoped<ISavegameRepository, SavegameRepository>();
-        serviceCollection.AddScoped<GameDataService>();
-        serviceCollection.AddScoped<PlaySessionDataService>();
-        serviceCollection.AddScoped<GameLinkDataService>();
-        serviceCollection.AddScoped<GameHashDataService>();
-        serviceCollection.AddScoped<StatisticsDataService>();
-        serviceCollection.AddScoped<AppCrashDataService>();
-    }
-
-    private static void ConfigureLogging(ServiceCollection serviceCollection, string appDataDirectory)
-    {
-        var logPath = Path.Combine(appDataDirectory, "TombLauncher_App.log");
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Information()
-            .WriteTo
-            .File(logPath, LogEventLevel.Information)
-            .CreateLogger();
-        serviceCollection.AddLogging(opts =>
-        {
-            opts.ClearProviders();
-            opts.SetMinimumLevel(LogLevel.Information);
-            opts.AddSerilog();
-        });
-    }
-
-    private static void ConfigureMappings(ServiceCollection serviceCollection)
-    {
-        serviceCollection.AddSingleton(sp => MapperConfigurationFactory.GetMapperConfiguration(t => sp.GetService(t)!));
-        serviceCollection.AddSingleton<IMapper>(sp =>
-        {
-            var config = sp.GetRequiredService<MapperConfiguration>();
-            return config.CreateMapper(t => sp.GetService(t)!);
-        });
-    }
 }

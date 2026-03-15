@@ -8,9 +8,9 @@ public class LevelSummaryResponse
     public int Id { get; set; }
     public string? Name { get; set; } = null!;
     public string? Description { get; set; } = null!;
-    public LevelEngineResponse Engine { get; set; } = null!;
-    public LevelDurationResponse Duration { get; set; } = null!;
-    public LevelDifficultyResponse Difficulty { get; set; } = null!;
+    public LevelEngineResponse? Engine { get; set; } = null;
+    public LevelDurationResponse? Duration { get; set; } = null;
+    public LevelDifficultyResponse? Difficulty { get; set; } = null;
     public List<LevelTagResponse> Tags { get; set; } = null!;
     public List<AuthorResponse> Authors { get; set; } = null!;
     public AuthorResponse Uploader { get; set; } = null!;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,38 +11,25 @@ using HtmlAgilityPack;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
-using TombLauncher.Contracts.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Utils;
 using TombLauncher.Extensions;
 using UtfUnknown;
 
 namespace TombLauncher.Installers.Downloaders.AspideTR.com;
 
-public class AspideTrGameDownloader : IGameDownloader
+public class AspideTrGameDownloader : GameDownloaderBase
 {
-    public AspideTrGameDownloader()
-    {
-        _httpClient = new HttpClient()
-        {
-            BaseAddress = new Uri(BaseUrl),
-        };
-        _classMappings = new Dictionary<string, string>();
-    }
-
-    public AspideTrGameDownloader(Dictionary<string, string> classMappings) : this()
+    public AspideTrGameDownloader(IHttpClientFactory httpClientFactory, Dictionary<string, string> classMappings) : base(httpClientFactory)
     {
         _classMappings = classMappings;
     }
 
-    public string DisplayName => "AspideTR";
-    public string BaseUrl => "https://www.aspidetr.com/";
-    public DownloaderSearchPayload DownloaderSearchPayload { get; set; } = new();
+    public override string DisplayName => "AspideTR";
+    public override string BaseUrl => "https://www.aspidetr.com/";
 
-    private readonly HttpClient _httpClient;
 
-    private readonly Dictionary<GameEngine, int?> _gameEngineMappings = new Dictionary<GameEngine, int?>()
+    private readonly Dictionary<GameEngine, int?> _gameEngineMappings = new()
     {
         { GameEngine.Unknown, null },
         { GameEngine.Ten, 8 },
@@ -55,22 +42,11 @@ public class AspideTrGameDownloader : IGameDownloader
 
     private readonly Dictionary<string, string> _classMappings;
 
-    public async Task<List<IGameSearchResultMetadata>> GetGames(DownloaderSearchPayload searchPayload,
-        CancellationToken cancellationToken)
-    {
-        DownloaderSearchPayload = searchPayload;
-        cancellationToken.ThrowIfCancellationRequested();
-        CurrentPage = 0;
-
-        var result = await FetchNextPage(cancellationToken);
-
-        return result;
-    }
 
     private async Task ParsePage(HtmlDocument htmlDocument, List<IGameSearchResultMetadata> result)
     {
         var levelsList = htmlDocument.DocumentNode.SelectNodes("//div[@class='levels']/article");
-        if (levelsList == null)
+        if (levelsList.IsNullOrEmpty())
             return;
         foreach (var level in levelsList)
         {
@@ -80,11 +56,8 @@ public class AspideTrGameDownloader : IGameDownloader
                 SourceSiteDisplayName = DisplayName
             };
             var headerNode = level.SelectSingleNode("./div[@class='level-content-block']/header");
-            var authorNode = headerNode.SelectSingleNode("./h2/em/a");
-            if (authorNode != null)
-            {
-                searchResult.Author = authorNode.InnerText.Trim();
-            }
+            var author = headerNode.SelectSingleNode("./h2/em/a")?.InnerText?.Trim();
+            searchResult.Author = author;
 
             var titleNode = headerNode.SelectSingleNode("./h2/a");
             if (titleNode != null)
@@ -114,7 +87,7 @@ public class AspideTrGameDownloader : IGameDownloader
             var featuredImage = level.SelectSingleNode("./div[@class='level-featured-image']/a/img");
             if (featuredImage != null)
             {
-                searchResult.TitlePic = featuredImage.Attributes["src"].Value;// await _httpClient.GetByteArrayAsync(featuredImage.Attributes["src"].Value);
+                searchResult.TitlePic = featuredImage.Attributes["src"].Value;
             }
 
             var engineTypeNode = level.SelectSingleNode("./div[contains(@class,'level-content')]");
@@ -165,69 +138,38 @@ public class AspideTrGameDownloader : IGameDownloader
             return Encoding.UTF8;
         var details = detection.Details.ToList();
         var targetEncoding = details[0].Encoding;
-        if (details.Count > 1)
+        if (details.Count <= 1) 
+            return targetEncoding;
+        if (!Equals(details[0].Encoding, Encoding.UTF8)) 
+            return targetEncoding;
+        if (Math.Abs(details[0].Confidence - details[1].Confidence) <= 0.05)
         {
-            if (details[0].Encoding == Encoding.UTF8)
-            {
-                if (Math.Abs(details[0].Confidence - details[1].Confidence) <= 0.05)
-                {
-                    targetEncoding = details[1].Encoding;
-                }
-            }
+            targetEncoding = details[1].Encoding;
         }
 
         return targetEncoding;
     }
 
-    public async Task<List<IGameSearchResultMetadata>> FetchNextPage(CancellationToken cancellationToken)
+
+    protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         var result = new List<IGameSearchResultMetadata>();
-        if (CurrentPage > TotalPages) return result;
-        CurrentPage++;
-        var convertedRequest = ConvertRequest(DownloaderSearchPayload);
-        var kvpList = ConvertRequest(convertedRequest);
-
-        var urlEncodedContent = new FormUrlEncodedContent(kvpList);
-        var queryString = await urlEncodedContent.ReadAsStringAsync(cancellationToken);
-        var url = GetPageUrl(CurrentPage, queryString);
-        var requestMessage = new HttpRequestMessage(HttpMethod.Get, url) { Content = urlEncodedContent };
-        var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
-        var content = await response.Content.ReadAsStreamAsync(cancellationToken);
-
-        var htmlDocument = new HtmlDocument();
-        htmlDocument.Load(content);
-        if (TotalPages == null)
-        {
-            TotalPages = GetTotalPages(htmlDocument);
-        }
-
-        await ParsePage(htmlDocument, result);
-        return result;
-    }
-
-    public async Task<List<IGameSearchResultMetadata>> FetchPage(int pageNumber, CancellationToken cancellationToken)
-    {
-        var result = new List<IGameSearchResultMetadata>();
-        if (pageNumber > TotalPages) return result;
-        var convertedRequest = ConvertRequest(DownloaderSearchPayload);
-        var kvpList = ConvertRequest(convertedRequest);
+        var convertedRequest = ConvertRequest(payload);
+        var kvpList = convertedRequest.ToQueryParams();
 
         var urlEncodedContent = new FormUrlEncodedContent(kvpList);
         var queryString = await urlEncodedContent.ReadAsStringAsync(cancellationToken);
         var url = GetPageUrl(pageNumber, queryString);
         var requestMessage = new HttpRequestMessage(HttpMethod.Get, url) { Content = urlEncodedContent };
-        var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
+        var response = await HttpClient.SendAsync(requestMessage, cancellationToken);
         var content = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         var htmlDocument = new HtmlDocument();
         htmlDocument.Load(content);
-        if (TotalPages == null)
-        {
-            TotalPages = GetTotalPages(htmlDocument);
-        }
+        var totalPages = GetTotalPages(htmlDocument);
 
         await ParsePage(htmlDocument, result);
-        return result;
+        return new SearchResultPage(result, totalPages);
     }
 
     private string GetPageUrl(int pageNumber, string queryString)
@@ -241,17 +183,17 @@ public class AspideTrGameDownloader : IGameDownloader
         return baseUrl + "?" + queryString;
     }
 
-    public Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
+    public override Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
         IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
-        return _httpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
+        return HttpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
     }
 
-    public async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
+    public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         var detailsLink = game.DetailsLink;
-        var page = await _httpClient.GetStreamAsync(detailsLink, cancellationToken);
+        var page = await HttpClient.GetStreamAsync(detailsLink, cancellationToken);
         var htmlDocument = new HtmlDocument();
         htmlDocument.Load(page);
         var dto = new GameMetadataDto()
@@ -262,7 +204,7 @@ public class AspideTrGameDownloader : IGameDownloader
             Setting = game.Setting,
             Title = game.Title,
             ReleaseDate = game.ReleaseDate,
-            TitlePic = await _httpClient.GetByteArrayAsync(game.TitlePic, cancellationToken),
+            TitlePic = await HttpClient.GetByteArrayAsync(game.TitlePic, cancellationToken),
             GameEngine = game.Engine,
             AuthorFullName = game.AuthorFullName
         };
@@ -270,7 +212,7 @@ public class AspideTrGameDownloader : IGameDownloader
         var detailsDiv = htmlDocument.DocumentNode.SelectSingleNode("//div[contains(@class, 'level-content')]");
         if (detailsDiv != null)
         {
-            var detailsText = detailsDiv.InnerText;
+            var detailsText = detailsDiv.InnerHtml.Trim();
             if (dto.Description == null || detailsText?.Length > dto.Description?.Length)
             {
                 dto.Description = detailsText;
@@ -280,15 +222,7 @@ public class AspideTrGameDownloader : IGameDownloader
         return dto;
     }
 
-    public bool HasMorePages()
-    {
-        return CurrentPage < TotalPages;
-    }
-
-    public int? TotalPages { get; private set; }
-    public int CurrentPage { get; private set; }
-
-    public DownloaderFeatures SupportedFeatures => DownloaderFeatures.Author | DownloaderFeatures.LevelName |
+    public override DownloaderFeatures SupportedFeatures => DownloaderFeatures.Author | DownloaderFeatures.LevelName |
                                                    DownloaderFeatures.Setting | DownloaderFeatures.GameDifficulty |
                                                    DownloaderFeatures.GameLength | DownloaderFeatures.GameEngine;
 
@@ -339,7 +273,7 @@ public class AspideTrGameDownloader : IGameDownloader
 
     private IEnumerable<KeyValuePair<string, string>> ConvertRequest(AspideTrSearchRequest convertedSearchRequest)
     {
-        return ReflectionUtils.GetPropertiesAsKeyValuePairs(convertedSearchRequest, k => k.ToLowerInvariant());
+        return convertedSearchRequest.ToQueryParams();
     }
 
     private int GetTotalPages(HtmlDocument htmlDocument)
@@ -347,7 +281,8 @@ public class AspideTrGameDownloader : IGameDownloader
         var paginationDiv = htmlDocument.DocumentNode.SelectSingleNode("//div[@class='pagination']");
 
         var lastListItem = paginationDiv?.SelectNodes("./ul/li").LastOrDefault();
-        if (lastListItem == null) return 1;
+        if (lastListItem == null) 
+            return 1;
         return int.TryParse(lastListItem.SelectSingleNode("./a").InnerText, out var val) ? val : 1;
     }
 }
