@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -25,7 +25,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Classes="h1" Text="{Binding GameTitle, Converter={StaticResource UppercaseConverter}}" />
+        <TextBlock Grid.Row="0" Classes="page-title" Text="{Binding GameTitle, Converter={StaticResource UppercaseConverter}}" />
         <DockPanel Grid.Row="1" LastChildFill="true">
             <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{loc:Translate SLOT}"/>
             <CheckBox IsChecked="{Binding SavegameFilter.StartOfLevelOnly}"

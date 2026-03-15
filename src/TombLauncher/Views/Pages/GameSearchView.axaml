@@ -39,7 +39,7 @@
 
         <!-- Page Title -->
         <TextBlock Grid.Row="0"
-                   Classes="h1"
+                   Classes="page-title"
                    Text="{loc:Translate SEARCH, Casing=Upper}" />
 
         <!-- Search Form (now contains the Search button) -->

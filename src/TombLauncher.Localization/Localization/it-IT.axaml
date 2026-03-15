@@ -356,5 +356,6 @@
     <system:String x:Key="NO_SAVEGAME_BACKUPS_FOUND">Nessun backup dei salvataggi trovato</system:String>
     <system:String x:Key="SAVEGAME_BACKUPS_FOUND_IMPORT">Non sono stati trovati backup dei salvataggi nel database di Tomb Launcher, ma sono stati trovati {0} file di salvataggio. Vuoi importarli?</system:String>
     <system:String x:Key="OPEN_SEARCH">Apri ricerca</system:String>
+    <system:String x:Key="DAILY_STATISTICS">Statistiche giornaliere</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
