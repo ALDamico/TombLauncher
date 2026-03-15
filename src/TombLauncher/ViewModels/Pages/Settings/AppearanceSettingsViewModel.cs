@@ -16,6 +16,8 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModelBase
             new ApplicationTheme("Scion (Light)", "Scion Light", ThemeVariant.Light),
             new ApplicationTheme("Xian (Dark)", "Xian", ThemeVariant.Dark),
             new ApplicationTheme("Xian (Light)", "Xian Light", ThemeVariant.Light),
+            new ApplicationTheme("Horus (Dark)", "Horus", ThemeVariant.Dark),
+            new ApplicationTheme("Horus (Light)", "Horus Light", ThemeVariant.Light),
         };
         // Default (will be overwritten by service)
         SelectedTheme = AvailableThemes[0];

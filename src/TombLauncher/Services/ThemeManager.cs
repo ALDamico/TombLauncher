@@ -22,6 +22,8 @@ public class ThemeManager
             "Xian Light" => "avares://TombLauncher/Assets/Themes/XianLight.axaml",
             "Scion" => "avares://TombLauncher/Assets/Themes/ScionTheme.axaml",
             "Scion Light" => "avares://TombLauncher/Assets/Themes/ScionLight.axaml",
+            "Horus" => "avares://TombLauncher/Assets/Themes/HorusTheme.axaml",
+            "Horus Light" => "avares://TombLauncher/Assets/Themes/HorusLight.axaml",
             _ => "avares://TombLauncher/Assets/Themes/ScionTheme.axaml" // Default
         };
 
