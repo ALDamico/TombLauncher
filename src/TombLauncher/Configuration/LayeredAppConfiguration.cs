@@ -35,7 +35,8 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         AskForConfirmationBeforeWalkthrough = User.GameDetails.AskForConfirmationBeforeWalkthrough.Coalesce(Defaults.GameDetails.AskForConfirmationBeforeWalkthrough),
         WinePath = User.GameDetails.WinePath.Coalesce(Defaults.GameDetails.WinePath),
         DocumentationPatterns = (Defaults.GameDetails.DocumentationPatterns ?? new()).MergeWithOverrides(User.GameDetails.DocumentationPatterns ?? new()),
-        DocumentationFolderExclusions = (Defaults.GameDetails.DocumentationFolderExclusions ?? new()).MergeWithOverrides(User.GameDetails.DocumentationFolderExclusions ?? new())
+        DocumentationFolderExclusions = (Defaults.GameDetails.DocumentationFolderExclusions ?? new()).MergeWithOverrides(User.GameDetails.DocumentationFolderExclusions ?? new()),
+        DescriptionFontSize = Defaults.GameDetails.DescriptionFontSize.Coalesce(User.GameDetails.DescriptionFontSize)
     };
 
     public ISavegamesConfig Savegames => new SavegamesConfig

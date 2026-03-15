@@ -242,6 +242,8 @@
     <system:String x:Key="THE_CLEAN_UP_PROCESS_HAS_COMPLETED_SUCCESSFULLY">Il processo di pulizia è stato completato con successo!</system:String>
     <system:String x:Key="SPACE_USED_BY_GAME">Spazio occupato per gioco</system:String>
     <system:String x:Key="WINE_EXECUTABLE_PATH">Percorso dell'eseguibile di Wine</system:String>
+    <system:String x:Key="DESCRIPTION_FONT_SIZE">Dimensione carattere descrizione</system:String>
+    <system:String x:Key="DESCRIPTION_FONT_SIZE_TOOLTIP">Controlla la dimensione del carattere di base nelle descrizioni. Gli heading si adattano proporzionalmente.</system:String>
     <system:String x:Key="WINE_TOOLTIP_CONTENT">Wine è un layer di compataibilità che consente di eseguire programmi Windows sotto Linux. Per poter giocare ai livelli custom di TRLE, è necessario che Wine sia installato sul sistema.</system:String>
     <system:String x:Key="UNZIP_FALLBACK_METHOD">Metodo di decompressione di fallback</system:String>
     <system:String x:Key="INSERT_NEW_GAME">INSERISCI UN NUOVO GIOCO</system:String>

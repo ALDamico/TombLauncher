@@ -9,4 +9,5 @@ public interface IGameDetailsConfig
     string? WinePath { get; }
     List<CheckableItem<string>>? DocumentationPatterns { get; }
     List<CheckableItem<string>>? DocumentationFolderExclusions { get; }
+    int? DescriptionFontSize { get; }
 }

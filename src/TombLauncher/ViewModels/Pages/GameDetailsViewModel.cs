@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -34,6 +34,7 @@ public partial class GameDetailsViewModel : PageViewModel
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands = new ObservableCollection<CommandViewModel>();
     [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles = new ObservableCollection<FileInfo>();
     [ObservableProperty] private GameWithStatsViewModel _game = null!;
+    [ObservableProperty] private int _descriptionFontSize = 18;
     [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks = new ObservableCollection<GameLinkViewModel>();
     public List<string> EnabledPatterns { get; set; } = new List<string>();
     public List<string> IgnoredFolders { get; set; } = new List<string>();

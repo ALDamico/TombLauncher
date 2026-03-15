@@ -109,6 +109,7 @@ public class SettingsPageService : IViewService
         return new GameDetailsSettingsViewModel(settingsPage)
         {
             AskForConfirmationBeforeWalkthrough = gd.AskForConfirmationBeforeWalkthrough.GetValueOrDefault(),
+            DescriptionFontSize = gd.DescriptionFontSize ?? 18,
             DocumentationPatterns = new EditablePatternListBoxViewModel() { TargetCollection = settings.EnabledPatterns.ToObservableCollection(), HeaderIcon = PackIconRemixIconKind.FileTextLine },
             FolderExclusions = new EditableFolderExclusionsListBoxViewModel() { TargetCollection = settings.ExcludedFolders.ToObservableCollection(), HeaderIcon = PackIconRemixIconKind.FolderLine },
             WinePath = settings.WinePath
