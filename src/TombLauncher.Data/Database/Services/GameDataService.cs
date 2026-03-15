@@ -316,8 +316,17 @@ public class GameDataService
 
         var game = await _dbContext.Games
             .Include(g => g.FileBackups.Where(f => targetFileTypes.Contains(f.FileType)))
+            .Include(g => g.InstalledFromLink)
             .SingleAsync(g => g.Id == id);
 
         return _mapper.Map<GameMetadataDto>(game);
+    }
+
+    public async Task SetInstalledFromLink(int gameId, int linkId)
+    {
+        var game = _dbContext.Games.Find(gameId);
+        if (game == null) return;
+        _dbContext.Entry(game).Property("InstalledFromLinkId").CurrentValue = linkId;
+        await _dbContext.SaveChangesAsync();
     }
 }

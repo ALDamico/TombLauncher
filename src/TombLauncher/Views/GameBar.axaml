@@ -9,81 +9,81 @@
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:io="clr-namespace:System.IO;assembly=System.Runtime"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="80"
              x:DataType="pages:GameDetailsViewModel"
              x:Class="TombLauncher.Views.GameBar"
              x:Name="ViewRoot">
     <Design.DataContext>
         <pages:GameDetailsViewModel />
     </Design.DataContext>
-    <Border CornerRadius="5" MaxHeight="100" Classes="card-background">
-        <DockPanel LastChildFill="True">
-            <controls:IconButton Height="65"
-                                 DockPanel.Dock="Right"
-                                 Margin="5 5 10 5"
-                                 Padding="0 5"
-                                 FontSize="28"
-                                 Icon="More2Line"
-                                 IsTextVisible="False"
-                                 CornerRadius="50">
-                <controls:IconButton.Flyout>
+    <Border CornerRadius="8"
+            Classes="card-background"
+            Padding="12 8"
+            BorderBrush="{DynamicResource CardBorderBrush}"
+            BorderThickness="1"
+            BoxShadow="0 2 8 0 #30000000">
+        <DockPanel LastChildFill="True" VerticalAlignment="Center">
+
+            <!-- Right: kebab "more" button -->
+            <controls:IconOnlyButton Icon="More2Line"
+                    DockPanel.Dock="Right"
+                    Margin="4 0 0 0"
+                    VerticalAlignment="Center">
+                <Button.Flyout>
                     <MenuFlyout>
-                        <MenuItem Header="{loc:Translate LAUNCH_OPTIONS}" 
+                        <MenuItem Header="{loc:Translate LAUNCH_OPTIONS}"
                                   Command="{Binding OpenLaunchOptionsCmd}"
                                   ToolTip.Tip="{loc:Translate LAUNCH_OPTIONS_TOOLTIP}">
                             <MenuItem.Icon>
-                                <iconPacks:PackIconRemixIcon Kind="TerminalLine"></iconPacks:PackIconRemixIcon>
+                                <iconPacks:PackIconRemixIcon Kind="TerminalLine" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{loc:Translate SAVEGAMES}" 
+                        <MenuItem Header="{loc:Translate SAVEGAMES}"
                                   Command="{Binding ManageSaveGamesCmd}"
                                   IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
                             <MenuItem.Icon>
-                                <iconPacks:PackIconRemixIcon Kind="Save3Line"></iconPacks:PackIconRemixIcon>
+                                <iconPacks:PackIconRemixIcon Kind="Save3Line" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{loc:Translate BROWSE_FILES}" 
+                        <MenuItem Header="{loc:Translate BROWSE_FILES}"
                                   IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
                                   Command="{Binding BrowseFolderCmd}">
                             <MenuItem.Icon>
-                                <iconPacks:PackIconRemixIcon Kind="FolderOpenLine"></iconPacks:PackIconRemixIcon>
+                                <iconPacks:PackIconRemixIcon Kind="FolderOpenLine" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem ItemsSource="{Binding WalkthroughLinks}" 
-                                  Header="{loc:Translate READ_WALKTHROUGH}" IsEnabled="{Binding WalkthroughLinks, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
+                        <MenuItem ItemsSource="{Binding WalkthroughLinks}"
+                                  Header="{loc:Translate READ_WALKTHROUGH}"
+                                  IsEnabled="{Binding WalkthroughLinks, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
                             <MenuItem.ItemContainerTheme>
                                 <ControlTheme TargetType="MenuItem"
                                               BasedOn="{StaticResource {x:Type MenuItem}}"
                                               x:DataType="viewModels:GameLinkViewModel">
                                     <Setter Property="Header"
-                                            Value="{Binding DisplayName, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='FROM_SITENAME'}">
-                                    </Setter>
+                                            Value="{Binding DisplayName, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='FROM_SITENAME'}" />
                                     <Setter Property="Command"
                                             Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).ReadWalkthroughCmd}" />
-                                    <Setter Property="CommandParameter" Value="{Binding .}"></Setter>
-                                    
-                                    <!-- Visual Overrides for Dynamic Items -->
+                                    <Setter Property="CommandParameter" Value="{Binding .}" />
                                     <Setter Property="Background" Value="Transparent" />
                                     <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                                     <Setter Property="CornerRadius" Value="4" />
                                 </ControlTheme>
                             </MenuItem.ItemContainerTheme>
                             <MenuItem.Icon>
-                                <iconPacks:PackIconRemixIcon Kind="MapLine"></iconPacks:PackIconRemixIcon>
+                                <iconPacks:PackIconRemixIcon Kind="MapLine" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{loc:Translate DOCUMENTATION}" ItemsSource="{Binding DocumentationFiles}" 
+                        <MenuItem Header="{loc:Translate DOCUMENTATION}"
+                                  ItemsSource="{Binding DocumentationFiles}"
                                   IsEnabled="{Binding DocumentationFiles, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
                             <MenuItem.ItemContainerTheme>
                                 <ControlTheme TargetType="MenuItem"
                                               BasedOn="{StaticResource {x:Type MenuItem}}"
                                               x:DataType="io:FileInfo">
-                                    <Setter Property="Header" Value="{Binding Name}"></Setter>
-                                    <Setter Property="Command" 
-                                            Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).OpenDocumentCommand}"></Setter>
-                                    <Setter Property="CommandParameter" Value="{Binding FullName}"></Setter>
-                                    
-                                    <!-- Visual Overrides for Dynamic Items -->
+                                    <Setter Property="Header" Value="{Binding Name}" />
+                                    <Setter Property="Command"
+                                            Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).OpenDocumentCommand}" />
+                                    <Setter Property="CommandParameter" Value="{Binding FullName}" />
                                     <Setter Property="Background" Value="Transparent" />
                                     <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                                     <Setter Property="CornerRadius" Value="4" />
@@ -91,87 +91,109 @@
                             </MenuItem.ItemContainerTheme>
                         </MenuItem>
                     </MenuFlyout>
-                </controls:IconButton.Flyout>
-            </controls:IconButton>
+                </Button.Flyout>
+            </controls:IconOnlyButton>
 
-            <StackPanel Orientation="Horizontal">
-                <controls:IconButton Height="65"
-                                     Margin="0 5 10 5"
-                                     Padding="0 5"
-                                     FontSize="28"
-                                     IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNull}}"
-                                     Command="{Binding InstallCmd}"
-                                     Icon="Download2Line"
-                                     Text="{loc:Translate DOWNLOAD}"
-                                     Classes="btn-success" />
-                <controls:IconButton
-                    Height="65"
-                    FontSize="28"
-                    IsVisible="{Binding Game.GameMetadata.IsInstalled, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    Classes="btn-success"
-                    Icon="PlayLargeFill"
-                    Text="{loc:Translate PLAY}"
-                    Margin="10 5"
-                    Padding="0 5"
-                    Command="{Binding Game.PlayCmd}">
-                    <controls:SplitIconButton.Flyout>
-                    </controls:SplitIconButton.Flyout>
-                </controls:IconButton>
-                <controls:IconButton Icon="Settings3Line" ToolTip.Tip="{loc:Translate CONFIGURE}" Classes="btn-primary"
-                                     FontSize="28" Height="65"
-                                     IsTextVisible="False"
-                                     IsVisible="{Binding SetupCommands, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
+            <!-- Left: action buttons + status info -->
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+
+                <!-- DOWNLOAD (when game not yet installed) -->
+                <Button Height="44"
+                        Padding="16 0"
+                        IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNull}}"
+                        Command="{Binding InstallCmd}"
+                        Classes="btn-success">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <iconPacks:PackIconRemixIcon Kind="Download2Line"
+                                                     Width="20" Height="20"
+                                                     VerticalAlignment="Center" />
+                        <TextBlock Text="{loc:Translate DOWNLOAD}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <!-- PLAY (when game is installed) -->
+                <Button Height="44"
+                        Padding="16 0"
+                        IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Classes="btn-success"
+                        Command="{Binding Game.PlayCmd}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <iconPacks:PackIconRemixIcon Kind="PlayLargeFill"
+                                                     Width="20" Height="20"
+                                                     VerticalAlignment="Center" />
+                        <TextBlock Text="{loc:Translate PLAY}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <!-- CONFIGURE (round, icon-only, when SetupCommands available) -->
+                <controls:IconOnlyButton Icon="Settings3Line"
+                        Classes="btn-primary"
+                        ToolTip.Tip="{loc:Translate CONFIGURE}"
+                        IsVisible="{Binding SetupCommands, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
+
                     <Button.Flyout>
-                        <MenuFlyout ItemsSource="{Binding SetupCommands}">
-                            <MenuFlyout.ItemContainerTheme>
-                                <ControlTheme TargetType="MenuItem"
-                                              BasedOn="{StaticResource {x:Type MenuItem}}"
-                                              x:DataType="viewModels:CommandViewModel">
-                                    <Setter Property="Header" Value="{Binding Text}" />
-                                    <Setter Property="Command" Value="{Binding Command}" />
-                                    <Setter Property="Icon">
-                                        <Template>
-                                            <iconPacks:PackIconRemixIcon Kind="{Binding ((viewModels:CommandViewModel)DataContext).Icon, RelativeSource={RelativeSource AncestorType=MenuItem}}" />
-                                        </Template>
-                                    </Setter>
-                                    
-                                    <!-- Visual Overrides for Dynamic Items -->
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-                                    <Setter Property="CornerRadius" Value="4" />
-                                </ControlTheme>
-                            </MenuFlyout.ItemContainerTheme>
-                        </MenuFlyout>
+                        <MenuFlyout ItemsSource="{Binding SetupCommands}"
+                                    ItemContainerTheme="{StaticResource CommandMenuItemContainerTheme}" />
                     </Button.Flyout>
-                </controls:IconButton>
+                </controls:IconOnlyButton>
+
+                <!-- Thin vertical separator before status indicators -->
+                <Rectangle Width="1" Height="28"
+                           Fill="{DynamicResource CardBorderBrush}"
+                           VerticalAlignment="Center"
+                           Margin="4 0"
+                           IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                <!-- Completed icon -->
                 <iconPacks:PackIconRemixIcon Kind="TrophyLine"
-                                       Height="28"
-                                       Width="28"
-                                       IsVisible="{Binding Game.GameMetadata.IsCompleted}"
-                                       ToolTip.Tip="{StaticResource 'Game completed'}" />
+                                             Width="22" Height="22"
+                                             VerticalAlignment="Center"
+                                             Background="Transparent"
+                                             IsVisible="{Binding Game.GameMetadata.IsCompleted}"
+                                             ToolTip.Tip="{loc:Translate GAME_COMPLETED}" />
+
+                <!-- Favourite icon -->
                 <iconPacks:PackIconRemixIcon Kind="HeartLine"
-                                       Height="28"
-                                       Width="28"
-                                       IsVisible="{Binding Game.GameMetadata.IsFavourite}"
-                                       ToolTip.Tip="{StaticResource 'Favourite'}" />
-                <TextBlock Text="{StaticResource 'Last played'}"
-                           FontStyle="Italic"
-                           Margin="0 5 10 5"
-                           VerticalAlignment="Center"
-                           IsVisible="{Binding Game.LastPlayed, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                <TextBlock Margin="0 5 10 5"
-                           VerticalAlignment="Center"
-                           Text="{Binding Game.LastPlayed, StringFormat=g}"
-                           IsVisible="{Binding Game.LastPlayed, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                <TextBlock Text="{StaticResource 'Play time'}"
-                           FontStyle="Italic"
-                           Margin="0 5 10 5"
-                           VerticalAlignment="Center"
-                           IsVisible="{Binding Game.LastPlayed, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                <TextBlock Margin="0 5 10 5"
-                           VerticalAlignment="Center"
-                           Text="{Binding Game.TotalPlayedTime, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"
-                           IsVisible="{Binding Game.TotalPlayedTime, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static system:TimeSpan.Zero}}" />
+                                             Width="22" Height="22"
+                                             VerticalAlignment="Center"
+                                             Background="Transparent"
+                                             IsVisible="{Binding Game.GameMetadata.IsFavourite}"
+                                             ToolTip.Tip="{loc:Translate FAVOURITE}" />
+
+                <!-- Last played: label + date, grouped together -->
+                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
+                            IsVisible="{Binding Game.LastPlayed, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <TextBlock Text="{loc:Translate LAST_PLAYED}"
+                               FontStyle="Italic"
+                               Foreground="{DynamicResource SecondaryBrush}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Game.LastPlayed, StringFormat=g}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Play time: label + duration, controlled by same condition -->
+                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
+                            IsVisible="{Binding Game.TotalPlayedTime, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static system:TimeSpan.Zero}}">
+                    <TextBlock Text="{loc:Translate PLAY_TIME}"
+                               FontStyle="Italic"
+                               Foreground="{DynamicResource SecondaryBrush}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Game.TotalPlayedTime, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Source site indicator -->
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center"
+                            IsVisible="{Binding Game.GameMetadata.InstalledFromSiteDisplayName,
+                                        Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <TextBlock Text="{loc:Translate INSTALLED_FROM}"
+                               FontStyle="Italic"
+                               Foreground="{DynamicResource SecondaryBrush}"
+                               VerticalAlignment="Center" />
+                    <Border Classes="source-badge">
+                        <TextBlock Text="{Binding Game.GameMetadata.InstalledFromSiteDisplayName}" />
+                    </Border>
+                </StackPanel>
 
             </StackPanel>
         </DockPanel>

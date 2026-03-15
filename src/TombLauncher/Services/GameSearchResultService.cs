@@ -76,6 +76,7 @@ public class GameSearchResultService : IViewService
     private int? _installedGameId;
     private InstallProgressViewModel? _installProgress;
     private NotificationViewModel? _notificationViewModel;
+    private IGameSearchResultMetadata? _preferredSource;
 
     public bool CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
     {
@@ -101,7 +102,11 @@ public class GameSearchResultService : IViewService
 
         _logger.LogInformation("Started downloading {GameTitle} from {DownloadUrl}", gameToInstall.Title,
             gameToInstall.DownloadLink);
-        foreach (var source in gameToInstallDto.Sources)
+        IGameSearchResultMetadata? successfulSource = null;
+        var sourcesToTry = _preferredSource != null
+            ? gameToInstallDto.Sources.Where(s => s.DownloadLink == _preferredSource.DownloadLink)
+            : gameToInstallDto.Sources;
+        foreach (var source in sourcesToTry)
         {
             try
             {
@@ -121,6 +126,7 @@ public class GameSearchResultService : IViewService
                     gameToInstall.InstallProgress.TotalBytes = 0;
                     gameToInstall.InstallProgress.DownloadSpeed = 0;
                 });
+                successfulSource = source;
                 break;
             }
             catch (HttpRequestException httpEx)
@@ -197,7 +203,9 @@ public class GameSearchResultService : IViewService
 
             hashes.ForEach(h => h.GameId = dto.Id);
             await _gameHashDataService.SaveHashes(hashes);
-            await SaveLinks(allDetails, dto);
+            var installedFromLinkId = await SaveLinks(allDetails, dto, successfulSource?.DownloadLink);
+            if (installedFromLinkId != 0)
+                await _gameDataService.SetInstalledFromLink(dto.Id, installedFromLinkId);
         }
         catch (TaskCanceledException)
         {
@@ -234,6 +242,20 @@ public class GameSearchResultService : IViewService
         _installedGameId = null;
         _downloadPath = null;
         _logger.LogInformation("Installation for {GameTitle} complete", gameToInstall.Title);
+    }
+
+    public async Task InstallFromSource(MultiSourceGameSearchResultMetadataViewModel gameToInstall,
+        IGameSearchResultMetadata specificSource)
+    {
+        _preferredSource = specificSource;
+        try
+        {
+            await Install(gameToInstall);
+        }
+        finally
+        {
+            _preferredSource = null;
+        }
     }
 
     private async Task<bool> CheckGameAlreadyInstalled(MultiSourceGameSearchResultMetadataViewModel gameToInstall, List<GameHashDto> hashes)
@@ -367,11 +389,12 @@ public class GameSearchResultService : IViewService
         dto.CommunitySetupExecutable = detectionResult.CommunitySetupExecutablePath;
     }
 
-    private async Task SaveLinks(IMergedGameSearchResultMetadata allDetails, IGameMetadata dto)
+    private async Task<int> SaveLinks(IMergedGameSearchResultMetadata allDetails, IGameMetadata dto, string? actualDownloadLink)
     {
+        var installedFromLinkId = 0;
         foreach (var detail in allDetails.Sources)
         {
-            await _gameLinkDataService.SaveLink(new GameLinkDto()
+            var linkId = await _gameLinkDataService.SaveLink(new GameLinkDto()
             {
                 Link = detail.DownloadLink,
                 LinkType = LinkType.Download,
@@ -379,6 +402,9 @@ public class GameSearchResultService : IViewService
                 BaseUrl = detail.BaseUrl,
                 DisplayName = detail.SourceSiteDisplayName
             });
+            if (detail.DownloadLink == actualDownloadLink)
+                installedFromLinkId = linkId;
+
             if (detail.DetailsLink.IsNotNullOrWhiteSpace())
             {
                 await _gameLinkDataService.SaveLink(new GameLinkDto()
@@ -414,6 +440,7 @@ public class GameSearchResultService : IViewService
                 });
             }
         }
+        return installedFromLinkId;
     }
 
     public async Task CancelInstall()

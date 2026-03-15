@@ -1,4 +1,4 @@
-﻿using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Core.Dtos;
@@ -26,4 +26,5 @@ public class GameMetadataDto : IGameMetadata
     public string? CommunitySetupExecutable { get; set; }
     public bool IsFavourite { get; set; }
     public bool IsCompleted { get; set; }
+    public string? InstalledFromSiteDisplayName { get; set; }
 }

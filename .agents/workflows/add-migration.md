@@ -26,5 +26,5 @@ Migrations are applied automatically at app startup via `DbContext.Database.Migr
 
 ## 5. Data access
 
-- For new queries, add methods to `GamesUnitOfWork` or create a new UnitOfWork (extend `UnitOfWorkBase`)
-- The pattern is: **UnitOfWork** → uses **EfRepository<T>** → accesses the **DbContext**
+- For new queries, add methods directly to the relevant `*DataService` class (e.g., `GameDataService`, `GameLinkDataService`) in `TombLauncher.Data/Database/Services/`.
+- The pattern is: **`*DataService`** → accesses the **`TombLauncherDbContext`** directly via EF Core.

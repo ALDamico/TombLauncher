@@ -1,4 +1,4 @@
-﻿<Button xmlns="https://github.com/avaloniaui"
+<Button xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,10 +6,16 @@
         xmlns:controls="clr-namespace:TombLauncher.Controls"
         mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="40"
         x:Class="TombLauncher.Controls.IconOnlyButton"
-        Command="{Binding RelativeSource={RelativeSource Self}, Path=Command}">
+        Command="{Binding RelativeSource={RelativeSource Self}, Path=Command}"
+        Width="36" Height="36"
+        CornerRadius="999"
+        Padding="6"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center">
     <Button.Content>
-        <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconRemixIcon Kind="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:IconOnlyButton}, Path=Icon}"/>
-        </StackPanel>
+        <iconPacks:PackIconRemixIcon
+            Kind="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:IconOnlyButton}, Path=Icon}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center" />
     </Button.Content>
 </Button>

@@ -12,6 +12,9 @@
              x:Class="TombLauncher.Views.Pages.WelcomePage.FavouritesWidget"
              x:Name="WidgetRoot"
              x:DataType="pages:WelcomePageViewModel">
+    <Design.DataContext>
+        <pages:WelcomePageViewModel/>
+    </Design.DataContext>
     <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
             IsVisible="{Binding ShowFavourites}">
         <StackPanel Spacing="8">

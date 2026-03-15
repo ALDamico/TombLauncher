@@ -320,6 +320,9 @@
     <system:String x:Key="CONFIGURE">Configure</system:String>
     <system:String x:Key="GAME_COMPLETED">Game completed</system:String>
     <system:String x:Key="PLAY_TIME">Play time</system:String>
+    <system:String x:Key="INSTALLED_FROM">Downloaded from</system:String>
+    <system:String x:Key="DOWNLOAD_FROM_SOURCE">Choose source</system:String>
+    <system:String x:Key="DOWNLOAD_FROM_FORMATTABLE">Download from {0}</system:String>
     <system:String x:Key="SETTINGS">Settings</system:String>
     <system:String x:Key="GAMES_INSTALLED">Games installed</system:String>
     <system:String x:Key="TOTAL_TIME_PLAYED">Total time played</system:String>
@@ -351,5 +354,6 @@
     <system:String x:Key="SAVING_LAUNCH_OPTIONS">Saving launch options...</system:String>
     <system:String x:Key="NO_SAVEGAME_BACKUPS_FOUND">No savegame backups found</system:String>
     <system:String x:Key="SAVEGAME_BACKUPS_FOUND_IMPORT">There were no savegame backups in Tomb Launcher's database, but we found {0} savegame files. Would you like to import them?</system:String>
+    <system:String x:Key="OPEN_SEARCH">Open search</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

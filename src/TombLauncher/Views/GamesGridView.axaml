@@ -13,10 +13,10 @@
     </Design.DataContext>
     <UserControl.Styles>
         <Style Selector="views|GameCardView:pointerover Border">
-            <Setter Property="Background" Value="{loc:Translate BUTTONBACKGROUNDPOINTEROVER}"></Setter>
+            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}"></Setter>
         </Style>
         <Style Selector="views|GameCardView Border">
-            <Setter Property="Background" Value="{loc:Translate BUTTONBACKGROUND}"></Setter>
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}"></Setter>
         </Style>
     </UserControl.Styles>
     <ScrollViewer>

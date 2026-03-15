@@ -40,19 +40,7 @@
             </Style.Animations>
         </Style>
         
-        <!-- Source badge style -->
-        <Style Selector="Border.source-badge">
-            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Padding" Value="8, 3"/>
-        </Style>
-        <Style Selector="Border.source-badge TextBlock">
-            <Setter Property="FontSize" Value="10"/>
-            <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="0"/>
-        </Style>
-        
+
         <!-- Metadata label style -->
         <Style Selector="StackPanel.meta-item">
             <Setter Property="Orientation" Value="Horizontal"/>
@@ -227,18 +215,35 @@
                                          IsVisible="{Binding InstalledGame, Converter={StaticResource GameInstalledToBooleanConverter}, Mode=OneWay}" />
                 <Button Command="{Binding InstallCmd}"
                         Classes="btn-primary"
+                        Width="36" Height="36"
+                        CornerRadius="999"
+                        Padding="6"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         CommandParameter="{Binding .}"
                         IsVisible="{Binding InstalledGame, Converter={StaticResource GameNotInstalledToBooleanConverter}}"
                         IsEnabled="{Binding ., Converter={StaticResource SearchResultCanDownloadToBooleanConverter}}"
                         ToolTip.Tip="{Binding DownloadLink, Converter={StaticResource DownloadToolTipConverter}}"
                         ToolTip.ShowOnDisabled="True">
-                    <iconPacks:PackIconRemixIcon Kind="Download2Line" />
+                    <iconPacks:PackIconRemixIcon Kind="Download2Line"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center" />
                 </Button>
                 <controls:IconOnlyButton Icon="CloseLine"
                                          Classes="btn-danger"
                                          ToolTip.Tip="{loc:Translate CANCEL}"
                                          IsVisible="{Binding InstallProgress, Converter={StaticResource GameIsInstallingToBooleanConverter}}"
                                          Command="{Binding CancelInstallCmd}" />
+                <!-- Kebab button: choose specific download source -->
+                <controls:IconOnlyButton Icon="MoreLine"
+                                         Classes="btn-secondary"
+                                         ToolTip.Tip="{loc:Translate DOWNLOAD_FROM_SOURCE}"
+                                         IsVisible="{Binding HasMultipleSources}">
+                    <Button.Flyout>
+                        <MenuFlyout ItemsSource="{Binding SourceMenuItems}"
+                                    ItemContainerTheme="{StaticResource CommandMenuItemContainerTheme}" />
+                    </Button.Flyout>
+                </controls:IconOnlyButton>
             </StackPanel>
         </Grid>
     </Border>

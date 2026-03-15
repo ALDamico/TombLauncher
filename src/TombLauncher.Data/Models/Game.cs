@@ -1,4 +1,4 @@
-﻿using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Data.Models;
 
@@ -25,4 +25,5 @@ public class Game
     public bool IsInstalled { get; set; }
     public bool IsFavourite { get; set; }
     public bool IsCompleted { get; set; }
+    public GameLink? InstalledFromLink { get; set; }
 }

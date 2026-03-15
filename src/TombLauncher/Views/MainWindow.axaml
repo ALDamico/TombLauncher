@@ -123,11 +123,10 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:IconButton Icon="{Binding Icon}"
-                                                 Command="{Binding Command}"
-                                                 ToolTip.Tip="{Binding Tooltip}" 
-                                                 Margin="5, 0"
-                                                 />
+                            <controls:IconOnlyButton Icon="{Binding Icon}"
+                                                     Command="{Binding Command}"
+                                                     ToolTip.Tip="{Binding Tooltip}"
+                                                     Margin="5 0" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

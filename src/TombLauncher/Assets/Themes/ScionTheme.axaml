@@ -9,9 +9,12 @@
     <!-- Fluent Theme Overrides -->
     <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource CardBackgroundColor}" />
     <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{StaticResource CardBackgroundColor}" />
-    
+
     <Color x:Key="CardBorderColor">#33FFFFFF</Color>
     <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource CardBorderColor}" />
+    <CornerRadius x:Key="MenuFlyoutPresenterCornerRadius">8</CornerRadius>
+    <Thickness x:Key="MenuFlyoutPresenterThemePadding">4</Thickness>
+    <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">1</Thickness>
 
     <!-- Primary Actions -->
     <Color x:Key="PrimaryColor">#008080</Color>
