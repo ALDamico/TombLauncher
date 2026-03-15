@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Contracts.Enums;
@@ -28,5 +28,6 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private string? _communitySetupExecutable;
     [ObservableProperty] private bool _isCompleted;
     [ObservableProperty] private bool _isFavourite;
+    [ObservableProperty] private string? _installedFromSiteDisplayName;
     public Guid Guid { get; set; }
 }

@@ -16,4 +16,16 @@ public class TombLauncherDbContext : DbContext
     public DbSet<GameLink> GameLink { get; set; }
     public DbSet<GameHashes> GameHashes { get; set; }
     public DbSet<SavegameMetadata> SavegameMetadata { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Game>()
+            .HasOne(g => g.InstalledFromLink)
+            .WithMany()
+            .HasForeignKey("InstalledFromLinkId")
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
+    }
 }

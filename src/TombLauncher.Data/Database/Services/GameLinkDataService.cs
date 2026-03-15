@@ -25,9 +25,9 @@ public class GameLinkDataService
         return _mapper.Map<List<GameLinkDto>>(query.ToList());
     }
 
-    public async Task SaveLink(GameLinkDto dto)
+    public async Task<int> SaveLink(GameLinkDto dto)
     {
-        if (dto.Id != 0) return;
+        if (dto.Id != 0) return dto.Id;
 
         var entity = await _dbContext.GameLink
             .Where(l => l.Link == dto.Link && l.LinkType == dto.LinkType && l.BaseUrl == dto.BaseUrl)
@@ -45,6 +45,7 @@ public class GameLinkDataService
         }
 
         await _dbContext.SaveChangesAsync();
+        return entity.Id;
     }
 
     public async Task<GameMetadataDto?> GetGameByLinks(LinkType linkType, List<string> links)
