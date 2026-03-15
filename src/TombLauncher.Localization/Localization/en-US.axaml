@@ -321,6 +321,8 @@
     <system:String x:Key="GAME_COMPLETED">Game completed</system:String>
     <system:String x:Key="PLAY_TIME">Play time</system:String>
     <system:String x:Key="INSTALLED_FROM">Downloaded from</system:String>
+    <system:String x:Key="DOWNLOAD_FROM_SOURCE">Choose source</system:String>
+    <system:String x:Key="DOWNLOAD_FROM_FORMATTABLE">Download from {0}</system:String>
     <system:String x:Key="SETTINGS">Settings</system:String>
     <system:String x:Key="GAMES_INSTALLED">Games installed</system:String>
     <system:String x:Key="TOTAL_TIME_PLAYED">Total time played</system:String>

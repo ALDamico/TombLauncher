@@ -132,25 +132,8 @@
                         IsVisible="{Binding SetupCommands, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
 
                     <Button.Flyout>
-                        <MenuFlyout ItemsSource="{Binding SetupCommands}">
-                            <MenuFlyout.ItemContainerTheme>
-                                <ControlTheme TargetType="MenuItem"
-                                              BasedOn="{StaticResource {x:Type MenuItem}}"
-                                              x:DataType="viewModels:CommandViewModel">
-                                    <Setter Property="Header" Value="{Binding Text}" />
-                                    <Setter Property="Command" Value="{Binding Command}" />
-                                    <Setter Property="Icon">
-                                        <Template>
-                                            <iconPacks:PackIconRemixIcon
-                                                Kind="{Binding ((viewModels:CommandViewModel)DataContext).Icon, RelativeSource={RelativeSource AncestorType=MenuItem}}" />
-                                        </Template>
-                                    </Setter>
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-                                    <Setter Property="CornerRadius" Value="4" />
-                                </ControlTheme>
-                            </MenuFlyout.ItemContainerTheme>
-                        </MenuFlyout>
+                        <MenuFlyout ItemsSource="{Binding SetupCommands}"
+                                    ItemContainerTheme="{StaticResource CommandMenuItemContainerTheme}" />
                     </Button.Flyout>
                 </controls:IconOnlyButton>
 

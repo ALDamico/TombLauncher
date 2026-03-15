@@ -234,6 +234,16 @@
                                          ToolTip.Tip="{loc:Translate CANCEL}"
                                          IsVisible="{Binding InstallProgress, Converter={StaticResource GameIsInstallingToBooleanConverter}}"
                                          Command="{Binding CancelInstallCmd}" />
+                <!-- Kebab button: choose specific download source -->
+                <controls:IconOnlyButton Icon="MoreLine"
+                                         Classes="btn-secondary"
+                                         ToolTip.Tip="{loc:Translate DOWNLOAD_FROM_SOURCE}"
+                                         IsVisible="{Binding HasMultipleSources}">
+                    <Button.Flyout>
+                        <MenuFlyout ItemsSource="{Binding SourceMenuItems}"
+                                    ItemContainerTheme="{StaticResource CommandMenuItemContainerTheme}" />
+                    </Button.Flyout>
+                </controls:IconOnlyButton>
             </StackPanel>
         </Grid>
     </Border>

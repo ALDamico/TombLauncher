@@ -1,5 +1,7 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -18,11 +20,19 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     {
         _gameSearchResultService = gameSearchResultService;
         Sources = new ObservableCollection<IGameSearchResultMetadata>();
+        Sources.CollectionChanged += OnSourcesCollectionChanged;
         InstallCmd = new AsyncRelayCommand(Install, CanInstall);
+        InstallFromCmd = new AsyncRelayCommand<IGameSearchResultMetadata>(InstallFrom, CanInstallFrom);
         CancelInstallCmd = new AsyncRelayCommand(CancelInstall);
         _reviewsLink = string.Empty;
         _downloadLink = string.Empty;
         _walkthroughLink = string.Empty;
+    }
+
+    private void OnSourcesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(HasMultipleSources));
+        OnPropertyChanged(nameof(SourceMenuItems));
     }
 
     private readonly GameSearchResultService _gameSearchResultService;
@@ -54,7 +64,24 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     [ObservableProperty] private bool _isNewlyAdded;
     [ObservableProperty] private bool _isRecentlyUpdated;
 
+    public bool HasMultipleSources => Sources.Count > 1;
+
+    public IEnumerable<CommandViewModel> SourceMenuItems =>
+        Sources.Select(s =>
+        {
+            var capturedSource = s;
+            return new CommandViewModel
+            {
+                Text = GetDownloadFromSiteLabel(capturedSource.SourceSiteDisplayName),
+                Command = new AsyncRelayCommand(
+                    () => InstallFrom(capturedSource),
+                    () => _gameSearchResultService.CanInstall(this))
+            };
+        });
+
     public ICommand InstallCmd { get; }
+    public ICommand InstallFromCmd { get; }
+    public ICommand CancelInstallCmd { get; }
 
     private async Task Install()
     {
@@ -68,8 +95,24 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         }
     }
 
+    private async Task InstallFrom(IGameSearchResultMetadata? source)
+    {
+        if (source == null) return;
+        try
+        {
+            await _gameSearchResultService.InstallFromSource(this, source);
+        }
+        catch (OperationCanceledException)
+        {
+            InstallProgress = null;
+        }
+    }
+
     private bool CanInstall() => _gameSearchResultService.CanInstall(this);
-    public ICommand CancelInstallCmd { get; }
+    private bool CanInstallFrom(IGameSearchResultMetadata? source) => source != null && _gameSearchResultService.CanInstall(this);
+
+    public string GetDownloadFromSiteLabel(string siteName)
+        => _gameSearchResultService.LocalizationManager.GetLocalizedString("DOWNLOAD_FROM_FORMATTABLE", siteName);
 
     private async Task CancelInstall() => await _gameSearchResultService.CancelInstall();
 }

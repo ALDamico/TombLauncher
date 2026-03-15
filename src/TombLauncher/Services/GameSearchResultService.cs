@@ -76,6 +76,7 @@ public class GameSearchResultService : IViewService
     private int? _installedGameId;
     private InstallProgressViewModel? _installProgress;
     private NotificationViewModel? _notificationViewModel;
+    private IGameSearchResultMetadata? _preferredSource;
 
     public bool CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
     {
@@ -102,7 +103,10 @@ public class GameSearchResultService : IViewService
         _logger.LogInformation("Started downloading {GameTitle} from {DownloadUrl}", gameToInstall.Title,
             gameToInstall.DownloadLink);
         IGameSearchResultMetadata? successfulSource = null;
-        foreach (var source in gameToInstallDto.Sources)
+        var sourcesToTry = _preferredSource != null
+            ? gameToInstallDto.Sources.Where(s => s.DownloadLink == _preferredSource.DownloadLink)
+            : gameToInstallDto.Sources;
+        foreach (var source in sourcesToTry)
         {
             try
             {
@@ -238,6 +242,20 @@ public class GameSearchResultService : IViewService
         _installedGameId = null;
         _downloadPath = null;
         _logger.LogInformation("Installation for {GameTitle} complete", gameToInstall.Title);
+    }
+
+    public async Task InstallFromSource(MultiSourceGameSearchResultMetadataViewModel gameToInstall,
+        IGameSearchResultMetadata specificSource)
+    {
+        _preferredSource = specificSource;
+        try
+        {
+            await Install(gameToInstall);
+        }
+        finally
+        {
+            _preferredSource = null;
+        }
     }
 
     private async Task<bool> CheckGameAlreadyInstalled(MultiSourceGameSearchResultMetadataViewModel gameToInstall, List<GameHashDto> hashes)

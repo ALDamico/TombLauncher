@@ -32,6 +32,8 @@
                 <valueConverters:DateTimeFormatConverter.DesiredFormat>DateTimeFormat</valueConverters:DateTimeFormatConverter.DesiredFormat>
             </valueConverters:DateTimeFormatConverter>
             <valueConverters:GreaterThanZeroToBoolConverter x:Key="GreaterThanZeroToBoolConverter"/>
+            <valueConverters:EnumIsNotDefaultConverter x:Key="EnumIsNotDefaultConverter"/>
+            <valueConverters:IconKindToNullableIconConverter x:Key="IconKindToNullableIconConverter"/>
             <valueConverters:TransferSpeedConverter x:Key="TransferSpeedFormatter"/>
             <valueConverters:FileSizeConverter x:Key="FileSizeFormatter"/>
             <valueConverters:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter"/>

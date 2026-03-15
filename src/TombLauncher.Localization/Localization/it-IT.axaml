@@ -320,6 +320,8 @@
     <system:String x:Key="GAME_COMPLETED">Gioco completato</system:String>
     <system:String x:Key="PLAY_TIME">Tempo di gioco</system:String>
     <system:String x:Key="INSTALLED_FROM">Scaricato da</system:String>
+    <system:String x:Key="DOWNLOAD_FROM_SOURCE">Scegli sorgente</system:String>
+    <system:String x:Key="DOWNLOAD_FROM_FORMATTABLE">Scarica da {0}</system:String>
     <system:String x:Key="SETTINGS">Impostazioni</system:String>
     <system:String x:Key="GAMES_INSTALLED">Giochi installati</system:String>
     <system:String x:Key="TOTAL_TIME_PLAYED">Tempo di gioco totale</system:String>

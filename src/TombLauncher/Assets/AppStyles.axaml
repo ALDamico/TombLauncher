@@ -1,7 +1,8 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
-        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls">
+        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+        xmlns:viewModels="clr-namespace:TombLauncher.ViewModels">
     <Design.PreviewWith>
         <Border Padding="20">
             <!-- Add Controls for Previewer Here -->
@@ -22,6 +23,19 @@
             <!-- Font families -->
             <FontFamily x:Key="TombRaiderFont">avares://TombLauncher/Assets#Tomb_Raider</FontFamily>
             <FontFamily x:Key="Figtree">avares://TombLauncher/Assets/Figtree-VariableFont_wght.ttf</FontFamily>
+            <!-- Shared theme for MenuFlyout items built from CommandViewModel -->
+            <ControlTheme x:Key="CommandMenuItemContainerTheme"
+                          TargetType="MenuItem"
+                          BasedOn="{StaticResource {x:Type MenuItem}}"
+                          x:DataType="viewModels:CommandViewModel">
+                <Setter Property="Header"     Value="{Binding Text}" />
+                <Setter Property="Command"    Value="{Binding Command}" />
+                <Setter Property="Icon"
+                        Value="{Binding Icon, Converter={StaticResource IconKindToNullableIconConverter}}" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                <Setter Property="CornerRadius" Value="4" />
+            </ControlTheme>
         </ResourceDictionary>
     </Styles.Resources>
     <Style Selector=":is(ContentControl)">
@@ -474,6 +488,26 @@
         <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Margin" Value="0"/>
+    </Style>
+    <Style Selector="Button.source-badge">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="8, 3"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.source-badge TextBlock">
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="0"/>
+    </Style>
+    <Style Selector="Button.source-badge:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryHoverBrush}"/>
+    </Style>
+    <Style Selector="Button.source-badge:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryPressedBrush}"/>
     </Style>
 
     <!-- Search Bar -->
