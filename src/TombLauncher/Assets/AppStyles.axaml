@@ -445,7 +445,7 @@
         <Setter Property="Margin" Value="0, 4" />
     </Style>
     
-    <!-- Submenu Transparency Fix -->
+    <!-- Submenu Transparency Fix: covers both visual-tree and template-tree Popup paths -->
     <Style Selector="MenuItem > Popup > Border">
         <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
@@ -453,7 +453,28 @@
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="4" />
     </Style>
+    <Style Selector="MenuItem /template/ Popup > Border">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="4" />
+    </Style>
 
+
+    <!-- Source badge (shared: GameSearchResultCardView, GameBar) -->
+    <Style Selector="Border.source-badge">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="8, 3"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Border.source-badge TextBlock">
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="0"/>
+    </Style>
 
     <!-- Search Bar -->
     <Style Selector="Border.search-bar">

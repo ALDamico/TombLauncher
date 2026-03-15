@@ -70,6 +70,7 @@
             <views:GameBar DataContext="{Binding .}" DockPanel.Dock="Top"/>
             <mdxaml:MarkdownScrollViewer x:Name="DescriptionViewer"
                                           DockPanel.Dock="Bottom"
+                                          Margin="0 8 0 0"
                                           Markdown="{Binding Game.GameMetadata.Description,
                                                      Converter={StaticResource MarkdownDescriptionConverter}}"/>
         </DockPanel>

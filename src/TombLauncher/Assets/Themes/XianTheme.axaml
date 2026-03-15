@@ -7,7 +7,16 @@
     <SolidColorBrush x:Key="CardBorderBrush">#33FFFFFF</SolidColorBrush>
     <SolidColorBrush x:Key="PageBackgroundBrush">#150F0F</SolidColorBrush>
     <SolidColorBrush x:Key="SidebarBackgroundBrush">#0F0B0B</SolidColorBrush>
-    
+
+    <!-- Fluent Theme Overrides -->
+    <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource CardBackgroundColor}" />
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{StaticResource CardBackgroundColor}" />
+    <Color x:Key="CardBorderColor">#33FFFFFF</Color>
+    <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource CardBorderColor}" />
+    <CornerRadius x:Key="MenuFlyoutPresenterCornerRadius">8</CornerRadius>
+    <Thickness x:Key="MenuFlyoutPresenterThemePadding">4</Thickness>
+    <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">1</Thickness>
+
     <!-- Primary Actions -->
     <Color x:Key="PrimaryColor">#B7410E</Color>
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" /> <!-- Rust -->
