@@ -5,11 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using TombLauncher.Configuration;
+using TombLauncher.Extensions;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
@@ -74,7 +75,7 @@ public class SettingsPageService : IViewService
             foreach (var section in viewModel.Sections)
                 section.ApplyTo(_appConfiguration.User);
 
-            ApplySideEffects(viewModel);
+            await ApplySideEffects(viewModel);
 
             var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
             await File.WriteAllTextAsync(userConfigPath,
@@ -83,11 +84,22 @@ public class SettingsPageService : IViewService
         }
     }
 
-    private void ApplySideEffects(SettingsPageViewModel viewModel)
+    private async Task ApplySideEffects(SettingsPageViewModel viewModel)
     {
         var languageSettings = viewModel.Sections.OfType<LanguageSettingsViewModel>().First();
+        var previousCulture = LocalizationManager.CurrentCulture;
         if (languageSettings.ApplicationLanguage?.CultureInfo != null)
             LocalizationManager.ChangeLanguage(languageSettings.ApplicationLanguage.CultureInfo);
+
+        if (languageSettings.ApplicationLanguage?.CultureInfo != null &&
+            !languageSettings.ApplicationLanguage.CultureInfo.Equals(previousCulture))
+        {
+            await ViewContext.PopupService.ShowLocalized(
+                "RESTART_REQUIRED_CAPTION",
+                "RESTART_REQUIRED_MESSAGE",
+                MsgBoxButton.Ok,
+                MsgBoxImage.Information);
+        }
 
         var appearanceSettings = viewModel.Sections.OfType<AppearanceSettingsViewModel>().First();
         if (appearanceSettings.SelectedTheme != null)
