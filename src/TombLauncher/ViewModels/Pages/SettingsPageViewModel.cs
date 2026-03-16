@@ -88,7 +88,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         var supportedLanguages = _settingsService.GetSupportedLanguages();
         var languageSettings = new LanguageSettingsViewModel(this)
         {
-            AvailableLanguages = supportedLanguages.ToObservableCollection(),
+            AvailableLanguages = supportedLanguages.OrderBy(l => l.DisplayName).ToObservableCollection(),
             ApplicationLanguage = supportedLanguages.FirstOrDefault(l =>
                 _settingsService.LocalizationManager.CurrentCulture?.Equals(l.CultureInfo) == true)
         };
