@@ -334,6 +334,14 @@
     <system:String x:Key="WHATS_NEW">What's new</system:String>
     <system:String x:Key="CHANGELOG_LOADING">Loading changelog...</system:String>
     <system:String x:Key="CHANGELOG_LOAD_FAILED">Could not retrieve the changelog.</system:String>
+    <system:String x:Key="UPDATE_AVAILABLE_TITLE">Update Available</system:String>
+    <system:String x:Key="NEW_VERSION_AVAILABLE">Version {0} is now available</system:String>
+    <system:String x:Key="SKIP_THIS_VERSION">Skip This Version</system:String>
+    <system:String x:Key="REMIND_ME_LATER">Remind Me Later</system:String>
+    <system:String x:Key="INSTALL_UPDATE">Install Update</system:String>
+    <system:String x:Key="DOWNLOADING_UPDATE">Downloading update…</system:String>
+    <system:String x:Key="INSTALL_AND_RELAUNCH">Install &amp; Relaunch</system:String>
+    <system:String x:Key="UPDATE_SIGNATURE_VERIFY_ERROR">The downloaded file could not be verified.</system:String>
     <system:String x:Key="WELCOME_PAGE">Welcome page</system:String>
     <system:String x:Key="SHOW_QUICK_STATS">Show quick stats</system:String>
     <system:String x:Key="SHOW_QUICK_ACTIONS">Show quick actions</system:String>

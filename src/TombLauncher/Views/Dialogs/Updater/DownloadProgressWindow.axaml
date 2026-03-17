@@ -1,0 +1,83 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:loc="using:TombLauncher.Localization"
+        xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+        mc:Ignorable="d"
+        x:Class="TombLauncher.Views.Dialogs.Updater.DownloadProgressWindow"
+        Title="{loc:Translate DOWNLOADING_UPDATE}"
+        Background="{DynamicResource PageBackgroundBrush}"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Width="420" Height="300"
+        ShowInTaskbar="False">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Classes="card-background"
+                BorderBrush="{DynamicResource CardBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="20,16">
+            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <iconPacks:PackIconRemixIcon Kind="Download2Line"
+                                             Width="24" Height="24"
+                                             Foreground="{DynamicResource PrimaryBrush}"
+                                             VerticalAlignment="Center" />
+                <TextBlock x:Name="StatusLabel"
+                           Text="{loc:Translate DOWNLOADING_UPDATE}"
+                           FontSize="15" FontWeight="SemiBold"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <!-- Progress content -->
+        <StackPanel Grid.Row="1"
+                    Spacing="16"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="24">
+            <controls:RingLoader x:Name="Spinner"
+                                 Width="56" Height="56"
+                                 HorizontalAlignment="Center" />
+            <ProgressBar x:Name="ProgressBar"
+                         Minimum="0" Maximum="100"
+                         Value="0"
+                         HorizontalAlignment="Stretch"
+                         Height="8"
+                         CornerRadius="4" />
+            <TextBlock x:Name="ProgressLabel"
+                       HorizontalAlignment="Center"
+                       Foreground="{DynamicResource MutedTextBrush}"
+                       FontSize="12" />
+            <TextBlock x:Name="ErrorLabel"
+                       HorizontalAlignment="Center"
+                       Foreground="{DynamicResource DangerBrush}"
+                       FontSize="12"
+                       TextWrapping="Wrap"
+                       IsVisible="False" />
+        </StackPanel>
+
+        <!-- Footer -->
+        <Border Grid.Row="2"
+                Classes="card-background"
+                BorderBrush="{DynamicResource CardBorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,12">
+            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                <Button x:Name="CancelButton"
+                        Content="{loc:Translate CANCEL}"
+                        Padding="16,8" />
+                <Button x:Name="InstallButton"
+                        Classes="btn-success"
+                        Content="{loc:Translate INSTALL_AND_RELAUNCH}"
+                        Padding="16,8"
+                        IsVisible="False" />
+            </StackPanel>
+        </Border>
+
+    </Grid>
+</Window>
