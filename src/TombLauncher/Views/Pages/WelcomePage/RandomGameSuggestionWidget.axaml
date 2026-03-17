@@ -40,7 +40,7 @@
 
             <!-- Game suggestion -->
             <ContentControl Content="{Binding RandomSuggestion}"
-                            IsVisible="{Binding HasRandomSuggestion}"
+                            IsVisible="{Binding RandomSuggestion, Converter={x:Static ObjectConverters.IsNotNull}}"
                             HorizontalAlignment="Center">
                 <ContentControl.ContentTemplate>
                     <DataTemplate>
