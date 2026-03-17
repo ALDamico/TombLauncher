@@ -5,6 +5,7 @@ using Newtonsoft.Json.Bson;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Utils;
+// ReSharper disable InconsistentNaming
 
 namespace TombLauncher.Core.Savegames.HeaderReaders;
 
@@ -34,7 +35,7 @@ public class Tr1xSavegameHeaderReader : ISavegameHeaderReader
             };
 
             string levelTitle;
-            int saveNumber;
+            int? saveNumber;
 
             if (buf.Length - HeaderSize != trxHeader.UncompressedSize)
             {
@@ -48,7 +49,7 @@ public class Tr1xSavegameHeaderReader : ISavegameHeaderReader
                 var jsonSerializer = new JsonSerializer();
                 var savegame = jsonSerializer.Deserialize<Tr1xSavegame>(bsonReader);
                 levelTitle = savegame?.LevelTitle ?? "Unknown Level";
-                saveNumber = savegame.SaveCounter;
+                saveNumber = savegame?.SaveCounter;
             }
             else
             {

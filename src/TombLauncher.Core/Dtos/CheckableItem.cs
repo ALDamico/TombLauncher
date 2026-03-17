@@ -8,9 +8,9 @@ public abstract class CheckableItem
 
 public class CheckableItem<T> : CheckableItem, IEquatable<T> where T : IEquatable<T>
 {
-    public required T Value { get; set; }
+    public required T Value { get; init; }
 
-    protected bool Equals(CheckableItem<T> other)
+    private bool Equals(CheckableItem<T> other)
     {
         return EqualityComparer<T>.Default.Equals(Value, other.Value);
     }
@@ -30,6 +30,6 @@ public class CheckableItem<T> : CheckableItem, IEquatable<T> where T : IEquatabl
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(IsChecked, Value);
+        return Value.GetHashCode();
     }
 }
