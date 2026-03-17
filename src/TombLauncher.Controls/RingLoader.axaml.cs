@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
 namespace TombLauncher.Controls;
@@ -28,5 +27,14 @@ public partial class RingLoader : UserControl
     {
         get => GetValue(InnerRingBrushProperty);
         set => SetValue(InnerRingBrushProperty, value);
+    }
+
+    public static readonly StyledProperty<string?> MessageProperty =
+        AvaloniaProperty.Register<RingLoader, string?>(nameof(Message));
+
+    public string? Message
+    {
+        get => GetValue(MessageProperty);
+        set => SetValue(MessageProperty, value);
     }
 }

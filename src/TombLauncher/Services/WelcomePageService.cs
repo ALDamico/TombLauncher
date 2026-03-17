@@ -19,7 +19,7 @@ namespace TombLauncher.Services;
 
 public class WelcomePageService : IViewService
 {
-    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GameDataService gameDataService, AppCrashHostService appCrashHostService, IAppConfiguration appConfiguration, ISettingsProvider settingsProvider, GameDownloadManager gameDownloadManager, GameWithStatsService gameWithStatsService)
+    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GameDataService gameDataService, AppCrashHostService appCrashHostService, IAppConfiguration appConfiguration, ISettingsProvider settingsProvider, GameDownloadManager gameDownloadManager, GameWithStatsService gameWithStatsService, GitHubReleaseService gitHubReleaseService)
     {
         ViewContext = viewContext;
         _appCrashDataService = appCrashDataService;
@@ -29,6 +29,7 @@ public class WelcomePageService : IViewService
         _settingsProvider = settingsProvider;
         _gameDownloadManager = gameDownloadManager;
         _gameWithStatsService = gameWithStatsService;
+        _gitHubReleaseService = gitHubReleaseService;
     }
     public ViewServiceContext ViewContext { get; }
     private readonly AppCrashDataService _appCrashDataService;
@@ -36,6 +37,7 @@ public class WelcomePageService : IViewService
     private readonly ISettingsProvider _settingsProvider;
     private readonly GameDownloadManager _gameDownloadManager;
     private readonly GameWithStatsService _gameWithStatsService;
+    private readonly GitHubReleaseService _gitHubReleaseService;
     private IMapper Mapper => ViewContext.Mapper;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
@@ -139,7 +141,7 @@ public class WelcomePageService : IViewService
                 new GameWithStatsViewModel(_gameWithStatsService, detailsViewModel));
             if (NavigationManager.CurrentPage is GameDetailsViewModel currentVm)
             {
-                if (gameToOpen.DownloadLink != null && gameToOpen.DownloadLink.Trim().Length > 0)
+                if (gameToOpen.DownloadLink.IsNotNullOrWhiteSpace() && gameToOpen.DownloadLink.Trim().Length > 0)
                 {
                     currentVm.InstallCmd = gameToOpen.InstallCmd;
                 }
@@ -149,4 +151,6 @@ public class WelcomePageService : IViewService
 
     internal async Task NavigateToNewGame() => await NavigationManager.NavigateTo<NewGameViewModel>();
     internal async Task NavigateToSearch() => await NavigationManager.NavigateTo<GameSearchViewModel>();
+
+    internal Task<string?> FetchChangelogAsync() => _gitHubReleaseService.GetChangelogMarkdownAsync();
 }

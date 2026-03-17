@@ -6,4 +6,6 @@ public interface IUpdaterConfig
     string? AppCastPublicKey { get; }
     bool UpdaterUseLocalPaths { get; }
     string? UpdateChannelName { get; }
+    string? GitHubRepositoryOwner { get; }
+    string? GitHubRepositoryName { get; }
 }

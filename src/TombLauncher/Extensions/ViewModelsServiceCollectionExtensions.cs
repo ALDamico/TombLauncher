@@ -10,8 +10,7 @@ public static class ViewModelsServiceCollectionExtensions
     public static IServiceCollection AddViewModels(this IServiceCollection services)
     {
         services.AddSingleton(sp =>
-            new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>())
-            { ChangeLogPath = "avares://TombLauncher/Data/CHANGELOG.md" });
+            new WelcomePageViewModel(sp.GetRequiredService<WelcomePageService>()));
         services.AddScoped<GameListViewModel>();
         services.AddScoped<GameSearchViewModel>();
         services.AddTransient<NewGameViewModel>();
