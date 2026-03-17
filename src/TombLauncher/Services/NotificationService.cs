@@ -30,11 +30,6 @@ public class NotificationService
         });
     }
 
-    public void AddNotification(NotificationViewModel notificationViewModel)
-    {
-        AddNotificationAsync(notificationViewModel).GetAwaiter().GetResult();
-    }
-
     public async Task AddErrorNotificationAsync(string title, string errorMessage, PackIconRemixIconKind icon)
     {
         var notificationViewModel = new NotificationViewModel()

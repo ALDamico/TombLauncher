@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
@@ -14,6 +15,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Updater;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Notifications;
 
@@ -48,7 +50,7 @@ public class UpdateService
 
     public async Task StartAsync()
     {
-        var channelName = _appConfiguration.Updater.UpdateChannelName ?? StableChannel;
+        var channelName = _appConfiguration.Updater.UpdateChannelName;
         var logger = new SerilogLogWriter();
 
         IAppCastDataDownloader appCastDataDownloader;
@@ -88,10 +90,13 @@ public class UpdateService
         };
 
         if (appCastHelper != null)
+        {
             _sparkle.AppCastHelper = appCastHelper;
+            _sparkle.AppCastHelper.SetupAppCastHelper(appCastDataDownloader, _appConfiguration.Updater.AppCastUrl!, AppUtils.GetApplicationVersion()?.ToString(), _sparkle.SignatureVerifier, _sparkle.LogWriter);
+        }
 
         _sparkle.UpdateDetected += OnUpdateDetected;
-        await _sparkle.StartLoop(true);
+        await _sparkle.StartLoop(true, true);
     }
 
     private void OnUpdateDetected(object? sender, UpdateDetectedEventArgs args)
@@ -99,7 +104,7 @@ public class UpdateService
         var channelName = _appConfiguration.Updater.UpdateChannelName;
         var payload = new UpdateCommandPayload(_sparkle!, args);
 
-        _notificationService.AddNotification(new NotificationViewModel
+        _ = _notificationService.AddNotificationAsync(new NotificationViewModel
         {
             Content = new StringNotificationViewModel
             {
