@@ -11,7 +11,6 @@ using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Services;
 using TombLauncher.Utils;
 
-
 namespace TombLauncher.Extensions;
 
 public static class DownloaderServiceCollectionExtensions

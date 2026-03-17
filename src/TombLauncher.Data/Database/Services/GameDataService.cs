@@ -137,7 +137,7 @@ public class GameDataService
     public GameWithStatsDto? GetLatestPlayedGame()
     {
         var playSessionsQuery = _dbContext.PlaySession
-            .Include(ps => ps.Game).ThenInclude(g => g.FileBackups);
+            .Include(ps => ps.Game).ThenInclude(g => g!.FileBackups);
         var entity = playSessionsQuery
             .FirstOrDefault(ps => ps.StartDate == playSessionsQuery.Max(p => p.StartDate));
 
@@ -160,7 +160,7 @@ public class GameDataService
     public List<GameWithStatsDto> GetRecentlyPlayedGames(int count)
     {
         var playSessions = _dbContext.PlaySession
-            .Include(ps => ps.Game).ThenInclude(g => g.FileBackups)
+            .Include(ps => ps.Game).ThenInclude(g => g!.FileBackups)
             .AsEnumerable()
             .GroupBy(ps => ps.GameId)
             .Select(g => new

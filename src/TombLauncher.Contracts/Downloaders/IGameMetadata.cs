@@ -13,7 +13,7 @@ public interface IGameMetadata
     string? Setting { get; set; }
     GameLength Length { get; set; }
     GameDifficulty Difficulty { get; set; }
-    string? InstallDirectory { get; set; }
+    string InstallDirectory { get; set; }
     string? ExecutablePath { get; set; }
     string Description { get; set; }
     Guid Guid { get; set; }

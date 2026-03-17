@@ -10,10 +10,10 @@ public interface ISavegameRepository
 {
     void BackupSavegames(int gameId, GameEngine engine, List<SavegameBackupDto> dtos, int? numberOfVersionsToKeep);
     Task<List<FileBackupDto>> GetSavegamesByGameId(int gameId);
-    Task<List<string>> GetSavegameMd5sByGameId(int gameId);
+    Task<List<string?>> GetSavegameMd5HashesByGameId(int gameId);
     Task UpdateSavegameStartOfLevel(FileBackupDto targetSaveGame);
     Task DeleteFileBackupById(int id);
-    void DeleteFileBackupsByGameId(int gameId, IEnumerable<FileType> fileTypes = null);
+    void DeleteFileBackupsByGameId(int gameId, IEnumerable<FileType>? fileTypes = null);
     SavegameBackupDto GetSavegameById(int id);
     Task<List<SavegameBackupDto>> GetSavegameBackups();
     Task SyncSavegameMetadata(IEnumerable<SavegameBackupDto> dtos);
@@ -43,14 +43,14 @@ public class SavegameRepository : ISavegameRepository
         foreach (var entity in entitiesToPersist)
         {
             _backups.Insert(entity);
-            _savegameMetadata.Upsert(entity.SavegameMetadata);
+            _savegameMetadata.Upsert(entity.SavegameMetadata!);
         }
 
         if (numberOfVersionsToKeep.HasValue)
         {
             var groups = _backups.GetAll().Include(b => b.SavegameMetadata).Where(b => b.GameId == gameId)
                 .OrderByDescending(b => b.BackedUpOn)
-                .GroupBy(b => b.SavegameMetadata.SlotNumber);
+                .GroupBy(b => b.SavegameMetadata!.SlotNumber);
             foreach (var group in groups)
             {
                 var lastDate = group.Select(g => g).Take(numberOfVersionsToKeep.Value).LastOrDefault()?.BackedUpOn;
@@ -69,7 +69,7 @@ public class SavegameRepository : ISavegameRepository
         return await _mapper.ProjectTo<FileBackupDto>(backups).ToListAsync();
     }
 
-    public async Task<List<string>> GetSavegameMd5sByGameId(int gameId)
+    public async Task<List<string?>> GetSavegameMd5HashesByGameId(int gameId)
     {
         return await _backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
             .Where(f => f.GameId == gameId).Select(sg => sg.Md5).ToListAsync();
@@ -91,7 +91,7 @@ public class SavegameRepository : ISavegameRepository
             await Save();
     }
 
-    public void DeleteFileBackupsByGameId(int gameId, IEnumerable<FileType> fileTypes = null)
+    public void DeleteFileBackupsByGameId(int gameId, IEnumerable<FileType>? fileTypes = null)
     {
         var byGameId = _backups.Get(b => b.GameId == gameId);
         if (fileTypes != null)
@@ -127,9 +127,14 @@ public class SavegameRepository : ISavegameRepository
         foreach (var entity in mappedEntities)
         {
             var backup = lookup[entity.Id];
-            entity.SavegameMetadata.LevelName = backup.LevelName;
-            entity.SavegameMetadata.SlotNumber = backup.SlotNumber;
-            entity.SavegameMetadata.SaveNumber = backup.SaveNumber;
+            var savegameMetadata = entity.SavegameMetadata;
+            if (savegameMetadata != null)
+            {
+                savegameMetadata.LevelName = backup.LevelName;
+                savegameMetadata.SlotNumber = backup.SlotNumber;
+                savegameMetadata.SaveNumber = backup.SaveNumber;
+            }
+            
             entity.Md5 = backup.Md5;
             entity.BackedUpOn = DateTime.Now;
 

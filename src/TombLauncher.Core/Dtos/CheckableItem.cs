@@ -15,7 +15,7 @@ public class CheckableItem<T> : CheckableItem, IEquatable<T> where T : IEquatabl
         return EqualityComparer<T>.Default.Equals(Value, other.Value);
     }
 
-    public bool Equals(T other)
+    public bool Equals(T? other)
     {
         return EqualityComparer<T>.Default.Equals(Value, other);
     }

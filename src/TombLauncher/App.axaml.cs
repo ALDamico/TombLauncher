@@ -31,7 +31,6 @@ using TombLauncher.Services;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.Views;
-using StringNotificationViewModel = TombLauncher.ViewModels.Notifications.StringNotificationViewModel;
 
 namespace TombLauncher;
 
@@ -172,8 +171,8 @@ public class App : Application
         serviceCollection.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
         serviceCollection.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
         serviceCollection.AddSingleton(platformSpecificFeatures);
-        serviceCollection.AddTombLauncherLogging(appDataDirectory);
-        serviceCollection.AddTombLauncherMappings();
+        serviceCollection.AddTombLauncherLogging(appDataDirectory)
+            .AddTombLauncherMappings();
         serviceCollection.AddSingleton<IAppFileOperationsService, AppFileOperationsService>();
         serviceCollection.AddSingleton<ThemeManager>();
         serviceCollection.AddSingleton<ISavegameHeaderProvider, SavegameHeaderProvider>();
