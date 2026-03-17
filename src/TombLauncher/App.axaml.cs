@@ -267,7 +267,7 @@ public class App : Application
             notificationService.AddNotification(new NotificationViewModel()
             {
                 Content = new StringNotificationViewModel()
-                { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion.Version ?? "") },
+                { Text = localizationService.GetLocalizedString("UPDATE_AVAILABLE_NOTIFICATION", args.LatestVersion.Version ?? "") },
                 IsDismissable = true,
                 IsCancelable = false,
                 IsOpenable = true,

@@ -31,7 +31,7 @@ public static class UpdateUtils
         {
             _uiFactories = new Dictionary<string, Func<IUIFactory>>()
             {
-                { PortableChannel, () => null! },
+                { PortableChannel, () => null! },   // Intentional: UIFactory is never used for portable — the UpdateCommand opens GitHub directly
                 { StableChannel, () => new UIFactory() }
             };
         }
@@ -53,6 +53,8 @@ public static class UpdateUtils
                 {
                     PortableChannel, new RelayCommand<UpdateCommandPayload>(payload =>
                     {
+                        // Ioc.Default is safe here: this lambda only runs when the user clicks
+                        // the notification button, well after the DI container is fully configured.
                         var settings = Ioc.Default.GetRequiredService<ISettingsProvider>();
                         var gitHubLink = settings.GetApplicationSettings().GitHubLink;
                         var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
