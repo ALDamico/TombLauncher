@@ -9,7 +9,6 @@ using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.SignatureVerifiers;
-using NetSparkleUpdater.UI.Avalonia;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Extensions;
@@ -71,7 +70,7 @@ public class UpdateService
         {
             var filter = new ChannelAppCastFilter(logger)
             {
-                ChannelSearchNames = [channelName!]
+                ChannelSearchNames = [channelName]
             };
             appCastHelper = new AppCastHelper { AppCastFilter = filter };
         }
@@ -94,7 +93,6 @@ public class UpdateService
         _sparkle.UpdateDetected += OnUpdateDetected;
         await _sparkle.StartLoop(true);
     }
-
 
     private void OnUpdateDetected(object? sender, UpdateDetectedEventArgs args)
     {
@@ -119,7 +117,7 @@ public class UpdateService
     private IUIFactory? GetUiFactory(string? channelName) => channelName switch
     {
         PortableChannel => null,
-        _ => new UIFactory()
+        _ => new TombLauncherUIFactory()
     };
 
     private ICommand GetUpdateCommand(string? channelName) => channelName switch
@@ -132,7 +130,7 @@ public class UpdateService
         _ => new RelayCommand<UpdateCommandPayload>(payload =>
         {
             if (payload?.Args != null)
-                payload.Sparkle?.ShowUpdateNeededUI(payload.Args.AppCastItems);
+                payload.Sparkle.ShowUpdateNeededUI(payload.Args.AppCastItems);
         })
     };
 

@@ -1,0 +1,69 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:loc="using:TombLauncher.Localization"
+        xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+        xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
+        mc:Ignorable="d"
+        x:Class="TombLauncher.Views.Dialogs.Updater.UpdateAvailableWindow"
+        Title="{loc:Translate UPDATE_AVAILABLE_TITLE}"
+        Background="{DynamicResource PageBackgroundBrush}"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Width="640" Height="560"
+        ShowInTaskbar="False">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Classes="card-background"
+                BorderBrush="{DynamicResource CardBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="24,20">
+            <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                <iconPacks:PackIconRemixIcon Kind="DownloadCloudLine"
+                                             Width="36" Height="36"
+                                             Foreground="{DynamicResource PrimaryBrush}"
+                                             VerticalAlignment="Center" />
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{loc:Translate UPDATE_AVAILABLE_TITLE}"
+                               Classes="page-title"
+                               Margin="0" />
+                    <TextBlock x:Name="VersionSubtitle"
+                               Foreground="{DynamicResource MutedTextBrush}"
+                               FontSize="13" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Release Notes -->
+        <mdxaml:MarkdownScrollViewer Grid.Row="1"
+                                      x:Name="ReleaseNotesMd"
+                                      Margin="16,12"
+                                      IsVisible="True" />
+
+        <!-- Footer -->
+        <Border Grid.Row="2"
+                Classes="card-background"
+                BorderBrush="{DynamicResource CardBorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,14">
+            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                <Button x:Name="SkipButton"
+                        Classes="btn-danger"
+                        Content="{loc:Translate SKIP_THIS_VERSION}"
+                        Padding="16,8" />
+                <Button x:Name="RemindLaterButton"
+                        Content="{loc:Translate REMIND_ME_LATER}"
+                        Padding="16,8" />
+                <Button x:Name="InstallButton"
+                        Classes="btn-success"
+                        Content="{loc:Translate INSTALL_UPDATE}"
+                        Padding="16,8" />
+            </StackPanel>
+        </Border>
+
+    </Grid>
+</Window>
