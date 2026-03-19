@@ -75,7 +75,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
                 Text = GetDownloadFromSiteLabel(capturedSource.SourceSiteDisplayName),
                 Command = new AsyncRelayCommand(
                     () => InstallFrom(capturedSource),
-                    () => _gameSearchResultService.CanInstall(this))
+                    () => _gameSearchResultService.CanInstall(this).GetAwaiter().GetResult())
             };
         });
 
@@ -108,8 +108,8 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         }
     }
 
-    private bool CanInstall() => _gameSearchResultService.CanInstall(this);
-    private bool CanInstallFrom(IGameSearchResultMetadata? source) => source != null && _gameSearchResultService.CanInstall(this);
+    private bool CanInstall() => _gameSearchResultService.CanInstall(this).GetAwaiter().GetResult();
+    private bool CanInstallFrom(IGameSearchResultMetadata? source) => source != null && _gameSearchResultService.CanInstall(this).GetAwaiter().GetResult();
 
     public string GetDownloadFromSiteLabel(string siteName)
         => _gameSearchResultService.LocalizationManager.GetLocalizedString("DOWNLOAD_FROM_FORMATTABLE", siteName);

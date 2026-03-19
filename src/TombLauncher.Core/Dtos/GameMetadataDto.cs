@@ -7,7 +7,7 @@ public class GameMetadataDto : IGameMetadata
 {
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
-    public string Author { get; set; } = string.Empty;
+    public string? Author { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public DateTime? InstallDate { get; set; }
     public GameEngine GameEngine { get; set; }

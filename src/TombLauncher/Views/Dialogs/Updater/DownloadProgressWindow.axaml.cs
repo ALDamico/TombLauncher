@@ -1,3 +1,5 @@
+#pragma warning disable AVLN3001
+using System;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using NetSparkleUpdater.Events;
@@ -9,9 +11,11 @@ namespace TombLauncher.Views.Dialogs.Updater;
 public partial class DownloadProgressWindow : Window, IDownloadProgress
 {
     private readonly ILocalizationManager _localization;
-    private bool _isDownloadComplete;
 
     public event DownloadInstallEventHandler? DownloadProcessCompleted;
+
+    [Obsolete("Design-time / Avalonia runtime loader only. Use the overload with ILocalizationManager.")]
+    public DownloadProgressWindow() : this(null!) { }
 
     public DownloadProgressWindow(ILocalizationManager localization)
     {
@@ -65,7 +69,6 @@ public partial class DownloadProgressWindow : Window, IDownloadProgress
     {
         Dispatcher.UIThread.Post(() =>
         {
-            _isDownloadComplete = true;
             Spinner.IsVisible = false;
             ProgressBar.Value = 100;
 

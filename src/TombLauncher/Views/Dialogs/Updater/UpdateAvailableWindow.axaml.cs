@@ -1,3 +1,5 @@
+#pragma warning disable AVLN3001
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
@@ -7,6 +9,7 @@ using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using TombLauncher.Contracts.Localization;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 namespace TombLauncher.Views.Dialogs.Updater;
 
@@ -21,6 +24,12 @@ public partial class UpdateAvailableWindow : Window, IUpdateAvailable
     public AppCastItem CurrentItem => _items.FirstOrDefault()!;
 
     private readonly List<AppCastItem> _items;
+
+    [Obsolete("Design-time / Avalonia runtime loader only. Use the overload with List<AppCastItem> and ILocalizationManager.")]
+    public UpdateAvailableWindow()
+    {
+        
+    }
 
     public UpdateAvailableWindow(List<AppCastItem> items, ILocalizationManager localization)
     {
