@@ -7,13 +7,14 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
+using TombLauncher.Utils;
 
 namespace TombLauncher.Installers.Downloaders.TRLE.net;
 
@@ -42,15 +43,15 @@ public class TrleGameDownloader : GameDownloaderBase
     private readonly Dictionary<GameEngine, string> _gameEngineMapping;
     private readonly Dictionary<string, GameEngine> _inverseGameEngineMapping;
 
-    private int GetTotalRows(HtmlDocument htmlDocument)
+    private int GetTotalRows(IDocument htmlDocument)
     {
-        var nodeWithTotal = htmlDocument.DocumentNode.SelectSingleNode("//span[@class='navText']");
+        var nodeWithTotal = htmlDocument.Body.SelectSingleNodeFromElement("//span[@class='navText']");
         if (nodeWithTotal == null)
         {
             return -1;
         }
 
-        var nodeText = nodeWithTotal.InnerText;
+        var nodeText = nodeWithTotal.GetInnerHtmlOrEmpty();
         var regex = new Regex(@"(\d+) record\(s\) found");
         var match = regex.Match(nodeText);
 
@@ -84,37 +85,37 @@ public class TrleGameDownloader : GameDownloaderBase
         }
 
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
-        var htmlDocument = new HtmlDocument();
-        htmlDocument.LoadHtml(content);
+        var htmlDocument = await AppUtils.OpenDocumentFromContent(content, cancellationToken);
         var totalPages = (int)Math.Ceiling((double)GetTotalRows(htmlDocument) / RowsPerPage);
 
         ParseResultPage(htmlDocument, result, cancellationToken);
         return new SearchResultPage(result, totalPages);
     }
 
-    private void ParseResultPage(HtmlDocument htmlDocument, List<IGameSearchResultMetadata> result,
+    private void ParseResultPage(IDocument htmlDocument, List<IGameSearchResultMetadata> result,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var resultsTable = htmlDocument.DocumentNode.SelectSingleNode("//table[@class='FindTable']");
-        var rows = resultsTable?.SelectNodes("./tr");
-        var headerRow = rows?.FirstOrDefault()?.SelectNodes("./strong/td");
+        var resultsTable = htmlDocument.Body.SelectSingleNodeFromElement("//table[@class='FindTable']");
+        var rows = resultsTable?.SelectNodesFromElement(".//tr");
+        var headerRow = rows?.FirstOrDefault()?.SelectNodesFromElement("./td");
         if (rows == null || headerRow == null) return;
         var dataRows = rows.Skip(1);
         foreach (var row in dataRows)
         {
             var metadata = new GameSearchResultMetadataDto() { BaseUrl = BaseUrl, SourceSiteDisplayName = DisplayName };
-            var fields = row.SelectNodes("./td");
+            var fields = row.SelectNodesFromElement(".//td");
             var zipped = headerRow.Zip(fields,
-                (header, r) => new KeyValuePair<string, HtmlNode>(header.InnerText.Trim(),
+                (header, r) => new KeyValuePair<string, INode?>(header.TextContent.Trim(),
                     r));
             foreach (var zip in zipped)
             {
                 var value = zip.Value;
-                if (value == null) continue;
-                var v = value.InnerText?.Trim().IsNullOrEmpty() == true
-                    ? value.SelectSingleNode("./a")?.Attributes["href"]?.Value
-                    : value.InnerText?.Trim() ?? string.Empty;
+                if (value == null) 
+                    continue;
+                var v = value.TextContent.Trim().IsNullOrEmpty()
+                    ? value.SelectSingleNodeFromElement(".//a")?.GetAttributeValue("href")
+                    : value.TextContent.Trim();
                 if (v == null) continue;
                 switch (zip.Key)
                 {
@@ -126,8 +127,8 @@ public class TrleGameDownloader : GameDownloaderBase
                         break;
                     case "levelname/info":
                         metadata.Title = v;
-                        var detailsLink = value.SelectSingleNode("./a")?.Attributes["href"]?.Value;
-                        metadata.DetailsLink = detailsLink ?? string.Empty;
+                        var detailsLink = value.SelectSingleNodeFromElement(".//a").GetAttributeValue("href");
+                        metadata.DetailsLink = detailsLink;
                         break;
                     case "difficulty":
                         metadata.Difficulty = Enum.TryParse<GameDifficulty>(v, true, out var actualDifficulty)
@@ -205,16 +206,14 @@ public class TrleGameDownloader : GameDownloaderBase
     public override Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
         IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
-        return HttpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
+        return HttpClient.DownloadAsync(metadata.DownloadLink!, stream, downloadProgress, cancellationToken);
     }
 
     public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
-        var detailsUrl = game.DetailsLink;
-        var page = await HttpClient.GetStreamAsync(detailsUrl, cancellationToken);
-        var htmlDocument = new HtmlDocument();
-        htmlDocument.Load(page);
+        var detailsUrl = new Uri(new Uri(BaseUrl), game.DetailsLink).ToString();
+        var htmlDocument = await AppUtils.OpenDocument(detailsUrl, cancellationToken);
         var metadata = new GameMetadataDto
         {
             Author = game.Author,
@@ -227,10 +226,10 @@ public class TrleGameDownloader : GameDownloaderBase
             AuthorFullName = game.AuthorFullName
         };
 
-        var imageNode = htmlDocument.DocumentNode.SelectSingleNode("//div[@align='center']/img[@class='border']");
+        var imageNode = htmlDocument.Body.SelectSingleNodeFromElement("//div[@align='center']/img[@class='border']");
         if (imageNode != null)
         {
-            var uri = imageNode.Attributes["src"].Value;
+            var uri = imageNode.GetAttributeValue("src");
             var byteArr = await HttpClient.GetByteArrayAsync(uri, cancellationToken);
             if (game.TitlePic.IsNullOrWhiteSpace())
             {
@@ -240,10 +239,10 @@ public class TrleGameDownloader : GameDownloaderBase
         }
 
         var descriptionNode =
-            htmlDocument.DocumentNode.SelectNodes("//td[@class='medGText']").LastOrDefault();
+            htmlDocument.Body.SelectNodesFromElement("//td[@class='medGText']").LastOrDefault();
         if (descriptionNode != null)
         {
-            metadata.Description = descriptionNode.InnerText;
+            metadata.Description = descriptionNode.TextContent;
         }
 
         return metadata;

@@ -7,13 +7,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
+using AngleSharp.Dom;
+using AngleSharp.XPath;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Extensions;
+using TombLauncher.Utils;
 using UtfUnknown;
 
 namespace TombLauncher.Installers.Downloaders.AspideTR.com;
@@ -43,9 +45,9 @@ public class AspideTrGameDownloader : GameDownloaderBase
     private readonly Dictionary<string, string> _classMappings;
 
 
-    private async Task ParsePage(HtmlDocument htmlDocument, List<IGameSearchResultMetadata> result)
+    private async Task ParsePage(IDocument htmlDocument, List<IGameSearchResultMetadata> result)
     {
-        var levelsList = htmlDocument.DocumentNode.SelectNodes("//div[@class='levels']/article");
+        var levelsList = htmlDocument.Body.SelectNodes("//div[@class='levels']/article");
         if (levelsList.IsNullOrEmpty())
             return;
         foreach (var level in levelsList)
@@ -55,45 +57,45 @@ public class AspideTrGameDownloader : GameDownloaderBase
                 BaseUrl = BaseUrl,
                 SourceSiteDisplayName = DisplayName
             };
-            var headerNode = level.SelectSingleNode("./div[@class='level-content-block']/header");
-            var author = headerNode.SelectSingleNode("./h2/em/a")?.InnerText?.Trim();
+            var headerNode = level?.SelectSingleNodeFromElement("./div[@class='level-content-block']/header");
+            var author = headerNode.SelectSingleNodeFromElement("./h2/em/a")?.TextContent.Trim();
             searchResult.Author = author;
 
-            var titleNode = headerNode.SelectSingleNode("./h2/a");
+            var titleNode = headerNode.SelectSingleNodeFromElement("./h2/a");
             if (titleNode != null)
             {
                 var targetEncoding = TryDetectEncoding(titleNode);
 
-                searchResult.Title = Encoding.UTF8.GetString(targetEncoding.GetBytes(titleNode.InnerText));
-                searchResult.DetailsLink = titleNode.Attributes["href"].Value;
+                searchResult.Title = Encoding.UTF8.GetString(targetEncoding.GetBytes(titleNode.TextContent));
+                searchResult.DetailsLink = titleNode.GetAttributeValue("href");
             }
 
-            var releaseDateNode = headerNode.SelectSingleNode("./time");
+            var releaseDateNode = headerNode.SelectSingleNodeFromElement("./time");
             if (releaseDateNode != null)
             {
-                if (DateTime.TryParse(releaseDateNode.Attributes["datetime"].Value, out var releaseDate))
+                if (DateTime.TryParse(releaseDateNode.GetAttributeValue("datetime"), out var releaseDate))
                 {
                     searchResult.ReleaseDate = releaseDate;
                 }
             }
 
-            var ratings = headerNode.SelectNodes("./div[@class='stars']/a/i");
-            if (ratings != null)
+            var ratings = headerNode.SelectNodesFromElement("./div[@class='stars']/a/i");
+            if (ratings.IsNotNullOrEmpty())
             {
                 searchResult.Rating = ratings.Count(n => n.HasClass("fa-star")) * 2 +
                                       ratings.Count(n => n.HasClass("fa-star-half-o"));
             }
 
-            var featuredImage = level.SelectSingleNode("./div[@class='level-featured-image']/a/img");
+            var featuredImage = level.SelectSingleNodeFromElement("./div[@class='level-featured-image']/a/img");
             if (featuredImage != null)
             {
-                searchResult.TitlePic = featuredImage.Attributes["src"].Value;
+                searchResult.TitlePic = featuredImage.GetAttributeValue("src");
             }
 
-            var engineTypeNode = level.SelectSingleNode("./div[contains(@class,'level-content')]");
+            var engineTypeNode = level.SelectSingleNodeFromElement("./div[contains(@class,'level-content')]");
             if (engineTypeNode != null)
             {
-                var innerText = engineTypeNode.InnerText.Remove(" ");
+                var innerText = engineTypeNode.TextContent.Remove(" ");
                 var regex = new Regex(@"((TombRaider\d|TEN))");
                 var matches = regex.Match(innerText);
                 if (matches.Success)
@@ -103,10 +105,10 @@ public class AspideTrGameDownloader : GameDownloaderBase
                 }
             }
 
-            var buttonsLinks = level.SelectSingleNode("./div[contains(@class, 'infos-buttons')]").SelectNodes("./a");
+            var buttonsLinks = level.SelectSingleNodeFromElement("./div[contains(@class, 'infos-buttons')]").SelectNodesFromElement("./a");
             foreach (var link in buttonsLinks)
             {
-                var linkText = link.Attributes["href"].Value;
+                var linkText = link.GetAttributeValue("href");
                 if (link.HasClass("info") && searchResult.DetailsLink.IsNullOrWhiteSpace())
                 {
                     searchResult.DetailsLink = linkText;
@@ -131,9 +133,9 @@ public class AspideTrGameDownloader : GameDownloaderBase
         await Task.CompletedTask;
     }
 
-    private static Encoding TryDetectEncoding(HtmlNode titleNode)
+    private static Encoding TryDetectEncoding(INode titleNode)
     {
-        var detection = CharsetDetector.DetectFromBytes(Encoding.GetEncoding(1252).GetBytes(titleNode.InnerText));
+        var detection = CharsetDetector.DetectFromBytes(Encoding.GetEncoding(1252).GetBytes(titleNode.TextContent));
         if (detection.Details.IsNullOrEmpty())
             return Encoding.UTF8;
         var details = detection.Details.ToList();
@@ -154,18 +156,13 @@ public class AspideTrGameDownloader : GameDownloaderBase
     protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         var result = new List<IGameSearchResultMetadata>();
-        var convertedRequest = ConvertRequest(payload);
-        var kvpList = convertedRequest.ToQueryParams();
+        var kvpList = ConvertRequest(payload);
 
         var urlEncodedContent = new FormUrlEncodedContent(kvpList);
         var queryString = await urlEncodedContent.ReadAsStringAsync(cancellationToken);
         var url = GetPageUrl(pageNumber, queryString);
-        var requestMessage = new HttpRequestMessage(HttpMethod.Get, url) { Content = urlEncodedContent };
-        var response = await HttpClient.SendAsync(requestMessage, cancellationToken);
-        var content = await response.Content.ReadAsStreamAsync(cancellationToken);
 
-        var htmlDocument = new HtmlDocument();
-        htmlDocument.Load(content);
+        var htmlDocument = await AppUtils.OpenDocument(url, cancellationToken);
         var totalPages = GetTotalPages(htmlDocument);
 
         await ParsePage(htmlDocument, result);
@@ -180,22 +177,22 @@ public class AspideTrGameDownloader : GameDownloaderBase
             baseUrl += $"page/{pageNumber}/";
         }
 
-        return baseUrl + "?" + queryString;
+        var websiteUrl = BaseUrl.TrimEnd("/").ToString();
+
+        return websiteUrl + baseUrl + "?" + queryString;
     }
 
     public override Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
         IProgress<DownloadProgressInfo> downloadProgress, CancellationToken cancellationToken)
     {
-        return HttpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
+        return HttpClient.DownloadAsync(metadata.DownloadLink!, stream, downloadProgress, cancellationToken);
     }
 
     public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
-        var detailsLink = game.DetailsLink;
-        var page = await HttpClient.GetStreamAsync(detailsLink, cancellationToken);
-        var htmlDocument = new HtmlDocument();
-        htmlDocument.Load(page);
+        var detailsLink = new Uri(new Uri(BaseUrl), game.DetailsLink).ToString();
+        var htmlDocument = await AppUtils.OpenDocument(detailsLink, cancellationToken);
         var dto = new GameMetadataDto()
         {
             Author = game.Author,
@@ -209,11 +206,11 @@ public class AspideTrGameDownloader : GameDownloaderBase
             AuthorFullName = game.AuthorFullName
         };
 
-        var detailsDiv = htmlDocument.DocumentNode.SelectSingleNode("//div[contains(@class, 'level-content')]");
+        var detailsDiv = htmlDocument.Body.SelectSingleNode("//div[contains(@class, 'level-content')]");
         if (detailsDiv != null)
         {
-            var detailsText = detailsDiv.InnerHtml.Trim();
-            if (dto.Description == null || detailsText?.Length > dto.Description?.Length)
+            var detailsText = detailsDiv.GetInnerHtmlOrEmpty().Trim();
+            if (dto.Description.IsNullOrWhiteSpace() || detailsText.Length > dto.Description.Length)
             {
                 dto.Description = detailsText;
             }
@@ -260,7 +257,7 @@ public class AspideTrGameDownloader : GameDownloaderBase
         return flags;
     }
 
-    private AspideTrSearchRequest ConvertRequest(DownloaderSearchPayload request)
+    private IEnumerable<KeyValuePair<string, string>> ConvertRequest(DownloaderSearchPayload request)
     {
         return new AspideTrSearchRequest()
         {
@@ -268,21 +265,16 @@ public class AspideTrGameDownloader : GameDownloaderBase
             LTitle = request.LevelName ?? string.Empty,
             LType = ConvertEngine(request.GameEngine.GetValueOrDefault()) ?? 0,
             Classes = string.Join("-", ConvertFlags(request))
-        };
+        }.ToQueryParams();
     }
 
-    private IEnumerable<KeyValuePair<string, string>> ConvertRequest(AspideTrSearchRequest convertedSearchRequest)
+    private int GetTotalPages(IDocument htmlDocument)
     {
-        return convertedSearchRequest.ToQueryParams();
-    }
+        var paginationDiv = htmlDocument.Body.SelectSingleNode("//div[@class='pagination']");
 
-    private int GetTotalPages(HtmlDocument htmlDocument)
-    {
-        var paginationDiv = htmlDocument.DocumentNode.SelectSingleNode("//div[@class='pagination']");
-
-        var lastListItem = paginationDiv?.SelectNodes("./ul/li").LastOrDefault();
+        var lastListItem = paginationDiv.SelectNodesFromElement("./ul/li").LastOrDefault();
         if (lastListItem == null) 
             return 1;
-        return int.TryParse(lastListItem.SelectSingleNode("./a").InnerText, out var val) ? val : 1;
+        return int.TryParse(lastListItem.SelectSingleNodeFromElement("./a")?.TextContent, out var val) ? val : 1;
     }
 }
