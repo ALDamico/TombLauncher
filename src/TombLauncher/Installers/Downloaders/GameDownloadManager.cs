@@ -89,6 +89,8 @@ public class GameDownloadManager
             SourceSiteDisplayName = game.SourceSiteDisplayName
         };
 
+        gameClone.Sources.Add(game);
+
         Merge([gameClone], allResults);
 
         return gameClone;
