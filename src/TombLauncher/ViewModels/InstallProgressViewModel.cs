@@ -1,21 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.ViewModels;
 
 public partial class InstallProgressViewModel : ViewModelBase
 {
-    public InstallProgressViewModel()
-    {
-        ProcessStarted = true;
-    }
     [ObservableProperty] private double _totalBytes;
     [ObservableProperty] private double _currentBytes;
     [ObservableProperty] private double _downloadSpeed;
     [ObservableProperty] private double _installPercentage;
     [ObservableProperty] private string _currentFileName = string.Empty;
     [ObservableProperty] private string _message = string.Empty;
-    [ObservableProperty] private bool _isDownloading;
-    [ObservableProperty] private bool _isInstalling;
-    [ObservableProperty] private bool _installCompleted;
-    [ObservableProperty] private bool _processStarted;
+    [ObservableProperty] private InstallStatus _installStatus;
+    [ObservableProperty] private bool _processStarted = true;
 }

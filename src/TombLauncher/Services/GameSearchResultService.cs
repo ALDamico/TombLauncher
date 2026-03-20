@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
-
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using IconPacks.Avalonia.RemixIcon;
 using Microsoft.Extensions.Logging;
@@ -118,8 +117,7 @@ public class GameSearchResultService : IViewService
                     new Progress<DownloadProgressInfo>(
                         p =>
                         {
-                            _installProgress.IsDownloading = true;
-                            _installProgress.IsInstalling = false;
+                            _installProgress.InstallStatus = InstallStatus.Downloading;
                             _installProgress.Message = "Downloading...";
                             _installProgress.TotalBytes = p.TotalBytes;
                             _installProgress.CurrentBytes = p.BytesDownloaded;
@@ -148,10 +146,13 @@ public class GameSearchResultService : IViewService
         if (!await EnsureDownloadPathNotNull(gameToInstall))
             return;
 
+        _installProgress.InstallStatus = InstallStatus.Indeterminate;
+        _installProgress.Message = LocalizationManager.GetLocalizedString("VERIFYING_DOWNLOAD");
         var hashes = await _hashCalculator.CalculateHashes(_downloadPath!);
         if (await CheckGameAlreadyInstalled(gameToInstall, hashes))
             return;
 
+        _installProgress.Message = LocalizationManager.GetLocalizedString("FETCHING_GAME_DETAILS");
         var allDetails = await _gameDownloadManager.FetchAllDetails( _settingsProvider.GetActiveDownloaders(), gameToInstallDto);
         var dto = await _gameDownloadManager.FetchDetails(gameToInstallDto);
         if (dto == null)
@@ -184,8 +185,7 @@ public class GameSearchResultService : IViewService
                 new Progress<CopyProgressInfo>(a =>
                 {
                     if (_installProgress == null) return;
-                    _installProgress.IsDownloading = false;
-                    _installProgress.IsInstalling = true;
+                    _installProgress.InstallStatus = InstallStatus.Installing;
                     _installProgress.Message = "Installing...";
                     _installProgress.InstallPercentage = a.Percentage.GetValueOrDefault();
                     _installProgress.CurrentFileName = a.CurrentFileName ?? string.Empty;
@@ -217,19 +217,14 @@ public class GameSearchResultService : IViewService
             if (_installProgress != null)
             {
                 _installProgress.Message = $"Install cancelled";
-                _installProgress.IsDownloading = false;
-                _installProgress.IsInstalling = false;
-                _installProgress.ProcessStarted = false;
+                _installProgress.InstallStatus = InstallStatus.Canceled;
             }
             return;
         }
 
         if (_installProgress != null)
         {
-            _installProgress.IsInstalling = false;
-            _installProgress.IsDownloading = false;
-            _installProgress.ProcessStarted = false;
-            _installProgress.InstallCompleted = true;
+            _installProgress.InstallStatus = InstallStatus.Completed;
             _installProgress.Message = "Install complete";
         }
         if (_notificationViewModel != null)
@@ -364,9 +359,7 @@ public class GameSearchResultService : IViewService
                 if (_installProgress != null)
                 {
                     _installProgress.Message = $"Download cancelled";
-                    _installProgress.IsDownloading = false;
-                    _installProgress.IsInstalling = false;
-                    _installProgress.ProcessStarted = false;
+                    _installProgress.InstallStatus = InstallStatus.Canceled;
                 }
                 if (_notificationViewModel != null)
                 {
@@ -383,7 +376,7 @@ public class GameSearchResultService : IViewService
                         return Task.CompletedTask;
                     return _gameWithStatsService.PlayGame(dto.Id);
                 },
-                (dto) => dto?.Id != null && _installProgress?.InstallCompleted == true)
+                (dto) => dto?.Id != null && _installProgress?.InstallStatus == InstallStatus.Completed)
         };
         await _notificationService.AddNotificationAsync(_notificationViewModel);
     }
@@ -468,15 +461,10 @@ public class GameSearchResultService : IViewService
         if (_installProgress != null)
         {
             _installProgress.Message = $"Download cancelled";
-            _installProgress.IsDownloading = false;
-            _installProgress.IsInstalling = false;
-            _installProgress.ProcessStarted = false;
+            _installProgress.InstallStatus = InstallStatus.Canceled;
         }
         _cancellationTokenSource = new CancellationTokenSource();
-        if (_notificationViewModel != null)
-        {
-            _notificationViewModel.IsOpenable = false;
-        }
+        _notificationViewModel?.IsOpenable = false;
 
         await AfterInstallCleanup();
         _logger.LogInformation("Installation canceled");
