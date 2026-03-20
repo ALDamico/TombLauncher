@@ -151,7 +151,7 @@ public class SavegameQueryService
             existingGamesDict[md5] = savegameFile;
         }
 
-        var backedUpSaves = await _savegameRepository.GetSavegameMd5sByGameId(savegameListView.GameId);
+        var backedUpSaves = await _savegameRepository.GetSavegameMd5HashesByGameId(savegameListView.GameId);
         var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys).ToList();
         if (missingSaveGames.Count == 0)
         {

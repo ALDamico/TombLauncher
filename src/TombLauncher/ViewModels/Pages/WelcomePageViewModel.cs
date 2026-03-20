@@ -25,7 +25,6 @@ public partial class WelcomePageViewModel : PageViewModel
     [ObservableProperty] private bool _showRecentlyPlayed = true;
     [ObservableProperty] private bool _showFavourites = true;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasRecentlyPlayedGames))]
     [NotifyCanExecuteChangedFor(nameof(PreviousRecentGameCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextRecentGameCommand))]
     private ObservableCollection<GameWithStatsViewModel> _recentlyPlayedGames = new();
@@ -33,16 +32,13 @@ public partial class WelcomePageViewModel : PageViewModel
     [NotifyCanExecuteChangedFor(nameof(PreviousRecentGameCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextRecentGameCommand))]
     private int _recentlyPlayedIndex;
-    public bool HasRecentlyPlayedGames => RecentlyPlayedGames.Count > 0;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasRecentlyPlayedGames))]
     [NotifyCanExecuteChangedFor(nameof(PreviousRecentGameCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextRecentGameCommand))]
     private List<int> _paginationIndices = new();
 
     // Favourites carousel
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasFavouriteGames))]
     [NotifyCanExecuteChangedFor(nameof(PreviousFavouriteCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextFavouriteCommand))]
     private ObservableCollection<GameWithStatsViewModel> _favouriteGames = new();
@@ -50,16 +46,18 @@ public partial class WelcomePageViewModel : PageViewModel
     [NotifyCanExecuteChangedFor(nameof(PreviousFavouriteCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextFavouriteCommand))]
     private int _favouriteIndex;
-    public bool HasFavouriteGames => FavouriteGames.Count > 0;
     [ObservableProperty] private List<int> _favouritePaginationIndices = new();
 
     [ObservableProperty] private bool _showRandomSuggestion = true;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasRandomSuggestion))]
     private MultiSourceGameSearchResultMetadataViewModel? _randomSuggestion;
     [ObservableProperty] private bool _isLoadingRandomSuggestion;
     [ObservableProperty] private bool _randomSuggestionFailed;
-    public bool HasRandomSuggestion => RandomSuggestion != null;
+
+    [ObservableProperty] private string? _changeLogMarkdown;
+    [ObservableProperty] private bool _isLoadingChangelog = true;
+    [ObservableProperty] private bool _changelogLoadFailed;
+
 
     protected override async Task RaiseInitialize()
     {
@@ -84,6 +82,7 @@ public partial class WelcomePageViewModel : PageViewModel
         {
             _ = LoadRandomSuggestionAsync();
         }
+        _ = LoadChangelogAsync();
         await base.RaiseInitialize();
     }
 
@@ -92,6 +91,10 @@ public partial class WelcomePageViewModel : PageViewModel
 
     [RelayCommand]
     private async Task SearchOnline() => await _welcomePageService.NavigateToSearch();
+
+    [RelayCommand]
+    private async Task RetryLoadChangelog() => await LoadChangelogAsync();
+
 
     [RelayCommand(CanExecute = nameof(CanGoPrevious))]
     private void PreviousRecentGame() => RecentlyPlayedIndex--;
@@ -152,5 +155,25 @@ public partial class WelcomePageViewModel : PageViewModel
         }
     }
 
-    [ObservableProperty] private string _changeLogPath = string.Empty;
+    private async Task LoadChangelogAsync()
+    {
+        IsLoadingChangelog = true;
+        ChangelogLoadFailed = false;
+        try
+        {
+            ChangeLogMarkdown = await _welcomePageService.FetchChangelogAsync();
+            if (ChangeLogMarkdown == null)
+            {
+                ChangelogLoadFailed = true;
+            }
+        }
+        catch
+        {
+            ChangelogLoadFailed = true;
+        }
+        finally
+        {
+            IsLoadingChangelog = false;
+        }
+    }
 }

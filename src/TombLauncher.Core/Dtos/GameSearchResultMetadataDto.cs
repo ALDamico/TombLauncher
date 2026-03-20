@@ -1,27 +1,28 @@
 ﻿using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
+// ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace TombLauncher.Core.Dtos;
 
 public class GameSearchResultMetadataDto : IGameSearchResultMetadata, IEquatable<GameSearchResultMetadataDto>
 {
     public string? Author { get; set; }
-    public string AuthorFullName { get; set; } = string.Empty;
+    public string? AuthorFullName { get; set; }
     public string Title { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; }
     public GameDifficulty Difficulty { get; set; }
     public GameLength Length { get; set; }
-    public string Setting { get; set; } = string.Empty;
+    public string? Setting { get; set; }
     public GameEngine Engine { get; set; }
-    public string DetailsLink { get; set; } = string.Empty;
+    public string? DetailsLink { get; set; }
     public string BaseUrl { get; set; } = string.Empty;
     public string SourceSiteDisplayName { get; set; } = string.Empty;
-    public string TitlePic { get; set; } = string.Empty;
-    public string ReviewsLink { get; set; } = string.Empty;
+    public string? TitlePic { get; set; }
+    public string? ReviewsLink { get; set; }
     public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
-    public string DownloadLink { get; set; } = string.Empty;
-    public string WalkthroughLink { get; set; } = string.Empty;
+    public string? DownloadLink { get; set; }
+    public string? WalkthroughLink { get; set; }
     public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     public int? SizeInMb { get; set; }
     public double? Rating { get; set; }

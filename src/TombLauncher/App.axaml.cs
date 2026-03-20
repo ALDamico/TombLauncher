@@ -15,9 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NetSparkleUpdater;
-using NetSparkleUpdater.Enums;
-using NetSparkleUpdater.SignatureVerifiers;
 using Serilog;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
@@ -31,11 +28,9 @@ using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization;
 using TombLauncher.Services;
-using TombLauncher.Updater;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.Views;
-using StringNotificationViewModel = TombLauncher.ViewModels.Notifications.StringNotificationViewModel;
 
 namespace TombLauncher;
 
@@ -50,8 +45,6 @@ public class App : Application
     {
         AvaloniaXamlLoader.Load(this);
     }
-
-    private SparkleUpdater _sparkle = null!;
 
     public override async void OnFrameworkInitializationCompleted()
     {
@@ -151,9 +144,8 @@ public class App : Application
         desktop.ShutdownMode = Avalonia.Controls.ShutdownMode.OnMainWindowClose;
         mainWindow.Show();
         splashScreen.Close();
-        var appConfiguration = Ioc.Default.GetRequiredService<ILayeredAppConfiguration>();
-        await InitNetSparkle(appConfiguration);
-        await _sparkle.CheckForUpdatesQuietly();
+        var updateService = Ioc.Default.GetRequiredService<UpdateService>();
+        await updateService.StartAsync();
         await Task.CompletedTask;
     }
 
@@ -179,8 +171,8 @@ public class App : Application
         serviceCollection.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
         serviceCollection.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
         serviceCollection.AddSingleton(platformSpecificFeatures);
-        serviceCollection.AddTombLauncherLogging(appDataDirectory);
-        serviceCollection.AddTombLauncherMappings();
+        serviceCollection.AddTombLauncherLogging(appDataDirectory)
+            .AddTombLauncherMappings();
         serviceCollection.AddSingleton<IAppFileOperationsService, AppFileOperationsService>();
         serviceCollection.AddSingleton<ThemeManager>();
         serviceCollection.AddSingleton<ISavegameHeaderProvider, SavegameHeaderProvider>();
@@ -227,6 +219,7 @@ public class App : Application
 
 
         serviceCollection.AddSingleton<NotificationService>();
+        serviceCollection.AddSingleton<UpdateService>();
         serviceCollection.AddScoped(sp =>
         {
             var settingsProvider = sp.GetRequiredService<ISettingsProvider>();
@@ -243,40 +236,6 @@ public class App : Application
         Log.Logger.Information("Service initialization complete");
 
         await Task.CompletedTask;
-    }
-
-    private async Task InitNetSparkle(IAppConfiguration appConfiguration)
-    {
-        var updateWorkers = UpdateUtils.AppCastWorkersFactory(appConfiguration);
-
-        _sparkle = new SparkleUpdater(appConfiguration.Updater.AppCastUrl ?? string.Empty,
-            new Ed25519Checker(SecurityMode.Strict, appConfiguration.Updater.AppCastPublicKey))
-        {
-            UIFactory = updateWorkers.UiFactory(),
-            AppCastDataDownloader = updateWorkers.AppCastDataDownloader,
-            UpdateDownloader = updateWorkers.UpdateDownloader,
-            LogWriter = updateWorkers.LoggerToUse,
-            UserInteractionMode = UserInteractionMode.NotSilent,
-            AppCastHelper = updateWorkers.AppCastHelper
-        };
-        _sparkle.UpdateDetected += (_, args) =>
-        {
-            var payload = new UpdateCommandPayload(_sparkle, args);
-            var notificationService = Ioc.Default.GetRequiredService<NotificationService>();
-            var localizationService = Ioc.Default.GetRequiredService<ILocalizationManager>();
-            notificationService.AddNotification(new NotificationViewModel()
-            {
-                Content = new StringNotificationViewModel()
-                { Text = localizationService.GetLocalizedString($"Update available notification", args.LatestVersion.Version ?? "") },
-                IsDismissable = true,
-                IsCancelable = false,
-                IsOpenable = true,
-                OpenCommand = updateWorkers.UpdateCommand,
-                OpenIcon = updateWorkers.UpdateIcon,
-                OpenCmdParam = payload
-            });
-        };
-        await _sparkle.StartLoop(true);
     }
 
     private Task ApplyInitialSettings()

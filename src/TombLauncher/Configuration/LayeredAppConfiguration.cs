@@ -63,6 +63,8 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         AppCastUrl = Defaults.Updater.AppCastUrl,
         AppCastPublicKey = Defaults.Updater.AppCastPublicKey,
         UpdaterUseLocalPaths = Defaults.Updater.UpdaterUseLocalPaths,
-        UpdateChannelName = User.Updater.UpdateChannelName.Coalesce(Defaults.Updater.UpdateChannelName)
+        UpdateChannelName = User.Updater.UpdateChannelName.Coalesce(Defaults.Updater.UpdateChannelName),
+        GitHubRepositoryName = Defaults.Updater.GitHubRepositoryName,
+        GitHubRepositoryOwner = Defaults.Updater.GitHubRepositoryOwner
     };
 }

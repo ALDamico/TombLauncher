@@ -5,9 +5,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
-             xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:welcomePage="clr-namespace:TombLauncher.Views.Pages.WelcomePage"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.WelcomePageView"
              x:Name="Root"
@@ -40,7 +40,6 @@
             <welcomePage:FavouritesWidget />
             <welcomePage:RandomGameSuggestionWidget x:Name="RandomSuggestionSection" />
 
-            <!-- What's New -->
             <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16">
                 <StackPanel Spacing="8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
@@ -51,8 +50,22 @@
                                    FontSize="16" FontWeight="DemiBold"
                                    VerticalAlignment="Center" />
                     </StackPanel>
+                    <controls:RingLoader Width="40" Height="40"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,16"
+                                        Message="{loc:Translate CHANGELOG_LOADING}"
+                                        IsVisible="{Binding IsLoadingChangelog}" />
+                    <StackPanel IsVisible="{Binding ChangelogLoadFailed}" Spacing="8">
+                        <controls:EmptyStateView Icon="SignalWifiErrorLine"
+                                               Title="{loc:Translate CHANGELOG_LOAD_FAILED}" />
+                        <Button Content="{loc:Translate TRY_AGAIN}"
+                                Command="{Binding RetryLoadChangelogCommand}"
+                                Classes="secondary"
+                                HorizontalAlignment="Center" />
+                    </StackPanel>
                     <mdxaml:MarkdownScrollViewer ScrollViewer.IsScrollChainingEnabled="True"
-                                                 Source="{Binding ChangeLogPath}" />
+                                                 IsVisible="{Binding ChangeLogMarkdown, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                                 Markdown="{Binding ChangeLogMarkdown}" />
                 </StackPanel>
             </Border>
         </StackPanel>

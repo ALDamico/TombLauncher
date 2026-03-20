@@ -10,7 +10,7 @@ public partial class SavegameViewModel : ViewModelBase
     [ObservableProperty] private int _id;
     [ObservableProperty] private string _filename = string.Empty;
     [ObservableProperty] private int _slotNumber;
-    [ObservableProperty] private int _saveNumber;
+    [ObservableProperty] private int? _saveNumber;
     [ObservableProperty] private string _levelName = string.Empty;
     [ObservableProperty][NotifyCanExecuteChangedFor(nameof(DeleteSavegameCmd))] private bool _isStartOfLevel;
     [ObservableProperty] private DateTime? _backedUpOn;

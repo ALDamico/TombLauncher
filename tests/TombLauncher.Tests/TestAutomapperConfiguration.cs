@@ -1,5 +1,6 @@
-using System;
 using TombLauncher.Factories;
+using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
+using NSubstitute;
 
 namespace TombLauncher.Tests;
 
@@ -11,7 +12,7 @@ public class TestAutomapperConfiguration
         Exception? thrownException = null;
         try
         {
-            var configuration = MapperConfigurationFactory.GetMapperConfiguration(t => Activator.CreateInstance(t)!);
+            var configuration = MapperConfigurationFactory.GetMapperConfiguration(Substitute.For<ILoggerFactory>(), t => Activator.CreateInstance(t)!);
             configuration.AssertConfigurationIsValid();
         }
         catch (Exception e)

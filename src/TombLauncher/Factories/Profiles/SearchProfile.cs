@@ -23,7 +23,8 @@ public class SearchProfile : Profile
             .ForMember(vm => vm.InstallProgress, m => m.Ignore())
             .ForMember(vm => vm.InstalledGame, m => m.Ignore())
             .ForMember(vm => vm.IsNewlyAdded, m => m.Ignore())
-            .ForMember(vm => vm.IsRecentlyUpdated, m => m.Ignore());
+            .ForMember(vm => vm.IsRecentlyUpdated, m => m.Ignore())
+            .ForMember(vm => vm.SourceMenuItems, opt => opt.Ignore());
         CreateMap<MultiSourceGameSearchResultMetadataViewModel, IMergedGameSearchResultMetadata>()
             .ConstructUsing(vm => new MergedGameSearchResultDto());
         CreateMap<MultiSourceGameSearchResultMetadataViewModel, GameSearchResultMetadataDto>();

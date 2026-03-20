@@ -18,7 +18,7 @@ public class EfRepository<T> : IRepository<T> where T : class
         return Get();
     }
     
-    public IQueryable<T> Get(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "")
+    public IQueryable<T> Get(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string includeProperties = "")
     {
         IQueryable<T> query = _dbSet;
         if (filter != null)
@@ -27,7 +27,7 @@ public class EfRepository<T> : IRepository<T> where T : class
         }
         
         foreach (var includeProperty in includeProperties.Split
-                     (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                     ([','], StringSplitOptions.RemoveEmptyEntries))
         {
             query = query.Include(includeProperty);
         }
@@ -40,7 +40,7 @@ public class EfRepository<T> : IRepository<T> where T : class
         return query;
     }
 
-    public T GetEntityById(int id)
+    public T? GetEntityById(int id)
     {
         return _dbSet.Find(id);
     }

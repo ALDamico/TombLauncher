@@ -12,7 +12,7 @@ public class MergedGameSearchResultDto : IMergedGameSearchResultMetadata
     public string Title { get; set; } = string.Empty;
     public GameDifficulty Difficulty { get; set; }
     public GameLength Length { get; set; }
-    public string Setting { get; set; } = string.Empty;
+    public string? Setting { get; set; }
     public GameEngine Engine { get; set; }
     public string? DetailsLink { get; set; }
     public string BaseUrl { get; set; } = string.Empty;
@@ -20,7 +20,7 @@ public class MergedGameSearchResultDto : IMergedGameSearchResultMetadata
     public string? TitlePic { get; set; }
     public string? ReviewsLink { get; set; }
     public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
-    public string DownloadLink { get; set; } = string.Empty;
+    public string? DownloadLink { get; set; }
     public string? WalkthroughLink { get; set; }
     public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
     public int? SizeInMb { get; set; }

@@ -331,6 +331,16 @@
     <system:String x:Key="FAVOURITE_GAMES">Giochi preferiti</system:String>
     <system:String x:Key="WELCOME_SUBTITLE">Un gestore per i livelli Tomb Raider Level Editor</system:String>
     <system:String x:Key="WHATS_NEW">Novità</system:String>
+    <system:String x:Key="CHANGELOG_LOADING">Caricamento novità in corso...</system:String>
+    <system:String x:Key="CHANGELOG_LOAD_FAILED">Impossibile recuperare il changelog.</system:String>
+    <system:String x:Key="UPDATE_AVAILABLE_TITLE">Aggiornamento disponibile</system:String>
+    <system:String x:Key="NEW_VERSION_AVAILABLE">La versione {0} è ora disponibile</system:String>
+    <system:String x:Key="SKIP_THIS_VERSION">Salta questa versione</system:String>
+    <system:String x:Key="REMIND_ME_LATER">Ricordamelo più tardi</system:String>
+    <system:String x:Key="INSTALL_UPDATE">Installa aggiornamento</system:String>
+    <system:String x:Key="DOWNLOADING_UPDATE">Download in corso…</system:String>
+    <system:String x:Key="INSTALL_AND_RELAUNCH">Installa e riavvia</system:String>
+    <system:String x:Key="UPDATE_SIGNATURE_VERIFY_ERROR">Impossibile verificare il file scaricato.</system:String>
     <system:String x:Key="WELCOME_PAGE">Pagina di benvenuto</system:String>
     <system:String x:Key="SHOW_QUICK_STATS">Mostra statistiche rapide</system:String>
     <system:String x:Key="SHOW_QUICK_ACTIONS">Mostra azioni rapide</system:String>

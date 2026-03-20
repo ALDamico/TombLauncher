@@ -19,7 +19,7 @@ public class NotificationService
         GenericDismissNotificationCmd = new AsyncRelayCommand<NotificationViewModel>(DismissNotification);
     }
 
-    private NotificationListViewModel _notificationListViewModel;
+    private readonly NotificationListViewModel _notificationListViewModel;
 
     public async Task AddNotificationAsync(NotificationViewModel notificationViewModel)
     {
@@ -28,11 +28,6 @@ public class NotificationService
         {
             _notificationListViewModel.Notifications.Add(notificationViewModel);
         });
-    }
-
-    public void AddNotification(NotificationViewModel notificationViewModel)
-    {
-        AddNotificationAsync(notificationViewModel).GetAwaiter().GetResult();
     }
 
     public async Task AddErrorNotificationAsync(string title, string errorMessage, PackIconRemixIconKind icon)

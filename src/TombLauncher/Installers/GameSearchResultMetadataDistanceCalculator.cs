@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Fastenshtein;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Extensions;
-using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers;
 
@@ -13,6 +9,8 @@ public class GameSearchResultMetadataDistanceCalculator
 {
     private string[] GetAuthorsArray(IGameSearchResultMetadata searchResult)
     {
+        if (searchResult.Author == null) 
+            return [];
         return searchResult.Author.Split(',', StringSplitOptions.TrimEntries|StringSplitOptions.RemoveEmptyEntries);
     }
     public double Calculate(IGameSearchResultMetadata x, IGameSearchResultMetadata y)
