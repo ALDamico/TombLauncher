@@ -27,7 +27,7 @@ public class GameDataService
 
     public async Task UpsertGame(IGameMetadata game)
     {
-        Game entity;
+        Game? entity;
         if (game.Id == 0)
         {
             entity = _mapper.Map<Game>(game);
@@ -35,7 +35,11 @@ public class GameDataService
         }
         else
         {
-            entity = _dbContext.Games.Find(game.Id)!;
+            if (game.InstallDirectory.IsNullOrWhiteSpace())
+                throw new InvalidOperationException("Attempting to insert a game with an unknown install directory!");
+            entity = await _dbContext.Games.FindAsync(game.Id);
+            if (entity == null)
+                throw new InvalidOperationException($"Game with id {game.Id} not found!");
             entity.Author = game.Author;
             entity.Description = game.Description;
             entity.Difficulty = game.Difficulty;
@@ -46,7 +50,7 @@ public class GameDataService
             entity.Title = game.Title;
             entity.GameEngine = game.GameEngine;
             entity.InstallDate = game.InstallDate;
-            entity.InstallDirectory = game.InstallDirectory;
+            entity.InstallDirectory = game.InstallDirectory!; // If we've reached this point, InstallDirectory HAS to be 
             entity.IsInstalled = game.IsInstalled;
             entity.ReleaseDate = game.ReleaseDate;
             entity.TitlePic = game.TitlePic;
@@ -137,7 +141,7 @@ public class GameDataService
     public GameWithStatsDto? GetLatestPlayedGame()
     {
         var playSessionsQuery = _dbContext.PlaySession
-            .Include(ps => ps.Game).ThenInclude(g => g.FileBackups);
+            .Include(ps => ps.Game).ThenInclude(g => g!.FileBackups);
         var entity = playSessionsQuery
             .FirstOrDefault(ps => ps.StartDate == playSessionsQuery.Max(p => p.StartDate));
 
@@ -160,7 +164,7 @@ public class GameDataService
     public List<GameWithStatsDto> GetRecentlyPlayedGames(int count)
     {
         var playSessions = _dbContext.PlaySession
-            .Include(ps => ps.Game).ThenInclude(g => g.FileBackups)
+            .Include(ps => ps.Game).ThenInclude(g => g!.FileBackups)
             .AsEnumerable()
             .GroupBy(ps => ps.GameId)
             .Select(g => new
@@ -205,13 +209,13 @@ public class GameDataService
                 });
 
         return favouriteGames
-            .OrderByDescending(g => playSessionStats.ContainsKey(g.Id) ? playSessionStats[g.Id].LastPlayed : DateTime.MinValue)
+            .OrderByDescending(g => playSessionStats.TryGetValue(g.Id, out var stat) ? stat.LastPlayed : DateTime.MinValue)
             .Take(count)
             .Select(g => new GameWithStatsDto
             {
                 GameMetadata = _mapper.Map<GameMetadataDto>(g),
-                LastPlayed = playSessionStats.ContainsKey(g.Id) ? playSessionStats[g.Id].LastPlayed : null,
-                TotalPlayedTime = playSessionStats.ContainsKey(g.Id) ? playSessionStats[g.Id].TotalPlayedTime : TimeSpan.Zero
+                LastPlayed = playSessionStats.TryGetValue(g.Id, out var sessionStat) ? sessionStat.LastPlayed : null,
+                TotalPlayedTime = playSessionStats.TryGetValue(g.Id, out var playSessionStat) ? playSessionStat.TotalPlayedTime : TimeSpan.Zero
             }).ToList();
     }
 
@@ -228,7 +232,7 @@ public class GameDataService
             .Where(b => b.GameId == launchOptionsDto.GameId)
             .Where(b => targetFileTypes.Contains(b.FileType));
 
-        var gameToUpdate = _dbContext.Games.Find(launchOptionsDto.GameId)!;
+        var gameToUpdate = (await _dbContext.Games.FindAsync(launchOptionsDto.GameId))!;
         gameToUpdate.GameEngine = launchOptionsDto.GameEngine;
         _dbContext.Games.Update(gameToUpdate);
 

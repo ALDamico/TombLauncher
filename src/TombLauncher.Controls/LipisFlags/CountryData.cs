@@ -2,7 +2,7 @@
 
 public class CountryData
 {
-    private static readonly Dictionary<string, string> _englishNameByIso2 =
+    private static readonly Dictionary<string, string> EnglishNameByIso2 =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             // NOTE FamFamFam Flags includes images for non-ISO 3166-1 entities: an, catalonia, cs, en, eu, scotland, wales
@@ -263,13 +263,13 @@ public class CountryData
     /// <summary>
     /// Returns an enumerable set of country ids supported by this set of flags.
     /// </summary>
-    public static IEnumerable<string> AllCountryIds => _englishNameByIso2.Keys;
+    public static IEnumerable<string> AllCountryIds => EnglishNameByIso2.Keys;
 
     /// <summary>
     /// Returns data for all countries that have flag images.
     /// </summary>
     public static IEnumerable<CountryData> AllCountries =>
-        _englishNameByIso2.Select(pair => new CountryData(pair.Key, pair.Value));
+        EnglishNameByIso2.Select(pair => new CountryData(pair.Key, pair.Value));
 
     /// <summary>
     /// Look up the name of the country identified by <paramref name="iso2"/>.
@@ -277,7 +277,7 @@ public class CountryData
     /// <param name="iso2">The ISO 3166-1 alpha-2 country code to look up.</param>
     /// <param name="name">The country name.</param>
     /// <returns><c>true</c> if the name was found, otherwise <c>false</c>.</returns>
-    public static bool TryGetName(string iso2, out string name) => _englishNameByIso2.TryGetValue(iso2, out name);
+    public static bool TryGetName(string iso2, out string? name) => EnglishNameByIso2.TryGetValue(iso2, out name);
 
     /// <summary>
     /// The country's identifier, according to ISO 3166-1 alpha-2.

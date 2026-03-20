@@ -47,11 +47,11 @@ public partial class ImagePicker : UserControl
         }); // TODO Make this a prop
         if (selectedFile.IsNotNullOrWhiteSpace())
         {
-            var newValue = new Bitmap(selectedFile);
+            var newValue = new Bitmap(selectedFile!);
             var oldValue = Source;
             Source = newValue;
             
-            OnPropertyChanged(new AvaloniaPropertyChangedEventArgs<IImage>(this, SourceProperty, new Optional<IImage>(oldValue), new BindingValue<IImage>(newValue), BindingPriority.Inherited));
+            OnPropertyChanged(new AvaloniaPropertyChangedEventArgs<IImage>(this, SourceProperty!, new Optional<IImage>(oldValue!), new BindingValue<IImage>(newValue), BindingPriority.Inherited));
         }
     }
     
@@ -61,7 +61,7 @@ public partial class ImagePicker : UserControl
         set => SetValue(DialogServiceProperty, value);
     }
 
-    public IImage Source
+    public IImage? Source
     {
         get => GetValue(SourceProperty);
         set => SetValue(SourceProperty, value);
@@ -69,6 +69,6 @@ public partial class ImagePicker : UserControl
 
     public static readonly StyledProperty<IDialogService> DialogServiceProperty =
         AvaloniaProperty.Register<ImagePicker, IDialogService>(nameof(DialogService));
-    public static readonly StyledProperty<IImage> SourceProperty =
-        AvaloniaProperty.Register<Image, IImage>(nameof(Source), default, true, BindingMode.TwoWay);
+    public static readonly StyledProperty<IImage?> SourceProperty =
+        AvaloniaProperty.Register<Image, IImage?>(nameof(Source), null, true, BindingMode.TwoWay);
 }

@@ -1,6 +1,4 @@
 using System.Globalization;
-using System.IO;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
@@ -12,12 +10,10 @@ namespace TombLauncher.Data.Database.Services;
 public class StatisticsDataService
 {
     private readonly TombLauncherDbContext _dbContext;
-    private readonly IMapper _mapper;
 
-    public StatisticsDataService(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration)
+    public StatisticsDataService(TombLauncherDbContext dbContext)
     {
         _dbContext = dbContext;
-        _mapper = mapperConfiguration.CreateMapper();
     }
 
     public async Task<StatisticsDto> GetStatistics()
@@ -96,7 +92,7 @@ public class StatisticsDataService
         foreach (var game in games)
         {
             var installDirectory = game.InstallDirectory;
-            var directorySize = 0L;
+            long directorySize;
             if (Directory.Exists(installDirectory))
             {
                 directorySize = PathUtils.GetDirectorySize(installDirectory);
@@ -122,10 +118,10 @@ public class StatisticsDataService
     {
         if (groupedByGame.Count == 0)
             return null;
-        var mostPlaySessions = groupedByGame.MaxBy(g => g.Count());
+        var mostPlaySessions = groupedByGame.MaxBy(g => g.Count())!;
         var mostPlayed = new GameStatisticsDto()
         {
-            Title = mostPlaySessions!.First().Game.Title,
+            Title = mostPlaySessions!.First().Game!.Title,
             TotalSessions = (uint)mostPlaySessions.Count(),
             Id = mostPlaySessions.First().GameId
         };
@@ -146,7 +142,7 @@ public class StatisticsDataService
             return null;
         return new GameStatisticsDto()
         {
-            Title = longest.Game.Title,
+            Title = longest.Game!.Title,
             LastPlayed = longest.StartDate,
             LastPlayedEnd = longest.EndDate,
             Id = longest.GameId
@@ -161,7 +157,7 @@ public class StatisticsDataService
 
         return new GameStatisticsDto()
         {
-            Title = latestSession.Game.Title,
+            Title = latestSession.Game!.Title,
             LastPlayed = latestSession.StartDate,
             Id = latestSession.GameId
         };

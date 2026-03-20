@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -112,7 +111,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
         var dictified = RequestUtils.DictifyRequest(request);
 
         var tags = await GetPagedResponse<LevelTagResponse>("level_tags", dictified, cancellationToken);
-        return tags?.Results?.ToDictionary(t => t.Name?.ToUpperInvariant() ?? string.Empty, t => t) ?? new Dictionary<string, LevelTagResponse>();
+        return tags.Results.ToDictionary(t => t.Name?.ToUpperInvariant() ?? string.Empty, t => t) ?? new Dictionary<string, LevelTagResponse>();
     }
 
     private async Task<Dictionary<string, LevelGenreResponse>> FetchGenres(CancellationToken cancellationToken)
@@ -326,7 +325,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
         IProgress<DownloadProgressInfo> downloadProgress,
         CancellationToken cancellationToken)
     {
-        await HttpClient.DownloadAsync(metadata.DownloadLink, stream, downloadProgress, cancellationToken);
+        await HttpClient.DownloadAsync(metadata.DownloadLink!, stream, downloadProgress, cancellationToken);
     }
 
     public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken)
@@ -342,7 +341,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
             ReleaseDate = game.ReleaseDate,
             AuthorFullName = game.AuthorFullName ?? string.Empty,
             TitlePic = game.TitlePic != null ? await HttpClient.GetByteArrayAsync(game.TitlePic!, cancellationToken) : Array.Empty<byte>(),
-            Title = game.Title ?? string.Empty,
+            Title = game.Title,
         };
     }
 

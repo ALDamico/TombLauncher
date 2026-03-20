@@ -6,7 +6,7 @@ public interface IGameMetadata
 {
     int Id { get; set; }
     string Title { get; set; }
-    string Author { get; set; }
+    string? Author { get; set; }
     DateTime? ReleaseDate { get; set; }
     DateTime? InstallDate { get; set; }
     GameEngine GameEngine { get; set; }

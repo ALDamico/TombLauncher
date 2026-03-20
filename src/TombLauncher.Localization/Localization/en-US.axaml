@@ -17,6 +17,8 @@
     <system:String x:Key="ZIP_FILES">ZIP files</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Select a folder</system:String>
     <system:String x:Key="INSTALLING_GAMENAME">Installing {0}...</system:String>
+    <system:String x:Key="VERIFYING_DOWNLOAD">Verifying download...</system:String>
+    <system:String x:Key="FETCHING_GAME_DETAILS">Fetching game details...</system:String>
     <system:String x:Key="THE_SAME_MOD_IS_ALREADY_INSTALLED">The same mod is already installed</system:String>
     <system:String x:Key="THE_SAME_MOD_IS_ALREADY_INSTALLED_TEXT">The same mod seems to be already installed. Press OK to keep installing, or Cancel to abort</system:String>
     <system:String x:Key="CANCEL">Cancel</system:String>
@@ -332,6 +334,16 @@
     <system:String x:Key="FAVOURITE_GAMES">Favourite games</system:String>
     <system:String x:Key="WELCOME_SUBTITLE">A Tomb Raider Level Editor manager</system:String>
     <system:String x:Key="WHATS_NEW">What's new</system:String>
+    <system:String x:Key="CHANGELOG_LOADING">Loading changelog...</system:String>
+    <system:String x:Key="CHANGELOG_LOAD_FAILED">Could not retrieve the changelog.</system:String>
+    <system:String x:Key="UPDATE_AVAILABLE_TITLE">Update Available</system:String>
+    <system:String x:Key="NEW_VERSION_AVAILABLE">Version {0} is now available</system:String>
+    <system:String x:Key="SKIP_THIS_VERSION">Skip This Version</system:String>
+    <system:String x:Key="REMIND_ME_LATER">Remind Me Later</system:String>
+    <system:String x:Key="INSTALL_UPDATE">Install Update</system:String>
+    <system:String x:Key="DOWNLOADING_UPDATE">Downloading update…</system:String>
+    <system:String x:Key="INSTALL_AND_RELAUNCH">Install &amp; Relaunch</system:String>
+    <system:String x:Key="UPDATE_SIGNATURE_VERIFY_ERROR">The downloaded file could not be verified.</system:String>
     <system:String x:Key="WELCOME_PAGE">Welcome page</system:String>
     <system:String x:Key="SHOW_QUICK_STATS">Show quick stats</system:String>
     <system:String x:Key="SHOW_QUICK_ACTIONS">Show quick actions</system:String>

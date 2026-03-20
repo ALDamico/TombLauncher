@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
-
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using IconPacks.Avalonia.RemixIcon;
 using Microsoft.Extensions.Logging;
@@ -78,16 +77,20 @@ public class GameSearchResultService : IViewService
     private NotificationViewModel? _notificationViewModel;
     private IGameSearchResultMetadata? _preferredSource;
 
-    public bool CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
+    public async Task<bool> CanInstall(MultiSourceGameSearchResultMetadataViewModel obj)
     {
         if (obj.DownloadLink.IsNullOrWhiteSpace())
             return false;
-        var links = obj.Sources.Select(s => s.DownloadLink).Where(downloadLink => downloadLink.IsNotNullOrWhiteSpace()).ToList();
+        var links = obj.Sources
+            .Select(s => s.DownloadLink).Where(downloadLink => downloadLink.IsNotNullOrWhiteSpace())
+            .Cast<string>()
+            .ToList();
         if (links.Count == 0)
         {
             return false;
         }
-        var gameDto = _gameLinkDataService.GetGameByLinks(LinkType.Download, links).GetAwaiter().GetResult();
+
+        var gameDto = await _gameLinkDataService.GetGameByLinks(LinkType.Download, links);
         return gameDto is not { IsInstalled: true };
     }
 
@@ -114,8 +117,7 @@ public class GameSearchResultService : IViewService
                     new Progress<DownloadProgressInfo>(
                         p =>
                         {
-                            _installProgress.IsDownloading = true;
-                            _installProgress.IsInstalling = false;
+                            _installProgress.InstallStatus = InstallStatus.Downloading;
                             _installProgress.Message = "Downloading...";
                             _installProgress.TotalBytes = p.TotalBytes;
                             _installProgress.CurrentBytes = p.BytesDownloaded;
@@ -144,10 +146,13 @@ public class GameSearchResultService : IViewService
         if (!await EnsureDownloadPathNotNull(gameToInstall))
             return;
 
+        _installProgress.InstallStatus = InstallStatus.Indeterminate;
+        _installProgress.Message = LocalizationManager.GetLocalizedString("VERIFYING_DOWNLOAD");
         var hashes = await _hashCalculator.CalculateHashes(_downloadPath!);
         if (await CheckGameAlreadyInstalled(gameToInstall, hashes))
             return;
 
+        _installProgress.Message = LocalizationManager.GetLocalizedString("FETCHING_GAME_DETAILS");
         var allDetails = await _gameDownloadManager.FetchAllDetails( _settingsProvider.GetActiveDownloaders(), gameToInstallDto);
         var dto = await _gameDownloadManager.FetchDetails(gameToInstallDto);
         if (dto == null)
@@ -180,8 +185,7 @@ public class GameSearchResultService : IViewService
                 new Progress<CopyProgressInfo>(a =>
                 {
                     if (_installProgress == null) return;
-                    _installProgress.IsDownloading = false;
-                    _installProgress.IsInstalling = true;
+                    _installProgress.InstallStatus = InstallStatus.Installing;
                     _installProgress.Message = "Installing...";
                     _installProgress.InstallPercentage = a.Percentage.GetValueOrDefault();
                     _installProgress.CurrentFileName = a.CurrentFileName ?? string.Empty;
@@ -213,19 +217,14 @@ public class GameSearchResultService : IViewService
             if (_installProgress != null)
             {
                 _installProgress.Message = $"Install cancelled";
-                _installProgress.IsDownloading = false;
-                _installProgress.IsInstalling = false;
-                _installProgress.ProcessStarted = false;
+                _installProgress.InstallStatus = InstallStatus.Canceled;
             }
             return;
         }
 
         if (_installProgress != null)
         {
-            _installProgress.IsInstalling = false;
-            _installProgress.IsDownloading = false;
-            _installProgress.ProcessStarted = false;
-            _installProgress.InstallCompleted = true;
+            _installProgress.InstallStatus = InstallStatus.Completed;
             _installProgress.Message = "Install complete";
         }
         if (_notificationViewModel != null)
@@ -233,7 +232,6 @@ public class GameSearchResultService : IViewService
             _notificationViewModel.IsCancelable = false;
             _notificationViewModel.IsDismissable = true;
         }
-
 
         await AfterInstallCleanup();
         gameToInstall.InstalledGame =
@@ -273,25 +271,28 @@ public class GameSearchResultService : IViewService
             if (result.ButtonResult == MsgBoxButtonResult.No)
             {
                 _logger.LogInformation("Won't install already existing game {GameTitle}", gameToInstall.Title);
-                await _gameLinkDataService.SaveLink(new GameLinkDto()
+                var linksToSave = new List<GameLinkDto>()
                 {
-                    Link = gameToInstall.DownloadLink,
-                    LinkType = LinkType.Download,
-                    GameId = gameId,
-                    BaseUrl = gameToInstall.BaseUrl,
-                    DisplayName = gameToInstall.SourceSiteDisplayName
-                });
-                await _gameLinkDataService.SaveLink(new GameLinkDto()
-                {
-                    Link = gameToInstall.DetailsLink,
-                    LinkType = LinkType.Details,
-                    GameId = gameId,
-                    BaseUrl = gameToInstall.BaseUrl,
-                    DisplayName = gameToInstall.SourceSiteDisplayName
-                });
+                    new()
+                    {
+                        Link = gameToInstall.DownloadLink,
+                        LinkType = LinkType.Download,
+                        GameId = gameId,
+                        BaseUrl = gameToInstall.BaseUrl,
+                        DisplayName = gameToInstall.SourceSiteDisplayName
+                    },
+                    new()
+                    {
+                        Link = gameToInstall.DetailsLink,
+                        LinkType = LinkType.Details,
+                        GameId = gameId,
+                        BaseUrl = gameToInstall.BaseUrl,
+                        DisplayName = gameToInstall.SourceSiteDisplayName
+                    }
+                };
                 if (gameToInstall.HasReviews)
                 {
-                    await _gameLinkDataService.SaveLink(new GameLinkDto()
+                    linksToSave.Add(new GameLinkDto()
                     {
                         Link = gameToInstall.ReviewsLink,
                         LinkType = LinkType.Reviews,
@@ -303,7 +304,7 @@ public class GameSearchResultService : IViewService
 
                 if (gameToInstall.HasWalkthrough)
                 {
-                    await _gameLinkDataService.SaveLink(new GameLinkDto()
+                    linksToSave.Add(new GameLinkDto()
                     {
                         Link = gameToInstall.WalkthroughLink,
                         LinkType = LinkType.Walkthrough,
@@ -312,6 +313,8 @@ public class GameSearchResultService : IViewService
                         DisplayName = gameToInstall.SourceSiteDisplayName
                     });
                 }
+
+                await _gameLinkDataService.SaveLinks(linksToSave, _cancellationTokenSource.Token);
 
                 return true;
             }
@@ -355,9 +358,7 @@ public class GameSearchResultService : IViewService
                 if (_installProgress != null)
                 {
                     _installProgress.Message = $"Download cancelled";
-                    _installProgress.IsDownloading = false;
-                    _installProgress.IsInstalling = false;
-                    _installProgress.ProcessStarted = false;
+                    _installProgress.InstallStatus = InstallStatus.Canceled;
                 }
                 if (_notificationViewModel != null)
                 {
@@ -374,7 +375,7 @@ public class GameSearchResultService : IViewService
                         return Task.CompletedTask;
                     return _gameWithStatsService.PlayGame(dto.Id);
                 },
-                (dto) => dto?.Id != null && _installProgress?.InstallCompleted == true)
+                (dto) => dto?.Id != null && _installProgress?.InstallStatus == InstallStatus.Completed)
         };
         await _notificationService.AddNotificationAsync(_notificationViewModel);
     }
@@ -391,23 +392,21 @@ public class GameSearchResultService : IViewService
 
     private async Task<int> SaveLinks(IMergedGameSearchResultMetadata allDetails, IGameMetadata dto, string? actualDownloadLink)
     {
-        var installedFromLinkId = 0;
+        var linksToSave = new List<GameLinkDto>();
         foreach (var detail in allDetails.Sources)
         {
-            var linkId = await _gameLinkDataService.SaveLink(new GameLinkDto()
+            linksToSave.Add(new GameLinkDto()
             {
-                Link = detail.DownloadLink,
+                Link = detail.DownloadLink!,
                 LinkType = LinkType.Download,
                 GameId = dto.Id,
                 BaseUrl = detail.BaseUrl,
                 DisplayName = detail.SourceSiteDisplayName
             });
-            if (detail.DownloadLink == actualDownloadLink)
-                installedFromLinkId = linkId;
 
             if (detail.DetailsLink.IsNotNullOrWhiteSpace())
             {
-                await _gameLinkDataService.SaveLink(new GameLinkDto()
+                linksToSave.Add(new GameLinkDto()
                 {
                     Link = detail.DetailsLink!,
                     LinkType = LinkType.Details,
@@ -418,7 +417,7 @@ public class GameSearchResultService : IViewService
             }
             if (detail.HasReviews && detail.ReviewsLink.IsNotNullOrWhiteSpace())
             {
-                await _gameLinkDataService.SaveLink(new GameLinkDto()
+                linksToSave.Add(new GameLinkDto()
                 {
                     Link = detail.ReviewsLink!,
                     LinkType = LinkType.Reviews,
@@ -430,7 +429,7 @@ public class GameSearchResultService : IViewService
 
             if (detail.HasWalkthrough && detail.WalkthroughLink.IsNotNullOrWhiteSpace())
             {
-                await _gameLinkDataService.SaveLink(new GameLinkDto()
+                linksToSave.Add(new GameLinkDto()
                 {
                     Link = detail.WalkthroughLink!,
                     LinkType = LinkType.Walkthrough,
@@ -440,7 +439,16 @@ public class GameSearchResultService : IViewService
                 });
             }
         }
-        return installedFromLinkId;
+
+        var savedLinks = await _gameLinkDataService.SaveLinks(linksToSave, _cancellationTokenSource.Token);
+
+        var downloadLinkDto = savedLinks.FirstOrDefault(l => l.Link == actualDownloadLink);
+        if (downloadLinkDto == null)
+        {
+            throw new InvalidOperationException($"Game link {actualDownloadLink} not saved to database!");
+        }
+
+        return downloadLinkDto.Id;
     }
 
     public async Task CancelInstall()
@@ -450,15 +458,10 @@ public class GameSearchResultService : IViewService
         if (_installProgress != null)
         {
             _installProgress.Message = $"Download cancelled";
-            _installProgress.IsDownloading = false;
-            _installProgress.IsInstalling = false;
-            _installProgress.ProcessStarted = false;
+            _installProgress.InstallStatus = InstallStatus.Canceled;
         }
         _cancellationTokenSource = new CancellationTokenSource();
-        if (_notificationViewModel != null)
-        {
-            _notificationViewModel.IsOpenable = false;
-        }
+        _notificationViewModel?.IsOpenable = false;
 
         await AfterInstallCleanup();
         _logger.LogInformation("Installation canceled");

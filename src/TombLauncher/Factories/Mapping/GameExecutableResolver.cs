@@ -4,6 +4,7 @@ using AutoMapper;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Factories.Mapping;
@@ -55,7 +56,7 @@ public class GameFileBackupsResolver : IValueResolver<GameMetadataDto, Game, Lis
             {
                 GameId = source.Id,
                 FileName = source.ExecutablePath ?? string.Empty,
-                FileType = FileType.GameExecutable
+                FileType = FileType.GameExecutable,
             };
             destination.FileBackups.Add(gameExecutable);
         }

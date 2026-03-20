@@ -1,7 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp;
+using AngleSharp.Dom;
+using AngleSharp.Io;
+using AngleSharp.XPath;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input.Platform;
@@ -10,6 +16,7 @@ using LiveChartsCore;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
 using TombLauncher.Core.PlatformSpecific;
+using AngleSharpConfig = AngleSharp.Configuration;
 
 namespace TombLauncher.Utils;
 
@@ -60,5 +67,54 @@ public static class AppUtils
         }
 
         return platformSpecificFeatures;
+    }
+
+    public static async Task<IDocument> OpenDocumentFromContent(string content, CancellationToken cancellationToken)
+    {
+        var config = AngleSharpConfig.Default.WithXPath().WithDefaultLoader();
+        var browsingContext = BrowsingContext.New(config);
+        return await browsingContext.OpenAsync(req => req.Content(content), cancellationToken);
+    }
+
+    public static async Task<IDocument> OpenDocument(string url, CancellationToken cancellationToken)
+    {
+        var config = AngleSharpConfig.Default.WithXPath().WithDefaultLoader();
+        var browsingContext = BrowsingContext.New(config);
+        return await browsingContext.OpenAsync(url, cancellationToken);
+    }
+
+    public static INode? SelectSingleNodeFromElement(this INode? node, string xpath, bool ignoreNamespaces = true)
+    {
+        return (node as IElement)?.SelectSingleNode(xpath, ignoreNamespaces);
+    }
+
+    public static List<INode> SelectNodesFromElement(this INode? node, string xpath, bool ignoreNamespaces = true)
+    {
+        return (node as IElement)?.SelectNodes(xpath, ignoreNamespaces) ?? [];
+    }
+
+    public static INamedNodeMap? GetAttributes(this INode? node)
+    {
+        return (node as IElement)?.Attributes;
+    }
+
+    public static bool HasClass(this INode? node, string className)
+    {
+        return (node as IElement)?.ClassList.Contains(className) ?? false;
+    }
+
+    public static string? GetAttributeValue(this INode? node, string attrName)
+    {
+        return node.GetAttributes()?[attrName]?.Value;
+    }
+
+    public static string? GetInnerHtml(this INode? node)
+    {
+        return (node as IElement)?.InnerHtml;
+    }
+
+    public static string GetInnerHtmlOrEmpty(this INode? node)
+    {
+        return node.GetInnerHtml() ?? "";
     }
 }

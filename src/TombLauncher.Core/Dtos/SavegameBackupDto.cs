@@ -12,7 +12,7 @@ public class SavegameBackupDto
     public int GameId { get; set; }
     public required string Md5 { get; set; }
     public int SlotNumber { get; set; }
-    public int SaveNumber { get; set; }
+    public int? SaveNumber { get; set; }
     public required string LevelName { get; set; }
     public int MetadataId { get; set; }
     public GameEngine GameEngine { get; set; }

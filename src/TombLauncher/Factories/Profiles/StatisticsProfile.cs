@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using AutoMapper;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.ViewModels;
@@ -36,6 +37,6 @@ internal class StatisticsProfile : Profile
             .ForMember(m => m.UpdateStartOfLevelStateCmd, opt => opt.Ignore())
             .ForMember(m => m.DeleteSavegameCmd, opt => opt.Ignore())
             .ForMember(m => m.RestoreSavegameCmd, opt => opt.Ignore())
-            .ForMember(m => m.Length, opt => opt.MapFrom(vm => vm.Data.Length));
+            .ForMember(m => m.Length, opt => opt.MapFrom(vm => vm.Data != null ? vm.Data.Length : 0));
     }
 }

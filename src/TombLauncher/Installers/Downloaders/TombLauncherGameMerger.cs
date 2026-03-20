@@ -1,15 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Data.Models;
-using TombLauncher.Services;
-using TombLauncher.ViewModels;
 
 namespace TombLauncher.Installers.Downloaders;
 
@@ -29,9 +23,9 @@ public class TombLauncherGameMerger : IGameMerger
         {
             var matching = addedElements.Select(e => new { Score = Comparer.Calculate(element, e), Element = e })
                 .Where(e => e.Score <= 0.25)
-                .GroupBy(e => e.Score)
-                .MinBy(e => e.Key)?.Select(e => e.Element);
-            if (matching == null) continue;
+                .Select(e => e.Element)
+                .ToList();
+            if (matching.IsNullOrEmpty()) continue;
             mergedCount++;
             foreach (var match in matching)
             {

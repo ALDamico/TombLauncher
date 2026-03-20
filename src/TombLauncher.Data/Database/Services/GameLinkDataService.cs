@@ -25,27 +25,45 @@ public class GameLinkDataService
         return _mapper.Map<List<GameLinkDto>>(query.ToList());
     }
 
-    public async Task<int> SaveLink(GameLinkDto dto)
+    public async Task<List<GameLinkDto>> SaveLinks(List<GameLinkDto> links, CancellationToken cancellationToken)
     {
-        if (dto.Id != 0) return dto.Id;
-
-        var entity = await _dbContext.GameLink
-            .Where(l => l.Link == dto.Link && l.LinkType == dto.LinkType && l.BaseUrl == dto.BaseUrl)
-            .FirstOrDefaultAsync();
-
-        if (entity == null)
+        var upserted = new List<GameLink>();
+        var linkValues = links.Select(l => l.Link).ToList();
+        var existingLinks = await _dbContext.GameLink
+            .Where(gl => linkValues.Contains(gl.Link))
+            .ToListAsync(cancellationToken);
+        var entities = links
+            .GroupJoin(existingLinks, dto => new { dto.Link, dto.LinkType, dto.BaseUrl },
+                gl => new { gl.Link, gl.LinkType, gl.BaseUrl }, (dto, link) => (dto, link)).ToList();
+        foreach (var kvp in entities)
         {
-            entity = _mapper.Map<GameLink>(dto);
-            _dbContext.GameLink.Add(entity);
-        }
-        else
-        {
-            _mapper.Map(dto, entity);
-            _dbContext.GameLink.Update(entity);
-        }
+            var link = kvp.link.FirstOrDefault();
+            var dto = kvp.dto;
+            if (link == null)
+            {
+                link = new GameLink()
+                {
+                    BaseUrl = dto.BaseUrl,
+                    Link = dto.Link,
+                    DisplayName = dto.DisplayName,
+                    LinkType = dto.LinkType,
+                    GameId = dto.GameId
+                };
+                _dbContext.GameLink.Add(link);
+            }
+            else
+            {
+                link.Link = dto.Link;
+                link.BaseUrl = dto.BaseUrl;
+                link.LinkType = dto.LinkType;
+                link.DisplayName = dto.DisplayName;
+                link.GameId = dto.GameId;
+            }
 
-        await _dbContext.SaveChangesAsync();
-        return entity.Id;
+            upserted.Add(link);
+        }
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return _mapper.Map<List<GameLinkDto>>(upserted);
     }
 
     public async Task<GameMetadataDto?> GetGameByLinks(LinkType linkType, List<string> links)

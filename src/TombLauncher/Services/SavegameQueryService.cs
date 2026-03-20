@@ -47,7 +47,7 @@ public class SavegameQueryService
             var headerParser = _headerProvider.GetHeaderReader(targetViewModel.GameEngine);
             foreach (var savegame in knownSavegames)
             {
-                var savegameHeader = headerParser.ReadHeader(savegame.FileName, savegame.Data);
+                var savegameHeader = headerParser.ReadHeader(savegame.FileName, savegame.Data!);
                 var viewModel = new SavegameViewModel()
                 {
                     UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd,
@@ -59,7 +59,7 @@ public class SavegameQueryService
                     SaveNumber = savegameHeader.SaveNumber,
                     IsStartOfLevel = savegame.FileType == FileType.SavegameStartOfLevel,
                     SlotNumber = savegameHeader.SlotNumber,
-                    Length = savegame.Data.LongLength,
+                    Length = savegame.Data!.LongLength,
                     BackedUpOn = savegame.BackedUpOn
                 };
                 observableCollection.Add(viewModel);
@@ -151,7 +151,7 @@ public class SavegameQueryService
             existingGamesDict[md5] = savegameFile;
         }
 
-        var backedUpSaves = await _savegameRepository.GetSavegameMd5sByGameId(savegameListView.GameId);
+        var backedUpSaves = await _savegameRepository.GetSavegameMd5HashesByGameId(savegameListView.GameId);
         var missingSaveGames = existingGamesDict.Keys.Except(backedUpSaves).Intersect(existingGamesDict.Keys).ToList();
         if (missingSaveGames.Count == 0)
         {
@@ -172,22 +172,19 @@ public class SavegameQueryService
                 foreach (var file in savegames)
                 {
                     var data = headerReader.ReadHeader(file);
-                    if (data != null)
+                    var savegameBytes = await File.ReadAllBytesAsync(file);
+                    var dto = new SavegameBackupDto()
                     {
-                        var savegameBytes = await File.ReadAllBytesAsync(file);
-                        var dto = new SavegameBackupDto()
-                        {
-                            Data = savegameBytes,
-                            FileName = file,
-                            FileType = FileType.Savegame,
-                            BackedUpOn = DateTime.Now,
-                            Md5 = Md5Utils.ComputeMd5Hash(savegameBytes),
-                            LevelName = data.LevelName,
-                            SaveNumber = data.SaveNumber,
-                            SlotNumber = data.SlotNumber
-                        };
-                        dataToBackup.Add(dto);
-                    }
+                        Data = savegameBytes,
+                        FileName = file,
+                        FileType = FileType.Savegame,
+                        BackedUpOn = DateTime.Now,
+                        Md5 = Md5Utils.ComputeMd5Hash(savegameBytes),
+                        LevelName = data.LevelName,
+                        SaveNumber = data.SaveNumber,
+                        SlotNumber = data.SlotNumber
+                    };
+                    dataToBackup.Add(dto);
                 }
 
                 _savegameRepository.BackupSavegames(savegameListView.GameId, savegameListView.GameEngine, dataToBackup, _numberOfVersionsToKeep);
