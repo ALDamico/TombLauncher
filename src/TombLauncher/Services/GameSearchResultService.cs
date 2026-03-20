@@ -233,7 +233,6 @@ public class GameSearchResultService : IViewService
             _notificationViewModel.IsDismissable = true;
         }
 
-
         await AfterInstallCleanup();
         gameToInstall.InstalledGame =
             Mapper.Map<GameWithStatsViewModel>(await _gameDataService.GetGameWithStats(dto.Id));
@@ -404,7 +403,6 @@ public class GameSearchResultService : IViewService
                 BaseUrl = detail.BaseUrl,
                 DisplayName = detail.SourceSiteDisplayName
             });
-            
 
             if (detail.DetailsLink.IsNotNullOrWhiteSpace())
             {
@@ -443,7 +441,6 @@ public class GameSearchResultService : IViewService
         }
 
         var savedLinks = await _gameLinkDataService.SaveLinks(linksToSave, _cancellationTokenSource.Token);
-
 
         var downloadLinkDto = savedLinks.FirstOrDefault(l => l.Link == actualDownloadLink);
         if (downloadLinkDto == null)
