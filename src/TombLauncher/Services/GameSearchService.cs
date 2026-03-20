@@ -26,7 +26,7 @@ public class GameSearchService : IViewService
 {
     public GameSearchService(ViewServiceContext viewContext, GameDownloadManager gameDownloadManager,
         GameLinkDataService gameLinkDataService, GameDataService gameDataService,
-        NotificationService notificationService, GameListService gameListService,
+        NotificationService notificationService,
         ILogger<GameSearchService> logger, ISettingsProvider settingsProvider,
         GameWithStatsService gameWithStatsService)
     {
@@ -69,11 +69,11 @@ public class GameSearchService : IViewService
             var (nextPageResults, _) = await _gameDownloadManager.GetGames(
                 target.LastSearchDownloaders!, target.LastSearchPayload!, nextPage);
 
-            var fetchedResults = await InvokeMerger(target, nextPageResults.SelectMany(r => r.Sources).Cast<IGameSearchResultMetadata>().ToList());
+            var fetchedResults = await InvokeMerger(target, nextPageResults.SelectMany(r => r.Sources).ToList());
 
             var gamesWithStats = await _gameDataService.GetGamesWithStats();
             var gamesByLinks = await
-                _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPageResults.SelectMany(g => g.Sources).Select(s => s.DownloadLink).ToList(), gamesWithStats);
+                _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPageResults.SelectMany(g => g.Sources).Select(s => s.DownloadLink!).ToList(), gamesWithStats);
             foreach (var game in Enumerable.Where(target.FetchedResults, r => r.InstalledGame == null))
             {
                 if (gamesByLinks.TryGetValue(game.DownloadLink, out var dto))
@@ -153,7 +153,7 @@ public class GameSearchService : IViewService
             {
                 var detailsViewModel = Mapper.Map<GameMetadataViewModel>(details);
                 var installedGame = await
-                    _gameLinkDataService.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink).ToList());
+                    _gameLinkDataService.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink!).ToList());
                 if (installedGame != null)
                 {
                     detailsViewModel.InstallDirectory = installedGame.InstallDirectory;
@@ -174,7 +174,6 @@ public class GameSearchService : IViewService
                         currentVm.InstallCmd = gameToOpen.InstallCmd;
                     }
                 }
-                return;
             }
         }
     }
@@ -195,13 +194,14 @@ public class GameSearchService : IViewService
                 target.CurrentPage = 1;
                 target.MaxTotalPages = maxTotalPages ?? 0;
                 var mappedGames = Mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);
-                var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink)
+                var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink!)
                     .Where(s => s.IsNotNullOrWhiteSpace()).ToList();
                 var allGamesWithStats = await _gameDataService.GetGamesWithStats();
                 var installedGames = await _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, downloadLinks, allGamesWithStats);
                 foreach (var game in mappedGames)
                 {
-                    if (game.DownloadLink == null) continue;
+                    if (game.DownloadLink.IsNullOrWhiteSpace()) 
+                        continue;
                     if (installedGames.TryGetValue(game.DownloadLink, out var installedGame))
                     {
                         game.InstalledGame = Mapper.Map<GameWithStatsViewModel>(installedGame);
