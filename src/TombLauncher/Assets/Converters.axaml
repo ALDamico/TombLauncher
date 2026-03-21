@@ -1,6 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+        xmlns:flags="clr-namespace:Lipis.Flags.Avalonia;assembly=Lipis.Flags.Avalonia"
         xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <Styles.Resources>
 
@@ -46,7 +47,7 @@
         <valueConverters:UppercaseConverter              x:Key="UppercaseConverter" />
         <valueConverters:FilenameConverter               x:Key="FilenameConverter" />
         <valueConverters:MarkdownDescriptionConverter    x:Key="MarkdownDescriptionConverter" />
-        <valueConverters:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter" />
+        <flags:CountryIdToFlagImageSourceConverter x:Key="CountryToFlagConverter" />
         <valueConverters:StringNullToNullBitmapConverter x:Key="StringNullToNullBitmap">
             <valueConverters:StringNullToNullBitmapConverter.DarkThemeVariantValue>
                 <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm-light.png</system:String>
