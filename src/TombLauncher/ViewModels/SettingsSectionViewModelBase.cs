@@ -87,6 +87,12 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     /// </summary>
     public virtual void ApplyTo(AppConfiguration userConfig) { }
 
+    /// <summary>
+    /// Returns true if this section has any visible content.
+    /// Override in sections that may be empty depending on platform or configuration.
+    /// </summary>
+    public virtual bool HasContent => true;
+
     public bool IsChanged { get; protected set; }
     private bool _editInProgress;
 

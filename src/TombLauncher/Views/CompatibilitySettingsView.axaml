@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.CompatibilitySettingsView"
+             x:DataType="settings:CompatibilitySettingsViewModel">
+    <Design.DataContext>
+        <settings:CompatibilitySettingsViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical" Spacing="12">
+
+        <!-- Wine executable path -->
+        <DockPanel LastChildFill="True" IsVisible="{Binding IsWineSupported}">
+            <Button DockPanel.Dock="Right"
+                    Command="{Binding AutoDetectWineCommand}"
+                    Content="{loc:Translate AUTODETECT_WINE}"
+                    VerticalAlignment="Center"
+                    Margin="8 0 0 0" />
+            <controls:LabeledTextBox Label="{loc:Translate WINE_EXECUTABLE_PATH}"
+                                     Text="{Binding WinePath}">
+                <controls:LabeledTextBox.Infotip>
+                    <controls:Infotip Header="{loc:Translate WINE_EXECUTABLE_PATH}"
+                                      ToolTipContent="{loc:Translate WINE_TOOLTIP_CONTENT}" />
+                </controls:LabeledTextBox.Infotip>
+            </controls:LabeledTextBox>
+        </DockPanel>
+
+        <!-- WINEPREFIX override -->
+        <DockPanel LastChildFill="True" IsVisible="{Binding IsWineSupported}">
+            <controls:LabeledTextBox Label="{loc:Translate WINE_PREFIX_PATH}"
+                                     Text="{Binding WinePrefix}">
+                <controls:LabeledTextBox.Infotip>
+                    <controls:Infotip Header="{loc:Translate WINE_PREFIX_PATH}"
+                                      ToolTipContent="{loc:Translate WINE_PREFIX_TOOLTIP_CONTENT}" />
+                </controls:LabeledTextBox.Infotip>
+            </controls:LabeledTextBox>
+        </DockPanel>
+
+    </StackPanel>
+</UserControl>

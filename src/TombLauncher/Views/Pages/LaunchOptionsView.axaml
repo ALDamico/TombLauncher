@@ -3,15 +3,14 @@
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:dialogs="clr-namespace:TombLauncher.ViewModels.Dialogs"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TombLauncher.Views.Dialogs.LaunchOptionsDialogView"
-             x:DataType="dialogs:LaunchOptionsDialogViewModel"
-             Width="600">
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="TombLauncher.Views.Pages.LaunchOptionsView"
+             x:DataType="pages:LaunchOptionsViewModel">
     <Design.DataContext>
-        <dialogs:LaunchOptionsDialogViewModel />
+        <pages:LaunchOptionsViewModel />
     </Design.DataContext>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -26,8 +25,8 @@
                                      Command="{Binding AutoDetectCommand}" />
                 <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                     <iconPacks:PackIconRemixIcon Kind="TerminalLine"
-                                                 Width="24" Height="24"
-                                                 Foreground="{DynamicResource PrimaryBrush}" />
+                                                Width="24" Height="24"
+                                                Foreground="{DynamicResource PrimaryBrush}" />
                     <TextBlock Text="{loc:Translate LAUNCH_OPTIONS, Casing=Upper}"
                                FontSize="18" FontWeight="DemiBold"
                                VerticalAlignment="Center" />
@@ -66,7 +65,7 @@
                                        Classes="small" Opacity="0.7" />
                             <DockPanel LastChildFill="True">
                                 <controls:Infotip DockPanel.Dock="Right" VerticalAlignment="Center"
-                                                  ToolTipContent="{loc:Translate SETUP_EXECUTABLE_TOOLTIP}" Margin="8, 0, 0, 0" />
+                                                  ToolTipContent="{loc:Translate SETUP_EXECUTABLE_TOOLTIP}" Margin="8,0,0,0" />
                                 <ComboBox ItemsSource="{Binding AvailableExecutables}"
                                           SelectedItem="{Binding SetupExecutable}" />
                             </DockPanel>
@@ -102,6 +101,28 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
+
+            <!-- Linux Compatibility Section (WINEPREFIX per-game) -->
+            <Border Classes="card-background" CornerRadius="8" Padding="16"
+                    IsVisible="{Binding IsWineSupported}">
+                <StackPanel Orientation="Vertical" Spacing="8">
+                    <controls:LabeledTextBox Label="{loc:Translate WINEPREFIX_LAUNCH_OPTION}"
+                                             Text="{Binding WinePrefix}">
+                        <controls:LabeledTextBox.Infotip>
+                            <controls:Infotip ToolTipContent="{loc:Translate WINE_PREFIX_TOOLTIP_CONTENT}" />
+                        </controls:LabeledTextBox.Infotip>
+                    </controls:LabeledTextBox>
+                </StackPanel>
+            </Border>
+
+            <!-- Action Buttons -->
+            <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
+                <Button Content="{loc:Translate CANCEL}"
+                        Command="{Binding CancelCmd}" />
+                <Button Content="{loc:Translate SAVE}"
+                        Classes="btn-success"
+                        Command="{Binding SaveCmd}" />
+            </StackPanel>
 
         </StackPanel>
     </ScrollViewer>

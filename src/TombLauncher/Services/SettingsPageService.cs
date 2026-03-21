@@ -77,11 +77,20 @@ public class SettingsPageService : IViewService
 
             await ApplySideEffects(viewModel);
 
-            var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
-            await File.WriteAllTextAsync(userConfigPath,
-                JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
-                    new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
+            await PersistCurrentConfigAsync();
         }
+    }
+
+    /// <summary>
+    /// Persists only the current user-layer config to disk (without requiring a SettingsPageViewModel).
+    /// Used by startup routines that modify the config directly (e.g. Wine detection, migration).
+    /// </summary>
+    public async Task PersistCurrentConfigAsync()
+    {
+        var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
+        await File.WriteAllTextAsync(userConfigPath,
+            JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
+                new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
     }
 
     private async Task ApplySideEffects(SettingsPageViewModel viewModel)
@@ -124,7 +133,6 @@ public class SettingsPageService : IViewService
             DescriptionFontSize = gd.DescriptionFontSize ?? 18,
             DocumentationPatterns = new EditablePatternListBoxViewModel() { TargetCollection = settings.EnabledPatterns.ToObservableCollection(), HeaderIcon = PackIconRemixIconKind.FileTextLine },
             FolderExclusions = new EditableFolderExclusionsListBoxViewModel() { TargetCollection = settings.ExcludedFolders.ToObservableCollection(), HeaderIcon = PackIconRemixIconKind.FolderLine },
-            WinePath = settings.WinePath
         };
     }
 

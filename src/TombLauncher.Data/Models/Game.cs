@@ -26,4 +26,5 @@ public class Game
     public bool IsFavourite { get; set; }
     public bool IsCompleted { get; set; }
     public GameLink? InstalledFromLink { get; set; }
+    public string? WinePrefix { get; set; }
 }

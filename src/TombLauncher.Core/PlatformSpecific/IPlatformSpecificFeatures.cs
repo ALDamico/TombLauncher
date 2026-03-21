@@ -10,9 +10,12 @@ public interface IPlatformSpecificFeatures
     EnumerationOptions GetEnumerationOptions();
 
     ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
-        string compatibilityExecutable, string workingDirectory);
+        string compatibilityExecutable, string workingDirectory, string? winePrefix = null);
 
     NotifyFilters GetSavegameWatcherNotifyFilters();
     List<UnzipBackendDto> GetPlatformSpecificZipFallbackPrograms();
     string GetAppDataDirectory();
+
+    bool IsWineSupported { get; }
+    string? FindWineExecutable();
 }

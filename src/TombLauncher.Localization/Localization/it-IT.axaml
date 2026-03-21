@@ -246,7 +246,14 @@
     <system:String x:Key="WINE_EXECUTABLE_PATH">Percorso dell'eseguibile di Wine</system:String>
     <system:String x:Key="DESCRIPTION_FONT_SIZE">Dimensione carattere descrizione</system:String>
     <system:String x:Key="DESCRIPTION_FONT_SIZE_TOOLTIP">Controlla la dimensione del carattere di base nelle descrizioni. Gli heading si adattano proporzionalmente.</system:String>
-    <system:String x:Key="WINE_TOOLTIP_CONTENT">Wine è un layer di compataibilità che consente di eseguire programmi Windows sotto Linux. Per poter giocare ai livelli custom di TRLE, è necessario che Wine sia installato sul sistema.</system:String>
+    <system:String x:Key="WINE_TOOLTIP_CONTENT">Wine è un layer di compatibilità che consente di eseguire programmi Windows sotto Linux. Per poter giocare ai livelli custom di TRLE, è necessario che Wine sia installato sul sistema.</system:String>
+    <system:String x:Key="COMPATIBILITY">Compatibilità</system:String>
+    <system:String x:Key="WINE_NOT_FOUND">Wine non trovato</system:String>
+    <system:String x:Key="WINE_NOT_FOUND_DESCRIPTION">TombLauncher utilizza Wine per eseguire i livelli TRLE su Linux. Se non è installato sul tuo sistema, non potrai giocare.</system:String>
+    <system:String x:Key="AUTODETECT_WINE">Rileva automaticamente</system:String>
+    <system:String x:Key="WINE_PREFIX_PATH">Directory WINEPREFIX</system:String>
+    <system:String x:Key="WINE_PREFIX_TOOLTIP_CONTENT">Percorso alla directory WINEPREFIX. Lasciare vuoto per usare il default di Wine (~/.wine).</system:String>
+    <system:String x:Key="WINEPREFIX_LAUNCH_OPTION">WINEPREFIX (questo gioco)</system:String>
     <system:String x:Key="UNZIP_FALLBACK_METHOD">Metodo di decompressione di fallback</system:String>
     <system:String x:Key="INSERT_NEW_GAME">INSERISCI UN NUOVO GIOCO</system:String>
     <system:String x:Key="INSTALL">Installa</system:String>

@@ -120,6 +120,15 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         Sections.Add(gameDetailsSettings);
         Sections.Add(savegameSettings);
         Sections.Add(welcomePageSettings);
+
+        var compat = _appConfiguration.Compatibility;
+        var compatVm = new CompatibilitySettingsViewModel(this, _platformSpecificFeatures)
+        {
+            WinePath = compat.WinePath ?? string.Empty,
+            WinePrefix = compat.WinePrefix ?? string.Empty,
+        };
+        Sections.Add(compatVm);
+
         AcceptChanges();
         return Task.CompletedTask;
     }

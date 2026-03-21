@@ -23,7 +23,7 @@ public partial class GameDetailsViewModel : PageViewModel
         BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
         ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
         ManageSaveGamesCmd = new AsyncRelayCommand(ManageSavegames);
-        OpenLaunchOptionsCmd = new RelayCommand(OpenLaunchOptions);
+        OpenLaunchOptionsCmd = new AsyncRelayCommand(OpenLaunchOptions);
         OpenDocumentCommand = new AsyncRelayCommand<string>(OpenDocument);
     }
 
@@ -85,7 +85,7 @@ public partial class GameDetailsViewModel : PageViewModel
 
     public ICommand OpenLaunchOptionsCmd { get; }
 
-    private void OpenLaunchOptions() => _gameDetailsService.OpenLaunchOptions(this);
+    private async Task OpenLaunchOptions() => await _gameDetailsService.OpenLaunchOptions(this);
 
     public ICommand OpenDocumentCommand { get; }
 

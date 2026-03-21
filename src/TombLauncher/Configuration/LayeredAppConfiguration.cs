@@ -24,6 +24,12 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         DefaultToGridView = User.Appearance.DefaultToGridView.Coalesce(Defaults.Appearance.DefaultToGridView)
     };
 
+    public ICompatibilityConfig Compatibility => new CompatibilityConfig
+    {
+        WinePath = User.Compatibility.WinePath.Coalesce(Defaults.Compatibility.WinePath),
+        WinePrefix = User.Compatibility.WinePrefix.Coalesce(Defaults.Compatibility.WinePrefix)
+    };
+
     public IDownloadersConfig Downloaders => new DownloadersConfig
     {
         Sources = User.Downloaders.Sources.Coalesce(Defaults.Downloaders.Sources),

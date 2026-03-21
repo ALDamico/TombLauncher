@@ -31,13 +31,6 @@
                     VerticalAlignment="Center">
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuItem Header="{loc:Translate LAUNCH_OPTIONS}"
-                                  Command="{Binding OpenLaunchOptionsCmd}"
-                                  ToolTip.Tip="{loc:Translate LAUNCH_OPTIONS_TOOLTIP}">
-                            <MenuItem.Icon>
-                                <iconPacks:PackIconRemixIcon Kind="TerminalLine" />
-                            </MenuItem.Icon>
-                        </MenuItem>
                         <MenuItem Header="{loc:Translate SAVEGAMES}"
                                   Command="{Binding ManageSaveGamesCmd}"
                                   IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
@@ -137,7 +130,13 @@
                     </Button.Flyout>
                 </controls:IconOnlyButton>
 
-                <!-- Thin vertical separator before status indicators -->
+                <!-- LAUNCH OPTIONS (round, icon-only, when game is installed) -->
+                <controls:IconOnlyButton Icon="TerminalLine"
+                        Classes="btn-primary"
+                        ToolTip.Tip="{loc:Translate LAUNCH_OPTIONS}"
+                        Command="{Binding OpenLaunchOptionsCmd}"
+                        IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
                 <Rectangle Width="1" Height="28"
                            Fill="{DynamicResource CardBorderBrush}"
                            VerticalAlignment="Center"

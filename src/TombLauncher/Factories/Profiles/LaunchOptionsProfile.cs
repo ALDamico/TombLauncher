@@ -1,7 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Factories.Mapping;
-using TombLauncher.ViewModels.Dialogs;
+using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.Factories.Profiles;
 
@@ -9,16 +9,12 @@ public class LaunchOptionsProfile : Profile
 {
     public LaunchOptionsProfile()
     {
-        CreateMap<LaunchOptionsDialogViewModel, LaunchOptionsDto>()
+        CreateMap<LaunchOptionsViewModel, LaunchOptionsDto>()
             .ForMember(dto => dto.GameEngine, opt => opt.MapFrom(vm => vm.SelectedEngine))
             .ForMember(dto => dto.GameExecutable, opt => opt.MapFrom(MappingUtils.MapGameExecutable))
             .ForMember(dto => dto.SetupExecutable, opt => opt.MapFrom(MappingUtils.MapSetupExecutable))
             .ForMember(dto => dto.CommunitySetupExecutable, opt => opt.MapFrom(MappingUtils.MapCommunitySetupExecutable))
-            .ForMember(dto => dto.GameId, opt => opt.MapFrom(vm => vm.TargetGame.Id));
-        
-       /* CreateMap<Game, LaunchOptionsDto>()
-            .ForMember(dto => dto.GameEngine, opt => opt.MapFrom(g => g.GameEngine))
-            .ForMember(dto => dto.GameId, opt => opt.MapFrom(g => g.Id))
-            .ForMember(dto => dto.GameExecutable, opt => opt.MapFrom(g => new FileBackupDto(){FileName = g.FileBackups.whe}))*/
+            .ForMember(dto => dto.GameId, opt => opt.MapFrom(vm => vm.GameId))
+            .ForMember(dto => dto.WinePrefix, opt => opt.MapFrom(vm => vm.WinePrefix));
     }
 }

@@ -19,9 +19,9 @@ public class GameDataService
         _mapper = mapperConfiguration.CreateMapper();
     }
 
-    public GameMetadataDto GetGameById(int id)
+    public async Task<GameMetadataDto?> GetGameById(int id, CancellationToken ct)
     {
-        var entity = _dbContext.Games.Find(id);
+        var entity = await _dbContext.Games.FindAsync([id], cancellationToken: ct);
         return _mapper.Map<GameMetadataDto>(entity);
     }
 
@@ -234,6 +234,7 @@ public class GameDataService
 
         var gameToUpdate = (await _dbContext.Games.FindAsync(launchOptionsDto.GameId))!;
         gameToUpdate.GameEngine = launchOptionsDto.GameEngine;
+        gameToUpdate.WinePrefix = launchOptionsDto.WinePrefix;
         _dbContext.Games.Update(gameToUpdate);
 
         // Update game executable

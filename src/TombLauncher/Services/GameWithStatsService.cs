@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
@@ -34,7 +34,8 @@ public class GameWithStatsService : IViewService, IDisposable
         ILogger<GameWithStatsService> logger,
         ISavegameHeaderProvider headerProvider,
         IPlatformSpecificFeatures platformSpecificFeatures,
-        SavegameHeaderProcessor headerProcessor)
+        SavegameHeaderProcessor headerProcessor,
+        IAppConfiguration appConfiguration)
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
@@ -49,14 +50,15 @@ public class GameWithStatsService : IViewService, IDisposable
 
         _logger = logger;
         _headerProvider = headerProvider;
-        _winePath = settingsProvider.GetGameDetailsSettings().WinePath;
+        _winePath = appConfiguration.Compatibility.WinePath;
+        _globalWinePrefix = appConfiguration.Compatibility.WinePrefix;
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
     }
 
     public ViewServiceContext ViewContext { get; }
     private SavegameHeaderProcessor? _headerProcessor;
-    private IMapper _mapper => ViewContext.Mapper;
+    private IMapper Mapper => ViewContext.Mapper;
 
     private readonly GameDataService _gameDataService;
     private readonly PlaySessionDataService _playSessionDataService;
@@ -69,8 +71,9 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly ILogger<GameWithStatsService> _logger;
     private readonly ISavegameHeaderProvider _headerProvider;
     private readonly string _winePath;
+    private readonly string? _globalWinePrefix;
     private DateTime? _startDate;
-    private IPlatformSpecificFeatures _platformSpecificFeatures;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public async Task OpenGame(GameWithStatsViewModel game)
     {
@@ -137,7 +140,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private async Task<GameWithStatsViewModel> GetGameById(int gameId)
     {
         var game = await _gameDataService.GetGameWithStats(gameId);
-        return _mapper.Map<GameWithStatsViewModel>(game);
+        return Mapper.Map<GameWithStatsViewModel>(game);
     }
 
     public bool CanPlayGame(GameWithStatsViewModel game)
@@ -181,7 +184,7 @@ public class GameWithStatsService : IViewService, IDisposable
         try
         {
             currentPage?.SetBusy(true, "SAVING_PLAY_SESSION".GetLocalizedString());
-            var gameMetadataDto = _mapper.Map<GameMetadataDto>(game.GameMetadata);
+            var gameMetadataDto = Mapper.Map<GameMetadataDto>(game.GameMetadata);
             await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
             currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
             var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
@@ -252,9 +255,13 @@ public class GameWithStatsService : IViewService, IDisposable
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
         _startDate = DateTime.Now;
 
+        var winePrefix = game.GameMetadata.WinePrefix.IsNotNullOrWhiteSpace()
+            ? game.GameMetadata.WinePrefix
+            : _globalWinePrefix;
+
         var process = new Process()
         {
-            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory),
+            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory, winePrefix),
             EnableRaisingEvents = true
         };
         if (trackPlayTime)
@@ -275,7 +282,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
     public async Task ToggleFavourite(GameWithStatsViewModel gameWithStatsViewModel)
     {
-        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        var metadata = Mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
         metadata.IsFavourite = !metadata.IsFavourite;
         await _gameDataService.UpsertGame(metadata);
         gameWithStatsViewModel.GameMetadata.IsFavourite = metadata.IsFavourite;
@@ -283,7 +290,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
     public async Task ToggleCompleted(GameWithStatsViewModel gameWithStatsViewModel)
     {
-        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        var metadata = Mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
         metadata.IsCompleted = !metadata.IsCompleted;
         await _gameDataService.UpsertGame(metadata);
         gameWithStatsViewModel.GameMetadata.IsCompleted = metadata.IsCompleted;
