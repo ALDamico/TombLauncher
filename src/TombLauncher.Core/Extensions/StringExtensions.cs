@@ -79,4 +79,23 @@ public static partial class StringExtensions
     {
         return chars.Any(c => s.EndsWith(c));
     }
+
+    public static string EnsureStartsWith(this string? s, string? prefix, char separator = '\0')
+    {
+        var nonNullPrefix = prefix ?? "";
+        var nonNullS = s ?? "";
+        if (separator > 0)
+        {
+            nonNullS = nonNullS.TrimStart(separator);
+            nonNullPrefix = nonNullPrefix.TrimEnd(separator);
+        }
+
+        if (Uri.IsWellFormedUriString(nonNullS, UriKind.Absolute))
+            return nonNullS;
+
+        if (separator > 0)
+            return string.Join(separator, nonNullPrefix, nonNullS);
+
+        return $"{nonNullPrefix}{nonNullS}";
+    }
 }

@@ -128,7 +128,7 @@ public class TrleGameDownloader : GameDownloaderBase
                     case "levelname/info":
                         metadata.Title = v;
                         var detailsLink = value.SelectSingleNodeFromElement(".//a").GetAttributeValue("href");
-                        metadata.DetailsLink = detailsLink;
+                        metadata.DetailsLink = detailsLink.EnsureStartsWith(BaseUrl, '/');
                         break;
                     case "difficulty":
                         metadata.Difficulty = Enum.TryParse<GameDifficulty>(v, true, out var actualDifficulty)
@@ -167,35 +167,17 @@ public class TrleGameDownloader : GameDownloaderBase
 
                 if (v.Contains("reviews.php"))
                 {
-                    var actualValue = v;
-                    if (actualValue.StartsWith("/"))
-                    {
-                        actualValue = BaseUrl + actualValue;
-                    }
-
-                    metadata.ReviewsLink = actualValue;
+                    metadata.ReviewsLink = v.EnsureStartsWith(BaseUrl, '/');
                 }
 
                 if (v.Contains("trle_dl.php"))
                 {
-                    var actualValue = v;
-                    if (actualValue.StartsWith("/"))
-                    {
-                        actualValue = BaseUrl + actualValue;
-                    }
-
-                    metadata.DownloadLink = actualValue;
+                    metadata.DownloadLink = v.EnsureStartsWith(BaseUrl, '/');
                 }
 
                 if (v.Contains("Levelwalk.php"))
                 {
-                    var actualValue = v;
-                    if (actualValue.StartsWith("/"))
-                    {
-                        actualValue = BaseUrl + actualValue;
-                    }
-
-                    metadata.WalkthroughLink = actualValue;
+                    metadata.WalkthroughLink = v.EnsureStartsWith(BaseUrl, '/');
                 }
             }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
@@ -40,7 +39,7 @@ public class UrlOpenErrorMessageBox : ViewModelBase, IMsgBoxViewModel
     public event EventHandler<RequestCloseDialogEventArgs>? RequestCloseDialog;
     public bool CheckBoxResult { get; set; } = false;
     public bool ShowCheckBox => CheckBoxText != null;
-    public string? CheckBoxText { get; set; } = null;
+    public string? CheckBoxText { get; set; }
     public bool HasIcon => false;
     public MsgBoxImage MsgBoxImage { get; set; }
     public MsgBoxButtonResult Result { get; set; }
