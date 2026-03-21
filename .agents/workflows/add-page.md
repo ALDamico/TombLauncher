@@ -25,10 +25,10 @@ Create `TombLauncher/Services/NewPageService.cs`:
 ## 3. Create the View
 
 Create the file pair:
-- `TombLauncher/Views/Pages/NewPagePage.axaml` (note the **Page** suffix, not View)
-- `TombLauncher/Views/Pages/NewPagePage.axaml.cs` (empty code-behind)
+- `TombLauncher/Views/Pages/NewPageView.axaml` (note the **View** suffix, in the **Pages** subfolder)
+- `TombLauncher/Views/Pages/NewPageView.axaml.cs` (empty code-behind)
 
-> **IMPORTANT**: The `ViewLocator` automatically resolves Views by replacing "ViewModel" with "Page" in the type name. So `NewPageViewModel` → looks for `NewPagePage`.
+> **IMPORTANT**: The `ViewLocator` resolves Views by replacing "ViewModel" with "View" in the type name, and only looks inside `Views/Pages/`. So `NewPageViewModel` → `Views/Pages/NewPageView.axaml`. Both the **suffix** (`View`) and the **folder** (`Pages/`) are required for the resolution to work.
 
 ## 4. Register in DI Container
 
