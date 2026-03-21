@@ -203,7 +203,7 @@
     <system:String x:Key="SETUP_EXECUTABLE_ARGS_TOOLTIP">The arguments to pass to the command line in order to run the setup utility. For classic engines, this is "-setup".</system:String>
     <system:String x:Key="CAN_LAUNCH_SETUP">Can launch setup utility</system:String>
     <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE">Community patch setup executable</system:String>
-    <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP">Enable this option if this level uses an enhanced community engine, like TRX or Tomb3 Community Edition, to launch its setup tool.</system:String>
+    <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP">Enable this option if this level uses an enhanced community engine, like some versions of TRX or Tomb3 Community Edition, to launch its setup tool.</system:String>
     <system:String x:Key="AUTO_DETECT_TOOLTIP">Try to detect automatically the best settings.</system:String>
     <system:String x:Key="USES_COMMUNITY_PATCH">Uses community patch</system:String>
     <system:String x:Key="LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME">Launching community patch setup for {0}</system:String>
@@ -248,6 +248,8 @@
     <system:String x:Key="DESCRIPTION_FONT_SIZE">Description font size</system:String>
     <system:String x:Key="DESCRIPTION_FONT_SIZE_TOOLTIP">Controls the base font size used in game descriptions. Headings scale proportionally.</system:String>
     <system:String x:Key="WINE_TOOLTIP_CONTENT">Wine is a compatibility layer that lets Windows programs run on Linux. To play custom TRLE levels, you'll need it installed on your system.</system:String>
+    <system:String x:Key="GENERAL">Launch</system:String>
+    <system:String x:Key="COMMUNITY_PATCH">Community patch</system:String>
     <system:String x:Key="COMPATIBILITY">Compatibility</system:String>
     <system:String x:Key="WINE_NOT_FOUND">Wine not found</system:String>
     <system:String x:Key="WINE_NOT_FOUND_DESCRIPTION">TombLauncher uses Wine to run TRLE levels on Linux. If it is not installed on your system, you won't be able to play.</system:String>

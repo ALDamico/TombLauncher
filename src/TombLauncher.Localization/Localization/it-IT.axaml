@@ -202,7 +202,7 @@
     <system:String x:Key="SETUP_EXECUTABLE_ARGS_TOOLTIP">Gli argomenti da passare alla riga di comando per avviare il setup. Nel caso dei motori dei giochi classici, il valore da utilizzare è "-setup".</system:String>
     <system:String x:Key="CAN_LAUNCH_SETUP">Può avviare la utility di setup</system:String>
     <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE">Eseguibile di setup della patch della community</system:String>
-    <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP">Abilita questa opzione se questo livello custom utilizza un motore avanzato della community come TRX o Tomb3 Community Edition, per avviare lo strumento di setup.</system:String>
+    <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP">Abilita questa opzione se questo livello custom utilizza un motore avanzato della community come alcune versioni di TRX o Tomb3 Community Edition, per avviare lo strumento di setup.</system:String>
     <system:String x:Key="AUTO_DETECT_TOOLTIP">Prova a rilevare automaticamente le impostazioni da utilizzare.</system:String>
     <system:String x:Key="USES_COMMUNITY_PATCH">Utilizza patch della community</system:String>
     <system:String x:Key="LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME">Avvio dell'utility di configurazione della patch della community per {0}</system:String>
@@ -247,6 +247,8 @@
     <system:String x:Key="DESCRIPTION_FONT_SIZE">Dimensione carattere descrizione</system:String>
     <system:String x:Key="DESCRIPTION_FONT_SIZE_TOOLTIP">Controlla la dimensione del carattere di base nelle descrizioni. Gli heading si adattano proporzionalmente.</system:String>
     <system:String x:Key="WINE_TOOLTIP_CONTENT">Wine è un layer di compatibilità che permette di eseguire programmi Windows su Linux. Per giocare ai livelli custom di TRLE, è necessario averlo installato sul proprio sistema.</system:String>
+    <system:String x:Key="GENERAL">Avvio</system:String>
+    <system:String x:Key="COMMUNITY_PATCH">Community patch</system:String>
     <system:String x:Key="COMPATIBILITY">Compatibilità</system:String>
     <system:String x:Key="WINE_NOT_FOUND">Wine non trovato</system:String>
     <system:String x:Key="WINE_NOT_FOUND_DESCRIPTION">TombLauncher utilizza Wine per eseguire i livelli TRLE su Linux. Se non è installato sul tuo sistema, non potrai giocare.</system:String>

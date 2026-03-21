@@ -90,7 +90,9 @@ public class GameLinkDataService
             .Where(l => links.Contains(l.Link) && l.LinkType == linkType)
             .ToListAsync();
 
-        return matchingLinks
+        var distinctLinks = matchingLinks.DistinctBy(l => l.Link);
+
+        return distinctLinks
             .Join(gamesWithStats, l => l.GameId, game => game.GameMetadata.Id,
                 (l, game) => new { l.Link, Game = game })
             .ToDictionary(k => k.Link, g => g.Game);
