@@ -18,6 +18,10 @@ public partial class CompatibilitySettingsViewModel : SettingsSectionViewModelBa
 
     [ObservableProperty] private string _winePath = string.Empty;
     [ObservableProperty] private string _winePrefix = string.Empty;
+    [ObservableProperty] private string? _wineVersion;
+
+    partial void OnWinePathChanged(string value) =>
+        WineVersion = _platformFeatures.GetWineVersion(value);
 
     public bool IsWineSupported => _platformFeatures.IsWineSupported;
 

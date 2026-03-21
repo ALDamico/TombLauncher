@@ -88,4 +88,28 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
             .Select(dir => Path.Combine(dir, "wine"))
             .FirstOrDefault(File.Exists);
     }
+
+    public string? GetWineVersion(string winePath)
+    {
+        if (string.IsNullOrWhiteSpace(winePath))
+            return null;
+        try
+        {
+            var psi = new ProcessStartInfo(winePath, "--version")
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            using var process = Process.Start(psi);
+            if (process == null) return null;
+            var output = process.StandardOutput.ReadToEnd().Trim();
+            process.WaitForExit();
+            return string.IsNullOrWhiteSpace(output) ? null : output;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

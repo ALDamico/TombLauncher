@@ -133,17 +133,14 @@
         </ScrollViewer>
 
         <!-- Action Buttons — sticky, always visible -->
-        <DockPanel Grid.Row="1" LastChildFill="False" Margin="0,8,0,0">
-            <Button DockPanel.Dock="Left"
-                    Content="{loc:Translate CANCEL}"
-                    Command="{Binding CancelCmd}" />
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,8,0,0">
             <controls:IconButton DockPanel.Dock="Right"
                                  Classes="btn-primary"
                                  Padding="16,8"
                                  Icon="Save3Line"
                                  Text="{loc:Translate SAVE}"
                                  Command="{Binding SaveCmd}" />
-        </DockPanel>
+        </StackPanel>
 
     </Grid>
 </UserControl>

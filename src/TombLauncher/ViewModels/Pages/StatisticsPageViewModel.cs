@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
+using TombLauncher.Configuration;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -11,10 +13,13 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class StatisticsPageViewModel : PageViewModel
 {
-    public StatisticsPageViewModel(StatisticsService statisticsService, GameWithStatsService gameWithStatsService)
+    public StatisticsPageViewModel(StatisticsService statisticsService, GameWithStatsService gameWithStatsService,
+        IPlatformSpecificFeatures platformFeatures, IAppConfiguration appConfiguration)
     {
         _statisticsService = statisticsService;
         _gameWithStatsService = gameWithStatsService;
+        _platformFeatures = platformFeatures;
+        _appConfiguration = appConfiguration;
         TopBarCommands =
         [
             new CommandViewModel()
@@ -28,12 +33,17 @@ public partial class StatisticsPageViewModel : PageViewModel
 
     private readonly StatisticsService _statisticsService;
     private readonly GameWithStatsService _gameWithStatsService;
+    private readonly IPlatformSpecificFeatures _platformFeatures;
+    private readonly IAppConfiguration _appConfiguration;
 
     [ObservableProperty] private Version? _applicationVersion;
     [ObservableProperty] private long _databaseSize;
     [ObservableProperty] private long _gamesSize;
     [ObservableProperty] private Version? _netVersion;
     [ObservableProperty] private StatisticsViewModel? _statistics;
+    [ObservableProperty] private string? _wineVersion;
+
+    public bool IsWineSupported => _platformFeatures.IsWineSupported;
 
     public override async Task OnNavigatedTo(object parameter)
     {
@@ -45,15 +55,14 @@ public partial class StatisticsPageViewModel : PageViewModel
         IsBusy = true;
         BusyMessage = "GATHERING_STATISTICS".GetLocalizedString();
         var t1 = Task.Run(() => ApplicationVersion = AppUtils.GetApplicationVersion());
-        // Note: GetDatabaseSize might access shared resources but running in Task.Factory.StartNew on background thread might be risky if DbContext is not thread safe?
-        // StatisticService typically uses new context or scope.
-        // Assuming Services handle thread safety.
         var t2 = Task.Run(() => DatabaseSize = _statisticsService.GetDatabaseSize());
         var t3 = Task.Run(() => GamesSize = _statisticsService.GetGamesSize());
         var t4 = _statisticsService.GetStatistics();
         var t5 = Task.Run(() => NetVersion = AppUtils.GetDotNetVersion());
+        var t6 = Task.Run(() => WineVersion = _platformFeatures.GetWineVersion(
+            _appConfiguration.Compatibility.WinePath ?? string.Empty));
 
-        await Task.WhenAll(t1, t2, t3, t4, t5);
+        await Task.WhenAll(t1, t2, t3, t4, t5, t6);
         Statistics = t4.Result;
         SetBusy(false);
     }
