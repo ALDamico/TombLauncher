@@ -38,7 +38,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
             new MainMenuItemViewModel()
             {
                 ToolTip = "MY_MODS".GetLocalizedString(),
-                Icon = PackIconRemixIconKind.Game2Line,
+                Icon = PackIconRemixIconKind.GamepadLine,
                 Text = "MY_MODS".GetLocalizedString(),
                 ViewModelType = typeof(GameListViewModel)
             },
