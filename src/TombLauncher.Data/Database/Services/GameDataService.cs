@@ -221,74 +221,59 @@ public class GameDataService
 
     public async Task UpdateLaunchOptions(LaunchOptionsDto launchOptionsDto)
     {
-        var targetFileTypes = new List<FileType>()
-        {
-            FileType.GameExecutable,
-            FileType.SetupExecutable,
-            FileType.CommunitySetupExecutable
-        };
-
-        var fileBackupQueryable = _dbContext.FileBackups
-            .Where(b => b.GameId == launchOptionsDto.GameId)
-            .Where(b => targetFileTypes.Contains(b.FileType));
-
+        // Update Game entity (engine + wine prefix)
         var gameToUpdate = (await _dbContext.Games.FindAsync(launchOptionsDto.GameId))!;
         gameToUpdate.GameEngine = launchOptionsDto.GameEngine;
         gameToUpdate.WinePrefix = launchOptionsDto.WinePrefix;
-        _dbContext.Games.Update(gameToUpdate);
 
-        // Update game executable
-        var gameExecutable = fileBackupQueryable.Where(fb => fb.FileType == FileType.GameExecutable);
-        if (await gameExecutable.AnyAsync())
+        // Load all relevant FileBackup records as tracked entities in one query
+        var relevantTypes = new[] { FileType.GameExecutable, FileType.SetupExecutable, FileType.CommunitySetupExecutable };
+        var existingBackups = await _dbContext.FileBackups
+            .Where(b => b.GameId == launchOptionsDto.GameId && relevantTypes.Contains(b.FileType))
+            .ToListAsync();
+
+        // Game executable — always present
+        var gameExeBackup = existingBackups.FirstOrDefault(b => b.FileType == FileType.GameExecutable);
+        if (gameExeBackup != null)
         {
-            await gameExecutable.ExecuteUpdateAsync(exe =>
-                exe.SetProperty(f => f.FileName, launchOptionsDto.GameExecutable.FileName));
+            gameExeBackup.FileName = launchOptionsDto.GameExecutable.FileName;
         }
         else
         {
-            var newEntity = _mapper.Map<FileBackup>(launchOptionsDto.GameExecutable);
-            _dbContext.FileBackups.Add(newEntity);
+            _dbContext.FileBackups.Add(_mapper.Map<FileBackup>(launchOptionsDto.GameExecutable));
         }
 
-        // Update setup executable
+        // Setup executable — optional
+        var setupBackup = existingBackups.FirstOrDefault(b => b.FileType == FileType.SetupExecutable);
         if (launchOptionsDto.SetupExecutable == null)
         {
-            await fileBackupQueryable.Where(b => b.FileType == FileType.SetupExecutable).ExecuteDeleteAsync();
+            if (setupBackup != null)
+                _dbContext.FileBackups.Remove(setupBackup);
+        }
+        else if (setupBackup != null)
+        {
+            setupBackup.FileName = launchOptionsDto.SetupExecutable.FileName;
+            setupBackup.Arguments = launchOptionsDto.SetupExecutable.Arguments;
         }
         else
         {
-            var setupQueryable = fileBackupQueryable.Where(fb => fb.FileType == FileType.SetupExecutable);
-            if (await setupQueryable.AnyAsync())
-            {
-                await setupQueryable.ExecuteUpdateAsync(exe =>
-                    exe.SetProperty(f => f.Arguments, launchOptionsDto.SetupExecutable.Arguments)
-                        .SetProperty(f => f.FileName, launchOptionsDto.SetupExecutable.FileName));
-            }
-            else
-            {
-                var newSetupExe = _mapper.Map<FileBackup>(launchOptionsDto.SetupExecutable);
-                _dbContext.FileBackups.Add(newSetupExe);
-            }
+            _dbContext.FileBackups.Add(_mapper.Map<FileBackup>(launchOptionsDto.SetupExecutable));
         }
 
+        // Community setup executable — optional
+        var communityBackup = existingBackups.FirstOrDefault(b => b.FileType == FileType.CommunitySetupExecutable);
         if (launchOptionsDto.CommunitySetupExecutable == null)
         {
-            await fileBackupQueryable.Where(b => b.FileType == FileType.CommunitySetupExecutable).ExecuteDeleteAsync();
+            if (communityBackup != null)
+                _dbContext.FileBackups.Remove(communityBackup);
+        }
+        else if (communityBackup != null)
+        {
+            communityBackup.FileName = launchOptionsDto.CommunitySetupExecutable.FileName;
         }
         else
         {
-            var communitySetupQueryable =
-                fileBackupQueryable.Where(fb => fb.FileType == FileType.CommunitySetupExecutable);
-            if (await communitySetupQueryable.AnyAsync())
-            {
-                await communitySetupQueryable.ExecuteUpdateAsync(exe =>
-                    exe.SetProperty(f => f.FileName, launchOptionsDto.CommunitySetupExecutable.FileName));
-            }
-            else
-            {
-                var newCommunitySetupExe = _mapper.Map<FileBackup>(launchOptionsDto.CommunitySetupExecutable);
-                _dbContext.FileBackups.Add(newCommunitySetupExe);
-            }
+            _dbContext.FileBackups.Add(_mapper.Map<FileBackup>(launchOptionsDto.CommunitySetupExecutable));
         }
 
         await _dbContext.SaveChangesAsync();

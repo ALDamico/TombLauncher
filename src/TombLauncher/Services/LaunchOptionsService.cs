@@ -78,8 +78,7 @@ public class LaunchOptionsService : IViewService
     {
         try
         {
-            var currentPage = NavigationManager.CurrentPage as PageViewModel;
-            if (currentPage != null)
+            if (NavigationManager.CurrentPage is PageViewModel currentPage)
             {
                 using (currentPage.BusyScope("SAVING_LAUNCH_OPTIONS".GetLocalizedString()))
                 {
