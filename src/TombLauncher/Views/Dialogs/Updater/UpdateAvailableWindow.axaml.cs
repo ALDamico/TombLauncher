@@ -28,7 +28,6 @@ public partial class UpdateAvailableWindow : Window, IUpdateAvailable
     [Obsolete("Design-time / Avalonia runtime loader only. Use the overload with List<AppCastItem> and ILocalizationManager.")]
     public UpdateAvailableWindow()
     {
-        
     }
 
     public UpdateAvailableWindow(List<AppCastItem> items, ILocalizationManager localization)

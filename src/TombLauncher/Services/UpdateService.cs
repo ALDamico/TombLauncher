@@ -72,7 +72,7 @@ public class UpdateService
         {
             var filter = new ChannelAppCastFilter(logger)
             {
-                ChannelSearchNames = [channelName]
+                ChannelSearchNames = [channelName!]
             };
             appCastHelper = new AppCastHelper { AppCastFilter = filter };
         }

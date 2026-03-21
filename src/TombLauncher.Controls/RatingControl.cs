@@ -175,7 +175,7 @@ namespace TombLauncher.Controls
             }
         }
 
-        private void StarsPresenter_PointerReleased(object sender, Avalonia.Input.PointerReleasedEventArgs e)
+        private void StarsPresenter_PointerReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
         {
             // e.Source is the original source of this event. In our case, if the user clicked on a star, the original source is a Path.
             if (e.Source is Path star)

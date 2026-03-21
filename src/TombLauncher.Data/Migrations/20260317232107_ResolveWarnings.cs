@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -113,7 +113,7 @@ namespace TombLauncher.Data.Migrations
                 table: "Games",
                 type: "BLOB",
                 nullable: false,
-                defaultValue: new byte[0],
+                defaultValue: Array.Empty<byte>(),
                 oldClrType: typeof(byte[]),
                 oldType: "BLOB",
                 oldNullable: true);

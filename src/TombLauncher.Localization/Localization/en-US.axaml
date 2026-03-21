@@ -17,6 +17,8 @@
     <system:String x:Key="ZIP_FILES">ZIP files</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Select a folder</system:String>
     <system:String x:Key="INSTALLING_GAMENAME">Installing {0}...</system:String>
+    <system:String x:Key="VERIFYING_DOWNLOAD">Verifying download...</system:String>
+    <system:String x:Key="FETCHING_GAME_DETAILS">Fetching game details...</system:String>
     <system:String x:Key="THE_SAME_MOD_IS_ALREADY_INSTALLED">The same mod is already installed</system:String>
     <system:String x:Key="THE_SAME_MOD_IS_ALREADY_INSTALLED_TEXT">The same mod seems to be already installed. Press OK to keep installing, or Cancel to abort</system:String>
     <system:String x:Key="CANCEL">Cancel</system:String>

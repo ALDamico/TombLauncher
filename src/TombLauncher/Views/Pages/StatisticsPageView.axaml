@@ -12,12 +12,26 @@
     <Design.DataContext>
         <pages:StatisticsPageViewModel />
     </Design.DataContext>
+
     <UserControl.Styles>
-        
         <Style Selector="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+        <Style Selector="TextBlock.section-heading">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="0,8,0,2"/>
+        </Style>
+        <Style Selector="iconPacks|PackIconRemixIcon.stat-icon">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+        </Style>
     </UserControl.Styles>
+
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
@@ -25,114 +39,125 @@
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
     </Interaction.Behaviors>
+
     <Grid RowDefinitions="Auto, *">
         <TextBlock Grid.Row="0" Classes="page-title" Text="{loc:Translate STATISTICS, Casing=Upper}" />
         <ScrollViewer Grid.Row="1">
-            <StackPanel Orientation="Vertical">
+            <StackPanel Spacing="8" Margin="0,4,0,16">
 
-                <Grid Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" MinWidth="160" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                <!-- ── Summary stats card ─────────────────────────── -->
+                <Border Classes="card-background" CornerRadius="8" Padding="16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" MinHeight="36"/>
+                            <RowDefinition Height="Auto" MinHeight="36"/>
+                            <RowDefinition Height="Auto" MinHeight="36"/>
+                            <RowDefinition Height="Auto" MinHeight="36"/>
+                            <RowDefinition Height="Auto" MinHeight="36"/>
+                            <RowDefinition Height="Auto" MinHeight="36"/>
+                            <RowDefinition Height="Auto" MinHeight="36"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="32"/>
+                            <ColumnDefinition Width="Auto" MinWidth="180"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{loc:Translate APPLICATION_VERSION}" />
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ApplicationVersion}" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{loc:Translate DOTNET_VERSION}" />
-                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NetVersion}" />
-                    <iconPacks:PackIconRemixIcon Height="24" Width="24" HorizontalAlignment="Center"
-                                            VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Kind="Database2Line"
-                                            Classes="text-muted" />
-                    <TextBlock Grid.Row="2" Grid.Column="1" 
-                               Text="{loc:Translate DATABASE_SIZE}" />
-                    <TextBlock Grid.Row="2" Grid.Column="2" 
-                               Text="{Binding DatabaseSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}" />
-                    <iconPacks:PackIconRemixIcon Height="24" Width="24" HorizontalAlignment="Center"
-                                            VerticalAlignment="Center" Grid.Row="3" Grid.Column="0" Kind="HardDriveLine"
-                                            Classes="text-muted" />
-                    <TextBlock Grid.Row="3" Grid.Column="1" 
-                               Text="{loc:Translate GAMES_SIZE}">
-                    </TextBlock>
-                    <TextBlock Grid.Row="3" Grid.Column="2" 
-                               Text="{Binding GamesSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}" />
-                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{loc:Translate LAST_PLAYED_GAME}"></TextBlock>
-                    <StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal">
-                        <Button Classes="hyperlink" 
-                                VerticalAlignment="Center"
-                                Content="{Binding Statistics.LatestPlayedGame.Title}" 
-                                Command="{Binding OpenGameCmd}" 
-                                CommandParameter="{Binding Statistics.LatestPlayedGame.Id}"/>
-                        <TextBlock Margin="10, 0">
-                            <Run Text="("></Run>
-                            <Run Text="{Binding Statistics.LatestPlayedGame.LastPlayed, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}"></Run>
-                            <Run Text=")"></Run>
-                        </TextBlock>
-                    </StackPanel>
-                    
-                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{loc:Translate LONGEST_PLAY_SESSION}"></TextBlock>
-                    <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="2">
-                        <Button Classes="hyperlink" 
-                                VerticalAlignment="Center"
-                                Content="{Binding Statistics.LongestPlaySession.Title}" 
-                                Command="{Binding OpenGameCmd}" 
-                                CommandParameter="{Binding Statistics.LongestPlaySession.Id}"/>
-                        <TextBlock Margin="10, 0">
-                            <Run Text="("></Run>
-                            <Run Text="{Binding Statistics.LongestPlaySession.Duration, Converter={StaticResource TimeSpanToHumanReadableStringConverter}, Mode=OneWay}"></Run>
-                            <Run Text=")"></Run>
-                        </TextBlock>
-                    </StackPanel>
-                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{loc:Translate MOST_PLAYED_GAME}"></TextBlock>
-                    <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="2">
-                        <Button Classes="hyperlink" 
-                                VerticalAlignment="Center"
-                                Content="{Binding Statistics.MostLaunches.Title}" 
-                                Command="{Binding OpenGameCmd}" 
-                                CommandParameter="{Binding Statistics.MostLaunches.Id}"/>
-                        <TextBlock Margin="10, 0">
-                            <Run Text="("/>
-                            <Run Text="{Binding Statistics.MostLaunches.TotalSessions, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='PLAYED_NUMBER_TIMES', Mode=OneWay}"/>
-                            <Run Text=")"></Run>
-                        </TextBlock>
-                    </StackPanel>
-                    
-                </Grid>
-                <!-- TODO Make localizable -->
-                <TextBlock Text="{loc:Translate SPACE_USED_BY_GAME}"/>
-                <avalonia:PieChart Series="{Binding Statistics.SpaceUsedStatistics.Series}" 
+                        <!-- Icons -->
+                        <iconPacks:PackIconRemixIcon Grid.Row="0" Grid.Column="0" Kind="InformationLine"   Classes="stat-icon" Margin="0, 0, 8, 0"/>
+                        <iconPacks:PackIconRemixIcon Grid.Row="1" Grid.Column="0" Kind="TerminalBoxLine"   Classes="stat-icon" Margin="0, 0, 8, 0"/>
+                        <iconPacks:PackIconRemixIcon Grid.Row="2" Grid.Column="0" Kind="Database2Line"     Classes="stat-icon" Margin="0, 0, 8, 0"/>
+                        <iconPacks:PackIconRemixIcon Grid.Row="3" Grid.Column="0" Kind="HardDriveLine"     Classes="stat-icon" Margin="0, 0, 8, 0"/>
+                        <iconPacks:PackIconRemixIcon Grid.Row="4" Grid.Column="0" Kind="GamepadLine"       Classes="stat-icon" Margin="0, 0, 8, 0"/>
+                        <iconPacks:PackIconRemixIcon Grid.Row="5" Grid.Column="0" Kind="TimerLine"         Classes="stat-icon" Margin="0, 0, 8, 0"/>
+                        <iconPacks:PackIconRemixIcon Grid.Row="6" Grid.Column="0" Kind="TrophyLine"        Classes="stat-icon" Margin="0, 0, 8, 0"/>
+
+                        <!-- Labels -->
+                        <TextBlock Grid.Row="0" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate APPLICATION_VERSION}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate DOTNET_VERSION}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate DATABASE_SIZE}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate GAMES_SIZE}"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate LAST_PLAYED_GAME}"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate LONGEST_PLAY_SESSION}"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate MOST_PLAYED_GAME}"/>
+
+                        <!-- Values -->
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ApplicationVersion}" FontWeight="Medium"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NetVersion}"         FontWeight="Medium"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" FontWeight="Medium"
+                                   Text="{Binding DatabaseSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" FontWeight="Medium"
+                                   Text="{Binding GamesSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"/>
+
+                        <StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                            <Button Classes="hyperlink"
+                                    VerticalAlignment="Center"
+                                    Content="{Binding Statistics.LatestPlayedGame.Title}"
+                                    Command="{Binding OpenGameCmd}"
+                                    CommandParameter="{Binding Statistics.LatestPlayedGame.Id}"/>
+                            <TextBlock Classes="text-muted"
+                                       IsVisible="{Binding Statistics.LatestPlayedGame, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <Run Text="("/>
+                                <Run Text="{Binding Statistics.LatestPlayedGame.LastPlayed, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}"/>
+                                <Run Text=")"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="5" Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                            <Button Classes="hyperlink"
+                                    VerticalAlignment="Center"
+                                    Content="{Binding Statistics.LongestPlaySession.Title}"
+                                    Command="{Binding OpenGameCmd}"
+                                    CommandParameter="{Binding Statistics.LongestPlaySession.Id}"/>
+                            <TextBlock Classes="text-muted"
+                                       IsVisible="{Binding Statistics.LongestPlaySession, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <Run Text="("/>
+                                <Run Text="{Binding Statistics.LongestPlaySession.Duration, Converter={StaticResource TimeSpanToHumanReadableStringConverter}, Mode=OneWay}"/>
+                                <Run Text=")"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="6" Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                            <Button Classes="hyperlink"
+                                    VerticalAlignment="Center"
+                                    Content="{Binding Statistics.MostLaunches.Title}"
+                                    Command="{Binding OpenGameCmd}"
+                                    CommandParameter="{Binding Statistics.MostLaunches.Id}"/>
+                            <TextBlock Classes="text-muted"
+                                       IsVisible="{Binding Statistics.MostLaunches, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <Run Text="("/>
+                                <Run Text="{Binding Statistics.MostLaunches.TotalSessions, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='PLAYED_NUMBER_TIMES', Mode=OneWay}"/>
+                                <Run Text=")"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ── Charts ─────────────────────────────────────── -->
+                <TextBlock Classes="section-heading" Text="{loc:Translate SPACE_USED_BY_GAME}"/>
+                <avalonia:PieChart Series="{Binding Statistics.SpaceUsedStatistics.Series}"
                                    Height="600"/>
-                
-                <TextBlock Text="{loc:Translate AVERAGE_PLAYTIME_BY_DAY_OF_WEEK}" />
+
+                <TextBlock Classes="section-heading" Text="{loc:Translate AVERAGE_PLAYTIME_BY_DAY_OF_WEEK}"/>
                 <avalonia:CartesianChart Series="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.Series}"
                                          XAxes="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.XAxis}"
                                          YAxes="{Binding Statistics.DayOfWeekAveragePlayTimeStatistics.YAxis}"
-                                         Height="600">
-                </avalonia:CartesianChart>
-                <TextBlock Text="{loc:Translate TOTAL_GAMES_PLAYED_BY_DAY_OF_WEEK}" />
+                                         Height="600"/>
+
+                <TextBlock Classes="section-heading" Text="{loc:Translate TOTAL_GAMES_PLAYED_BY_DAY_OF_WEEK}"/>
                 <avalonia:CartesianChart Series="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.Series}"
                                          XAxes="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.XAxis}"
                                          YAxes="{Binding Statistics.DayOfWeekTotalGamesPlayedStatistics.YAxis}"
-                                         Height="600" />
+                                         Height="600"/>
 
-                <TextBlock Text="{loc:Translate DAILY_STATISTICS}" />
+                <TextBlock Classes="section-heading" Text="{loc:Translate DAILY_STATISTICS}"/>
                 <avalonia:CartesianChart Series="{Binding Statistics.DailyAverageGameLengthStatistics.Series}"
                                          XAxes="{Binding Statistics.DailyAverageGameLengthStatistics.XAxis}"
                                          YAxes="{Binding Statistics.DailyAverageGameLengthStatistics.YAxis}"
                                          LegendPosition="Left"
-                                         Height="600" />
+                                         Height="600"/>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>
-
-
 </UserControl>

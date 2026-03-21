@@ -17,6 +17,8 @@
     <system:String x:Key="ZIP_FILES">File ZIP</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Seleziona una cartella</system:String>
     <system:String x:Key="INSTALLING_GAMENAME">Installazione di {0} in corso...</system:String>
+    <system:String x:Key="VERIFYING_DOWNLOAD">Verifica download in corso...</system:String>
+    <system:String x:Key="FETCHING_GAME_DETAILS">Recupero dettagli gioco in corso...</system:String>
     <system:String x:Key="THE_SAME_MOD_IS_ALREADY_INSTALLED">Questa mod è già installata</system:String>
     <system:String x:Key="THE_SAME_MOD_IS_ALREADY_INSTALLED_TEXT">Questa mod sembra già installata. Fai clic</system:String>
     <system:String x:Key="CANCEL">Annulla</system:String>

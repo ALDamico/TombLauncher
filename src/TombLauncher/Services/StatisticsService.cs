@@ -125,8 +125,9 @@ public class StatisticsService
                 {
                     new Axis()
                     {
+                        MinStep = 1,
                         Labeler = v =>
-                            v.ToString(CultureInfo.InvariantCulture) + " " + "GAMES_PLAYED".GetLocalizedString(),
+                            ((int)v).ToString() + " " + "GAMES_PLAYED".GetLocalizedString(),
                         Name = "TOTAL_GAMES_PLAYED".GetLocalizedString(),
                     }
                 }
