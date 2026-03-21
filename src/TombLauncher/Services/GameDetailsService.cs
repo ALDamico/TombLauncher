@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 
@@ -119,5 +120,12 @@ public class GameDetailsService : IViewService
             .Where(f => excludedFolders.All(dir => !f.Contains(dir)))
             .Select(f => new FileInfo(f))
             .ToList();
+    }
+
+    public async Task<GameMetadataViewModel> GetGame(int id, CancellationToken ct)
+    {
+        var game = await _gameDataService.GetGameById(id, ct);
+        var viewModel = ViewContext.Mapper.Map<GameMetadataViewModel>(game);
+        return viewModel;
     }
 }

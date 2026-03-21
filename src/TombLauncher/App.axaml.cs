@@ -282,10 +282,13 @@ public class App : Application
         var mergedWinePath = appConfig.Compatibility.WinePath;
         
         var wineExe = platform.FindWineExecutable();
-        if (wineExe != null && mergedWinePath != wineExe)
+        if (wineExe != null)
         {
-            appConfig.User.Compatibility.WinePath = wineExe;
-            await PersistAsync();
+            if (mergedWinePath != wineExe)
+            {
+                appConfig.User.Compatibility.WinePath = wineExe;
+                await PersistAsync();
+            }
         }
         else
         {

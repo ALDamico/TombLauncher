@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
-using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels.Pages;
 
@@ -25,6 +24,7 @@ public partial class GameDetailsViewModel : PageViewModel
         ManageSaveGamesCmd = new AsyncRelayCommand(ManageSavegames);
         OpenLaunchOptionsCmd = new AsyncRelayCommand(OpenLaunchOptions);
         OpenDocumentCommand = new AsyncRelayCommand<string>(OpenDocument);
+        _game = null!;
     }
 
     [ObservableProperty]
@@ -33,18 +33,23 @@ public partial class GameDetailsViewModel : PageViewModel
 
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands = new ObservableCollection<CommandViewModel>();
     [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles = new ObservableCollection<FileInfo>();
-    [ObservableProperty] private GameWithStatsViewModel _game = null!;
+    [ObservableProperty] private GameWithStatsViewModel _game;
     [ObservableProperty] private int _descriptionFontSize = 18;
     [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks = new ObservableCollection<GameLinkViewModel>();
     public List<string> EnabledPatterns { get; set; } = new List<string>();
     public List<string> IgnoredFolders { get; set; } = new List<string>();
     private readonly GameDetailsService _gameDetailsService;
 
-    public override async Task OnNavigatedTo(object parameter)
+    public override async Task OnNavigatedTo(object? parameter)
     {
         if (parameter is GameWithStatsViewModel game)
         {
             Game = game;
+        }
+
+        if (parameter == null)
+        {
+            Game.GameMetadata = await _gameDetailsService.GetGame(Game.GameMetadata.Id, CancellationToken.None);
         }
 
         _gameDetailsService.InitializeSettings(this);

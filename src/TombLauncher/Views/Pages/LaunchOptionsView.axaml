@@ -13,125 +13,137 @@
         <pages:LaunchOptionsViewModel />
     </Design.DataContext>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Orientation="Vertical" Spacing="12" Margin="0,0,0,8">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <!-- Header -->
-            <DockPanel LastChildFill="True">
-                <controls:IconButton DockPanel.Dock="Right"
-                                     Icon="RefreshLine"
-                                     Text="{loc:Translate AUTO_DETECT}"
-                                     ToolTip.Tip="{loc:Translate AUTO_DETECT_TOOLTIP}"
-                                     Command="{Binding AutoDetectCommand}" />
-                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <iconPacks:PackIconRemixIcon Kind="TerminalLine"
-                                                Width="24" Height="24"
-                                                Foreground="{DynamicResource PrimaryBrush}" />
-                    <TextBlock Text="{loc:Translate LAUNCH_OPTIONS, Casing=Upper}"
-                               FontSize="18" FontWeight="DemiBold"
-                               VerticalAlignment="Center" />
-                </StackPanel>
-            </DockPanel>
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical" Spacing="12" Margin="0,0,0,8">
 
-            <!-- General Section -->
-            <Border Classes="card-background" CornerRadius="8" Padding="16">
-                <StackPanel Orientation="Vertical" Spacing="8">
-                    <controls:CardSectionHeader IconKind="PlayLargeLine"
-                                               Title="{loc:Translate GENERAL}" />
-                    <TextBlock Text="{loc:Translate ENGINE_TYPE}"
-                               Classes="small" Opacity="0.7" />
-                    <ComboBox ItemsSource="{Binding AvailableEngines}"
-                              SelectedValue="{Binding SelectedEngine}"
-                              SelectedValueBinding="{Binding Value, Mode=TwoWay}"
-                              AutoScrollToSelectedItem="True"
-                              DisplayMemberBinding="{Binding Description}" />
+                <!-- Header -->
+                <DockPanel LastChildFill="True">
+                    <controls:IconButton DockPanel.Dock="Right"
+                                         Icon="RefreshLine"
+                                         Text="{loc:Translate AUTO_DETECT}"
+                                         ToolTip.Tip="{loc:Translate AUTO_DETECT_TOOLTIP}"
+                                         Command="{Binding AutoDetectCommand}" />
+                    <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                        <iconPacks:PackIconRemixIcon Kind="TerminalLine"
+                                                    Width="24" Height="24"
+                                                    Foreground="{DynamicResource PrimaryBrush}" />
+                        <TextBlock Text="{loc:Translate LAUNCH_OPTIONS, Casing=Upper}"
+                                   FontSize="18" FontWeight="DemiBold"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </DockPanel>
 
-                    <TextBlock Text="{loc:Translate GAME_EXECUTABLE}"
-                               Classes="small" Opacity="0.7"
-                               Margin="0,8,0,0" />
-                    <ComboBox ItemsSource="{Binding AvailableExecutables}"
-                              SelectedItem="{Binding GameExecutable, Mode=TwoWay}" />
-                </StackPanel>
-            </Border>
+                <!-- General Section -->
+                <Border Classes="card-background" CornerRadius="8" Padding="16">
+                    <StackPanel Orientation="Vertical" Spacing="8">
+                        <controls:CardSectionHeader IconKind="PlayLargeLine"
+                                                   Title="{loc:Translate GENERAL}" />
+                        <TextBlock Text="{loc:Translate ENGINE_TYPE}"
+                                   Classes="small" Opacity="0.7" />
+                        <ComboBox ItemsSource="{Binding AvailableEngines}"
+                                  SelectedValue="{Binding SelectedEngine}"
+                                  SelectedValueBinding="{Binding Value, Mode=TwoWay}"
+                                  AutoScrollToSelectedItem="True"
+                                  DisplayMemberBinding="{Binding Description}" />
 
-            <!-- Setup Section -->
-            <Border Classes="card-background" CornerRadius="8" Padding="16">
-                <StackPanel Orientation="Vertical" Spacing="8">
-                    <controls:CardSectionHeader IconKind="HammerLine"
-                                               Title="{loc:Translate SETUP}" />
-                    <CheckBox IsChecked="{Binding SupportsSetup}"
-                              Content="{loc:Translate CAN_LAUNCH_SETUP}" />
+                        <TextBlock Text="{loc:Translate GAME_EXECUTABLE}"
+                                   Classes="small" Opacity="0.7"
+                                   Margin="0,8,0,0" />
+                        <ComboBox ItemsSource="{Binding AvailableExecutables}"
+                                  SelectedItem="{Binding GameExecutable, Mode=TwoWay}" />
+                    </StackPanel>
+                </Border>
 
-                    <StackPanel Orientation="Vertical" Spacing="8"
-                                IsEnabled="{Binding SupportsSetup}">
-                        <StackPanel Orientation="Vertical" Spacing="4">
-                            <TextBlock Text="{loc:Translate SETUP_EXECUTABLE}"
-                                       Classes="small" Opacity="0.7" />
-                            <DockPanel LastChildFill="True">
-                                <controls:Infotip DockPanel.Dock="Right" VerticalAlignment="Center"
-                                                  ToolTipContent="{loc:Translate SETUP_EXECUTABLE_TOOLTIP}" Margin="8,0,0,0" />
-                                <ComboBox ItemsSource="{Binding AvailableExecutables}"
-                                          SelectedItem="{Binding SetupExecutable}" />
-                            </DockPanel>
+                <!-- Setup Section -->
+                <Border Classes="card-background" CornerRadius="8" Padding="16">
+                    <StackPanel Orientation="Vertical" Spacing="8">
+                        <controls:CardSectionHeader IconKind="HammerLine"
+                                                   Title="{loc:Translate SETUP}" />
+                        <CheckBox IsChecked="{Binding SupportsSetup}"
+                                  Content="{loc:Translate CAN_LAUNCH_SETUP}" />
+
+                        <StackPanel Orientation="Vertical" Spacing="8"
+                                    IsEnabled="{Binding SupportsSetup}">
+                            <StackPanel Orientation="Vertical" Spacing="4">
+                                <TextBlock Text="{loc:Translate SETUP_EXECUTABLE}"
+                                           Classes="small" Opacity="0.7" />
+                                <DockPanel LastChildFill="True">
+                                    <controls:Infotip DockPanel.Dock="Right" VerticalAlignment="Center"
+                                                      ToolTipContent="{loc:Translate SETUP_EXECUTABLE_TOOLTIP}" Margin="8,0,0,0" />
+                                    <ComboBox ItemsSource="{Binding AvailableExecutables}"
+                                              SelectedItem="{Binding SetupExecutable}" />
+                                </DockPanel>
+                            </StackPanel>
+
+                            <controls:LabeledTextBox Label="{loc:Translate SETUP_EXECUTABLE_ARGS}"
+                                                     Text="{Binding SetupArgs}">
+                                <controls:LabeledTextBox.Infotip>
+                                    <controls:Infotip ToolTipContent="{loc:Translate SETUP_EXECUTABLE_ARGS_TOOLTIP}" />
+                                </controls:LabeledTextBox.Infotip>
+                            </controls:LabeledTextBox>
                         </StackPanel>
+                    </StackPanel>
+                </Border>
 
-                        <controls:LabeledTextBox Label="{loc:Translate SETUP_EXECUTABLE_ARGS}"
-                                                 Text="{Binding SetupArgs}">
+                <!-- Community Patch Section -->
+                <Border Classes="card-background" CornerRadius="8" Padding="16">
+                    <StackPanel Orientation="Vertical" Spacing="8">
+                        <controls:CardSectionHeader IconKind="GroupLine"
+                                                   Title="{loc:Translate COMMUNITY_PATCH}" />
+                        <DockPanel LastChildFill="True">
+                            <controls:Infotip DockPanel.Dock="Right"
+                                              VerticalAlignment="Center"
+                                              ToolTipContent="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP}" />
+                            <CheckBox IsChecked="{Binding SupportsCustomSetup}"
+                                      Content="{loc:Translate USES_COMMUNITY_PATCH}" />
+                        </DockPanel>
+
+                        <StackPanel Orientation="Vertical" Spacing="4"
+                                    IsEnabled="{Binding SupportsCustomSetup}">
+                            <TextBlock Text="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE}"
+                                       Classes="small" Opacity="0.7" />
+                            <ComboBox ItemsSource="{Binding AvailableExecutables}"
+                                      SelectedItem="{Binding CustomSetupExecutable}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Linux Compatibility Section (WINEPREFIX per-game) -->
+                <Border Classes="card-background" CornerRadius="8" Padding="16"
+                        IsVisible="{Binding IsWineSupported}">
+                    <StackPanel Orientation="Vertical" Spacing="8">
+                        <controls:CardSectionHeader IconKind="Goblet2Line"
+                                                   Title="{loc:Translate COMPATIBILITY}" />
+                        <controls:LabeledTextBox Label="{loc:Translate WINEPREFIX_LAUNCH_OPTION}"
+                                                 Text="{Binding WinePrefix}">
                             <controls:LabeledTextBox.Infotip>
-                                <controls:Infotip ToolTipContent="{loc:Translate SETUP_EXECUTABLE_ARGS_TOOLTIP}" />
+                                <controls:Infotip ToolTipContent="{loc:Translate WINE_PREFIX_TOOLTIP_CONTENT}" />
                             </controls:LabeledTextBox.Infotip>
                         </controls:LabeledTextBox>
                     </StackPanel>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- Community Patch Section -->
-            <Border Classes="card-background" CornerRadius="8" Padding="16">
-                <StackPanel Orientation="Vertical" Spacing="8">
-                    <controls:CardSectionHeader IconKind="GroupLine"
-                                               Title="{loc:Translate COMMUNITY_PATCH}" />
-                    <DockPanel LastChildFill="True">
-                        <controls:Infotip DockPanel.Dock="Right"
-                                          VerticalAlignment="Center"
-                                          ToolTipContent="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP}" />
-                        <CheckBox IsChecked="{Binding SupportsCustomSetup}"
-                                  Content="{loc:Translate USES_COMMUNITY_PATCH}" />
-                    </DockPanel>
-
-                    <StackPanel Orientation="Vertical" Spacing="4"
-                                IsEnabled="{Binding SupportsCustomSetup}">
-                        <TextBlock Text="{loc:Translate COMMUNITY_PATCH_SETUP_EXECUTABLE}"
-                                   Classes="small" Opacity="0.7" />
-                        <ComboBox ItemsSource="{Binding AvailableExecutables}"
-                                  SelectedItem="{Binding CustomSetupExecutable}" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-
-            <!-- Linux Compatibility Section (WINEPREFIX per-game) -->
-            <Border Classes="card-background" CornerRadius="8" Padding="16"
-                    IsVisible="{Binding IsWineSupported}">
-                <StackPanel Orientation="Vertical" Spacing="8">
-                    <controls:CardSectionHeader IconKind="Goblet2Line"
-                                               Title="{loc:Translate COMPATIBILITY}" />
-                    <controls:LabeledTextBox Label="{loc:Translate WINEPREFIX_LAUNCH_OPTION}"
-                                             Text="{Binding WinePrefix}">
-                        <controls:LabeledTextBox.Infotip>
-                            <controls:Infotip ToolTipContent="{loc:Translate WINE_PREFIX_TOOLTIP_CONTENT}" />
-                        </controls:LabeledTextBox.Infotip>
-                    </controls:LabeledTextBox>
-                </StackPanel>
-            </Border>
-
-            <!-- Action Buttons -->
-            <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
-                <Button Content="{loc:Translate CANCEL}"
-                        Command="{Binding CancelCmd}" />
-                <Button Content="{loc:Translate SAVE}"
-                        Classes="btn-success"
-                        Command="{Binding SaveCmd}" />
             </StackPanel>
+        </ScrollViewer>
 
-        </StackPanel>
-    </ScrollViewer>
+        <!-- Action Buttons — sticky, always visible -->
+        <DockPanel Grid.Row="1" LastChildFill="False" Margin="0,8,0,0">
+            <Button DockPanel.Dock="Left"
+                    Content="{loc:Translate CANCEL}"
+                    Command="{Binding CancelCmd}" />
+            <controls:IconButton DockPanel.Dock="Right"
+                                 Classes="btn-primary"
+                                 Padding="16,8"
+                                 Icon="Save3Line"
+                                 Text="{loc:Translate SAVE}"
+                                 Command="{Binding SaveCmd}" />
+        </DockPanel>
+
+    </Grid>
 </UserControl>
