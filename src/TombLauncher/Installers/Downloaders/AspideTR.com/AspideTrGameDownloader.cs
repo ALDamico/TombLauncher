@@ -111,19 +111,19 @@ public class AspideTrGameDownloader : GameDownloaderBase
                 var linkText = link.GetAttributeValue("href");
                 if (link.HasClass("info") && searchResult.DetailsLink.IsNullOrWhiteSpace())
                 {
-                    searchResult.DetailsLink = linkText;
+                    searchResult.DetailsLink = linkText.EnsureStartsWith(BaseUrl, '/');
                 }
                 else if (link.HasClass("reviews") && linkText != "#")
                 {
-                    searchResult.ReviewsLink = linkText;
+                    searchResult.ReviewsLink = linkText.EnsureStartsWith(BaseUrl, '/');
                 }
                 else if (link.HasClass("walkthroughs") && linkText != "#")
                 {
-                    searchResult.WalkthroughLink = linkText;
+                    searchResult.WalkthroughLink = linkText.EnsureStartsWith(BaseUrl, '/');
                 }
                 else if (link.HasClass("download"))
                 {
-                    searchResult.DownloadLink = linkText;
+                    searchResult.DownloadLink = linkText.EnsureStartsWith(BaseUrl, '/');
                 }
             }
 

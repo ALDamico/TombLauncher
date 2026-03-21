@@ -111,7 +111,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
         var dictified = RequestUtils.DictifyRequest(request);
 
         var tags = await GetPagedResponse<LevelTagResponse>("level_tags", dictified, cancellationToken);
-        return tags.Results.ToDictionary(t => t.Name?.ToUpperInvariant() ?? string.Empty, t => t) ?? new Dictionary<string, LevelTagResponse>();
+        return tags.Results.ToDictionary(t => t.Name?.ToUpperInvariant() ?? string.Empty, t => t);
     }
 
     private async Task<Dictionary<string, LevelGenreResponse>> FetchGenres(CancellationToken cancellationToken)
@@ -122,7 +122,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
         };
         var dictified = RequestUtils.DictifyRequest(request);
         var genres = await GetPagedResponse<LevelGenreResponse>("level_genres", dictified, cancellationToken);
-        return genres?.Results?.ToDictionary(g => g.Name?.ToUpperInvariant() ?? string.Empty, g => g) ?? new Dictionary<string, LevelGenreResponse>();
+        return genres.Results?.ToDictionary(g => g.Name?.ToUpperInvariant() ?? string.Empty, g => g) ?? new Dictionary<string, LevelGenreResponse>();
     }
 
     private async Task<Dictionary<int, GameEngine>> FetchSupportedEngines(CancellationToken cancellationToken)
@@ -189,9 +189,9 @@ public class TrCustomsGameDownloader : GameDownloaderBase
                 TitlePic = summary.Cover?.Url ?? string.Empty,
                 SizeInMb = summary.LastFile?.Size != null ? (int)Math.Ceiling(summary.LastFile.Size / (1024.0 * 1024.0)) : null,
                 ReviewCount = summary.ReviewCount,
-                ReviewsLink = $"levels/{summary.Id}/reviews",
-                DetailsLink = $"levels/{summary.Id}",
-                DownloadLink = summary.LastFile?.Url ?? string.Empty
+                ReviewsLink = $"levels/{summary.Id}/reviews".EnsureStartsWith(BaseUrl, '/'),
+                DetailsLink = $"levels/{summary.Id}".EnsureStartsWith(BaseUrl, '/'),
+                DownloadLink = summary.LastFile?.Url.EnsureStartsWith(BaseUrl, '/') ?? string.Empty
             };
             result.Add(metadata);
         }
@@ -200,9 +200,9 @@ public class TrCustomsGameDownloader : GameDownloaderBase
     private double? ParseRating(RatingClassResponse? ratingClass)
     {
         double? rating = null;
-        if (ratingClass != null && ratingClass.Name != null && _ratingMap.ContainsKey(ratingClass.Name))
+        if (ratingClass is { Name: not null } && _ratingMap.TryGetValue(ratingClass.Name, out var value))
         {
-            rating = _ratingMap[ratingClass.Name];
+            rating = value;
         }
 
         return rating;

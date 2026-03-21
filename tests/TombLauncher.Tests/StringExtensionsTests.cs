@@ -102,4 +102,47 @@ public class StringExtensionsTests
         byte[] arr = [65, 66, 67]; // "ABC"
         Assert.Equal("", arr.GetNullTerminatedString(0));
     }
+
+    // --- EnsureStartsWith ---
+
+    [Theory]
+    // Relative URL → prepend BaseUrl with separator
+    [InlineData("/level.php?id=1", "https://trle.net", '/', "https://trle.net/level.php?id=1")]
+    // Already absolute URL, same domain → unchanged
+    [InlineData("https://trle.net/level.php?id=1", "https://trle.net", '/', "https://trle.net/level.php?id=1")]
+    // Absolute URL with www., prefix without → unchanged (original bug)
+    [InlineData("https://www.trle.net/scadm/trle_dl.php?lid=3674", "https://trle.net", '/', "https://www.trle.net/scadm/trle_dl.php?lid=3674")]
+    // Double slash on path → trimmed correctly
+    [InlineData("//level.php", "https://trle.net", '/', "https://trle.net/level.php")]
+    // BaseUrl with trailing slash → no double slash in result
+    [InlineData("/level.php", "https://trle.net/", '/', "https://trle.net/level.php")]
+    public void EnsureStartsWith_WithSeparator_ReturnsExpectedUrl(string s, string prefix, char sep, string expected)
+    {
+        Assert.Equal(expected, s.EnsureStartsWith(prefix, sep));
+    }
+
+    [Theory]
+    // No separator: relative URL → direct concat
+    [InlineData("/level.php", "https://trle.net", "https://trle.net/level.php")]
+    // No separator: absolute URL → unchanged
+    [InlineData("https://trle.net/level.php", "https://trle.net", "https://trle.net/level.php")]
+    public void EnsureStartsWith_WithoutSeparator_ReturnsExpectedUrl(string s, string prefix, string expected)
+    {
+        Assert.Equal(expected, s.EnsureStartsWith(prefix));
+    }
+
+    [Fact]
+    public void EnsureStartsWith_NullS_ReturnsPrefix()
+    {
+        // null s → empty string joined with prefix → trailing separator
+        Assert.Equal("https://trle.net/", ((string?)null).EnsureStartsWith("https://trle.net", '/'));
+    }
+
+    [Fact]
+    public void EnsureStartsWith_NullPrefix_ReturnsS()
+    {
+        // null prefix → empty string joined with separator → "/level.php"
+        Assert.Equal("/level.php", "/level.php".EnsureStartsWith(null, '/'));
+    }
 }
+
