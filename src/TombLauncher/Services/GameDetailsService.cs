@@ -118,4 +118,11 @@ public class GameDetailsService : IViewService
             .Select(f => new FileInfo(f))
             .ToList();
     }
+
+    public async Task<GameMetadataViewModel> GetGame(int id, CancellationToken ct)
+    {
+        var game = await _gameDataService.GetGameById(id, ct);
+        var viewModel = ViewContext.Mapper.Map<GameMetadataViewModel>(game);
+        return viewModel;
+    }
 }

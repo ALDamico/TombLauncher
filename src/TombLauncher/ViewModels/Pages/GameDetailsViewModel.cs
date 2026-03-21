@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -33,11 +34,16 @@ public partial class GameDetailsViewModel : PageViewModel
     public List<string> IgnoredFolders { get; set; } = [];
     private readonly GameDetailsService _gameDetailsService;
 
-    public override async Task OnNavigatedTo(object parameter)
+    public override async Task OnNavigatedTo(object? parameter)
     {
         if (parameter is GameWithStatsViewModel game)
         {
             Game = game;
+        }
+
+        if (parameter == null)
+        {
+            Game.GameMetadata = await _gameDetailsService.GetGame(Game.GameMetadata.Id, CancellationToken.None);
         }
 
         _gameDetailsService.InitializeSettings(this);
