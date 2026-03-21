@@ -256,6 +256,7 @@
     <system:String x:Key="AUTODETECT_WINE">Autodetect</system:String>
     <system:String x:Key="WINE_PREFIX_PATH">Wine data folder (optional)</system:String>
     <system:String x:Key="WINE_PREFIX_TOOLTIP_CONTENT">A dedicated folder where Wine stores this game's settings and virtual Windows files, keeping them separate from other games. Leave empty to share the common default folder.</system:String>
+    <system:String x:Key="WINE_VERSION">Wine version</system:String>
     <system:String x:Key="WINEPREFIX_LAUNCH_OPTION">Wine data folder (this game only)</system:String>
     <system:String x:Key="UNZIP_FALLBACK_METHOD">Unzip fallback method</system:String>
     <system:String x:Key="INSERT_NEW_GAME">INSERT NEW GAME</system:String>

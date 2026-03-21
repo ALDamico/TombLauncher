@@ -59,4 +59,5 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
 
     public bool IsWineSupported => false;
     public string? FindWineExecutable() => null;
+    public string? GetWineVersion(string winePath) => null;
 }

@@ -18,4 +18,5 @@ public interface IPlatformSpecificFeatures
 
     bool IsWineSupported { get; }
     string? FindWineExecutable();
+    string? GetWineVersion(string winePath);
 }

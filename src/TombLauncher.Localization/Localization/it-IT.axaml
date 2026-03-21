@@ -255,6 +255,7 @@
     <system:String x:Key="AUTODETECT_WINE">Rileva automaticamente</system:String>
     <system:String x:Key="WINE_PREFIX_PATH">Cartella dati Wine (opzionale)</system:String>
     <system:String x:Key="WINE_PREFIX_TOOLTIP_CONTENT">Una cartella dedicata in cui Wine memorizza le impostazioni e i file Windows virtuali di questo gioco, tenendoli separati dagli altri. Lascia vuoto per usare la cartella predefinita comune.</system:String>
+    <system:String x:Key="WINE_VERSION">Versione di Wine</system:String>
     <system:String x:Key="WINEPREFIX_LAUNCH_OPTION">Cartella dati Wine (solo questo gioco)</system:String>
     <system:String x:Key="UNZIP_FALLBACK_METHOD">Metodo di decompressione di fallback</system:String>
     <system:String x:Key="INSERT_NEW_GAME">INSERISCI UN NUOVO GIOCO</system:String>

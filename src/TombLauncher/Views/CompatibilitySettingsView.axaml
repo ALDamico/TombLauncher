@@ -40,5 +40,12 @@
             </controls:LabeledTextBox>
         </DockPanel>
 
+        <!-- Detected Wine version (read-only) -->
+        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsWineSupported}">
+            <TextBlock Classes="text-muted" VerticalAlignment="Center" Text="{loc:Translate WINE_VERSION}" />
+            <TextBlock FontWeight="Medium" VerticalAlignment="Center"
+                       Text="{Binding WineVersion, FallbackValue='–'}" />
+        </StackPanel>
+
     </StackPanel>
 </UserControl>
