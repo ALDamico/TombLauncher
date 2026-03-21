@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.10" />
+      <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.12" />
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     </ItemGroup>
 
