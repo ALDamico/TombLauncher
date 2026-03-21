@@ -8,6 +8,7 @@ using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
