@@ -181,7 +181,7 @@
     <system:String x:Key="SYNC_SAVEGAME_METADATA">Sync savegame metadata</system:String>
     <system:String x:Key="SYNC_NOW">Sync now</system:String>
     <system:String x:Key="LEVEL_NAME">Level name</system:String>
-    <system:String x:Key="SLOT_NUMBER">Slot #</system:String>
+    <system:String x:Key="SLOT_NUMBER">Slot #{0}</system:String>
     <system:String x:Key="FILE_NAME">File name</system:String>
     <system:String x:Key="DATE_AND_TIME">Date and time</system:String>
     <system:String x:Key="ALL_SLOTS">All slots</system:String>
@@ -383,5 +383,6 @@
     <system:String x:Key="RESTART_REQUIRED_CAPTION">Restart required</system:String>
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">The language has been changed. Please restart the application to apply the new language.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Daily statistics</system:String>
+    <system:String x:Key="LOADING_SAVEGAMES">Loading savegames...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

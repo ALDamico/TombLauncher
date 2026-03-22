@@ -30,15 +30,24 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
     public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
         string compatibilityExecutable, string workingDirectory, string? winePrefix = null)
     {
-        arguments = executableFileNameOnly + " " + (arguments ?? "");
-        var psi = new ProcessStartInfo(compatibilityExecutable)
+        // wine exits immediately after spawning the Windows process into wineserver,
+        // breaking process-lifetime tracking (play time, save file monitoring).
+        // Wrapping with bash + "wineserver -w" keeps the monitored process alive
+        // until wineserver shuts down, i.e. until the game truly exits.
+        var gameArgs = string.IsNullOrWhiteSpace(arguments) ? string.Empty : " " + arguments;
+        var wineCommand = $"\"{compatibilityExecutable}\" \"{executableFileNameOnly}\"{gameArgs}";
+
+        var psi = new ProcessStartInfo("bash")
         {
-            Arguments = arguments,
             WorkingDirectory = workingDirectory,
             UseShellExecute = false,
         };
+        psi.ArgumentList.Add("-c");
+        psi.ArgumentList.Add($"{wineCommand}; wineserver -w");
+
         if (!string.IsNullOrWhiteSpace(winePrefix))
             psi.Environment["WINEPREFIX"] = winePrefix;
+
         return psi;
     }
 

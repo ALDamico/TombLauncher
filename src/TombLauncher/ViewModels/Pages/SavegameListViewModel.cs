@@ -50,10 +50,12 @@ public partial class SavegameListViewModel : PageViewModel
             GameTitle = gameMetadata.Title;
             InstallLocation = gameMetadata.InstallDirectory;
             GameEngine = gameMetadata.GameEngine;
-
-            SetBusy("Loading savegames");
-            await _savegameQueryService.LoadSaveGames(this);
-            await _savegameQueryService.InitSlots(this);
+            
+            using (BusyScope("LOADING_SAVEGAMES"))
+            {
+                await _savegameQueryService.LoadSaveGames(this);
+                await _savegameQueryService.InitSlots(this);
+            }
             SetBusy(false);
         }
     }
