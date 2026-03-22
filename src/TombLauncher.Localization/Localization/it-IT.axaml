@@ -180,7 +180,7 @@
     <system:String x:Key="SYNC_SAVEGAME_METADATA">Sincronizza i metadati dei salvataggi</system:String>
     <system:String x:Key="SYNC_NOW">Esegui ora</system:String>
     <system:String x:Key="LEVEL_NAME">Nome livello</system:String>
-    <system:String x:Key="SLOT_NUMBER">Slot #</system:String>
+    <system:String x:Key="SLOT_NUMBER">Slot #{0}</system:String>
     <system:String x:Key="FILE_NAME">Nome file</system:String>
     <system:String x:Key="DATE_AND_TIME">Data e ora</system:String>
     <system:String x:Key="ALL_SLOTS">Tutti gli slot</system:String>
@@ -382,6 +382,7 @@
     <system:String x:Key="RESTART_REQUIRED_CAPTION">Riavvio necessario</system:String>
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">La lingua è stata modificata. Riavvia l'applicazione per applicare la nuova lingua.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Statistiche giornaliere</system:String>
+    <system:String x:Key="LOADING_SAVEGAMES">Caricamento salvataggi in corso...</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN">Commuta schermo intero (F11)</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
