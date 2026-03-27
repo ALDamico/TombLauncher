@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,7 @@ using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Launchers;
 using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
@@ -36,6 +38,7 @@ public class GameWithStatsService : IViewService, IDisposable
         IPlatformSpecificFeatures platformSpecificFeatures,
         SavegameHeaderProcessor headerProcessor,
         IAppConfiguration appConfiguration,
+        IGameLauncher gameLauncher,
         GameMetadataMapper mapper)
     {
         ViewContext = viewContext;
@@ -51,7 +54,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
         _logger = logger;
         _headerProvider = headerProvider;
-        _winePath = appConfiguration.Compatibility.WinePath;
+        _gameLauncher = gameLauncher;
         _globalWinePrefix = appConfiguration.Compatibility.WinePrefix;
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
@@ -72,7 +75,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly int? _numberOfSavesToKeep;
     private readonly ILogger<GameWithStatsService> _logger;
     private readonly ISavegameHeaderProvider _headerProvider;
-    private readonly string _winePath;
+    private readonly IGameLauncher _gameLauncher;
     private readonly string? _globalWinePrefix;
     private DateTime? _startDate;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
@@ -263,23 +266,59 @@ public class GameWithStatsService : IViewService, IDisposable
 
         var process = new Process()
         {
-            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory, winePrefix),
+            StartInfo = _gameLauncher.GetLaunchStartInfo(executableFileNameOnly, arguments ?? "", workingDirectory, winePrefix),
             EnableRaisingEvents = true
         };
+
+        var stdoutBuilder = new StringBuilder();
+        var stderrBuilder = new StringBuilder();
+
+        // Redirect streams only when UseShellExecute=false (Linux/Wine); not available on Windows with UseShellExecute=true.
+        if (!process.StartInfo.UseShellExecute)
+        {
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.OutputDataReceived += (_, args) => { if (args.Data != null) stdoutBuilder.AppendLine(args.Data); };
+            process.ErrorDataReceived  += (_, args) => { if (args.Data != null) stderrBuilder.AppendLine(args.Data); };
+        }
+
         if (trackPlayTime)
         {
-            process.Exited += async (sender, _) => await OnGameExited(game, (Process)sender!);
+            process.Exited += async (sender, _) =>
+            {
+                var p = (Process)sender!;
+                LogProcessOutputOnError(p, stdoutBuilder, stderrBuilder);
+                await OnGameExited(game, p);
+            };
         }
         else
         {
-            process.Exited += (sender, _) => OnSetupExited((Process)sender!);
+            process.Exited += (sender, _) =>
+            {
+                var p = (Process)sender!;
+                LogProcessOutputOnError(p, stdoutBuilder, stderrBuilder);
+                OnSetupExited(p);
+            };
         }
 
-        process.ErrorDataReceived += (_, args) => _logger.LogError("Process error: {StandardError}", args.Data);
-        process.OutputDataReceived +=
-            (_, args) => _logger.LogInformation("Process output: {StandardOutput}", args.Data);
-
         process.Start();
+
+        if (!process.StartInfo.UseShellExecute)
+        {
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+        }
+    }
+
+    private void LogProcessOutputOnError(Process process, StringBuilder stdout, StringBuilder stderr)
+    {
+        if (process.ExitCode == 0) return;
+        var stdoutStr = stdout.ToString();
+        var stderrStr = stderr.ToString();
+        if (!string.IsNullOrWhiteSpace(stdoutStr))
+            _logger.LogWarning("Process stdout:{NewLine}{StdOut}", Environment.NewLine, stdoutStr);
+        if (!string.IsNullOrWhiteSpace(stderrStr))
+            _logger.LogWarning("Process stderr:{NewLine}{StdErr}", Environment.NewLine, stderrStr);
     }
 
     public async Task ToggleFavourite(GameWithStatsViewModel gameWithStatsViewModel)

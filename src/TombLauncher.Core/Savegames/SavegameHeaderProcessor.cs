@@ -45,6 +45,8 @@ public class SavegameHeaderProcessor : IDisposable
 
     public void EnqueueFileName(string fileName)
     {
+        if (fileName.EndsWith("savereg.tmp"))
+            return;
         if (Directory.Exists(fileName))
         {
             _logger.LogWarning("{Filename} was a directory. Will be ignored", fileName);

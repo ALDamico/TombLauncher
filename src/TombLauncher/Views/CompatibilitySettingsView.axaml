@@ -5,7 +5,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:cfg="clr-namespace:TombLauncher.Configuration.Sections"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
              x:Class="TombLauncher.Views.CompatibilitySettingsView"
              x:DataType="settings:CompatibilitySettingsViewModel">
     <Design.DataContext>
@@ -13,8 +15,30 @@
     </Design.DataContext>
     <StackPanel Orientation="Vertical" Spacing="12">
 
-        <!-- Wine executable path -->
+        <!-- Tool selector: Wine / Proton -->
         <DockPanel LastChildFill="True" IsVisible="{Binding IsWineSupported}">
+            <controls:LabeledTextBox Label="{loc:Translate COMPATIBILITY_TOOL}">
+                <controls:LabeledTextBox.Content>
+                    <ComboBox SelectedItem="{Binding SelectedTool}" HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="cfg:CompatibilityTool">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconRemixIcon Kind="{Binding ., Converter={StaticResource CompatibilityToolToIconConverter}}"/>
+                                    <TextBlock Margin="8, 0, 0, 0" Text="{Binding .}"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                        <cfg:CompatibilityTool>Wine</cfg:CompatibilityTool>
+                        <cfg:CompatibilityTool>Proton</cfg:CompatibilityTool>
+                    </ComboBox>
+                </controls:LabeledTextBox.Content>
+            </controls:LabeledTextBox>
+        </DockPanel>
+
+        <!-- ═══ Wine section ═══════════════════════════════════════════════ -->
+
+        <!-- Wine executable path -->
+        <DockPanel LastChildFill="True" IsVisible="{Binding IsWine}">
             <Button DockPanel.Dock="Right"
                     Command="{Binding AutoDetectWineCommand}"
                     Content="{loc:Translate AUTODETECT_WINE}"
@@ -30,7 +54,7 @@
         </DockPanel>
 
         <!-- WINEPREFIX override -->
-        <DockPanel LastChildFill="True" IsVisible="{Binding IsWineSupported}">
+        <DockPanel LastChildFill="True" IsVisible="{Binding IsWine}">
             <controls:LabeledTextBox Label="{loc:Translate WINE_PREFIX_PATH}"
                                      Text="{Binding WinePrefix}">
                 <controls:LabeledTextBox.Infotip>
@@ -41,10 +65,65 @@
         </DockPanel>
 
         <!-- Detected Wine version (read-only) -->
-        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsWineSupported}">
+        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsWine}">
             <TextBlock Classes="text-muted" VerticalAlignment="Center" Text="{loc:Translate WINE_VERSION}" />
             <TextBlock FontWeight="Medium" VerticalAlignment="Center"
                        Text="{Binding WineVersion, FallbackValue='–'}" />
+        </StackPanel>
+
+        <!-- ═══ Proton section ══════════════════════════════════════════════ -->
+
+        <!-- Proton installation ComboBox (auto-detected from steamapps) -->
+        <DockPanel LastChildFill="True" IsVisible="{Binding IsProton}">
+            <controls:LabeledTextBox Label="{loc:Translate PROTON_EXECUTABLE_PATH}">
+                <controls:LabeledTextBox.Infotip>
+                    <controls:Infotip Header="{loc:Translate PROTON_EXECUTABLE_PATH}"
+                                      ToolTipContent="{loc:Translate PROTON_TOOLTIP_CONTENT}" />
+                </controls:LabeledTextBox.Infotip>
+                <controls:LabeledTextBox.Content>
+                    <ComboBox ItemsSource="{Binding AvailableProtonInstallations}"
+                              SelectedItem="{Binding SelectedProtonInstallation}"
+                              IsVisible="{Binding !HasNoProtonInstallations}"
+                              HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </controls:LabeledTextBox.Content>
+            </controls:LabeledTextBox>
+        </DockPanel>
+
+        <!-- Manual Proton path fallback (shown when no installations are auto-detected) -->
+        <DockPanel LastChildFill="True"
+                   IsVisible="{Binding HasNoProtonInstallations}">
+            <controls:LabeledTextBox Label="{loc:Translate PROTON_EXECUTABLE_PATH}"
+                                     Text="{Binding ManualProtonPath}"
+                                     IsVisible="{Binding IsProton}">
+                <controls:LabeledTextBox.Infotip>
+                    <controls:Infotip Header="{loc:Translate PROTON_EXECUTABLE_PATH}"
+                                      ToolTipContent="{loc:Translate PROTON_TOOLTIP_CONTENT}" />
+                </controls:LabeledTextBox.Infotip>
+            </controls:LabeledTextBox>
+        </DockPanel>
+
+        <!-- STEAM_COMPAT_DATA_PATH override -->
+        <DockPanel LastChildFill="True" IsVisible="{Binding IsProton}">
+            <controls:LabeledTextBox Label="{loc:Translate PROTON_DATA_PATH}"
+                                     Text="{Binding WinePrefix}">
+                <controls:LabeledTextBox.Infotip>
+                    <controls:Infotip Header="{loc:Translate PROTON_DATA_PATH}"
+                                      ToolTipContent="{loc:Translate PROTON_DATA_PATH_TOOLTIP}" />
+                </controls:LabeledTextBox.Infotip>
+            </controls:LabeledTextBox>
+        </DockPanel>
+
+        <!-- Detected Proton version (read-only) -->
+        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsProton}">
+            <TextBlock Classes="text-muted" VerticalAlignment="Center" Text="{loc:Translate PROTON_VERSION}" />
+            <TextBlock FontWeight="Medium" VerticalAlignment="Center"
+                       Text="{Binding ProtonVersion, FallbackValue='–'}" />
         </StackPanel>
 
     </StackPanel>
