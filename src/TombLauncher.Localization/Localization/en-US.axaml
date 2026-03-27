@@ -159,7 +159,8 @@
     <system:String x:Key="FETCHING_SAVEGAMES_FOR_GAMETITLE">Fetching savegames for {0}</system:String>
     <system:String x:Key="SLOT">Slot</system:String>
     <system:String x:Key="ONLY_START_OF_LEVEL">Only start of level</system:String>
-    <system:String x:Key="MARK_UNMARK_AS_START_OF_LEVEL_SAVE">Mark/unmark as start of level save</system:String>
+    <system:String x:Key="MARK_AS_START_OF_LEVEL_SAVE">Mark as start of level save</system:String>
+    <system:String x:Key="UNMARK_AS_START_OF_LEVEL_SAVE">Unmark as start of level save</system:String>
     <system:String x:Key="UPDATE_IN_PROGRESS">Update in progress...</system:String>
     <system:String x:Key="CONFIRM_DELETE">Confirm delete</system:String>
     <system:String x:Key="ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_SAVEGAME_THIS">Are you sure you want to delete this savegame? This action cannot be undone.</system:String>
@@ -181,7 +182,8 @@
     <system:String x:Key="SYNC_SAVEGAME_METADATA">Sync savegame metadata</system:String>
     <system:String x:Key="SYNC_NOW">Sync now</system:String>
     <system:String x:Key="LEVEL_NAME">Level name</system:String>
-    <system:String x:Key="SLOT_NUMBER">Slot #{0}</system:String>
+    <system:String x:Key="SLOT_NUMBER">Slot #</system:String>
+    <system:String x:Key="SLOT_NUMBER_FORMATTABLE">Slot #{0}</system:String>
     <system:String x:Key="FILE_NAME">File name</system:String>
     <system:String x:Key="DATE_AND_TIME">Date and time</system:String>
     <system:String x:Key="ALL_SLOTS">All slots</system:String>
@@ -258,6 +260,14 @@
     <system:String x:Key="WINE_PREFIX_TOOLTIP_CONTENT">A dedicated folder where Wine stores this game's settings and virtual Windows files, keeping them separate from other games. Leave empty to share the common default folder.</system:String>
     <system:String x:Key="WINE_VERSION">Wine version</system:String>
     <system:String x:Key="WINEPREFIX_LAUNCH_OPTION">Wine data folder (this game only)</system:String>
+    <system:String x:Key="COMPATIBILITY_TOOL">Compatibility tool</system:String>
+    <system:String x:Key="PROTON_EXECUTABLE_PATH">Proton executable path</system:String>
+    <system:String x:Key="PROTON_TOOLTIP_CONTENT">Proton is Valve's compatibility layer for running Windows games on Linux. Select an installation detected from your Steam library, or enter the path manually.</system:String>
+    <system:String x:Key="PROTON_DATA_PATH">Proton data folder (optional)</system:String>
+    <system:String x:Key="PROTON_DATA_PATH_TOOLTIP">A dedicated folder where Proton stores this game's settings and virtual Windows files (STEAM_COMPAT_DATA_PATH). Leave empty to use the global default.</system:String>
+    <system:String x:Key="PROTON_VERSION">Proton version</system:String>
+    <system:String x:Key="PROTON_NOT_FOUND">Proton not found</system:String>
+    <system:String x:Key="PROTON_NOT_FOUND_DESCRIPTION">TombLauncher is set to use Proton, but no installation was found. Make sure you have Proton installed via Steam, or set the path manually in Settings → Compatibility.</system:String>
     <system:String x:Key="UNZIP_FALLBACK_METHOD">Unzip fallback method</system:String>
     <system:String x:Key="INSERT_NEW_GAME">INSERT NEW GAME</system:String>
     <system:String x:Key="INSTALL">Install</system:String>

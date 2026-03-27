@@ -9,9 +9,6 @@ public interface IPlatformSpecificFeatures
     void OpenUrl(string link);
     EnumerationOptions GetEnumerationOptions();
 
-    ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
-        string compatibilityExecutable, string workingDirectory, string? winePrefix = null);
-
     NotifyFilters GetSavegameWatcherNotifyFilters();
     List<UnzipBackendDto> GetPlatformSpecificZipFallbackPrograms();
     string GetAppDataDirectory();
@@ -19,4 +16,6 @@ public interface IPlatformSpecificFeatures
     bool IsWineSupported { get; }
     string? FindWineExecutable();
     string? GetWineVersion(string winePath);
+    List<ProtonInstallationDto> FindAvailableProtonInstallations();
+    string? GetProtonVersion(string protonPath);
 }

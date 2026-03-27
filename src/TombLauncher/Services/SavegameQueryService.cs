@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
@@ -35,7 +34,7 @@ public class SavegameQueryService
         _savegameRepository = savegameRepository;
         _headerProvider = headerProvider;
         _popupService = popupService;
-        _numberOfVersionsToKeep = settingsProvider.GetSavegameSettings()?.NumberOfVersionsToKeep;
+        _numberOfVersionsToKeep = settingsProvider.GetSavegameSettings().NumberOfVersionsToKeep;
     }
 
     public async Task LoadSaveGames(SavegameListViewModel targetViewModel)
@@ -100,7 +99,7 @@ public class SavegameQueryService
 
         savegameListViewModel.Slots.AddRange(usedSlots.Select(s => new SavegameSlotViewModel()
         {
-            Header = "SLOT_NUMBER".GetLocalizedString(s),
+            Header = "SLOT_NUMBER_FORMATTABLE".GetLocalizedString(s),
             SaveSlot = s,
             IsEnabled = true,
             FilterCmd = savegameListViewModel.FilterCmd

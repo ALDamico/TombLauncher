@@ -18,8 +18,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using TombLauncher.Configuration;
+using TombLauncher.Configuration.Sections;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
+using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
@@ -147,7 +149,7 @@ public class App : Application
         splashScreen.Close();
         var updateService = Ioc.Default.GetRequiredService<UpdateService>();
         await updateService.StartAsync();
-        await CheckWineAsync();
+        await CheckCompatibilityToolAsync();
     }
 
     private async Task InitializeServices()
@@ -219,6 +221,17 @@ public class App : Application
         }));
 
 
+        serviceCollection.AddTransient<IGameLauncher>(sp =>
+        {
+            var cfg = sp.GetRequiredService<IAppConfiguration>().Compatibility;
+            return cfg.CompatibilityTool switch
+            {
+                CompatibilityTool.Proton => new ProtonGameLauncher(cfg.ProtonPath ?? ""),
+                CompatibilityTool.None => new WindowsGameLauncher(),
+                _ => new WineGameLauncher(cfg.WinePath ?? "wine"),
+            };
+        });
+
         serviceCollection.AddSingleton<NotificationService>();
         serviceCollection.AddSingleton<UpdateService>();
         serviceCollection.AddScoped(sp =>
@@ -261,12 +274,13 @@ public class App : Application
         return Task.CompletedTask;
     }
 
-    private static async Task CheckWineAsync()
+    private static async Task CheckCompatibilityToolAsync()
     {
         var platform = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
         if (!platform.IsWineSupported) return;
 
         var appConfig = Ioc.Default.GetRequiredService<ILayeredAppConfiguration>();
+        var notifications = Ioc.Default.GetRequiredService<NotificationService>();
 
         // Migrate old WinePath from GameDetails to Compatibility (one-time, only user layer)
         var oldWinePath = appConfig.User.GameDetails.WinePath;
@@ -278,24 +292,37 @@ public class App : Application
             return;
         }
 
-        // Use the merged (layered) config value — default "wine" counts as configured
-        var mergedWinePath = appConfig.Compatibility.WinePath;
-        
-        var wineExe = platform.FindWineExecutable();
-        if (wineExe != null)
+        var tool = appConfig.Compatibility.CompatibilityTool;
+
+        if (tool == CompatibilityTool.Proton)
         {
-            if (mergedWinePath != wineExe)
+            var protonInstallations = platform.FindAvailableProtonInstallations();
+            if (protonInstallations.Count == 0 && string.IsNullOrWhiteSpace(appConfig.Compatibility.ProtonPath))
             {
-                appConfig.User.Compatibility.WinePath = wineExe;
-                await PersistAsync();
+                await notifications.AddWarningNotificationAsync(
+                    "PROTON_NOT_FOUND", "PROTON_NOT_FOUND_DESCRIPTION",
+                    PackIconRemixIconKind.GobletBrokenLine);
             }
         }
         else
         {
-            var notifications = Ioc.Default.GetRequiredService<NotificationService>();
-            await notifications.AddWarningNotificationAsync(
-                "WINE_NOT_FOUND", "WINE_NOT_FOUND_DESCRIPTION",
-                PackIconRemixIconKind.GobletBrokenLine);
+            // Wine (default)
+            var mergedWinePath = appConfig.Compatibility.WinePath;
+            var wineExe = platform.FindWineExecutable();
+            if (wineExe != null)
+            {
+                if (mergedWinePath != wineExe)
+                {
+                    appConfig.User.Compatibility.WinePath = wineExe;
+                    await PersistAsync();
+                }
+            }
+            else
+            {
+                await notifications.AddWarningNotificationAsync(
+                    "WINE_NOT_FOUND", "WINE_NOT_FOUND_DESCRIPTION",
+                    PackIconRemixIconKind.GobletBrokenLine);
+            }
         }
 
         static async Task PersistAsync()
@@ -305,5 +332,4 @@ public class App : Application
             await settingsService.PersistCurrentConfigAsync();
         }
     }
-
 }

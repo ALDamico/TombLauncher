@@ -126,7 +126,15 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         {
             WinePath = compat.WinePath ?? string.Empty,
             WinePrefix = compat.WinePrefix ?? string.Empty,
+            SelectedTool = compat.CompatibilityTool,
+            ManualProtonPath = compat.ProtonPath,
         };
+        // Pre-select the stored Proton installation in the ComboBox if it matches
+        if (!string.IsNullOrWhiteSpace(compat.ProtonPath))
+        {
+            compatVm.SelectedProtonInstallation =
+                compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
+        }
         Sections.Add(compatVm);
 
         AcceptChanges();

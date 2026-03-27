@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Core.PlatformSpecific;
@@ -25,30 +26,6 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
             RecurseSubdirectories = true,
             ReturnSpecialDirectories = false
         };
-    }
-
-    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
-        string compatibilityExecutable, string workingDirectory, string? winePrefix = null)
-    {
-        // wine exits immediately after spawning the Windows process into wineserver,
-        // breaking process-lifetime tracking (play time, save file monitoring).
-        // Wrapping with bash + "wineserver -w" keeps the monitored process alive
-        // until wineserver shuts down, i.e. until the game truly exits.
-        var gameArgs = string.IsNullOrWhiteSpace(arguments) ? string.Empty : " " + arguments;
-        var wineCommand = $"\"{compatibilityExecutable}\" \"{executableFileNameOnly}\"{gameArgs}";
-
-        var psi = new ProcessStartInfo("bash")
-        {
-            WorkingDirectory = workingDirectory,
-            UseShellExecute = false,
-        };
-        psi.ArgumentList.Add("-c");
-        psi.ArgumentList.Add($"{wineCommand}; wineserver -w");
-
-        if (!string.IsNullOrWhiteSpace(winePrefix))
-            psi.Environment["WINEPREFIX"] = winePrefix;
-
-        return psi;
     }
 
     public NotifyFilters GetSavegameWatcherNotifyFilters()
@@ -120,5 +97,75 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
         {
             return null;
         }
+    }
+
+    public List<ProtonInstallationDto> FindAvailableProtonInstallations()
+    {
+        var steamRoots = CollectSteamRoots();
+        var results = new List<ProtonInstallationDto>();
+
+        foreach (var steamRoot in steamRoots)
+        {
+            var commonDir = Path.Combine(steamRoot, "steamapps", "common");
+            if (!Directory.Exists(commonDir)) continue;
+
+            foreach (var dir in Directory.EnumerateDirectories(commonDir, "Proton*"))
+            {
+                var protonBin = Path.Combine(dir, "proton");
+                if (!File.Exists(protonBin)) continue;
+
+                var displayName = Path.GetFileName(dir); // e.g. "Proton 9.0"
+                results.Add(new ProtonInstallationDto(displayName, protonBin));
+            }
+        }
+
+        // Sort descending so newest version appears first
+        results.Sort((a, b) => string.Compare(b.DisplayName, a.DisplayName, StringComparison.OrdinalIgnoreCase));
+        return results;
+    }
+
+    /// <summary>
+    /// Collects all Steam library roots, starting with the default one then
+    /// parsing libraryfolders.vdf for additional libraries.
+    /// </summary>
+    private static List<string> CollectSteamRoots()
+    {
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var defaultRoot = Path.Combine(home, ".steam", "steam");
+        var roots = new List<string> { defaultRoot };
+
+        var vdf = Path.Combine(defaultRoot, "steamapps", "libraryfolders.vdf");
+        if (!File.Exists(vdf)) return roots;
+
+        // Simple regex-based parse: look for lines like: "path"  "/some/path"
+        var pathPattern = new Regex(@"""path""	+""(.+?)""", RegexOptions.Compiled);
+        foreach (var line in File.ReadLines(vdf))
+        {
+            var m = pathPattern.Match(line);
+            if (m.Success)
+            {
+                var extra = m.Groups[1].Value;
+                if (!roots.Contains(extra))
+                    roots.Add(extra);
+            }
+        }
+        // Let's filter entries that are symbolic links
+        return roots
+            .Where(Directory.Exists)
+            .Select(dir => new DirectoryInfo(dir).ResolveLinkTarget(true)?.FullName ?? dir)
+            .Distinct()
+            .ToList();
+    }
+
+    public string? GetProtonVersion(string protonPath)
+    {
+        if (string.IsNullOrWhiteSpace(protonPath)) return null;
+
+        // Proton stores its version in a file called "version" next to the binary
+        var versionFile = Path.Combine(Path.GetDirectoryName(protonPath) ?? "", "version");
+        if (!File.Exists(versionFile)) return null;
+
+        try { return File.ReadAllText(versionFile).Trim(); }
+        catch { return null; }
     }
 }
