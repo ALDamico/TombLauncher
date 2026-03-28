@@ -11,6 +11,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input.Platform;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using IconPacks.Avalonia.RemixIcon;
 using LiveChartsCore;
@@ -20,7 +21,9 @@ using LiveChartsCore.SkiaSharpView;
 using TombLauncher.Configuration;
 using TombLauncher.Configuration.Sections;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Services;
 using AngleSharpConfig = AngleSharp.Configuration;
 
@@ -191,5 +194,46 @@ public static class AppUtils
             baseVariant = ThemeVariant.Light;
         }
         ChangeTheme(baseVariant);
+    }
+
+    public static void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    {
+        AppCrashDataService? appCrashDataService = null;
+        try
+        {
+            appCrashDataService = Ioc.Default.GetRequiredService<AppCrashDataService>();
+        }
+        catch (InvalidOperationException)
+        {
+            // Service provider not configured yet.
+            // Log to console/debug as fallback
+            Console.Error.WriteLine("Unhandled exception occurred before IoC container was initialized.");
+            Console.Error.WriteLine(e.Exception);
+            // Cannot use database logging
+        }
+
+        var exception = e.Exception;
+        if (exception is TargetInvocationException tie)
+        {
+            exception = tie.InnerException;
+        }
+
+        Console.Error.WriteLine("--- ORIGINAL FATAL CRASH ---");
+        Console.Error.WriteLine(exception);
+        Console.Error.WriteLine("----------------------------");
+
+        if (appCrashDataService != null)
+        {
+            if (exception != null) appCrashDataService.InsertAppCrash(exception);
+            var welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
+            welcomePageService.HandleNotNotifiedCrashes();
+        }
+
+        e.Handled = true;
+        if (exception?.GetType() == typeof(AppRestartRequestedException))
+        {
+            // WTF?! How did you get in here?
+            e.Handled = false;
+        }
     }
 }
