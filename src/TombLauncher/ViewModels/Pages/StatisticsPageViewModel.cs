@@ -52,19 +52,19 @@ public partial class StatisticsPageViewModel : PageViewModel
 
     private async Task Initialize()
     {
-        IsBusy = true;
-        BusyMessage = "GATHERING_STATISTICS".GetLocalizedString();
-        var t1 = Task.Run(() => ApplicationVersion = AppUtils.GetApplicationVersion());
-        var t2 = Task.Run(() => DatabaseSize = _statisticsService.GetDatabaseSize());
-        var t3 = Task.Run(() => GamesSize = _statisticsService.GetGamesSize());
-        var t4 = _statisticsService.GetStatistics();
-        var t5 = Task.Run(() => NetVersion = AppUtils.GetDotNetVersion());
-        var t6 = Task.Run(() => WineVersion = _platformFeatures.GetWineVersion(
-            _appConfiguration.Compatibility.WinePath ?? string.Empty));
+        using (BusyScope("GATHERING_STATISTICS".GetLocalizedString()))
+        {
+            var t1 = Task.Run(() => ApplicationVersion = AppUtils.GetApplicationVersion());
+            var t2 = Task.Run(() => DatabaseSize = _statisticsService.GetDatabaseSize());
+            var t3 = Task.Run(() => GamesSize = _statisticsService.GetGamesSize());
+            var t4 = _statisticsService.GetStatistics();
+            var t5 = Task.Run(() => NetVersion = AppUtils.GetDotNetVersion());
+            var t6 = Task.Run(() => WineVersion = _platformFeatures.GetWineVersion(
+                _appConfiguration.Compatibility.WinePath ?? string.Empty));
 
-        await Task.WhenAll(t1, t2, t3, t4, t5, t6);
-        Statistics = t4.Result;
-        SetBusy(false);
+            await Task.WhenAll(t1, t2, t3, t4, t5, t6);
+            Statistics = t4.Result;
+        }
     }
 
     [RelayCommand(AllowConcurrentExecutions = false)]

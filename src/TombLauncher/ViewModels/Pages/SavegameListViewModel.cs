@@ -46,7 +46,6 @@ public partial class SavegameListViewModel : PageViewModel
                 await _savegameQueryService.LoadSaveGames(this);
                 await _savegameQueryService.InitSlots(this);
             }
-            SetBusy(false);
         }
     }
 

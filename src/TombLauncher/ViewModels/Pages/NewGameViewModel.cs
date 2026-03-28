@@ -58,8 +58,6 @@ public partial class NewGameViewModel : PageViewModel
 
     protected override async Task SaveInner()
     {
-        IsBusy = true;
-
         await _newGameService.InstallGame(GameMetadata, InstallProgress, Source);
     }
 

@@ -1,5 +1,4 @@
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Navigation;
 
 namespace TombLauncher.Services;
 
