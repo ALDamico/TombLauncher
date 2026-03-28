@@ -9,12 +9,9 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using IconPacks.Avalonia.RemixIcon;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using TombLauncher.Configuration;
-using TombLauncher.Configuration.Sections;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.PlatformSpecific;
@@ -167,7 +164,7 @@ public class App : Application
         mainWindow.Show();
         var updateService = Ioc.Default.GetRequiredService<UpdateService>();
         await updateService.StartAsync();
-        await CheckCompatibilityToolAsync();
+        await AppUtils.CheckCompatibilityToolAsync();
     }
 
     private async Task InitializeServices(Application application, ResourceDictionary resourceDictionary, IProgress<string> progress)
@@ -218,54 +215,5 @@ public class App : Application
             baseVariant = ThemeVariant.Light;
         }
         AppUtils.ChangeTheme(baseVariant);
-    }
-
-    private static async Task CheckCompatibilityToolAsync()
-    {
-        var platform = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
-        if (!platform.IsWineSupported) return;
-
-        var appConfig = Ioc.Default.GetRequiredService<ILayeredAppConfiguration>();
-        var notifications = Ioc.Default.GetRequiredService<NotificationService>();
-
-        var tool = appConfig.Compatibility.CompatibilityTool;
-
-        if (tool == CompatibilityTool.Proton)
-        {
-            var protonInstallations = platform.FindAvailableProtonInstallations();
-            if (protonInstallations.Count == 0 && string.IsNullOrWhiteSpace(appConfig.Compatibility.ProtonPath))
-            {
-                await notifications.AddWarningNotificationAsync(
-                    "PROTON_NOT_FOUND", "PROTON_NOT_FOUND_DESCRIPTION",
-                    PackIconRemixIconKind.GobletBrokenLine);
-            }
-        }
-        else
-        {
-            // Wine (default)
-            var mergedWinePath = appConfig.Compatibility.WinePath;
-            var wineExe = platform.FindWineExecutable();
-            if (wineExe != null)
-            {
-                if (mergedWinePath != wineExe)
-                {
-                    appConfig.User.Compatibility.WinePath = wineExe;
-                    await PersistAsync();
-                }
-            }
-            else
-            {
-                await notifications.AddWarningNotificationAsync(
-                    "WINE_NOT_FOUND", "WINE_NOT_FOUND_DESCRIPTION",
-                    PackIconRemixIconKind.GobletBrokenLine);
-            }
-        }
-
-        static async Task PersistAsync()
-        {
-            using var scope = Ioc.Default.CreateScope();
-            var settingsService = scope.ServiceProvider.GetRequiredService<SettingsPageService>();
-            await settingsService.PersistCurrentConfigAsync();
-        }
     }
 }

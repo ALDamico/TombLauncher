@@ -12,10 +12,16 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input.Platform;
 using Avalonia.Styling;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using IconPacks.Avalonia.RemixIcon;
 using LiveChartsCore;
+using Microsoft.Extensions.DependencyInjection;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
+using TombLauncher.Configuration;
+using TombLauncher.Configuration.Sections;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Services;
 using AngleSharpConfig = AngleSharp.Configuration;
 
 namespace TombLauncher.Utils;
@@ -116,5 +122,54 @@ public static class AppUtils
     public static string GetInnerHtmlOrEmpty(this INode? node)
     {
         return node.GetInnerHtml() ?? "";
+    }
+
+    public static async Task CheckCompatibilityToolAsync()
+    {
+        var platform = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+        if (!platform.IsWineSupported) return;
+
+        var appConfig = Ioc.Default.GetRequiredService<ILayeredAppConfiguration>();
+        var notifications = Ioc.Default.GetRequiredService<NotificationService>();
+
+        var tool = appConfig.Compatibility.CompatibilityTool;
+
+        if (tool == CompatibilityTool.Proton)
+        {
+            var protonInstallations = platform.FindAvailableProtonInstallations();
+            if (protonInstallations.Count == 0 && string.IsNullOrWhiteSpace(appConfig.Compatibility.ProtonPath))
+            {
+                await notifications.AddWarningNotificationAsync(
+                    "PROTON_NOT_FOUND", "PROTON_NOT_FOUND_DESCRIPTION",
+                    PackIconRemixIconKind.GobletBrokenLine);
+            }
+        }
+        else
+        {
+            // Wine (default)
+            var mergedWinePath = appConfig.Compatibility.WinePath;
+            var wineExe = platform.FindWineExecutable();
+            if (wineExe != null)
+            {
+                if (mergedWinePath != wineExe)
+                {
+                    appConfig.User.Compatibility.WinePath = wineExe;
+                    await PersistAsync();
+                }
+            }
+            else
+            {
+                await notifications.AddWarningNotificationAsync(
+                    "WINE_NOT_FOUND", "WINE_NOT_FOUND_DESCRIPTION",
+                    PackIconRemixIconKind.GobletBrokenLine);
+            }
+        }
+
+        static async Task PersistAsync()
+        {
+            using var scope = Ioc.Default.CreateScope();
+            var settingsService = scope.ServiceProvider.GetRequiredService<SettingsPageService>();
+            await settingsService.PersistCurrentConfigAsync();
+        }
     }
 }
