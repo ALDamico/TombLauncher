@@ -5,7 +5,6 @@ using AutoMapper;
 using CommunityToolkit.Mvvm.DependencyInjection;
 
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;

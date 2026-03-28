@@ -9,10 +9,10 @@ using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Launchers;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
@@ -186,36 +186,37 @@ public class GameWithStatsService : IViewService, IDisposable
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         try
         {
-            currentPage?.SetBusy(true, "SAVING_PLAY_SESSION".GetLocalizedString());
-            var gameMetadataDto = Mapper.Map<GameMetadataDto>(game.GameMetadata);
-            await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
-            currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
-            var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
-
-            foreach (var file in filesToProcess)
+            using (currentPage?.BusyScope("SAVING_PLAY_SESSION".GetLocalizedString()))
             {
-                file.Md5 = Md5Utils.ComputeMd5Hash(file.Data);
+                var gameMetadataDto = Mapper.Map<GameMetadataDto>(game.GameMetadata);
+                await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(),
+                    process.ExitTime);
+                currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
+                var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
+
+                foreach (var file in filesToProcess)
+                {
+                    file.Md5 = Md5Utils.ComputeMd5Hash(file.Data);
+                }
+
+                filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
+
+                if (_backupEnabled)
+                {
+                    _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine,
+                        filesToProcess, _numberOfSavesToKeep);
+                    _headerProcessor?.ClearProcessedFiles();
+                }
+
+                errorOccurred = _headerProcessor?.ErrorOccurred ?? false;
+                CleanupWatcherAndProcessor();
+
+
+                await _savegameRepository.Save();
             }
-
-            filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
-
-            if (_backupEnabled)
-            {
-                _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
-                _headerProcessor?.ClearProcessedFiles();
-            }
-
-            errorOccurred = _headerProcessor?.ErrorOccurred ?? false;
-            CleanupWatcherAndProcessor();
-
-
-            await _savegameRepository.Save();
-
-            // NavigationManager.RequestRefresh(); // Not available in V2? Need to handle refresh.
         }
         finally
         {
-            currentPage?.ClearBusy();
             if (errorOccurred)
             {
                 await ViewContext.PopupService.ShowLocalized("Savegame parse error",
@@ -228,8 +229,7 @@ public class GameWithStatsService : IViewService, IDisposable
     public void LaunchSetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy(
-            "LAUNCHING_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        currentPage?.SetBusy("LAUNCHING_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.SetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
@@ -239,8 +239,7 @@ public class GameWithStatsService : IViewService, IDisposable
     public void LaunchCommunitySetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy(
-            "LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        currentPage?.SetBusy("LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.CommunitySetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);

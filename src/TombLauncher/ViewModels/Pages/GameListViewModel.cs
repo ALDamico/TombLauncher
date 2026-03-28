@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Localization.Extensions;
@@ -12,11 +11,11 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameListViewModel : PageViewModel
 {
-    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games = new ObservableCollection<GameWithStatsViewModel>();
+    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games = [];
     [ObservableProperty] private GameWithStatsViewModel? _selectedGame;
     [ObservableProperty] private bool _showAsGrid;
 
-    private GameListService _gameListService;
+    private readonly GameListService _gameListService;
 
     public GameListViewModel(GameListService gameListService)
     {
@@ -25,18 +24,19 @@ public partial class GameListViewModel : PageViewModel
 
     public override async Task OnNavigatedTo(object parameter)
     {
-        SetBusy("Fetching games...");
-        _gameListService.ApplySettings(this);
-        AddGameCmd = new AsyncRelayCommand(AddGame);
-        UninstallCmd = new RelayCommand<GameWithStatsViewModel>(Uninstall);
-        OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
-        OpenSearchCmd = new AsyncRelayCommand(OpenSearch);
-        PlayCmd = new RelayCommand<GameWithStatsViewModel>(Play);
-        AddToFavouritesCmd = new AsyncRelayCommand<GameWithStatsViewModel>(AddToFavourites);
-        MarkUnmarkCompletedCmd = new AsyncRelayCommand<GameWithStatsViewModel>(MarkUnmarkCompleted);
-        InitTopBarCommands();
-        Games = await _gameListService.FetchGames(this);
-        ClearBusy();
+        using (BusyScope("FETCHING_GAMES"))
+        {
+            _gameListService.ApplySettings(this);
+            AddGameCmd = new AsyncRelayCommand(AddGame);
+            UninstallCmd = new AsyncRelayCommand<GameWithStatsViewModel>(Uninstall);
+            OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
+            OpenSearchCmd = new AsyncRelayCommand(OpenSearch);
+            PlayCmd = new RelayCommand<GameWithStatsViewModel>(Play);
+            AddToFavouritesCmd = new AsyncRelayCommand<GameWithStatsViewModel>(AddToFavourites);
+            MarkUnmarkCompletedCmd = new AsyncRelayCommand<GameWithStatsViewModel>(MarkUnmarkCompleted);
+            InitTopBarCommands();
+            Games = await _gameListService.FetchGames(this);
+        }
     }
 
     private void InitTopBarCommands()
@@ -74,19 +74,19 @@ public partial class GameListViewModel : PageViewModel
 
     private void Play(GameWithStatsViewModel? game)
     {
-        game?.PlayCmd?.Execute(null);
+        game?.PlayCmd.Execute(null);
     }
 
     public ICommand? OpenCmd { get; private set; }
 
     private void Open(GameWithStatsViewModel? game)
     {
-        game?.OpenCmd?.Execute(null);
+        game?.OpenCmd.Execute(null);
     }
 
     public ICommand? UninstallCmd { get; private set; }
 
-    private async void Uninstall(GameWithStatsViewModel? game)
+    private async Task Uninstall(GameWithStatsViewModel? game)
     {
         if (game != null)
             await _gameListService.Uninstall(this, game);

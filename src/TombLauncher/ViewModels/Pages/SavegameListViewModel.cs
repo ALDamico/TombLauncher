@@ -3,13 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
-using TombLauncher.ViewModels;
 
 namespace TombLauncher.ViewModels.Pages;
 
@@ -56,7 +54,6 @@ public partial class SavegameListViewModel : PageViewModel
                 await _savegameQueryService.LoadSaveGames(this);
                 await _savegameQueryService.InitSlots(this);
             }
-            SetBusy(false);
         }
     }
 
@@ -72,15 +69,13 @@ public partial class SavegameListViewModel : PageViewModel
     [ObservableProperty] private ObservableCollection<SavegameSlotViewModel> _slots = new ObservableCollection<SavegameSlotViewModel>();
     [ObservableProperty] private SavegameSlotViewModel? _selectedSlot;
     [ObservableProperty] private SaveGameListFilter _savegameFilter;
-    private SavegameQueryService _savegameQueryService;
-    private SavegameCommandService _savegameCommandService;
+    private readonly SavegameQueryService _savegameQueryService;
+    private readonly SavegameCommandService _savegameCommandService;
 
-    [ObservableProperty] public ICommand _filterCmd;
+    [ObservableProperty] private ICommand _filterCmd;
 
     private async Task Filter(SaveGameListFilter? slotNumber)
     {
-        if (_savegameQueryService == null)
-            return;
         if (slotNumber != null)
             await _savegameQueryService.ApplyFilter(this, slotNumber);
     }

@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Navigation;
 using TombLauncher.Contracts.Progress;
-using TombLauncher.Core.Navigation;
+using TombLauncher.Localization.Extensions;
 
 namespace TombLauncher.ViewModels;
 
@@ -49,7 +49,7 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
 
     }
 
-    public void SetBusy(bool isBusy, string? busyMessage = null)
+    private void SetBusy(bool isBusy, string? busyMessage = null)
     {
         var busyState = new PageBusyState() { IsBusy = isBusy, BusyMessage = busyMessage };
         _progress.Report(busyState);
@@ -72,7 +72,7 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
         return new BusyDisposable(this);
     }
 
-    private sealed class BusyDisposable(PageViewModel vm) : IDisposable
+    private sealed class BusyDisposable(INavigationTarget vm) : IDisposable
     {
         public void Dispose() => vm.ClearBusy();
     }
@@ -82,7 +82,10 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
 
     private async Task Save()
     {
-        await SaveInner();
+        using (BusyScope("INSTALLING".GetLocalizedString()))
+        {
+            await SaveInner();
+        }
     }
 
     protected virtual Task SaveInner()

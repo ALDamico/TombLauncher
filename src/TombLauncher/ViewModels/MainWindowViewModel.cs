@@ -6,7 +6,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
-using TombLauncher.Core.Navigation;
+using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;

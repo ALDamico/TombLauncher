@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
 using TombLauncher.Contracts.Enums;
@@ -20,7 +19,7 @@ public partial class NewGameViewModel : PageViewModel
     {
         _newGameService = newGameService;
         GameMetadata = new GameMetadataViewModel();
-        GameMetadata.PropertyChanged += (sender, args) => RaiseCanExecuteChanged(SaveCmd);
+        GameMetadata.PropertyChanged += (_, _) => RaiseCanExecuteChanged(SaveCmd);
 
         AvailableLengths = EnumUtils.GetEnumViewModels<GameLength>().ToObservableCollection();
         AvailableDifficulties = EnumUtils.GetEnumViewModels<GameDifficulty>().ToObservableCollection();
@@ -66,8 +65,6 @@ public partial class NewGameViewModel : PageViewModel
 
     protected override async Task SaveInner()
     {
-        IsBusy = true;
-
         await _newGameService.InstallGame(GameMetadata, InstallProgress, Source);
     }
 
