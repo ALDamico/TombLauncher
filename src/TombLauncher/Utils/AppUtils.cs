@@ -190,6 +190,6 @@ public static class AppUtils
         {
             baseVariant = ThemeVariant.Light;
         }
-        AppUtils.ChangeTheme(baseVariant);
+        ChangeTheme(baseVariant);
     }
 }
