@@ -306,16 +306,6 @@ public class App : Application
         var appConfig = Ioc.Default.GetRequiredService<ILayeredAppConfiguration>();
         var notifications = Ioc.Default.GetRequiredService<NotificationService>();
 
-        // Migrate old WinePath from GameDetails to Compatibility (one-time, only user layer)
-        var oldWinePath = appConfig.User.GameDetails.WinePath;
-        if (string.IsNullOrWhiteSpace(appConfig.User.Compatibility.WinePath)
-            && !string.IsNullOrWhiteSpace(oldWinePath))
-        {
-            appConfig.User.Compatibility.WinePath = oldWinePath;
-            await PersistAsync();
-            return;
-        }
-
         var tool = appConfig.Compatibility.CompatibilityTool;
 
         if (tool == CompatibilityTool.Proton)

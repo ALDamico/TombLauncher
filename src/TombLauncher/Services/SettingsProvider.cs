@@ -107,7 +107,6 @@ public class SettingsProvider : ISettingsProvider
         var methodToUse = _platformSpecificFeatures.GetPlatformSpecificZipFallbackPrograms()
             .FirstOrDefault(m => m.Name == dl.UnzipFallbackMethod);
         return new GameDetailsCoreSettings(
-            gd.WinePath ?? string.Empty,
             dl.UnzipFallbackMethod ?? string.Empty,
             methodToUse != null ? (methodToUse.Command, methodToUse.CommandLineArguments) : (string.Empty, string.Empty),
             gd.DocumentationPatterns?.ToList() ?? new List<CheckableItem<string>>(),
