@@ -121,7 +121,7 @@ public class App : Application
     private async Task ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop, SplashScreen splashScreen)
     {
         // Services initialized in background task
-        ApplyInitialSettings();
+        AppUtils.ApplyInitialSettings();
         var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
         var mainWindow = new MainWindow
         {
@@ -169,25 +169,5 @@ public class App : Application
         Log.Logger.Information("Service initialization complete");
 
         await Task.CompletedTask;
-    }
-
-    private void ApplyInitialSettings()
-    {
-        var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
-        var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
-        var themeManager = Ioc.Default.GetRequiredService<ThemeManager>();
-
-        var applicationLanguage = settingsProvider.GetApplicationSettings().ApplicationLanguage;
-        localizationManager.ChangeLanguage(applicationLanguage);
-
-        var applicationTheme = settingsProvider.GetAppearanceSettings().ApplicationTheme;
-        themeManager.ApplyTheme(applicationTheme);
-
-        var baseVariant = ThemeVariant.Dark;
-        if (!string.IsNullOrEmpty(applicationTheme) && applicationTheme.Contains("Light"))
-        {
-            baseVariant = ThemeVariant.Light;
-        }
-        AppUtils.ChangeTheme(baseVariant);
     }
 }

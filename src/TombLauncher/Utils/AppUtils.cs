@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp;
 using AngleSharp.Dom;
-using AngleSharp.Io;
 using AngleSharp.XPath;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -20,6 +19,7 @@ using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
 using TombLauncher.Configuration;
 using TombLauncher.Configuration.Sections;
+using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Services;
 using AngleSharpConfig = AngleSharp.Configuration;
@@ -171,5 +171,25 @@ public static class AppUtils
             var settingsService = scope.ServiceProvider.GetRequiredService<SettingsPageService>();
             await settingsService.PersistCurrentConfigAsync();
         }
+    }
+    
+    public static void ApplyInitialSettings()
+    {
+        var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
+        var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
+        var themeManager = Ioc.Default.GetRequiredService<ThemeManager>();
+
+        var applicationLanguage = settingsProvider.GetApplicationSettings().ApplicationLanguage;
+        localizationManager.ChangeLanguage(applicationLanguage);
+
+        var applicationTheme = settingsProvider.GetAppearanceSettings().ApplicationTheme;
+        themeManager.ApplyTheme(applicationTheme);
+
+        var baseVariant = ThemeVariant.Dark;
+        if (!string.IsNullOrEmpty(applicationTheme) && applicationTheme.Contains("Light"))
+        {
+            baseVariant = ThemeVariant.Light;
+        }
+        AppUtils.ChangeTheme(baseVariant);
     }
 }
