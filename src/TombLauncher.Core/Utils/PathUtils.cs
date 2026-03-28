@@ -64,8 +64,35 @@ public class PathUtils
 
     public static long GetDirectorySize(string directory)
     {
-        return new DirectoryInfo(directory)
-            .EnumerateFiles("*.*", SearchOption.AllDirectories)
-            .Sum(f => f.Length);
+        return GetDirectorySizeCore(new DirectoryInfo(directory));
+    }
+
+    private static readonly EnumerationOptions _safeEnumOptions = new()
+    {
+        IgnoreInaccessible = true,
+        // Do not follow symlinks: Wine/Proton prefixes contain symlinks like
+        // dosdevices/z: -> / that would traverse the entire filesystem.
+        AttributesToSkip = FileAttributes.ReparsePoint
+    };
+
+    private static readonly HashSet<string> _directoriesToSkip =
+        new(StringComparer.OrdinalIgnoreCase) { "proton_pfx" };
+
+    private static long GetDirectorySizeCore(DirectoryInfo dir)
+    {
+        long size = 0;
+        try
+        {
+            size += dir.EnumerateFiles("*.*", _safeEnumOptions).Sum(f => f.Length);
+            foreach (var sub in dir.EnumerateDirectories("*", _safeEnumOptions))
+            {
+                if (_directoriesToSkip.Contains(sub.Name))
+                    continue;
+                size += GetDirectorySizeCore(sub);
+            }
+        }
+        catch (UnauthorizedAccessException) { }
+        catch (IOException) { }
+        return size;
     }
 }
