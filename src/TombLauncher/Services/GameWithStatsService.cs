@@ -38,7 +38,7 @@ public class GameWithStatsService : IViewService, IDisposable
         IPlatformSpecificFeatures platformSpecificFeatures,
         SavegameHeaderProcessor headerProcessor,
         IAppConfiguration appConfiguration,
-        IGameLauncher gameLauncher,
+        Func<IGameLauncher> gameLauncherFactory,
         GameMetadataMapper mapper)
     {
         ViewContext = viewContext;
@@ -54,7 +54,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
         _logger = logger;
         _headerProvider = headerProvider;
-        _gameLauncher = gameLauncher;
+        _gameLauncherFactory = gameLauncherFactory;
         _globalWinePrefix = appConfiguration.Compatibility.WinePrefix;
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
@@ -75,7 +75,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly int? _numberOfSavesToKeep;
     private readonly ILogger<GameWithStatsService> _logger;
     private readonly ISavegameHeaderProvider _headerProvider;
-    private readonly IGameLauncher _gameLauncher;
+    private readonly Func<IGameLauncher> _gameLauncherFactory;
     private readonly string? _globalWinePrefix;
     private DateTime? _startDate;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
@@ -266,7 +266,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
         var process = new Process()
         {
-            StartInfo = _gameLauncher.GetLaunchStartInfo(executableFileNameOnly, arguments ?? "", workingDirectory, winePrefix),
+            StartInfo = _gameLauncherFactory().GetLaunchStartInfo(executableFileNameOnly, arguments ?? "", workingDirectory, winePrefix),
             EnableRaisingEvents = true
         };
 

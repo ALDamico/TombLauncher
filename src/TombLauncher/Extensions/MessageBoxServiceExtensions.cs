@@ -1,8 +1,11 @@
+using System.Reflection;
 using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Services;
 
 namespace TombLauncher.Extensions;
 
@@ -26,5 +29,17 @@ public static class MessageBoxServiceExtensions
     private static string GetActualButtonText(string? value, string defaultValue)
     {
         return (value.Coalesce(defaultValue) ?? string.Empty).GetLocalizedString();
+    }
+
+    internal static IServiceCollection AddPopups(this IServiceCollection serviceCollection)
+    {
+        return serviceCollection.AddSingleton<IPopupService>(_ => new PopupService(
+            DialogServiceFactory.CreateMessageBoxService(),
+            DialogServiceFactory.Create(new DialogServiceConfiguration()
+            {
+                ApplicationName = "Tomb Launcher",
+                UseApplicationNameInTitle = true,
+                ViewsAssemblyName = Assembly.GetExecutingAssembly().GetName().Name
+            })));
     }
 }
