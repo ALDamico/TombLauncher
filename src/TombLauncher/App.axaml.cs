@@ -14,7 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
