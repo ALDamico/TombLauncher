@@ -11,10 +11,11 @@ namespace TombLauncher.Extensions;
 public static class DatabaseServiceCollectionExtensions
 {
     public static IServiceCollection AddDatabaseAccess(this IServiceCollection services,
-        IAppConfiguration appConfiguration, string appDataDirectory)
+        string appDataDirectory)
     {
-        services.AddDbContext<TombLauncherDbContext>(opts =>
+        services.AddDbContext<TombLauncherDbContext>((sp, opts) =>
         {
+            var appConfiguration = sp.GetRequiredService<IAppConfiguration>();
             var databasePath = Path.Combine(appDataDirectory,
                 appConfiguration.Application.DatabasePath ?? "TombLauncher.sqlite");
             var connectionString = $"Data Source={databasePath}";
