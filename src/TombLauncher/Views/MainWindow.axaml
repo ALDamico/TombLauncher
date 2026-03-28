@@ -145,7 +145,7 @@
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}"
                     ZIndex="5000" Background="#A0000000">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <controls:RingLoader Width="80" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center" Message="{Binding CurrentPage.BusyMessage, FallbackValue=''}" />
+                    <controls:RingLoader HorizontalAlignment="Center" VerticalAlignment="Center" Message="{Binding CurrentPage.BusyMessage, FallbackValue=''}" />
                     <TextBlock HorizontalAlignment="Center"
                                VerticalAlignment="Center"
                                Text="{Binding CurrentPage.CurrentFileName}"

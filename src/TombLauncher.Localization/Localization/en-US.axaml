@@ -395,5 +395,6 @@
     <system:String x:Key="DAILY_STATISTICS">Daily statistics</system:String>
     <system:String x:Key="LOADING_SAVEGAMES">Loading savegames...</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN">Toggle full screen (F11)</system:String>
+    <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
