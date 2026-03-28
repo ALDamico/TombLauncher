@@ -394,5 +394,6 @@
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">La lingua è stata modificata. Riavvia l'applicazione per applicare la nuova lingua.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Statistiche giornaliere</system:String>
     <system:String x:Key="LOADING_SAVEGAMES">Caricamento salvataggi in corso...</system:String>
+    <system:String x:Key="BACKING_UP_SAVEGAMES">Backup dei salvataggi in corso...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
