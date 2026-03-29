@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:cfg="clr-namespace:TombLauncher.Configuration.Sections"
+             xmlns:cfg="clr-namespace:TombLauncher.Contracts.Enums;assembly=TombLauncher.Contracts"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
              x:Class="TombLauncher.Views.CompatibilitySettingsView"

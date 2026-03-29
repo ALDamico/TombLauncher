@@ -1,4 +1,4 @@
-namespace TombLauncher.Configuration.Sections;
+namespace TombLauncher.Contracts.Enums;
 
 public enum CompatibilityTool
 {
