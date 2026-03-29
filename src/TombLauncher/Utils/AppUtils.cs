@@ -19,7 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
 using TombLauncher.Configuration;
-using TombLauncher.Configuration.Sections;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.PlatformSpecific;

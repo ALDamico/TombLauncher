@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using IconPacks.Avalonia.RemixIcon;
-using TombLauncher.Configuration.Sections;
+using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.ValueConverters;
 

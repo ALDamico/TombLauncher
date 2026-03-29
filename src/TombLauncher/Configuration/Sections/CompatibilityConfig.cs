@@ -1,3 +1,5 @@
+using TombLauncher.Contracts.Enums;
+
 namespace TombLauncher.Configuration.Sections;
 
 public class CompatibilityConfig : ICompatibilityConfig

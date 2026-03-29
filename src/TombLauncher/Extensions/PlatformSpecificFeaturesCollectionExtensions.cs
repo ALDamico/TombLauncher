@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Configuration;
-using TombLauncher.Configuration.Sections;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;
 

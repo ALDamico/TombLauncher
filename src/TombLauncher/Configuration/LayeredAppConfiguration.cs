@@ -1,4 +1,5 @@
 using TombLauncher.Configuration.Sections;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.Configuration;

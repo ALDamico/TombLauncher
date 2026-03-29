@@ -1,10 +1,9 @@
 using System.Collections.ObjectModel;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Configuration;
-using TombLauncher.Configuration.Sections;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific;
 
