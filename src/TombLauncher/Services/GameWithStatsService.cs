@@ -17,6 +17,7 @@ using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 
@@ -188,15 +189,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
     private async Task<PlaySessionCrashDto?> ReadGameCrash(GameMetadataViewModel game, int exitCode, string standardOutput, string standardError)
     {
-        var crashFiles = Directory.GetFiles(game.InstallDirectory!, "last_crash*",
-            new EnumerationOptions()
-            {
-                IgnoreInaccessible = true,
-                MatchCasing = MatchCasing.CaseInsensitive,
-                RecurseSubdirectories = true,
-                AttributesToSkip = FileAttributes.ReparsePoint,
-                ReturnSpecialDirectories = false
-            });
+        var crashFiles = AppUtils.GetLogFiles(game.InstallDirectory!, _startDate!.Value);
         var playSessionCrashDto = new PlaySessionCrashDto()
         {
             ExitCode = exitCode,
