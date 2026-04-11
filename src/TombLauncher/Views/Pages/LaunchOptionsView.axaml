@@ -121,7 +121,7 @@
                         <controls:CardSectionHeader IconKind="Goblet2Line"
                                                    Title="{loc:Translate COMPATIBILITY}" />
                         <controls:LabeledTextBox Label="{loc:Translate WINEPREFIX_LAUNCH_OPTION}"
-                                                 Text="{Binding WinePrefix}">
+                                                 Text="{Binding CompatibilityPrefixPath}">
                             <controls:LabeledTextBox.Infotip>
                                 <controls:Infotip ToolTipContent="{loc:Translate WINE_PREFIX_TOOLTIP_CONTENT}" />
                             </controls:LabeledTextBox.Infotip>

@@ -131,7 +131,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         var compatVm = new CompatibilitySettingsViewModel(this, _platformSpecificFeatures)
         {
             WinePath = compat.WinePath ?? string.Empty,
-            WinePrefix = compat.WinePrefix ?? string.Empty,
+            CompatibilityPrefixPath = compat.CompatibilityPrefixPath ?? string.Empty,
             SelectedTool = compat.CompatibilityTool,
             ManualProtonPath = compat.ProtonPath,
         };

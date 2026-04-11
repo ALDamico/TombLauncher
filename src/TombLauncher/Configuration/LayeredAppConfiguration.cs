@@ -27,11 +27,11 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
 
     public ICompatibilityConfig Compatibility => new CompatibilityConfig
     {
-        CompatibilityTool = User.Compatibility.CompatibilityTool != CompatibilityTool.Wine
+        CompatibilityTool = User.Compatibility.CompatibilityTool != CompatibilityTool.Unspecified
             ? User.Compatibility.CompatibilityTool
             : Defaults.Compatibility.CompatibilityTool,
         WinePath = User.Compatibility.WinePath.Coalesce(Defaults.Compatibility.WinePath),
-        WinePrefix = User.Compatibility.WinePrefix.Coalesce(Defaults.Compatibility.WinePrefix),
+        CompatibilityPrefixPath = User.Compatibility.CompatibilityPrefixPath.Coalesce(Defaults.Compatibility.CompatibilityPrefixPath),
         ProtonPath = User.Compatibility.ProtonPath.Coalesce(Defaults.Compatibility.ProtonPath),
     };
 

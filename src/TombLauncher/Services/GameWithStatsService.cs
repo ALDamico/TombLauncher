@@ -55,7 +55,7 @@ public class GameWithStatsService : IViewService, IDisposable
         _logger = logger;
         _headerProvider = headerProvider;
         _gameLauncherFactory = gameLauncherFactory;
-        _globalWinePrefix = appConfiguration.Compatibility.WinePrefix;
+        _globalCompatibilityPrefixPath = appConfiguration.Compatibility.CompatibilityPrefixPath;
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
         _mapper = mapper;
@@ -76,7 +76,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly ILogger<GameWithStatsService> _logger;
     private readonly ISavegameHeaderProvider _headerProvider;
     private readonly Func<IGameLauncher> _gameLauncherFactory;
-    private readonly string? _globalWinePrefix;
+    private readonly string? _globalCompatibilityPrefixPath;
     private DateTime? _startDate;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
@@ -259,13 +259,19 @@ public class GameWithStatsService : IViewService, IDisposable
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
         _startDate = DateTime.Now;
 
-        var winePrefix = game.GameMetadata.WinePrefix.IsNotNullOrWhiteSpace()
-            ? game.GameMetadata.WinePrefix
-            : _globalWinePrefix;
+        var winePrefix = game.GameMetadata.CompatibilityPrefixPath.IsNotNullOrWhiteSpace()
+            ? game.GameMetadata.CompatibilityPrefixPath
+            : _globalCompatibilityPrefixPath;
 
         var process = new Process()
         {
-            StartInfo = _gameLauncherFactory().GetLaunchStartInfo(executableFileNameOnly, arguments ?? "", workingDirectory, winePrefix),
+            StartInfo = _gameLauncherFactory().GetLaunchStartInfo(new GameLaunchContext
+            {
+                ExecutableFileName = executableFileNameOnly,
+                Arguments = arguments ?? "",
+                WorkingDirectory = workingDirectory,
+                PrefixPath = winePrefix,
+            }),
             EnableRaisingEvents = true
         };
 

@@ -6,6 +6,6 @@ public interface ICompatibilityConfig
 {
     CompatibilityTool CompatibilityTool { get; }
     string? WinePath { get; }
-    string? WinePrefix { get; }
+    string? CompatibilityPrefixPath { get; }
     string? ProtonPath { get; }
 }
