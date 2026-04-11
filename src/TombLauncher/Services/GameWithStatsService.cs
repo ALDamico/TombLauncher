@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
@@ -56,7 +55,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
     public ViewServiceContext ViewContext { get; }
     private SavegameHeaderProcessor? _headerProcessor;
-    private IMapper _mapper => ViewContext.Mapper;
+    private IMapper Mapper => ViewContext.Mapper;
 
     private readonly GameDataService _gameDataService;
     private readonly PlaySessionDataService _playSessionDataService;
@@ -70,7 +69,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly ISavegameHeaderProvider _headerProvider;
     private readonly string _winePath;
     private DateTime? _startDate;
-    private IPlatformSpecificFeatures _platformSpecificFeatures;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public async Task OpenGame(GameWithStatsViewModel game)
     {
@@ -102,6 +101,7 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             _watcher.Changed -= WatcherOnCreatedOrChanged;
         }
+
         try
         {
             _watcher = new FileSystemWatcher(game.GameMetadata.InstallDirectory ?? string.Empty, "save*.*")
@@ -137,7 +137,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private async Task<GameWithStatsViewModel> GetGameById(int gameId)
     {
         var game = await _gameDataService.GetGameWithStats(gameId);
-        return _mapper.Map<GameWithStatsViewModel>(game);
+        return Mapper.Map<GameWithStatsViewModel>(game);
     }
 
     public bool CanPlayGame(GameWithStatsViewModel game)
@@ -165,24 +165,75 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             _logger.LogInformation("Setup process exited without issue");
         }
+
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.ClearBusy();
     }
 
+    private async Task<(int, string, string)> ReadProcessData(Process process)
+    {
+        var standardError = process.StandardError.ReadToEndAsync();
+        var standardOutput = process.StandardOutput.ReadToEndAsync();
+
+        await Task.WhenAll(standardOutput, standardError);
+
+        if (standardOutput.Result.IsNotNullOrWhiteSpace())
+            _logger.LogInformation("Process output: {StandardOutput}", standardOutput.Result);
+
+        if (standardError.Result.IsNotNullOrWhiteSpace())
+            _logger.LogError("Process error: {StandardError}", standardError.Result);
+
+        return (process.ExitCode, standardOutput.Result, standardError.Result);
+    }
+
+    private async Task<PlaySessionCrashDto?> ReadGameCrash(GameMetadataViewModel game, int exitCode, string standardOutput, string standardError)
+    {
+        var crashFiles = Directory.GetFiles(game.InstallDirectory!, "last_crash*",
+            new EnumerationOptions()
+            {
+                IgnoreInaccessible = true,
+                MatchCasing = MatchCasing.CaseInsensitive,
+                RecurseSubdirectories = true,
+                AttributesToSkip = FileAttributes.ReparsePoint,
+                ReturnSpecialDirectories = false
+            });
+        var playSessionCrashDto = new PlaySessionCrashDto()
+        {
+            ExitCode = exitCode,
+            StdOut = standardOutput,
+            StdErr = standardError
+        };
+        foreach (var crashFile in crashFiles)
+        {
+            var dto = new CrashFileDto(Path.GetFileName(crashFile), await File.ReadAllTextAsync(crashFile));
+            playSessionCrashDto.CrashFiles.Add(dto);
+        }
+
+        return playSessionCrashDto;
+    }
+
     private async Task OnGameExited(GameWithStatsViewModel game, Process process)
     {
-        Console.WriteLine("Exited!");
+        _logger.LogInformation("Play session for game {GameTitle} (ID: {GameId}) ended.", game.GameMetadata.Title,
+            game.GameMetadata.Id);
         var errorOccurred = false;
+        PlaySessionCrashDto? playSessionCrashDto = null;
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        var (exitCode, standardOutput, standardError) = await ReadProcessData(process);
+
         if (process.ExitCode != 0)
         {
-            _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
+            _logger.LogWarning("Game process exited with exit code {ExitCode}", process.ExitCode);
+            currentPage?.SetBusy(true, "SAVING_PLAY_SESSION_ERROR_DATA");
+            playSessionCrashDto = await ReadGameCrash(game.GameMetadata, exitCode, standardOutput, standardError);
         }
-        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+
         try
         {
             currentPage?.SetBusy(true, "SAVING_PLAY_SESSION".GetLocalizedString());
-            var gameMetadataDto = _mapper.Map<GameMetadataDto>(game.GameMetadata);
-            await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
+            var gameMetadataDto = Mapper.Map<GameMetadataDto>(game.GameMetadata);
+            await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(),
+                process.ExitTime, playSessionCrashDto);
             currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
             var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
 
@@ -195,7 +246,8 @@ public class GameWithStatsService : IViewService, IDisposable
 
             if (_backupEnabled)
             {
-                _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
+                _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess,
+                    _numberOfSavesToKeep);
                 _headerProcessor?.ClearProcessedFiles();
             }
 
@@ -241,20 +293,24 @@ public class GameWithStatsService : IViewService, IDisposable
         }
     }
 
-    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false, string? arguments = null)
+    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false,
+        string? arguments = null)
     {
         var executableFileNameOnly = Path.GetFileName(executable);
         string workingDirectory = string.Empty;
         if (game.GameMetadata.InstallDirectory != null)
         {
-            workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable)) ?? string.Empty;
+            workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable)) ??
+                               string.Empty;
         }
+
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
         _startDate = DateTime.Now;
 
         var process = new Process()
         {
-            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory),
+            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "",
+                _winePath, workingDirectory),
             EnableRaisingEvents = true
         };
         if (trackPlayTime)
@@ -266,16 +322,12 @@ public class GameWithStatsService : IViewService, IDisposable
             process.Exited += (sender, _) => OnSetupExited((Process)sender!);
         }
 
-        process.ErrorDataReceived += (_, args) => _logger.LogError("Process error: {StandardError}", args.Data);
-        process.OutputDataReceived +=
-            (_, args) => _logger.LogInformation("Process output: {StandardOutput}", args.Data);
-
         process.Start();
     }
 
     public async Task ToggleFavourite(GameWithStatsViewModel gameWithStatsViewModel)
     {
-        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        var metadata = Mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
         metadata.IsFavourite = !metadata.IsFavourite;
         await _gameDataService.UpsertGame(metadata);
         gameWithStatsViewModel.GameMetadata.IsFavourite = metadata.IsFavourite;
@@ -283,7 +335,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
     public async Task ToggleCompleted(GameWithStatsViewModel gameWithStatsViewModel)
     {
-        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        var metadata = Mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
         metadata.IsCompleted = !metadata.IsCompleted;
         await _gameDataService.UpsertGame(metadata);
         gameWithStatsViewModel.GameMetadata.IsCompleted = metadata.IsCompleted;
@@ -307,9 +359,11 @@ public class GameWithStatsService : IViewService, IDisposable
                 {
                     Directory.Delete(installDir, true);
                 }
+
                 await _gameDataService.MarkGameAsUninstalled(gameId);
             }
         }
+
         await NavigationManager.GoBack();
     }
 

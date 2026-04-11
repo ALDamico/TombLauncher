@@ -372,5 +372,6 @@
     <system:String x:Key="RESTART_REQUIRED_CAPTION">Riavvio necessario</system:String>
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">La lingua è stata modificata. Riavvia l'applicazione per applicare la nuova lingua.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Statistiche giornaliere</system:String>
+    <system:String x:Key="SAVING_PLAY_SESSION_ERROR_DATA">Salvataggio informazioni errore della sessione di gioco...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

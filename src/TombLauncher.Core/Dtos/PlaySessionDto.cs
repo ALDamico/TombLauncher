@@ -6,4 +6,5 @@ public class PlaySessionDto
     public int GameId { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
+    public PlaySessionCrashDto? PlaySessionCrashDto { get; set; }
 }

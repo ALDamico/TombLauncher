@@ -34,7 +34,9 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
         {
             Arguments = arguments ?? "",
             WorkingDirectory = workingDirectory,
-            UseShellExecute = true,
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            RedirectStandardOutput = true
         };
     }
 
