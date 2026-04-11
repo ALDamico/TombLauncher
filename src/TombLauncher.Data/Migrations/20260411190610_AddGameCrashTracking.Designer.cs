@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TombLauncher.Data.Database;
 
@@ -10,9 +11,11 @@ using TombLauncher.Data.Database;
 namespace TombLauncher.Data.Migrations
 {
     [DbContext(typeof(TombLauncherDbContext))]
-    partial class TombLauncherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260411190610_AddGameCrashTracking")]
+    partial class AddGameCrashTracking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
@@ -85,15 +88,6 @@ namespace TombLauncher.Data.Migrations
                     b.Property<string>("AuthorFullName")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CompatibilityPrefixPath")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("CompatibilityTool")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CompatibilityToolPath")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
@@ -146,30 +140,6 @@ namespace TombLauncher.Data.Migrations
                     b.HasIndex("InstalledFromLinkId");
 
                     b.ToTable("Games");
-                });
-
-            modelBuilder.Entity("TombLauncher.Data.Models.GameEnvironmentVariable", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("VariableName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("VariableValue")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("GameEnvironmentVariables");
                 });
 
             modelBuilder.Entity("TombLauncher.Data.Models.GameHashes", b =>
@@ -308,17 +278,6 @@ namespace TombLauncher.Data.Migrations
                     b.Navigation("InstalledFromLink");
                 });
 
-            modelBuilder.Entity("TombLauncher.Data.Models.GameEnvironmentVariable", b =>
-                {
-                    b.HasOne("TombLauncher.Data.Models.Game", "Game")
-                        .WithMany("EnvironmentVariables")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
             modelBuilder.Entity("TombLauncher.Data.Models.GameHashes", b =>
                 {
                     b.HasOne("TombLauncher.Data.Models.Game", null)
@@ -366,8 +325,6 @@ namespace TombLauncher.Data.Migrations
 
             modelBuilder.Entity("TombLauncher.Data.Models.Game", b =>
                 {
-                    b.Navigation("EnvironmentVariables");
-
                     b.Navigation("FileBackups");
 
                     b.Navigation("Hashes");

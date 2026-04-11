@@ -11,6 +11,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
@@ -112,6 +113,7 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             _watcher.Changed -= WatcherOnCreatedOrChanged;
         }
+
         try
         {
             _watcher = new FileSystemWatcher(game.GameMetadata.InstallDirectory ?? string.Empty, "save*.*")
@@ -175,26 +177,76 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             _logger.LogInformation("Setup process exited without issue");
         }
+
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.ClearBusy();
     }
 
+    private async Task<(int, string, string)> ReadProcessData(Process process)
+    {
+        var standardError = process.StandardError.ReadToEndAsync();
+        var standardOutput = process.StandardOutput.ReadToEndAsync();
+
+        await Task.WhenAll(standardOutput, standardError);
+
+        if (standardOutput.Result.IsNotNullOrWhiteSpace())
+            _logger.LogInformation("Process output: {StandardOutput}", standardOutput.Result);
+
+        if (standardError.Result.IsNotNullOrWhiteSpace())
+            _logger.LogError("Process error: {StandardError}", standardError.Result);
+
+        return (process.ExitCode, standardOutput.Result, standardError.Result);
+    }
+
+    private async Task<PlaySessionCrashDto?> ReadGameCrash(GameMetadataViewModel game, int exitCode, string standardOutput, string standardError)
+    {
+        var crashFiles = Directory.GetFiles(game.InstallDirectory!, "last_crash*",
+            new EnumerationOptions()
+            {
+                IgnoreInaccessible = true,
+                MatchCasing = MatchCasing.CaseInsensitive,
+                RecurseSubdirectories = true,
+                AttributesToSkip = FileAttributes.ReparsePoint,
+                ReturnSpecialDirectories = false
+            });
+        var playSessionCrashDto = new PlaySessionCrashDto()
+        {
+            ExitCode = exitCode,
+            StdOut = standardOutput,
+            StdErr = standardError
+        };
+        foreach (var crashFile in crashFiles)
+        {
+            var dto = new CrashFileDto(Path.GetFileName(crashFile), await File.ReadAllTextAsync(crashFile));
+            playSessionCrashDto.CrashFiles.Add(dto);
+        }
+
+        return playSessionCrashDto;
+    }
+
     private async Task OnGameExited(GameWithStatsViewModel game, Process process)
     {
-        Console.WriteLine("Exited!");
+        _logger.LogInformation("Play session for game {GameTitle} (ID: {GameId}) ended.", game.GameMetadata.Title,
+            game.GameMetadata.Id);
         var errorOccurred = false;
+        PlaySessionCrashDto? playSessionCrashDto = null;
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        var (exitCode, standardOutput, standardError) = await ReadProcessData(process);
+
         if (process.ExitCode != 0)
         {
-            _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
+            _logger.LogWarning("Game process exited with exit code {ExitCode}", process.ExitCode);
+            currentPage?.SetBusy("SAVING_PLAY_SESSION_ERROR_DATA");
+            playSessionCrashDto = await ReadGameCrash(game.GameMetadata, exitCode, standardOutput, standardError);
         }
-        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+
         try
         {
             using (currentPage?.BusyScope("SAVING_PLAY_SESSION".GetLocalizedString()))
             {
                 var gameMetadataDto = _mapper.ToDto(game.GameMetadata);
                 await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(),
-                    process.ExitTime);
+                    process.ExitTime, playSessionCrashDto);
                 currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
                 var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
 
@@ -258,6 +310,7 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable)) ?? string.Empty;
         }
+
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
         _startDate = DateTime.Now;
 
@@ -384,9 +437,11 @@ public class GameWithStatsService : IViewService, IDisposable
                 {
                     Directory.Delete(installDir, true);
                 }
+
                 await _gameDataService.MarkGameAsUninstalled(gameId);
             }
         }
+
         await NavigationManager.GoBack();
     }
 

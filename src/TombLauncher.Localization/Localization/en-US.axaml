@@ -394,6 +394,7 @@
     <system:String x:Key="RESTART_REQUIRED_CAPTION">Restart required</system:String>
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">The language has been changed. Please restart the application to apply the new language.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Daily statistics</system:String>
+    <system:String x:Key="SAVING_PLAY_SESSION_ERROR_DATA">Saving play session error information...</system:String>
     <system:String x:Key="LOADING_SAVEGAMES">Loading savegames...</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN">Toggle full screen (F11)</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
