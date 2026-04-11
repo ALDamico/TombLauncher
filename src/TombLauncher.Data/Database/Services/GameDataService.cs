@@ -224,7 +224,7 @@ public class GameDataService
         // Update Game entity (engine + wine prefix)
         var gameToUpdate = (await _dbContext.Games.FindAsync(launchOptionsDto.GameId))!;
         gameToUpdate.GameEngine = launchOptionsDto.GameEngine;
-        gameToUpdate.WinePrefix = launchOptionsDto.WinePrefix;
+        gameToUpdate.CompatibilityPrefixPath = launchOptionsDto.CompatibilityPrefixPath;
 
         // Load all relevant FileBackup records as tracked entities in one query
         var relevantTypes = new[] { FileType.GameExecutable, FileType.SetupExecutable, FileType.CommunitySetupExecutable };

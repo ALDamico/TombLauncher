@@ -17,25 +17,26 @@ public class WineGameLauncher : IGameLauncher
         _winePath = winePath;
     }
 
-    public ProcessStartInfo GetLaunchStartInfo(
-        string executableFileNameOnly,
-        string arguments,
-        string workingDirectory,
-        string? prefixPath = null)
+    public ProcessStartInfo GetLaunchStartInfo(GameLaunchContext context)
     {
-        var gameArgs = string.IsNullOrWhiteSpace(arguments) ? string.Empty : " " + arguments;
-        var wineCommand = $"\"{_winePath}\" \"{executableFileNameOnly}\"{gameArgs}";
+        var gameArgs = string.IsNullOrWhiteSpace(context.Arguments) ? string.Empty : " " + context.Arguments;
+        var wineCommand = $"\"{_winePath}\" \"{context.ExecutableFileName}\"{gameArgs}";
 
         var psi = new ProcessStartInfo("bash")
         {
-            WorkingDirectory = workingDirectory,
+            WorkingDirectory = context.WorkingDirectory,
             UseShellExecute = false,
         };
         psi.ArgumentList.Add("-c");
         psi.ArgumentList.Add($"{wineCommand}; wineserver -w");
 
-        if (!string.IsNullOrWhiteSpace(prefixPath))
-            psi.Environment["WINEPREFIX"] = prefixPath;
+        if (!string.IsNullOrWhiteSpace(context.PrefixPath))
+            psi.Environment["WINEPREFIX"] = context.PrefixPath;
+
+        // Per-game env var overrides applied last — they can override WINEPREFIX and any of the above.
+        if (context.ExtraEnvVars != null)
+            foreach (var (k, v) in context.ExtraEnvVars)
+                psi.Environment[k] = v;
 
         return psi;
     }

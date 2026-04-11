@@ -16,18 +16,14 @@ public class ProtonGameLauncher : IGameLauncher
         _protonPath = protonPath;
     }
 
-    public ProcessStartInfo GetLaunchStartInfo(
-        string executableFileNameOnly,
-        string arguments,
-        string workingDirectory,
-        string? prefixPath = null)
+    public ProcessStartInfo GetLaunchStartInfo(GameLaunchContext context)
     {
-        var gameArgs = string.IsNullOrWhiteSpace(arguments) ? string.Empty : " " + arguments;
-        var protonCommand = $"\"{_protonPath}\" run \"{executableFileNameOnly}\"{gameArgs}";
+        var gameArgs = string.IsNullOrWhiteSpace(context.Arguments) ? string.Empty : " " + context.Arguments;
+        var protonCommand = $"\"{_protonPath}\" run \"{context.ExecutableFileName}\"{gameArgs}";
 
         var psi = new ProcessStartInfo("bash")
         {
-            WorkingDirectory = workingDirectory,
+            WorkingDirectory = context.WorkingDirectory,
             UseShellExecute = false,
         };
         psi.ArgumentList.Add("-lc");
@@ -43,9 +39,9 @@ public class ProtonGameLauncher : IGameLauncher
         psi.Environment.Remove("__VK_LAYER_NV_optimus");
 
         // STEAM_COMPAT_DATA_PATH must always be set and the directory must exist before Proton starts.
-        var compatDataPath = string.IsNullOrWhiteSpace(prefixPath)
-            ? Path.Combine(workingDirectory, "proton_pfx")
-            : prefixPath;
+        var compatDataPath = string.IsNullOrWhiteSpace(context.PrefixPath)
+            ? Path.Combine(context.WorkingDirectory, "proton_pfx")
+            : context.PrefixPath;
 
         Directory.CreateDirectory(compatDataPath);
         psi.Environment["STEAM_COMPAT_DATA_PATH"] = compatDataPath;
@@ -58,13 +54,18 @@ public class ProtonGameLauncher : IGameLauncher
         psi.Environment["DXVK_LOG_LEVEL"] = "info";
 
         // Tells Proton where the game files are; needed by some Proton versions.
-        psi.Environment["STEAM_COMPAT_INSTALL_PATH"] = workingDirectory;
+        psi.Environment["STEAM_COMPAT_INSTALL_PATH"] = context.WorkingDirectory;
 
         // Derive the Steam client root from the Proton binary path:
         // {steam_root}/steamapps/common/Proton X.Y/proton  →  3 levels up = {steam_root}
         var steamClientPath = Path.GetFullPath(
             Path.Combine(Path.GetDirectoryName(_protonPath)!, "..", "..", ".."));
         psi.Environment["STEAM_COMPAT_CLIENT_INSTALL_PATH"] = steamClientPath;
+
+        // Per-game env var overrides applied last — they can override any of the above.
+        if (context.ExtraEnvVars != null)
+            foreach (var (k, v) in context.ExtraEnvVars)
+                psi.Environment[k] = v;
 
         return psi;
     }

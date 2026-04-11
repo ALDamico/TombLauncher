@@ -15,6 +15,6 @@ public class LaunchOptionsProfile : Profile
             .ForMember(dto => dto.SetupExecutable, opt => opt.MapFrom(MappingUtils.MapSetupExecutable))
             .ForMember(dto => dto.CommunitySetupExecutable, opt => opt.MapFrom(MappingUtils.MapCommunitySetupExecutable))
             .ForMember(dto => dto.GameId, opt => opt.MapFrom(vm => vm.GameId))
-            .ForMember(dto => dto.WinePrefix, opt => opt.MapFrom(vm => vm.WinePrefix));
+            .ForMember(dto => dto.CompatibilityPrefixPath, opt => opt.MapFrom(vm => vm.CompatibilityPrefixPath));
     }
 }

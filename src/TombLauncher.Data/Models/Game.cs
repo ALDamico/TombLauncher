@@ -26,5 +26,8 @@ public class Game
     public bool IsFavourite { get; set; }
     public bool IsCompleted { get; set; }
     public GameLink? InstalledFromLink { get; set; }
-    public string? WinePrefix { get; set; }
+    public string? CompatibilityPrefixPath { get; set; }
+    public int CompatibilityTool { get; set; }        // CompatibilityTool enum as int; 0 = Unspecified
+    public string? CompatibilityToolPath { get; set; }
+    public List<GameEnvironmentVariable> EnvironmentVariables { get; set; } = [];
 }

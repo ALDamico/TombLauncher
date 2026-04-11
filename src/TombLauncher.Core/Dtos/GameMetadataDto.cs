@@ -27,5 +27,8 @@ public class GameMetadataDto : IGameMetadata
     public bool IsFavourite { get; set; }
     public bool IsCompleted { get; set; }
     public string? InstalledFromSiteDisplayName { get; set; }
-    public string? WinePrefix { get; set; }
+    public string? CompatibilityPrefixPath { get; set; }
+    public CompatibilityTool CompatibilityTool { get; set; }
+    public string? CompatibilityToolPath { get; set; }
+    public List<EnvironmentVariableDto> ExtraEnvVars { get; set; } = [];
 }

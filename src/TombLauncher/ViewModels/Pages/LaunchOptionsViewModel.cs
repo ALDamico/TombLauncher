@@ -45,7 +45,7 @@ public partial class LaunchOptionsViewModel : PageViewModel
         SetupArgs = game.SetupExecutableArgs;
         SetupExecutable = AvailableExecutables.FirstOrDefault(e => e == game.SetupExecutable);
         CustomSetupExecutable = AvailableExecutables.FirstOrDefault(e => e == game.CommunitySetupExecutable);
-        WinePrefix = game.WinePrefix;
+        CompatibilityPrefixPath = game.CompatibilityPrefixPath;
 
         if (SetupExecutable.IsNotNullOrWhiteSpace()) SupportsSetup = true;
         if (CustomSetupExecutable.IsNotNullOrWhiteSpace()) SupportsCustomSetup = true;
@@ -62,7 +62,7 @@ public partial class LaunchOptionsViewModel : PageViewModel
     [ObservableProperty] private bool _supportsSetup;
     [ObservableProperty] private bool _supportsCustomSetup;
     [ObservableProperty] private string? _customSetupExecutable;
-    [ObservableProperty] private string? _winePrefix;
+    [ObservableProperty] private string? _compatibilityPrefixPath;
     public bool IsWineSupported { get; }
 
     // ── Commands ──────────────────────────────────────────────────────────────

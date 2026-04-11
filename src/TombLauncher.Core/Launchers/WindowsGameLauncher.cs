@@ -7,16 +7,12 @@ namespace TombLauncher.Core.Launchers;
 /// </summary>
 public class WindowsGameLauncher : IGameLauncher
 {
-    public ProcessStartInfo GetLaunchStartInfo(
-        string executableFileNameOnly,
-        string arguments,
-        string workingDirectory,
-        string? prefixPath = null)
+    public ProcessStartInfo GetLaunchStartInfo(GameLaunchContext context)
     {
-        return new ProcessStartInfo(executableFileNameOnly)
+        return new ProcessStartInfo(context.ExecutableFileName)
         {
-            Arguments = arguments,
-            WorkingDirectory = workingDirectory,
+            Arguments = context.Arguments,
+            WorkingDirectory = context.WorkingDirectory,
             UseShellExecute = true,
         };
     }

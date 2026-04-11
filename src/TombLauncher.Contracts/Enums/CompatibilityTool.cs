@@ -2,7 +2,8 @@ namespace TombLauncher.Contracts.Enums;
 
 public enum CompatibilityTool
 {
-    Wine,
-    Proton,
-    None
+    Unspecified = 0,  // Use global settings (C# default)
+    Wine = 1,
+    Proton = 2,
+    None = 3
 }

@@ -25,7 +25,7 @@ public partial class CompatibilitySettingsViewModel : SettingsSectionViewModelBa
     // ─── Wine ────────────────────────────────────────────────────────────────
 
     [ObservableProperty] private string _winePath = string.Empty;
-    [ObservableProperty] private string _winePrefix = string.Empty;
+    [ObservableProperty] private string _compatibilityPrefixPath = string.Empty;
     [ObservableProperty] private string? _wineVersion;
 
     partial void OnWinePathChanged(string value) =>
@@ -102,7 +102,7 @@ public partial class CompatibilitySettingsViewModel : SettingsSectionViewModelBa
     public override void ApplyTo(AppConfiguration userConfig)
     {
         userConfig.Compatibility.WinePath = WinePath;
-        userConfig.Compatibility.WinePrefix = WinePrefix;
+        userConfig.Compatibility.CompatibilityPrefixPath = CompatibilityPrefixPath;
         userConfig.Compatibility.CompatibilityTool = SelectedTool;
         userConfig.Compatibility.ProtonPath = EffectiveProtonPath;
     }

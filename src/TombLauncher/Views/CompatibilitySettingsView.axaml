@@ -56,7 +56,7 @@
         <!-- WINEPREFIX override -->
         <DockPanel LastChildFill="True" IsVisible="{Binding IsWine}">
             <controls:LabeledTextBox Label="{loc:Translate WINE_PREFIX_PATH}"
-                                     Text="{Binding WinePrefix}">
+                                     Text="{Binding CompatibilityPrefixPath}">
                 <controls:LabeledTextBox.Infotip>
                     <controls:Infotip Header="{loc:Translate WINE_PREFIX_PATH}"
                                       ToolTipContent="{loc:Translate WINE_PREFIX_TOOLTIP_CONTENT}" />
@@ -111,7 +111,7 @@
         <!-- STEAM_COMPAT_DATA_PATH override -->
         <DockPanel LastChildFill="True" IsVisible="{Binding IsProton}">
             <controls:LabeledTextBox Label="{loc:Translate PROTON_DATA_PATH}"
-                                     Text="{Binding WinePrefix}">
+                                     Text="{Binding CompatibilityPrefixPath}">
                 <controls:LabeledTextBox.Infotip>
                     <controls:Infotip Header="{loc:Translate PROTON_DATA_PATH}"
                                       ToolTipContent="{loc:Translate PROTON_DATA_PATH_TOOLTIP}" />
