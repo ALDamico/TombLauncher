@@ -1,3 +1,4 @@
+using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration.Sections;
 
 namespace TombLauncher.Configuration;
@@ -11,4 +12,5 @@ public interface IAppConfiguration
     ISavegamesConfig Savegames { get; }
     IWelcomePageConfig WelcomePage { get; }
     IUpdaterConfig Updater { get; }
+    IAiConfig Ai { get; }
 }

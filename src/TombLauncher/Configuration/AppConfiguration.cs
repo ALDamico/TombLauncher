@@ -1,3 +1,4 @@
+using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration.Sections;
 
 namespace TombLauncher.Configuration;
@@ -11,6 +12,7 @@ public class AppConfiguration : IAppConfiguration
     public SavegamesConfig Savegames { get; set; } = new();
     public WelcomePageConfig WelcomePage { get; set; } = new();
     public UpdaterConfig Updater { get; set; } = new();
+    public AiConfig Ai { get; set; } = new();
 
     // Explicit interface implementation — returns the same objects as read-only interfaces
     IApplicationConfig IAppConfiguration.Application => Application;
@@ -20,4 +22,5 @@ public class AppConfiguration : IAppConfiguration
     ISavegamesConfig IAppConfiguration.Savegames => Savegames;
     IWelcomePageConfig IAppConfiguration.WelcomePage => WelcomePage;
     IUpdaterConfig IAppConfiguration.Updater => Updater;
+    IAiConfig IAppConfiguration.Ai => Ai;
 }
