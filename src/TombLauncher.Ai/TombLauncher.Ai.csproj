@@ -12,6 +12,7 @@
       <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.26.0" />
       <PackageReference Include="LLamaSharp.Backend.Vulkan" Version="0.26.0" />
       <PackageReference Include="LLamaSharp.semantic-kernel" Version="0.26.0" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.5" />
       <PackageReference Include="Microsoft.SemanticKernel" Version="1.74.0" />
     </ItemGroup>
 
@@ -28,6 +29,15 @@
       <Reference Include="Microsoft.Data.Sqlite">
         <HintPath>..\..\..\..\.nuget\packages\microsoft.data.sqlite.core\10.0.2\lib\net8.0\Microsoft.Data.Sqlite.dll</HintPath>
       </Reference>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include="../../libs/SqliteVector/vector.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="../../libs/SqliteVector/vector.so">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>
