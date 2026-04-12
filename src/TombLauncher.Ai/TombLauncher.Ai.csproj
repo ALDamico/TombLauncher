@@ -24,12 +24,6 @@
     <ItemGroup>
       <Folder Include="Abstractions\" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.Data.Sqlite">
-        <HintPath>..\..\..\..\.nuget\packages\microsoft.data.sqlite.core\10.0.2\lib\net8.0\Microsoft.Data.Sqlite.dll</HintPath>
-      </Reference>
-    </ItemGroup>
     
     <ItemGroup>
         <Content Include="../../libs/SqliteVector/vector.dll">
@@ -39,5 +33,4 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-
 </Project>
