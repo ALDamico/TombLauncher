@@ -1,6 +1,7 @@
 using LLama;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Ai.Models;
 
 namespace TombLauncher.Ai.Services;
 
@@ -22,13 +23,22 @@ public class EmbedderService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var files = GetFilesToProcess(InputPath);
+        var allChunks = new List<Chunk>();
 
         foreach (var file in files)
         {
             var fileContent = await File.ReadAllTextAsync(file, cancellationToken);
+            _logger.LogInformation("Computing embedding embedding for {File}", file);
             var embeddings = await _embedder.GetEmbeddings(fileContent, cancellationToken);
-            _logger.LogInformation(string.Join(',', embeddings[0]));
+            var chunks = embeddings.Select(e => new Chunk()
+            {
+                ChunkText = fileContent, DocumentTitle = Path.GetFileName(file), SectionTitle = Path.GetFileName(file),
+                Embedding = e
+            });
+            allChunks.AddRange(chunks);
         }
+        _logger.LogInformation("Saving embeddings");
+        await _knowledgeBaseWriter.WriteChunks(allChunks, cancellationToken);
         
         _lifetime.StopApplication();
     }

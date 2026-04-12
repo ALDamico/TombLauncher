@@ -14,9 +14,8 @@
   </Folder>
   <Folder Name="/libs/" />
   <Folder Name="/libs/SqliteVector/">
-    <File Path="..\..\Scaricati\vector.dll" />
-    <File Path="..\..\Scaricati\vector.lib" />
-    <File Path="..\..\Scaricati\vector.so" />
+    <File Path="libs/SqliteVector/vector.so"/>
+    <File Path="libs/SqliteVector/vector.dll"/>
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/TombLauncher.Ai/TombLauncher.Ai.csproj" />

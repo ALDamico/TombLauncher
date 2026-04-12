@@ -8,5 +8,5 @@ public class Chunk
     public string? DocumentTitle { get; set; }
     public string? SectionTitle { get; set; }
     public string? ChunkText { get; set; }
-    public float[] Embedding { get; } = new float[AiConstants.EmbeddingSize];
+    public float[] Embedding { get; init; } = new float[AiConstants.EmbeddingSize];
 }
