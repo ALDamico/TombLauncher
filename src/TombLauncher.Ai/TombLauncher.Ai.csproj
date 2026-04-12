@@ -14,4 +14,12 @@
       <PackageReference Include="Microsoft.SemanticKernel" Version="1.74.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Abstractions\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
+    </ItemGroup>
+
 </Project>
