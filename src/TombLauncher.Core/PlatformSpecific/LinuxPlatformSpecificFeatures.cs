@@ -28,6 +28,20 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
         };
     }
 
+    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string? arguments, string compatibilityExecutable,
+        string workingDirectory)
+    {
+        arguments = executableFileNameOnly + " " + (arguments ?? "");
+        return new ProcessStartInfo(compatibilityExecutable)
+        {
+            Arguments = arguments,
+            WorkingDirectory = workingDirectory,
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            RedirectStandardOutput = true
+        };
+    }
+
     public NotifyFilters GetSavegameWatcherNotifyFilters()
     {
         return NotifyFilters.LastWrite | NotifyFilters.FileName;

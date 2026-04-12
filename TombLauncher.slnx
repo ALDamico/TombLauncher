@@ -13,6 +13,7 @@
     <File Path="deploy/TombLauncher.pupnet.conf" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/TombLauncher.Ai/TombLauncher.Ai.csproj" />
     <Project Path="src/TombLauncher.Contracts/TombLauncher.Contracts.csproj" />
     <Project Path="src/TombLauncher.Controls/TombLauncher.Controls.csproj" />
     <Project Path="src/TombLauncher.Core/TombLauncher.Core.csproj" />
