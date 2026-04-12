@@ -12,6 +12,12 @@
     <File Path="deploy/installer-script.iss" />
     <File Path="deploy/TombLauncher.pupnet.conf" />
   </Folder>
+  <Folder Name="/libs/" />
+  <Folder Name="/libs/SqliteVector/">
+    <File Path="..\..\Scaricati\vector.dll" />
+    <File Path="..\..\Scaricati\vector.lib" />
+    <File Path="..\..\Scaricati\vector.so" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/TombLauncher.Ai/TombLauncher.Ai.csproj" />
     <Project Path="src/TombLauncher.Contracts/TombLauncher.Contracts.csproj" />

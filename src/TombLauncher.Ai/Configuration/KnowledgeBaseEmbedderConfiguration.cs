@@ -6,4 +6,5 @@ public class KnowledgeBaseEmbedderConfiguration
     public required string ModelsPath { get; set; }
     public required string ModelFileName { get; set; }
     public required uint ContextLength { get; set; }
+    public required string KnowledgeBasePath { get; set; }
 }

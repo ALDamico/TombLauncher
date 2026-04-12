@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.1.72" />
       <PackageReference Include="LLamaSharp" Version="0.26.0" />
       <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.26.0" />
       <PackageReference Include="LLamaSharp.Backend.Vulkan" Version="0.26.0" />
@@ -21,6 +22,12 @@
 
     <ItemGroup>
       <Folder Include="Abstractions\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Data.Sqlite">
+        <HintPath>..\..\..\..\.nuget\packages\microsoft.data.sqlite.core\10.0.2\lib\net8.0\Microsoft.Data.Sqlite.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

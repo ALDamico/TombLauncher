@@ -1,0 +1,12 @@
+using TombLauncher.Contracts.Ai;
+
+namespace TombLauncher.Ai.Models;
+
+public class Chunk
+{
+    public int Id { get; set; }
+    public string? DocumentTitle { get; set; }
+    public string? SectionTitle { get; set; }
+    public string? ChunkText { get; set; }
+    public float[] Embedding { get; } = new float[AiConstants.EmbeddingSize];
+}
