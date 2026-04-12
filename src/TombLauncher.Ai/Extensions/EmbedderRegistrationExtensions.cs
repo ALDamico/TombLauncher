@@ -9,6 +9,7 @@ public static class EmbedderRegistrationExtensions
     public static IServiceCollection RegisterKnowledgeBaseEmbedder(this IServiceCollection serviceCollection)
     {
         return serviceCollection.AddHostedService<EmbedderService>()
-            .AddSingleton(EmbedderFactory.GetEmbedder);
+            .AddSingleton(EmbedderFactory.GetEmbedder)
+            .AddSingleton<KnowledgeBaseWriter>();
     }
 }

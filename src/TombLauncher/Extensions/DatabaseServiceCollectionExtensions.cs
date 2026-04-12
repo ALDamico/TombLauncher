@@ -2,6 +2,7 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts.Configuration;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database.Services;

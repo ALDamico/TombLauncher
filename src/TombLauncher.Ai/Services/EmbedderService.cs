@@ -9,13 +9,15 @@ public class EmbedderService : IHostedService
     private readonly IHostApplicationLifetime _lifetime;
     private readonly ILogger<EmbedderService> _logger;
     private readonly LLamaEmbedder _embedder;
+    private readonly KnowledgeBaseWriter _knowledgeBaseWriter;
     private const string InputPath = "./Input";
 
-    public EmbedderService(IHostApplicationLifetime lifetime, ILogger<EmbedderService> logger, LLamaEmbedder embedder)
+    public EmbedderService(IHostApplicationLifetime lifetime, ILogger<EmbedderService> logger, LLamaEmbedder embedder, KnowledgeBaseWriter knowledgeBaseWriter)
     {
         _lifetime = lifetime;
         _logger = logger;
         _embedder = embedder;
+        _knowledgeBaseWriter = knowledgeBaseWriter;
     }
     public async Task StartAsync(CancellationToken cancellationToken)
     {

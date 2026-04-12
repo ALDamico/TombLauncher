@@ -32,6 +32,7 @@ if (!File.Exists(modelPath))
 }
     
 await host.RunAsync();
+return;
 
 async Task DownloadModel(string modelUrl, string filePath, ILogger<Program> downloadLogger, CancellationToken ct)
 {
