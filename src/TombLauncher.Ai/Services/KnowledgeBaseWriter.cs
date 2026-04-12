@@ -10,7 +10,8 @@ namespace TombLauncher.Ai.Services;
 
 public class KnowledgeBaseWriter
 {
-    private KnowledgeBaseEmbedderConfiguration _embedderConfiguration;
+    private readonly KnowledgeBaseEmbedderConfiguration _embedderConfiguration;
+    
     public KnowledgeBaseWriter(IOptions<KnowledgeBaseEmbedderConfiguration> embedderConfiguration)
     {
         _embedderConfiguration = embedderConfiguration.Value;
@@ -30,9 +31,9 @@ CREATE TABLE IF NOT EXISTS knowledge_chunks
     VALUES (@DocumentTitle, @SectionTitle, @ChunkText, vector_as_f32(@Embedding))
 ";
 
-    private const string ComputeVectorsQueries = @"
-SELECT vector_init('knowledge_chunks', 'embedding', 'type=FLOAT32,dimension=768');
-SELECT vector_quantize('knowledge_chunks', 'embedding');";
+    private const string VectorInit = "SELECT vector_init('knowledge_chunks', 'embedding', 'type=FLOAT32,dimension=768');";
+
+    private const string VectorQuantize = "SELECT vector_quantize('knowledge_chunks', 'embedding');";
 
     private Task WriteChunk(IDbTransaction transaction, Chunk chunk)
     {
@@ -51,7 +52,8 @@ SELECT vector_quantize('knowledge_chunks', 'embedding');";
         }
         
         transaction.Commit();
-        await connection.ExecuteAsync(ComputeVectorsQueries);
+        await connection.ExecuteAsync(VectorInit);
+        await connection.ExecuteAsync(VectorQuantize);
     }
 
     private IDbTransaction CreateTransaction(IDbConnection connection, CancellationToken cancellationToken)

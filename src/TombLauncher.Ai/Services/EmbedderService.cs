@@ -28,7 +28,7 @@ public class EmbedderService : IHostedService
         foreach (var file in files)
         {
             var fileContent = await File.ReadAllTextAsync(file, cancellationToken);
-            _logger.LogInformation("Computing embedding embedding for {File}", file);
+            _logger.LogInformation("Computing embedding for {File}", file);
             var embeddings = await _embedder.GetEmbeddings(fileContent, cancellationToken);
             var chunks = embeddings.Select(e => new Chunk()
             {
