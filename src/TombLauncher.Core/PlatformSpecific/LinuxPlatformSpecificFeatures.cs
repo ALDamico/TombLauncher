@@ -27,13 +27,13 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
         };
     }
 
-    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments, string compatibilityExecutable,
+    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string? arguments, string compatibilityExecutable,
         string workingDirectory)
     {
         arguments = executableFileNameOnly + " " + (arguments ?? "");
         return new ProcessStartInfo(compatibilityExecutable)
         {
-            Arguments = arguments ?? "",
+            Arguments = arguments,
             WorkingDirectory = workingDirectory,
             UseShellExecute = false,
             RedirectStandardError = true,

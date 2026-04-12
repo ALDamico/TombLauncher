@@ -374,5 +374,8 @@
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">The language has been changed. Please restart the application to apply the new language.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Daily statistics</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION_ERROR_DATA">Saving play session error information...</system:String>
+    <system:String x:Key="REFRESHING_CPU_INFO">Refreshing CPU information...</system:String>
+    <system:String x:Key="REFRESHING_MEMORY_INFO">Refreshing RAM information...</system:String>
+    <system:String x:Key="REFRESHING_GPU_INFO">Refreshing GPU information...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

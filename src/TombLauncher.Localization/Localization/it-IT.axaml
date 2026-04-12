@@ -373,5 +373,8 @@
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">La lingua è stata modificata. Riavvia l'applicazione per applicare la nuova lingua.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Statistiche giornaliere</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION_ERROR_DATA">Salvataggio informazioni errore della sessione di gioco...</system:String>
+    <system:String x:Key="REFRESHING_CPU_INFO">Recupero informazioni CPU...</system:String>
+    <system:String x:Key="REFRESHING_MEMORY_INFO">Recupero informazioni RAM...</system:String>
+    <system:String x:Key="REFRESHING_GPU_INFO">Recupero informazioni GPU...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
