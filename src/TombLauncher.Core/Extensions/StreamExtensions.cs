@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace TombLauncher.Extensions;
+﻿namespace TombLauncher.Core.Extensions;
 
 public static class StreamExtensions
 {
