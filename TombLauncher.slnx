@@ -18,6 +18,7 @@
     <Project Path="src/TombLauncher.Controls/TombLauncher.Controls.csproj" />
     <Project Path="src/TombLauncher.Core/TombLauncher.Core.csproj" />
     <Project Path="src/TombLauncher.Data/TombLauncher.Data.csproj" />
+    <Project Path="src/TombLauncher.KnowledgeBase.Embedder/TombLauncher.KnowledgeBase.Embedder.csproj" />
     <Project Path="src/TombLauncher.Localization/TombLauncher.Localization.csproj" />
     <Project Path="src/TombLauncher/TombLauncher.csproj" />
   </Folder>

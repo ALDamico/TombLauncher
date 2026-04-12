@@ -15,11 +15,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Abstractions\" />
+      <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
+      <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
+      <Folder Include="Abstractions\" />
     </ItemGroup>
 
 </Project>
