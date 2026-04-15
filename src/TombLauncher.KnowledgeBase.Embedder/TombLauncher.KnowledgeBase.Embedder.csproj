@@ -25,25 +25,10 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <None Remove="Input\01_borderless_gaming.md" />
-      <Content Include="Input\01_borderless_gaming.md">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Input\02_common_issues_and_solutions.md" />
-      <Content Include="Input\02_common_issues_and_solutions.md">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Input\03_antivirus_false_positive.md" />
-      <Content Include="Input\03_antivirus_false_positive.md">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Input\04_setting_up_custom_levels.md" />
-      <Content Include="Input\04_setting_up_custom_levels.md">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Input\05_system_requisites.md" />
-      <Content Include="Input\05_system_requisites.md">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Input\06_widescreen.md" />
       <Content Include="Input\06_widescreen.md">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -54,6 +39,21 @@
       </Content>
       <None Remove="Input\08_guide_controller_setup.md" />
       <Content Include="Input\08_guide_controller_setup.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Input\01_borderless_gaming\01_borderless_gaming.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Input\02_common_issues_and_solutions\02_common_issues_and_solutions.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Input\03_antivirus_false_positive\03_antivirus_false_positive.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Input\04_setting_up_custom_levels\04_setting_up_custom_levels.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Input\05_system_requisites\05_system_requisites.md">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
