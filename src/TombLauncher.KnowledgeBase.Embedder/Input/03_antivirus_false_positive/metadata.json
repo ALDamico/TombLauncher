@@ -1,0 +1,5 @@
+{
+  "documentTitle": "Antivirus false positive",
+  "appliesTo": ["TombRaider1", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5"],
+  "platforms": ["windows"]
+}
