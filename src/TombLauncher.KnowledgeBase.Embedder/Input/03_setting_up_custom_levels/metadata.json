@@ -1,0 +1,78 @@
+{
+  "documentTitle": "Setting up Custom Levels",
+  "appliesTo": ["TombRaider1", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "Tr1x", "Tr2x"],
+  "platforms": ["Windows"],
+  "sections": [
+    {
+      "heading": "How do I install TRLE custom levels?",
+      "platforms": ["Windows", "Linux"]
+    },
+    {
+      "heading": "How to pop up the Game Options Window for Tomb Raider?",
+      "appliesTo": ["TombRaider1"]
+    },
+    {
+      "heading": "How to pop up the Game Options Window for Tomb Raider 2?",
+      "appliesTo": ["TombRaider2"]
+    },
+    {
+      "heading": "How to pop up the Game Options Window for Tomb Raider 3?",
+      "appliesTo": ["TombRaider3"]
+    },
+    {
+      "heading": "How to pop up the Game Options Window for Tomb Raider 4?",
+      "appliesTo": ["TombRaider4"]
+    },
+    {
+      "heading": "How to pop up the Game Options Window for Tomb Raider 5?",
+      "appliesTo": ["TombRaider5"]
+    },
+    {
+      "heading": "How to pop up the Game Options Window for TRX?",
+      "appliesTo": ["Tr1x", "Tr2x"],
+      "engineVersions": { "Tr1x": "[, 4.13)", "Tr2x": "[, 4.13)" }
+    },
+    {
+      "heading": "How to pop up the Game Options Window for TRX?",
+      "appliesTo": ["Tr1x", "Tr2x"],
+      "engineVersions": { "Tr1x": "[4.13, )", "Tr2x": "[4.13, )" }
+    },
+    {
+      "heading": "What are the recommended settings for Tomb Raider 2?",
+      "appliesTo": ["TombRaider2"]
+    },
+    {
+      "heading": "What are the recommended settings for Tomb Raider 3?",
+      "appliesTo": ["TombRaider3"]
+    },
+    {
+      "heading": "What are the recommended settings for Tomb Raider 4?",
+      "appliesTo": ["TombRaider4"]
+    },
+    {
+      "heading": "What are the recommended settings for Tomb Raider 5?",
+      "appliesTo": ["TombRaider5"]
+    },
+    {
+      "heading": "Where are the settings stored for Tomb Raider 1?",
+      "appliesTo": ["TombRaider1"]
+    },
+    {
+      "heading": "Where are the settings stored for Tomb Raider 2?",
+      "appliesTo": ["TombRaider2"]
+    },
+    {
+      "heading": "Where are the settings stored for Tomb Raider 3?",
+      "appliesTo": ["TombRaider3"]
+    },
+    {
+      "heading": "Where are the settings stored for Tomb Raider 4?",
+      "appliesTo": ["TombRaider4"]
+    },
+    {
+      "heading": "Where are the settings stored for Tomb Raider 5?",
+      "appliesTo": ["TombRaider5"]
+    }
+  ],
+  "source": "http://forum3314.trle.net/viewtopic.php?f=78&t=3321"
+}

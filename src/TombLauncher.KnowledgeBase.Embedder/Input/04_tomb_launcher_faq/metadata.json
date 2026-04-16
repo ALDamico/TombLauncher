@@ -1,0 +1,15 @@
+{
+  "documentTitle": "TombLauncher FAQ",
+  "appliesTo": ["TombRaider1", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "Ten", "Tr1x", "Tr2x", "TombAti", "Tomb2Main"],
+  "platforms": ["Windows", "Linux"],
+  "sections": [
+    {
+      "heading": "How do I configure Wine or Proton to run a game on Linux?",
+      "platforms": ["Linux"]
+    },
+    {
+      "heading": "How do I set global compatibility defaults for Linux?",
+      "platforms": ["Linux"]
+    }
+  ]
+}
