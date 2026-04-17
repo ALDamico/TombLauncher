@@ -1,21 +1,18 @@
 using System.Data;
 using Dapper;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Ai.Models;
 using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Ai.Services;
 
-public class KnowledgeBaseWriter
+public class KnowledgeBaseWriter : VectorDbService
 {
-    private readonly KnowledgeBaseEmbedderConfiguration _embedderConfiguration;
-
-    public KnowledgeBaseWriter(IOptions<KnowledgeBaseEmbedderConfiguration> embedderConfiguration)
+    public KnowledgeBaseWriter(IOptions<KnowledgeBaseEmbedderConfiguration> embedderConfiguration) : base(embedderConfiguration)
     {
-        _embedderConfiguration = embedderConfiguration.Value;
     }
 
     // If JOIN performance on metadata_id becomes an issue, add: CREATE INDEX IF NOT EXISTS idx_chunks_metadata_id ON knowledge_chunks(metadata_id)
@@ -53,11 +50,6 @@ VALUES(@AppVersionRange, @EngineVersion, @AppliesTo, @Platforms, @Source)
 RETURNING *
 ";
 
-    private const string VectorInit =
-        "SELECT vector_init('knowledge_chunks', 'embedding', 'type=FLOAT32,dimension=768');";
-
-    private const string VectorQuantize = "SELECT vector_quantize('knowledge_chunks', 'embedding');";
-
     private Task WriteChunk(IDbTransaction transaction, Chunk chunk)
     {
         return transaction.Connection!.ExecuteAsync(InsertEmbeddingQuery,
@@ -93,7 +85,7 @@ RETURNING *
 
     public async Task WriteChunks(IEnumerable<AnnotatedChunk> annotatedChunks, CancellationToken cancellationToken)
     {
-        using var connection = GetConnection($"Data Source={_embedderConfiguration.KnowledgeBasePath}");
+        using var connection = GetConnection($"Data Source={EmbedderConfiguration.KnowledgeBasePath}");
         connection.Open();
         await EnsureTables(connection);
         var transaction = CreateTransaction(connection, cancellationToken);
@@ -111,8 +103,8 @@ RETURNING *
         }
 
         transaction.Commit();
-        await connection.ExecuteAsync(VectorInit);
-        await connection.ExecuteAsync(VectorQuantize);
+        await ExecuteVectorInit(connection);
+        await ExecuteVectorQuantize(connection);
     }
 
     private IDbTransaction CreateTransaction(IDbConnection connection, CancellationToken cancellationToken)
@@ -134,13 +126,5 @@ RETURNING *
         await connection.ExecuteAsync("DROP TABLE knowledge_chunks");
         await connection.ExecuteAsync(CreateMetadataTable);
         await connection.ExecuteAsync(CreateEmbeddingsTable);
-    }
-
-    private IDbConnection GetConnection(string connectionString)
-    {
-        var connection = new SqliteConnection(connectionString);
-        connection.EnableExtensions();
-        connection.LoadExtension("./vector");
-        return connection;
     }
 }
