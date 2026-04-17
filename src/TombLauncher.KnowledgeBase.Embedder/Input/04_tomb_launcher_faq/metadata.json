@@ -4,11 +4,11 @@
   "platforms": ["Windows", "Linux"],
   "sections": [
     {
-      "heading": "How do I configure Wine or Proton to run a game on Linux?",
+      "header": "How do I configure Wine or Proton to run a game on Linux?",
       "platforms": ["Linux"]
     },
     {
-      "heading": "How do I set global compatibility defaults for Linux?",
+      "header": "How do I set global compatibility defaults for Linux?",
       "platforms": ["Linux"]
     }
   ]

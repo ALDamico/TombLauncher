@@ -29,5 +29,5 @@
         <Content Include="../../libs/SqliteVector/vector.so">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-    </ItemGroup>
+</ItemGroup>
 </Project>
