@@ -26,6 +26,17 @@ CREATE TABLE IF NOT EXISTS knowledge_chunks
     embedding BLOB
 );";
 
+    private const string CreateMetadataTable = @"
+CREATE TABLE IF NOT EXISTS knowledge_metadata
+(
+    id INTEGER PRIMARY KEY,
+    app_version_range TEXT NULL,
+    engine_version TEXT NULL,
+    applies_to TEXT NULL,
+    platforms TEXT NULL,
+    source TEXT NULL
+);";
+
     private const string InsertEmbeddingQuery = @"
     INSERT INTO knowledge_chunks(document_title, section_title, chunk_text, embedding)
     VALUES (@DocumentTitle, @SectionTitle, @ChunkText, vector_as_f32(@Embedding))
@@ -40,15 +51,16 @@ CREATE TABLE IF NOT EXISTS knowledge_chunks
         return transaction.Connection!.ExecuteAsync(InsertEmbeddingQuery, new {DocumentTitle = chunk.DocumentTitle, SectionTitle =chunk.SectionTitle, ChunkText = chunk.ChunkText, Embedding = JsonConvert.SerializeObject(chunk.Embedding)});
     }
 
-    public async Task WriteChunks(IEnumerable<Chunk> chunks, CancellationToken cancellationToken)
+    public async Task WriteChunks(IEnumerable<AnnotatedChunk> annotatedChunks, CancellationToken cancellationToken)
     {
         using var connection = GetConnection($"Data Source={_embedderConfiguration.KnowledgeBasePath}");
         connection.Open();
         await EnsureTables(connection);
         var transaction = CreateTransaction(connection, cancellationToken);
-        foreach (var chunk in chunks)
+        foreach (var annotatedChunk in annotatedChunks)
         {
-            await WriteChunk(transaction, chunk);
+            foreach (var chunk in annotatedChunk.Chunks)
+                await WriteChunk(transaction, chunk);
         }
         
         transaction.Commit();
@@ -69,8 +81,10 @@ CREATE TABLE IF NOT EXISTS knowledge_chunks
 
     private async Task EnsureTables(IDbConnection connection)
     {
-        await connection.ExecuteAsync(new CommandDefinition(CreateEmbeddingsTable));
+        await connection.ExecuteAsync(CreateEmbeddingsTable);
         await connection.ExecuteAsync("DELETE FROM knowledge_chunks");
+        await connection.ExecuteAsync(CreateMetadataTable);
+        await connection.ExecuteAsync("DELETE FROM knowledge_metadata");
     }
     
     private IDbConnection GetConnection(string connectionString)
