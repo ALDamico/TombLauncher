@@ -12,6 +12,7 @@
       <PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.26.0" />
       <PackageReference Include="LLamaSharp.Backend.Vulkan" Version="0.26.0" />
       <PackageReference Include="LLamaSharp.semantic-kernel" Version="0.26.0" />
+      <PackageReference Include="Markdig" Version="1.1.2" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.5" />
       <PackageReference Include="Microsoft.SemanticKernel" Version="1.74.0" />
     </ItemGroup>
@@ -19,10 +20,6 @@
     <ItemGroup>
       <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
       <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Abstractions\" />
     </ItemGroup>
     
     <ItemGroup>
