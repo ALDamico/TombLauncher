@@ -34,7 +34,7 @@ public static class DocumentChunker
                     if (currentHeading != null)
                     {
                         var annotatedChunk = await ProcessSection(embedder, cancellationToken, currentHeading, sectionLines, groupedMetadata,
-                            identicalHeadingCount, documentTitle);
+                            identicalHeadingCount, documentTitle, metadata);
                         output.Add(annotatedChunk);
 
                         identicalHeadingCount = GetHeadingText(currentHeading) == GetHeadingText(heading)
@@ -59,7 +59,7 @@ public static class DocumentChunker
         // Flush last section
         if (currentHeading != null)
         {
-            var annotatedChunk = await ProcessSection(embedder, cancellationToken, currentHeading, sectionLines, groupedMetadata, identicalHeadingCount, documentTitle);
+            var annotatedChunk = await ProcessSection(embedder, cancellationToken, currentHeading, sectionLines, groupedMetadata, identicalHeadingCount, documentTitle, metadata);
             output.Add(annotatedChunk);
         }
 
@@ -68,13 +68,14 @@ public static class DocumentChunker
 
     private static async Task<AnnotatedChunk> ProcessSection(LLamaEmbedder embedder, CancellationToken cancellationToken,
         HeadingBlock currentHeading, List<string> sectionLines, ILookup<string, SectionMetadata> groupedMetadata, int identicalHeadingCount,
-        string documentTitle)
+        string documentTitle, DocumentMetadata metadata)
     {
         var (header, sectionText) = (GetHeadingText(currentHeading), string.Join("\n\n", sectionLines));
         var split = ChunkUtils.SplitChunks(sectionText);
         var annotatedChunk = new AnnotatedChunk()
         {
             SectionHeader = header,
+            DocumentMetadata = metadata,
             SectionMetadata = groupedMetadata[header].ElementAtOrDefault(identicalHeadingCount)
         };
         foreach (var item in split)

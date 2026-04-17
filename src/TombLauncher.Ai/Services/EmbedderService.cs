@@ -15,7 +15,7 @@ public class EmbedderService : IHostedService
     private readonly LLamaEmbedder _embedder;
     private readonly KnowledgeBaseWriter _knowledgeBaseWriter;
     private const string InputPath = "./Input";
-    private const string IgnoreDir = "_ignore";
+    private const string IgnoreDir = "_ignored";
 
     public EmbedderService(IHostApplicationLifetime lifetime, ILogger<EmbedderService> logger, LLamaEmbedder embedder, KnowledgeBaseWriter knowledgeBaseWriter)
     {
@@ -64,7 +64,7 @@ public class EmbedderService : IHostedService
     private string[] GetFilesToProcess(string inputDirectory)
     {
         Directory.CreateDirectory(InputPath);
-        return Directory.GetFiles(inputDirectory, "*.md")
+        return Directory.GetFiles(inputDirectory, "*.md", SearchOption.AllDirectories)
             .Where(f => Path.GetFileName(Path.GetDirectoryName(f)) != IgnoreDir)
             .ToArray();
     }
