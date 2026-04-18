@@ -11,6 +11,7 @@ public class RagService : ITroubleshootingService
 {
     private readonly VectorSearchService _vectorSearchService;
     private readonly IChatCompletionService _chatCompletionService;
+    private bool _disposed;
 
     public RagService(VectorSearchService vectorSearchService, IChatCompletionService chatCompletionService)
     {
@@ -54,5 +55,14 @@ Relevant documentation:
         stringBuilder.AppendLine("Additional information:  ").AppendLine(JsonConvert.SerializeObject(additionalData));
 
         return stringBuilder.ToString();
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+        _disposed = true;
+        if (_chatCompletionService is IDisposable disposable) 
+            disposable.Dispose();
     }
 }

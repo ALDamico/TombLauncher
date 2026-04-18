@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
@@ -171,6 +172,7 @@ public class App : Application
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
         serviceCollection.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
+        serviceCollection.AddSingleton<IAiConfig>(sp => sp.GetRequiredService<ILayeredAppConfiguration>().Ai);
         serviceCollection.AddSingleton(platformSpecificFeatures);
         serviceCollection.AddTombLauncherLogging(appDataDirectory)
             .AddTombLauncherMappings();
