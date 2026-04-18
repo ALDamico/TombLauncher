@@ -20,6 +20,7 @@
     <ItemGroup>
       <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
       <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
+      <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
     </ItemGroup>
     
     <ItemGroup>

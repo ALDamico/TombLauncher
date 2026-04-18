@@ -1,9 +1,10 @@
-using LLama;
 using LLama.Common;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
 using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Ai.Factories;
+using TombLauncher.Ai.Plugins;
 using TombLauncher.Ai.Services;
 using TombLauncher.Core.PlatformSpecific;
 
@@ -36,6 +37,17 @@ public static class EmbedderRegistrationExtensions
                     };
             })
             .AddScoped<IWeightsLoader, WeightsLoader>()
-            .AddScoped<IChatCompletionServiceLoader, LlamaChatCompletionServiceLoader>();
+            .AddScoped<TroubleshootingContextService>()
+            .AddScoped<IChatCompletionServiceLoader, LlamaChatCompletionServiceLoader>()
+            .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings(){FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()})
+            .AddSingleton<GameDiagnosticsPlugin>()
+            .AddSingleton<Kernel>(sp =>
+            {
+                var kernel = Kernel.CreateBuilder().Build();
+                var gameDiagnosticsPlugin = sp.GetRequiredService<GameDiagnosticsPlugin>();
+                kernel.Plugins.AddFromObject(gameDiagnosticsPlugin);
+                return kernel;
+            })
+            ;
     }
 }
