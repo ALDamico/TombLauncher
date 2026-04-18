@@ -398,6 +398,12 @@
     <system:String x:Key="REFRESHING_CPU_INFO">Refreshing CPU information...</system:String>
     <system:String x:Key="REFRESHING_MEMORY_INFO">Refreshing RAM information...</system:String>
     <system:String x:Key="REFRESHING_GPU_INFO">Refreshing GPU information...</system:String>
+    <system:String x:Key="PHI_4_MINI_DESCRIPTION">Developed by Microsoft, this is the recommended model to get started. It runs on the CPU with no graphics card needed, and handles most questions about TombLauncher and custom Tomb Raider levels.</system:String>
+    <system:String x:Key="MINISTRAL_3_3B_DESCRIPTION">Developed by Mistral AI, this is the lightest model available. It takes up less disk space and requires less memory than the alternatives — the right choice if your computer has limited resources.</system:String>
+    <system:String x:Key="LLAMA_3_1_8B_DESCRIPTION">Developed by Meta, it's one of the most widely used and tested models in its class. It delivers better quality answers than lightweight models, but requires more memory. Recommended if you have at least 8 GB of free RAM.</system:String>
+    <system:String x:Key="PHI_4_14B_DESCRIPTION">The more powerful member of Microsoft's Phi family. It delivers more accurate and detailed answers than Phi 4 Mini, at the cost of higher memory usage. Ideal for those who want better quality without stepping up to a performance model.</system:String>
+    <system:String x:Key="COMMAND_R_32B_DESCRIPTION">Developed by Cohere, it's specifically designed to answer complex, detailed questions. It requires a dedicated graphics card to run efficiently. Recommended for users who already have some experience with TombLauncher and want more in-depth answers.</system:String>
+    <system:String x:Key="QWEN_3_5_35B_DESCRIPTION">Developed by Alibaba, this is the most advanced model available. It delivers the highest quality answers, but requires high-end hardware to run. Recommended only if you have a GPU with at least 24 GB of VRAM.</system:String>
     <system:String x:Key="LOADING_SAVEGAMES">Loading savegames...</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN">Toggle full screen (F11)</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
