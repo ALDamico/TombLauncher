@@ -5,6 +5,6 @@ public interface IAiConfig
     bool IsAiEnabled { get; set; }
     string? KnowledgeBaseUrl { get; set; }
     string? KnowledgeBasePath { get; set; }
-    int? GpuLayerCount { get; set; }
+    double? GpuOffloadPercentage { get; set; }
     string? ModelName { get; set; }
 }

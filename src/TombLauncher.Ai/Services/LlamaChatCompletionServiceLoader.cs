@@ -20,7 +20,7 @@ public class LlamaChatCompletionServiceLoader : IChatCompletionServiceLoader
         CancellationToken cancellationToken)
     {
         var weights = await _weightsLoader.LoadWeightsAsync(_modelParams, progress, cancellationToken);
-        var llamaContext = new LLamaContext(weights, _modelParams);
+        var llamaContext = new LLamaContext(weights.Weights, _modelParams);
         var executor = new InteractiveExecutor(llamaContext);
         IsLoaded = true;
         return new LLamaSharpChatCompletion(executor);

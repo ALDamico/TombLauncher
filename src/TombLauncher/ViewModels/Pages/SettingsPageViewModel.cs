@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
-
+using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts.Ai;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Services;
@@ -15,18 +16,25 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 {
-    public SettingsPageViewModel(SettingsPageService settingsService, ISettingsProvider settingsProvider, IPopupService popupService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration, IAppFileOperationsService appFileOperationsService, ILayeredAppConfiguration appConfiguration)
+    public SettingsPageViewModel(SettingsPageService settingsService, 
+        ISettingsProvider settingsProvider, 
+        IPopupService popupService, 
+        MapperConfiguration mapperConfiguration, 
+        IAppFileOperationsService appFileOperationsService, 
+        ILayeredAppConfiguration appConfiguration,
+        AiModelRegistry aiModelRegistry)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
         _popupService = popupService;
-        _platformSpecificFeatures = platformSpecificFeatures;
+        _platformSpecificFeatures = settingsProvider.PlatformSpecificFeatures;
         _mapperConfiguration = mapperConfiguration;
         _appFileOperationsService = appFileOperationsService;
         _appConfiguration = appConfiguration;
+        _aiModelRegistry = aiModelRegistry;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
-        Sections.CollectionChanged += (sender, args) =>
+        Sections.CollectionChanged += (_, args) =>
         {
             if (args.NewItems != null)
             {
@@ -57,6 +65,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly MapperConfiguration _mapperConfiguration;
     private readonly IAppFileOperationsService _appFileOperationsService;
     private readonly ILayeredAppConfiguration _appConfiguration;
+    private readonly AiModelRegistry _aiModelRegistry;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -90,7 +99,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         {
             AvailableLanguages = supportedLanguages.OrderBy(l => l.DisplayName).ToObservableCollection(),
             ApplicationLanguage = supportedLanguages.FirstOrDefault(l =>
-                _settingsService.LocalizationManager.CurrentCulture?.Equals(l.CultureInfo) == true)
+                _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo))
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();
@@ -114,12 +123,23 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             MaxRerolls = wp.RandomGameMaxRerolls.GetValueOrDefault(10)
         };
 
+        var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
+
+        var aiSettings = new AiSettingsSectionViewModel(this)
+        {
+            AvailableModels = _aiModelRegistry.AvailableModels.ToObservableCollection(),
+            SelectedModel = aiCoreSettings.ModelName.IsNotNullOrWhiteSpace() ? _aiModelRegistry.GetMetadata(aiCoreSettings.ModelName!) : null,
+            GpuOffloadLevel = (int)(aiCoreSettings.GpuOffloadPercentage.GetValueOrDefault() * AiConstants.MaxOffloadLevel),
+            IsEnabled = aiCoreSettings.IsEnabled
+        };
+
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);
         Sections.Add(downloaderSettings);
         Sections.Add(gameDetailsSettings);
         Sections.Add(savegameSettings);
         Sections.Add(welcomePageSettings);
+        Sections.Add(aiSettings);
         AcceptChanges();
         return Task.CompletedTask;
     }

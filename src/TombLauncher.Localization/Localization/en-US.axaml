@@ -383,5 +383,6 @@
     <system:String x:Key="PHI_4_14B_DESCRIPTION">The more powerful member of Microsoft's Phi family. It delivers more accurate and detailed answers than Phi 4 Mini, at the cost of higher memory usage. Ideal for those who want better quality without stepping up to a performance model.</system:String>
     <system:String x:Key="COMMAND_R_32B_DESCRIPTION">Developed by Cohere, it's specifically designed to answer complex, detailed questions. It requires a dedicated graphics card to run efficiently. Recommended for users who already have some experience with TombLauncher and want more in-depth answers.</system:String>
     <system:String x:Key="QWEN_3_5_35B_DESCRIPTION">Developed by Alibaba, this is the most advanced model available. It delivers the highest quality answers, but requires high-end hardware to run. Recommended only if you have a GPU with at least 24 GB of VRAM.</system:String>
+    <system:String x:Key="AI_FEATURES">AI FEATURES</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

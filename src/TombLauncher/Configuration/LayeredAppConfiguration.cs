@@ -73,7 +73,7 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
     {
         IsAiEnabled = User.Ai.IsAiEnabled,
         KnowledgeBaseUrl = Defaults.Ai.KnowledgeBaseUrl,
-        GpuLayerCount = User.Ai.GpuLayerCount.Coalesce(Defaults.Ai.GpuLayerCount),
+        GpuOffloadPercentage = User.Ai.GpuOffloadPercentage.Coalesce(Defaults.Ai.GpuOffloadPercentage),
         ModelName = User.Ai.ModelName.Coalesce(Defaults.Ai.ModelName)
     };
 }

@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using System.Globalization;
-using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.PlatformSpecific;
 
 namespace TombLauncher.Services;
 
@@ -14,4 +13,6 @@ public interface ISettingsProvider
     List<DownloaderConfiguration> GetDownloaderConfigurations();
     List<IGameDownloader> GetActiveDownloaders();
     SavegameCoreSettings GetSavegameSettings();
+    AiCoreSettings GetAiCoreSettings();
+    IPlatformSpecificFeatures PlatformSpecificFeatures { get; }
 }
