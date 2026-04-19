@@ -152,5 +152,9 @@
       <Compile Update="Views\Pages\LaunchOptionsView.axaml.cs">
         <DependentUpon>LaunchOptionsView.axaml</DependentUpon>
       </Compile>
+      <Compile Update="Views\AiModelCard.axaml.cs">
+        <DependentUpon>AiModelCard.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

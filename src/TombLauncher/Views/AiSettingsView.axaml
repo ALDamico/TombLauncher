@@ -5,6 +5,7 @@
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
              xmlns:loc="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:views="clr-namespace:TombLauncher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.AiSettingsView"
              x:DataType="settings:AiSettingsViewModel">
@@ -14,19 +15,24 @@
         <DockPanel LastChildFill="True">
             <controls:Infotip DockPanel.Dock="Right"
                               Header="{loc:Translate LLM_MODEL}"
-                              ToolTipContent="{loc:Translate LLM_MODEL_DESCRIPTION}"/>
+                              ToolTipContent="{loc:Translate LLM_MODEL_DESCRIPTION}" />
             <TextBlock Text="{loc:Translate LLM_MODEL}"></TextBlock>
         </DockPanel>
         <ItemsControl ItemsSource="{Binding AvailableModels}">
-            
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <views:AiModelCard />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
         </ItemsControl>
         <TextBlock Text="{loc:Translate GPU_OFFLOAD_LEVEL}"></TextBlock>
-        <Slider Minimum="0" Maximum="4" Orientation="Horizontal" Value="{Binding GpuOffloadLevel}" 
-                IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="BottomRight"></Slider>
+        <Slider Minimum="0" Maximum="4" Orientation="Horizontal" Value="{Binding GpuOffloadLevel}"
+                IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="BottomRight">
+        </Slider>
         <DockPanel LastChildFill="True">
             <TextBlock DockPanel.Dock="Left" Text="{loc:Translate FULL_CPU}"></TextBlock>
             <TextBlock DockPanel.Dock="Right" Text="{loc:Translate FULL_GPU}"></TextBlock>
-            <TextBlock Text="{Binding GpuOffloadLevel}"></TextBlock>
+            <TextBlock Text="{Binding GpuOffloadLevel}" TextAlignment="Center" />
         </DockPanel>
     </StackPanel>
 </UserControl>
