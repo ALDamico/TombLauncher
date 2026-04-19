@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.AiModelCard"
+             x:DataType="viewModels:AiModelViewModel">
+    <Border CornerRadius="8" Padding="16" Margin="4" Background="{DynamicResource CardBackgroundBrush}" 
+            BorderThickness="1"
+            BorderBrush="{DynamicResource CardBorderBrush}">
+        <DockPanel LastChildFill="True">
+            <RadioButton DockPanel.Dock="Left" 
+                         IsChecked="{Binding IsSelected}" 
+                         IsEnabled="{Binding IsDownloaded}"/>
+            <controls:IconOnlyButton DockPanel.Dock="Right" IsVisible="{Binding !IsDownloaded}" 
+                                     Icon="Download2Line" ToolTip.Tip="{localization:Translate DOWNLOAD}"
+                                     Command="{Binding DownloadCmd}"
+                                     Classes="btn-primary"/>
+            <controls:IconOnlyButton DockPanel.Dock="Right" IsVisible="{Binding IsDownloading}" 
+                                     Icon="CloseLine" ToolTip.Tip="{localization:Translate CANCEL}"
+                                     Command="{Binding CancelDownloadCmd}"
+                                     Classes="btn-danger"/>
+            <DockPanel LastChildFill="True">
+                <iconPacks:PackIconRemixIcon Classes="text-muted" 
+                                             DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Width="32" Height="32" Kind="{Binding Metadata.Vendor, Converter={StaticResource AiVendorToIconConverter}}"/>
+                <StackPanel>
+                    <TextBlock Classes="section-title" Text="{Binding Metadata.FriendlyName}"></TextBlock>
+                    <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate VENDOR}"></TextBlock>
+                    <TextBlock Classes="small text-muted" Text="{Binding Metadata.Vendor}"></TextBlock>
+                    <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate MODEL_CLASS}"></TextBlock>
+                    <TextBlock Classes="small text-muted" Text="{Binding Metadata.AiModelClass}"></TextBlock>
+                    <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate DESCRIPTION}"></TextBlock>
+                    <TextBlock Classes="small text-muted" Text="{Binding Metadata.Description}" 
+                               TextWrapping="Wrap"></TextBlock>
+                    <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate LANGUAGES}"/>
+                </StackPanel>
+            </DockPanel>
+        </DockPanel>
+    </Border>
+</UserControl>

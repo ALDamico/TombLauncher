@@ -148,5 +148,9 @@
         <DependentUpon>FavouritesWidget.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\AiModelCard.axaml.cs">
+        <DependentUpon>AiModelCard.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>
