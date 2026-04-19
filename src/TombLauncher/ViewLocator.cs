@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,7 +8,6 @@ namespace TombLauncher;
 
 public class ViewLocator : IDataTemplate
 {
-    private const string ViewModelsPrefix = "TombLauncher.ViewModels.ViewModels.";
     private const string ViewsPrefix = "TombLauncher.Views.";
     public Control? Build(object? data)
     {
@@ -43,7 +41,7 @@ public class ViewLocator : IDataTemplate
 
     private Control? GetControl(object data, string targetReplacement)
     {
-        var name = data.GetType().Name!.Replace("ViewModel", targetReplacement, StringComparison.Ordinal);
+        var name = data.GetType().Name.Replace("ViewModel", targetReplacement, StringComparison.Ordinal);
         name = ViewsPrefix + name;
         var type = Type.GetType(name);
 
