@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Globalization;
-using IconPacks.Avalonia.RemixIcon;
-using TombLauncher.Ai.Models;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Localization.Extensions;
 
-namespace TombLauncher.Configuration;
+namespace TombLauncher.Ai.Services;
 
 public class AiModelRegistry
 {
@@ -19,14 +17,11 @@ public class AiModelRegistry
 
     private readonly Dictionary<string, AiModelMetadata> _modelLookup;
 
-    public AiModelMetadata GetMetadata(string modelId)
+    public AiModelMetadata? GetMetadata(string? modelId)
     {
-        if (!_modelLookup.TryGetValue(modelId, out var modelMetadata))
-        {
-            throw new KeyNotFoundException($"Model {modelId} is not valid!");
-        }
-
-        return modelMetadata;
+        if (modelId == null)
+            return null;
+        return _modelLookup.GetValueOrDefault(modelId);
     }
 
     public IReadOnlyList<AiModelMetadata> AvailableModels { get; } =
@@ -39,7 +34,6 @@ public class AiModelRegistry
             Description = "PHI_4_MINI_DESCRIPTION".GetLocalizedString(),
             FriendlyName = "Phi 4 Mini",
             AiModelClass = AiModelClass.Lightweight,
-            Icon = PackIconRemixIconKind.MicrosoftLine,
             FileName = "Phi-4-mini-instruct-Q4_K_M.gguf",
             DownloadLink =
                 "https://huggingface.co/unsloth/Phi-4-mini-instruct-GGUF/resolve/main/Phi-4-mini-instruct-Q4_K_M.gguf",
@@ -85,7 +79,6 @@ public class AiModelRegistry
             Description = "LLAMA_3_1_8B_DESCRIPTION".GetLocalizedString(),
             FriendlyName = "Llama 3.1 8B",
             AiModelClass = AiModelClass.Mainstream,
-            Icon = PackIconRemixIconKind.MetaFill,
             SupportedLanguages =
             [
                 CultureInfo.GetCultureInfo("en"), CultureInfo.GetCultureInfo("de"), CultureInfo.GetCultureInfo("fr"),
@@ -99,7 +92,6 @@ public class AiModelRegistry
             Description = "PHI_4_14B_DESCRIPTION".GetLocalizedString(),
             FriendlyName = "Phi 4",
             Vendor = "Microsoft",
-            Icon = PackIconRemixIconKind.MicrosoftFill,
             AiModelClass = AiModelClass.Mainstream,
             SupportedLanguages = [CultureInfo.GetCultureInfo("en")],
             DownloadLink = "https://huggingface.co/microsoft/phi-4-gguf/resolve/main/phi-4-Q4_K.gguf",
@@ -111,7 +103,6 @@ public class AiModelRegistry
             Description = "QWEN_3_5_35B_DESCRIPTION".GetLocalizedString(),
             FriendlyName = "Qwen 3.5 35B",
             Vendor = "Alibaba Cloud",
-            Icon = PackIconRemixIconKind.AlibabaCloudFill,
             AiModelClass = AiModelClass.Performance,
             SupportedLanguages =
             [

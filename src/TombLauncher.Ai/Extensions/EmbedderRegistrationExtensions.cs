@@ -32,8 +32,7 @@ public static class EmbedderRegistrationExtensions
                 var modelsDirectory = Path.Combine(platformSpecificFeatures.GetAppDataDirectory(), "Models");
                 return new ModelParams(Path.Combine(modelsDirectory, modelId))
                 {
-                    ContextSize = 8192,
-                    GpuLayerCount = aiConfig.GpuLayerCount.GetValueOrDefault()
+                    ContextSize = 8192
                 };
             })
             .AddScoped<IWeightsLoader, WeightsLoader>()
@@ -42,6 +41,7 @@ public static class EmbedderRegistrationExtensions
             .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings()
                 { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
             .AddSingleton<GameDiagnosticsPlugin>()
+            .AddSingleton<AiModelRegistry>()
             .AddSingleton<Kernel>(sp =>
             {
                 var kernel = Kernel.CreateBuilder().Build();

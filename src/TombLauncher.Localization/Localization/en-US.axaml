@@ -411,5 +411,6 @@
     <system:String x:Key="ABOUT_ACKNOWLEDGEMENTS">Acknowledgements</system:String>
     <system:String x:Key="WEBSITE">Website</system:String>
     <system:String x:Key="LICENSE">License</system:String>
+    <system:String x:Key="AI_FEATURES">AI FEATURES</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

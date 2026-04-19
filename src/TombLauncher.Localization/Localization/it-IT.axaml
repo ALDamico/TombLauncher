@@ -411,5 +411,6 @@
     <system:String x:Key="ABOUT_ACKNOWLEDGEMENTS">Riconoscimenti</system:String>
     <system:String x:Key="WEBSITE">Sito web</system:String>
     <system:String x:Key="LICENSE">Licenza</system:String>
+    <system:String x:Key="AI_FEATURES">FUNZIONALITÀ AI</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

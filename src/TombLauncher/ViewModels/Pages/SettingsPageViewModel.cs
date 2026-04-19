@@ -3,8 +3,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-
+using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts.Ai;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Mappers;
@@ -21,7 +22,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         IPlatformSpecificFeatures platformSpecificFeatures, 
         IAppFileOperationsService appFileOperationsService, 
         ILayeredAppConfiguration appConfiguration,
-        SettingsMapper settingsMapper)
+        SettingsMapper settingsMapper,
+        AiModelRegistry aiModelRegistry)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
@@ -30,6 +32,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _appFileOperationsService = appFileOperationsService;
         _appConfiguration = appConfiguration;
         _settingsMapper = settingsMapper;
+        _aiModelRegistry = aiModelRegistry;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -62,6 +65,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly IAppFileOperationsService _appFileOperationsService;
     private readonly ILayeredAppConfiguration _appConfiguration;
+    private readonly AiModelRegistry _aiModelRegistry;
     private readonly SettingsMapper _settingsMapper;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
@@ -120,6 +124,16 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             MaxRerolls = wp.RandomGameMaxRerolls.GetValueOrDefault(10)
         };
 
+        var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
+
+        var aiSettings = new AiSettingsSectionViewModel(this)
+        {
+            AvailableModels = _aiModelRegistry.AvailableModels.ToObservableCollection(),
+            SelectedModel = aiCoreSettings.ModelName.IsNotNullOrWhiteSpace() ? _aiModelRegistry.GetMetadata(aiCoreSettings.ModelName!) : null,
+            GpuOffloadLevel = (int)(aiCoreSettings.GpuOffloadPercentage.GetValueOrDefault() * AiConstants.MaxOffloadLevel),
+            IsEnabled = aiCoreSettings.IsEnabled
+        };
+
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);
         Sections.Add(downloaderSettings);
@@ -142,7 +156,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
                 compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
         }
         Sections.Add(compatVm);
-
+        Sections.Add(aiSettings);
         AcceptChanges();
         return Task.CompletedTask;
     }

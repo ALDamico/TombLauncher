@@ -1,4 +1,4 @@
-namespace TombLauncher.Ai.Models;
+namespace TombLauncher.Core.Dtos;
 
 public enum AiModelClass
 {
