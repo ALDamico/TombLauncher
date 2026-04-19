@@ -1,5 +1,7 @@
+using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration;
 
 namespace TombLauncher.Extensions;
@@ -26,7 +28,7 @@ public static class ConfigurationServiceCollectionExtensions
 
         services.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
         services.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
-
+        services.AddSingleton(appConfiguration.Ai);
         return services;
     }
 }

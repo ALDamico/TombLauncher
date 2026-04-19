@@ -12,16 +12,16 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using TombLauncher.Ai.Configuration;
+using TombLauncher.Ai.Extensions;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
-using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
+using TombLauncher.Localization;
 using TombLauncher.Services;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
@@ -184,6 +184,7 @@ public class App : Application
             .AddPlatformSpecificFeatures(platformSpecificFeatures)
             .AddTombLauncherLogging(appDataDirectory)
             .AddTombLauncherMappings()
+            .RegisterAiFeatures()
             .AddSaveGameManagement()
             .AddTheming()
             .AddFileOperations()
