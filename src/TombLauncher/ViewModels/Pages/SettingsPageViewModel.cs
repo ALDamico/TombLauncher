@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Ai.Services;
@@ -23,7 +25,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         IAppFileOperationsService appFileOperationsService, 
         ILayeredAppConfiguration appConfiguration,
         SettingsMapper settingsMapper,
-        AiModelRegistry aiModelRegistry)
+        AiModelRegistry aiModelRegistry,
+        IHttpClientFactory httpClientFactory)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
@@ -33,6 +36,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _appConfiguration = appConfiguration;
         _settingsMapper = settingsMapper;
         _aiModelRegistry = aiModelRegistry;
+        _httpClientFactory = httpClientFactory;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -67,6 +71,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly ILayeredAppConfiguration _appConfiguration;
     private readonly AiModelRegistry _aiModelRegistry;
     private readonly SettingsMapper _settingsMapper;
+    private readonly IHttpClientFactory _httpClientFactory;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -83,10 +88,10 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         RaiseCanExecuteChanged(SaveCommand);
     }
 
-    public override Task OnNavigatedTo(object parameter)
+    public override async Task OnNavigatedTo(object parameter)
     {
         if (IsInitialized)
-            return Task.CompletedTask;
+            return;
 
         IsInitialized = true;
         var appearanceCoreSettings = _settingsProvider.GetAppearanceSettings();
@@ -128,11 +133,21 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         var aiSettings = new AiSettingsSectionViewModel(this)
         {
-            AvailableModels = _aiModelRegistry.AvailableModels.ToObservableCollection(),
-            SelectedModel = aiCoreSettings.ModelName.IsNotNullOrWhiteSpace() ? _aiModelRegistry.GetMetadata(aiCoreSettings.ModelName!) : null,
+            AvailableModels = _aiModelRegistry.AvailableModels.Select(m => new AiModelViewModel(m)).ToObservableCollection(),
             GpuOffloadLevel = (int)(aiCoreSettings.GpuOffloadPercentage.GetValueOrDefault() * AiConstants.MaxOffloadLevel),
-            IsEnabled = aiCoreSettings.IsEnabled
+            IsEnabled = aiCoreSettings.IsEnabled,
         };
+
+        foreach (var model in aiCoreSettings.ModelSizes)
+        {
+            aiSettings.AvailableModels.FirstOrDefault(m => m.Metadata.ModelId == model.Key)?.FileSizeBytes =
+                model.Value;
+        }
+
+        aiSettings.SelectedModel =
+            aiSettings.AvailableModels.SingleOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelName);
+
+        _ = aiSettings.AvailableModels.Where(m => m.FileSizeBytes == null).Select(async m => await FetchSize(m));
 
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);
@@ -158,7 +173,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         Sections.Add(compatVm);
         Sections.Add(aiSettings);
         AcceptChanges();
-        return Task.CompletedTask;
     }
 
     protected override async Task SaveInner()
@@ -200,6 +214,24 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         get
         {
             return Sections.Any(s => s.EditInProgress);
+        }
+    }
+    
+    private async Task FetchSize(AiModelViewModel m)
+    {
+        m.IsFetchingSize = true;
+        try
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            m.FileSizeBytes = await httpClient.FetchSizeAsync(m.Metadata.DownloadLink, CancellationToken.None);
+        }
+        catch
+        {
+            // FileSizeBytes rimane null → la view mostra "dimensione sconosciuta"
+        }
+        finally
+        {
+            m.IsFetchingSize = false;
         }
     }
 }
