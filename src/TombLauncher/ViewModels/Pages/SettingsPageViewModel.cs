@@ -131,7 +131,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
 
-        var aiSettings = new AiSettingsSectionViewModel(this)
+        var aiSettings = new AiSettingsViewModel(this)
         {
             AvailableModels = _aiModelRegistry.AvailableModels.Select(m => new AiModelViewModel(m)).ToObservableCollection(),
             GpuOffloadLevel = (int)(aiCoreSettings.GpuOffloadPercentage.GetValueOrDefault() * AiConstants.MaxOffloadLevel),
@@ -147,7 +147,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         aiSettings.SelectedModel =
             aiSettings.AvailableModels.SingleOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelName);
 
-        _ = aiSettings.AvailableModels.Where(m => m.FileSizeBytes == null).Select(async m => await FetchSize(m));
+        _ = Task.WhenAll(aiSettings.AvailableModels.Where(m => m.FileSizeBytes == null).Select(async m => await FetchSize(m)));
 
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);

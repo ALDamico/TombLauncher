@@ -8,9 +8,9 @@ using TombLauncher.Contracts.Ai;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
-public partial class AiSettingsSectionViewModel : SettingsSectionViewModelBase
+public partial class AiSettingsViewModel : SettingsSectionViewModelBase
 {
-    public AiSettingsSectionViewModel(PageViewModel settingsPage) : base("AI_FEATURES", settingsPage, PackIconRemixIconKind.BrainAi3Fill)
+    public AiSettingsViewModel(PageViewModel settingsPage) : base("AI_FEATURES", settingsPage, PackIconRemixIconKind.BrainAi3Fill)
     {
     }
 
