@@ -10,4 +10,4 @@ public record GameDetailsCoreSettings(string WinePath, string UnzipFallbackMetho
 
 public record ApplicationCoreSettings(string GitHubLink, CultureInfo ApplicationLanguage, int RandomGameMaxRerolls, string DatabasePath);
 
-public record AiCoreSettings(bool IsEnabled, string? ModelName, double? GpuOffloadPercentage);
+public record AiCoreSettings(bool IsEnabled, string? ModelName, double? GpuOffloadPercentage, Dictionary<string, long> ModelSizes);

@@ -7,4 +7,5 @@ public interface IAiConfig
     string? KnowledgeBasePath { get; set; }
     double? GpuOffloadPercentage { get; set; }
     string? ModelName { get; set; }
+    Dictionary<string, long>? ModelSizes { get; set; }
 }

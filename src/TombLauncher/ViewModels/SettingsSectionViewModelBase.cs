@@ -53,25 +53,6 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     [ObservableProperty]
     [IgnoreChanges]
     private PageViewModel _settingsPage;
-    internal void RaiseCanExecuteChanged<T>(ICommand command)
-    {
-        if (command is RelayCommand<T> relayCommand)
-            relayCommand.NotifyCanExecuteChanged();
-        else if (command is AsyncRelayCommand<T> asyncRelayCommand)
-            asyncRelayCommand.NotifyCanExecuteChanged();
-    }
-
-    internal void RaiseCanExecuteChanged(ICommand command)
-    {
-        if (command is RelayCommand relayCommand)
-        {
-            relayCommand.NotifyCanExecuteChanged();
-        }
-        else if (command is AsyncRelayCommand asyncRelayCommand)
-        {
-            asyncRelayCommand.NotifyCanExecuteChanged();
-        }
-    }
 
     public void AcceptChanges()
     {
@@ -88,14 +69,13 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     public virtual void ApplyTo(AppConfiguration userConfig) { }
 
     public bool IsChanged { get; protected set; }
-    private bool _editInProgress;
 
     public bool EditInProgress
     {
-        get => _editInProgress;
+        get;
         protected set
         {
-            _editInProgress = value;
+            field = value;
             OnPropertyChanged();
         }
     }

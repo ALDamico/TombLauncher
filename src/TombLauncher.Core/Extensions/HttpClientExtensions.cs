@@ -6,7 +6,6 @@ public static class HttpClientExtensions
 {
     public static async Task DownloadAsync(this HttpClient client, string requestUri, Stream destination, IProgress<DownloadProgressInfo>? progress = null, CancellationToken cancellationToken = default)
     {
-
         // Get the http headers first to examine the content length
         using (var response = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
         {
@@ -31,5 +30,12 @@ public static class HttpClientExtensions
                 progress.Report(new DownloadProgressInfo() { BytesDownloaded = contentLength.GetValueOrDefault(), StartDate = startDate, TotalBytes = contentLength.Value });
             }
         }
+    }
+
+    public static async Task<long?> FetchSizeAsync(this HttpClient client, string requestUri, CancellationToken cancellationToken)
+    {
+        using var response =
+            await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, requestUri), HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        return response.Content.Headers.ContentLength;
     }
 }
