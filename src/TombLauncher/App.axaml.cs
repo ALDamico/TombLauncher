@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
@@ -10,24 +8,18 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using TombLauncher.Ai.Configuration;
+using TombLauncher.Ai.Extensions;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
-using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
-using TombLauncher.Installers;
-using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -158,81 +150,26 @@ public class App : Application
         var appDataDirectory = platformSpecificFeatures.GetAppDataDirectory();
 
         var appConfiguration = new LayeredAppConfiguration();
-        IConfiguration configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: false)
-            .AddJsonFile("appsettings.Development.json", optional: true)
-            .Build();
-        configuration.Bind(appConfiguration.Defaults);
-        var userConfigPath = Path.Combine(appDataDirectory, "appsettings.user.json");
-        IConfiguration userConfiguration = new ConfigurationBuilder()
-            .AddJsonFile(userConfigPath, optional: true)
-            .Build();
-        userConfiguration.Bind(appConfiguration.User);
 
         var serviceCollection = new ServiceCollection();
-        serviceCollection.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
-        serviceCollection.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
-        serviceCollection.AddSingleton<IAiConfig>(sp => sp.GetRequiredService<ILayeredAppConfiguration>().Ai);
-        serviceCollection.AddSingleton(platformSpecificFeatures);
-        serviceCollection.AddTombLauncherLogging(appDataDirectory)
-            .AddTombLauncherMappings();
-        serviceCollection.AddSingleton<IAppFileOperationsService, AppFileOperationsService>();
+        serviceCollection
+            .AddSingleton(platformSpecificFeatures)
+            .AddTombLauncherConfiguration(appConfiguration, appDataDirectory)
+            .AddTombLauncherLogging(appDataDirectory)
+            .AddTombLauncherMappings()
+            .RegisterAiFeatures()
+            .AddPageServices()
+            .AddViewModels()
+            .AddDatabaseAccess(appConfiguration, appDataDirectory)
+            .AddSavegameManagement()
+            .AddGameInstallationFeatures()
+            .AddModals()
+            .AddDownloaders();
+        
         serviceCollection.AddSingleton<ThemeManager>();
-        serviceCollection.AddSingleton<ISavegameHeaderProvider, SavegameHeaderProvider>();
-        serviceCollection.AddTransient<SavegameQueryService>();
-        serviceCollection.AddTransient<SavegameCommandService>();
-        serviceCollection.AddPageServices();
-        serviceCollection.AddViewModels();
         serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current!));
-        serviceCollection.AddDatabaseAccess(appConfiguration, appDataDirectory);
-        serviceCollection.AddSingleton(sp => new NavigationManager(sp));
-        serviceCollection.AddSingleton<IPopupService>(_ => new PopupService(
-            DialogServiceFactory.CreateMessageBoxService(),
-            DialogServiceFactory.Create(new DialogServiceConfiguration()
-            {
-                ApplicationName = "Tomb Launcher",
-                UseApplicationNameInTitle = true,
-                ViewsAssemblyName = Assembly.GetExecutingAssembly().GetName().Name
-            })));
-        serviceCollection.AddScoped<TombRaiderLevelInstaller>();
-        serviceCollection.AddScoped<TombRaiderEngineDetector>();
-        serviceCollection.AddTransient<IGameMerger>(_ =>
-            new TombLauncherGameMerger(new GameSearchResultMetadataDistanceCalculator()
-            { UseAuthor = true, IgnoreSubTitle = true }));
-        serviceCollection.AddDownloaders();
-        serviceCollection.AddTransient(sp =>
-        {
-            var downloadManager = new GameDownloadManager(sp.GetRequiredService<IGameMerger>())
-            {
-                Downloaders = sp.GetRequiredService<ISettingsProvider>().GetActiveDownloaders()
-            };
-
-
-            return downloadManager;
-        });
-        serviceCollection.AddScoped(_ => new GameFileHashCalculator(new HashSet<string>()
-        {
-            ".tr4",
-            ".pak",
-            ".tr2",
-            ".sfx",
-            ".dat",
-            ".phd"
-        }));
-
-
         serviceCollection.AddSingleton<NotificationService>();
         serviceCollection.AddSingleton<UpdateService>();
-        serviceCollection.AddScoped(sp =>
-        {
-            var settingsProvider = sp.GetRequiredService<ISettingsProvider>();
-            var delay = settingsProvider.GetSavegameSettings().ProcessingDelay;
-            var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-            return new SavegameHeaderProcessor(loggerFactory.CreateLogger<SavegameHeaderProcessor>())
-            {
-                Delay = delay
-            };
-        });
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);

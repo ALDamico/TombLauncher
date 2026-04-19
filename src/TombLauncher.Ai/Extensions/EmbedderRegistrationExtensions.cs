@@ -31,15 +31,16 @@ public static class EmbedderRegistrationExtensions
                 var modelId = aiConfig.ModelName!;
                 var modelsDirectory = Path.Combine(platformSpecificFeatures.GetAppDataDirectory(), "Models");
                 return new ModelParams(Path.Combine(modelsDirectory, modelId))
-                    {
-                        ContextSize = 8192,
-                        GpuLayerCount = aiConfig.GpuLayerCount.GetValueOrDefault()
-                    };
+                {
+                    ContextSize = 8192,
+                    GpuLayerCount = aiConfig.GpuLayerCount.GetValueOrDefault()
+                };
             })
             .AddScoped<IWeightsLoader, WeightsLoader>()
             .AddScoped<TroubleshootingContextService>()
             .AddScoped<IChatCompletionServiceLoader, LlamaChatCompletionServiceLoader>()
-            .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings(){FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()})
+            .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings()
+                { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
             .AddSingleton<GameDiagnosticsPlugin>()
             .AddSingleton<Kernel>(sp =>
             {
@@ -47,7 +48,6 @@ public static class EmbedderRegistrationExtensions
                 var gameDiagnosticsPlugin = sp.GetRequiredService<GameDiagnosticsPlugin>();
                 kernel.Plugins.AddFromObject(gameDiagnosticsPlugin);
                 return kernel;
-            })
-            ;
+            });
     }
 }
