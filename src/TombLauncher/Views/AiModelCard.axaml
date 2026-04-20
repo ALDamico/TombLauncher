@@ -6,6 +6,8 @@
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:svg="clr-namespace:Avalonia.Svg;assembly=Svg.Controls.Avalonia"
+             xmlns:globalization="clr-namespace:System.Globalization;assembly=System.Runtime"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.AiModelCard"
              x:DataType="viewModels:AiModelViewModel">
@@ -37,6 +39,26 @@
                     <TextBlock Classes="small text-muted" Text="{Binding Metadata.Description}" 
                                TextWrapping="Wrap"></TextBlock>
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate LANGUAGES}"/>
+                    <controls:OverflowItemsList Items="{Binding Metadata.SupportedLanguages}" ItemsToShow="6">
+                        <controls:OverflowItemsList.ItemTemplate>
+                            <DataTemplate DataType="globalization:CultureInfo">
+                                <Border Classes="filter-chip" Padding="6, 2">
+                                    <StackPanel Orientation="Horizontal">
+                                        <svg:Svg Height="8" Width="8" Margin="-4, 0, 8, 0"
+                                                 Path="{Binding IetfLanguageTag, Converter={StaticResource CountryToFlagConverter}}"></svg:Svg>
+                                        <TextBlock Text="{Binding NativeName}"></TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </controls:OverflowItemsList.ItemTemplate>
+                        <controls:OverflowItemsList.OverflowItem>
+                            <DataTemplate>
+                                <Border Classes="filter-chip" Padding="6, 2">
+                                    <TextBlock Text="E altri..."></TextBlock>
+                                </Border>
+                            </DataTemplate>
+                        </controls:OverflowItemsList.OverflowItem>
+                    </controls:OverflowItemsList>
                 </StackPanel>
             </DockPanel>
         </DockPanel>
