@@ -383,5 +383,16 @@
     <system:String x:Key="COMMAND_R_32B_DESCRIPTION">Sviluppato da Cohere, è progettato specificamente per rispondere a domande complesse e articolate. Richiede una scheda grafica dedicata per funzionare in modo efficiente. Consigliato per chi ha già un po' di esperienza con TombLauncher e vuole risposte più approfondite.</system:String>
     <system:String x:Key="QWEN_3_5_35B_DESCRIPTION">Sviluppato da Alibaba, è il modello più avanzato disponibile. Offre la massima qualità di risposta, ma richiede hardware di fascia alta per funzionare. Consigliato solo se disponi di una GPU con almeno 24 GB di VRAM.</system:String>
     <system:String x:Key="AI_FEATURES">FUNZIONALITÀ AI</system:String>
+    <system:String x:Key="VENDOR">Produttore</system:String>
+    <system:String x:Key="MODEL_SIZE">Dimensione modello</system:String>
+    <system:String x:Key="MODEL_CLASS">Classe modello</system:String>
+    <system:String x:Key="SUPPORTED_LANGUAGES">Lingue supportate</system:String>
+    <system:String x:Key="LANGUAGES_AND_OTHER">e altre {0}</system:String>
+    <system:String x:Key="IS_ENABLED">Abilita funzionalità AI</system:String>
+    <system:String x:Key="LLM_MODEL">Modello AI</system:String>
+    <system:String x:Key="LLM_MODEL_DESCRIPTION">Seleziona il modello AI da usare per rispondere alle domande. I modelli devono essere scaricati prima di poter essere selezionati.</system:String>
+    <system:String x:Key="GPU_OFFLOAD_LEVEL">Livello di offload GPU</system:String>
+    <system:String x:Key="FULL_CPU">Solo CPU</system:String>
+    <system:String x:Key="FULL_GPU">Solo GPU</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
