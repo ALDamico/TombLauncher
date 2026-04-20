@@ -18,16 +18,19 @@
             <RadioButton DockPanel.Dock="Left" 
                          IsChecked="{Binding IsSelected}" 
                          IsEnabled="{Binding IsDownloaded}"/>
-            <controls:IconOnlyButton DockPanel.Dock="Right" IsVisible="{Binding !IsDownloaded}" 
+            <controls:IconOnlyButton DockPanel.Dock="Right" IsVisible="{Binding !IsDownloaded}"
+                                     Margin="12,0,0,0"
                                      Icon="Download2Line" ToolTip.Tip="{localization:Translate DOWNLOAD}"
                                      Command="{Binding DownloadCmd}"
                                      Classes="btn-primary"/>
-            <controls:IconOnlyButton DockPanel.Dock="Right" IsVisible="{Binding IsDownloading}" 
+            <controls:IconOnlyButton DockPanel.Dock="Right" IsVisible="{Binding IsDownloading}"
+                                     Margin="12,0,0,0"
                                      Icon="CloseLine" ToolTip.Tip="{localization:Translate CANCEL}"
                                      Command="{Binding CancelDownloadCmd}"
                                      Classes="btn-danger"/>
             <DockPanel LastChildFill="True">
-                <iconPacks:PackIconRemixIcon Classes="text-muted" 
+                <iconPacks:PackIconRemixIcon Classes="text-muted"
+                                             Margin="0,0,12,0"
                                              DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Width="32" Height="32" Kind="{Binding Metadata.Vendor, Converter={StaticResource AiVendorToIconConverter}}"/>
                 <StackPanel>
                     <TextBlock Classes="section-title" Text="{Binding Metadata.FriendlyName}"></TextBlock>
@@ -36,28 +39,37 @@
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate MODEL_CLASS}"></TextBlock>
                     <TextBlock Classes="small text-muted" Text="{Binding Metadata.AiModelClass}"></TextBlock>
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate DESCRIPTION}"></TextBlock>
-                    <TextBlock Classes="small text-muted" Text="{Binding Metadata.Description}" 
+                    <TextBlock Classes="small text-muted" Text="{Binding Metadata.Description}"
                                TextWrapping="Wrap"></TextBlock>
-                    <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate LANGUAGES}"/>
-                    <controls:OverflowItemsList Items="{Binding Metadata.SupportedLanguages}" ItemsToShow="6">
+                    <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate SUPPORTED_LANGUAGES}"/>
+                    <controls:OverflowItemsList Items="{Binding Metadata.SupportedLanguages}"
+                                                ItemsToShow="6">
+                        <controls:OverflowItemsList.OverflowTemplate>
+                            <DataTemplate x:DataType="controls:OverflowItemsList+OverflowMarker">
+                                <Border Classes="filter-chip" Padding="0" ClipToBounds="True" Margin="0,0,4,4">
+                                    <TextBlock Classes="small" Margin="8,4"
+                                               Text="{Binding Count, Converter={StaticResource LocalizedStringConverter}, ConverterParameter=LANGUAGES_AND_OTHER}"/>
+                                </Border>
+                            </DataTemplate>
+                        </controls:OverflowItemsList.OverflowTemplate>
                         <controls:OverflowItemsList.ItemTemplate>
-                            <DataTemplate DataType="globalization:CultureInfo">
-                                <Border Classes="filter-chip" Padding="6, 2">
-                                    <StackPanel Orientation="Horizontal">
-                                        <svg:Svg Height="8" Width="8" Margin="-4, 0, 8, 0"
-                                                 Path="{Binding IetfLanguageTag, Converter={StaticResource CountryToFlagConverter}}"></svg:Svg>
-                                        <TextBlock Text="{Binding NativeName}"></TextBlock>
-                                    </StackPanel>
+                            <DataTemplate x:DataType="globalization:CultureInfo">
+                                <Border Classes="filter-chip" Padding="0" ClipToBounds="True" Margin="4,0,4,0">
+                                    <Grid ColumnDefinitions="Auto,Auto">
+                                        <svg:Svg Grid.Column="0"
+                                                 Height="24"
+                                                 Width="24"
+                                                 VerticalAlignment="Stretch"
+                                                 Path="{Binding IetfLanguageTag, Converter={StaticResource CountryToFlagConverter}}"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Classes="small"
+                                                   Margin="6,4,8,4"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding NativeName}"/>
+                                    </Grid>
                                 </Border>
                             </DataTemplate>
                         </controls:OverflowItemsList.ItemTemplate>
-                        <controls:OverflowItemsList.OverflowItem>
-                            <DataTemplate>
-                                <Border Classes="filter-chip" Padding="6, 2">
-                                    <TextBlock Text="E altri..."></TextBlock>
-                                </Border>
-                            </DataTemplate>
-                        </controls:OverflowItemsList.OverflowItem>
                     </controls:OverflowItemsList>
                 </StackPanel>
             </DockPanel>
