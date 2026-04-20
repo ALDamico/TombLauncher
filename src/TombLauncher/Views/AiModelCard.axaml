@@ -6,7 +6,6 @@
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:svg="clr-namespace:Avalonia.Svg;assembly=Svg.Controls.Avalonia"
              xmlns:globalization="clr-namespace:System.Globalization;assembly=System.Runtime"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.AiModelCard"
@@ -36,6 +35,10 @@
                     <TextBlock Classes="section-title" Text="{Binding Metadata.FriendlyName}"></TextBlock>
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate VENDOR}"></TextBlock>
                     <TextBlock Classes="small text-muted" Text="{Binding Metadata.Vendor}"></TextBlock>
+                    <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate MODEL_SIZE}"></TextBlock>
+                    <TextBlock Classes="small text-muted" 
+                               Text="{Binding FileSizeBytes, Converter={StaticResource FileSizeFormatter}}" 
+                               IsVisible="{Binding FileSizeBytes, Converter={x:Static ObjectConverters.IsNotNull}}"></TextBlock>
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate MODEL_CLASS}"></TextBlock>
                     <TextBlock Classes="small text-muted" Text="{Binding Metadata.AiModelClass}"></TextBlock>
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate DESCRIPTION}"></TextBlock>
@@ -55,18 +58,11 @@
                         <controls:OverflowItemsList.ItemTemplate>
                             <DataTemplate x:DataType="globalization:CultureInfo">
                                 <Border Classes="filter-chip" Padding="0" ClipToBounds="True" Margin="4,0,4,0">
-                                    <Grid ColumnDefinitions="Auto,Auto">
-                                        <svg:Svg Grid.Column="0"
-                                                 Height="24"
-                                                 Width="24"
-                                                 VerticalAlignment="Stretch"
-                                                 Path="{Binding IetfLanguageTag, Converter={StaticResource CountryToFlagConverter}}"/>
-                                        <TextBlock Grid.Column="1"
-                                                   Classes="small"
-                                                   Margin="6,4,8,4"
-                                                   VerticalAlignment="Center"
-                                                   Text="{Binding NativeName}"/>
-                                    </Grid>
+                                    <TextBlock
+                                        Classes="small"
+                                        Margin="6,4,8,4"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding NativeName}" />
                                 </Border>
                             </DataTemplate>
                         </controls:OverflowItemsList.ItemTemplate>

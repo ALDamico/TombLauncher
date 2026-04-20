@@ -412,5 +412,16 @@
     <system:String x:Key="WEBSITE">Sito web</system:String>
     <system:String x:Key="LICENSE">Licenza</system:String>
     <system:String x:Key="AI_FEATURES">FUNZIONALITÀ AI</system:String>
+    <system:String x:Key="VENDOR">Produttore</system:String>
+    <system:String x:Key="MODEL_SIZE">Dimensione modello</system:String>
+    <system:String x:Key="MODEL_CLASS">Classe modello</system:String>
+    <system:String x:Key="SUPPORTED_LANGUAGES">Lingue supportate</system:String>
+    <system:String x:Key="LANGUAGES_AND_OTHER">e altre {0}</system:String>
+    <system:String x:Key="IS_ENABLED">Abilita funzionalità AI</system:String>
+    <system:String x:Key="LLM_MODEL">Modello AI</system:String>
+    <system:String x:Key="LLM_MODEL_DESCRIPTION">Seleziona il modello AI da usare per rispondere alle domande. I modelli devono essere scaricati prima di poter essere selezionati.</system:String>
+    <system:String x:Key="GPU_OFFLOAD_LEVEL">Livello di offload GPU</system:String>
+    <system:String x:Key="FULL_CPU">Solo CPU</system:String>
+    <system:String x:Key="FULL_GPU">Solo GPU</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
