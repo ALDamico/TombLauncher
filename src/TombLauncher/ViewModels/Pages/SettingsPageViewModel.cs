@@ -149,6 +149,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         _ = Task.WhenAll(aiSettings.AvailableModels.Where(m => m.FileSizeBytes == null).Select(async m => await FetchSize(m)));
 
+        Sections.Add(aiSettings);
         Sections.Add(appearanceSettings);
         Sections.Add(languageSettings);
         Sections.Add(downloaderSettings);
