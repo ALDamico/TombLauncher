@@ -45,7 +45,7 @@ anymore.
 
 To solve the issue just download and apply this fix: https://community.pcgamingwiki.com/files/file/82-tomb-raider-series-fullscreen-border-fix/
 
-A future version of TombLauncher will allow you to fix this issue without applying that fix, but as of version 1.1.0 this is not yet available.
+A future version of Tomb Launcher will allow you to fix this issue without applying that fix, but as of version 1.1.0 this is not yet available.
 
 You may want to know that this Fix doesn't patch your game. It just writes some informations in Windows. Specifically, it creates an SDB file in the folder "C:\Windows\apppatch\CustomSDB\" and also writes some data in the Registry key [HKEY\_LOCAL\_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Custom]
 
@@ -76,7 +76,7 @@ This issue mostly depends on your graphic card settings. Some Graphic Cards set 
 Assuming the savegames are not corrupted, probably they don't work because they were created with a previous version of the game.
 Unfortunately after a game revision/update the old savegames don't work anymore.
 
-Although some sources, like TRCustoms.org, do allow you to download previous versions of a level, TombLauncher always installs the latest version by default. As of version 1.1.0, this is unlikely to change in the future.
+Although some sources, like TRCustoms.org, do allow you to download previous versions of a level, Tomb Launcher always installs the latest version by default. As of version 1.1.0, this is unlikely to change in the future.
 
 ## Why don't my savegames work anymore from one play session to the next?
 This issue could be the famous "Monkey Bug". It occurs only in modern Operating Systems and only if there are monkeys in the level (Note: Actually, I also experienced this bug in a level with cats, probably because the builder used the monkeys slot for cats).  

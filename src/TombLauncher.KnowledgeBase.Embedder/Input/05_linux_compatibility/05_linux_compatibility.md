@@ -1,8 +1,8 @@
 # Linux Compatibility
-**by TombLauncher Developers**  
+**by Tomb Launcher Developers**  
 *Last edited: 13 Apr 2026*
 
-TombLauncher enables you to play TRLE custom levels easily using either Wine or Proton.
+Tomb Launcher enables you to play TRLE custom levels easily using either Wine or Proton.
 
 Here are some common issues you may encounter:
 
@@ -21,7 +21,7 @@ This is a known issue with Tomb Launcher, as of version 1.1.0. We cannot guarant
 supported under Linux.
 
 ## Do TR1X/TR2X levels support running with the native Linux executable?
-This is a feature that we will probably implement in a future version of TombLauncher. As of version 1.1.0, TR1X and 
+This is a feature that we will probably implement in a future version of Tomb Launcher. As of version 1.1.0, TR1X and 
 TR2X levels run under Linux through Wine or Proton.
 
 ## Can Tomb Raider 1 and Tomb Raider 2 levels be patched to run via TR1X/TR2X?
