@@ -8,13 +8,13 @@
 ## How do I install TRLE custom levels?
 
 All TRLE Custom Levels are ready-to-play. No installation is needed. Just download a random game, unzip it in a folder of your choice and run the main EXE.  
-Technically, you don't even need TombLauncher to play them: what TombLauncher calls "installation" is really just decompressing the game in its own data folder and keeping them organized.  
+Technically, you don't even need Tomb Launcher to play them: what Tomb Launcher calls "installation" is really just decompressing the game in its own data folder and keeping them organized.  
 However, for a better game experience, you must adjust the settings before playing.
 
 ## How to pop up the Game Options Window for Tomb Raider?
 The original Tomb Raider did not have an options menu to speak of.
 
-Future versions of TombLauncher will support migrating TR1 levels to the TR1X engine, but as of version 1.1.0, this is not yet supported.
+Future versions of Tomb Launcher will support migrating TR1 levels to the TR1X engine, but as of version 1.1.0, this is not yet supported.
 
 ## How to pop up the Game Options Window for Tomb Raider 2?
 You can show the game options window directly via Tomb Launcher by the game details page -> cog button -> Configure.
@@ -109,7 +109,7 @@ This allows you to enable or disable sound. You generally need to leave these as
 
 This tab allows you to add a joystick. However, these older games may not play very well with newer input devices.
 
-Future versions of TombLauncher will support improved controller integration through AntiMicroX, but as of version 1.1.0 this is not yet implemented.
+Future versions of Tomb Launcher will support improved controller integration through AntiMicroX, but as of version 1.1.0 this is not yet implemented.
 
 ### Advanced
 You rarely need to edit this page.
@@ -147,7 +147,7 @@ Sound Adapter: Leave it as is
 
 Joystick Adapter: these older games may not play very well with newer input devices.
 
-Future versions of TombLauncher will support improved controller integration through AntiMicroX, but as of version 1.1.0 this is not yet implemented.
+Future versions of Tomb Launcher will support improved controller integration through AntiMicroX, but as of version 1.1.0 this is not yet implemented.
 
 Tomb Raider 3 does not allow you to play windowed natively.
 

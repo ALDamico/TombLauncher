@@ -25,7 +25,7 @@ With the tool installed, you'll need to copy the NetSparkle_Ed25519.priv and Net
 
 With the public/private key pair in order, you will need to edit the file `installer-script.iss` by bumping up its version number.
 
-The TombLauncher project version number will also need to be bumped up.
+The Tomb Launcher project version number will also need to be bumped up.
 
 Now, run the _Publish Self-Contained_ task to generate the new version.
 

@@ -13,7 +13,7 @@ Because of the multiple unofficial patches applied during level building, antivi
 
 ---
 
-To solve this issue, add TombLauncher's data folder to the exception list of Windows Defender or your other antivirus software.
+To solve this issue, add Tomb Launcher's data folder to the exception list of Windows Defender or your other antivirus software.
 
 **Note**: Never remove any plugin and dll!
 Every file is necessary. Removing plugins or .dlls can cause crucial
