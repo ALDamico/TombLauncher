@@ -57,6 +57,5 @@
             </valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
         </valueConverters:StringNullToNullBitmapConverter>
         <valueConverters:AiVendorToIconConverter x:Key="AiVendorToIconConverter"/>
-
     </Styles.Resources>
 </Styles>
