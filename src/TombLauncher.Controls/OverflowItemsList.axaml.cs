@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
@@ -21,7 +19,7 @@ public partial class OverflowItemsList : UserControl
 
     private const int DefaultItemsToShow = 10;
 
-    internal sealed class OverflowMarker
+    public sealed class OverflowMarker
     {
         public int Count { get; init; }
     }
@@ -35,16 +33,16 @@ public partial class OverflowItemsList : UserControl
         set => SetValue(ItemTemplateProperty, value);
     }
 
-    public static readonly StyledProperty<DataTemplate> OverflowItemProperty =
-        AvaloniaProperty.Register<OverflowItemsList, DataTemplate>(nameof(OverflowItem));
+    public static readonly StyledProperty<DataTemplate?> OverflowTemplateProperty =
+        AvaloniaProperty.Register<OverflowItemsList, DataTemplate?>(nameof(OverflowTemplate));
 
-    public DataTemplate OverflowItem
+    public DataTemplate? OverflowTemplate
     {
-        get => GetValue(OverflowItemProperty);
-        set => SetValue(OverflowItemProperty, value);
+        get => GetValue(OverflowTemplateProperty);
+        set => SetValue(OverflowTemplateProperty, value);
     }
 
-    public static readonly StyledProperty<ICollection?> ItemsProperty =
+public static readonly StyledProperty<ICollection?> ItemsProperty =
         AvaloniaProperty.Register<OverflowItemsList, ICollection?>(nameof(Items));
 
     public ICollection? Items
@@ -79,17 +77,17 @@ public partial class OverflowItemsList : UserControl
         base.OnPropertyChanged(change);
         if (change.Property == ItemsProperty || change.Property == ItemsToShowProperty)
             RebuildDisplayedItems();
-        if (change.Property == ItemTemplateProperty || change.Property == OverflowItemProperty)
+        if (change.Property == ItemTemplateProperty || change.Property == OverflowTemplateProperty)
             UpdateItemTemplate();
     }
 
     private void UpdateItemTemplate()
     {
         _innerItemsControl.ItemTemplate = new FuncDataTemplate<object>((data, _) =>
-        {
-            var template = data is OverflowMarker ? OverflowItem : ItemTemplate;
-            return template?.Build(data) ?? new ContentControl { Content = data };
-        });
+            data is OverflowMarker
+                ? OverflowTemplate?.Build(data) ?? new ContentControl { Content = data }
+                : ItemTemplate?.Build(data) ?? new ContentControl { Content = data }
+        );
     }
 
     private void RebuildDisplayedItems()
@@ -101,7 +99,7 @@ public partial class OverflowItemsList : UserControl
         }
 
         var overflowCount = Math.Max(0, Items.Count - ItemsToShow);
-        var items = Items.Cast<object>().Take(ItemsToShow).ToList<object>();
+        var items = Items.Cast<object>().Take(ItemsToShow).ToList();
         if (overflowCount > 0)
             items.Add(new OverflowMarker { Count = overflowCount });
         DisplayedItems = items;
