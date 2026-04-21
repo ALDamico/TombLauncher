@@ -423,5 +423,9 @@
     <system:String x:Key="GPU_OFFLOAD_LEVEL">GPU offload level</system:String>
     <system:String x:Key="FULL_CPU">CPU only</system:String>
     <system:String x:Key="FULL_GPU">GPU only</system:String>
+    <system:String x:Key="DOWNLOADING_MODEL">Downloading model {0} from {1}...</system:String>
+    <system:String x:Key="DOWNLOADING_MODEL_TITLE">Downloading AI model</system:String>
+    <system:String x:Key="MODEL_DOWNLOAD_CANCELED">Download of {0} canceled</system:String>
+    <system:String x:Key="ERROR_DOWNLOADING_MODEL">Error downloading model</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

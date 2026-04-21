@@ -48,6 +48,7 @@ public static class EmbedderRegistrationExtensions
                 var gameDiagnosticsPlugin = sp.GetRequiredService<GameDiagnosticsPlugin>();
                 kernel.Plugins.AddFromObject(gameDiagnosticsPlugin);
                 return kernel;
-            });
+            })
+            .AddSingleton<ModelDownloadService>();
     }
 }
