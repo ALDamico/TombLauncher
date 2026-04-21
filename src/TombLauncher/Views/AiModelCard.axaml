@@ -14,7 +14,7 @@
             BorderThickness="1"
             BorderBrush="{DynamicResource CardBorderBrush}">
         <DockPanel LastChildFill="True">
-            <RadioButton DockPanel.Dock="Left" 
+            <RadioButton DockPanel.Dock="Left" GroupName="AiCards"
                          IsChecked="{Binding IsSelected}" 
                          IsEnabled="{Binding IsDownloaded}"/>
             <controls:IconOnlyButton DockPanel.Dock="Right" IsVisible="{Binding !IsDownloaded}"

@@ -29,6 +29,7 @@ public static class MapperConfigurationFactory
             cfg.AddProfile<StatisticsProfile>();
             cfg.AddProfile<SavegamesProfile>();
             cfg.AddProfile<LaunchOptionsProfile>();
+            cfg.AddProfile(new AiProfile(serviceFactory ?? (_ => null!)));
 
             cfg.CreateMap<PlaySession, PlaySessionDto>().ReverseMap();
             cfg.CreateMap<FileBackup, FileBackupDto>().ReverseMap();
