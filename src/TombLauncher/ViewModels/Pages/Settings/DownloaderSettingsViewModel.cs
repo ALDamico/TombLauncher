@@ -19,13 +19,13 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 {
-    public DownloaderSettingsViewModel(PageViewModel settingsPage, ISettingsProvider settingsProvider, IAppFileOperationsService appFileOperations, IPopupService popupService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage, PackIconRemixIconKind.DownloadLine)
+    public DownloaderSettingsViewModel(PageViewModel settingsPage, ISettingsProvider settingsProvider, IAppFileOperationsService appFileOperations, IPopupService popupService, IPlatformSpecificFeatures platformSpecificFeatures, IMapper mapper) : base("DOWNLOADERS", settingsPage, PackIconRemixIconKind.DownloadLine)
     {
         InfoTipContent = "DOWNLOADERS_INFOTIP_CONTENT".GetLocalizedString();
         _settingsProvider = settingsProvider;
         _appFileOperations = appFileOperations;
         _popupService = popupService;
-        _mapper = mapperConfiguration.CreateMapper();
+        _mapper = mapper;
         AvailableUnzipFallbackMethods =
             _mapper.Map<ObservableCollection<UnzipBackendViewModel>>(platformSpecificFeatures
                 .GetPlatformSpecificZipFallbackPrograms()) ?? new ObservableCollection<UnzipBackendViewModel>();
