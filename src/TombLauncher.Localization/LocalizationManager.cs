@@ -11,7 +11,7 @@ using TombLauncher.Contracts.Localization.Dtos;
 
 namespace TombLauncher.Localization;
 
-public class LocalizationManager : ILocalizationManager, INotifyPropertyChanged
+public class LocalizationManager : ILocalizationManager
 {
     public LocalizationManager(Application application)
     {
@@ -25,9 +25,9 @@ public class LocalizationManager : ILocalizationManager, INotifyPropertyChanged
     public static LocalizationManager? Instance { get; private set; }
 
     private CultureInfo _currentCulture;
-    private string _localizationRelativePath;
-    private CultureInfo _defaultCulture;
-    private Application _application;
+    private readonly string _localizationRelativePath;
+    private readonly CultureInfo _defaultCulture;
+    private readonly Application _application;
     private ResourceDictionary _localizedStrings = new();
 
     public CultureInfo CurrentCulture => _currentCulture;
@@ -65,7 +65,7 @@ public class LocalizationManager : ILocalizationManager, INotifyPropertyChanged
             }
         }
 
-        return cultureInfos;
+        return cultureInfos.OrderBy(l => l.DisplayName).ToList();
     }
 
     public void ChangeLanguage(CultureInfo targetLanguage)
@@ -74,8 +74,8 @@ public class LocalizationManager : ILocalizationManager, INotifyPropertyChanged
         if (currentApp == null) return;*/
         _currentCulture = targetLanguage;
         var cultureName = _currentCulture.Name;
-        var currentTranslations = /*currentApp*/_application.Resources.MergedDictionaries.OfType<ResourceInclude>()
-            .FirstOrDefault(dic => dic.Source?.OriginalString?.Contains(_localizationRelativePath) ?? false);
+        var currentTranslations = _application.Resources.MergedDictionaries.OfType<ResourceInclude>()
+            .FirstOrDefault(dic => dic.Source?.OriginalString.Contains(_localizationRelativePath) ?? false);
         CultureInfo.CurrentUICulture = _currentCulture;
         CultureInfo.DefaultThreadCurrentUICulture = _currentCulture;
         if (currentTranslations != null)
@@ -103,7 +103,7 @@ public class LocalizationManager : ILocalizationManager, INotifyPropertyChanged
 
         var rd = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(xaml);
         var rdDefault = AvaloniaRuntimeXamlLoader.Parse<ResourceDictionary>(defaultKeyXaml);
-        var missingKeys = Enumerable.Except<object>(rdDefault.Keys, rd.Keys);
+        var missingKeys = Enumerable.Except(rdDefault.Keys, rd.Keys);
         var resultingDictionary = new ResourceDictionary();
         foreach (var key in missingKeys)
         {
@@ -125,9 +125,6 @@ public class LocalizationManager : ILocalizationManager, INotifyPropertyChanged
 
     public Dictionary<string, string> GetSubsetInvertedByPrefix(string prefix)
     {
-        if (_localizedStrings == null)
-            return new Dictionary<string, string>();
-
         var elements = _localizedStrings.Where(ls => (ls.Key as string)?.StartsWith(prefix + "_") == true);
         var dictionary = new Dictionary<string, string>();
         foreach (var element in elements)
@@ -139,19 +136,14 @@ public class LocalizationManager : ILocalizationManager, INotifyPropertyChanged
         return dictionary;
     }
 
-    public string GetLocalizedString(string key, params object[] parms)
+    public string GetLocalizedString(string key, params object[]? parms)
     {
         if (parms == null)
         {
             parms = [];
         }
 
-        if (_localizedStrings == null)
-        {
-            return parms.Length == 0 ? key : string.Format(key, parms);
-        }
-
-        return !_localizedStrings.TryGetValue(key, out var s) ? key : string.Format((s as string) ?? key, parms);
+        return !_localizedStrings.TryGetValue(key, out var s) ? key : string.Format(s as string ?? key, parms);
     }
 
     public string this[string key] => GetLocalizedString(key);
