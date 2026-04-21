@@ -21,25 +21,21 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     public SettingsPageViewModel(SettingsPageService settingsService, 
         ISettingsProvider settingsProvider, 
         IPopupService popupService, 
-        MapperConfiguration mapperConfiguration, 
+        IMapper mapper, 
         IAppFileOperationsService appFileOperationsService, 
         ILayeredAppConfiguration appConfiguration,
         AiModelRegistry aiModelRegistry,
-        IHttpClientFactory httpClientFactory,
-        ModelDownloadService modelDownloadService,
-        NotificationService notificationService)
+        IHttpClientFactory httpClientFactory)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
         _popupService = popupService;
         _platformSpecificFeatures = settingsProvider.PlatformSpecificFeatures;
-        _mapperConfiguration = mapperConfiguration;
+        _mapper = mapper;
         _appFileOperationsService = appFileOperationsService;
         _appConfiguration = appConfiguration;
         _aiModelRegistry = aiModelRegistry;
         _httpClientFactory = httpClientFactory;
-        _modelDownloadService = modelDownloadService;
-        _notificationService = notificationService;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -70,13 +66,11 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly ISettingsProvider _settingsProvider;
     private readonly IPopupService _popupService;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
-    private readonly MapperConfiguration _mapperConfiguration;
+    private readonly IMapper _mapper;
     private readonly IAppFileOperationsService _appFileOperationsService;
     private readonly ILayeredAppConfiguration _appConfiguration;
     private readonly AiModelRegistry _aiModelRegistry;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ModelDownloadService _modelDownloadService;
-    private readonly NotificationService _notificationService;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -114,7 +108,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();
-        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _popupService, _platformSpecificFeatures, _mapperConfiguration)
+        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _popupService, _platformSpecificFeatures, _mapper)
         {
             AvailableDownloaders = downloaders.ToObservableCollection()
         };
@@ -136,9 +130,13 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
 
+        var availableModels = _mapper.Map<ObservableCollection<AiModelViewModel>>(_aiModelRegistry.AvailableModels);
+        var selectedModel = availableModels.FirstOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelName);
+
         var aiSettings = new AiSettingsViewModel(this)
         {
-            AvailableModels = _aiModelRegistry.AvailableModels.Select(m => new AiModelViewModel(m, _modelDownloadService, _notificationService)).ToObservableCollection(),
+            AvailableModels = availableModels,
+            SelectedModel = selectedModel,
             GpuOffloadLevel = (int)(aiCoreSettings.GpuOffloadPercentage.GetValueOrDefault() * AiConstants.MaxOffloadLevel),
             IsEnabled = aiCoreSettings.IsEnabled,
         };
