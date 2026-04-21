@@ -24,6 +24,7 @@ public partial class AiModelViewModel : ObservableObject
         _modelDownloadService = modelDownloadService;
         _notificationService = notificationService;
         Metadata = metadata;
+        _isDownloaded = modelDownloadService.IsModelDownloaded(metadata);
         DownloadCmd = new AsyncRelayCommand(Download, CanDownload);
         CancelDownloadCmd = new AsyncRelayCommand(CancelDownload, CanCancelDownload);
     }
