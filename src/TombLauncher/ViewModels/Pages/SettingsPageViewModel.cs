@@ -25,7 +25,9 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         IAppFileOperationsService appFileOperationsService, 
         ILayeredAppConfiguration appConfiguration,
         AiModelRegistry aiModelRegistry,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        ModelDownloadService modelDownloadService,
+        NotificationService notificationService)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
@@ -36,6 +38,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _appConfiguration = appConfiguration;
         _aiModelRegistry = aiModelRegistry;
         _httpClientFactory = httpClientFactory;
+        _modelDownloadService = modelDownloadService;
+        _notificationService = notificationService;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -71,6 +75,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly ILayeredAppConfiguration _appConfiguration;
     private readonly AiModelRegistry _aiModelRegistry;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ModelDownloadService _modelDownloadService;
+    private readonly NotificationService _notificationService;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -132,7 +138,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         var aiSettings = new AiSettingsViewModel(this)
         {
-            AvailableModels = _aiModelRegistry.AvailableModels.Select(m => new AiModelViewModel(m)).ToObservableCollection(),
+            AvailableModels = _aiModelRegistry.AvailableModels.Select(m => new AiModelViewModel(m, _modelDownloadService, _notificationService)).ToObservableCollection(),
             GpuOffloadLevel = (int)(aiCoreSettings.GpuOffloadPercentage.GetValueOrDefault() * AiConstants.MaxOffloadLevel),
             IsEnabled = aiCoreSettings.IsEnabled,
         };

@@ -394,5 +394,9 @@
     <system:String x:Key="GPU_OFFLOAD_LEVEL">Livello di offload GPU</system:String>
     <system:String x:Key="FULL_CPU">Solo CPU</system:String>
     <system:String x:Key="FULL_GPU">Solo GPU</system:String>
+    <system:String x:Key="DOWNLOADING_MODEL">Download del modello {0} da {1} in corso...</system:String>
+    <system:String x:Key="DOWNLOADING_MODEL_TITLE">Download modello AI in corso</system:String>
+    <system:String x:Key="MODEL_DOWNLOAD_CANCELED">Download di {0} annullato</system:String>
+    <system:String x:Key="ERROR_DOWNLOADING_MODEL">Errore durante il download del modello</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

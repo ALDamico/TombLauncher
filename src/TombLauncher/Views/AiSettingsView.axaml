@@ -31,7 +31,8 @@
         </ItemsControl>
         <TextBlock Text="{loc:Translate GPU_OFFLOAD_LEVEL}"></TextBlock>
         <Slider Minimum="0" Maximum="4" Orientation="Horizontal" Value="{Binding GpuOffloadLevel}"
-                IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="BottomRight">
+                IsSnapToTickEnabled="True" TickFrequency="1"
+                Classes="discrete-dots">
         </Slider>
         <DockPanel LastChildFill="True">
             <TextBlock DockPanel.Dock="Left" Text="{loc:Translate FULL_CPU}"></TextBlock>

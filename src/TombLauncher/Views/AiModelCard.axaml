@@ -33,6 +33,8 @@
                                              DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Width="32" Height="32" Kind="{Binding Metadata.Vendor, Converter={StaticResource AiVendorToIconConverter}}"/>
                 <StackPanel>
                     <TextBlock Classes="section-title" Text="{Binding Metadata.FriendlyName}"></TextBlock>
+                    <ContentControl Content="{Binding InstallProgress}" Margin="0, 4, 0, 0"
+                                    IsVisible="{Binding InstallProgress, Converter={x:Static ObjectConverters.IsNotNull}}" />
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate VENDOR}"></TextBlock>
                     <TextBlock Classes="small text-muted" Text="{Binding Metadata.Vendor}"></TextBlock>
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate MODEL_SIZE}"></TextBlock>
