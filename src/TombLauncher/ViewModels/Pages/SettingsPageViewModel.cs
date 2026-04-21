@@ -26,9 +26,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         ILayeredAppConfiguration appConfiguration,
         SettingsMapper settingsMapper,
         AiModelRegistry aiModelRegistry,
-        IHttpClientFactory httpClientFactory,
-        ModelDownloadService modelDownloadService,
-        NotificationService notificationService)
+        IHttpClientFactory httpClientFactory)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
@@ -39,8 +37,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _settingsMapper = settingsMapper;
         _aiModelRegistry = aiModelRegistry;
         _httpClientFactory = httpClientFactory;
-        _modelDownloadService = modelDownloadService;
-        _notificationService = notificationService;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -76,8 +72,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly AiModelRegistry _aiModelRegistry;
     private readonly SettingsMapper _settingsMapper;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ModelDownloadService _modelDownloadService;
-    private readonly NotificationService _notificationService;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -137,9 +131,13 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
 
+        var availableModels = _mapper.Map<ObservableCollection<AiModelViewModel>>(_aiModelRegistry.AvailableModels);
+        var selectedModel = availableModels.FirstOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelName);
+
         var aiSettings = new AiSettingsViewModel(this)
         {
-            AvailableModels = _aiModelRegistry.AvailableModels.Select(m => new AiModelViewModel(m, _modelDownloadService, _notificationService)).ToObservableCollection(),
+            AvailableModels = availableModels,
+            SelectedModel = selectedModel,
             GpuOffloadLevel = (int)(aiCoreSettings.GpuOffloadPercentage.GetValueOrDefault() * AiConstants.MaxOffloadLevel),
             IsEnabled = aiCoreSettings.IsEnabled,
         };
