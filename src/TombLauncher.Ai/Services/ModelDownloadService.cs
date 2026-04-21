@@ -18,17 +18,14 @@ public class ModelDownloadService
 
     public async Task DownloadAsync(AiModelMetadata model, IProgress<DownloadProgressInfo> progress, CancellationToken cancellationToken)
     {
-        var urlToFetch = model.DownloadLink;
         var destinationFilePath = GetDestinationFilePath(model);
+        Directory.CreateDirectory(Path.GetDirectoryName(destinationFilePath)!);
         await using var file = new FileStream(destinationFilePath, FileMode.Create);
-        await _httpClient.DownloadAsync(urlToFetch, file, progress, cancellationToken);
+        await _httpClient.DownloadAsync(model.DownloadLink, file, progress, cancellationToken);
     }
 
-    private string GetDestinationFilePath(AiModelMetadata model)
-    {
-        var destinationDirectory = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "Models");
-        Directory.CreateDirectory(destinationDirectory);
-        var destinationFilePath = Path.Combine(destinationDirectory, model.FileName);
-        return destinationFilePath;
-    }
+    public bool IsModelDownloaded(AiModelMetadata model) => File.Exists(GetDestinationFilePath(model));
+
+    private string GetDestinationFilePath(AiModelMetadata model) =>
+        Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "Models", model.FileName);
 }
