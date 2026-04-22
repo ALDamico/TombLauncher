@@ -131,7 +131,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
 
-        var availableModels = _mapper.Map<ObservableCollection<AiModelViewModel>>(_aiModelRegistry.AvailableModels);
+        var availableModels = _mapper.Map<ObservableCollection<Ai.AiModelViewModel>>(_aiModelRegistry.AvailableModels);
         var selectedModel = availableModels.FirstOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelName);
         selectedModel?.IsSelected = true;
         var aiSettings = new AiSettingsViewModel(this)
@@ -218,7 +218,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         }
     }
     
-    private async Task FetchSize(AiModelViewModel m)
+    private async Task FetchSize(Ai.AiModelViewModel m)
     {
         m.IsFetchingSize = true;
         try

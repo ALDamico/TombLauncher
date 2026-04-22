@@ -5,8 +5,8 @@
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
              xmlns:loc="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             xmlns:ai="clr-namespace:TombLauncher.Views.Ai"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.AiSettingsView"
              x:DataType="settings:AiSettingsViewModel">
@@ -25,7 +25,7 @@
         <ItemsControl ItemsSource="{Binding AvailableModels}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <views:AiModelCard />
+                    <ai:AiModelCard />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

@@ -12,7 +12,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.Ai;
 
 public partial class AiModelViewModel : ObservableObject
 {
