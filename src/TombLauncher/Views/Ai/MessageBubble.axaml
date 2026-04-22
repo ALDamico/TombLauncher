@@ -30,7 +30,7 @@
         <StackPanel Orientation="Vertical" Margin="8">
             <TextBlock HorizontalAlignment="Right" Classes="text-muted small" FontWeight="DemiBold" Text="{Binding SentDate}"></TextBlock>
             <mdxaml:MarkdownScrollViewer helpers:MarkdownTypography.FontFamily="{StaticResource Spectral}" 
-                                         Markdown="{Binding Text}"/>
+                                         Markdown="{Binding Text}" />
         </StackPanel>
     </Border>
 </UserControl>
