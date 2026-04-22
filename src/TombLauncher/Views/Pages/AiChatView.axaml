@@ -19,7 +19,8 @@
         <TextBox DockPanel.Dock="Bottom" AcceptsReturn="True" AcceptsTab="False" 
                  CornerRadius="50" 
                  Watermark="{localization:Translate ASK_LAURA_SOMETHING}"
-                 Height="200"
+                 MinHeight="48"
+                 MaxHeight="200"
                  Text="{Binding CurrentText}">
             <TextBox.KeyBindings>
                 <KeyBinding Command="{Binding SendMessageCommand}" Gesture="Enter"/>
@@ -38,6 +39,11 @@
                                      Margin="16, 0" Icon="SendPlane2Line" Command="{Binding SendMessageCommand}"/>
             </TextBox.InnerRightContent>
         </TextBox>
+        <StackPanel Margin="32, 0" DockPanel.Dock="Bottom" Orientation="Horizontal" IsVisible="{Binding IsGenerating}">
+            <controls:RingLoader Height="32" Width="32" ></controls:RingLoader>
+            <TextBlock Margin="8, 4" VerticalAlignment="Center" FontStyle="Italic" Classes="text-muted" 
+                       Text="{Binding CurrentStatusText}"></TextBlock>
+        </StackPanel>
         <ScrollViewer>
             <ItemsRepeater ItemsSource="{Binding MessageHistory}">
                 <ItemsRepeater.ItemTemplate>
