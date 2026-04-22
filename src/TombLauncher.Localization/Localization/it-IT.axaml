@@ -398,5 +398,8 @@
     <system:String x:Key="DOWNLOADING_MODEL_TITLE">Download modello AI in corso</system:String>
     <system:String x:Key="MODEL_DOWNLOAD_CANCELED">Download di {0} annullato</system:String>
     <system:String x:Key="ERROR_DOWNLOADING_MODEL">Errore durante il download del modello</system:String>
+    <system:String x:Key="TALK_TO_LAURA">Chatta con Laura</system:String>
+    <system:String x:Key="ASK_LAURA_SOMETHING">Chiedi qualcosa a Laura...</system:String>
+    <system:String x:Key="SEND">Invia messaggio</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

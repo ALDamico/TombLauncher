@@ -4,6 +4,7 @@ using TombLauncher.Ai.Services;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Services;
 using TombLauncher.ViewModels;
+using AiModelViewModel = TombLauncher.ViewModels.Ai.AiModelViewModel;
 
 namespace TombLauncher.Factories.Profiles;
 

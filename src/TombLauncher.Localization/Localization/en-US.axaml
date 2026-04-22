@@ -399,5 +399,8 @@
     <system:String x:Key="DOWNLOADING_MODEL_TITLE">Downloading AI model</system:String>
     <system:String x:Key="MODEL_DOWNLOAD_CANCELED">Download of {0} canceled</system:String>
     <system:String x:Key="ERROR_DOWNLOADING_MODEL">Error downloading model</system:String>
+    <system:String x:Key="TALK_TO_LAURA">Chat with Laura</system:String>
+    <system:String x:Key="ASK_LAURA_SOMETHING">Ask Laura something...</system:String>
+    <system:String x:Key="SEND">Send message</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

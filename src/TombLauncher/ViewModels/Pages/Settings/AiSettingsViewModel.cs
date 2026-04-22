@@ -15,12 +15,12 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     {
     }
 
-    [ObservableProperty] private ObservableCollection<AiModelViewModel>? _availableModels;
-    public AiModelViewModel? SelectedModel => AvailableModels?.FirstOrDefault(m => m.IsSelected);
+    [ObservableProperty] private ObservableCollection<Ai.AiModelViewModel>? _availableModels;
+    public Ai.AiModelViewModel? SelectedModel => AvailableModels?.FirstOrDefault(m => m.IsSelected);
     [ObservableProperty] [Range(0, 4)] private int _gpuOffloadLevel;
     [ObservableProperty] private bool _isEnabled;
     
-    partial void OnAvailableModelsChanged(ObservableCollection<AiModelViewModel>? oldValue, ObservableCollection<AiModelViewModel>? newValue)
+    partial void OnAvailableModelsChanged(ObservableCollection<Ai.AiModelViewModel>? oldValue, ObservableCollection<Ai.AiModelViewModel>? newValue)
     {
         if (oldValue != null)
             foreach (var item in oldValue)
@@ -33,7 +33,7 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     
     private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(AiModelViewModel.IsSelected))
+        if (e.PropertyName == nameof(Ai.AiModelViewModel.IsSelected))
             OnPropertyChanged(nameof(AvailableModels));
     }
 

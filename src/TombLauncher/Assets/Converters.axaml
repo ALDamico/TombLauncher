@@ -56,6 +56,8 @@
                 <system:String>avares://TombLauncher/Assets/unknown-title-pic-sm.png</system:String>
             </valueConverters:StringNullToNullBitmapConverter.LightThemeVariantValue>
         </valueConverters:StringNullToNullBitmapConverter>
+        
+        <!-- ── Ai features ── -->
         <valueConverters:AiVendorToIconConverter x:Key="AiVendorToIconConverter"/>
     </Styles.Resources>
 </Styles>
