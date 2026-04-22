@@ -132,11 +132,10 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         var availableModels = _mapper.Map<ObservableCollection<AiModelViewModel>>(_aiModelRegistry.AvailableModels);
         var selectedModel = availableModels.FirstOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelName);
-
+        selectedModel?.IsSelected = true;
         var aiSettings = new AiSettingsViewModel(this)
         {
             AvailableModels = availableModels,
-            SelectedModel = selectedModel,
             GpuOffloadLevel = (int)(aiCoreSettings.GpuOffloadPercentage.GetValueOrDefault() * AiConstants.MaxOffloadLevel),
             IsEnabled = aiCoreSettings.IsEnabled,
         };
@@ -146,10 +145,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             aiSettings.AvailableModels.FirstOrDefault(m => m.Metadata.ModelId == model.Key)?.FileSizeBytes =
                 model.Value;
         }
-
-        aiSettings.SelectedModel =
-            aiSettings.AvailableModels.SingleOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelName);
-
+        
         _ = Task.WhenAll(aiSettings.AvailableModels.Where(m => m.FileSizeBytes == null).Select(async m => await FetchSize(m)));
 
         Sections.Add(aiSettings);
