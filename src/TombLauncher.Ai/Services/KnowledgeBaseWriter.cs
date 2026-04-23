@@ -1,5 +1,7 @@
 using System.Data;
 using Dapper;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TombLauncher.Ai.Abstractions;
@@ -11,8 +13,12 @@ namespace TombLauncher.Ai.Services;
 
 public class KnowledgeBaseWriter : VectorDbService
 {
-    public KnowledgeBaseWriter(IOptions<KnowledgeBaseEmbedderConfiguration> embedderConfiguration) : base(embedderConfiguration)
+    private readonly ILogger<KnowledgeBaseWriter> _logger;
+
+    public KnowledgeBaseWriter(IOptions<AiConfig> embedderConfiguration, ILogger<KnowledgeBaseWriter> logger) : base(embedderConfiguration.Value)
     {
+        _logger = logger;
+        _logger.LogInformation("Will write to database {DbPath}", EmbedderConfiguration.KnowledgeBasePath);
     }
 
     // If JOIN performance on metadata_id becomes an issue, add: CREATE INDEX IF NOT EXISTS idx_chunks_metadata_id ON knowledge_chunks(metadata_id)
@@ -120,10 +126,26 @@ RETURNING *
 
     private async Task EnsureTables(IDbConnection connection)
     {
-        await connection.ExecuteAsync("DELETE FROM knowledge_metadata");
-        await connection.ExecuteAsync("DELETE FROM knowledge_chunks");
-        await connection.ExecuteAsync("DROP TABLE knowledge_metadata");
-        await connection.ExecuteAsync("DROP TABLE knowledge_chunks");
+        try
+        {
+            await connection.ExecuteAsync("DELETE FROM knowledge_metadata");
+           
+        }
+        catch (SqliteException ex)
+        {
+            _logger.LogInformation("knowledge_metadata did not exist. Oh well...: {Ex}", ex);
+        }
+
+        try
+        {
+            await connection.ExecuteAsync("DELETE FROM knowledge_chunks");
+        }
+        catch (SqliteException ex)
+        {
+            _logger.LogInformation("knowledge_chunks did not exist. Oh well...: {Ex}", ex);
+        }
+        await connection.ExecuteAsync("DROP TABLE IF EXISTS knowledge_metadata");
+        await connection.ExecuteAsync("DROP TABLE IF EXISTS knowledge_chunks");
         await connection.ExecuteAsync(CreateMetadataTable);
         await connection.ExecuteAsync(CreateEmbeddingsTable);
     }

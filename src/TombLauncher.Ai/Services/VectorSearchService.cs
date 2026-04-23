@@ -1,6 +1,5 @@
 using Dapper;
 using LLama;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NuGet.Versioning;
 using TombLauncher.Ai.Abstractions;
@@ -23,7 +22,7 @@ JOIN vector_quantize_scan('knowledge_chunks', 'embedding', vector_as_f32(@Vector
     private const string MetadataQuery = @"SELECT id AS ""Id"", app_version_range AS ""AppVersionRange"", engine_version AS ""EngineVersion"", applies_to AS ""AppliesTo"", platforms AS ""Platforms"", source AS ""Source""
 FROM knowledge_metadata
 WHERE id IN @Ids;";
-    public VectorSearchService(LLamaEmbedder embedder, IOptions<KnowledgeBaseEmbedderConfiguration> configuration) : base(configuration)
+    public VectorSearchService(LLamaEmbedder embedder, IAiConfig configuration) : base(configuration)
     {
         _embedder = embedder;
     }

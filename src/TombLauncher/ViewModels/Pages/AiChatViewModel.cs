@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Ai;
+using TombLauncher.Ai.Abstractions;
 using TombLauncher.Core.Extensions;
 using TombLauncher.ViewModels.Ai;
 
@@ -13,10 +14,26 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class AiChatViewModel : PageViewModel
 {
+    private readonly ITroubleshootingServiceLoader _troubleshootingServiceLoader;
     [ObservableProperty] private bool _isGenerating;
     [ObservableProperty] private string _currentText = "";
     [ObservableProperty] private ObservableCollection<AiMessageViewModel> _messageHistory = new();
     [ObservableProperty] private string _currentStatusText = "";
+    private ITroubleshootingService? _ragService;
+
+    public AiChatViewModel( ITroubleshootingServiceLoader troubleshootingServiceLoader)
+    {
+        _troubleshootingServiceLoader = troubleshootingServiceLoader;
+    }
+
+    protected override async Task RaiseInitialize()
+    {
+        using (BusyScope("Caricamento modello AI..."))
+        {
+            _ragService = await _troubleshootingServiceLoader.Load(new Progress<float>(f => Console.WriteLine(f)), CancellationToken.None);
+        }
+        await base.RaiseInitialize();
+    }
 
     private readonly List<string> _statusTexts =
     [

@@ -8,4 +8,9 @@ public interface IAiConfig
     double? GpuOffloadPercentage { get; set; }
     string? ModelName { get; set; }
     Dictionary<string, long>? ModelSizes { get; set; }
+    string EmbeddingModelUrl { get; set; }
+    string ModelsPath { get; set; }
+    string EmbeddingModelFileName { get; set; }
+    uint EmbeddingContextLength { get; set; }
+    
 }

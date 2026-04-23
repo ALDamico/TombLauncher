@@ -8,4 +8,8 @@ public class AiConfig : IAiConfig
     public double? GpuOffloadPercentage { get; set; }
     public string? ModelName { get; set; }
     public Dictionary<string, long>? ModelSizes { get; set; }
+    public string EmbeddingModelUrl { get; set; } = null!;
+    public string ModelsPath { get; set; } = null!;
+    public string EmbeddingModelFileName { get; set; } = null!;
+    public uint EmbeddingContextLength { get; set; }
 }
