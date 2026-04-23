@@ -12,7 +12,7 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(builder => builder.AddJsonFile("appsettings.json"))
     .ConfigureServices((ctx, services) =>
     {
-        services.Configure<KnowledgeBaseEmbedderConfiguration>(ctx.Configuration.GetSection("Embedder"));
+        services.Configure<AiConfig>(ctx.Configuration.GetSection("Embedder"));
         services.RegisterKnowledgeBaseEmbedder()
             .AddEmbedderLogging();
     })
@@ -22,9 +22,9 @@ var cts = new CancellationTokenSource();
 Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
 
 var cancellationToken = cts.Token;
-var options = host.Services.GetRequiredService<IOptions<KnowledgeBaseEmbedderConfiguration>>().Value;
+var options = host.Services.GetRequiredService<IOptions<AiConfig>>().Value;
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
-var modelPath = Path.Combine(options.ModelsPath, options.ModelFileName);
+var modelPath = Path.Combine(options.ModelsPath, options.EmbeddingModelFileName);
 Directory.CreateDirectory(options.ModelsPath);
 if (!File.Exists(modelPath))
 {

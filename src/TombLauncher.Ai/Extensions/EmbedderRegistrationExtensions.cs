@@ -29,8 +29,11 @@ public static class EmbedderRegistrationExtensions
                 var platformSpecificFeatures = sp.GetRequiredService<IPlatformSpecificFeatures>();
                 var aiConfig = sp.GetRequiredService<IAiConfig>();
                 var modelId = aiConfig.ModelName!;
-                var modelsDirectory = Path.Combine(platformSpecificFeatures.GetAppDataDirectory(), "Models");
-                return new ModelParams(Path.Combine(modelsDirectory, modelId))
+                var modelToUse = sp.GetRequiredService<AiModelRegistry>().GetMetadata(modelId);
+                if (modelToUse == null)
+                    throw new InvalidOperationException();
+                var modelPath = Path.Combine(platformSpecificFeatures.GetAppDataDirectory(), aiConfig.ModelsPath, modelToUse.FileName);
+                return new ModelParams(modelPath)
                 {
                     ContextSize = 8192
                 };

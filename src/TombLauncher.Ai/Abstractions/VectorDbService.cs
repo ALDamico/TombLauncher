@@ -1,23 +1,22 @@
 using System.Data;
 using Dapper;
 using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Options;
 using TombLauncher.Ai.Configuration;
 
 namespace TombLauncher.Ai.Abstractions;
 
 public abstract class VectorDbService
 {
-    protected KnowledgeBaseEmbedderConfiguration EmbedderConfiguration { get; }
+    protected IAiConfig EmbedderConfiguration { get; }
     
     private const string VectorInit =
         "SELECT vector_init('knowledge_chunks', 'embedding', 'type=FLOAT32,dimension=768,distance=COSINE');";
     private const string VectorQuantize = "SELECT vector_quantize('knowledge_chunks', 'embedding');";
     private const string VectorQuantizePreload = "SELECT vector_quantize_preload('knowledge_chunks', 'embedding');";
 
-    protected VectorDbService(IOptions<KnowledgeBaseEmbedderConfiguration> embedderConfiguration)
+    protected VectorDbService(IAiConfig embedderConfiguration)
     {
-        EmbedderConfiguration = embedderConfiguration.Value;
+        EmbedderConfiguration = embedderConfiguration;
     }
     
     protected IDbConnection GetConnection(string connectionString)
