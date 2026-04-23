@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
@@ -19,7 +20,6 @@ using Serilog;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
@@ -55,7 +55,12 @@ public class App : Application
                 // Line below is needed to remove Avalonia data validation.
                 // Without this line you will get duplicate validations from both Avalonia and CT
                 BindingPlugins.DataValidators.RemoveAt(0);
-                var splashScreen = new SplashScreen();
+                var splashScreen = new SplashScreen()
+                {
+                    Version = AppUtils.GetApplicationVersion()
+                };
+
+                IProgress<string> progress = new Progress<string>(p => splashScreen.StatusMessage = p);
                 splashScreen.Show();
                 desktop.ShutdownRequested += (_, _) =>
                 {
@@ -64,18 +69,43 @@ public class App : Application
                 };
 
                 Dispatcher.UIThread.UnhandledException += OnUnhandledException;
+                var resourceDictionary = new ResourceDictionary();
 
-                // Run initialization in background to allow Splash Screen to render
-                await Task.Run(async () =>
+                var mainWindow = new MainWindow();
+                try
                 {
-                    await InitializeServices();
-                    // Trigger DB migration explicitly in background
-                    using var scope = Ioc.Default.CreateScope();
-                    var dbContext = scope.ServiceProvider.GetRequiredService<TombLauncherDbContext>();
-                    await dbContext.Database.MigrateAsync();
-                });
+                    // Run initialization in background to allow Splash Screen to render
+                    var mainWindowVm = await Task.Run(async () =>
+                    {
+                        await InitializeServices(Current!, resourceDictionary, progress);
 
-                await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(desktop, splashScreen));
+                        progress.Report("Restoring language settings...");
+                        var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
+                        Dispatcher.UIThread.Invoke(() => { ApplyUiLanguage(settingsProvider); });
+
+                        progress.Report("Updating application database...");
+                        using var scope = Ioc.Default.CreateScope();
+                        var dbContext = scope.ServiceProvider.GetRequiredService<TombLauncherDbContext>();
+                        await dbContext.Database.MigrateAsync();
+                        progress.Report("Getting ready...");
+
+                        // Resolved on a background thread: MainWindowViewModel and its dependencies
+                        // must stay VM-pure (no AvaloniaObject/IImage/UI-thread-affine construction).
+                        return Ioc.Default.GetRequiredService<MainWindowViewModel>();
+                    });
+
+                    mainWindow.DataContext = mainWindowVm;
+                }
+                catch (Exception ex)
+                {
+                    Log.Logger.Fatal(ex, "Fatal exception on background initialization task");
+                    Environment.Exit(-1);
+                }
+                
+                desktop.MainWindow = mainWindow;
+                desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+                await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(splashScreen, mainWindow));
             }
 
             base.OnFrameworkInitializationCompleted();
@@ -85,6 +115,14 @@ public class App : Application
             Log.Logger.Fatal(e, "Unhandled exception occurred before OnFrameworkInitializationCompleted");
             Environment.Exit(-1);
         }
+    }
+
+    // This has to be called before MainWindowViewModel's actual construction, otherwise some strings won't be initialized properly
+    private static void ApplyUiLanguage(ISettingsProvider settingsProvider)
+    {
+        var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
+        var applicationLanguage = settingsProvider.GetApplicationSettings().ApplicationLanguage;
+        localizationManager.ChangeLanguage(applicationLanguage);
     }
 
     private void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -128,32 +166,22 @@ public class App : Application
         }
     }
 
-    private async Task ShowMainWindow(IClassicDesktopStyleApplicationLifetime desktop, SplashScreen splashScreen)
+    private async Task ShowMainWindow(SplashScreen splashScreen, MainWindow mainWindow)
     {
-        // Services initialized in background task
-        await ApplyInitialSettings();
-        var navigationManager = Ioc.Default.GetRequiredService<NavigationManager>();
-        var mainWindow = new MainWindow
-        {
-            DataContext = new MainWindowViewModel(navigationManager,
-                Ioc.Default.GetRequiredService<NotificationListViewModel>(),
-                Ioc.Default.GetRequiredService<ISettingsProvider>(), Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>()),
-        };
-
-        desktop.MainWindow = mainWindow;
-        desktop.ShutdownMode = Avalonia.Controls.ShutdownMode.OnMainWindowClose;
-        mainWindow.Show();
         splashScreen.Close();
+        ApplyInitialSettings();
+        mainWindow.Show();
         var updateService = Ioc.Default.GetRequiredService<UpdateService>();
         await updateService.StartAsync();
-        await Task.CompletedTask;
     }
 
-    private async Task InitializeServices()
+    private async Task InitializeServices(Application application, ResourceDictionary resourceDictionary, IProgress<string> progress)
     {
         var platformSpecificFeatures = AppUtils.InitPlatformSpecificFeatures();
 
         var appDataDirectory = platformSpecificFeatures.GetAppDataDirectory();
+        
+        progress.Report("Reading application configuration...");
 
         var appConfiguration = new LayeredAppConfiguration();
         IConfiguration configuration = new ConfigurationBuilder()
@@ -180,7 +208,7 @@ public class App : Application
         serviceCollection.AddTransient<SavegameCommandService>();
         serviceCollection.AddPageServices();
         serviceCollection.AddViewModels();
-        serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current!));
+        serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(application, resourceDictionary));
         serviceCollection.AddDatabaseAccess(appConfiguration, appDataDirectory);
         serviceCollection.AddSingleton(sp => new NavigationManager(sp));
         serviceCollection.AddSingleton<IPopupService>(_ => new PopupService(
@@ -238,14 +266,10 @@ public class App : Application
         await Task.CompletedTask;
     }
 
-    private Task ApplyInitialSettings()
+    private void ApplyInitialSettings()
     {
         var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
-        var localizationManager = Ioc.Default.GetRequiredService<ILocalizationManager>();
         var themeManager = Ioc.Default.GetRequiredService<ThemeManager>();
-
-        var applicationLanguage = settingsProvider.GetApplicationSettings().ApplicationLanguage;
-        localizationManager.ChangeLanguage(applicationLanguage);
 
         var applicationTheme = settingsProvider.GetAppearanceSettings().ApplicationTheme;
         themeManager.ApplyTheme(applicationTheme);
@@ -256,8 +280,6 @@ public class App : Application
             baseVariant = ThemeVariant.Light;
         }
         AppUtils.ChangeTheme(baseVariant);
-
-        return Task.CompletedTask;
     }
 
 }

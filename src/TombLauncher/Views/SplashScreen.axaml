@@ -1,8 +1,8 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="using:TombLauncher.Localization"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.SplashScreen"
         Title="SplashScreen"
@@ -14,16 +14,25 @@
         WindowStartupLocation="CenterScreen"
         Topmost="True"
         ShowInTaskbar="False"
-        >
+        x:Name="SplashScreenRoot">
     <Window.Styles>
         <Style Selector="TextBlock.style">
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Margin" Value="15"/>
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="15" />
         </Style>
     </Window.Styles>
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock Classes="style" FontSize="48" FontFamily="{StaticResource TombRaiderFont}">TOMB LAUNCHER</TextBlock>
-        <TextBlock Classes="style" Text="Loading..."></TextBlock>
-    </StackPanel>
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+            <TextBlock  Classes="small" IsVisible="{Binding ElementName=SplashScreenRoot, Path=Version, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <Run FontWeight="DemiBold">v. </Run>
+                <Run Text="{Binding ElementName=SplashScreenRoot, Path=Version}"></Run>
+            </TextBlock>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Classes="style" FontSize="48" FontFamily="{StaticResource TombRaiderFont}">TOMB LAUNCHER</TextBlock>
+            <controls:RingLoader Height="64" Width="64" />
+            <TextBlock Classes="style" Text="{Binding ElementName=SplashScreenRoot, Path=StatusMessage}"></TextBlock>
+        </StackPanel>
+    </DockPanel>
 </Window>
