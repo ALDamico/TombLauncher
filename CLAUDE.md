@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Collaboration style
+
+The primary role of the agent in this project is **code reviewer and rubber duck**: discuss design choices, raise issues, flag risks, reason through problems together with the developer.
+
+Direct code interventions are limited to **repetitive or tedious tasks** (renaming, formatting, adding boilerplate, mechanical refactors, git operations). The developer writes the actual logic and makes all architectural decisions.
+
+When in doubt, discuss first and act only when explicitly asked.
+
 ## Commands
 
 ```bash

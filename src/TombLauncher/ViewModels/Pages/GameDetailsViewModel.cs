@@ -102,7 +102,7 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             setupCommands.Add(new CommandViewModel()
             {
-                Command = Game.LaunchSetupCmd,
+                Command = Game.LaunchSetupCommand,
                 Icon = PackIconRemixIconKind.Settings3Line,
                 Text = "SETUP".GetLocalizedString()
             });
@@ -112,7 +112,7 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             setupCommands.Add(new CommandViewModel()
             {
-                Command = Game.LaunchCommunitySetupCmd,
+                Command = Game.LaunchCommunitySetupCommand,
                 Icon = PackIconRemixIconKind.PlayLargeLine,
                 Text = "COMMUNITY_PATCH_SETUP".GetLocalizedString()
             });

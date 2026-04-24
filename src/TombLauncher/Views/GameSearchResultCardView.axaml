@@ -211,7 +211,7 @@
             <!-- Actions -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top" Spacing="4" Margin="0, 4, 0, 0">
                 <controls:IconOnlyButton Icon="PlayLargeFill" Classes="btn-success"
-                                         Command="{Binding InstalledGame.PlayCmd}"
+                                         Command="{Binding InstalledGame.PlayCommand}"
                                          IsVisible="{Binding InstalledGame, Converter={StaticResource GameInstalledToBooleanConverter}, Mode=OneWay}" />
                 <Button Command="{Binding InstallCmd}"
                         Classes="btn-primary"
