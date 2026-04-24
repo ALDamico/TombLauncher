@@ -12,41 +12,30 @@ namespace TombLauncher.ViewModels;
 
 public abstract partial class EditableListBoxViewModel : ObservableValidator
 {
-    public EditableListBoxViewModel()
-    {
-        _editedValueIndex = -1;
-        AddValueCmd = new RelayCommand(AddValue, CanAddValue);
-        ClearCurrentValueCmd = new RelayCommand(ClearCurrentValue, CanClearCurrentValue);
-        DeleteValueCmd = new RelayCommand<CheckableItem<string>>(DeleteValue, CanDeleteValue);
-        EditValueCmd = new RelayCommand<CheckableItem<string>>(EditValue, CanEditValue);
-        HandleKeyUpCmd = new RelayCommand<KeyEventArgs>(HandleKeyUp);
-    }
-
     private CheckableItem<string>? _editedValue;
-    private int _editedValueIndex;
-    private ObservableCollection<CheckableItem<string>> _targetCollection = null!;
+    private int _editedValueIndex = -1;
 
-    public ObservableCollection<CheckableItem<string>> TargetCollection
+    public ObservableCollection<CheckableItem<string>>? TargetCollection
     {
-        get => _targetCollection;
+        get;
         set
         {
-            if (_targetCollection != null)
+            if (field != null)
             {
-                _targetCollection.CollectionChanged -= TargetCollectionOnCollectionChanged;
+                field.CollectionChanged -= TargetCollectionOnCollectionChanged;
             }
 
-            SetProperty(ref _targetCollection, value);
-            if (value != null)
+            SetProperty(ref field, value);
+            if (field != null)
             {
-                _targetCollection.CollectionChanged += TargetCollectionOnCollectionChanged;
+                field.CollectionChanged += TargetCollectionOnCollectionChanged;
             }
         }
-    }
+    } = null!;
 
     [ObservableProperty]
     [NotifyDataErrorInfo]
-    [NotifyCanExecuteChangedFor(nameof(ClearCurrentValueCmd), nameof(AddValueCmd), nameof(EditValueCmd))]
+    [NotifyCanExecuteChangedFor(nameof(ClearCurrentValueCommand), nameof(AddValueCommand), nameof(EditValueCommand))]
     [CustomValidation(typeof(EditableListBoxViewModel), nameof(InvokeValidateMethod))]
     private string _currentValue = null!;
 
@@ -54,10 +43,10 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
     [ObservableProperty] private string _header = null!;
     [ObservableProperty] private PackIconRemixIconKind? _headerIcon;
 
-    public IRelayCommand AddValueCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(CanAddValue))]
     private void AddValue()
     {
+        TargetCollection ??= [];
         TargetCollection.Add(new CheckableItem<string>() { IsChecked = true, Value = CurrentValue });
         CurrentValue = string.Empty;
         _editedValue = null;
@@ -65,14 +54,13 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
 
     private bool CanAddValue() => CurrentValue.IsNotNullOrWhiteSpace() && !HasErrors;
 
-    public IRelayCommand ClearCurrentValueCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(CanClearCurrentValue))]
     private void ClearCurrentValue()
     {
         CurrentValue = string.Empty;
         if (_editedValue != null)
         {
-            TargetCollection.Insert(_editedValueIndex, _editedValue);
+            TargetCollection?.Insert(_editedValueIndex, _editedValue);
             _editedValue = null;
             _editedValueIndex = -1;
         }
@@ -80,13 +68,12 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
 
     private bool CanClearCurrentValue() => CurrentValue.IsNotNullOrWhiteSpace();
 
-    public IRelayCommand DeleteValueCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(CanDeleteValue))]
     private void DeleteValue(CheckableItem<string>? valueToDelete)
     {
         if (valueToDelete != null)
         {
-            TargetCollection.Remove(valueToDelete);
+            TargetCollection?.Remove(valueToDelete);
         }
     }
 
@@ -95,16 +82,18 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
         return valueToDelete is { CanUserCheck: true };
     }
 
-    public IRelayCommand EditValueCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(CanEditValue))]
     private void EditValue(CheckableItem<string>? valueToEdit)
     {
         if (valueToEdit == null) return;
 
         // TODO Add EditInProgress
         _editedValue = valueToEdit;
-        _editedValueIndex = TargetCollection.IndexOf(valueToEdit);
-        TargetCollection.Remove(valueToEdit);
+        if (TargetCollection != null)
+        {
+            _editedValueIndex = TargetCollection.IndexOf(valueToEdit);
+            TargetCollection.Remove(valueToEdit);
+        }
         CurrentValue = valueToEdit.Value;
     }
 
@@ -113,8 +102,7 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
         return valueToEdit is { CanUserCheck: true } && _editedValue == null;
     }
 
-    public IRelayCommand<KeyEventArgs> HandleKeyUpCmd { get; }
-
+    [RelayCommand]
     private void HandleKeyUp(KeyEventArgs? keyEventArgs)
     {
         if (keyEventArgs == null) return;
