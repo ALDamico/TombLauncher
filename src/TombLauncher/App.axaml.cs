@@ -71,7 +71,6 @@ public class App : Application
                 Dispatcher.UIThread.UnhandledException += OnUnhandledException;
                 var resourceDictionary = new ResourceDictionary();
 
-                var mainWindow = new MainWindow();
                 try
                 {
                     // Run initialization in background to allow Splash Screen to render
@@ -94,18 +93,19 @@ public class App : Application
                         return Ioc.Default.GetRequiredService<MainWindowViewModel>();
                     });
 
-                    mainWindow.DataContext = mainWindowVm;
+                    // Built after ApplyUiLanguage so that {loc:Translate ...} markup extensions
+                    // in MainWindow.axaml resolve against the loaded LocalizationManager.
+                    var mainWindow = new MainWindow { DataContext = mainWindowVm };
+                    desktop.MainWindow = mainWindow;
+                    desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+                    await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(splashScreen, mainWindow));
                 }
                 catch (Exception ex)
                 {
                     Log.Logger.Fatal(ex, "Fatal exception on background initialization task");
                     Environment.Exit(-1);
                 }
-                
-                desktop.MainWindow = mainWindow;
-                desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
-
-                await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(splashScreen, mainWindow));
             }
 
             base.OnFrameworkInitializationCompleted();

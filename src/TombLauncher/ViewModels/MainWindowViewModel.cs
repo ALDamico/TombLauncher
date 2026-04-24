@@ -1,8 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Avalonia.Threading;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
@@ -10,6 +9,7 @@ using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;
@@ -23,9 +23,6 @@ public partial class MainWindowViewModel : WindowViewModelBase
         NotificationListViewModel = notificationListViewModel;
         _settingsProvider = settingsProvider;
         _platformSpecificFeatures = platformSpecificFeatures;
-        TogglePaneCmd = new RelayCommand(TogglePane);
-        GoBackCmd = new RelayCommand(GoBack, CanGoBack);
-        OpenSettingsCmd = new AsyncRelayCommand(OpenSettings);
         MenuItems = new ObservableCollection<MainMenuItemViewModel>()
         {
             new MainMenuItemViewModel()
@@ -101,7 +98,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
         if (e.PropertyName == nameof(NavigationManager.CanGoBack))
         {
-            Dispatcher.UIThread.Invoke(() => ((RelayCommand)GoBackCmd).NotifyCanExecuteChanged());
+            GoBackCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -127,8 +124,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
         set => SetProperty(ref _isPaneOpen, value);
     }
 
-    public ICommand TogglePaneCmd { get; }
-
+    [RelayCommand]
     private void TogglePane()
     {
         IsPaneOpen = !IsPaneOpen;
@@ -151,23 +147,30 @@ public partial class MainWindowViewModel : WindowViewModelBase
             }
         }
     } = null!;
-
-
+    
     public INavigationTarget? CurrentPage => _navigationManager.CurrentPage as INavigationTarget;
-    public ICommand GoBackCmd { get; }
 
+    [RelayCommand(CanExecute = nameof(CanGoBack))]
     private void GoBack()
     {
         _ = _navigationManager.GoBack();
     }
 
     private bool CanGoBack() => _navigationManager.CanGoBack;
-    public ICommand OpenSettingsCmd { get; }
 
+    [RelayCommand]
     private async Task OpenSettings()
     {
         await _navigationManager.NavigateTo(SettingsItem.ViewModelType!);
         SelectedMenuItem = SettingsItem;
         IsSettingsOpen = true;
+    }
+
+    [ObservableProperty] private WindowState _currentWindowState;
+
+    [RelayCommand]
+    private void ToggleFullScreen()
+    {
+        CurrentWindowState = WindowUtils.ToggleWindowState(CurrentWindowState);
     }
 }
