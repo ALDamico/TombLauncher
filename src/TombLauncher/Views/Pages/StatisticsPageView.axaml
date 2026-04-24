@@ -93,7 +93,7 @@
                             <Button Classes="hyperlink"
                                     VerticalAlignment="Center"
                                     Content="{Binding Statistics.LatestPlayedGame.Title}"
-                                    Command="{Binding OpenGameCmd}"
+                                    Command="{Binding OpenGameCommand}"
                                     CommandParameter="{Binding Statistics.LatestPlayedGame.Id}"/>
                             <TextBlock Classes="text-muted"
                                        IsVisible="{Binding Statistics.LatestPlayedGame, Converter={x:Static ObjectConverters.IsNotNull}}">
@@ -107,7 +107,7 @@
                             <Button Classes="hyperlink"
                                     VerticalAlignment="Center"
                                     Content="{Binding Statistics.LongestPlaySession.Title}"
-                                    Command="{Binding OpenGameCmd}"
+                                    Command="{Binding OpenGameCommand}"
                                     CommandParameter="{Binding Statistics.LongestPlaySession.Id}"/>
                             <TextBlock Classes="text-muted"
                                        IsVisible="{Binding Statistics.LongestPlaySession, Converter={x:Static ObjectConverters.IsNotNull}}">
@@ -121,7 +121,7 @@
                             <Button Classes="hyperlink"
                                     VerticalAlignment="Center"
                                     Content="{Binding Statistics.MostLaunches.Title}"
-                                    Command="{Binding OpenGameCmd}"
+                                    Command="{Binding OpenGameCommand}"
                                     CommandParameter="{Binding Statistics.MostLaunches.Id}"/>
                             <TextBlock Classes="text-muted"
                                        IsVisible="{Binding Statistics.MostLaunches, Converter={x:Static ObjectConverters.IsNotNull}}">
