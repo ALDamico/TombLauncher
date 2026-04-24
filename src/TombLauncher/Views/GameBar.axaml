@@ -32,14 +32,14 @@
                 <Button.Flyout>
                     <MenuFlyout>
                         <MenuItem Header="{loc:Translate LAUNCH_OPTIONS}"
-                                  Command="{Binding OpenLaunchOptionsCmd}"
+                                  Command="{Binding OpenLaunchOptionsCommand}"
                                   ToolTip.Tip="{loc:Translate LAUNCH_OPTIONS_TOOLTIP}">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconRemixIcon Kind="TerminalLine" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="{loc:Translate SAVEGAMES}"
-                                  Command="{Binding ManageSaveGamesCmd}"
+                                  Command="{Binding ManageSavegamesCommand}"
                                   IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconRemixIcon Kind="Save3Line" />
@@ -47,7 +47,7 @@
                         </MenuItem>
                         <MenuItem Header="{loc:Translate BROWSE_FILES}"
                                   IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                  Command="{Binding BrowseFolderCmd}">
+                                  Command="{Binding BrowseFolderCommand}">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconRemixIcon Kind="FolderOpenLine" />
                             </MenuItem.Icon>
@@ -62,7 +62,7 @@
                                     <Setter Property="Header"
                                             Value="{Binding DisplayName, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='FROM_SITENAME'}" />
                                     <Setter Property="Command"
-                                            Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).ReadWalkthroughCmd}" />
+                                            Value="{Binding ElementName=ViewRoot, Path=((pages:GameDetailsViewModel)DataContext).ReadWalkthroughCommand}" />
                                     <Setter Property="CommandParameter" Value="{Binding .}" />
                                     <Setter Property="Background" Value="Transparent" />
                                     <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />

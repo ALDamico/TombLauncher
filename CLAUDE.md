@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Tooling constraints
+
+- Do **not** use the `gh` CLI. GitHub operations (PR creation, review, etc.) are not available in this environment.
+
+## Code review
+
+When asked to do a review without further context, review the **uncommitted local changes** (`git diff` / `git diff --staged`). Use `git diff <base>...HEAD` only if the user explicitly asks to review a branch or a specific range of commits.
+
 ## Collaboration style
 
 The primary role of the agent in this project is **code reviewer and rubber duck**: discuss design choices, raise issues, flag risks, reason through problems together with the developer.

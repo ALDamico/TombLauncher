@@ -5,7 +5,6 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
-using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels.Dialogs;
 
@@ -17,33 +16,31 @@ public class AppCrashHostViewModel : DialogViewModel
         AcceptCommandText = "ACCEPT".GetLocalizedString();
         CancelCommandText = "RESTART_APPLICATION".GetLocalizedString();
         CancelCommand = new RelayCommand(InvokeRestart);
-        CopyCmd = new RelayCommand<object>(Copy, CanCopy);
-        SaveCmd = new RelayCommand(Save);
+        CopyCommand = new RelayCommand<object>(Copy, CanCopy);
+        SaveCommand = new RelayCommand(Save);
     }
 
-    private AppCrashHostService _appCrashHostService;
+    private readonly AppCrashHostService _appCrashHostService;
 
     private bool CanCopy(object? obj)
     {
         return true;
     }
 
-    private AppCrashDto _crash = null!;
-
     public AppCrashDto Crash
     {
-        get => _crash;
-        set => RaiseAndSetIfChanged(ref _crash, value);
-    }
+        get;
+        set => RaiseAndSetIfChanged(ref field, value);
+    } = null!;
 
-    public ICommand SaveCmd { get; }
+    public ICommand SaveCommand { get; }
 
     private async void Save()
     {
         await _appCrashHostService.Save(Crash);
     }
 
-    public ICommand CopyCmd { get; }
+    public ICommand CopyCommand { get; }
 
     private void Copy(object? param)
     {

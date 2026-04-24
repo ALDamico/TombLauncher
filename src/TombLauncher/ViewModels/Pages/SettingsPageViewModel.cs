@@ -63,14 +63,14 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     {
         if (args.PropertyName == nameof(IsChanged))
             return;
-        RaiseCanExecuteChanged(SaveCmd);
+        RaiseCanExecuteChanged(SaveCommand);
     }
 
     private void SectionErrorChanged(object? sender, DataErrorsChangedEventArgs args)
     {
         OnPropertyChanged(nameof(IsChanged));
         OnPropertyChanged(nameof(HasPendingEdits));
-        RaiseCanExecuteChanged(SaveCmd);
+        RaiseCanExecuteChanged(SaveCommand);
     }
 
     public override Task OnNavigatedTo(object parameter)
@@ -145,7 +145,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         OnPropertyChanged(nameof(IsChanged));
         OnPropertyChanged(nameof(HasPendingEdits));
-        RaiseCanExecuteChanged(SaveCmd);
+        RaiseCanExecuteChanged(SaveCommand);
     }
 
     public bool IsChanged

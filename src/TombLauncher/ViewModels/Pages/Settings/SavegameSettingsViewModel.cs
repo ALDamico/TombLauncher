@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
@@ -13,7 +12,6 @@ public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
     public SavegameSettingsViewModel(PageViewModel settingsPage, SettingsPageService settingsService) : base("SAVEGAMES", settingsPage, PackIconRemixIconKind.Save3Line)
     {
         _settingsService = settingsService;
-        SyncSavegamesInfoCmd = new AsyncRelayCommand(SyncSavegamesInfo);
     }
 
     [ObservableProperty] private bool? _savegameBackupEnabled;
@@ -21,9 +19,9 @@ public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private int? _numberOfVersionsToKeep;
     [ObservableProperty] private int _savegameProcessingDelay;
 
-    public ICommand SyncSavegamesInfoCmd { get; }
     private readonly SettingsPageService _settingsService;
-
+    
+    [RelayCommand]
     private async Task SyncSavegamesInfo() => await _settingsService.SyncSavegames(SettingsPage);
 
     public override void ApplyTo(AppConfiguration userConfig)

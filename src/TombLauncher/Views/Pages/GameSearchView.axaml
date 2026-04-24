@@ -7,7 +7,6 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.GameSearchView"
              x:Name="Root"
@@ -23,7 +22,7 @@
         </EventTriggerBehavior>
         <EventTriggerBehavior EventName="KeyUp">
             <EventTriggerBehavior.Actions>
-                <InvokeCommandAction Command="{Binding HandleKeyUpCmd}"
+                <InvokeCommandAction Command="{Binding HandleKeyUpCommand}"
                                      PassEventArgsToCommand="True" />
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
@@ -47,8 +46,8 @@
                               DataContext="{Binding SearchPayload}"
                               AvailableDifficulties="{Binding AvailableDifficulties}"
                               AvailableEngines="{Binding AvailableEngines}"
-                              SearchCommand="{Binding #Root.((pages:GameSearchViewModel)DataContext).SearchCmd}"
-                              ClearFiltersCommand="{Binding #Root.((pages:GameSearchViewModel)DataContext).ClearFiltersCmd}"
+                              SearchCommand="{Binding #Root.((pages:GameSearchViewModel)DataContext).SearchCommand}"
+                              ClearFiltersCommand="{Binding #Root.((pages:GameSearchViewModel)DataContext).ClearFiltersCommand}"
                               Margin="0, 0, 0, 8"/>
 
         <!-- Result Count -->
@@ -74,7 +73,7 @@
                 <ItemsRepeater ItemsSource="{Binding FetchedResults}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
-                            <views:GameSearchResultCardView TapCommand="{Binding DataContext.OpenCmd, ElementName=Root}" />
+                            <views:GameSearchResultCardView TapCommand="{Binding DataContext.OpenCommand, ElementName=Root}" />
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                 </ItemsRepeater>
@@ -92,7 +91,7 @@
                              MinHeight="36"
                              HorizontalContentAlignment="Center"
                              VerticalContentAlignment="Center"
-                             Command="{Binding LoadMoreCmd}"
+                             Command="{Binding LoadMoreCommand}"
                              IsVisible="{Binding HasMoreResults}" />
     </Grid>
 </UserControl>

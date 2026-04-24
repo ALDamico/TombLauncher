@@ -7,7 +7,6 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Utils;
-using System.ComponentModel;
 
 namespace TombLauncher.ViewModels.Dialogs;
 
@@ -71,18 +70,16 @@ public partial class LaunchOptionsDialogViewModel : DialogViewModel
         set => RaiseAndSetIfChanged(ref _gameExecutable, value);
     }
 
-    private ObservableCollection<EnumViewModel<GameEngine>> _availableEngines = null!;
     public ObservableCollection<EnumViewModel<GameEngine>> AvailableEngines
     {
-        get => _availableEngines;
-        set => RaiseAndSetIfChanged(ref _availableEngines, value);
+        get;
+        set => RaiseAndSetIfChanged(ref field, value);
     }
 
-    private GameEngine _selectedEngine;
     public GameEngine SelectedEngine
     {
-        get => _selectedEngine;
-        set => RaiseAndSetIfChanged(ref _selectedEngine, value);
+        get;
+        set => RaiseAndSetIfChanged(ref field, value);
     }
 
     private string? _setupExecutable;
@@ -160,9 +157,4 @@ public partial class LaunchOptionsDialogViewModel : DialogViewModel
         var vm = AvailableEngines.FirstOrDefault(e => e.Value == engine);
         return vm?.Value ?? GameEngine.Unknown;
     }
-
-    protected virtual void OnPropertyChanging(PropertyChangingEventArgs e)
-    {
-    }
-
 }
