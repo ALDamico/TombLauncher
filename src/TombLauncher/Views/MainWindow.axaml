@@ -7,14 +7,20 @@
         xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         xmlns:loc="using:TombLauncher.Localization"
+        xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
         Icon="/Assets/tomb-launcher-icon.ico"
         Title="{Binding Title}"
         Background="{DynamicResource PageBackgroundBrush}"
+        WindowState="{Binding CurrentWindowState, Mode=TwoWay}"
         Width="1024"
         Height="768">
+    
+    <Window.Resources>
+        <valueConverters:FullScreenToIconConverter x:Key="FullScreenToIconConverter"/>
+    </Window.Resources>
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -35,7 +41,7 @@
                                      Classes="icon-only"
                                      ToolTip.Tip="Menu" 
                                      Icon="MenuLine" 
-                                     Command="{Binding TogglePaneCmd}"/>
+                                     Command="{Binding TogglePaneCommand}"/>
 
                 <ListBox Grid.Row="1" 
                          Margin="2 0 -100 0" 
@@ -85,7 +91,7 @@
                         <EventTriggerBehavior EventName="PointerReleased" 
                                               SourceObject="SettingsItem">
                             <EventTriggerBehavior.Actions>
-                                <InvokeCommandAction Command="{Binding OpenSettingsCmd}"/>
+                                <InvokeCommandAction Command="{Binding OpenSettingsCommand}"/>
                             </EventTriggerBehavior.Actions>
                         </EventTriggerBehavior>
                     </Interaction.Behaviors>
@@ -108,7 +114,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0" LastChildFill="False">
-                <controls:IconOnlyButton Command="{Binding GoBackCmd}"
+                <controls:IconOnlyButton Command="{Binding GoBackCommand}"
                                      Icon="ArrowLeftLine" />
                 <ContentControl Content="{Binding NotificationListViewModel}" 
                                 DockPanel.Dock="Right"/>
@@ -130,6 +136,10 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                <controls:IconOnlyButton DockPanel.Dock="Right" 
+                                         Command="{Binding ToggleFullScreenCommand}" 
+                                         Icon="{Binding CurrentWindowState, Converter={StaticResource FullScreenToIconConverter}}" 
+                                         ToolTip.Tip="{loc:Translate TOGGLE_FULLSCREEN}"/>
 
             </DockPanel>
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}"
