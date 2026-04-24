@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -11,27 +10,29 @@ public partial class NotificationListViewModel : ViewModelBase
 {
     public NotificationListViewModel()
     {
-        Notifications = new ObservableCollection<NotificationViewModel>();
+        Notifications = [];
         Notifications.CollectionChanged += OnNotificationsChanged;
-        ClearAllCmd = new RelayCommand(() => Notifications.Clear(), () => Notifications.Any());
-        MarkNoNewElementsCmd = new RelayCommand(MarkNoNewElements);
     }
 
     private void OnNotificationsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems?.Count > 0)
+        if (e is { Action: NotifyCollectionChangedAction.Add, NewItems.Count: > 0 })
         {
             HasNewItems = true;
         }
         OnPropertyChanged(nameof(Notifications));
-        RaiseCanExecuteChanged(ClearAllCmd);
+        RaiseCanExecuteChanged(ClearAllCommand);
     }
 
     [ObservableProperty] private ObservableCollection<NotificationViewModel> _notifications;
     [ObservableProperty] private bool _hasNewItems;
-    public ICommand ClearAllCmd { get; }
-    public ICommand MarkNoNewElementsCmd { get; }
 
+    [RelayCommand(CanExecute = nameof(CanClear))]
+    private void ClearAll() => Notifications.Clear();
+
+    private bool CanClear => Notifications.Any();
+
+    [RelayCommand]
     private void MarkNoNewElements()
     {
         HasNewItems = false;

@@ -107,7 +107,7 @@
                                                   Classes="btn-danger"
                                                   ToolTip.Tip="Cancel"/>
                         
-                        <controls:RoundIconButton Icon="CloseLine" Command="{Binding DismissCmd}"
+                        <controls:RoundIconButton Icon="CloseLine" Command="{Binding DismissCommand}"
                                                   CommandParameter="{Binding .}"
                                                   IsVisible="{Binding IsDismissable}"
                                                   Classes="round-button" 
