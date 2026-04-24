@@ -17,7 +17,7 @@
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
-                <InvokeCommandAction Command="{Binding InitCmd}" />
+                <InvokeCommandAction Command="{Binding InitCommand}" />
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
         <EventTriggerBehavior EventName="KeyUp">

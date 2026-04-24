@@ -34,7 +34,7 @@ public static class MapperConfigurationFactory
             cfg.CreateMap<FileBackup, FileBackupDto>().ReverseMap();
 
 
-            cfg.AddGlobalIgnore("InitCmd");
+            cfg.AddGlobalIgnore("InitCommand");
         }, loggerFactory);
 
         return mapperConfiguration;
