@@ -5,8 +5,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
-             xmlns:pages1="clr-namespace:TombLauncher.Views.Pages"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
@@ -213,7 +211,7 @@
                 <controls:IconOnlyButton Icon="PlayLargeFill" Classes="btn-success"
                                          Command="{Binding InstalledGame.PlayCommand}"
                                          IsVisible="{Binding InstalledGame, Converter={StaticResource GameInstalledToBooleanConverter}, Mode=OneWay}" />
-                <Button Command="{Binding InstallCmd}"
+                <Button Command="{Binding InstallCommand}"
                         Classes="btn-primary"
                         Width="36" Height="36"
                         CornerRadius="999"
@@ -233,7 +231,7 @@
                                          Classes="btn-danger"
                                          ToolTip.Tip="{loc:Translate CANCEL}"
                                          IsVisible="{Binding InstallProgress, Converter={StaticResource GameIsInstallingToBooleanConverter}}"
-                                         Command="{Binding CancelInstallCmd}" />
+                                         Command="{Binding CancelInstallCommand}" />
                 <!-- Kebab button: choose specific download source -->
                 <controls:IconOnlyButton Icon="MoreLine"
                                          Classes="btn-secondary"

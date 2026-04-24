@@ -143,7 +143,7 @@ public class WelcomePageService : IViewService
             {
                 if (gameToOpen.DownloadLink.IsNotNullOrWhiteSpace() && gameToOpen.DownloadLink.Trim().Length > 0)
                 {
-                    currentVm.InstallCmd = gameToOpen.InstallCmd;
+                    currentVm.InstallCmd = gameToOpen.InstallCommand;
                 }
             }
         }
