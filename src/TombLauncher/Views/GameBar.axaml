@@ -101,7 +101,7 @@
                 <Button Height="44"
                         Padding="16 0"
                         IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNull}}"
-                        Command="{Binding InstallCmd}"
+                        Command="{Binding InstallCommand}"
                         Classes="btn-success">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <iconPacks:PackIconRemixIcon Kind="Download2Line"
