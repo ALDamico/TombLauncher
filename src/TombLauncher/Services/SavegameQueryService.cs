@@ -35,7 +35,7 @@ public class SavegameQueryService
         _savegameRepository = savegameRepository;
         _headerProvider = headerProvider;
         _popupService = popupService;
-        _numberOfVersionsToKeep = settingsProvider.GetSavegameSettings()?.NumberOfVersionsToKeep;
+        _numberOfVersionsToKeep = settingsProvider.GetSavegameSettings().NumberOfVersionsToKeep;
     }
 
     public async Task LoadSaveGames(SavegameListViewModel targetViewModel)
@@ -50,9 +50,9 @@ public class SavegameQueryService
                 var savegameHeader = headerParser.ReadHeader(savegame.FileName, savegame.Data!);
                 var viewModel = new SavegameViewModel()
                 {
-                    UpdateStartOfLevelStateCmd = targetViewModel.UpdateStartOfLevelStateCmd,
-                    DeleteSavegameCmd = targetViewModel.DeleteSaveCmd,
-                    RestoreSavegameCmd = targetViewModel.RestoreSavegameCmd,
+                    UpdateStartOfLevelStateCommand = targetViewModel.UpdateStartOfLevelStateCommand,
+                    DeleteSavegameCommand = targetViewModel.DeleteSaveCommand,
+                    RestoreSavegameCommand = targetViewModel.RestoreSavegameCommand,
                     Id = savegame.Id,
                     Filename = savegame.FileName,
                     LevelName = savegameHeader.LevelName,
@@ -86,7 +86,7 @@ public class SavegameQueryService
             Header = "ALL_SLOTS".GetLocalizedString(),
             IsEnabled = true,
             SaveSlot = null,
-            FilterCmd = savegameListViewModel.FilterCmd
+            FilterCommand = savegameListViewModel.FilterCommand
         };
         savegameListViewModel.Slots.Add(allSlotsItem);
 
@@ -95,7 +95,7 @@ public class SavegameQueryService
             Header = "-----",
             IsEnabled = false,
             SaveSlot = null,
-            FilterCmd = null
+            FilterCommand = null
         });
 
         savegameListViewModel.Slots.AddRange(usedSlots.Select(s => new SavegameSlotViewModel()
@@ -103,7 +103,7 @@ public class SavegameQueryService
             Header = "SLOT_NUMBER".GetLocalizedString(s),
             SaveSlot = s,
             IsEnabled = true,
-            FilterCmd = savegameListViewModel.FilterCmd
+            FilterCommand = savegameListViewModel.FilterCommand
         }));
         savegameListViewModel.SelectedSlot = allSlotsItem;
         return Task.CompletedTask;

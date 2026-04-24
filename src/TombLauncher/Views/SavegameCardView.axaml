@@ -63,12 +63,12 @@
                         Orientation="Horizontal">
                 <controls:IconOnlyButton Icon="HistoryLine"
                                          ToolTip.Tip="{loc:Translate RESTORE}"
-                                         Command="{Binding RestoreSavegameCmd}"
+                                         Command="{Binding RestoreSavegameCommand}"
                                          CommandParameter="{Binding Id}">
                 </controls:IconOnlyButton>
 
                 <ToggleButton IsChecked="{Binding IsStartOfLevel}"
-                              Command="{Binding UpdateStartOfLevelStateCmd}"
+                              Command="{Binding UpdateStartOfLevelStateCommand}"
                               CommandParameter="{Binding .}"
                               ToolTip.Tip="{loc:Translate MARK_UNMARK_AS_START_OF_LEVEL_SAVE}">
                     <ToggleButton.Content>
@@ -77,7 +77,7 @@
                     </ToggleButton.Content>
                 </ToggleButton>
                 <controls:IconOnlyButton Icon="DeleteBinLine"
-                                         Command="{Binding DeleteSavegameCmd}"
+                                         Command="{Binding DeleteSavegameCommand}"
                                          CommandParameter="{Binding .}"
                                          IsVisible="{Binding !IsStartOfLevel}"
                                          Classes="btn-danger" />

@@ -26,7 +26,7 @@ public partial class GamesDataGridView : UserControl
             row.DoubleTapped += (o, eventArgs) =>
             {
                 var dataContext = row.DataContext as GameWithStatsViewModel;
-                dataContext?.PlayCmd.Execute(null);
+                dataContext?.PlayCommand.Execute(null);
             };
         };
     }

@@ -54,7 +54,7 @@
                     <!-- Actions -->
                     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
                         <Button ToolTip.Tip="{loc:Translate COPY}"
-                                Command="{Binding CopyCmd}"
+                                Command="{Binding CopyCommand}"
                                 CommandParameter="{Binding Crash}"
                                 Classes="pill-button">
                             <StackPanel Orientation="Horizontal" Spacing="6">
@@ -63,7 +63,7 @@
                             </StackPanel>
                         </Button>
                         <Button ToolTip.Tip="{loc:Translate SAVE}"
-                                Command="{Binding SaveCmd}"
+                                Command="{Binding SaveCommand}"
                                 Classes="pill-button">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <iconPacks:PackIconRemixIcon Kind="Save3Line" Width="14" Height="14" />

@@ -1,11 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Extensions;
@@ -20,7 +17,7 @@ public partial class NewGameViewModel : PageViewModel
     {
         _newGameService = newGameService;
         GameMetadata = new GameMetadataViewModel();
-        GameMetadata.PropertyChanged += (sender, args) => RaiseCanExecuteChanged(SaveCmd);
+        GameMetadata.PropertyChanged += (_, _) => RaiseCanExecuteChanged(SaveCommand);
 
         AvailableLengths = EnumUtils.GetEnumViewModels<GameLength>().ToObservableCollection();
         AvailableDifficulties = EnumUtils.GetEnumViewModels<GameDifficulty>().ToObservableCollection();
@@ -38,9 +35,6 @@ public partial class NewGameViewModel : PageViewModel
                 BusyMessage = copyProgressInfo.Message;
             }
         });
-
-        PickZipArchiveCmd = new AsyncRelayCommand(PickZipArchive);
-        PickFolderCmd = new AsyncRelayCommand(PickFolder);
     }
 
     private readonly NewGameService _newGameService;
@@ -50,15 +44,13 @@ public partial class NewGameViewModel : PageViewModel
     public ObservableCollection<EnumViewModel<GameDifficulty>> AvailableDifficulties { get; }
     public IProgress<CopyProgressInfo> InstallProgress { get; }
 
-    public ICommand PickZipArchiveCmd { get; }
-
+    [RelayCommand]
     private async Task PickZipArchive()
     {
         Source = await _newGameService.PickZipArchive();
     }
 
-    public ICommand PickFolderCmd { get; }
-
+    [RelayCommand]
     private async Task PickFolder()
     {
         Source = await _newGameService.PickFolder();

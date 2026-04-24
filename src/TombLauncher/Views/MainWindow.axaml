@@ -156,7 +156,7 @@
                         <Run Text="{Binding CurrentPage.PercentageComplete, StringFormat={}{0:0.00}}" />
                         <Run Text="%" />
                     </TextBlock>
-                    <Button Content="{loc:Translate CANCEL}" Command="{Binding CurrentPage.CancelCmd}"
+                    <Button Content="{loc:Translate CANCEL}" Command="{Binding CurrentPage.CancelCommand}"
                             IsVisible="{Binding CurrentPage.IsCancelable}">
                     </Button>
                 </StackPanel>

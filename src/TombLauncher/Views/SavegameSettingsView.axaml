@@ -39,7 +39,7 @@
             <TextBlock Text="{loc:Translate SYNC_SAVEGAME_METADATA}"/>    
         </DockPanel>
         <controls:IconButton Icon="RefreshLine" 
-                             Text="{loc:Translate SYNC_NOW}" Command="{Binding SyncSavegamesInfoCmd}"/>
+                             Text="{loc:Translate SYNC_NOW}" Command="{Binding SyncSavegamesInfoCommand}"/>
         
     </StackPanel>
 </UserControl>

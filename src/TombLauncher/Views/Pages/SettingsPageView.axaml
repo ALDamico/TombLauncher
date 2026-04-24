@@ -15,7 +15,7 @@
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
-                <InvokeCommandAction Command="{Binding InitCmd}" />
+                <InvokeCommandAction Command="{Binding InitCommand}" />
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
     </Interaction.Behaviors>
@@ -45,7 +45,7 @@
                                  Padding="16,8"
                                  Icon="Save3Line"
                                  Text="{loc:Translate SAVE}"
-                                 Command="{Binding SaveCmd}" />
+                                 Command="{Binding SaveCommand}" />
         </DockPanel>
     </Grid>
 

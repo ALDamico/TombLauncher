@@ -34,9 +34,9 @@ internal class StatisticsProfile : Profile
             .ForMember(m => m.SaveNumber, opt => opt.Ignore())
             .ForMember(m => m.SlotNumber, opt => opt.Ignore())
             .ForMember(m => m.LevelName, opt => opt.Ignore())
-            .ForMember(m => m.UpdateStartOfLevelStateCmd, opt => opt.Ignore())
-            .ForMember(m => m.DeleteSavegameCmd, opt => opt.Ignore())
-            .ForMember(m => m.RestoreSavegameCmd, opt => opt.Ignore())
+            .ForMember(m => m.UpdateStartOfLevelStateCommand, opt => opt.Ignore())
+            .ForMember(m => m.DeleteSavegameCommand, opt => opt.Ignore())
+            .ForMember(m => m.RestoreSavegameCommand, opt => opt.Ignore())
             .ForMember(m => m.Length, opt => opt.MapFrom(vm => vm.Data != null ? vm.Data.Length : 0));
     }
 }

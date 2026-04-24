@@ -1,6 +1,4 @@
-using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
@@ -11,19 +9,18 @@ using TombLauncher.ViewModels.Notifications;
 
 namespace TombLauncher.Services;
 
-public class NotificationService
+public partial class NotificationService
 {
     public NotificationService(NotificationListViewModel notificationListViewModel)
     {
         _notificationListViewModel = notificationListViewModel;
-        GenericDismissNotificationCmd = new AsyncRelayCommand<NotificationViewModel>(DismissNotification);
     }
 
     private readonly NotificationListViewModel _notificationListViewModel;
 
     public async Task AddNotificationAsync(NotificationViewModel notificationViewModel)
     {
-        notificationViewModel.DismissCmd = GenericDismissNotificationCmd;
+        notificationViewModel.DismissCommand = DismissNotificationCommand;
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             _notificationListViewModel.Notifications.Add(notificationViewModel);
@@ -73,6 +70,7 @@ public class NotificationService
         await AddNotificationAsync(notificationViewModel);
     }
 
+    [RelayCommand]
     private async Task DismissNotification(NotificationViewModel? thisNotification)
     {
         if (thisNotification == null) return;
@@ -86,12 +84,9 @@ public class NotificationService
 
     public void RemoveNotification(NotificationViewModel notificationViewModel)
     {
-        if (notificationViewModel == null) return;
         Dispatcher.UIThread.Invoke(() =>
         {
             _notificationListViewModel.Notifications.Remove(notificationViewModel);
         });
     }
-
-    private ICommand GenericDismissNotificationCmd { get; }
 }

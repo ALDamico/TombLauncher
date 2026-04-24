@@ -37,29 +37,29 @@
         <Border.ContextMenu>
             <ContextMenu>
                     <MenuItem Header="{loc:Translate PLAY}" 
-                              Command="{Binding PlayCmd}">
+                              Command="{Binding PlayCommand}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconRemixIcon Kind="PlayLargeFill"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{loc:Translate VIEW_DETAILS}" 
-                              Command="{Binding OpenCmd}"/>
+                              Command="{Binding OpenCommand}"/>
                     <Separator/>
                     <MenuItem Header="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}" 
-                              Command="{Binding MarkGameAsFavouriteCmd}">
+                              Command="{Binding ToggleFavouriteCommand}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToIconConverter}}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}"
-                              Command="{Binding MarkGameAsCompletedCmd}">
+                              Command="{Binding ToggleCompletedCommand}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToIconConverter}}"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="{loc:Translate UNINSTALL}" 
-                              Command="{Binding UninstallCmd}">
+                              Command="{Binding UninstallCommand}">
                         <MenuItem.Icon>
                             <iconPacks:PackIconRemixIcon Kind="DeleteBinLine" Foreground="{DynamicResource DangerBrush}"/>
                         </MenuItem.Icon>
@@ -69,10 +69,10 @@
         <Interaction.Behaviors>
             <EventTriggerBehavior EventName="DoubleTapped"
                                   SourceObject="GameCard">
-                <InvokeCommandAction Command="{Binding PlayCmd}"></InvokeCommandAction>
+                <InvokeCommandAction Command="{Binding PlayCommand}"></InvokeCommandAction>
             </EventTriggerBehavior>
             <EventTriggerBehavior EventName="Tapped" SourceObject="GameCard">
-                <InvokeCommandAction Command="{Binding OpenCmd}"></InvokeCommandAction>
+                <InvokeCommandAction Command="{Binding OpenCommand}"></InvokeCommandAction>
             </EventTriggerBehavior>
         </Interaction.Behaviors>
         <Border.Styles>

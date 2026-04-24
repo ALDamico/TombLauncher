@@ -31,7 +31,7 @@
         <Interaction.Behaviors>
             <EventTriggerBehavior EventName="Click" SourceObject="NotificationButtonFlyout">
                 <EventTriggerBehavior.Actions>
-                    <InvokeCommandAction Command="{Binding MarkNoNewElementsCmd}" />
+                    <InvokeCommandAction Command="{Binding MarkNoNewElementsCommand}" />
                 </EventTriggerBehavior.Actions>
             </EventTriggerBehavior>
         </Interaction.Behaviors>
@@ -74,12 +74,12 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
                                 <controls:RoundIconButton Width="32" Height="32" Icon="CheckDoubleLine"
                                                           ToolTip.Tip="{loc:Translate MARK_ALL_AS_READ}"
-                                                          Command="{Binding MarkNoNewElementsCmd}"
+                                                          Command="{Binding MarkNoNewElementsCommand}"
                                                           IsVisible="{Binding HasNewItems}"/>
                                 
                                 <controls:RoundIconButton Width="32" Height="32" Icon="CloseLine" 
                                                           ToolTip.Tip="{loc:Translate CLEAR_ALL}"
-                                                          Command="{Binding ClearAllCmd}">
+                                                          Command="{Binding ClearAllCommand}">
                                 </controls:RoundIconButton>
                             </StackPanel>
                         </Grid>

@@ -43,11 +43,11 @@
                                                       Icon="FolderZipLine"
                                                       Text="{loc:Translate OPEN_ZIP_FILE}"
                                                       VerticalAlignment="Top"
-                                                      Command="{Binding PickZipArchiveCmd}">
+                                                      Command="{Binding PickZipArchiveCommand}">
                                 <controls:SplitIconButton.Flyout>
                                     <MenuFlyout Placement="Bottom">
                                         <MenuItem Header="{loc:Translate OPEN_FOLDER}"
-                                                  Command="{Binding PickFolderCmd}">
+                                                  Command="{Binding PickFolderCommand}">
                                             <MenuItem.Icon>
                                                 <iconPacks:PackIconRemixIcon Kind="FolderLine" />
                                             </MenuItem.Icon>
@@ -189,7 +189,7 @@
                                  Padding="16,8"
                                  Icon="Save3Line"
                                  Text="{loc:Translate INSTALL}"
-                                 Command="{Binding SaveCmd}" />
+                                 Command="{Binding SaveCommand}" />
         </DockPanel>
     </Grid>
 </UserControl>

@@ -10,10 +10,10 @@ public abstract class ViewModelBase : ObservableObject
 {
     protected ViewModelBase()
     {
-        InitCmd = new AsyncRelayCommand(RaiseInitialize);
+        InitCommand = new AsyncRelayCommand(RaiseInitialize);
     }
     
-    public ICommand InitCmd { get; set; }
+    public ICommand InitCommand { get; set; }
 
     protected virtual Task RaiseInitialize()
     {

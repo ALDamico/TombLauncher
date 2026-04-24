@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 
 namespace TombLauncher.Core.Navigation;
 
@@ -13,6 +13,6 @@ public interface INavigationTarget
     string BusyMessage { get; }
     string CurrentFileName { get; }
     double? PercentageComplete { get; }
-    ICommand CancelCmd { get; }
+    IRelayCommand CancelCommand { get; }
     bool IsCancelable { get; }
 }

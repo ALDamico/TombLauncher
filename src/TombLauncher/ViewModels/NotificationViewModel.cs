@@ -25,7 +25,7 @@ public partial class NotificationViewModel : ViewModelBase
     [ObservableProperty] private DateTime _timestamp;
     [ObservableProperty] private bool _isClosing;
 
-    public ICommand? DismissCmd { get; set; }
+    public ICommand? DismissCommand { get; set; }
     public ICommand? OpenCommand { get; set; }
     public ICommand? CancelCommand { get; set; }
 }

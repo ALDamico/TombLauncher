@@ -2,10 +2,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
-using CommunityToolkit.Mvvm.DependencyInjection;
-
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
@@ -29,7 +26,7 @@ public class GameListService : IViewService
     private readonly GameDataService _gameDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    private IMapper _mapper => ViewContext.Mapper;
+    private IMapper Mapper => ViewContext.Mapper;
     private readonly ISettingsProvider _settingsProvider;
 
     public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
@@ -37,7 +34,7 @@ public class GameListService : IViewService
         using (host.BusyScope("LOADING_GAMES".GetLocalizedString()))
         {
             var gamesWithStats = await _gameDataService.GetGamesWithStats(true);
-            return _mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
+            return Mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
         }
     }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Avalonia;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -38,27 +37,15 @@ public partial class GameSearchViewModel : PageViewModel
         _gameSearchService = gameSearchService;
         SearchPayload = new DownloaderSearchPayloadViewModel();
         SearchPayload.PropertyChanged += OnSearchPayloadPropertyChanged;
-        SearchCmd = new AsyncRelayCommand(Search);
-        HandleKeyUpCmd = new AsyncRelayCommand<KeyEventArgs?>(HandleKeyUp);
-        OpenCmd = new AsyncRelayCommand<MultiSourceGameSearchResultMetadataViewModel?>(Open);
-        LoadMoreCmd = new AsyncRelayCommand(LoadMore);
-        ClearFiltersCmd = new RelayCommand(ClearFilters, CanClearFilters);
         IsCancelable = true;
     }
-
-    public override Task OnNavigatedTo(object parameter)
-    {
-        return Task.CompletedTask;
-    }
-
 
     protected override void Cancel()
     {
         _gameSearchService.Cancel();
     }
 
-    [ObservableProperty] private ICommand _searchCmd;
-
+    [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task Search()
     {
         await _gameSearchService.Search(this);
@@ -69,16 +56,14 @@ public partial class GameSearchViewModel : PageViewModel
         LoadMoreFeedback = string.Empty;
     }
 
-    [ObservableProperty] private ICommand _handleKeyUpCmd;
-
+    [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task HandleKeyUp(KeyEventArgs? keyEventArgs)
     {
         if (keyEventArgs?.Key == Key.Enter)
             await Search();
     }
 
-    [ObservableProperty] private ICommand _loadMoreCmd;
-
+    [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task LoadMore()
     {
         try
@@ -95,17 +80,15 @@ public partial class GameSearchViewModel : PageViewModel
             ShowResults = ResultCount > 0;
         }
     }
-
-    [ObservableProperty] private ICommand _openCmd;
-
+    
+    [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task Open(MultiSourceGameSearchResultMetadataViewModel? gameToOpen)
     {
         if (gameToOpen != null)
             await _gameSearchService.Open(this, gameToOpen);
     }
 
-    [ObservableProperty] private ICommand _clearFiltersCmd;
-
+    [RelayCommand(CanExecute = nameof(CanClearFilters))]
     private void ClearFilters()
     {
         SearchPayload.ClearFilters();
@@ -120,7 +103,7 @@ public partial class GameSearchViewModel : PageViewModel
     {
         if (e.PropertyName == nameof(DownloaderSearchPayloadViewModel.HasActiveFilters))
         {
-            (ClearFiltersCmd as RelayCommand)?.NotifyCanExecuteChanged();
+            ClearFiltersCommand.NotifyCanExecuteChanged();
         }
     }
 }

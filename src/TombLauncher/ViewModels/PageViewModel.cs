@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Navigation;
@@ -30,8 +29,6 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
             IsBusy = state.IsBusy;
             BusyMessage = state.BusyMessage ?? string.Empty;
         });
-        SaveCmd = new AsyncRelayCommand(Save, CanSave);
-        CancelCmd = new RelayCommand(Cancel, () => IsCancelable);
         TopBarCommands = new ObservableCollection<ITopBarCommand>();
     }
 
@@ -42,8 +39,7 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
     [ObservableProperty] private bool _isCancelable;
     [ObservableProperty] private ObservableCollection<ITopBarCommand> _topBarCommands;
 
-    public ICommand CancelCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(IsCancelable))]
     protected virtual void Cancel()
     {
 
@@ -77,9 +73,9 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
         public void Dispose() => vm.ClearBusy();
     }
 
-    public ICommand SaveCmd { get; protected set; }
     protected virtual bool CanSave() => false;
 
+    [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanSave))]
     private async Task Save()
     {
         await SaveInner();

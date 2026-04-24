@@ -1,8 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Localization.Extensions;
@@ -12,7 +10,7 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameListViewModel : PageViewModel
 {
-    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games = new ObservableCollection<GameWithStatsViewModel>();
+    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games = new();
     [ObservableProperty] private GameWithStatsViewModel? _selectedGame;
     [ObservableProperty] private bool _showAsGrid;
 
@@ -27,13 +25,6 @@ public partial class GameListViewModel : PageViewModel
     {
         SetBusy("Fetching games...");
         _gameListService.ApplySettings(this);
-        AddGameCmd = new AsyncRelayCommand(AddGame);
-        UninstallCmd = new RelayCommand<GameWithStatsViewModel>(Uninstall);
-        OpenCmd = new RelayCommand<GameWithStatsViewModel>(Open);
-        OpenSearchCmd = new AsyncRelayCommand(OpenSearch);
-        PlayCmd = new RelayCommand<GameWithStatsViewModel>(Play);
-        AddToFavouritesCmd = new AsyncRelayCommand<GameWithStatsViewModel>(AddToFavourites);
-        MarkUnmarkCompletedCmd = new AsyncRelayCommand<GameWithStatsViewModel>(MarkUnmarkCompleted);
         InitTopBarCommands();
         Games = await _gameListService.FetchGames(this);
         ClearBusy();
@@ -44,67 +35,61 @@ public partial class GameListViewModel : PageViewModel
         TopBarCommands.Clear();
         TopBarCommands.Add(new CommandViewModel()
         {
-            Command = OpenSearchCmd!,
+            Command = OpenSearchCommand,
             Icon = PackIconRemixIconKind.Search2Line,
             Tooltip = "OPEN_SEARCH".GetLocalizedString()
         });
         TopBarCommands.Add(new CommandViewModel()
         {
-            Command = AddGameCmd!,
+            Command = AddGameCommand,
             Icon = PackIconRemixIconKind.AddLargeLine,
             Tooltip = "ADD".GetLocalizedString()
         });
     }
-
-    public IAsyncRelayCommand? AddGameCmd { get; private set; }
-
+    
+    [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task AddGame()
     {
         await _gameListService.AddGame();
     }
 
-    public ICommand? OpenSearchCmd { get; private set; }
-
+    [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task OpenSearch()
     {
         await _gameListService.OpenSearch();
     }
 
-    public ICommand? PlayCmd { get; private set; }
-
+    [RelayCommand]
     private void Play(GameWithStatsViewModel? game)
     {
-        game?.PlayCmd?.Execute(null);
+        game?.PlayCommand.Execute(null);
     }
 
-    public ICommand? OpenCmd { get; private set; }
-
+    [RelayCommand]
     private void Open(GameWithStatsViewModel? game)
     {
-        game?.OpenCmd?.Execute(null);
+        game?.OpenCommand.Execute(null);
     }
 
-    public ICommand? UninstallCmd { get; private set; }
-
-    private async void Uninstall(GameWithStatsViewModel? game)
+    [RelayCommand(AllowConcurrentExecutions = false)]
+    private async Task Uninstall(GameWithStatsViewModel? game)
     {
-        if (game != null)
-            await _gameListService.Uninstall(this, game);
+        if (game == null)
+            return;
+        await _gameListService.Uninstall(this, game);
     }
 
-    public ICommand? AddToFavouritesCmd { get; private set; }
-
+    [RelayCommand]
     private async Task AddToFavourites(GameWithStatsViewModel? game)
     {
-        if (game?.MarkGameAsFavouriteCmd != null)
-            await game.MarkGameAsFavouriteCmd.ExecuteAsync(null);
+        if (game?.ToggleFavouriteCommand != null)
+            await game.ToggleFavouriteCommand.ExecuteAsync(null);
     }
 
-    public ICommand? MarkUnmarkCompletedCmd { get; private set; }
-
-    private async Task MarkUnmarkCompleted(GameWithStatsViewModel? game)
+    [RelayCommand]
+    private async Task ToggleCompleted(GameWithStatsViewModel? game)
     {
-        if (game?.MarkGameAsCompletedCmd != null)
-            await game.MarkGameAsCompletedCmd.ExecuteAsync(null);
+        if (game?.ToggleCompletedCommand != null)
+            await game.ToggleCompletedCommand.ExecuteAsync(null);
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
@@ -20,11 +19,11 @@ public partial class StatisticsPageViewModel : PageViewModel
         [
             new CommandViewModel()
             {
-                Command = new AsyncRelayCommand(Initialize), Icon = PackIconRemixIconKind.RefreshLine,
+                Command = new AsyncRelayCommand(Initialize), 
+                Icon = PackIconRemixIconKind.RefreshLine,
                 Tooltip = "RELOAD".GetLocalizedString()
             }
         ];
-        OpenGameCmd = new AsyncRelayCommand<int>(OpenGame);
     }
 
     private readonly StatisticsService _statisticsService;
@@ -59,8 +58,7 @@ public partial class StatisticsPageViewModel : PageViewModel
         SetBusy(false);
     }
 
-    public ICommand OpenGameCmd { get; }
-
+    [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task OpenGame(int gameId)
     {
         await _gameWithStatsService.OpenGame(gameId);

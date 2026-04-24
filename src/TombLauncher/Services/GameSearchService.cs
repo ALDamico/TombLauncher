@@ -171,7 +171,7 @@ public class GameSearchService : IViewService
                 {
                     if (gameToOpen.DownloadLink.IsNotNullOrWhiteSpace())
                     {
-                        currentVm.InstallCmd = gameToOpen.InstallCmd;
+                        currentVm.InstallCommand = gameToOpen.InstallCommand;
                     }
                 }
             }

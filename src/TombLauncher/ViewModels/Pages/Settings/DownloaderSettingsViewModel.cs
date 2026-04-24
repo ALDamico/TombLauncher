@@ -6,7 +6,6 @@ using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
-
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Configuration;
 using TombLauncher.Core.Dtos;
@@ -19,10 +18,14 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
 {
-    public DownloaderSettingsViewModel(PageViewModel settingsPage, ISettingsProvider settingsProvider, IAppFileOperationsService appFileOperations, IPopupService popupService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage, PackIconRemixIconKind.DownloadLine)
+    public DownloaderSettingsViewModel(PageViewModel settingsPage, 
+        ISettingsProvider settingsProvider, 
+        IAppFileOperationsService appFileOperations, 
+        IPopupService popupService, 
+        IPlatformSpecificFeatures platformSpecificFeatures, 
+        MapperConfiguration mapperConfiguration) : base("DOWNLOADERS", settingsPage, PackIconRemixIconKind.DownloadLine)
     {
         InfoTipContent = "DOWNLOADERS_INFOTIP_CONTENT".GetLocalizedString();
-        _settingsProvider = settingsProvider;
         _appFileOperations = appFileOperations;
         _popupService = popupService;
         _mapper = mapperConfiguration.CreateMapper();
@@ -30,8 +33,8 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
             _mapper.Map<ObservableCollection<UnzipBackendViewModel>>(platformSpecificFeatures
                 .GetPlatformSpecificZipFallbackPrograms()) ?? new ObservableCollection<UnzipBackendViewModel>();
         SelectedUnzipFallbackMethod =
-            AvailableUnzipFallbackMethods!.FirstOrDefault(m => m.Name == _settingsProvider.GetGameDetailsSettings().UnzipFallbackMethod)!;
-        if (SelectedUnzipFallbackMethod == null)
+            AvailableUnzipFallbackMethods.FirstOrDefault(m => m.Name == settingsProvider.GetGameDetailsSettings().UnzipFallbackMethod)!;
+        if (SelectedUnzipFallbackMethod == null!)
             SelectedUnzipFallbackMethod = AvailableUnzipFallbackMethods.FirstOrDefault()!;
     }
 
@@ -56,7 +59,6 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
     private DownloaderViewModel? _selectedDownloader;
     [ObservableProperty] private ObservableCollection<UnzipBackendViewModel> _availableUnzipFallbackMethods;
     [ObservableProperty] private UnzipBackendViewModel _selectedUnzipFallbackMethod;
-    private readonly ISettingsProvider _settingsProvider;
     private readonly IAppFileOperationsService _appFileOperations;
     private readonly IPopupService _popupService;
     private readonly IMapper _mapper;
@@ -87,6 +89,6 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
     public override void ApplyTo(AppConfiguration userConfig)
     {
         userConfig.Downloaders.Sources = _mapper.Map<List<DownloaderConfiguration>>(AvailableDownloaders);
-        userConfig.Downloaders.UnzipFallbackMethod = SelectedUnzipFallbackMethod?.Name;
+        userConfig.Downloaders.UnzipFallbackMethod = SelectedUnzipFallbackMethod.Name;
     }
 }

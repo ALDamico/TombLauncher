@@ -4,14 +4,12 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
-using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels.Pages;
 
@@ -20,24 +18,19 @@ public partial class GameDetailsViewModel : PageViewModel
     public GameDetailsViewModel(GameDetailsService gameDetailsService)
     {
         _gameDetailsService = gameDetailsService;
-        BrowseFolderCmd = new RelayCommand(BrowseFolder, CanBrowseFolder);
-        ReadWalkthroughCmd = new AsyncRelayCommand<GameLinkViewModel>(ReadWalkthrough);
-        ManageSaveGamesCmd = new AsyncRelayCommand(ManageSavegames);
-        OpenLaunchOptionsCmd = new RelayCommand(OpenLaunchOptions);
-        OpenDocumentCommand = new AsyncRelayCommand<string>(OpenDocument);
     }
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCmd))]
+    [NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCommand))]
     private bool _askForConfirmationBeforeOpeningWalkthrough;
 
-    [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands = new ObservableCollection<CommandViewModel>();
-    [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles = new ObservableCollection<FileInfo>();
+    [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands = [];
+    [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles = [];
     [ObservableProperty] private GameWithStatsViewModel _game = null!;
     [ObservableProperty] private int _descriptionFontSize = 18;
-    [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks = new ObservableCollection<GameLinkViewModel>();
-    public List<string> EnabledPatterns { get; set; } = new List<string>();
-    public List<string> IgnoredFolders { get; set; } = new List<string>();
+    [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks = [];
+    public List<string> EnabledPatterns { get; set; } = [];
+    public List<string> IgnoredFolders { get; set; } = [];
     private readonly GameDetailsService _gameDetailsService;
 
     public override async Task OnNavigatedTo(object parameter)
@@ -50,15 +43,14 @@ public partial class GameDetailsViewModel : PageViewModel
         _gameDetailsService.InitializeSettings(this);
         InitSetupCommands();
 
-        if (Game.GameMetadata.IsInstalled && Game.GameMetadata.InstallDirectory != null)
+        if (Game.GameMetadata is { IsInstalled: true, InstallDirectory: not null })
             DocumentationFiles = _gameDetailsService
                 .GetDocumentationFiles(Game.GameMetadata.InstallDirectory, EnabledPatterns, IgnoredFolders)
                 .ToObservableCollection();
         await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
     }
-
-    public ICommand BrowseFolderCmd { get; }
-
+    
+    [RelayCommand(CanExecute = nameof(CanBrowseFolder))]
     private void BrowseFolder()
     {
         if (Game.GameMetadata.InstallDirectory != null)
@@ -69,12 +61,10 @@ public partial class GameDetailsViewModel : PageViewModel
 
     private bool CanBrowseFolder() => Game.CanUninstall();
 
-    public IAsyncRelayCommand ManageSaveGamesCmd { get; }
-
+    [RelayCommand]
     private async Task ManageSavegames() => await _gameDetailsService.OpenSavegameList(this);
 
-    public IRelayCommand ReadWalkthroughCmd { get; }
-
+    [RelayCommand]
     private async Task ReadWalkthrough(GameLinkViewModel? link)
     {
         if (link != null)
@@ -83,12 +73,10 @@ public partial class GameDetailsViewModel : PageViewModel
 
     [ObservableProperty] private ICommand? _installCmd;
 
-    public ICommand OpenLaunchOptionsCmd { get; }
-
+    [RelayCommand]
     private void OpenLaunchOptions() => _gameDetailsService.OpenLaunchOptions(this);
 
-    public ICommand OpenDocumentCommand { get; }
-
+    [RelayCommand]
     private async Task OpenDocument(string? path)
     {
         if (path != null)
@@ -102,7 +90,7 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             setupCommands.Add(new CommandViewModel()
             {
-                Command = Game.LaunchSetupCmd,
+                Command = Game.LaunchSetupCommand,
                 Icon = PackIconRemixIconKind.Settings3Line,
                 Text = "SETUP".GetLocalizedString()
             });
@@ -112,7 +100,7 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             setupCommands.Add(new CommandViewModel()
             {
-                Command = Game.LaunchCommunitySetupCmd,
+                Command = Game.LaunchCommunitySetupCommand,
                 Icon = PackIconRemixIconKind.PlayLargeLine,
                 Text = "COMMUNITY_PATCH_SETUP".GetLocalizedString()
             });

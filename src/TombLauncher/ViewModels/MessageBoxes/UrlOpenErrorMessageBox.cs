@@ -48,7 +48,7 @@ public class UrlOpenErrorMessageBox : ViewModelBase, IMsgBoxViewModel
     public bool Topmost { get; set; }
     public Bitmap? Icon { get; set; }
     public string? AcceptCommandText { get; set; } = "YES".GetLocalizedString();
-    public ICommand NoCommand { get; set; } = null!;
+    public ICommand NoCommand { get; set; }
     public string? CancelCommandText { get; set; } = string.Empty;
     public string? Message { get; set; } = string.Empty;
     public string? MsgBoxTitle { get; set; } = string.Empty;
@@ -57,7 +57,7 @@ public class UrlOpenErrorMessageBox : ViewModelBase, IMsgBoxViewModel
     public bool ShowYesButton { get; set; } = true;
     public bool ShowOkButton { get; set; } = false;
     public bool ShowCancelButton { get; set; } = false;
-    public string TargetUrl { get; set; } = string.Empty;
+    public string TargetUrl { get; init; } = string.Empty;
 
 
     protected virtual void OnRequestCloseDialog(RequestCloseDialogEventArgs e)

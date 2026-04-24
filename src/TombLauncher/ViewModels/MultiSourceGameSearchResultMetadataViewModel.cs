@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Downloaders;
@@ -21,9 +20,6 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
         _gameSearchResultService = gameSearchResultService;
         Sources = new ObservableCollection<IGameSearchResultMetadata>();
         Sources.CollectionChanged += OnSourcesCollectionChanged;
-        InstallCmd = new AsyncRelayCommand(Install, CanInstall);
-        InstallFromCmd = new AsyncRelayCommand<IGameSearchResultMetadata>(InstallFrom, CanInstallFrom);
-        CancelInstallCmd = new AsyncRelayCommand(CancelInstall);
         _reviewsLink = string.Empty;
         _downloadLink = string.Empty;
         _walkthroughLink = string.Empty;
@@ -79,10 +75,7 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
             };
         });
 
-    public ICommand InstallCmd { get; }
-    public ICommand InstallFromCmd { get; }
-    public ICommand CancelInstallCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(CanInstall), AllowConcurrentExecutions = false)]
     private async Task Install()
     {
         try
@@ -94,7 +87,10 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
             InstallProgress = null;
         }
     }
+    
+    private bool CanInstall() => _gameSearchResultService.CanInstall(this).GetAwaiter().GetResult();
 
+    [RelayCommand(CanExecute = nameof(CanInstallFrom), AllowConcurrentExecutions = false)]
     private async Task InstallFrom(IGameSearchResultMetadata? source)
     {
         if (source == null) return;
@@ -107,12 +103,13 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
             InstallProgress = null;
         }
     }
-
-    private bool CanInstall() => _gameSearchResultService.CanInstall(this).GetAwaiter().GetResult();
+    
     private bool CanInstallFrom(IGameSearchResultMetadata? source) => source != null && _gameSearchResultService.CanInstall(this).GetAwaiter().GetResult();
 
-    public string GetDownloadFromSiteLabel(string siteName)
+    private string GetDownloadFromSiteLabel(string siteName)
         => _gameSearchResultService.LocalizationManager.GetLocalizedString("DOWNLOAD_FROM_FORMATTABLE", siteName);
 
+
+    [RelayCommand]
     private async Task CancelInstall() => await _gameSearchResultService.CancelInstall();
 }

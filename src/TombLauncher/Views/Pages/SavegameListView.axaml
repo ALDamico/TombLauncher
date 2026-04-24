@@ -15,7 +15,7 @@
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
             <EventTriggerBehavior.Actions>
-                <InvokeCommandAction Command="{Binding InitCmd}" />
+                <InvokeCommandAction Command="{Binding InitCommand}" />
             </EventTriggerBehavior.Actions>
         </EventTriggerBehavior>
     </Interaction.Behaviors>
@@ -36,7 +36,7 @@
                     <EventTriggerBehavior EventName="PropertyChanged" 
                                           SourceObject="{Binding SavegameFilter}">
                         <EventTriggerBehavior.Actions>
-                            <InvokeCommandAction Command="{Binding SelectedSlot.FilterCmd}"
+                            <InvokeCommandAction Command="{Binding SelectedSlot.FilterCommand}"
                                                  CommandParameter="{Binding SavegameFilter}" />
                         </EventTriggerBehavior.Actions>
                     </EventTriggerBehavior>
@@ -63,7 +63,7 @@
                     <EventTriggerBehavior EventName="SelectionChanged" 
                                           SourceObject="{Binding SelectedSlot}">
                         <EventTriggerBehavior.Actions>
-                            <InvokeCommandAction Command="{Binding SelectedSlot.FilterCmd}"
+                            <InvokeCommandAction Command="{Binding SelectedSlot.FilterCommand}"
                                                  CommandParameter="{Binding SavegameFilter}" />
                         </EventTriggerBehavior.Actions>
                     </EventTriggerBehavior>

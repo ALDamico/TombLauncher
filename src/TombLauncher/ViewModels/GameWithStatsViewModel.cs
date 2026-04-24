@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Services;
@@ -17,37 +16,29 @@ public partial class GameWithStatsViewModel : ViewModelBase
     {
         _gameMetadata = null!;
         _gameWithStatsService = gameWithStatsService;
-        PlayCmd = new RelayCommand(Play, CanPlay);
-        OpenCmd = new AsyncRelayCommand(Open);
-        LaunchSetupCmd = new RelayCommand(LaunchSetup, CanLaunchSetup);
-        LaunchCommunitySetupCmd = new RelayCommand(LaunchCommunitySetup, CanLaunchCommunitySetup);
-        MarkGameAsFavouriteCmd = new AsyncRelayCommand(MarkGameAsFavourite);
-        MarkGameAsCompletedCmd = new AsyncRelayCommand(MarkGameAsComplete);
-        UninstallCmd = new AsyncRelayCommand(Uninstall, CanUninstall);
     }
 
     private readonly GameWithStatsService _gameWithStatsService;
 
-    [ObservableProperty]
-    private GameMetadataViewModel _gameMetadata;
+    [ObservableProperty] private GameMetadataViewModel _gameMetadata;
     [ObservableProperty] private TimeSpan _totalPlayedTime;
     [ObservableProperty] private DateTime? _lastPlayed;
     [ObservableProperty] private bool _areCommandsVisible;
-    public ICommand PlayCmd { get; }
+    [RelayCommand(CanExecute = nameof(CanPlay))]
     private void Play()
     {
         _gameWithStatsService.PlayGame(this);
     }
 
     private bool CanPlay() => _gameWithStatsService.CanPlayGame(this);
-    public ICommand OpenCmd { get; }
+    
+    [RelayCommand]
     private async Task Open()
     {
         await _gameWithStatsService.OpenGame(this);
     }
 
-    public ICommand LaunchSetupCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(CanLaunchSetup))]
     private void LaunchSetup()
     {
         _gameWithStatsService.LaunchSetup(this);
@@ -58,8 +49,7 @@ public partial class GameWithStatsViewModel : ViewModelBase
         return _gameWithStatsService.CanLaunchSetup(this);
     }
 
-    public ICommand LaunchCommunitySetupCmd { get; }
-
+    [RelayCommand(CanExecute = nameof(CanLaunchCommunitySetup))]
     private void LaunchCommunitySetup()
     {
         _gameWithStatsService.LaunchCommunitySetup(this);
@@ -70,22 +60,19 @@ public partial class GameWithStatsViewModel : ViewModelBase
         return _gameWithStatsService.CanLaunchCommunitySetup(this);
     }
 
-    public IAsyncRelayCommand MarkGameAsFavouriteCmd { get; }
-
-    private async Task MarkGameAsFavourite()
+    [RelayCommand]
+    private async Task ToggleFavourite()
     {
         await _gameWithStatsService.ToggleFavourite(this);
     }
 
-    public IAsyncRelayCommand MarkGameAsCompletedCmd { get; }
-
-    private async Task MarkGameAsComplete()
+    [RelayCommand]
+    private async Task ToggleCompleted()
     {
         await _gameWithStatsService.ToggleCompleted(this);
     }
 
-    public ICommand UninstallCmd { get; }
-
+    [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanUninstall))]
     private async Task Uninstall()
     {
         await _gameWithStatsService.Uninstall(GameMetadata.Id);

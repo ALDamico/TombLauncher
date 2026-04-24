@@ -57,6 +57,7 @@
         <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
         <PackageReference Include="Svg.Controls.Avalonia" Version="11.3.9.4" />
+        <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
         <PackageReference Include="UTF.Unknown" Version="2.6.0" />
         <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.9" />
     </ItemGroup>

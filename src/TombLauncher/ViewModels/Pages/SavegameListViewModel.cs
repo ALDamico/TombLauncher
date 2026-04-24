@@ -1,15 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
-using TombLauncher.ViewModels;
 
 namespace TombLauncher.ViewModels.Pages;
 
@@ -21,22 +18,15 @@ public partial class SavegameListViewModel : PageViewModel
         _savegameCommandService = savegameCommandService;
         SavegameFilter = new SaveGameListFilter();
 
-        FilterCmd = new AsyncRelayCommand<SaveGameListFilter>(Filter);
-        UpdateStartOfLevelStateCmd = new AsyncRelayCommand<SavegameViewModel>(UpdateStartOfLevelState);
-        RestoreSavegameCmd = new AsyncRelayCommand<int>(RestoreSavegame);
-        DeleteAllCmd = new AsyncRelayCommand(DeleteAll);
-        CheckNonBackedUpSavegamesCmd = new AsyncRelayCommand(CheckNonBackedUpSavegames);
-
-        DeleteSaveCmd = new AsyncRelayCommand<SavegameViewModel>(DeleteSave, CanDelete);
         TopBarCommands.Add(new CommandViewModel()
         {
-            Command = DeleteAllCmd,
+            Command = DeleteAllCommand,
             Icon = PackIconRemixIconKind.DeleteBinLine,
             Tooltip = "DELETE_ALL".GetLocalizedString()
         });
         TopBarCommands.Add(new CommandViewModel()
         {
-            Command = CheckNonBackedUpSavegamesCmd,
+            Command = CheckNonBackedUpSavegamesCommand,
             Icon = PackIconRemixIconKind.ImportLine,
             Tooltip = "IMPORT_MISSING_SAVEGAMES".GetLocalizedString()
         });
@@ -66,33 +56,28 @@ public partial class SavegameListViewModel : PageViewModel
     [ObservableProperty]
     private ObservableCollection<SavegameViewModel> _savegames = new ObservableCollection<SavegameViewModel>();
 
-    [ObservableProperty] private ObservableCollection<SavegameViewModel> _filteredSaves = new ObservableCollection<SavegameViewModel>();
-    [ObservableProperty] private ObservableCollection<SavegameSlotViewModel> _slots = new ObservableCollection<SavegameSlotViewModel>();
+    [ObservableProperty] private ObservableCollection<SavegameViewModel> _filteredSaves = [];
+    [ObservableProperty] private ObservableCollection<SavegameSlotViewModel> _slots = [];
     [ObservableProperty] private SavegameSlotViewModel? _selectedSlot;
     [ObservableProperty] private SaveGameListFilter _savegameFilter;
-    private SavegameQueryService _savegameQueryService;
-    private SavegameCommandService _savegameCommandService;
+    private readonly SavegameQueryService _savegameQueryService;
+    private readonly SavegameCommandService _savegameCommandService;
 
-    [ObservableProperty] public ICommand _filterCmd;
-
+    [RelayCommand]
     private async Task Filter(SaveGameListFilter? slotNumber)
     {
-        if (_savegameQueryService == null)
-            return;
         if (slotNumber != null)
             await _savegameQueryService.ApplyFilter(this, slotNumber);
     }
 
-    public ICommand UpdateStartOfLevelStateCmd { get; private set; }
-
+    [RelayCommand]
     private async Task UpdateStartOfLevelState(SavegameViewModel? targetSaveGame)
     {
         if (targetSaveGame != null)
             await _savegameCommandService.UpdateStartOfLevelState(this, targetSaveGame);
     }
 
-    public IRelayCommand DeleteSaveCmd { get; private set; }
-
+    [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanDelete))]
     private async Task DeleteSave(SavegameViewModel? target)
     {
         if (target != null)
@@ -105,22 +90,19 @@ public partial class SavegameListViewModel : PageViewModel
         return !obj.IsStartOfLevel;
     }
 
-    public ICommand RestoreSavegameCmd { get; private set; }
-
+    [RelayCommand]
     private async Task RestoreSavegame(int savegameId)
     {
         await _savegameCommandService.Restore(this, savegameId, Slots.Max(s => s.SaveSlot).GetValueOrDefault());
     }
 
-    public ICommand DeleteAllCmd { get; private set; }
-
+    [RelayCommand]
     private async Task DeleteAll()
     {
         await _savegameCommandService.DeleteAllSavegamesByGameId(this, GameId);
     }
 
-    public ICommand CheckNonBackedUpSavegamesCmd { get; private set; }
-
+    [RelayCommand]
     private async Task CheckNonBackedUpSavegames()
     {
         await _savegameQueryService.CheckSavegamesNotBackedUp(this);
