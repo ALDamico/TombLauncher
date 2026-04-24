@@ -71,7 +71,7 @@ public partial class GameDetailsViewModel : PageViewModel
             await _gameDetailsService.OpenWalkthrough(link.Link, AskForConfirmationBeforeOpeningWalkthrough);
     }
 
-    [ObservableProperty] private ICommand? _installCmd;
+    [ObservableProperty] private ICommand? _installCommand;
 
     [RelayCommand]
     private void OpenLaunchOptions() => _gameDetailsService.OpenLaunchOptions(this);
