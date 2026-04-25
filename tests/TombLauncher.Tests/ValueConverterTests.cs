@@ -1,4 +1,5 @@
 using System.Globalization;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.ValueConverters;
 
 namespace TombLauncher.Tests;
@@ -154,5 +155,28 @@ public class ValueConverterTests
     {
         var converter = new TransferSpeedConverter();
         Assert.Null(converter.Convert(null, typeof(string), null, Culture));
+    }
+
+    private const PackIconRemixIconKind TrueIcon = PackIconRemixIconKind.CheckLine;
+    private const PackIconRemixIconKind FalseIcon = PackIconRemixIconKind.DeleteBackFill;
+
+    [Theory]
+    [InlineData(true, TrueIcon)]
+    [InlineData(false, FalseIcon)]
+    [InlineData(";P", null)]
+    public void BooleanToIconConverter_Convert_ConvertsCorrectly(object value, PackIconRemixIconKind? expectedValue)
+    {
+        var converter = new BooleanToIconConverter(){TrueValue = TrueIcon, FalseValue = FalseIcon};
+        Assert.Equal(expectedValue, converter.Convert(value, typeof(PackIconRemixIconKind), null, Culture));
+    }
+    
+    [Theory]
+    [InlineData(TrueIcon, true)]
+    [InlineData( FalseIcon, false)]
+    [InlineData(null, false)]
+    public void BooleanToIconConverter_ConvertBack_ConvertsCorrectly(PackIconRemixIconKind? value, bool expectedValue)
+    {
+        var converter = new BooleanToIconConverter(){TrueValue = TrueIcon, FalseValue = FalseIcon};
+        Assert.Equal(expectedValue, converter.ConvertBack(value, typeof(bool), null, Culture));
     }
 }
