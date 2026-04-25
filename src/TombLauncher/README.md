@@ -14,7 +14,7 @@ creating a migration.
 
 ## Releasing a new version
 
-The release process is fully automated via GitHub Actions and triggers on merge of a `release/x.y.z` branch into `main`.
+The release process is fully automated via GitHub Actions and triggers on merge of a `release/x.y.z` branch into `master`.
 
 1. **Bump the version** using the `/bump-version` slash command in Claude Code:
    ```
@@ -35,7 +35,7 @@ The release process is fully automated via GitHub Actions and triggers on merge 
    git push origin release/1.0.3
    ```
 
-4. **Open a PR** from `release/1.0.3` → `main`. CI (build + test) runs automatically on the PR.
+4. **Open a PR** from `release/1.0.3` → `master`. CI (build + test) runs automatically on the PR.
 
 5. **Merge the PR**. GitHub Actions then automatically:
    - Builds the Windows installer (Inno Setup) and Linux packages (AppImage, DEB, RPM)
