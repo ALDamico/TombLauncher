@@ -1,0 +1,127 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:converters="clr-namespace:TombLauncher.ValueConverters"
+             mc:Ignorable="d"
+             x:Class="TombLauncher.Views.Pages.WelcomePage.FavouritesWidget"
+             x:Name="WidgetRoot"
+             x:DataType="pages:WelcomePageViewModel">
+    <Design.DataContext>
+        <pages:WelcomePageViewModel/>
+    </Design.DataContext>
+    <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
+            IsVisible="{Binding ShowFavourites}">
+        <StackPanel Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <iconPacks:PackIconRemixIcon Kind="Heart3Line" Width="20" Height="20"
+                                              Foreground="{DynamicResource PrimaryBrush}"
+                                              VerticalAlignment="Center" />
+                <TextBlock Text="{loc:Translate FAVOURITE_GAMES}"
+                           FontSize="16" FontWeight="Bold"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+
+            <!-- Empty state -->
+            <controls:EmptyStateView Icon="Heart3Line"
+                                     Subtitle="{loc:Translate NO_FAVOURITE_GAMES}"
+                                     IsVisible="{Binding FavouriteGames, Converter={StaticResource CollectionEmptyToVisibilityConverter}}"
+                                     Margin="0,16" />
+
+            <!-- Carousel -->
+            <Grid ColumnDefinitions="Auto,*,Auto"
+                  IsVisible="{Binding FavouriteGames, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}">
+                <Button Grid.Column="0" Command="{Binding PreviousFavouriteCommand}"
+                        VerticalAlignment="Center" Padding="8" Margin="0,0,8,0">
+                    <iconPacks:PackIconRemixIcon Kind="ArrowLeftSLine" Width="20" Height="20" />
+                </Button>
+                <Carousel Grid.Column="1"
+                          ItemsSource="{Binding FavouriteGames}"
+                          SelectedIndex="{Binding FavouriteIndex}">
+                    <Carousel.PageTransition>
+                        <CrossFade Duration="0:0:0.3" />
+                    </Carousel.PageTransition>
+                    <Carousel.ItemTemplate>
+                        <DataTemplate>
+                            <views:GameCardView HorizontalAlignment="Center" />
+                        </DataTemplate>
+                    </Carousel.ItemTemplate>
+                </Carousel>
+                <Button Grid.Column="2" Command="{Binding NextFavouriteCommand}"
+                        VerticalAlignment="Center" Padding="8" Margin="8,0,0,0">
+                    <iconPacks:PackIconRemixIcon Kind="ArrowRightSLine" Width="20" Height="20" />
+                </Button>
+            </Grid>
+
+            <!-- Pagination dots -->
+            <Border x:Name="FavActiveBrushProvider" Background="{DynamicResource PrimaryBrush}"
+                    IsVisible="False" Width="0" Height="0" />
+            <Border x:Name="FavInactiveBrushProvider" Background="{DynamicResource MutedTextBrush}"
+                    IsVisible="False" Width="0" Height="0" />
+            <ItemsControl ItemsSource="{Binding FavouritePaginationIndices}"
+                          HorizontalAlignment="Center"
+                          IsVisible="{Binding FavouriteGames, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}"
+                          Margin="0,4,0,0">
+                <ItemsControl.Resources>
+                    <converters:IndexMatchToBrushConverter x:Key="FavDotFillConverter" />
+                    <converters:IndexMatchToDoubleConverter x:Key="FavDotSizeConverter" />
+                </ItemsControl.Resources>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="6" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="x:Int32">
+                        <Ellipse VerticalAlignment="Center">
+                            <Ellipse.Transitions>
+                                <Transitions>
+                                    <DoubleTransition Property="Width" Duration="0:0:0.2" />
+                                    <DoubleTransition Property="Height" Duration="0:0:0.2" />
+                                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                                </Transitions>
+                            </Ellipse.Transitions>
+                            <Ellipse.Width>
+                                <MultiBinding Converter="{StaticResource FavDotSizeConverter}" ConverterParameter="10|8">
+                                    <Binding Path="." />
+                                    <Binding Path="DataContext.FavouriteIndex"
+                                             ElementName="WidgetRoot" />
+                                </MultiBinding>
+                            </Ellipse.Width>
+                            <Ellipse.Height>
+                                <MultiBinding Converter="{StaticResource FavDotSizeConverter}" ConverterParameter="10|8">
+                                    <Binding Path="." />
+                                    <Binding Path="DataContext.FavouriteIndex"
+                                             ElementName="WidgetRoot" />
+                                </MultiBinding>
+                            </Ellipse.Height>
+                            <Ellipse.Opacity>
+                                <MultiBinding Converter="{StaticResource FavDotSizeConverter}" ConverterParameter="1|0.4">
+                                    <Binding Path="." />
+                                    <Binding Path="DataContext.FavouriteIndex"
+                                             ElementName="WidgetRoot" />
+                                </MultiBinding>
+                            </Ellipse.Opacity>
+                            <Ellipse.Fill>
+                                <MultiBinding Converter="{StaticResource FavDotFillConverter}">
+                                    <Binding Path="." />
+                                    <Binding Path="DataContext.FavouriteIndex"
+                                             ElementName="WidgetRoot" />
+                                    <Binding Path="Background"
+                                             ElementName="FavActiveBrushProvider" />
+                                    <Binding Path="Background"
+                                             ElementName="FavInactiveBrushProvider" />
+                                </MultiBinding>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Border>
+</UserControl>

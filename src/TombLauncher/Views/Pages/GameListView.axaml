@@ -1,0 +1,62 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             x:Class="TombLauncher.Views.Pages.GameListView"
+             x:DataType="pages:GameListViewModel">
+    <Design.DataContext>
+        <pages:GameListViewModel />
+    </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:BooleanToIconConverter x:Key="BooleanToIconConverter"
+                                                        TrueValue="GridLine"
+                                                        FalseValue="TableLine" />
+        <valueConverters:BooleanToStringConverter x:Key="BooleanToStringConverter" 
+                                                  TrueValue="{loc:Translate GRID_VIEW}" 
+                                                  FalseValue="{loc:Translate TABLE_VIEW}"/>
+    </UserControl.Resources>
+
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCommand}"/>
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <WrapPanel Grid.Row="1">
+            <ToggleButton IsChecked="{Binding ShowAsGrid}">
+                <ToggleButton.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconRemixIcon Kind="{Binding ShowAsGrid, Converter={StaticResource BooleanToIconConverter}}" 
+                                               Margin="5, 0"></iconPacks:PackIconRemixIcon>
+                        <TextBlock Text="{Binding ShowAsGrid, Converter={StaticResource BooleanToStringConverter}}"/>
+                    </StackPanel>
+                </ToggleButton.Content>
+            </ToggleButton>
+        </WrapPanel>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center"
+                    IsVisible="{Binding Games, Converter={StaticResource CollectionEmptyToVisibilityConverter}}"
+                    Orientation="Horizontal" VerticalAlignment="Center">
+            <Image Source="/Assets/Lara_Croft_Flashlight.png" Height="320"/>
+            <StackPanel Orientation="Vertical">
+                <TextBlock FontSize="20" FontWeight="DemiBold" TextAlignment="Center" HorizontalAlignment="Center" Text="{loc:Translate NO_GAMES}" />
+                <TextBlock FontStyle="Italic" TextAlignment="Center" HorizontalAlignment="Center" Text="{loc:Translate TRY_ADDING_ONE}"/>
+            </StackPanel>
+        </StackPanel>
+        <views:GamesDataGridView Grid.Row="2" DataContext="{Binding .}" IsVisible="{Binding !ShowAsGrid}"/>
+        <views:GamesGridView Grid.Row="2" DataContext="{Binding .}" IsVisible="{Binding ShowAsGrid}"/>
+    </Grid>
+</UserControl>

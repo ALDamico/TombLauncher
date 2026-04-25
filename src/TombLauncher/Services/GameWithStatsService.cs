@@ -1,0 +1,338 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
+using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Navigation;
+using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Core.Savegames;
+using TombLauncher.Core.Utils;
+using TombLauncher.Data.Database.Repositories;
+using TombLauncher.Data.Database.Services;
+using TombLauncher.Extensions;
+using TombLauncher.Localization.Extensions;
+using TombLauncher.ViewModels;
+using TombLauncher.ViewModels.Pages;
+
+namespace TombLauncher.Services;
+
+public class GameWithStatsService : IViewService, IDisposable
+{
+    public GameWithStatsService(
+        ViewServiceContext viewContext,
+        GameDataService gameDataService,
+        PlaySessionDataService playSessionDataService,
+        ISavegameRepository savegameRepository,
+        ISettingsProvider settingsProvider,
+        ILogger<GameWithStatsService> logger,
+        ISavegameHeaderProvider headerProvider,
+        IPlatformSpecificFeatures platformSpecificFeatures,
+        SavegameHeaderProcessor headerProcessor)
+    {
+        ViewContext = viewContext;
+        _gameDataService = gameDataService;
+        _playSessionDataService = playSessionDataService;
+        _savegameRepository = savegameRepository;
+        var savegameSettings = settingsProvider.GetSavegameSettings();
+        _backupEnabled = savegameSettings.IsBackupEnabled;
+        if (_backupEnabled)
+        {
+            _numberOfSavesToKeep = savegameSettings.NumberOfVersionsToKeep;
+        }
+
+        _logger = logger;
+        _headerProvider = headerProvider;
+        _winePath = settingsProvider.GetGameDetailsSettings().WinePath;
+        _platformSpecificFeatures = platformSpecificFeatures;
+        _headerProcessor = headerProcessor;
+    }
+
+    public ViewServiceContext ViewContext { get; }
+    private SavegameHeaderProcessor? _headerProcessor;
+    private IMapper _mapper => ViewContext.Mapper;
+
+    private readonly GameDataService _gameDataService;
+    private readonly PlaySessionDataService _playSessionDataService;
+    private readonly ISavegameRepository _savegameRepository;
+    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
+    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    private FileSystemWatcher? _watcher;
+    private readonly bool _backupEnabled;
+    private readonly int? _numberOfSavesToKeep;
+    private readonly ILogger<GameWithStatsService> _logger;
+    private readonly ISavegameHeaderProvider _headerProvider;
+    private readonly string _winePath;
+    private DateTime? _startDate;
+    private IPlatformSpecificFeatures _platformSpecificFeatures;
+
+    public async Task OpenGame(GameWithStatsViewModel game)
+    {
+        await NavigationManager.NavigateTo<GameDetailsViewModel>(game);
+    }
+
+    public async Task OpenGame(int gameId)
+    {
+        var game = await GetGameById(gameId);
+        await OpenGame(game);
+    }
+
+    public void PlayGame(GameWithStatsViewModel game)
+    {
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.SetBusy("STARTING_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        InitFileSystemWatcher(game);
+        _headerProcessor?.Start();
+
+        if (game.GameMetadata.ExecutablePath != null)
+        {
+            LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
+        }
+    }
+
+    private void InitFileSystemWatcher(GameWithStatsViewModel game)
+    {
+        if (_watcher != null)
+        {
+            _watcher.Changed -= WatcherOnCreatedOrChanged;
+        }
+        try
+        {
+            _watcher = new FileSystemWatcher(game.GameMetadata.InstallDirectory ?? string.Empty, "save*.*")
+            {
+                IncludeSubdirectories = true,
+                EnableRaisingEvents = true,
+                InternalBufferSize = 8192 * 32,
+                NotifyFilter = _platformSpecificFeatures.GetSavegameWatcherNotifyFilters()
+            };
+            if (_headerProcessor != null)
+                _headerProcessor.SavegameHeaderReader = _headerProvider.GetHeaderReader(game.GameMetadata.GameEngine);
+            _watcher.Changed += WatcherOnCreatedOrChanged;
+        }
+        catch
+        {
+            _watcher?.Dispose();
+            throw;
+        }
+    }
+
+    private void WatcherOnCreatedOrChanged(object sender, FileSystemEventArgs e)
+    {
+        _headerProcessor?.EnqueueFileName(e.FullPath);
+    }
+
+    public async Task PlayGame(int gameId)
+    {
+        var gameViewModel = await GetGameById(gameId);
+        await OpenGame(gameViewModel);
+        PlayGame(gameViewModel);
+    }
+
+    private async Task<GameWithStatsViewModel> GetGameById(int gameId)
+    {
+        var game = await _gameDataService.GetGameWithStats(gameId);
+        return _mapper.Map<GameWithStatsViewModel>(game);
+    }
+
+    public bool CanPlayGame(GameWithStatsViewModel game)
+    {
+        return game.GameMetadata.IsInstalled;
+    }
+
+    public bool CanLaunchSetup(GameWithStatsViewModel game)
+    {
+        return game.GameMetadata.SetupExecutable.IsNotNullOrWhiteSpace();
+    }
+
+    public bool CanLaunchCommunitySetup(GameWithStatsViewModel game)
+    {
+        return game.GameMetadata.CommunitySetupExecutable.IsNotNullOrWhiteSpace();
+    }
+
+    private void OnSetupExited(Process process)
+    {
+        if (process.ExitCode != 0)
+        {
+            _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
+        }
+        else
+        {
+            _logger.LogInformation("Setup process exited without issue");
+        }
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.ClearBusy();
+    }
+
+    private async Task OnGameExited(GameWithStatsViewModel game, Process process)
+    {
+        Console.WriteLine("Exited!");
+        var errorOccurred = false;
+        if (process.ExitCode != 0)
+        {
+            _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
+        }
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        try
+        {
+            currentPage?.SetBusy(true, "SAVING_PLAY_SESSION".GetLocalizedString());
+            var gameMetadataDto = _mapper.Map<GameMetadataDto>(game.GameMetadata);
+            await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
+            currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
+            var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
+
+            foreach (var file in filesToProcess)
+            {
+                file.Md5 = Md5Utils.ComputeMd5Hash(file.Data);
+            }
+
+            filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
+
+            if (_backupEnabled)
+            {
+                _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
+                _headerProcessor?.ClearProcessedFiles();
+            }
+
+            errorOccurred = _headerProcessor?.ErrorOccurred ?? false;
+            CleanupWatcherAndProcessor();
+
+
+            await _savegameRepository.Save();
+
+            // NavigationManager.RequestRefresh(); // Not available in V2? Need to handle refresh.
+        }
+        finally
+        {
+            currentPage?.ClearBusy();
+            if (errorOccurred)
+            {
+                await ViewContext.PopupService.ShowLocalized("Savegame parse error",
+                    "An error occurred while processing a savegame. Savegames have not been backed up.",
+                    MsgBoxButton.Ok, MsgBoxImage.Error);
+            }
+        }
+    }
+
+    public void LaunchSetup(GameWithStatsViewModel game)
+    {
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.SetBusy(
+            "LAUNCHING_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        if (game.GameMetadata.SetupExecutable != null)
+        {
+            LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
+        }
+    }
+
+    public void LaunchCommunitySetup(GameWithStatsViewModel game)
+    {
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        currentPage?.SetBusy(
+            "LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        if (game.GameMetadata.CommunitySetupExecutable != null)
+        {
+            LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
+        }
+    }
+
+    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false, string? arguments = null)
+    {
+        var executableFileNameOnly = Path.GetFileName(executable);
+        string workingDirectory = string.Empty;
+        if (game.GameMetadata.InstallDirectory != null)
+        {
+            workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable)) ?? string.Empty;
+        }
+        // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
+        _startDate = DateTime.Now;
+
+        var process = new Process()
+        {
+            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory),
+            EnableRaisingEvents = true
+        };
+        if (trackPlayTime)
+        {
+            process.Exited += async (sender, _) => await OnGameExited(game, (Process)sender!);
+        }
+        else
+        {
+            process.Exited += (sender, _) => OnSetupExited((Process)sender!);
+        }
+
+        process.ErrorDataReceived += (_, args) => _logger.LogError("Process error: {StandardError}", args.Data);
+        process.OutputDataReceived +=
+            (_, args) => _logger.LogInformation("Process output: {StandardOutput}", args.Data);
+
+        process.Start();
+    }
+
+    public async Task ToggleFavourite(GameWithStatsViewModel gameWithStatsViewModel)
+    {
+        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        metadata.IsFavourite = !metadata.IsFavourite;
+        await _gameDataService.UpsertGame(metadata);
+        gameWithStatsViewModel.GameMetadata.IsFavourite = metadata.IsFavourite;
+    }
+
+    public async Task ToggleCompleted(GameWithStatsViewModel gameWithStatsViewModel)
+    {
+        var metadata = _mapper.Map<GameMetadataDto>(gameWithStatsViewModel.GameMetadata);
+        metadata.IsCompleted = !metadata.IsCompleted;
+        await _gameDataService.UpsertGame(metadata);
+        gameWithStatsViewModel.GameMetadata.IsCompleted = metadata.IsCompleted;
+    }
+
+    public bool CanUninstall(GameMetadataViewModel metadataViewModel)
+    {
+        return metadataViewModel.IsInstalled;
+    }
+
+    public async Task Uninstall(int gameId)
+    {
+        var game = await _gameDataService.GetGameWithStats(gameId);
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+        if (currentPage is PageViewModel pageVm)
+        {
+            using (pageVm.BusyScope("UNINSTALLING".GetLocalizedString(game.GameMetadata.Title)))
+            {
+                var installDir = game.GameMetadata.InstallDirectory;
+                if (installDir != null)
+                {
+                    Directory.Delete(installDir, true);
+                }
+                await _gameDataService.MarkGameAsUninstalled(gameId);
+            }
+        }
+        await NavigationManager.GoBack();
+    }
+
+    private void CleanupWatcherAndProcessor()
+    {
+        try
+        {
+            _headerProcessor?.Dispose();
+            _watcher?.Dispose();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Already disposed
+        }
+        finally
+        {
+            _headerProcessor = null;
+            _watcher = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        CleanupWatcherAndProcessor();
+    }
+}

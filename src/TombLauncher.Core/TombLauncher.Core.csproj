@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
+      <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="IconPacks.Avalonia.RemixIcon" Version="1.3.1" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
+      <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
+      <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    </ItemGroup>
+
+</Project>

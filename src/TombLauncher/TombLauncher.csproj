@@ -1,0 +1,152 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <ApplicationIcon>Assets\tomb-launcher-icon.ico</ApplicationIcon>
+        <Title>Tomb Launcher</Title>
+        <Authors>Tomb Launcher developers</Authors>
+        <Description>Tomb Launcher is a Tomb Raider custom level manager.</Description>
+        <Copyright>2025 Tomb Launcher developers</Copyright>
+        <PackageProjectUrl>https://tomblauncher.app</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/ALDamico/TombLauncher</RepositoryUrl>
+        <Version>1.0.2</Version>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AngleSharp" Version="1.4.0" />
+        <PackageReference Include="AngleSharp.XPath" Version="2.0.6" />
+        <PackageReference Include="AsyncImageLoader.Avalonia" Version="3.7.0" />
+        <PackageReference Include="Avalonia" Version="11.3.12" />
+        <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.1.5" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.12" />
+        <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.12" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.12" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+        <PackageReference Include="Fastenshtein" Version="1.0.11" />
+        <PackageReference Include="IconPacks.Avalonia.RemixIcon" Version="1.3.1" />
+        <PackageReference Include="JamSoft.AvaloniaUI.Dialogs" Version="1.4.2" />
+        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc6.1" />
+        <PackageReference Include="Markdown.Avalonia" Version="11.0.2" />
+        <PackageReference Include="Markdown.Avalonia.Html" Version="11.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.1" />
+        <PackageReference Include="NetSparkleUpdater.SparkleUpdater" Version="3.0.4" />
+        <PackageReference Include="NetSparkleUpdater.UI.Avalonia" Version="3.0.4" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <PackageReference Include="Octokit" Version="14.0.0" />
+        <PackageReference Include="Serilog" Version="4.3.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+        <PackageReference Include="Svg.Controls.Avalonia" Version="11.3.9.4" />
+        <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
+        <PackageReference Include="UTF.Unknown" Version="2.6.0" />
+        <PackageReference Include="Xaml.Behaviors.Interactions" Version="11.3.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Data\Games\README.md" />
+      <Content Include="Data\Games\README.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="appsettings.json" />
+      <Content Include="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+    
+    <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+        <None Remove="appsettings.Development.json" />
+        <Content Include="appsettings.Development.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Controls\TombLauncher.Controls.csproj" />
+      <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
+      <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
+      <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\Dialogs\AppCrashHostView.axaml.cs">
+        <DependentUpon>AppCrashHostView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\GameDetailsView.axaml.cs">
+        <DependentUpon>GameDetailsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\GameListView.axaml.cs">
+        <DependentUpon>GameListView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\GameSearchView.axaml.cs">
+        <DependentUpon>GameSearchView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\NewGameView.axaml.cs">
+        <DependentUpon>NewGameView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePageView.axaml.cs">
+        <DependentUpon>WelcomePageView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\StatisticsPageView.axaml.cs">
+        <DependentUpon>StatisticsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Notifications\StringIconNotificationView.axaml.cs">
+        <DependentUpon>StringIconNotificationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Notifications\StringNotificationView.axaml.cs">
+        <DependentUpon>StringNotificationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\RandomGameSuggestionWidget.axaml.cs">
+        <DependentUpon>RandomGameSuggestionWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\QuickStatsWidget.axaml.cs">
+        <DependentUpon>QuickStatsWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\QuickActionsWidget.axaml.cs">
+        <DependentUpon>QuickActionsWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\RecentlyPlayedWidget.axaml.cs">
+        <DependentUpon>RecentlyPlayedWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\ResumeLastGameWidget.axaml.cs">
+        <DependentUpon>ResumeLastGameWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\WelcomePage\FavouritesWidget.axaml.cs">
+        <DependentUpon>FavouritesWidget.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+</Project>

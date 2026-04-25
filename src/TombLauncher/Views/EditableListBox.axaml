@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:dtos="clr-namespace:TombLauncher.Core.Dtos;assembly=TombLauncher.Core"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.EditableListBox"
+             x:DataType="viewModels:EditableListBoxViewModel"
+             x:Name="ViewRoot">
+    <Design.DataContext>
+        <viewModels:EditableListBoxViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,0,4">
+            <iconPacks:PackIconRemixIcon Kind="{Binding HeaderIcon}"
+                                         Width="16" Height="16"
+                                         VerticalAlignment="Center"
+                                         Foreground="{DynamicResource PrimaryBrush}"
+                                         IsVisible="{Binding HeaderIcon, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            <TextBlock Text="{Binding Header}"
+                       FontWeight="DemiBold" />
+        </StackPanel>
+        <DockPanel LastChildFill="True">
+            <controls:IconOnlyButton Icon="EraserLine" 
+                                     ToolTip.Tip="{loc:Translate CLEAR}" 
+                                     Command="{Binding ClearCurrentValueCommand}" 
+                                     DockPanel.Dock="Right" 
+                                     Classes="btn-danger"></controls:IconOnlyButton>
+            <controls:IconOnlyButton Icon="AddLine" 
+                                     ToolTip.Tip="{loc:Translate ADD}" 
+                                     Command="{Binding AddValueCommand}" 
+                                     DockPanel.Dock="Right" />
+            <TextBox Text="{Binding CurrentValue}"
+                     Watermark="{Binding Watermark}">
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="KeyUp">
+                        <InvokeCommandAction Command="{Binding HandleKeyUpCommand}" 
+                                             PassEventArgsToCommand="True"/>
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </TextBox>
+        </DockPanel>
+        <ListBox ItemsSource="{Binding TargetCollection}" MaxHeight="350">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DataTemplate.DataType>
+                        <x:Type TypeName="dtos:CheckableItem" x:TypeArguments="system:String"/>
+                    </DataTemplate.DataType>
+                    <DockPanel LastChildFill="True">
+                        <controls:IconOnlyButton DockPanel.Dock="Right" 
+                                                 Icon="DeleteBinLine" 
+                                                 Classes="btn-danger" 
+                                                 ToolTip.Tip="{loc:Translate DELETE}" 
+                                                 IsVisible="{Binding CanUserCheck}"
+                                                 Command="{Binding ElementName=ViewRoot, Path=((viewModels:EditableListBoxViewModel)DataContext).DeleteValueCommand}"
+                                                 CommandParameter="{Binding .}"/>
+                        <controls:IconOnlyButton DockPanel.Dock="Right" 
+                                                 Icon="EditLine" 
+                                                 Classes="btn-primary" 
+                                                 ToolTip.Tip="{loc:Translate EDIT}" 
+                                                 Command="{Binding ElementName=ViewRoot, Path=((viewModels:EditableListBoxViewModel)DataContext).EditValueCommand}"
+                                                 CommandParameter="{Binding .}"
+                                                 IsVisible="{Binding CanUserCheck}"
+                        ></controls:IconOnlyButton>
+                        <CheckBox IsChecked="{Binding IsChecked}" 
+                                  IsEnabled="{Binding CanUserCheck}" 
+                                  Content="{Binding Value}"/>
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</UserControl>

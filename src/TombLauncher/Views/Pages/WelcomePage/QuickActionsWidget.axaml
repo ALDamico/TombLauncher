@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d"
+             x:Class="TombLauncher.Views.Pages.WelcomePage.QuickActionsWidget"
+             x:DataType="pages:WelcomePageViewModel">
+    <Design.DataContext>
+        <pages:WelcomePageViewModel></pages:WelcomePageViewModel>
+    </Design.DataContext>
+    <UniformGrid Columns="3" Margin="0,0,0,16"
+                 IsVisible="{Binding ShowQuickActions}">
+        <Button Command="{Binding AddGameCommand}" Margin="4" Padding="16"
+                Classes="card-background" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+            <StackPanel Spacing="8" HorizontalAlignment="Center">
+                <iconPacks:PackIconRemixIcon Kind="AddCircleLine" Width="24" Height="24"
+                                              HorizontalAlignment="Center"
+                                              Foreground="{DynamicResource PrimaryBrush}" />
+                <TextBlock Text="{loc:Translate ADD_GAME}"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding SearchOnlineCommand}" Margin="4" Padding="16"
+                Classes="card-background" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+            <StackPanel Spacing="8" HorizontalAlignment="Center">
+                <iconPacks:PackIconRemixIcon Kind="SearchLine" Width="24" Height="24"
+                                              HorizontalAlignment="Center"
+                                              Foreground="{DynamicResource PrimaryBrush}" />
+                <TextBlock Text="{loc:Translate SEARCH_ONLINE}"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding ShuffleRandomSuggestionCommand}" Margin="4" Padding="16"
+                Classes="card-background" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+            <StackPanel Spacing="8" HorizontalAlignment="Center">
+                <iconPacks:PackIconRemixIcon Kind="ShuffleLine" Width="24" Height="24"
+                                              HorizontalAlignment="Center"
+                                              Foreground="{DynamicResource PrimaryBrush}" />
+                <TextBlock Text="{loc:Translate RANDOM_GAME}"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+        </Button>
+    </UniformGrid>
+</UserControl>

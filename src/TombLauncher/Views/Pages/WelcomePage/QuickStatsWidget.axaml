@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d"
+             x:Class="TombLauncher.Views.Pages.WelcomePage.QuickStatsWidget"
+             x:DataType="pages:WelcomePageViewModel">
+    <Design.DataContext>
+        <pages:WelcomePageViewModel></pages:WelcomePageViewModel>
+    </Design.DataContext>
+    <UniformGrid Columns="4" Margin="0,0,0,16"
+                 IsVisible="{Binding ShowQuickStats}">
+        <controls:StatCard Icon="GamepadLine"
+                           Value="{Binding QuickStats.InstalledGamesCount}"
+                           Label="{loc:Translate GAMES_INSTALLED}" />
+        <controls:StatCard Icon="TimeLine"
+                           Value="{Binding QuickStats.TotalPlayTime, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"
+                           Label="{loc:Translate TOTAL_TIME_PLAYED}" />
+        <controls:StatCard Icon="TrophyLine"
+                           Value="{Binding QuickStats.CompletedGamesCount}"
+                           Label="{loc:Translate COMPLETED_GAMES}" />
+        <controls:StatCard Icon="HeartLine"
+                           Value="{Binding QuickStats.FavouriteGamesCount}"
+                           Label="{loc:Translate FAVOURITE_GAMES}" />
+    </UniformGrid>
+</UserControl>

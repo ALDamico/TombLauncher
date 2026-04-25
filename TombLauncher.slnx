@@ -1,0 +1,26 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/deploy/">
+    <File Path="deploy/app.metainfo.xml" />
+    <File Path="deploy/tomb-launcher-icon.256x256.png" />
+    <File Path="deploy/tomb-launcher-icon.ico" />
+    <File Path="deploy/tomblauncher.desktop" />
+    <File Path="deploy/installer-script.iss" />
+    <File Path="deploy/TombLauncher.pupnet.conf" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/TombLauncher.Contracts/TombLauncher.Contracts.csproj" />
+    <Project Path="src/TombLauncher.Controls/TombLauncher.Controls.csproj" />
+    <Project Path="src/TombLauncher.Core/TombLauncher.Core.csproj" />
+    <Project Path="src/TombLauncher.Data/TombLauncher.Data.csproj" />
+    <Project Path="src/TombLauncher.Localization/TombLauncher.Localization.csproj" />
+    <Project Path="src/TombLauncher/TombLauncher.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TombLauncher.Tests/TombLauncher.Tests.csproj" />
+  </Folder>
+</Solution>

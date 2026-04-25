@@ -1,0 +1,180 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+        xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+        xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:loc="using:TombLauncher.Localization"
+        xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TombLauncher.Views.MainWindow"
+        x:DataType="viewModels:MainWindowViewModel"
+        Icon="/Assets/tomb-launcher-icon.ico"
+        Title="{Binding Title}"
+        Background="{DynamicResource PageBackgroundBrush}"
+        WindowState="{Binding CurrentWindowState, Mode=TwoWay}"
+        Width="1024"
+        Height="768">
+    
+    <Window.Resources>
+        <valueConverters:FullScreenToIconConverter x:Key="FullScreenToIconConverter"/>
+    </Window.Resources>
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <viewModels:MainWindowViewModel />
+    </Design.DataContext>
+    <SplitView IsPaneOpen="{Binding IsPaneOpen}" DisplayMode="CompactInline">
+        <SplitView.Pane>
+
+            <Grid Background="{DynamicResource SidebarBackgroundBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <controls:IconButton Grid.Row="0" 
+                                     Classes="icon-only"
+                                     ToolTip.Tip="Menu" 
+                                     Icon="MenuLine" 
+                                     Command="{Binding TogglePaneCommand}"/>
+
+                <ListBox Grid.Row="1" 
+                         Margin="2 0 -100 0" 
+                         ItemsSource="{Binding MenuItems}" 
+                         SelectionMode="Single"
+                         SelectedItem="{Binding SelectedMenuItem}">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="12 8" />
+                        </Style>
+                    </ListBox.Styles>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
+                            <StackPanel Spacing="20" 
+                                        Orientation="Horizontal">
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
+                                <TextBlock Text="{Binding Text}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBoxItem Grid.Row="2" Content="{Binding GitHubLinkItem}" x:Name="GitHubLinkItem" 
+                             ToolTip.Tip="{Binding GitHubLinkItem.Tooltip}">
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior EventName="PointerReleased" 
+                                              SourceObject="GitHubLinkItem">
+                            <EventTriggerBehavior.Actions>
+                                <InvokeCommandAction Command="{Binding GitHubLinkItem.Command}"/>
+                            </EventTriggerBehavior.Actions>
+                        </EventTriggerBehavior>
+                    </Interaction.Behaviors>
+                    <ListBoxItem.ContentTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:CommandViewModel}">
+                            <StackPanel Spacing="20" 
+                                        Orientation="Horizontal">
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
+                                <TextBlock Text="{Binding Text}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBoxItem.ContentTemplate>
+                </ListBoxItem>
+                <ListBoxItem Grid.Row="3" 
+                             Content="{Binding SettingsItem}" 
+                             x:Name="SettingsItem" 
+                             IsSelected="{Binding IsSettingsOpen}">
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior EventName="PointerReleased" 
+                                              SourceObject="SettingsItem">
+                            <EventTriggerBehavior.Actions>
+                                <InvokeCommandAction Command="{Binding OpenSettingsCommand}"/>
+                            </EventTriggerBehavior.Actions>
+                        </EventTriggerBehavior>
+                    </Interaction.Behaviors>
+                    <ListBoxItem.ContentTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
+                            <StackPanel Spacing="20" 
+                                        Orientation="Horizontal">
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
+                                <TextBlock Text="{Binding Text}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBoxItem.ContentTemplate>
+                </ListBoxItem>
+            </Grid>
+
+        </SplitView.Pane>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" LastChildFill="False">
+                <controls:IconOnlyButton Command="{Binding GoBackCommand}"
+                                     Icon="ArrowLeftLine" />
+                <ContentControl Content="{Binding NotificationListViewModel}" 
+                                DockPanel.Dock="Right"/>
+                <ItemsControl DockPanel.Dock="Right"
+                              HorizontalAlignment="Right"
+                              ItemsSource="{Binding CurrentPage.TopBarCommands}"
+                              Margin="0,0,15,0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <controls:IconOnlyButton Icon="{Binding Icon}"
+                                                     Command="{Binding Command}"
+                                                     ToolTip.Tip="{Binding Tooltip}"
+                                                     Margin="5 0" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <controls:IconOnlyButton DockPanel.Dock="Right" 
+                                         Command="{Binding ToggleFullScreenCommand}" 
+                                         Icon="{Binding CurrentWindowState, Converter={StaticResource FullScreenToIconConverter}}" 
+                                         ToolTip.Tip="{loc:Translate TOGGLE_FULLSCREEN}"/>
+
+            </DockPanel>
+            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsVisible="{Binding CurrentPage.IsBusy}"
+                    ZIndex="5000" Background="#A0000000">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <controls:RingLoader Width="80" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center" Message="{Binding CurrentPage.BusyMessage, FallbackValue=''}" />
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="{Binding CurrentPage.CurrentFileName}"
+                               IsVisible="{Binding CurrentPage.CurrentFileName, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding CurrentPage.PercentageComplete, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <Run Text="{Binding CurrentPage.PercentageComplete, StringFormat={}{0:0.00}}" />
+                        <Run Text="%" />
+                    </TextBlock>
+                    <Button Content="{loc:Translate CANCEL}" Command="{Binding CurrentPage.CancelCommand}"
+                            IsVisible="{Binding CurrentPage.IsCancelable}">
+                    </Button>
+                </StackPanel>
+            </Border>
+            <TransitioningContentControl Grid.Row="1" 
+                                         Margin="15" 
+                                         Content="{Binding CurrentPage}">
+                <TransitioningContentControl.PageTransition>
+                    <CrossFade Duration="0:00:00.25" />
+                </TransitioningContentControl.PageTransition>
+                <TransitioningContentControl.IsEnabled>
+                    <Binding Path="CurrentPage.IsBusy" Converter="{x:Static ObjectConverters.Equal}">
+                        <Binding.ConverterParameter>
+                            <system:Boolean>False</system:Boolean>
+                        </Binding.ConverterParameter>
+                    </Binding>
+                </TransitioningContentControl.IsEnabled>
+            </TransitioningContentControl>
+        </Grid>
+    </SplitView>
+</Window>

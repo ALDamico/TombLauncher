@@ -1,0 +1,126 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.GamesDataGridView"
+             x:DataType="pages:GameListViewModel">
+    <Design.DataContext>
+        <pages:GameListViewModel />
+    </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:BooleanToIconConverter x:Key="AddToFavouritesBooleanToIconConverter" 
+                                                        TrueValue="HeartFill" 
+                                                        FalseValue="HeartLine"/>
+        <valueConverters:BooleanToStringConverter x:Key="AddRemoveFromFavouritesBooleanConverter" 
+                                                  TrueValue="{loc:Translate REMOVE_FROM_FAVOURITES}" 
+                                                  FalseValue="{loc:Translate ADD_TO_FAVOURITES}"/>
+        <valueConverters:BooleanToIconConverter x:Key="MarkAsCompletedBooleanToIconConverter" 
+                                                        TrueValue="TrophyFill" 
+                                                        FalseValue="TrophyLine"/>
+        <valueConverters:BooleanToStringConverter x:Key="MarkUnmarkCompletedBooleanConverter" 
+                                                  TrueValue="{loc:Translate UNMARK_AS_COMPLETED}" 
+                                                  FalseValue="{loc:Translate MARK_AS_COMPLETED}"/>
+    </UserControl.Resources>
+    <DataGrid ItemsSource="{Binding Games}" 
+              IsReadOnly="True" 
+              x:Name="GamesDataGrid"
+              IsVisible="{Binding Games, Converter={StaticResource CollectionNotEmptyToVisibilityConverter}}" 
+              SelectedItem="{Binding SelectedGame}"
+              FrozenColumnCount="1">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{loc:Translate Play}" 
+                              Command="{Binding PlayCommand}"
+                              CommandParameter="{Binding SelectedGame}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconRemixIcon Kind="PlayLargeFill"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{loc:Translate VIEW_DETAILS}" 
+                              Command="{Binding OpenCommand}" 
+                              CommandParameter="{Binding SelectedGame}"/>
+                    <Separator/>
+                    <MenuItem Header="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}" 
+                              Command="{Binding AddToFavouritesCommand}"
+                              CommandParameter="{Binding SelectedGame}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconRemixIcon Kind="{Binding SelectedGame.GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToIconConverter}}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}"
+                              Command="{Binding ToggleCompletedCommand}"
+                              CommandParameter="{Binding SelectedGame}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconRemixIcon Kind="{Binding SelectedGame.GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToIconConverter}}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="{loc:Translate UNINSTALL}" 
+                              Command="{Binding UninstallCommand}" 
+                              CommandParameter="{Binding SelectedGame}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconRemixIcon Kind="DeleteBinLine" Foreground="{DynamicResource DangerBrush}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="{loc:Translate ACTIONS}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" IsVisible="{Binding AreCommandsVisible}">
+                                <controls:IconButton Icon="PlayLargeFill"
+                                                     ToolTip.Tip="{Binding GameMetadata.Title, Converter={StaticResource LocalizedStringConverter}, ConverterParameter='PLAY_GAMENAME'}"
+                                                     Command="{Binding PlayCommand}" />
+                                <controls:IconButton Icon="FileListLine" ToolTip.Tip="{loc:Translate VIEW_DETAILS}"
+                                                     Command="{Binding OpenCommand}">
+                                </controls:IconButton>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="{loc:Translate TITLE}" Binding="{Binding GameMetadata.Title}" />
+                <DataGridTemplateColumn >
+                    <DataGridTemplateColumn.Header>
+                        <iconPacks:PackIconRemixIcon ToolTip.Tip="{loc:Translate FAVOURITE}" 
+                                               Kind="HeartLine"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ToggleButton Classes="icon-only" 
+                                          Command="{Binding ToggleFavouriteCommand}" 
+                                          ToolTip.Tip="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddRemoveFromFavouritesBooleanConverter}}">
+                                <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsFavourite, Converter={StaticResource AddToFavouritesBooleanToIconConverter}}"/>
+                            </ToggleButton>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn >
+                    <DataGridTemplateColumn.Header>
+                        <iconPacks:PackIconRemixIcon ToolTip.Tip="{loc:Translate COMPLETED}" 
+                                               Kind="TrophyLine"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ToggleButton Classes="icon-only" 
+                                          Command="{Binding ToggleCompletedCommand}" 
+                                          ToolTip.Tip="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkUnmarkCompletedBooleanConverter}}">
+                                <iconPacks:PackIconRemixIcon Kind="{Binding GameMetadata.IsCompleted, Converter={StaticResource MarkAsCompletedBooleanToIconConverter}}"/>
+                            </ToggleButton>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="{loc:Translate RELEASE_DATE}" Binding="{Binding GameMetadata.ReleaseDate, StringFormat=d}" />
+                <DataGridTextColumn Header="{loc:Translate INSTALL_DATE}" Binding="{Binding GameMetadata.InstallDate, StringFormat=d}" />
+                <DataGridTextColumn Header="{loc:Translate ENGINE}" Binding="{Binding GameMetadata.GameEngine, Converter={StaticResource EnumToDescriptionConverter}}" />
+                <DataGridTextColumn Header="{loc:Translate TIME_PLAYED}" Binding="{Binding TotalPlayedTime, Mode=OneWay, Converter={StaticResource TimeSpanToHumanReadableStringConverter}}"/>
+                <DataGridTextColumn Header="{loc:Translate LAST_PLAYED}" Binding="{Binding LastPlayed, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+</UserControl>

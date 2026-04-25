@@ -1,0 +1,43 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Horus Light Theme: Azure & Gold on light backgrounds -->
+    <!-- Primary Backgrounds -->
+    <Color x:Key="CardBackgroundColor">#CCE8F0FA</Color>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Light Azure -->
+    <SolidColorBrush x:Key="CardBorderBrush">#33000000</SolidColorBrush>
+    <SolidColorBrush x:Key="PageBackgroundBrush">#FAFCFF</SolidColorBrush>
+    <SolidColorBrush x:Key="SidebarBackgroundBrush">#F0F5FC</SolidColorBrush>
+    
+    <!-- Primary Actions -->
+    <Color x:Key="PrimaryColor">#2E86C1</Color>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" /> <!-- Azure Blue -->
+    <SolidColorBrush x:Key="PrimaryPointerOverBrush">#1A6FA0</SolidColorBrush>
+    <SolidColorBrush x:Key="ColoredButtonTextBrush">#FFFFFF</SolidColorBrush>
+
+    <!-- Interactive Controls: use PrimaryColor for checked/on states -->
+    <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{StaticResource PrimaryColor}" Opacity="0.85" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{StaticResource PrimaryColor}" Opacity="0.7" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{StaticResource PrimaryColor}" Opacity="0.85" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="{StaticResource PrimaryColor}" Opacity="0.7" />
+    <SolidColorBrush x:Key="RadioButtonOuterEllipseFillChecked" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="RadioButtonOuterEllipseFillCheckedPointerOver" Color="{StaticResource PrimaryColor}" Opacity="0.85" />
+    <SolidColorBrush x:Key="RadioButtonOuterEllipseFillCheckedPressed" Color="{StaticResource PrimaryColor}" Opacity="0.7" />
+
+    <!-- Accents -->
+    <SolidColorBrush x:Key="AccentBrush">#B8860B</SolidColorBrush> <!-- Dark Gold for visibility on light -->
+    
+    <!-- Status -->
+    <SolidColorBrush x:Key="SuccessBrush">#198754</SolidColorBrush>
+    <SolidColorBrush x:Key="SuccessPointerOverBrush">#157347</SolidColorBrush>
+    <SolidColorBrush x:Key="DangerBrush">#dc3545</SolidColorBrush>
+    <SolidColorBrush x:Key="DangerPointerOverBrush">#b02a37</SolidColorBrush>
+    <SolidColorBrush x:Key="WarningBrush">#B8860B</SolidColorBrush>
+    <SolidColorBrush x:Key="WarningPointerOverBrush">#D4A017</SolidColorBrush>
+    
+    <!-- Text -->
+    <SolidColorBrush x:Key="TextBrush">#212529</SolidColorBrush>
+    <SolidColorBrush x:Key="MutedTextBrush">#6c757d</SolidColorBrush>
+    <SolidColorBrush x:Key="SecondaryBrush">#6c757d</SolidColorBrush>
+</ResourceDictionary>

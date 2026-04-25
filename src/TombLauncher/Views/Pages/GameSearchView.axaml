@@ -1,0 +1,97 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:TombLauncher.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.GameSearchView"
+             x:Name="Root"
+             x:DataType="pages:GameSearchViewModel">
+    <Design.DataContext>
+        <pages:GameSearchViewModel />
+    </Design.DataContext>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCommand}" />
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
+        <EventTriggerBehavior EventName="KeyUp">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding HandleKeyUpCommand}"
+                                     PassEventArgsToCommand="True" />
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Page Title -->
+        <TextBlock Grid.Row="0"
+                   Classes="page-title"
+                   Text="{loc:Translate SEARCH, Casing=Upper}" />
+
+        <!-- Search Form (now contains the Search button) -->
+        <views:GameSearchForm Grid.Row="1"
+                              DataContext="{Binding SearchPayload}"
+                              AvailableDifficulties="{Binding AvailableDifficulties}"
+                              AvailableEngines="{Binding AvailableEngines}"
+                              SearchCommand="{Binding #Root.((pages:GameSearchViewModel)DataContext).SearchCommand}"
+                              ClearFiltersCommand="{Binding #Root.((pages:GameSearchViewModel)DataContext).ClearFiltersCommand}"
+                              Margin="0, 0, 0, 8"/>
+
+        <!-- Result Count -->
+        <TextBlock Grid.Row="2"
+                   Margin="8, 4"
+                   FontSize="13"
+                   Foreground="{DynamicResource MutedTextBrush}"
+                   IsVisible="{Binding HasSearched}">
+            <Run Text="{Binding ResultCount, Mode=OneWay, StringFormat='{}{0} '}"/><Run Text="{loc:Translate RESULTS_FOUND}"/><Run Text="{Binding LoadMoreFeedback, Mode=OneWay}"/>
+        </TextBlock>
+        
+        <!-- Results Area -->
+        <Panel Grid.Row="3">
+            <!-- Empty State: shown when searched but no results -->
+            <controls:EmptyStateView Icon="SearchLine"
+                                      Title="{loc:Translate NO_RESULTS_FOUND}"
+                                      Subtitle="{loc:Translate TRY_DIFFERENT_SEARCH_TERMS}"
+                                      IsVisible="{Binding ShowEmptyState}" />
+            
+            <!-- Results List -->
+            <ScrollViewer Offset="{Binding ScrollViewerOffset, Mode=TwoWay}"
+                          IsVisible="{Binding ShowResults}">
+                <ItemsRepeater ItemsSource="{Binding FetchedResults}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
+                            <views:GameSearchResultCardView TapCommand="{Binding DataContext.OpenCommand, ElementName=Root}" />
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </Panel>
+        
+        <!-- Load More Button -->
+        <controls:IconButton Grid.Row="4"
+                             HorizontalAlignment="Center"
+                             Margin="0, 8"
+                             Icon="ArrowDownSLine"
+                             Text="{loc:Translate LOAD_MORE}"
+                             Classes="btn-primary"
+                             MinWidth="160"
+                             MinHeight="36"
+                             HorizontalContentAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             Command="{Binding LoadMoreCommand}"
+                             IsVisible="{Binding HasMoreResults}" />
+    </Grid>
+</UserControl>

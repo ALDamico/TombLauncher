@@ -1,0 +1,74 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- JamSoft MsgBox and Dialog Theme Overrides -->
+    <Style Selector="Window">
+        <Setter Property="Background" Value="{DynamicResource PageBackgroundBrush}" />
+    </Style>
+    <Style Selector="Border#MsgBoxTitleBorder">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+    <Style Selector="Grid#ButtonGrid">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+    </Style>
+    <Style Selector="Ellipse#MsgBoxIconBackgroundEllipse">
+        <Setter Property="Fill" Value="White" />
+    </Style>
+
+    <!-- Pill buttons -->
+    <Style Selector="Grid#ButtonGrid Button">
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="Padding" Value="20 8" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
+    </Style>
+    <Style Selector="Grid#ButtonGrid Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryPointerOverBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
+    </Style>
+
+    <!-- No/Cancel buttons: red -->
+    <Style Selector="Button#MsgBoxNoButton">
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+    </Style>
+    <Style Selector="Button#MsgBoxNoButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DangerPointerOverBrush}" />
+    </Style>
+    <Style Selector="Button#MsgBoxCancelButton">
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+    </Style>
+    <Style Selector="Button#MsgBoxCancelButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DangerPointerOverBrush}" />
+    </Style>
+
+    <!-- JamSoft Dialog Chrome Overrides -->
+    <Style Selector="DockPanel#ChromeDockPanel">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+    </Style>
+    <Style Selector="Button.CloseChildButton:pointerover /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+    </Style>
+
+    <!-- Dialog buttons: pill style -->
+    <Style Selector="Button#DialogAcceptButton">
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="Padding" Value="20 8" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
+    </Style>
+    <Style Selector="Button#DialogAcceptButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryPointerOverBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
+    </Style>
+    <Style Selector="Button#DialogCancelButton">
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="Padding" Value="20 8" />
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
+    </Style>
+    <Style Selector="Button#DialogCancelButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DangerPointerOverBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
+    </Style>
+
+</Styles>

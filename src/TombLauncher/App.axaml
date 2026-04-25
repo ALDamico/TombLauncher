@@ -1,0 +1,38 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="TombLauncher.App"
+             xmlns:local="using:TombLauncher"
+             RequestedThemeVariant="Default">
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://TombLauncher/Assets/Themes/ScionTheme.axaml" />
+                <ResourceInclude Source="../Assets/RatingStyles.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://IconPacks.Avalonia.RemixIcon/RemixIcon.axaml" />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/MsgBoxStyles.axaml" />
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ChildStyle.axaml" />
+        <StyleInclude Source="avares://JamSoft.AvaloniaUI.Dialogs/Themes/ModalStyle.axaml" />
+        <StyleInclude Source="avares://TombLauncher/Assets/JamSoftOverrides.axaml" />
+        <StyleInclude Source="avares://TombLauncher/Assets/Converters.axaml" />
+        <StyleInclude Source="avares://TombLauncher/Assets/AppStyles.axaml"></StyleInclude>
+        <Style Selector="ComboBox">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="CalendarDatePicker">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        
+        <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
+        
+    </Application.Styles>
+</Application>
