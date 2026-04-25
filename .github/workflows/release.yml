@@ -230,7 +230,7 @@ jobs:
           gh release download v$VERSION \
             --repo ALDamico/TombLauncher \
             --pattern "TombLauncher-$VERSION-setup.exe" \
-            --pattern "TombLauncher-$VERSION-x86_64.AppImage" \
+            --pattern "tomb-launcher-$VERSION-x86_64.AppImage" \
             --pattern "TombLauncher $VERSION-portable.zip" \
             --dir artifacts/
         env:
@@ -247,12 +247,15 @@ jobs:
           curl -fsSL "https://tomblauncher.app/updates/appcast.xml" \
             -o appcast-output/appcast.xml 2>/dev/null || true
 
+          APPCAST_PUBLIC_KEY="RoxRb1RImp7yakYKUN+fEe+lt1WC2CWwnz+2pz4GSH8="
+
           netsparkle-generate-appcast \
             --single-file "artifacts/TombLauncher-$VERSION-setup.exe" \
             --file-version "$VERSION" \
             --os windows \
             --channel stable \
             --private-key-override "$APPCAST_PRIVATE_KEY" \
+            --public-key-override "$APPCAST_PUBLIC_KEY" \
             --use-ed25519-signature-attribute \
             --base-url "$BASE_URL" \
             --product-name "Tomb Launcher" \
@@ -261,11 +264,12 @@ jobs:
             -a appcast-output/
 
           netsparkle-generate-appcast \
-            --single-file "artifacts/TombLauncher-$VERSION-x86_64.AppImage" \
+            --single-file "artifacts/tomb-launcher-$VERSION-x86_64.AppImage" \
             --file-version "$VERSION" \
             --os linux \
             --channel stable \
             --private-key-override "$APPCAST_PRIVATE_KEY" \
+            --public-key-override "$APPCAST_PUBLIC_KEY" \
             --use-ed25519-signature-attribute \
             --base-url "$BASE_URL" \
             --product-name "Tomb Launcher" \
@@ -281,6 +285,7 @@ jobs:
             --os windows \
             --channel portable \
             --private-key-override "$APPCAST_PRIVATE_KEY" \
+            --public-key-override "$APPCAST_PUBLIC_KEY" \
             --use-ed25519-signature-attribute \
             --base-url "https://tomblauncher.app/updates/" \
             --product-name "Tomb Launcher" \
