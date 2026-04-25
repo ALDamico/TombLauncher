@@ -132,7 +132,7 @@ jobs:
         run: |
           Compress-Archive `
             -Path "src/TombLauncher/bin/Release/publish-self-contained/*" `
-            -DestinationPath "deploy/Output/TombLauncher $env:VERSION-portable.zip"
+            -DestinationPath "deploy/Output/TombLauncher-$env:VERSION-portable.zip"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -230,8 +230,8 @@ jobs:
           gh release download v$VERSION \
             --repo ALDamico/TombLauncher \
             --pattern "TombLauncher-$VERSION-setup.exe" \
-            --pattern "tomb-launcher-$VERSION-x86_64.AppImage" \
-            --pattern "TombLauncher $VERSION-portable.zip" \
+            --pattern "tomb-launcher-$VERSION-1.x86_64.AppImage" \
+            --pattern "*portable.zip" \
             --dir artifacts/
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -264,7 +264,7 @@ jobs:
             -a appcast-output/
 
           netsparkle-generate-appcast \
-            --single-file "artifacts/tomb-launcher-$VERSION-x86_64.AppImage" \
+            --single-file "artifacts/tomb-launcher-$VERSION-1.x86_64.AppImage" 
             --file-version "$VERSION" \
             --os linux \
             --channel stable \
@@ -277,7 +277,7 @@ jobs:
             --reparse-existing \
             -a appcast-output/
 
-          PORTABLE_ZIP="TombLauncher $VERSION-portable.zip"
+          PORTABLE_ZIP="TombLauncher-$VERSION-portable.zip"
           cp "artifacts/$PORTABLE_ZIP" "appcast-output/$PORTABLE_ZIP"
           netsparkle-generate-appcast \
             --single-file "appcast-output/$PORTABLE_ZIP" \
@@ -308,5 +308,5 @@ jobs:
             appcast-output/appcast.xml \
             "$SSH_USER@$SSH_HOST:$SSH_PATH/"
           scp -i ~/.ssh/deploy_key \
-            "appcast-output/TombLauncher $VERSION-portable.zip" \
+            "appcast-output/TombLauncher-$VERSION-portable.zip" \
             "$SSH_USER@$SSH_HOST:$SSH_PATH/"
