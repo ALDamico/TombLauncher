@@ -28,6 +28,7 @@ jobs:
           gh release download v$VERSION \
             --pattern "TombLauncher-$VERSION-setup.exe" \
             --pattern "TombLauncher-$VERSION-x86_64.AppImage" \
+            --pattern "TombLauncher-$VERSION-portable-win-x64.zip" \
             --dir artifacts/
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,6 +60,20 @@ jobs:
             --file-version "$VERSION" \
             --os linux \
             --channel stable \
+            --private-key-override "$APPCAST_PRIVATE_KEY" \
+            --use-ed25519-signature-attribute \
+            --base-url "$BASE_URL" \
+            --product-name "Tomb Launcher" \
+            --human-readable \
+            --reparse-existing \
+            -a appcast-output/
+
+          # Windows portable ZIP — canale portable
+          netsparkle-generate-appcast \
+            --single-file "artifacts/TombLauncher-$VERSION-portable-win-x64.zip" \
+            --file-version "$VERSION" \
+            --os windows \
+            --channel portable \
             --private-key-override "$APPCAST_PRIVATE_KEY" \
             --use-ed25519-signature-attribute \
             --base-url "$BASE_URL" \

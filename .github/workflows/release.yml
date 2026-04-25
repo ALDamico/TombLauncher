@@ -127,10 +127,17 @@ jobs:
             "/DOutputBaseFilename=TombLauncher-$env:VERSION-setup" `
             "deploy\installer-script.iss"
 
+      - name: Build portable ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive `
+            -Path "src/TombLauncher/bin/Release/publish-self-contained/*" `
+            -DestinationPath "deploy/Output/TombLauncher-$env:VERSION-portable-win-x64.zip"
+
       - uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: deploy/Output/*.exe
+          path: deploy/Output/
 
   create-release:
     if: |
