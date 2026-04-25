@@ -228,6 +228,7 @@ jobs:
         run: |
           mkdir artifacts
           gh release download v$VERSION \
+            --repo ALDamico/TombLauncher \
             --pattern "TombLauncher-$VERSION-setup.exe" \
             --pattern "TombLauncher-$VERSION-x86_64.AppImage" \
             --pattern "TombLauncher $VERSION-portable.zip" \
