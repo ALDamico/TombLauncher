@@ -40,6 +40,10 @@ jobs:
           BASE_URL="https://github.com/ALDamico/TombLauncher/releases/download/v$VERSION/"
           mkdir appcast-output
 
+          # Scarica l'appcast esistente per preservare le versioni precedenti
+          curl -fsSL "https://tomblauncher.app/updates/appcast.xml" \
+            -o appcast-output/appcast.xml 2>/dev/null || true
+
           # Windows installer
           netsparkle-generate-appcast \
             --single-file "artifacts/TombLauncher-$VERSION-setup.exe" \
@@ -51,9 +55,10 @@ jobs:
             --base-url "$BASE_URL" \
             --product-name "Tomb Launcher" \
             --human-readable \
+            --reparse-existing \
             -a appcast-output/
 
-          # Linux AppImage — appended to the same appcast
+          # Linux AppImage
           netsparkle-generate-appcast \
             --single-file "artifacts/TombLauncher-$VERSION-x86_64.AppImage" \
             --file-version "$VERSION" \
@@ -67,12 +72,28 @@ jobs:
             --reparse-existing \
             -a appcast-output/
 
-      - name: Upload appcast.xml to tomblauncher.app
+          # Windows portable ZIP — canale portable, servito da tomblauncher.app
+          PORTABLE_ZIP="TombLauncher $VERSION-portable.zip"
+          cp "artifacts/$PORTABLE_ZIP" "appcast-output/$PORTABLE_ZIP"
+          netsparkle-generate-appcast \
+            --single-file "appcast-output/$PORTABLE_ZIP" \
+            --file-version "$VERSION" \
+            --os windows \
+            --channel portable \
+            --private-key-override "$APPCAST_PRIVATE_KEY" \
+            --use-ed25519-signature-attribute \
+            --base-url "https://tomblauncher.app/updates/" \
+            --product-name "Tomb Launcher" \
+            --human-readable \
+            --reparse-existing \
+            -a appcast-output/
+
+      - name: Upload appcast.xml and portable ZIP to tomblauncher.app
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.DEPLOY_SSH_HOST }}
           username: ${{ secrets.DEPLOY_SSH_USER }}
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-          source: appcast-output/appcast.xml
+          source: "appcast-output/appcast.xml,appcast-output/TombLauncher ${{ env.VERSION }}-portable.zip"
           target: ${{ secrets.DEPLOY_SSH_PATH }}
           strip_components: 1
