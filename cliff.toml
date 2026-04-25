@@ -1,0 +1,29 @@
+[changelog]
+header = ""
+body = """
+{% for group, commits in commits | group_by(attribute="group") -%}
+### {{ group | upper_first }}
+{% for commit in commits -%}
+- {{ commit.message | upper_first }}
+{% endfor %}
+{% endfor %}
+"""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+commit_parsers = [
+  { message = "^feat", group = "New features" },
+  { message = "^fix", group = "Bug fixes" },
+  { message = "^perf", group = "Performance improvements" },
+  { message = "^refactor", skip = true },
+  { message = "^chore", skip = true },
+  { message = "^test", skip = true },
+  { message = "^docs", skip = true },
+  { message = "^style", skip = true },
+  { message = "^build", skip = true },
+  { message = "^ci", skip = true },
+]
+filter_commits = true
+tag_pattern = "v[0-9]*"

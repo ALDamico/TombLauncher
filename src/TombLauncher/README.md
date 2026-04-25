@@ -13,30 +13,34 @@ You can use the -v or --verbose switch to get a more comprehensive output in cas
 creating a migration.
 
 ## Releasing a new version
-If this is the first time you're generating a new version, you'll need to make sure you have the `netsparkle-generate-appcast` utility installed.
 
-To install, use the command `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
+The release process is fully automated via GitHub Actions and triggers on merge of a `release/x.y.z` branch into `main`.
 
-With the tool installed, you'll need to copy the NetSparkle_Ed25519.priv and NetSparkle_Ed25519.pub files to `%HOMEPATH%\AppData\Local\netsparkle`.
+1. **Bump the version** using the `/bump-version` slash command in Claude Code:
+   ```
+   /bump-version 1.0.3
+   ```
+   This updates `TombLauncher.csproj` and `deploy/TombLauncher.pupnet.conf` in one step.
 
-> **Note**
-> 
-> For security reasons, these files aren't stored in the repository.
+2. **Commit and push** the version bump:
+   ```bash
+   git add src/TombLauncher/TombLauncher.csproj deploy/TombLauncher.pupnet.conf
+   git commit -m "chore: bump version to 1.0.3"
+   git push
+   ```
 
-With the public/private key pair in order, you will need to edit the file `installer-script.iss` by bumping up its version number.
+3. **Create and push the release branch**:
+   ```bash
+   git checkout -b release/1.0.3
+   git push origin release/1.0.3
+   ```
 
-The TombLauncher project version number will also need to be bumped up.
+4. **Open a PR** from `release/1.0.3` → `main`. CI (build + test) runs automatically on the PR.
 
-Now, run the _Publish Self-Contained_ task to generate the new version.
+5. **Merge the PR**. GitHub Actions then automatically:
+   - Builds the Windows installer (Inno Setup) and Linux packages (AppImage, DEB, RPM)
+   - Generates release notes from conventional commits since the previous tag
+   - Creates the git tag `v1.0.3` and publishes a GitHub Release with all packages
+   - Signs and deploys the updated `appcast.xml` to `tomblauncher.app` for in-app updates
 
-Once done, compile the script using InnoSetup. By default, the application will generate the installer in a
-directory named **Output** (it will be created if it doesn't exist).
-
-When InnoSetup has finished generating the installer, use the following command to generate the appcast:
-
-`netsparkle-generate-appcast -b .\Output\ -p .\TombLauncher\Data -u "YOUR_APPCASTS_PATH" -l "YOUR_CHANGELOGS_PATH" -a "YOUR_DESTINATION_APPCAST_PATH" -n "Tomb Launcher"`
-
-> **Note**
-> 
-> The FTP transfer to the website **MUST** be in binary mode. Otherwise, the carriage returns may get stripped, causing 
-> the signature verification to fail for apparently no reason.
+> **Note:** The CI validates that the branch version matches `TombLauncher.csproj`. If they differ, the pipeline fails — run `/bump-version` before creating the release branch.
