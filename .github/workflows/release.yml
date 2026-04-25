@@ -190,5 +190,113 @@ jobs:
             staging/**/*.deb
             staging/**/*.rpm
             staging/**/*.exe
+            staging/**/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-appcast:
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       startsWith(github.event.pull_request.head.ref, 'release/'))
+    runs-on: ubuntu-latest
+    needs: create-release
+    steps:
+      - name: Set VERSION
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+          else
+            HEAD_REF="${{ github.event.pull_request.head.ref }}"
+            echo "VERSION=${HEAD_REF#release/}" >> $GITHUB_ENV
+          fi
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install netsparkle-generate-appcast
+        run: |
+          dotnet tool install -g NetSparkleUpdater.Tools.AppCastGenerator
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Download release artifacts
+        run: |
+          mkdir artifacts
+          gh release download v$VERSION \
+            --pattern "TombLauncher-$VERSION-setup.exe" \
+            --pattern "TombLauncher-$VERSION-x86_64.AppImage" \
+            --pattern "TombLauncher $VERSION-portable.zip" \
+            --dir artifacts/
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate and sign appcast.xml
+        env:
+          APPCAST_PRIVATE_KEY: ${{ secrets.APPCAST_PRIVATE_KEY }}
+          DOTNET_ROLL_FORWARD: Major
+        run: |
+          BASE_URL="https://github.com/ALDamico/TombLauncher/releases/download/v$VERSION/"
+          mkdir appcast-output
+
+          curl -fsSL "https://tomblauncher.app/updates/appcast.xml" \
+            -o appcast-output/appcast.xml 2>/dev/null || true
+
+          netsparkle-generate-appcast \
+            --single-file "artifacts/TombLauncher-$VERSION-setup.exe" \
+            --file-version "$VERSION" \
+            --os windows \
+            --channel stable \
+            --private-key-override "$APPCAST_PRIVATE_KEY" \
+            --use-ed25519-signature-attribute \
+            --base-url "$BASE_URL" \
+            --product-name "Tomb Launcher" \
+            --human-readable \
+            --reparse-existing \
+            -a appcast-output/
+
+          netsparkle-generate-appcast \
+            --single-file "artifacts/TombLauncher-$VERSION-x86_64.AppImage" \
+            --file-version "$VERSION" \
+            --os linux \
+            --channel stable \
+            --private-key-override "$APPCAST_PRIVATE_KEY" \
+            --use-ed25519-signature-attribute \
+            --base-url "$BASE_URL" \
+            --product-name "Tomb Launcher" \
+            --human-readable \
+            --reparse-existing \
+            -a appcast-output/
+
+          PORTABLE_ZIP="TombLauncher $VERSION-portable.zip"
+          cp "artifacts/$PORTABLE_ZIP" "appcast-output/$PORTABLE_ZIP"
+          netsparkle-generate-appcast \
+            --single-file "appcast-output/$PORTABLE_ZIP" \
+            --file-version "$VERSION" \
+            --os windows \
+            --channel portable \
+            --private-key-override "$APPCAST_PRIVATE_KEY" \
+            --use-ed25519-signature-attribute \
+            --base-url "https://tomblauncher.app/updates/" \
+            --product-name "Tomb Launcher" \
+            --human-readable \
+            --reparse-existing \
+            -a appcast-output/
+
+      - name: Upload to tomblauncher.app
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
+          SSH_PATH: ${{ secrets.DEPLOY_SSH_PATH }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          scp -i ~/.ssh/deploy_key \
+            appcast-output/appcast.xml \
+            "$SSH_USER@$SSH_HOST:$SSH_PATH/"
+          scp -i ~/.ssh/deploy_key \
+            "appcast-output/TombLauncher $VERSION-portable.zip" \
+            "$SSH_USER@$SSH_HOST:$SSH_PATH/"
