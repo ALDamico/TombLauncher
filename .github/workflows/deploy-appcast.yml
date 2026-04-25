@@ -41,6 +41,10 @@ jobs:
           BASE_URL="https://github.com/ALDamico/TombLauncher/releases/download/v$VERSION/"
           mkdir appcast-output
 
+          # Scarica l'appcast esistente per preservare le versioni precedenti
+          curl -fsSL "https://tomblauncher.app/updates/appcast.xml" \
+            -o appcast-output/appcast.xml 2>/dev/null || true
+
           # Windows installer
           netsparkle-generate-appcast \
             --single-file "artifacts/TombLauncher-$VERSION-setup.exe" \
@@ -52,9 +56,10 @@ jobs:
             --base-url "$BASE_URL" \
             --product-name "Tomb Launcher" \
             --human-readable \
+            --reparse-existing \
             -a appcast-output/
 
-          # Linux AppImage — appended to the same appcast
+          # Linux AppImage
           netsparkle-generate-appcast \
             --single-file "artifacts/TombLauncher-$VERSION-x86_64.AppImage" \
             --file-version "$VERSION" \
