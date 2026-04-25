@@ -103,7 +103,7 @@ public class PathUtilsTests : IDisposable
     [Fact]
     public void GetWindowsInvalidFileNameChars_WithoutSeparators_DoesNotContainSlashes()
     {
-        var chars = PathUtils.GetWindowsInvalidFileNameChars(false);
+        var chars = PathUtils.GetWindowsInvalidFileNameChars();
         Assert.DoesNotContain('\\', chars);
         Assert.DoesNotContain('/', chars);
     }
@@ -125,5 +125,77 @@ public class PathUtilsTests : IDisposable
         Assert.StartsWith(Path.GetTempPath(), result);
         Assert.EndsWith("TombLauncher", result);
         Assert.True(Directory.Exists(result));
+    }
+
+    [Fact]
+    public void GetDirectorySize_DoesNotFollowSymlinks()
+    {
+        var folderA = Path.Combine(_tempDir, "folderA");
+        var folderB = Path.Combine(_tempDir, "folderB");
+        Directory.CreateDirectory(folderA);
+        Directory.CreateDirectory(folderB);
+
+        File.WriteAllText(Path.Combine(folderA, "a.txt"), "A"); // 1 byte
+        File.WriteAllBytes(Path.Combine(folderB, "big.bin"), new byte[1000]); // 1000 byte
+
+        // symlink dentro folderA che punta a folderB
+        Directory.CreateSymbolicLink(Path.Combine(folderA, "linkToB"), folderB);
+
+        var size = PathUtils.GetDirectorySize(folderA);
+        Assert.Equal(1L, size); // solo a.txt, non big.bin
+    }
+
+    [Fact]
+    public void GetDirectorySize_SkipsProtonPrefixDirectory()
+    {
+        var folder = Path.Combine(_tempDir, "proton");
+        var protonPfxFolder = Path.Combine(folder, "proton_pfx");
+        Directory.CreateDirectory(folder);
+        Directory.CreateDirectory(protonPfxFolder);
+        var arr = new byte[1000];
+        WriteEmptyArray(folder, arr);
+        WriteEmptyArray(protonPfxFolder, arr);
+
+        var size = PathUtils.GetDirectorySize(folder);
+        Assert.Equal(1000, size); // only "proton/a.bin", skips "proton_pfx/a.bin"
+    }
+
+    [Fact]
+    public void GetDirectorySize_DoesNotThrow_ForInaccessibleSubdirectory()
+    {
+        if (OperatingSystem.IsWindows())
+            return;
+        var dir = Path.Combine(_tempDir, "accessible");
+        Directory.CreateDirectory(dir);
+        var inaccessibleDir = Path.Combine(dir, "inaccessible");
+        Directory.CreateDirectory(inaccessibleDir);
+        var arr = new byte[500];
+        WriteEmptyArray(dir, arr);
+        WriteEmptyArray(inaccessibleDir, arr);
+
+        long directorySize = -1;
+        Exception? exception = null;
+        try
+        {
+            File.SetUnixFileMode(inaccessibleDir, UnixFileMode.None);
+            directorySize = PathUtils.GetDirectorySize(dir);
+        }
+        catch(Exception ex)
+        {
+            exception = ex;
+        }
+        finally
+        {
+            File.SetUnixFileMode(inaccessibleDir, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        }
+
+        Assert.Equal(500, directorySize);
+        Assert.Null(exception);
+    }
+
+    private static void WriteEmptyArray(string folder, byte[] array)
+    {
+        var fileName = Path.Combine(folder, "a.bin");
+        File.WriteAllBytes(fileName, array);
     }
 }

@@ -10,6 +10,7 @@
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              xmlns:downloaders="clr-namespace:TombLauncher.Contracts.Downloaders;assembly=TombLauncher.Contracts"
              xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:enums="clr-namespace:TombLauncher.Contracts.Enums;assembly=TombLauncher.Contracts"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameSearchResultCardView"
              x:DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
@@ -210,7 +211,7 @@
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top" Spacing="4" Margin="0, 4, 0, 0">
                 <controls:IconOnlyButton Icon="PlayLargeFill" Classes="btn-success"
                                          Command="{Binding InstalledGame.PlayCommand}"
-                                         IsVisible="{Binding InstalledGame, Converter={StaticResource GameInstalledToBooleanConverter}, Mode=OneWay}" />
+                                         IsVisible="{Binding InstalledGame.GameMetadata.IsInstalled, Mode=OneWay}" />
                 <Button Command="{Binding InstallCommand}"
                         Classes="btn-primary"
                         Width="36" Height="36"
@@ -219,7 +220,7 @@
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         CommandParameter="{Binding .}"
-                        IsVisible="{Binding InstalledGame, Converter={StaticResource GameNotInstalledToBooleanConverter}}"
+                        IsVisible="{Binding !InstalledGame.GameMetadata.IsInstalled}"
                         IsEnabled="{Binding ., Converter={StaticResource SearchResultCanDownloadToBooleanConverter}}"
                         ToolTip.Tip="{Binding DownloadLink, Converter={StaticResource DownloadToolTipConverter}}"
                         ToolTip.ShowOnDisabled="True">
@@ -230,7 +231,7 @@
                 <controls:IconOnlyButton Icon="CloseLine"
                                          Classes="btn-danger"
                                          ToolTip.Tip="{loc:Translate CANCEL}"
-                                         IsVisible="{Binding InstallProgress, Converter={StaticResource GameIsInstallingToBooleanConverter}}"
+                                         IsVisible="{Binding InstallProgress.InstallStatus, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static enums:InstallStatus.Completed}}"
                                          Command="{Binding CancelInstallCommand}" />
                 <!-- Kebab button: choose specific download source -->
                 <controls:IconOnlyButton Icon="MoreLine"

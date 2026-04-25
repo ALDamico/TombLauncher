@@ -21,11 +21,6 @@ public class BooleanToStringConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (targetType == typeof(bool))
-        {
-            return (value as string) == TrueValue.GetLocalizedString();
-        }
-
-        return false;
+        throw new NotSupportedException();
     }
 }
