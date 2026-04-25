@@ -20,7 +20,7 @@ public static class DateTimeExtensions
         return dateTime.GetDateAtMidnight() + TimeSpan.FromDays(1) - TimeSpan.FromSeconds(1);
     }
 
-    public static TimeSpan Average(this IEnumerable<TimeSpan> timeSpans)
+    public static TimeSpan Average(this IEnumerable<TimeSpan>? timeSpans)
     {
         if (timeSpans == null) 
             return TimeSpan.Zero;
@@ -32,7 +32,7 @@ public static class DateTimeExtensions
         return TimeSpan.FromTicks((long)Math.Round(average, 0, MidpointRounding.AwayFromZero));
     }
 
-    public static TimeSpan Sum(this IEnumerable<TimeSpan> timeSpans)
+    public static TimeSpan Sum(this IEnumerable<TimeSpan>? timeSpans)
     {
         if (timeSpans == null) 
             return TimeSpan.Zero;
