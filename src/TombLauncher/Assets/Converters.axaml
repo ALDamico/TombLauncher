@@ -8,9 +8,6 @@
         <!-- ── Game state ── -->
         <valueConverters:MultiSourceGameSearchResultMetadataCanDownloadToBooleanConverter
             x:Key="SearchResultCanDownloadToBooleanConverter" />
-        <valueConverters:GameIsInstallingToBooleanConverter       x:Key="GameIsInstallingToBooleanConverter" />
-        <valueConverters:GameMetadataIsNotInstalledToBooleanConverter x:Key="GameNotInstalledToBooleanConverter" />
-        <valueConverters:GameMetadataIsInstalledToBooleanConverter x:Key="GameInstalledToBooleanConverter" />
 
         <!-- ── Collections ── -->
         <valueConverters:CollectionToVisibilityConverter x:Key="CollectionEmptyToVisibilityConverter" />
