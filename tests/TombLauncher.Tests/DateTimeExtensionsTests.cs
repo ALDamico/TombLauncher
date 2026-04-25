@@ -102,8 +102,7 @@ public class DateTimeExtensionsTests
         IEnumerable<TimeSpan>? data = null;
         Assert.Equal(TimeSpan.Zero, data.Sum());
     }
-    
-    
+
     [Fact]
     public void Sum_EmptyReturnsZero()
     {

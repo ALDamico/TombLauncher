@@ -188,8 +188,7 @@ public class PathUtilsTests : IDisposable
         {
             File.SetUnixFileMode(inaccessibleDir, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         }
-        
-        
+
         Assert.Equal(500, directorySize);
         Assert.Null(exception);
     }
