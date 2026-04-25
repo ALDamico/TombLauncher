@@ -264,7 +264,7 @@ jobs:
             -a appcast-output/
 
           netsparkle-generate-appcast \
-            --single-file "artifacts/tomb-launcher-$VERSION-1.x86_64.AppImage" \
+            --single-file "artifacts/tomb-launcher-$VERSION-1.x86_64.AppImage" 
             --file-version "$VERSION" \
             --os linux \
             --channel stable \
