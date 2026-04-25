@@ -89,6 +89,16 @@ jobs:
             "VERSION=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append
           }
 
+      - name: Validate version matches .csproj
+        if: github.event_name != 'workflow_dispatch'
+        shell: pwsh
+        run: |
+          $csprojVersion = (Select-String -Path 'src/TombLauncher/TombLauncher.csproj' -Pattern '<Version>([^<]+)</Version>').Matches[0].Groups[1].Value
+          if ($csprojVersion -ne $env:VERSION) {
+            Write-Error "Branch release/$env:VERSION does not match .csproj ($csprojVersion). Run /bump-version before creating the release branch."
+            exit 1
+          }
+
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
