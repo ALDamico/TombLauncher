@@ -242,56 +242,37 @@ jobs:
           DOTNET_ROLL_FORWARD: Major
         run: |
           BASE_URL="https://github.com/ALDamico/TombLauncher/releases/download/v$VERSION/"
+          APPCAST_PUBLIC_KEY="RoxRb1RImp7yakYKUN+fEe+lt1WC2CWwnz+2pz4GSH8="
           mkdir appcast-output
 
           curl -fsSL "https://tomblauncher.app/updates/appcast.xml" \
             -o appcast-output/appcast.xml 2>/dev/null || true
 
-          APPCAST_PUBLIC_KEY="RoxRb1RImp7yakYKUN+fEe+lt1WC2CWwnz+2pz4GSH8="
+          COMMON_ARGS=(
+            --private-key-override "$APPCAST_PRIVATE_KEY"
+            --public-key-override "$APPCAST_PUBLIC_KEY"
+            --use-ed25519-signature-attribute
+            --product-name "Tomb Launcher"
+            --human-readable
+            --reparse-existing
+            -a appcast-output/
+          )
 
           netsparkle-generate-appcast \
             --single-file "artifacts/TombLauncher-$VERSION-setup.exe" \
-            --file-version "$VERSION" \
-            --os windows \
-            --channel stable \
-            --private-key-override "$APPCAST_PRIVATE_KEY" \
-            --public-key-override "$APPCAST_PUBLIC_KEY" \
-            --use-ed25519-signature-attribute \
-            --base-url "$BASE_URL" \
-            --product-name "Tomb Launcher" \
-            --human-readable \
-            --reparse-existing \
-            -a appcast-output/
+            --file-version "$VERSION" --os windows \
+            --base-url "$BASE_URL" "${COMMON_ARGS[@]}"
 
           netsparkle-generate-appcast \
-            --single-file "artifacts/tomb-launcher-$VERSION-1.x86_64.AppImage" 
-            --file-version "$VERSION" \
-            --os linux \
-            --channel stable \
-            --private-key-override "$APPCAST_PRIVATE_KEY" \
-            --public-key-override "$APPCAST_PUBLIC_KEY" \
-            --use-ed25519-signature-attribute \
-            --base-url "$BASE_URL" \
-            --product-name "Tomb Launcher" \
-            --human-readable \
-            --reparse-existing \
-            -a appcast-output/
+            --single-file "artifacts/tomb-launcher-$VERSION-1.x86_64.AppImage" \
+            --file-version "$VERSION" --os linux \
+            --base-url "$BASE_URL" "${COMMON_ARGS[@]}"
 
-          PORTABLE_ZIP="TombLauncher-$VERSION-portable.zip"
-          cp "artifacts/$PORTABLE_ZIP" "appcast-output/$PORTABLE_ZIP"
+          cp "artifacts/TombLauncher-$VERSION-portable.zip" appcast-output/
           netsparkle-generate-appcast \
-            --single-file "appcast-output/$PORTABLE_ZIP" \
-            --file-version "$VERSION" \
-            --os windows \
-            --channel portable \
-            --private-key-override "$APPCAST_PRIVATE_KEY" \
-            --public-key-override "$APPCAST_PUBLIC_KEY" \
-            --use-ed25519-signature-attribute \
-            --base-url "https://tomblauncher.app/updates/" \
-            --product-name "Tomb Launcher" \
-            --human-readable \
-            --reparse-existing \
-            -a appcast-output/
+            --single-file "appcast-output/TombLauncher-$VERSION-portable.zip" \
+            --file-version "$VERSION" --os windows --channel portable \
+            --base-url "https://tomblauncher.app/updates/" "${COMMON_ARGS[@]}"
 
       - name: Upload to tomblauncher.app
         env:
