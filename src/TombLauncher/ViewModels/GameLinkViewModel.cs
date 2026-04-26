@@ -3,7 +3,7 @@ using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.ViewModels;
 
-public partial class GameLinkViewModel : ViewModelBase
+public partial class GameLinkViewModel : ObservableObject
 {
     [ObservableProperty] private int _id;
     [ObservableProperty] private LinkType _linkType;
