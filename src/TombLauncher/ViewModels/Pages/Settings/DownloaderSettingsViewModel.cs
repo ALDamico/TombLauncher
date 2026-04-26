@@ -10,7 +10,6 @@ using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
-using TombLauncher.Mapping;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages.Settings;

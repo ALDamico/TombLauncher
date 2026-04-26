@@ -12,7 +12,7 @@ using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.Mapping;
+using TombLauncher.Mappers;
 using TombLauncher.ValueConverters;
 using TombLauncher.ViewModels;
 

@@ -14,7 +14,6 @@ using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
-using TombLauncher.Mapping;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.MessageBoxes;

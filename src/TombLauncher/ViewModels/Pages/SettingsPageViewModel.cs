@@ -8,7 +8,6 @@ using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Mappers;
-using TombLauncher.Mapping;
 using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages.Settings;
 

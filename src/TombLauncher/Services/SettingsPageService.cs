@@ -15,7 +15,6 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
-using TombLauncher.Mapping;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;

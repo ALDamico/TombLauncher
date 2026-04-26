@@ -21,7 +21,6 @@ using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Mappers;
-using TombLauncher.Mapping;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services;
