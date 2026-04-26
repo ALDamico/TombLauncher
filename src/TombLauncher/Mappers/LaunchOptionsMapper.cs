@@ -2,7 +2,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.ViewModels.Dialogs;
 
-namespace TombLauncher.Factories.Mapping;
+namespace TombLauncher.Mappers;
 
 public class LaunchOptionsMapper
 {

@@ -2,19 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services;
@@ -25,7 +23,8 @@ public class NewGameService : IViewService
         GameFileHashCalculator hashCalculator,
         TombRaiderLevelInstaller levelInstaller,
         TombRaiderEngineDetector engineDetector,
-        ILogger<NewGameService> logger)
+        ILogger<NewGameService> logger,
+        GameMetadataMapper gameMetadataMapper)
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
@@ -34,15 +33,16 @@ public class NewGameService : IViewService
         _levelInstaller = levelInstaller;
         _engineDetector = engineDetector;
         _logger = logger;
+        _gameMetadataMapper = gameMetadataMapper;
     }
 
     public ViewServiceContext ViewContext { get; }
     private readonly ILogger<NewGameService> _logger;
+    private readonly GameMetadataMapper _gameMetadataMapper;
     private readonly GameDataService _gameDataService;
     private readonly GameHashDataService _gameHashDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    private IMapper Mapper => ViewContext.Mapper;
     private readonly GameFileHashCalculator _gameFileHashCalculator;
     private readonly TombRaiderLevelInstaller _levelInstaller;
     private readonly TombRaiderEngineDetector _engineDetector;
@@ -51,7 +51,7 @@ public class NewGameService : IViewService
     {
         var file = await ViewContext.PopupService.OpenFile("SELECT_A_ZIP_FILE".GetLocalizedString(), new List<FilePickerFileType>()
         {
-            new FilePickerFileType("ZIP_FILES".GetLocalizedString())
+            new("ZIP_FILES".GetLocalizedString())
             {
                 Patterns = new List<string>() { "*.zip" }
             }
@@ -96,7 +96,7 @@ public class NewGameService : IViewService
         var guid = Guid.NewGuid();
         gameMetadata.Guid = guid;
 
-        var gameMetadataDto = Mapper.Map<GameMetadataDto>(gameMetadata);
+        var gameMetadataDto = _gameMetadataMapper.ToDto(gameMetadata);
 
         var installLocation = await _levelInstaller.Install(source, gameMetadataDto, CancellationToken.None, progress);
         progress.Report(new CopyProgressInfo() { Message = "FINISHING_UP".GetLocalizedString() });
@@ -109,7 +109,7 @@ public class NewGameService : IViewService
         gameMetadata.CommunitySetupExecutable = gameEngineResult.CommunitySetupExecutablePath;
         gameMetadata.IsInstalled = true;
 
-        var dto = Mapper.Map<GameMetadataDto>(gameMetadata);
+        var dto = _gameMetadataMapper.ToDto(gameMetadata);
         await _gameDataService.UpsertGame(dto);
         hashes.ForEach(h => h.GameId = dto.Id);
         await _gameHashDataService.SaveHashes(hashes);

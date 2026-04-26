@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Factories.Mapping;
 using TombLauncher.Installers.Downloaders;
+using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.Pages;
@@ -29,7 +28,9 @@ public class WelcomePageService : IViewService
         GameDownloadManager gameDownloadManager, 
         GameWithStatsService gameWithStatsService, 
         GitHubReleaseService gitHubReleaseService,
-        GameMetadataMapper gameMetadataMapper)
+        GameMetadataMapper gameMetadataMapper,
+        SearchMapper searchMapper,
+        GameSearchResultService gameSearchResultService)
     {
         ViewContext = viewContext;
         _appCrashDataService = appCrashDataService;
@@ -41,6 +42,8 @@ public class WelcomePageService : IViewService
         _gameWithStatsService = gameWithStatsService;
         _gitHubReleaseService = gitHubReleaseService;
         _gameMetadataMapper = gameMetadataMapper;
+        _searchMapper = searchMapper;
+        _gameSearchResultService = gameSearchResultService;
     }
     public ViewServiceContext ViewContext { get; }
     private readonly AppCrashDataService _appCrashDataService;
@@ -50,7 +53,8 @@ public class WelcomePageService : IViewService
     private readonly GameWithStatsService _gameWithStatsService;
     private readonly GitHubReleaseService _gitHubReleaseService;
     private readonly GameMetadataMapper _gameMetadataMapper;
-    private IMapper Mapper => ViewContext.Mapper;
+    private readonly SearchMapper _searchMapper;
+    private readonly GameSearchResultService _gameSearchResultService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly GameDataService _gameDataService;
@@ -132,7 +136,7 @@ public class WelcomePageService : IViewService
                 var candidate = allGamesResult.FirstOrDefault();
                 if (candidate != null)
                 {
-                    return Mapper.Map<MultiSourceGameSearchResultMetadataViewModel>(candidate);
+                    return _searchMapper.ToViewModel(candidate, _gameSearchResultService);
                 }
             }
             catch
@@ -146,7 +150,7 @@ public class WelcomePageService : IViewService
 
     internal async Task OpenRandomGameSuggestionAsync(MultiSourceGameSearchResultMetadataViewModel gameToOpen)
     {
-        var gameToOpenDto = Mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
+        var gameToOpenDto = _searchMapper.ToDto(gameToOpen);
         var details = await _gameDownloadManager.FetchDetails(gameToOpenDto);
         if (details != null)
         {

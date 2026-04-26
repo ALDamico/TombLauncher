@@ -7,7 +7,7 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages.Settings;
 
-namespace TombLauncher.Factories.Mapping;
+namespace TombLauncher.Mappers;
 
 public class SettingsMapper
 {

@@ -5,7 +5,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.ViewModels;
 
-namespace TombLauncher.Factories.Mapping;
+namespace TombLauncher.Mapping;
 
 public class StatisticsMapper
 {
