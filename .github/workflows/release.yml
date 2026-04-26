@@ -281,14 +281,15 @@ jobs:
           SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
           SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
           SSH_PATH: ${{ secrets.DEPLOY_SSH_PATH }}
+          SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
-          scp -i ~/.ssh/deploy_key \
+          ssh-keyscan -p $SSH_PORT "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          scp -i ~/.ssh/deploy_key -P $SSH_PORT \
             appcast-output/appcast.xml \
             "$SSH_USER@$SSH_HOST:$SSH_PATH/"
-          scp -i ~/.ssh/deploy_key \
+          scp -i ~/.ssh/deploy_key -P $SSH_PORT \
             "appcast-output/TombLauncher-$VERSION-portable.zip" \
             "$SSH_USER@$SSH_HOST:$SSH_PATH/"
