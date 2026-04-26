@@ -30,7 +30,6 @@ public static class MapperConfigurationFactory
             cfg.AddProfile<SavegamesProfile>();
             cfg.AddProfile<LaunchOptionsProfile>();
 
-            cfg.CreateMap<PlaySession, PlaySessionDto>().ReverseMap();
             cfg.CreateMap<FileBackup, FileBackupDto>().ReverseMap();
 
 
