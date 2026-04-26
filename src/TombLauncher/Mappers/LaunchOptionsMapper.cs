@@ -37,7 +37,6 @@ public class LaunchOptionsMapper
             FileName = vm.GameExecutable!,
             FileType = FileType.GameExecutable
         };
-        
 
         return new LaunchOptionsDto()
         {
