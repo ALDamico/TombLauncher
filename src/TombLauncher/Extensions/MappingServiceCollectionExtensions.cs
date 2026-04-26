@@ -26,6 +26,7 @@ public static class MappingServiceCollectionExtensions
         services.AddSingleton<FileBackupMapper>();
         services.AddSingleton<GameMetadataMapper>();
         services.AddSingleton<GameMapper>();
+        services.AddSingleton<DownloaderSearchPayloadMapper>();
         return services;
     }
 }
