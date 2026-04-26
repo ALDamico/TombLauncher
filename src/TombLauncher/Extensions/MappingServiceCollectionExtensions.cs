@@ -1,8 +1,5 @@
-using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using TombLauncher.Data.Mapping;
-using TombLauncher.Factories;
 using TombLauncher.Mappers;
 using TombLauncher.Mapping;
 
@@ -12,15 +9,7 @@ public static class MappingServiceCollectionExtensions
 {
     public static IServiceCollection AddTombLauncherMappings(this IServiceCollection services)
     {
-        services.AddSingleton(sp =>
-                MapperConfigurationFactory.GetMapperConfiguration(sp.GetService<ILoggerFactory>()!,
-                    t => sp.GetService(t)!))
-            .AddSingleton<IMapper>(sp =>
-            {
-                var config = sp.GetRequiredService<MapperConfiguration>();
-                return config.CreateMapper(t => sp.GetService(t)!);
-            })
-            .AddSingleton<SettingsMapper>()
+        services.AddSingleton<SettingsMapper>()
             .AddSingleton<AppCrashMapper>()
             .AddSingleton<StatisticsMapper>()
             .AddSingleton<GameLinkMapper>()
@@ -31,7 +20,8 @@ public static class MappingServiceCollectionExtensions
             .AddSingleton<GameMapper>()
             .AddSingleton<DownloaderSearchPayloadMapper>()
             .AddSingleton<LaunchOptionsMapper>()
-            .AddSingleton<SearchMapper>();
+            .AddSingleton<SearchMapper>()
+            .AddSingleton<SavegameMapper>();
         return services;
     }
 }
