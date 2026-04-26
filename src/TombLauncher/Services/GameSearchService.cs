@@ -29,7 +29,8 @@ public class GameSearchService : IViewService
         NotificationService notificationService,
         ILogger<GameSearchService> logger, ISettingsProvider settingsProvider,
         GameWithStatsService gameWithStatsService,
-        GameMetadataMapper gameMapper)
+        GameMetadataMapper gameMapper,
+        DownloaderSearchPayloadMapper searchPayloadMapper)
     {
         ViewContext = viewContext;
         _gameDownloadManager = gameDownloadManager;
@@ -40,6 +41,7 @@ public class GameSearchService : IViewService
         _settingsProvider = settingsProvider;
         _gameWithStatsService = gameWithStatsService;
         _gameMapper = gameMapper;
+        _searchPayloadMapper = searchPayloadMapper;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -55,6 +57,7 @@ public class GameSearchService : IViewService
     private readonly GameLinkDataService _gameLinkDataService;
     private readonly GameDataService _gameDataService;
     private readonly GameMetadataMapper _gameMapper;
+    private readonly DownloaderSearchPayloadMapper _searchPayloadMapper;
 
     private Task<List<IMergedGameSearchResultMetadata>> InvokeMerger(GameSearchViewModel target, List<IGameSearchResultMetadata> nextPage)
     {
@@ -190,7 +193,7 @@ public class GameSearchService : IViewService
             target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
             try
             {
-                var searchPayloadDto = Mapper.Map<DownloaderSearchPayload>(target.SearchPayload);
+                var searchPayloadDto = _searchPayloadMapper.ToDto(target.SearchPayload);
                 var (games, maxTotalPages) = await _gameDownloadManager.GetGames(downloaders, searchPayloadDto, 1);
                 target.LastSearchPayload = searchPayloadDto;
                 target.LastSearchDownloaders = downloaders;
