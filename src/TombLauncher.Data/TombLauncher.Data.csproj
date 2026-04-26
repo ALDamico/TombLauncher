@@ -16,7 +16,6 @@
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.2" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
-      <PackageReference Include="Riok.Mapperly" Version="4.3.1" />
     </ItemGroup>
 
     <ItemGroup>
