@@ -1,9 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore.Kernel;
-using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.ViewModels;
 

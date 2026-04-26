@@ -10,15 +10,6 @@ internal class StatisticsProfile : Profile
 {
     public StatisticsProfile()
     {
-        CreateMap<DayOfWeekStatisticsDto, DayOfWeekAverageTimeStatisticsViewModel>()
-            .ForMember(vm => vm.MetaData, opt => opt.Ignore())
-            .ForMember(vm => vm.Coordinate, opt => opt.Ignore())
-            .ForMember(vm => vm.Index, opt => opt.Ignore());
-        CreateMap<DailyStatisticsDto, DailyStatisticsViewModel>()
-            .ForMember(vm => vm.MetaData, opt => opt.Ignore())
-            .ForMember(vm => vm.Coordinate, opt => opt.Ignore());
-        CreateMap<GameStatisticsDto, GameStatisticsViewModel>();
-
 
         CreateMap<SavegameViewModel, FileBackupDto>()
             .ConstructUsingServiceLocator()
