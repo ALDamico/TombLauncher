@@ -4,12 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
@@ -27,10 +25,12 @@ public class GameDetailsService : IViewService
 {
     public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GameLinkDataService gameLinkDataService,
         IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider,
-        TombRaiderEngineDetector engineDetector, ILogger<GameDetailsService> logger, GameLinkDtoMapper mapper)
+        TombRaiderEngineDetector engineDetector, ILogger<GameDetailsService> logger, 
+        GameLinkDtoMapper mapper, LaunchOptionsMapper launchOptionsMapper)
     {
         _logger = logger;
         _mapper = mapper;
+        _launchOptionsMapper = launchOptionsMapper;
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _gameLinkDataService = gameLinkDataService;
@@ -41,13 +41,13 @@ public class GameDetailsService : IViewService
 
     private readonly ILogger<GameDetailsService> _logger;
     private readonly GameLinkDtoMapper _mapper;
+    private readonly LaunchOptionsMapper _launchOptionsMapper;
 
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
     private readonly GameLinkDataService _gameLinkDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    private IMapper Mapper => ViewContext.Mapper;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly ISettingsProvider _settingsProvider;
     private readonly TombRaiderEngineDetector _engineDetector;
@@ -115,12 +115,11 @@ public class GameDetailsService : IViewService
         try
         {
             var gameMetadata = vm.TargetGame;
-            var currentPage = NavigationManager.CurrentPage as PageViewModel;
-            if (currentPage != null)
+            if (NavigationManager.CurrentPage is PageViewModel currentPage)
             {
                 using (currentPage.BusyScope("SAVING_LAUNCH_OPTIONS".GetLocalizedString()))
                 {
-                    var launchOptionsDto = Mapper.Map<LaunchOptionsDto>(vm);
+                    var launchOptionsDto = _launchOptionsMapper.ToDto(vm);
 
                     gameMetadata.ExecutablePath = vm.GameExecutable;
                     gameMetadata.SetupExecutable = vm.SetupExecutable;
