@@ -1,9 +1,9 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Data.Mapping;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Data.Database.Services;
@@ -11,18 +11,14 @@ namespace TombLauncher.Data.Database.Services;
 public class GameDataService
 {
     private readonly TombLauncherDbContext _dbContext;
-    private readonly IMapper _mapper;
+    private readonly FileBackupMapper _fileBackupMapper;
+    private readonly GameMapper _gameMapper;
 
-    public GameDataService(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration)
+    public GameDataService(TombLauncherDbContext dbContext, FileBackupMapper fileBackupMapper, GameMapper gameMapper)
     {
         _dbContext = dbContext;
-        _mapper = mapperConfiguration.CreateMapper();
-    }
-
-    public GameMetadataDto GetGameById(int id)
-    {
-        var entity = _dbContext.Games.Find(id);
-        return _mapper.Map<GameMetadataDto>(entity);
+        _fileBackupMapper = fileBackupMapper;
+        _gameMapper = gameMapper;
     }
 
     public async Task UpsertGame(IGameMetadata game)
@@ -30,7 +26,7 @@ public class GameDataService
         Game? entity;
         if (game.Id == 0)
         {
-            entity = _mapper.Map<Game>(game);
+            entity = _gameMapper.ToGame(game);
             _dbContext.Games.Add(entity);
         }
         else
@@ -72,11 +68,6 @@ public class GameDataService
         await _dbContext.SaveChangesAsync();
     }
 
-    public List<GameMetadataDto> GetGames()
-    {
-        return _mapper.Map<List<GameMetadataDto>>(_dbContext.Games.ToList());
-    }
-
     public async Task<List<GameWithStatsDto>> GetGamesWithStats(bool installedOnly = false)
     {
         var outputList = new List<GameWithStatsDto>();
@@ -98,7 +89,7 @@ public class GameDataService
 
         foreach (var game in games)
         {
-            var gameMetadata = _mapper.Map<GameMetadataDto>(game);
+            var gameMetadata = _gameMapper.ToDto(game);
             var thisGamePlaySessions = playSessions[game.Id].ToList();
             var gameWithStatsDto = new GameWithStatsDto()
             {
@@ -148,7 +139,7 @@ public class GameDataService
         if (entity == null)
             return null;
 
-        var metadataDto = _mapper.Map<GameMetadataDto>(entity.Game);
+        var metadataDto = _gameMapper.ToDto(entity.Game!);
         var allPlaySessions = playSessionsQuery
             .Where(ps => ps.GameId == entity.GameId).ToList()
             .Select(ps => ps.EndDate - ps.StartDate).Sum();
@@ -181,7 +172,7 @@ public class GameDataService
 
         return playSessions.Select(g => new GameWithStatsDto
         {
-            GameMetadata = _mapper.Map<GameMetadataDto>(g.Game),
+            GameMetadata = _gameMapper.ToDto(g.Game!),
             LastPlayed = g.LastPlayed,
             TotalPlayedTime = g.TotalPlayedTime
         }).ToList();
@@ -213,7 +204,7 @@ public class GameDataService
             .Take(count)
             .Select(g => new GameWithStatsDto
             {
-                GameMetadata = _mapper.Map<GameMetadataDto>(g),
+                GameMetadata = _gameMapper.ToDto(g),
                 LastPlayed = playSessionStats.TryGetValue(g.Id, out var sessionStat) ? sessionStat.LastPlayed : null,
                 TotalPlayedTime = playSessionStats.TryGetValue(g.Id, out var playSessionStat) ? playSessionStat.TotalPlayedTime : TimeSpan.Zero
             }).ToList();
@@ -245,7 +236,7 @@ public class GameDataService
         }
         else
         {
-            var newEntity = _mapper.Map<FileBackup>(launchOptionsDto.GameExecutable);
+            var newEntity = _fileBackupMapper.ToFileBackup(launchOptionsDto.GameExecutable);
             _dbContext.FileBackups.Add(newEntity);
         }
 
@@ -265,7 +256,7 @@ public class GameDataService
             }
             else
             {
-                var newSetupExe = _mapper.Map<FileBackup>(launchOptionsDto.SetupExecutable);
+                var newSetupExe = _fileBackupMapper.ToFileBackup(launchOptionsDto.SetupExecutable);
                 _dbContext.FileBackups.Add(newSetupExe);
             }
         }
@@ -285,7 +276,7 @@ public class GameDataService
             }
             else
             {
-                var newCommunitySetupExe = _mapper.Map<FileBackup>(launchOptionsDto.CommunitySetupExecutable);
+                var newCommunitySetupExe = _fileBackupMapper.ToFileBackup(launchOptionsDto.CommunitySetupExecutable);
                 _dbContext.FileBackups.Add(newCommunitySetupExe);
             }
         }
@@ -323,12 +314,12 @@ public class GameDataService
             .Include(g => g.InstalledFromLink)
             .SingleAsync(g => g.Id == id);
 
-        return _mapper.Map<GameMetadataDto>(game);
+        return _gameMapper.ToDto(game);
     }
 
     public async Task SetInstalledFromLink(int gameId, int linkId)
     {
-        var game = _dbContext.Games.Find(gameId);
+        var game = await _dbContext.Games.FindAsync(gameId);
         if (game == null) return;
         _dbContext.Entry(game).Property("InstalledFromLinkId").CurrentValue = linkId;
         await _dbContext.SaveChangesAsync();

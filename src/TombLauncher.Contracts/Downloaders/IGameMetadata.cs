@@ -25,4 +25,5 @@ public interface IGameMetadata
     string? CommunitySetupExecutable { get; set; }
     bool IsFavourite { get; set; }
     bool IsCompleted { get; set; }
+    string? InstalledFromSiteDisplayName { get; set; }
 }

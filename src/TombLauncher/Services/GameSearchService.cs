@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Avalonia.Threading;
 using AvaloniaEdit.Utils;
-
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 using StringNotificationViewModel = TombLauncher.ViewModels.Notifications.StringNotificationViewModel;
@@ -28,7 +26,11 @@ public class GameSearchService : IViewService
         GameLinkDataService gameLinkDataService, GameDataService gameDataService,
         NotificationService notificationService,
         ILogger<GameSearchService> logger, ISettingsProvider settingsProvider,
-        GameWithStatsService gameWithStatsService)
+        GameWithStatsService gameWithStatsService,
+        GameMetadataMapper gameMapper,
+        DownloaderSearchPayloadMapper searchPayloadMapper,
+        SearchMapper searchMapper,
+        GameSearchResultService gameSearchResultService)
     {
         ViewContext = viewContext;
         _gameDownloadManager = gameDownloadManager;
@@ -38,12 +40,15 @@ public class GameSearchService : IViewService
         _logger = logger;
         _settingsProvider = settingsProvider;
         _gameWithStatsService = gameWithStatsService;
+        _gameMapper = gameMapper;
+        _searchPayloadMapper = searchPayloadMapper;
+        _searchMapper = searchMapper;
+        _gameSearchResultService = gameSearchResultService;
     }
 
     public ViewServiceContext ViewContext { get; }
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    private IMapper Mapper => ViewContext.Mapper;
     private readonly NotificationService _notificationService;
     private readonly ILogger<GameSearchService> _logger;
     private readonly ISettingsProvider _settingsProvider;
@@ -52,10 +57,14 @@ public class GameSearchService : IViewService
     private readonly GameDownloadManager _gameDownloadManager;
     private readonly GameLinkDataService _gameLinkDataService;
     private readonly GameDataService _gameDataService;
+    private readonly GameMetadataMapper _gameMapper;
+    private readonly DownloaderSearchPayloadMapper _searchPayloadMapper;
+    private readonly SearchMapper _searchMapper;
+    private readonly GameSearchResultService _gameSearchResultService;
 
     private Task<List<IMergedGameSearchResultMetadata>> InvokeMerger(GameSearchViewModel target, List<IGameSearchResultMetadata> nextPage)
     {
-        var fetchedResults = Mapper.Map<List<IMergedGameSearchResultMetadata>>(target.FetchedResults);
+        var fetchedResults = _searchMapper.ToMergedDtos(target.FetchedResults);
         _gameDownloadManager.Merge(fetchedResults, nextPage);
         return Task.FromResult(fetchedResults);
     }
@@ -74,16 +83,15 @@ public class GameSearchService : IViewService
             var gamesWithStats = await _gameDataService.GetGamesWithStats();
             var gamesByLinks = await
                 _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPageResults.SelectMany(g => g.Sources).Select(s => s.DownloadLink!).ToList(), gamesWithStats);
-            foreach (var game in Enumerable.Where(target.FetchedResults, r => r.InstalledGame == null))
+            foreach (var game in target.FetchedResults.Where(r => r.InstalledGame == null))
             {
                 if (gamesByLinks.TryGetValue(game.DownloadLink, out var dto))
                 {
-                    game.InstalledGame = Mapper.Map<GameWithStatsViewModel>(dto);
+                    game.InstalledGame = _gameMapper.ToViewModel(dto, _gameWithStatsService);
                 }
             }
 
-            var mappedResults = await new TaskFactory().StartNew(() =>
-                Mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(fetchedResults));
+            var mappedResults = await Task.Run(() => _searchMapper.ToObservableCollection(fetchedResults, _gameSearchResultService));
             var addedCount = 0;
             var updatedCount = 0;
 
@@ -138,20 +146,20 @@ public class GameSearchService : IViewService
         }
     }
 
-    public bool CanLoadMore(GameSearchViewModel target) => target.CurrentPage < target.MaxTotalPages;
+    private bool CanLoadMore(GameSearchViewModel target) => target.CurrentPage < target.MaxTotalPages;
 
     public async Task Open(GameSearchViewModel target, MultiSourceGameSearchResultMetadataViewModel gameToOpen)
     {
         using (target.BusyScope(string.Empty))
         {
             _logger.LogInformation("Opening game {GameName}", gameToOpen.Title);
-            var gameToOpenDto = Mapper.Map<GameSearchResultMetadataDto>(gameToOpen);
+            var gameToOpenDto = _searchMapper.ToDto(gameToOpen);
 
             var details = await _gameDownloadManager.FetchDetails(gameToOpenDto);
 
             if (details != null)
             {
-                var detailsViewModel = Mapper.Map<GameMetadataViewModel>(details);
+                var detailsViewModel = _gameMapper.ToViewModel(details);
                 var installedGame = await
                     _gameLinkDataService.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink!).ToList());
                 if (installedGame != null)
@@ -187,13 +195,13 @@ public class GameSearchService : IViewService
             target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
             try
             {
-                var searchPayloadDto = Mapper.Map<DownloaderSearchPayload>(target.SearchPayload);
+                var searchPayloadDto = _searchPayloadMapper.ToDto(target.SearchPayload);
                 var (games, maxTotalPages) = await _gameDownloadManager.GetGames(downloaders, searchPayloadDto, 1);
                 target.LastSearchPayload = searchPayloadDto;
                 target.LastSearchDownloaders = downloaders;
                 target.CurrentPage = 1;
                 target.MaxTotalPages = maxTotalPages ?? 0;
-                var mappedGames = Mapper.Map<List<MultiSourceGameSearchResultMetadataViewModel>>(games);
+                var mappedGames = _searchMapper.ToViewModels(games, _gameSearchResultService).ToList();
                 var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink!)
                     .Where(s => s.IsNotNullOrWhiteSpace()).ToList();
                 var allGamesWithStats = await _gameDataService.GetGamesWithStats();
@@ -204,7 +212,7 @@ public class GameSearchService : IViewService
                         continue;
                     if (installedGames.TryGetValue(game.DownloadLink, out var installedGame))
                     {
-                        game.InstalledGame = Mapper.Map<GameWithStatsViewModel>(installedGame);
+                        game.InstalledGame = _gameMapper.ToViewModel(installedGame, _gameWithStatsService);
                     }
                 }
 

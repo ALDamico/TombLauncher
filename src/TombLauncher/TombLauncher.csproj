@@ -149,4 +149,8 @@
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Factories\" />
+    </ItemGroup>
 </Project>

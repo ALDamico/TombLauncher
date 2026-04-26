@@ -1,7 +1,7 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Data.Mapping;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Data.Database.Services;
@@ -9,20 +9,23 @@ namespace TombLauncher.Data.Database.Services;
 public class GameLinkDataService
 {
     private readonly TombLauncherDbContext _dbContext;
-    private readonly IMapper _mapper;
+    private readonly GameLinkMapper _mapper;
+    private readonly GameMapper _gameMapper;
 
-    public GameLinkDataService(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration)
+    public GameLinkDataService(TombLauncherDbContext dbContext, GameLinkMapper mapper, GameMapper gameMapper)
     {
         _dbContext = dbContext;
-        _mapper = mapperConfiguration.CreateMapper();
+        _mapper = mapper;
+        _gameMapper = gameMapper;
     }
 
-    public List<GameLinkDto> GetLinks(int gameId, LinkType? linkType = null)
+    public async Task<List<GameLinkDto>> GetLinks(int gameId, CancellationToken cancellationToken, LinkType? linkType = null)
     {
         IQueryable<GameLink> query = _dbContext.GameLink.Where(l => l.GameId == gameId);
         if (linkType != null)
             query = query.Where(g => g.LinkType == linkType);
-        return _mapper.Map<List<GameLinkDto>>(query.ToList());
+        var result = await query.ToListAsync(cancellationToken);
+        return _mapper.ToDtos(result);
     }
 
     public async Task<List<GameLinkDto>> SaveLinks(List<GameLinkDto> links, CancellationToken cancellationToken)
@@ -39,31 +42,18 @@ public class GameLinkDataService
         {
             var link = kvp.link.FirstOrDefault();
             var dto = kvp.dto;
-            if (link == null)
+            var shouldAdd = link == null;
+
+            link = _mapper.ToGameLink(dto, link);
+            if (shouldAdd)
             {
-                link = new GameLink()
-                {
-                    BaseUrl = dto.BaseUrl,
-                    Link = dto.Link,
-                    DisplayName = dto.DisplayName,
-                    LinkType = dto.LinkType,
-                    GameId = dto.GameId
-                };
                 _dbContext.GameLink.Add(link);
-            }
-            else
-            {
-                link.Link = dto.Link;
-                link.BaseUrl = dto.BaseUrl;
-                link.LinkType = dto.LinkType;
-                link.DisplayName = dto.DisplayName;
-                link.GameId = dto.GameId;
             }
 
             upserted.Add(link);
         }
         await _dbContext.SaveChangesAsync(cancellationToken);
-        return _mapper.Map<List<GameLinkDto>>(upserted);
+        return _mapper.ToDtos(upserted);
     }
 
     public async Task<GameMetadataDto?> GetGameByLinks(LinkType linkType, List<string> links)
@@ -87,20 +77,10 @@ public class GameLinkDataService
             var game = await _dbContext.Games
                 .Include(g => g.FileBackups.Where(f => targetFileTypes.Contains(f.FileType)))
                 .SingleAsync(g => g.Id == gameId);
-            return _mapper.Map<GameMetadataDto>(game);
+            return _gameMapper.ToDto(game);
         }
 
         return null;
-    }
-
-    public List<GameMetadataDto> GetGamesByLinks(LinkType linkType, List<string> links)
-    {
-        var queryResult = _dbContext.GameLink
-            .Where(l => links.Contains(l.Link) && l.LinkType == linkType)
-            .Select(l => l.GameId)
-            .Join(_dbContext.Games, i => i, game => game.Id, (i, game) => game);
-
-        return _mapper.Map<List<GameMetadataDto>>(queryResult.ToList());
     }
 
     public async Task<Dictionary<string, GameWithStatsDto>> GetGamesByLinksDictionary(

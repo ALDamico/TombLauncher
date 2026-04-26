@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
@@ -21,6 +20,7 @@ using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
+using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services;
@@ -34,7 +34,9 @@ public class GameSearchResultService : IViewService
         GameDownloadManager downloadManager,
         NotificationService notificationService, GameWithStatsService gameWithStatsService,
         ILogger<GameSearchResultService> logger, GameFileHashCalculator hashCalculator,
-        IAppFileOperationsService appFileOperations, ISettingsProvider settingsProvider)
+        IAppFileOperationsService appFileOperations, ISettingsProvider settingsProvider,
+        GameMetadataMapper gameMetadataMapper,
+        SearchMapper searchMapper)
     {
         ViewContext = viewContext;
         _gameDownloadManager = downloadManager;
@@ -50,6 +52,8 @@ public class GameSearchResultService : IViewService
         _hashCalculator = hashCalculator;
         _appFileOperations = appFileOperations;
         _settingsProvider = settingsProvider;
+        _gameMetadataMapper = gameMetadataMapper;
+        _searchMapper = searchMapper;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -66,10 +70,11 @@ public class GameSearchResultService : IViewService
     private readonly TombRaiderEngineDetector _engineDetector;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    private IMapper Mapper => ViewContext.Mapper;
     private readonly GameFileHashCalculator _hashCalculator;
     private readonly IAppFileOperationsService _appFileOperations;
     private readonly ISettingsProvider _settingsProvider;
+    private readonly GameMetadataMapper _gameMetadataMapper;
+    private readonly SearchMapper _searchMapper;
     private string? _downloadPath;
     private string? _installPath;
     private int? _installedGameId;
@@ -101,7 +106,7 @@ public class GameSearchResultService : IViewService
         await InitNotificationViewModel(gameToInstall);
 
         gameToInstall.InstallProgress = _installProgress;
-        var gameToInstallDto = Mapper.Map<MergedGameSearchResultDto>(gameToInstall);
+        var gameToInstallDto = _searchMapper.ToMergedDto(gameToInstall);
 
         _logger.LogInformation("Started downloading {GameTitle} from {DownloadUrl}", gameToInstall.Title,
             gameToInstall.DownloadLink);
@@ -235,7 +240,7 @@ public class GameSearchResultService : IViewService
 
         await AfterInstallCleanup();
         gameToInstall.InstalledGame =
-            Mapper.Map<GameWithStatsViewModel>(await _gameDataService.GetGameWithStats(dto.Id));
+            _gameMetadataMapper.ToViewModel(await _gameDataService.GetGameWithStats(dto.Id), _gameWithStatsService);
         _notificationViewModel = null;
         _installedGameId = null;
         _downloadPath = null;
@@ -258,7 +263,8 @@ public class GameSearchResultService : IViewService
 
     private async Task<bool> CheckGameAlreadyInstalled(MultiSourceGameSearchResultMetadataViewModel gameToInstall, List<GameHashDto> hashes)
     {
-        if (_gameHashDataService.ExistsHashes(hashes, out var foundGameId))
+        var (hashesExists, foundGameId) = await _gameHashDataService.ExistsHashes(hashes, CancellationToken.None);
+        if (hashesExists)
         {
             _logger.LogWarning("Game {GameTitle} already installed", gameToInstall.Title);
             var gameId = foundGameId.GetValueOrDefault();

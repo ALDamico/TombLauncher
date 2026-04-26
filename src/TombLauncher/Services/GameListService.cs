@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
-using AutoMapper;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.Pages;
@@ -15,26 +15,31 @@ public class GameListService : IViewService
 {
     public GameListService(ViewServiceContext viewContext,
         GameDataService gameDataService,
-        ISettingsProvider settingsProvider)
+        ISettingsProvider settingsProvider,
+        GameMetadataMapper gameMetadataMapper,
+        GameWithStatsService gameWithStatsService)
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _settingsProvider = settingsProvider;
+        _gameMetadataMapper = gameMetadataMapper;
+        _gameWithStatsService = gameWithStatsService;
     }
 
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    private IMapper Mapper => ViewContext.Mapper;
     private readonly ISettingsProvider _settingsProvider;
+    private readonly GameMetadataMapper _gameMetadataMapper;
+    private readonly GameWithStatsService _gameWithStatsService;
 
     public async Task<ObservableCollection<GameWithStatsViewModel>> FetchGames(GameListViewModel host)
     {
         using (host.BusyScope("LOADING_GAMES".GetLocalizedString()))
         {
             var gamesWithStats = await _gameDataService.GetGamesWithStats(true);
-            return Mapper.Map<ObservableCollection<GameWithStatsViewModel>>(gamesWithStats);
+            return _gameMetadataMapper.ToObservableCollection(gamesWithStats, _gameWithStatsService);
         }
     }
 

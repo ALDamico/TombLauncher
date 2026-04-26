@@ -1,28 +1,26 @@
-using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TombLauncher.Core.Dtos;
-using TombLauncher.Data.Models;
+using TombLauncher.Data.Mapping;
 
 namespace TombLauncher.Data.Database.Services;
 
 public class GameHashDataService
 {
     private readonly TombLauncherDbContext _dbContext;
-    private readonly IMapper _mapper;
+    private readonly GameHashMapper _mapper;
 
-    public GameHashDataService(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration)
+    public GameHashDataService(TombLauncherDbContext dbContext, GameHashMapper mapper)
     {
         _dbContext = dbContext;
-        _mapper = mapperConfiguration.CreateMapper();
+        _mapper = mapper;
     }
 
-    public bool ExistsHashes(List<GameHashDto> computedHashes, out int? foundId)
+    public async Task<(bool, int?)> ExistsHashes(List<GameHashDto> computedHashes, CancellationToken cancellationToken)
     {
-        foundId = null;
-        var allHashes = _dbContext.GameHashes.ToList();
-        var computedEntities = computedHashes.Select(h => _mapper.Map<GameHashes>(h)).ToList();
+        var allHashes = await _dbContext.GameHashes.ToListAsync(cancellationToken);
 
         var joined = allHashes
-            .Join(computedEntities,
+            .Join(computedHashes,
                 gh => gh.FileName + "#" + gh.Md5Hash,
                 tmp => tmp.FileName + "#" + tmp.Md5Hash,
                 (gh, _) => gh);
@@ -33,37 +31,23 @@ public class GameHashDataService
             .ToList();
 
         if (matches.Count == 0)
-            return false;
+            return (false, null);
 
         if (matches.Any(m => m.Count == computedHashes.Count))
         {
             var idToReturn = matches.FirstOrDefault()?.Id;
-            var game = _dbContext.Games.Find(idToReturn.GetValueOrDefault());
-            if (game == null || !game.IsInstalled)
-                return false;
-            foundId = idToReturn;
-            return true;
+            var game = await _dbContext.Games.FindAsync([idToReturn.GetValueOrDefault()], cancellationToken);
+            return game is not { IsInstalled: true } ? (false, null) : (true, idToReturn);
         }
 
-        return false;
+        return (false, null);
     }
 
     public async Task SaveHashes(List<GameHashDto> hashes)
     {
-        foreach (var hash in hashes)
-        {
-            var entity = _mapper.Map<GameHashes>(hash);
-            _dbContext.GameHashes.Add(entity);
-        }
+        var allHashes = _mapper.ToGameHashes(hashes);
+        await _dbContext.GameHashes.AddRangeAsync(allHashes);
 
         await _dbContext.SaveChangesAsync();
-    }
-
-    public List<GameHashDto> GetHashes(GameMetadataDto dto)
-    {
-        var queryResult = _dbContext.GameHashes
-            .Where(h => h.GameId == dto.Id)
-            .ToList();
-        return _mapper.Map<List<GameHashDto>>(queryResult);
     }
 }
