@@ -10,9 +10,6 @@ internal class SettingsProfile : Profile
 {
     public SettingsProfile()
     {
-        CreateMap<AvailableLanguageDto, ApplicationLanguageViewModel>()
-            .ForMember(dto => dto.CultureInfo, opt => opt.MapFrom(culture => culture.Culture))
-            .ReverseMap();
         CreateMap<DownloaderConfiguration, DownloaderViewModel>().ReverseMap();
         CreateMap<UnzipBackendDto, UnzipBackendViewModel>().ReverseMap();
     }

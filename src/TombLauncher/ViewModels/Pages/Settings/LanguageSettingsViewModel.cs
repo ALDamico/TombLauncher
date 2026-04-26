@@ -15,7 +15,7 @@ public partial class LanguageSettingsViewModel : SettingsSectionViewModelBase
     }
 
     [ObservableProperty] private ApplicationLanguageViewModel? _applicationLanguage;
-    [ObservableProperty] private ObservableCollection<ApplicationLanguageViewModel> _availableLanguages = new ObservableCollection<ApplicationLanguageViewModel>();
+    [ObservableProperty] private ObservableCollection<ApplicationLanguageViewModel> _availableLanguages = [];
 
     public override void ApplyTo(AppConfiguration userConfig)
     {
