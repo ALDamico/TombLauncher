@@ -19,6 +19,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
+using TombLauncher.Factories.Mapping;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.ViewModels;
@@ -34,7 +35,8 @@ public class GameSearchResultService : IViewService
         GameDownloadManager downloadManager,
         NotificationService notificationService, GameWithStatsService gameWithStatsService,
         ILogger<GameSearchResultService> logger, GameFileHashCalculator hashCalculator,
-        IAppFileOperationsService appFileOperations, ISettingsProvider settingsProvider)
+        IAppFileOperationsService appFileOperations, ISettingsProvider settingsProvider,
+        GameMetadataMapper gameMetadataMapper)
     {
         ViewContext = viewContext;
         _gameDownloadManager = downloadManager;
@@ -50,6 +52,7 @@ public class GameSearchResultService : IViewService
         _hashCalculator = hashCalculator;
         _appFileOperations = appFileOperations;
         _settingsProvider = settingsProvider;
+        _gameMetadataMapper = gameMetadataMapper;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -70,6 +73,7 @@ public class GameSearchResultService : IViewService
     private readonly GameFileHashCalculator _hashCalculator;
     private readonly IAppFileOperationsService _appFileOperations;
     private readonly ISettingsProvider _settingsProvider;
+    private readonly GameMetadataMapper _gameMetadataMapper;
     private string? _downloadPath;
     private string? _installPath;
     private int? _installedGameId;
@@ -235,7 +239,7 @@ public class GameSearchResultService : IViewService
 
         await AfterInstallCleanup();
         gameToInstall.InstalledGame =
-            Mapper.Map<GameWithStatsViewModel>(await _gameDataService.GetGameWithStats(dto.Id));
+            _gameMetadataMapper.ToViewModel(await _gameDataService.GetGameWithStats(dto.Id), _gameWithStatsService);
         _notificationViewModel = null;
         _installedGameId = null;
         _downloadPath = null;
