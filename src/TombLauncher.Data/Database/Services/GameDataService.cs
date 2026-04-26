@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
@@ -13,13 +12,13 @@ public class GameDataService
 {
     private readonly TombLauncherDbContext _dbContext;
     private readonly FileBackupMapper _fileBackupMapper;
-    private readonly IMapper _legacyMapper;
+    private readonly GameMapper _gameMapper;
 
-    public GameDataService(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration, FileBackupMapper fileBackupMapper)
+    public GameDataService(TombLauncherDbContext dbContext, FileBackupMapper fileBackupMapper, GameMapper gameMapper)
     {
         _dbContext = dbContext;
         _fileBackupMapper = fileBackupMapper;
-        _legacyMapper = mapperConfiguration.CreateMapper();
+        _gameMapper = gameMapper;
     }
 
     public async Task UpsertGame(IGameMetadata game)
@@ -27,7 +26,7 @@ public class GameDataService
         Game? entity;
         if (game.Id == 0)
         {
-            entity = _legacyMapper.Map<Game>(game);
+            entity = _gameMapper.ToGame(game);
             _dbContext.Games.Add(entity);
         }
         else
@@ -69,11 +68,6 @@ public class GameDataService
         await _dbContext.SaveChangesAsync();
     }
 
-    public List<GameMetadataDto> GetGames()
-    {
-        return _legacyMapper.Map<List<GameMetadataDto>>(_dbContext.Games.ToList());
-    }
-
     public async Task<List<GameWithStatsDto>> GetGamesWithStats(bool installedOnly = false)
     {
         var outputList = new List<GameWithStatsDto>();
@@ -95,7 +89,7 @@ public class GameDataService
 
         foreach (var game in games)
         {
-            var gameMetadata = _legacyMapper.Map<GameMetadataDto>(game);
+            var gameMetadata = _gameMapper.ToDto(game);
             var thisGamePlaySessions = playSessions[game.Id].ToList();
             var gameWithStatsDto = new GameWithStatsDto()
             {
@@ -145,7 +139,7 @@ public class GameDataService
         if (entity == null)
             return null;
 
-        var metadataDto = _legacyMapper.Map<GameMetadataDto>(entity.Game);
+        var metadataDto = _gameMapper.ToDto(entity.Game!);
         var allPlaySessions = playSessionsQuery
             .Where(ps => ps.GameId == entity.GameId).ToList()
             .Select(ps => ps.EndDate - ps.StartDate).Sum();
@@ -178,7 +172,7 @@ public class GameDataService
 
         return playSessions.Select(g => new GameWithStatsDto
         {
-            GameMetadata = _legacyMapper.Map<GameMetadataDto>(g.Game),
+            GameMetadata = _gameMapper.ToDto(g.Game!),
             LastPlayed = g.LastPlayed,
             TotalPlayedTime = g.TotalPlayedTime
         }).ToList();
@@ -210,7 +204,7 @@ public class GameDataService
             .Take(count)
             .Select(g => new GameWithStatsDto
             {
-                GameMetadata = _legacyMapper.Map<GameMetadataDto>(g),
+                GameMetadata = _gameMapper.ToDto(g),
                 LastPlayed = playSessionStats.TryGetValue(g.Id, out var sessionStat) ? sessionStat.LastPlayed : null,
                 TotalPlayedTime = playSessionStats.TryGetValue(g.Id, out var playSessionStat) ? playSessionStat.TotalPlayedTime : TimeSpan.Zero
             }).ToList();
@@ -320,12 +314,12 @@ public class GameDataService
             .Include(g => g.InstalledFromLink)
             .SingleAsync(g => g.Id == id);
 
-        return _legacyMapper.Map<GameMetadataDto>(game);
+        return _gameMapper.ToDto(game);
     }
 
     public async Task SetInstalledFromLink(int gameId, int linkId)
     {
-        var game = _dbContext.Games.Find(gameId);
+        var game = await _dbContext.Games.FindAsync(gameId);
         if (game == null) return;
         _dbContext.Entry(game).Property("InstalledFromLinkId").CurrentValue = linkId;
         await _dbContext.SaveChangesAsync();

@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
@@ -11,13 +10,13 @@ public class GameLinkDataService
 {
     private readonly TombLauncherDbContext _dbContext;
     private readonly GameLinkMapper _mapper;
-    private readonly IMapper _legacyMapper;
+    private readonly GameMapper _gameMapper;
 
-    public GameLinkDataService(TombLauncherDbContext dbContext, GameLinkMapper mapper, IMapper legacyMapper)
+    public GameLinkDataService(TombLauncherDbContext dbContext, GameLinkMapper mapper, GameMapper gameMapper)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _legacyMapper = legacyMapper;
+        _gameMapper = gameMapper;
     }
 
     public async Task<List<GameLinkDto>> GetLinks(int gameId, CancellationToken cancellationToken, LinkType? linkType = null)
@@ -78,7 +77,7 @@ public class GameLinkDataService
             var game = await _dbContext.Games
                 .Include(g => g.FileBackups.Where(f => targetFileTypes.Contains(f.FileType)))
                 .SingleAsync(g => g.Id == gameId);
-            return _legacyMapper.Map<GameMetadataDto>(game);
+            return _gameMapper.ToDto(game);
         }
 
         return null;

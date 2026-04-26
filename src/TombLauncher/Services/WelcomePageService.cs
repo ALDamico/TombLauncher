@@ -10,6 +10,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Data.Database.Services;
+using TombLauncher.Factories.Mapping;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
@@ -19,7 +20,16 @@ namespace TombLauncher.Services;
 
 public class WelcomePageService : IViewService
 {
-    public WelcomePageService(ViewServiceContext viewContext, AppCrashDataService appCrashDataService, GameDataService gameDataService, AppCrashHostService appCrashHostService, IAppConfiguration appConfiguration, ISettingsProvider settingsProvider, GameDownloadManager gameDownloadManager, GameWithStatsService gameWithStatsService, GitHubReleaseService gitHubReleaseService)
+    public WelcomePageService(ViewServiceContext viewContext, 
+        AppCrashDataService appCrashDataService, 
+        GameDataService gameDataService, 
+        AppCrashHostService appCrashHostService, 
+        IAppConfiguration appConfiguration, 
+        ISettingsProvider settingsProvider, 
+        GameDownloadManager gameDownloadManager, 
+        GameWithStatsService gameWithStatsService, 
+        GitHubReleaseService gitHubReleaseService,
+        GameMetadataMapper gameMetadataMapper)
     {
         ViewContext = viewContext;
         _appCrashDataService = appCrashDataService;
@@ -30,6 +40,7 @@ public class WelcomePageService : IViewService
         _gameDownloadManager = gameDownloadManager;
         _gameWithStatsService = gameWithStatsService;
         _gitHubReleaseService = gitHubReleaseService;
+        _gameMetadataMapper = gameMetadataMapper;
     }
     public ViewServiceContext ViewContext { get; }
     private readonly AppCrashDataService _appCrashDataService;
@@ -38,6 +49,7 @@ public class WelcomePageService : IViewService
     private readonly GameDownloadManager _gameDownloadManager;
     private readonly GameWithStatsService _gameWithStatsService;
     private readonly GitHubReleaseService _gitHubReleaseService;
+    private readonly GameMetadataMapper _gameMetadataMapper;
     private IMapper Mapper => ViewContext.Mapper;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
@@ -136,7 +148,7 @@ public class WelcomePageService : IViewService
         var details = await _gameDownloadManager.FetchDetails(gameToOpenDto);
         if (details != null)
         {
-            var detailsViewModel = Mapper.Map<GameMetadataViewModel>(details);
+            var detailsViewModel = _gameMetadataMapper.ToViewModel(details);
             await NavigationManager.NavigateTo<GameDetailsViewModel>(
                 new GameWithStatsViewModel(_gameWithStatsService, detailsViewModel));
             if (NavigationManager.CurrentPage is GameDetailsViewModel currentVm)

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalonia.Threading;
 using AvaloniaEdit.Utils;
-
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
@@ -14,6 +13,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.Services;
+using TombLauncher.Factories.Mapping;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
@@ -28,7 +28,8 @@ public class GameSearchService : IViewService
         GameLinkDataService gameLinkDataService, GameDataService gameDataService,
         NotificationService notificationService,
         ILogger<GameSearchService> logger, ISettingsProvider settingsProvider,
-        GameWithStatsService gameWithStatsService)
+        GameWithStatsService gameWithStatsService,
+        GameMetadataMapper gameMapper)
     {
         ViewContext = viewContext;
         _gameDownloadManager = gameDownloadManager;
@@ -38,6 +39,7 @@ public class GameSearchService : IViewService
         _logger = logger;
         _settingsProvider = settingsProvider;
         _gameWithStatsService = gameWithStatsService;
+        _gameMapper = gameMapper;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -52,6 +54,7 @@ public class GameSearchService : IViewService
     private readonly GameDownloadManager _gameDownloadManager;
     private readonly GameLinkDataService _gameLinkDataService;
     private readonly GameDataService _gameDataService;
+    private readonly GameMetadataMapper _gameMapper;
 
     private Task<List<IMergedGameSearchResultMetadata>> InvokeMerger(GameSearchViewModel target, List<IGameSearchResultMetadata> nextPage)
     {
@@ -74,7 +77,7 @@ public class GameSearchService : IViewService
             var gamesWithStats = await _gameDataService.GetGamesWithStats();
             var gamesByLinks = await
                 _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPageResults.SelectMany(g => g.Sources).Select(s => s.DownloadLink!).ToList(), gamesWithStats);
-            foreach (var game in Enumerable.Where(target.FetchedResults, r => r.InstalledGame == null))
+            foreach (var game in target.FetchedResults.Where(r => r.InstalledGame == null))
             {
                 if (gamesByLinks.TryGetValue(game.DownloadLink, out var dto))
                 {
@@ -138,7 +141,7 @@ public class GameSearchService : IViewService
         }
     }
 
-    public bool CanLoadMore(GameSearchViewModel target) => target.CurrentPage < target.MaxTotalPages;
+    private bool CanLoadMore(GameSearchViewModel target) => target.CurrentPage < target.MaxTotalPages;
 
     public async Task Open(GameSearchViewModel target, MultiSourceGameSearchResultMetadataViewModel gameToOpen)
     {
@@ -151,7 +154,7 @@ public class GameSearchService : IViewService
 
             if (details != null)
             {
-                var detailsViewModel = Mapper.Map<GameMetadataViewModel>(details);
+                var detailsViewModel = _gameMapper.ToViewModel(details);
                 var installedGame = await
                     _gameLinkDataService.GetGameByLinks(LinkType.Download, gameToOpen.Sources.Select(s => s.DownloadLink!).ToList());
                 if (installedGame != null)
