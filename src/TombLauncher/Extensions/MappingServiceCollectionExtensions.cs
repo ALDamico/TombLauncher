@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Data.Mapping;
 using TombLauncher.Factories;
 using TombLauncher.Factories.Mapping;
 
@@ -17,6 +18,7 @@ public static class MappingServiceCollectionExtensions
             return config.CreateMapper(t => sp.GetService(t)!);
         });
         services.AddSingleton<SettingsMapper>();
+        services.AddSingleton<AppCrashMapper>();
         return services;
     }
 }

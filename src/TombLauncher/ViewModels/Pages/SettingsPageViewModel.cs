@@ -2,12 +2,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Factories.Mapping;
 using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages.Settings;
 
@@ -19,17 +19,17 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         ISettingsProvider settingsProvider, 
         IPopupService popupService, 
         IPlatformSpecificFeatures platformSpecificFeatures, 
-        MapperConfiguration mapperConfiguration, 
         IAppFileOperationsService appFileOperationsService, 
-        ILayeredAppConfiguration appConfiguration)
+        ILayeredAppConfiguration appConfiguration,
+        SettingsMapper settingsMapper)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
         _popupService = popupService;
         _platformSpecificFeatures = platformSpecificFeatures;
-        _mapperConfiguration = mapperConfiguration;
         _appFileOperationsService = appFileOperationsService;
         _appConfiguration = appConfiguration;
+        _settingsMapper = settingsMapper;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -60,9 +60,9 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly ISettingsProvider _settingsProvider;
     private readonly IPopupService _popupService;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
-    private readonly MapperConfiguration _mapperConfiguration;
     private readonly IAppFileOperationsService _appFileOperationsService;
     private readonly ILayeredAppConfiguration _appConfiguration;
+    private readonly SettingsMapper _settingsMapper;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -100,7 +100,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();
-        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _popupService, _platformSpecificFeatures)
+        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _popupService, _platformSpecificFeatures, _settingsMapper)
         {
             AvailableDownloaders = downloaders.ToObservableCollection()
         };
