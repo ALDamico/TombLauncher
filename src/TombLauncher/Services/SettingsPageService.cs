@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -52,7 +51,6 @@ public class SettingsPageService : IViewService
     private readonly IServiceProvider _serviceProvider;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    private IMapper _legacyMapper => ViewContext.Mapper;
     private readonly SettingsMapper _mapper;
     private readonly ILogger<SettingsPageService> _logger;
     private readonly ThemeManager _themeManager;
@@ -109,7 +107,7 @@ public class SettingsPageService : IViewService
 
     public List<DownloaderViewModel> GetDownloaderViewModels()
     {
-        return _legacyMapper.Map<List<DownloaderViewModel>>(_settingsProvider.GetDownloaderConfigurations());
+        return _mapper.ToViewModels(_settingsProvider.GetDownloaderConfigurations());
     }
 
     public GameDetailsSettingsViewModel GetGameDetailsSettings(PageViewModel settingsPage)

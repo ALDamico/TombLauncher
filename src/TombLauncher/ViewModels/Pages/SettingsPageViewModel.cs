@@ -100,7 +100,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();
-        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _popupService, _platformSpecificFeatures, _mapperConfiguration)
+        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _popupService, _platformSpecificFeatures)
         {
             AvailableDownloaders = downloaders.ToObservableCollection()
         };
