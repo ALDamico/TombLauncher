@@ -1,7 +1,7 @@
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.ViewModels;
 
-namespace TombLauncher.Factories.Mapping;
+namespace TombLauncher.Mappers;
 
 public class DownloaderSearchPayloadMapper
 {

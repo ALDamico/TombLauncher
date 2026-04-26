@@ -14,8 +14,9 @@ using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
-using TombLauncher.Factories.Mapping;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mappers;
+using TombLauncher.Mapping;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 

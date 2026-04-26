@@ -22,7 +22,6 @@ public static class MapperConfigurationFactory
                 cfg.ConstructServicesUsing(type => serviceFactory(type) ?? Activator.CreateInstance(type));
             }
 
-            cfg.AddProfile(new SearchProfile(serviceFactory ?? (_ => null!)));
             cfg.AddProfile<StatisticsProfile>();
             cfg.AddProfile<SavegamesProfile>();
 

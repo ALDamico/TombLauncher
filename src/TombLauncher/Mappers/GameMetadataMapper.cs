@@ -8,7 +8,7 @@ using TombLauncher.Services;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 
-namespace TombLauncher.Factories.Mapping;
+namespace TombLauncher.Mappers;
 
 public class GameMetadataMapper
 {
@@ -89,7 +89,10 @@ public class GameMetadataMapper
         };
     }
 
-    public List<GameWithStatsViewModel> ToViewModels(List<GameWithStatsDto> dtos,
+    public List<GameWithStatsViewModel> ToViewModels(IEnumerable<GameWithStatsDto> dtos,
         GameWithStatsService gameWithStatsService) =>
         dtos.Where(d => d != null!).Select(d => ToViewModel(d, gameWithStatsService)).ToList();
+
+    public ObservableCollection<GameWithStatsViewModel> ToObservableCollection(IEnumerable<GameWithStatsDto> dtos,
+        GameWithStatsService gameWithStatsService) => ToViewModels(dtos, gameWithStatsService).ToObservableCollection();
 }

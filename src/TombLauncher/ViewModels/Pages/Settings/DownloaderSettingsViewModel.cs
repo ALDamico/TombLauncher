@@ -8,8 +8,9 @@ using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Configuration;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Extensions;
-using TombLauncher.Factories.Mapping;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mappers;
+using TombLauncher.Mapping;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages.Settings;

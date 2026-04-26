@@ -1,10 +1,8 @@
 ﻿using System;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Data.Models;
 
 namespace TombLauncher.ViewModels;
 

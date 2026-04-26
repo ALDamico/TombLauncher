@@ -11,8 +11,8 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Services;
-using TombLauncher.Factories.Mapping;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mapping;
 using TombLauncher.ValueConverters;
 using TombLauncher.ViewModels;
 
