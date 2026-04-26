@@ -59,7 +59,7 @@ Dependency direction: `TombLauncher` → `Controls / Core / Data / Localization`
 - `AddViewModels()` — registers all page ViewModels with appropriate lifetimes (singleton for long-lived pages, scoped/transient for the rest)
 - `AddPageServices()` — registers application-layer services
 - `AddDatabaseAccess(config, appDataDir)` — registers `TombLauncherDbContext` (SQLite), repositories, and data services
-- `AddTombLauncherMappings()` — builds `MapperConfiguration` and registers `IMapper`
+- `AddTombLauncherMappings()` — registers all manual mapper singletons
 - `AddDownloaders()` — registers the three community-site downloaders
 
 EF Core migrations run automatically at startup via `dbContext.Database.MigrateAsync()`.
@@ -106,9 +106,14 @@ ProcessStartInfo GetLaunchStartInfo(GameLaunchContext context);
 
 Data access goes through scoped service classes (`GameDataService`, `PlaySessionDataService`, etc.) rather than direct repository access from ViewModels.
 
-### AutoMapper
+### Mapping
 
-`MapperConfigurationFactory.GetMapperConfiguration()` assembles all profiles. Profiles live in `src/TombLauncher/Factories/Profiles/`. `cfg.AddGlobalIgnore("InitCmd")` suppresses mapping of RelayCommand properties. The mapper is registered as a singleton and injected into services that need entity↔DTO conversion.
+Manual mapper classes (`XMapper`) registered as DI singletons via `AddTombLauncherMappings()`. Split by layer:
+
+- `src/TombLauncher/Mappers/` — DTO↔ViewModel mappers (e.g. `GameMetadataMapper`, `SearchMapper`)
+- `src/TombLauncher.Data/Mapping/` — entity↔DTO mappers (e.g. `GameMapper`, `FileBackupMapper`)
+
+Methods follow explicit naming: `ToDto`, `ToViewModel`, `ToViewModels`, `ToObservableCollection`. When a mapping requires a service (e.g. `GameWithStatsViewModel` needs `GameWithStatsService`), the service is passed as a method parameter rather than injected into the mapper.
 
 ### Multi-source downloader
 
