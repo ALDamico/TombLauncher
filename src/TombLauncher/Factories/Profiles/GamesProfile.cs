@@ -14,7 +14,6 @@ internal class GamesProfile : Profile
     public GamesProfile(Func<Type, object> serviceFactory)
     {
         CreateMap<GameHashes, GameHashDto>().ReverseMap();
-        CreateMap<GameLink, GameLinkDto>().ReverseMap();
         CreateMap<Game, GameMetadataDto>()
             .ForMember(g => g.ExecutablePath, opt => opt.MapFrom<GameExecutableResolver>())
             .ForMember(g => g.SetupExecutable, opt => opt.MapFrom<SetupExecutableResolver>())
@@ -35,8 +34,6 @@ internal class GamesProfile : Profile
 
         CreateMap<GameMetadataViewModel, GameMetadataDto>()
             .ForMember(dto => dto.TitlePic, opt => opt.MapFrom(vm => vm.TitlePic != null ? ImageUtils.ToByteArray(vm.TitlePic) : null));
-
-        CreateMap<GameLinkDto, GameLinkViewModel>().ReverseMap();
 
         CreateMap<GameWithStatsDto, GameWithStatsViewModel>()
             .ConstructUsing((dto, ctx) =>

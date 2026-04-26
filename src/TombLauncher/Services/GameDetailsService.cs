@@ -2,19 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Dtos;
-using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
+using TombLauncher.Factories.Mapping;
 using TombLauncher.Installers;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.ViewModels;
@@ -28,9 +27,10 @@ public class GameDetailsService : IViewService
 {
     public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GameLinkDataService gameLinkDataService,
         IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider,
-        TombRaiderEngineDetector engineDetector, ILogger<GameDetailsService> logger)
+        TombRaiderEngineDetector engineDetector, ILogger<GameDetailsService> logger, GameLinkDtoMapper mapper)
     {
         _logger = logger;
+        _mapper = mapper;
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _gameLinkDataService = gameLinkDataService;
@@ -40,6 +40,7 @@ public class GameDetailsService : IViewService
     }
 
     private readonly ILogger<GameDetailsService> _logger;
+    private readonly GameLinkDtoMapper _mapper;
 
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
@@ -67,13 +68,8 @@ public class GameDetailsService : IViewService
 
     public async Task FetchLinks(GameDetailsViewModel game, LinkType linkType)
     {
-        var tf = new TaskFactory();
-        var links = await tf.StartNew(() =>
-        {
-            var links = _gameLinkDataService.GetLinks(game.Game.GameMetadata.Id, linkType);
-            return Mapper.Map<List<GameLinkViewModel>>(links);
-        });
-        game.WalkthroughLinks = links.ToObservableCollection();
+        var links = await _gameLinkDataService.GetLinks(game.Game.GameMetadata.Id, CancellationToken.None, linkType);
+        game.WalkthroughLinks = _mapper.ToObservableCollection(links);
     }
 
     public async Task OpenWalkthrough(string link, bool askConfirmation)

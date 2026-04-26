@@ -20,6 +20,8 @@ public static class MappingServiceCollectionExtensions
         services.AddSingleton<SettingsMapper>();
         services.AddSingleton<AppCrashMapper>();
         services.AddSingleton<StatisticsMapper>();
+        services.AddSingleton<GameLinkMapper>();
+        services.AddSingleton<GameLinkDtoMapper>();
         return services;
     }
 }
