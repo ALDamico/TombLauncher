@@ -70,7 +70,8 @@ public class NewGameService : IViewService
         _logger.LogInformation("Installing game {GameTitle}", gameMetadata.Title);
         progress.Report(new CopyProgressInfo() { Message = "INSTALLING_GAMENAME".GetLocalizedString(gameMetadata.Title) });
         var hashes = await _gameFileHashCalculator.CalculateHashes(source);
-        if (_gameHashDataService.ExistsHashes(hashes, out _))
+        var (hashesExist, _) = await _gameHashDataService.ExistsHashes(hashes, CancellationToken.None);
+        if (hashesExist)
         {
             _logger.LogWarning("Game {GameTitle} is already installed", gameMetadata.Title);
             var messageBoxResult = await Dispatcher.UIThread.InvokeAsync(() =>
