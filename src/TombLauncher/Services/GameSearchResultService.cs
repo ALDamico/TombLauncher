@@ -258,7 +258,8 @@ public class GameSearchResultService : IViewService
 
     private async Task<bool> CheckGameAlreadyInstalled(MultiSourceGameSearchResultMetadataViewModel gameToInstall, List<GameHashDto> hashes)
     {
-        if (_gameHashDataService.ExistsHashes(hashes, out var foundGameId))
+        var (hashesExists, foundGameId) = await _gameHashDataService.ExistsHashes(hashes, CancellationToken.None);
+        if (hashesExists)
         {
             _logger.LogWarning("Game {GameTitle} already installed", gameToInstall.Title);
             var gameId = foundGameId.GetValueOrDefault();

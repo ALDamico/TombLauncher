@@ -22,6 +22,7 @@ public static class MappingServiceCollectionExtensions
         services.AddSingleton<StatisticsMapper>();
         services.AddSingleton<GameLinkMapper>();
         services.AddSingleton<GameLinkDtoMapper>();
+        services.AddSingleton<GameHashMapper>();
         return services;
     }
 }

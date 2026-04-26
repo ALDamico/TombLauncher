@@ -13,7 +13,6 @@ internal class GamesProfile : Profile
 {
     public GamesProfile(Func<Type, object> serviceFactory)
     {
-        CreateMap<GameHashes, GameHashDto>().ReverseMap();
         CreateMap<Game, GameMetadataDto>()
             .ForMember(g => g.ExecutablePath, opt => opt.MapFrom<GameExecutableResolver>())
             .ForMember(g => g.SetupExecutable, opt => opt.MapFrom<SetupExecutableResolver>())
