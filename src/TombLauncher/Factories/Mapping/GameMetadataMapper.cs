@@ -4,6 +4,7 @@ using System.Linq;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Services;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 
@@ -77,4 +78,18 @@ public class GameMetadataMapper
 
     public List<GameMetadataDto> ToDtos(IEnumerable<GameMetadataViewModel> viewModels) =>
         viewModels.Select(ToDto).ToList();
+
+    public GameWithStatsViewModel ToViewModel(GameWithStatsDto dto, GameWithStatsService gameWithStatsService)
+    {
+        return new GameWithStatsViewModel(gameWithStatsService, ToViewModel(dto.GameMetadata))
+        {
+            AreCommandsVisible = false,
+            LastPlayed = dto.LastPlayed,
+            TotalPlayedTime = dto.TotalPlayedTime
+        };
+    }
+
+    public List<GameWithStatsViewModel> ToViewModels(List<GameWithStatsDto> dtos,
+        GameWithStatsService gameWithStatsService) =>
+        dtos.Where(d => d != null!).Select(d => ToViewModel(d, gameWithStatsService)).ToList();
 }

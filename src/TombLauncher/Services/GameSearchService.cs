@@ -84,7 +84,7 @@ public class GameSearchService : IViewService
             {
                 if (gamesByLinks.TryGetValue(game.DownloadLink, out var dto))
                 {
-                    game.InstalledGame = Mapper.Map<GameWithStatsViewModel>(dto);
+                    game.InstalledGame = _gameMapper.ToViewModel(dto, _gameWithStatsService);
                 }
             }
 
@@ -210,7 +210,7 @@ public class GameSearchService : IViewService
                         continue;
                     if (installedGames.TryGetValue(game.DownloadLink, out var installedGame))
                     {
-                        game.InstalledGame = Mapper.Map<GameWithStatsViewModel>(installedGame);
+                        game.InstalledGame = _gameMapper.ToViewModel(installedGame, _gameWithStatsService);
                     }
                 }
 

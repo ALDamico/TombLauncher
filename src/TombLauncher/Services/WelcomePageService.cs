@@ -70,10 +70,12 @@ public class WelcomePageService : IViewService
         ViewContext.PopupService.ShowDialog(appCrashHostViewModel, MarkAsNotified);
     }
 
-    internal async Task<GameWithStatsViewModel> GetLatestPlayedGame()
+    internal async Task<GameWithStatsViewModel?> GetLatestPlayedGame()
     {
         var latestPlayedGame = _gameDataService.GetLatestPlayedGame();
-        var viewModel = Mapper.Map<GameWithStatsViewModel>(latestPlayedGame);
+        if (latestPlayedGame == null) 
+            return null;
+        var viewModel = _gameMetadataMapper.ToViewModel(latestPlayedGame, _gameWithStatsService); 
         return await Task.FromResult(viewModel);
     }
 
@@ -93,13 +95,13 @@ public class WelcomePageService : IViewService
     internal List<GameWithStatsViewModel> GetRecentlyPlayedGames(int count = 5)
     {
         var dtos = _gameDataService.GetRecentlyPlayedGames(count);
-        return dtos.Select(Mapper.Map<GameWithStatsViewModel>).ToList();
+        return _gameMetadataMapper.ToViewModels(dtos, _gameWithStatsService);
     }
 
     internal List<GameWithStatsViewModel> GetFavouriteGames(int count = 5)
     {
         var dtos = _gameDataService.GetFavouriteGames(count);
-        return dtos.Select(Mapper.Map<GameWithStatsViewModel>).ToList();
+        return _gameMetadataMapper.ToViewModels(dtos, _gameWithStatsService);
     }
 
     internal async Task<MultiSourceGameSearchResultMetadataViewModel?> FetchRandomGameSuggestionAsync()
