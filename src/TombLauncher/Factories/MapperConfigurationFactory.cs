@@ -24,7 +24,6 @@ public static class MapperConfigurationFactory
 
             cfg.AddProfile<AppCrashProfile>();
             cfg.AddProfile(new GamesProfile(serviceFactory ?? (_ => null!)));
-            cfg.AddProfile<SettingsProfile>();
             cfg.AddProfile(new SearchProfile(serviceFactory ?? (_ => null!)));
             cfg.AddProfile<StatisticsProfile>();
             cfg.AddProfile<SavegamesProfile>();
