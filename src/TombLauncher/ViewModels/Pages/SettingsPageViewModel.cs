@@ -15,7 +15,13 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 {
-    public SettingsPageViewModel(SettingsPageService settingsService, ISettingsProvider settingsProvider, IPopupService popupService, IPlatformSpecificFeatures platformSpecificFeatures, MapperConfiguration mapperConfiguration, IAppFileOperationsService appFileOperationsService, ILayeredAppConfiguration appConfiguration)
+    public SettingsPageViewModel(SettingsPageService settingsService, 
+        ISettingsProvider settingsProvider, 
+        IPopupService popupService, 
+        IPlatformSpecificFeatures platformSpecificFeatures, 
+        MapperConfiguration mapperConfiguration, 
+        IAppFileOperationsService appFileOperationsService, 
+        ILayeredAppConfiguration appConfiguration)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
@@ -26,7 +32,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _appConfiguration = appConfiguration;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
-        Sections.CollectionChanged += (sender, args) =>
+        Sections.CollectionChanged += (_, args) =>
         {
             if (args.NewItems != null)
             {
@@ -90,7 +96,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         {
             AvailableLanguages = supportedLanguages.OrderBy(l => l.DisplayName).ToObservableCollection(),
             ApplicationLanguage = supportedLanguages.FirstOrDefault(l =>
-                _settingsService.LocalizationManager.CurrentCulture?.Equals(l.CultureInfo) == true)
+                _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo))
         };
 
         var downloaders = _settingsService.GetDownloaderViewModels();

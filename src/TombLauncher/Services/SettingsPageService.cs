@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,9 +12,9 @@ using TombLauncher.Configuration;
 using TombLauncher.Extensions;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Factories.Mapping;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
@@ -34,7 +33,8 @@ public class SettingsPageService : IViewService
         IServiceProvider serviceProvider,
         IAppFileOperationsService appFileOperations,
         ISettingsProvider settingsProvider,
-        IPlatformSpecificFeatures platformSpecificFeatures)
+        IPlatformSpecificFeatures platformSpecificFeatures,
+        SettingsMapper settingsMapper)
     {
         ViewContext = viewContext;
         _appConfiguration = appConfiguration;
@@ -44,6 +44,7 @@ public class SettingsPageService : IViewService
         _appFileOperations = appFileOperations;
         _settingsProvider = settingsProvider;
         _platformSpecificFeatures = platformSpecificFeatures;
+        _mapper = settingsMapper;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -51,7 +52,8 @@ public class SettingsPageService : IViewService
     private readonly IServiceProvider _serviceProvider;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    private IMapper _mapper => ViewContext.Mapper;
+    private IMapper _legacyMapper => ViewContext.Mapper;
+    private readonly SettingsMapper _mapper;
     private readonly ILogger<SettingsPageService> _logger;
     private readonly ThemeManager _themeManager;
     private readonly IAppFileOperationsService _appFileOperations;
@@ -61,12 +63,8 @@ public class SettingsPageService : IViewService
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
     {
         var supportedLanguages = LocalizationManager.GetSupportedLanguages();
-        return _mapper.Map<List<ApplicationLanguageViewModel>>(supportedLanguages);
+        return _mapper.ToViewModels(supportedLanguages);
     }
-
-    public CultureInfo GetApplicationLanguage() => _settingsProvider.GetApplicationSettings().ApplicationLanguage;
-
-    public string GetApplicationTheme() => _settingsProvider.GetAppearanceSettings().ApplicationTheme;
 
     public async Task Save(SettingsPageViewModel viewModel)
     {
@@ -111,7 +109,7 @@ public class SettingsPageService : IViewService
 
     public List<DownloaderViewModel> GetDownloaderViewModels()
     {
-        return _mapper.Map<List<DownloaderViewModel>>(_settingsProvider.GetDownloaderConfigurations());
+        return _legacyMapper.Map<List<DownloaderViewModel>>(_settingsProvider.GetDownloaderConfigurations());
     }
 
     public GameDetailsSettingsViewModel GetGameDetailsSettings(PageViewModel settingsPage)
