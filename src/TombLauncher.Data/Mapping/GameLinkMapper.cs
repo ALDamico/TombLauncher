@@ -32,7 +32,6 @@ public class GameLinkMapper
             };
         }
 
-
         extant.DisplayName = dto.DisplayName;
         extant.BaseUrl = dto.BaseUrl;
         extant.Id = dto.Id;
