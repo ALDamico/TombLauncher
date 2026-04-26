@@ -28,8 +28,6 @@ public static class MapperConfigurationFactory
             cfg.AddProfile<SavegamesProfile>();
             cfg.AddProfile<LaunchOptionsProfile>();
 
-            cfg.CreateMap<FileBackup, FileBackupDto>().ReverseMap();
-
 
             cfg.AddGlobalIgnore("InitCommand");
         }, loggerFactory);
