@@ -3,16 +3,14 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using JamSoft.AvaloniaUI.Dialogs;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.Pages;
@@ -24,21 +22,21 @@ public class SavegameCommandService
     private readonly ISavegameRepository _savegameRepository;
     private readonly ISavegameHeaderProvider _headerProvider;
     private readonly IPopupService _popupService;
-    private readonly IMapper _mapper;
     private readonly ILogger<SavegameCommandService> _logger;
+    private readonly SavegameMapper _savegameMapper;
 
     public SavegameCommandService(
         ISavegameRepository savegameRepository,
         ISavegameHeaderProvider headerProvider,
         IPopupService popupService,
-        MapperConfiguration mapperConfiguration,
-        ILogger<SavegameCommandService> logger)
+        ILogger<SavegameCommandService> logger,
+        SavegameMapper savegameMapper)
     {
         _savegameRepository = savegameRepository;
         _headerProvider = headerProvider;
         _popupService = popupService;
-        _mapper = mapperConfiguration.CreateMapper();
         _logger = logger;
+        _savegameMapper = savegameMapper;
     }
 
     public async Task UpdateStartOfLevelState(SavegameListViewModel savegameListViewModel,
@@ -47,7 +45,7 @@ public class SavegameCommandService
         _logger.LogInformation("Setting savegame number {Savegame} as start of level...", targetSaveGame.SaveNumber);
         using (savegameListViewModel.BusyScope("UPDATE_IN_PROGRESS".GetLocalizedString()))
         {
-            var dto = _mapper.Map<FileBackupDto>(targetSaveGame);
+            var dto = _savegameMapper.ToDto(targetSaveGame);
             await _savegameRepository.UpdateSavegameStartOfLevel(dto);
         }
     }
@@ -90,10 +88,10 @@ public class SavegameCommandService
             var dialogViewModel = new RestoreSavegameDialogViewModel()
             {
                 Slots = availableSlots,
-                SelectedSlot = availableSlots.FirstOrDefault(s => s.SaveSlot == savegame.SlotNumber) ?? availableSlots.First(),
-                Data = savegame.Data,
-                TargetDirectory = Path.GetDirectoryName(savegame.FileName) ?? string.Empty,
-                BaseFileName = Path.GetFileNameWithoutExtension(savegame.FileName)
+                SelectedSlot = availableSlots.FirstOrDefault(s => s.SaveSlot == savegame?.SlotNumber) ?? availableSlots.First(),
+                Data = savegame?.Data ?? [],
+                TargetDirectory = Path.GetDirectoryName(savegame?.FileName) ?? string.Empty,
+                BaseFileName = Path.GetFileNameWithoutExtension(savegame?.FileName) ?? string.Empty
             };
             _popupService.ShowDialog(dialogViewModel, ExecuteRestore);
         }

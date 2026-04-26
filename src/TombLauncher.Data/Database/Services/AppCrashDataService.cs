@@ -1,6 +1,4 @@
 using System.Text.Json;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Data.Mapping;
 using TombLauncher.Data.Models;

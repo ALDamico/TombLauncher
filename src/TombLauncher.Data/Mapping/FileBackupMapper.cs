@@ -55,7 +55,8 @@ public class FileBackupMapper
             FileType = fileBackup.FileType,
             MetadataId = fileBackup.SavegameMetadata?.Id ?? 0,
             SaveNumber = fileBackup.SavegameMetadata?.SaveNumber,
-            SlotNumber = fileBackup.SavegameMetadata?.SlotNumber ?? 0
+            SlotNumber = fileBackup.SavegameMetadata?.SlotNumber ?? 0,
+            GameEngine = fileBackup.Game?.GameEngine ?? default
         };
     }
 
