@@ -269,6 +269,7 @@ jobs:
             --base-url "$BASE_URL" "${COMMON_ARGS[@]}"
 
           cp "artifacts/TombLauncher-$VERSION-portable.zip" appcast-output/
+
           netsparkle-generate-appcast \
             --single-file "appcast-output/TombLauncher-$VERSION-portable.zip" \
             --file-version "$VERSION" --os windows --channel portable \
