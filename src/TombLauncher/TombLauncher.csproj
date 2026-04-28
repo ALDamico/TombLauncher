@@ -152,8 +152,4 @@
         <DependentUpon>LaunchOptionsView.axaml</DependentUpon>
       </Compile>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Factories\" />
-    </ItemGroup>
 </Project>

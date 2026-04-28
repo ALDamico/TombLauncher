@@ -21,6 +21,7 @@ public static class ViewModelsServiceCollectionExtensions
         services.AddTransient<GameDetailsViewModel>();
         services.AddTransient<LaunchOptionsViewModel>();
         services.AddSingleton<MainWindowViewModel>();
+        services.AddTransient<LaunchOptionsViewModel>();
         return services;
     }
 }
