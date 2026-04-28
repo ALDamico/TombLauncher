@@ -1,4 +1,4 @@
-﻿using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Core.Dtos;
 
@@ -9,4 +9,5 @@ public class LaunchOptionsDto
     public required FileBackupDto GameExecutable { get; set; }
     public FileBackupDto? SetupExecutable { get; set; }
     public FileBackupDto? CommunitySetupExecutable { get; set; }
+    public string? WinePrefix { get; set; }
 }

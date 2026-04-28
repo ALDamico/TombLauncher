@@ -28,7 +28,7 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
     }
 
     public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
-        string compatibilityExecutable, string workingDirectory)
+        string compatibilityExecutable, string workingDirectory, string? winePrefix = null)
     {
         return new ProcessStartInfo(executableFileNameOnly)
         {
@@ -56,4 +56,7 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
     {
         return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
     }
+
+    public bool IsWineSupported => false;
+    public string? FindWineExecutable() => null;
 }

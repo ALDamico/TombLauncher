@@ -148,6 +148,9 @@
         <DependentUpon>FavouritesWidget.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Pages\LaunchOptionsView.axaml.cs">
+        <DependentUpon>LaunchOptionsView.axaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

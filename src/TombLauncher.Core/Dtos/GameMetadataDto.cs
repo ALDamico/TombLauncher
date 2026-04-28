@@ -27,4 +27,5 @@ public class GameMetadataDto : IGameMetadata
     public bool IsFavourite { get; set; }
     public bool IsCompleted { get; set; }
     public string? InstalledFromSiteDisplayName { get; set; }
+    public string? WinePrefix { get; set; }
 }

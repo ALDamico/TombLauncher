@@ -56,6 +56,20 @@ public partial class NotificationService
         AddErrorNotificationAsync(errorMessage, icon).GetAwaiter().GetResult();
     }
 
+    public async Task AddWarningNotificationAsync(string title, string message, PackIconRemixIconKind icon)
+    {
+        var notificationViewModel = new NotificationViewModel()
+        {
+            IsOpenable = false,
+            IsCancelable = false,
+            IsDismissable = true,
+            Title = title.GetLocalizedString(),
+            Content = new StringIconNotificationViewModel() { Icon = icon, Text = message.GetLocalizedString() },
+            Type = NotificationType.Warning
+        };
+        await AddNotificationAsync(notificationViewModel);
+    }
+
     public async Task AddSuccessNotification(string title, string message)
     {
         var notificationViewModel = new NotificationViewModel()

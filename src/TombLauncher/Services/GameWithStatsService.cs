@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Navigation;
 using TombLauncher.Core.PlatformSpecific;
@@ -33,6 +35,7 @@ public class GameWithStatsService : IViewService, IDisposable
         ISavegameHeaderProvider headerProvider,
         IPlatformSpecificFeatures platformSpecificFeatures,
         SavegameHeaderProcessor headerProcessor,
+        IAppConfiguration appConfiguration,
         GameMetadataMapper mapper)
     {
         ViewContext = viewContext;
@@ -48,7 +51,8 @@ public class GameWithStatsService : IViewService, IDisposable
 
         _logger = logger;
         _headerProvider = headerProvider;
-        _winePath = settingsProvider.GetGameDetailsSettings().WinePath;
+        _winePath = appConfiguration.Compatibility.WinePath;
+        _globalWinePrefix = appConfiguration.Compatibility.WinePrefix;
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
         _mapper = mapper;
@@ -69,6 +73,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly ILogger<GameWithStatsService> _logger;
     private readonly ISavegameHeaderProvider _headerProvider;
     private readonly string _winePath;
+    private readonly string? _globalWinePrefix;
     private DateTime? _startDate;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
@@ -252,9 +257,13 @@ public class GameWithStatsService : IViewService, IDisposable
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
         _startDate = DateTime.Now;
 
+        var winePrefix = game.GameMetadata.WinePrefix.IsNotNullOrWhiteSpace()
+            ? game.GameMetadata.WinePrefix
+            : _globalWinePrefix;
+
         var process = new Process()
         {
-            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory),
+            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory, winePrefix),
             EnableRaisingEvents = true
         };
         if (trackPlayTime)

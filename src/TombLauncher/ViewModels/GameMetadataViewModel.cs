@@ -28,5 +28,6 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private bool _isCompleted;
     [ObservableProperty] private bool _isFavourite;
     [ObservableProperty] private string? _installedFromSiteDisplayName;
+    [ObservableProperty] private string? _winePrefix;
     public Guid Guid { get; set; }
 }

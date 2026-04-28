@@ -11,15 +11,18 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using IconPacks.Avalonia.RemixIcon;
 using JamSoft.AvaloniaUI.Dialogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Serilog;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
@@ -173,6 +176,7 @@ public class App : Application
         mainWindow.Show();
         var updateService = Ioc.Default.GetRequiredService<UpdateService>();
         await updateService.StartAsync();
+        await CheckWineAsync();
     }
 
     private async Task InitializeServices(Application application, ResourceDictionary resourceDictionary, IProgress<string> progress)
@@ -206,9 +210,9 @@ public class App : Application
         serviceCollection.AddSingleton<ISavegameHeaderProvider, SavegameHeaderProvider>();
         serviceCollection.AddTransient<SavegameQueryService>();
         serviceCollection.AddTransient<SavegameCommandService>();
-        serviceCollection.AddPageServices();
-        serviceCollection.AddViewModels();
-        serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(application, resourceDictionary));
+        serviceCollection.AddPageServices()
+            .AddViewModels();
+        serviceCollection.AddSingleton<ILocalizationManager>(_ => new LocalizationManager(Current!, resourceDictionary));
         serviceCollection.AddDatabaseAccess(appConfiguration, appDataDirectory);
         serviceCollection.AddSingleton(sp => new NavigationManager(sp));
         serviceCollection.AddSingleton<IPopupService>(_ => new PopupService(
@@ -280,6 +284,48 @@ public class App : Application
             baseVariant = ThemeVariant.Light;
         }
         AppUtils.ChangeTheme(baseVariant);
+    }
+
+    private static async Task CheckWineAsync()
+    {
+        var platform = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+        if (!platform.IsWineSupported) return;
+
+        var appConfig = Ioc.Default.GetRequiredService<ILayeredAppConfiguration>();
+
+        // Migrate old WinePath from GameDetails to Compatibility (one-time, only user layer)
+        var oldWinePath = appConfig.User.GameDetails.WinePath;
+        if (string.IsNullOrWhiteSpace(appConfig.User.Compatibility.WinePath)
+            && !string.IsNullOrWhiteSpace(oldWinePath))
+        {
+            appConfig.User.Compatibility.WinePath = oldWinePath;
+            await PersistAsync();
+            return;
+        }
+
+        // Use the merged (layered) config value — default "wine" counts as configured
+        var mergedWinePath = appConfig.Compatibility.WinePath;
+        
+        var wineExe = platform.FindWineExecutable();
+        if (wineExe != null && mergedWinePath != wineExe)
+        {
+            appConfig.User.Compatibility.WinePath = wineExe;
+            await PersistAsync();
+        }
+        else
+        {
+            var notifications = Ioc.Default.GetRequiredService<NotificationService>();
+            await notifications.AddWarningNotificationAsync(
+                "WINE_NOT_FOUND", "WINE_NOT_FOUND_DESCRIPTION",
+                PackIconRemixIconKind.GobletBrokenLine);
+        }
+
+        static async Task PersistAsync()
+        {
+            using var scope = Ioc.Default.CreateScope();
+            var settingsService = scope.ServiceProvider.GetRequiredService<SettingsPageService>();
+            await settingsService.PersistCurrentConfigAsync();
+        }
     }
 
 }

@@ -225,6 +225,7 @@ public class GameDataService
 
         var gameToUpdate = (await _dbContext.Games.FindAsync(launchOptionsDto.GameId))!;
         gameToUpdate.GameEngine = launchOptionsDto.GameEngine;
+        gameToUpdate.WinePrefix = launchOptionsDto.WinePrefix;
         _dbContext.Games.Update(gameToUpdate);
 
         // Update game executable

@@ -27,16 +27,19 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
         };
     }
 
-    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments, string compatibilityExecutable,
-        string workingDirectory)
+    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
+        string compatibilityExecutable, string workingDirectory, string? winePrefix = null)
     {
         arguments = executableFileNameOnly + " " + (arguments ?? "");
-        return new ProcessStartInfo(compatibilityExecutable)
+        var psi = new ProcessStartInfo(compatibilityExecutable)
         {
-            Arguments = arguments ?? "",
+            Arguments = arguments,
             WorkingDirectory = workingDirectory,
-            UseShellExecute = true,
+            UseShellExecute = false,
         };
+        if (!string.IsNullOrWhiteSpace(winePrefix))
+            psi.Environment["WINEPREFIX"] = winePrefix;
+        return psi;
     }
 
     public NotifyFilters GetSavegameWatcherNotifyFilters()
@@ -63,5 +66,26 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
             Directory.CreateDirectory(appDir);
         }
         return appDir;
+    }
+
+    public bool IsWineSupported => true;
+
+    public string? FindWineExecutable()
+    {
+        // 1. Check WINE env var (points directly to the wine binary)
+        var wineEnv = Environment.GetEnvironmentVariable("WINE");
+        if (!string.IsNullOrWhiteSpace(wineEnv) && File.Exists(wineEnv))
+            return wineEnv;
+
+        // 2. Check WINEPATH env var (explicitly set on some systems)
+        var winePathEnv = Environment.GetEnvironmentVariable("WINEPATH");
+        if (!string.IsNullOrWhiteSpace(winePathEnv) && File.Exists(winePathEnv))
+            return winePathEnv;
+
+        // 3. Fall back to PATH scan
+        var pathDirs = Environment.GetEnvironmentVariable("PATH")?.Split(':') ?? [];
+        return pathDirs
+            .Select(dir => Path.Combine(dir, "wine"))
+            .FirstOrDefault(File.Exists);
     }
 }

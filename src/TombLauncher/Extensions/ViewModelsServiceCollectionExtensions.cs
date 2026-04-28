@@ -19,6 +19,7 @@ public static class ViewModelsServiceCollectionExtensions
         services.AddScoped<StatisticsPageViewModel>();
         services.AddTransient<SavegameListViewModel>();
         services.AddTransient<GameDetailsViewModel>();
+        services.AddTransient<LaunchOptionsViewModel>();
         services.AddSingleton<MainWindowViewModel>();
         return services;
     }
