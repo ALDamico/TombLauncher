@@ -9,9 +9,7 @@ using Microsoft.Extensions.Logging;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Navigation;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using System.Collections.Generic;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;
@@ -84,7 +82,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private DateTime? _startDate;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
-    public async Task OpenGame(GameWithStatsViewModel game)
+    public async Task OpenGame(GameWithStatsViewModel? game)
     {
         await NavigationManager.NavigateTo<GameDetailsViewModel>(game);
     }
@@ -143,10 +141,10 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var gameViewModel = await GetGameById(gameId);
         await OpenGame(gameViewModel);
-        PlayGame(gameViewModel);
+        PlayGame(gameViewModel!);
     }
 
-    private async Task<GameWithStatsViewModel> GetGameById(int gameId)
+    private async Task<GameWithStatsViewModel?> GetGameById(int gameId)
     {
         var game = await _gameDataService.GetGameWithStats(gameId);
         return _mapper.ToViewModel(game, this);
@@ -263,9 +261,10 @@ public class GameWithStatsService : IViewService, IDisposable
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
         _startDate = DateTime.Now;
 
-        var winePrefix = game.GameMetadata.CompatibilityPrefixPath.IsNotNullOrWhiteSpace()
+        var rawPrefix = game.GameMetadata.CompatibilityPrefixPath.IsNotNullOrWhiteSpace()
             ? game.GameMetadata.CompatibilityPrefixPath
             : _globalCompatibilityPrefixPath;
+        var winePrefix = rawPrefix != null ? _platformSpecificFeatures.ExpandPath(rawPrefix) : null;
 
         var perGameTool = game.GameMetadata.CompatibilityTool;
         IGameLauncher launcher = perGameTool == CompatibilityTool.Unspecified

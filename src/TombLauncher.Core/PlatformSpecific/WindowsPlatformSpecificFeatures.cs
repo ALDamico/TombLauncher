@@ -46,6 +46,8 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
         return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
     }
 
+    public string ExpandPath(string path) => path;
+
     public bool IsWineSupported => false;
     public string? FindWineExecutable() => null;
     public string? GetWineVersion(string winePath) => null;

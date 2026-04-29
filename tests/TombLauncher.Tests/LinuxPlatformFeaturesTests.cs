@@ -107,6 +107,27 @@ public class LinuxPlatformFeaturesTests : IDisposable
         Assert.Equal("9.0.3", _sut.GetProtonVersion(bin));
     }
 
+    // ─── ExpandPath ──────────────────────────────────────────────────────────
+
+    [Fact]
+    public void ExpandPath_ExpandsLeadingTilde()
+    {
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        Assert.Equal(Path.Combine(home, "games/tr1"), _sut.ExpandPath("~/games/tr1"));
+    }
+
+    [Fact]
+    public void ExpandPath_ReturnsAbsolutePath_Unchanged()
+    {
+        Assert.Equal("/opt/games/tr1", _sut.ExpandPath("/opt/games/tr1"));
+    }
+
+    [Fact]
+    public void ExpandPath_DoesNotExpand_TildeInMiddle()
+    {
+        Assert.Equal("/opt/my~path", _sut.ExpandPath("/opt/my~path"));
+    }
+
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
     /// <summary>

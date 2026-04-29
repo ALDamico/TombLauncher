@@ -54,6 +54,11 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
         return appDir;
     }
 
+    public string ExpandPath(string path) =>
+        path.StartsWith('~')
+            ? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + path[1..]
+            : path;
+
     public bool IsWineSupported => true;
 
     public string? FindWineExecutable()

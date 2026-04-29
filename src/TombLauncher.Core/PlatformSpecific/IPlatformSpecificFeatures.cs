@@ -13,6 +13,8 @@ public interface IPlatformSpecificFeatures
     List<UnzipBackendDto> GetPlatformSpecificZipFallbackPrograms();
     string GetAppDataDirectory();
 
+    string ExpandPath(string path);
+
     bool IsWineSupported { get; }
     string? FindWineExecutable();
     string? GetWineVersion(string winePath);
