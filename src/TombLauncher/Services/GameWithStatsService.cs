@@ -2,12 +2,16 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.Navigation;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Core.Utils;
@@ -33,6 +37,8 @@ public class GameWithStatsService : IViewService, IDisposable
         ISavegameHeaderProvider headerProvider,
         IPlatformSpecificFeatures platformSpecificFeatures,
         SavegameHeaderProcessor headerProcessor,
+        IAppConfiguration appConfiguration,
+        Func<IGameLauncher> gameLauncherFactory,
         GameMetadataMapper mapper)
     {
         ViewContext = viewContext;
@@ -48,7 +54,9 @@ public class GameWithStatsService : IViewService, IDisposable
 
         _logger = logger;
         _headerProvider = headerProvider;
-        _winePath = settingsProvider.GetGameDetailsSettings().WinePath;
+        _gameLauncherFactory = gameLauncherFactory;
+        _globalCompatibilityPrefixPath = appConfiguration.Compatibility.CompatibilityPrefixPath;
+        _appConfiguration = appConfiguration;
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
         _mapper = mapper;
@@ -68,11 +76,13 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly int? _numberOfSavesToKeep;
     private readonly ILogger<GameWithStatsService> _logger;
     private readonly ISavegameHeaderProvider _headerProvider;
-    private readonly string _winePath;
+    private readonly Func<IGameLauncher> _gameLauncherFactory;
+    private readonly string? _globalCompatibilityPrefixPath;
+    private readonly IAppConfiguration _appConfiguration;
     private DateTime? _startDate;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
-    public async Task OpenGame(GameWithStatsViewModel game)
+    public async Task OpenGame(GameWithStatsViewModel? game)
     {
         await NavigationManager.NavigateTo<GameDetailsViewModel>(game);
     }
@@ -131,10 +141,10 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var gameViewModel = await GetGameById(gameId);
         await OpenGame(gameViewModel);
-        PlayGame(gameViewModel);
+        PlayGame(gameViewModel!);
     }
 
-    private async Task<GameWithStatsViewModel> GetGameById(int gameId)
+    private async Task<GameWithStatsViewModel?> GetGameById(int gameId)
     {
         var game = await _gameDataService.GetGameWithStats(gameId);
         return _mapper.ToViewModel(game, this);
@@ -180,36 +190,37 @@ public class GameWithStatsService : IViewService, IDisposable
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         try
         {
-            currentPage?.SetBusy(true, "SAVING_PLAY_SESSION".GetLocalizedString());
-            var gameMetadataDto = _mapper.ToDto(game.GameMetadata);
-            await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(), process.ExitTime);
-            currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
-            var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
-
-            foreach (var file in filesToProcess)
+            using (currentPage?.BusyScope("SAVING_PLAY_SESSION".GetLocalizedString()))
             {
-                file.Md5 = Md5Utils.ComputeMd5Hash(file.Data);
+                var gameMetadataDto = _mapper.ToDto(game.GameMetadata);
+                await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(),
+                    process.ExitTime);
+                currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
+                var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
+
+                foreach (var file in filesToProcess)
+                {
+                    file.Md5 = Md5Utils.ComputeMd5Hash(file.Data);
+                }
+
+                filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
+
+                if (_backupEnabled)
+                {
+                    _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine,
+                        filesToProcess, _numberOfSavesToKeep);
+                    _headerProcessor?.ClearProcessedFiles();
+                }
+
+                errorOccurred = _headerProcessor?.ErrorOccurred ?? false;
+                CleanupWatcherAndProcessor();
+
+
+                await _savegameRepository.Save();
             }
-
-            filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
-
-            if (_backupEnabled)
-            {
-                _savegameRepository.BackupSavegames(game.GameMetadata.Id, game.GameMetadata.GameEngine, filesToProcess, _numberOfSavesToKeep);
-                _headerProcessor?.ClearProcessedFiles();
-            }
-
-            errorOccurred = _headerProcessor?.ErrorOccurred ?? false;
-            CleanupWatcherAndProcessor();
-
-
-            await _savegameRepository.Save();
-
-            // NavigationManager.RequestRefresh(); // Not available in V2? Need to handle refresh.
         }
         finally
         {
-            currentPage?.ClearBusy();
             if (errorOccurred)
             {
                 await ViewContext.PopupService.ShowLocalized("Savegame parse error",
@@ -222,8 +233,7 @@ public class GameWithStatsService : IViewService, IDisposable
     public void LaunchSetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy(
-            "LAUNCHING_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        currentPage?.SetBusy("LAUNCHING_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.SetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
@@ -233,8 +243,7 @@ public class GameWithStatsService : IViewService, IDisposable
     public void LaunchCommunitySetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy(
-            "LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        currentPage?.SetBusy("LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.CommunitySetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
@@ -252,25 +261,93 @@ public class GameWithStatsService : IViewService, IDisposable
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
         _startDate = DateTime.Now;
 
+        var rawPrefix = game.GameMetadata.CompatibilityPrefixPath.IsNotNullOrWhiteSpace()
+            ? game.GameMetadata.CompatibilityPrefixPath
+            : _globalCompatibilityPrefixPath;
+        var winePrefix = rawPrefix != null ? _platformSpecificFeatures.ExpandPath(rawPrefix) : null;
+
+        var perGameTool = game.GameMetadata.CompatibilityTool;
+        IGameLauncher launcher = perGameTool == CompatibilityTool.Unspecified
+            ? _gameLauncherFactory()
+            : perGameTool switch
+            {
+                CompatibilityTool.Proton => new ProtonGameLauncher(
+                    game.GameMetadata.CompatibilityToolPath.IsNotNullOrWhiteSpace()
+                        ? game.GameMetadata.CompatibilityToolPath!
+                        : _appConfiguration.Compatibility.ProtonPath ?? ""),
+                CompatibilityTool.None => new WindowsGameLauncher(),
+                _ => new WineGameLauncher(
+                    game.GameMetadata.CompatibilityToolPath.IsNotNullOrWhiteSpace()
+                        ? game.GameMetadata.CompatibilityToolPath!
+                        : _appConfiguration.Compatibility.WinePath ?? "wine")
+            };
+
+        var extraEnvVars = game.GameMetadata.ExtraEnvVars.Count > 0
+            ? game.GameMetadata.ExtraEnvVars.ToDictionary(e => e.VariableName, e => e.VariableValue)
+            : null;
+
         var process = new Process()
         {
-            StartInfo = _platformSpecificFeatures.GetGameLaunchStartInfo(executableFileNameOnly, arguments ?? "", _winePath, workingDirectory),
+            StartInfo = launcher.GetLaunchStartInfo(new GameLaunchContext
+            {
+                ExecutableFileName = executableFileNameOnly,
+                Arguments = arguments ?? "",
+                WorkingDirectory = workingDirectory,
+                PrefixPath = winePrefix,
+                ExtraEnvVars = extraEnvVars
+            }),
             EnableRaisingEvents = true
         };
+
+        var stdoutBuilder = new StringBuilder();
+        var stderrBuilder = new StringBuilder();
+
+        // Redirect streams only when UseShellExecute=false (Linux/Wine); not available on Windows with UseShellExecute=true.
+        if (!process.StartInfo.UseShellExecute)
+        {
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.OutputDataReceived += (_, args) => { if (args.Data != null) stdoutBuilder.AppendLine(args.Data); };
+            process.ErrorDataReceived  += (_, args) => { if (args.Data != null) stderrBuilder.AppendLine(args.Data); };
+        }
+
         if (trackPlayTime)
         {
-            process.Exited += async (sender, _) => await OnGameExited(game, (Process)sender!);
+            process.Exited += async (sender, _) =>
+            {
+                var p = (Process)sender!;
+                LogProcessOutputOnError(p, stdoutBuilder, stderrBuilder);
+                await OnGameExited(game, p);
+            };
         }
         else
         {
-            process.Exited += (sender, _) => OnSetupExited((Process)sender!);
+            process.Exited += (sender, _) =>
+            {
+                var p = (Process)sender!;
+                LogProcessOutputOnError(p, stdoutBuilder, stderrBuilder);
+                OnSetupExited(p);
+            };
         }
 
-        process.ErrorDataReceived += (_, args) => _logger.LogError("Process error: {StandardError}", args.Data);
-        process.OutputDataReceived +=
-            (_, args) => _logger.LogInformation("Process output: {StandardOutput}", args.Data);
-
         process.Start();
+
+        if (!process.StartInfo.UseShellExecute)
+        {
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+        }
+    }
+
+    private void LogProcessOutputOnError(Process process, StringBuilder stdout, StringBuilder stderr)
+    {
+        if (process.ExitCode == 0) return;
+        var stdoutStr = stdout.ToString();
+        var stderrStr = stderr.ToString();
+        if (!string.IsNullOrWhiteSpace(stdoutStr))
+            _logger.LogWarning("Process stdout:{NewLine}{StdOut}", Environment.NewLine, stdoutStr);
+        if (!string.IsNullOrWhiteSpace(stderrStr))
+            _logger.LogWarning("Process stderr:{NewLine}{StdErr}", Environment.NewLine, stderrStr);
     }
 
     public async Task ToggleFavourite(GameWithStatsViewModel gameWithStatsViewModel)

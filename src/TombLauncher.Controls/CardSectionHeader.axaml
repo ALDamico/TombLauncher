@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:controls="clr-namespace:TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="60"
+             x:Class="TombLauncher.Controls.CardSectionHeader"
+             x:Name="CardSectionHeaderRoot">
+    <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+        <iconPacks:PackIconRemixIcon Kind="{Binding ElementName=CardSectionHeaderRoot, Path=IconKind}"
+                                     Width="20" Height="20"
+                                     Foreground="{DynamicResource PrimaryBrush}"
+                                     VerticalAlignment="Center" />
+        <TextBlock Text="{Binding ElementName=CardSectionHeaderRoot, Path=Title}"
+                   FontSize="16" FontWeight="DemiBold"
+                   VerticalAlignment="Center" />
+    </StackPanel>
+</UserControl>

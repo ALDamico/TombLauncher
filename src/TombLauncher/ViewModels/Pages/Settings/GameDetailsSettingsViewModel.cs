@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Configuration;
@@ -15,9 +14,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     {
     }
 
-    public bool IsWinePathOptionVisible => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
     [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
-    [ObservableProperty] private string _winePath = string.Empty;
     [ObservableProperty] private int _descriptionFontSize = 18;
 
     public IReadOnlyList<int> AvailableFontSizes { get; } = new[] { 12, 14, 16, 18, 20 };
@@ -75,7 +72,6 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     public override void ApplyTo(AppConfiguration userConfig)
     {
         userConfig.GameDetails.AskForConfirmationBeforeWalkthrough = AskForConfirmationBeforeWalkthrough;
-        userConfig.GameDetails.WinePath = WinePath;
         userConfig.GameDetails.DescriptionFontSize = DescriptionFontSize;
         userConfig.GameDetails.DocumentationPatterns = DocumentationPatterns?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
         userConfig.GameDetails.DocumentationFolderExclusions = FolderExclusions?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();

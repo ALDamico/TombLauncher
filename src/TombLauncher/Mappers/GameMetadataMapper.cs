@@ -1,6 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Media.Imaging;
+using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
@@ -12,8 +16,24 @@ namespace TombLauncher.Mappers;
 
 public class GameMetadataMapper
 {
+    private readonly ILogger<GameMetadataMapper> _logger;
+
+    public GameMetadataMapper(ILogger<GameMetadataMapper> logger)
+    {
+        _logger = logger;
+    }
+
     public GameMetadataViewModel ToViewModel(IGameMetadata dto)
     {
+        Bitmap? titlePic = null;
+        try
+        {
+            titlePic = ImageUtils.ToBitmap(dto.TitlePic);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error converting title picture for {GameName} from {Downloader}", dto.Title, dto.InstalledFromSiteDisplayName);
+        }
         return new GameMetadataViewModel()
         {
             GameEngine = dto.GameEngine,
@@ -37,7 +57,11 @@ public class GameMetadataMapper
             Setting = dto.Setting,
             SetupExecutable = dto.SetupExecutable,
             SetupExecutableArgs = dto.SetupExecutableArgs,
-            TitlePic = ImageUtils.ToBitmap(dto.TitlePic)
+            TitlePic = titlePic,
+            CompatibilityPrefixPath = dto.CompatibilityPrefixPath,
+            CompatibilityTool = dto.CompatibilityTool,
+            CompatibilityToolPath = dto.CompatibilityToolPath,
+            ExtraEnvVars = dto.ExtraEnvVars.OfType<EnvironmentVariableDto>().ToList()
         };
     }
 
@@ -72,15 +96,20 @@ public class GameMetadataMapper
             Setting = viewModel.Setting,
             SetupExecutable = viewModel.SetupExecutable,
             SetupExecutableArgs = viewModel.SetupExecutableArgs,
-            TitlePic = ImageUtils.ToByteArray(viewModel.TitlePic)
+            TitlePic = ImageUtils.ToByteArray(viewModel.TitlePic),
+            CompatibilityPrefixPath = viewModel.CompatibilityPrefixPath,
+            CompatibilityTool = viewModel.CompatibilityTool,
+            CompatibilityToolPath = viewModel.CompatibilityToolPath,
+            ExtraEnvVars = viewModel.ExtraEnvVars.Cast<IEnvironmentVariable>().ToList()
         };
     }
 
     public List<GameMetadataDto> ToDtos(IEnumerable<GameMetadataViewModel> viewModels) =>
         viewModels.Select(ToDto).ToList();
 
-    public GameWithStatsViewModel ToViewModel(GameWithStatsDto dto, GameWithStatsService gameWithStatsService)
+    public GameWithStatsViewModel? ToViewModel(GameWithStatsDto? dto, GameWithStatsService gameWithStatsService)
     {
+        if (dto == null) return null;
         return new GameWithStatsViewModel(gameWithStatsService, ToViewModel(dto.GameMetadata))
         {
             AreCommandsVisible = false,
@@ -89,9 +118,9 @@ public class GameMetadataMapper
         };
     }
 
-    public List<GameWithStatsViewModel> ToViewModels(IEnumerable<GameWithStatsDto> dtos,
+    public List<GameWithStatsViewModel> ToViewModels(IEnumerable<GameWithStatsDto?> dtos,
         GameWithStatsService gameWithStatsService) =>
-        dtos.Where(d => d != null!).Select(d => ToViewModel(d, gameWithStatsService)).ToList();
+        dtos.Where(d => d != null).Select(d => ToViewModel(d, gameWithStatsService)!).ToList();
 
     public ObservableCollection<GameWithStatsViewModel> ToObservableCollection(IEnumerable<GameWithStatsDto> dtos,
         GameWithStatsService gameWithStatsService) => ToViewModels(dtos, gameWithStatsService).ToObservableCollection();

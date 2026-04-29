@@ -1,6 +1,5 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
@@ -17,7 +16,8 @@
     <UserControl.Resources>
         <converters:StringCasingConverter x:Key="StringCasingConverter" />
     </UserControl.Resources>
-    <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+    <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,0,0,16"
+            IsVisible="{Binding HasContent}">
         <StackPanel Orientation="Vertical" Spacing="12">
             <DockPanel LastChildFill="True">
                 <controls:Infotip IsVisible="{Binding InfoTipContent, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" 

@@ -1,3 +1,4 @@
+using TombLauncher.Contracts;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 
@@ -27,4 +28,8 @@ public class GameMetadataDto : IGameMetadata
     public bool IsFavourite { get; set; }
     public bool IsCompleted { get; set; }
     public string? InstalledFromSiteDisplayName { get; set; }
+    public string? CompatibilityPrefixPath { get; set; }
+    public CompatibilityTool CompatibilityTool { get; set; }
+    public string? CompatibilityToolPath { get; set; }
+    public List<IEnvironmentVariable> ExtraEnvVars { get; set; } = [];
 }

@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.ViewModels;
 
@@ -28,5 +30,9 @@ public partial class GameMetadataViewModel : ViewModelBase
     [ObservableProperty] private bool _isCompleted;
     [ObservableProperty] private bool _isFavourite;
     [ObservableProperty] private string? _installedFromSiteDisplayName;
+    [ObservableProperty] private string? _compatibilityPrefixPath;
+    [ObservableProperty] private CompatibilityTool _compatibilityTool;
+    [ObservableProperty] private string? _compatibilityToolPath;
+    public List<EnvironmentVariableDto> ExtraEnvVars { get; set; } = [];
     public Guid Guid { get; set; }
 }

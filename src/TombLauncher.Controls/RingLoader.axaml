@@ -21,7 +21,7 @@
     </UserControl.Styles>
 
     <StackPanel HorizontalAlignment="Center" Spacing="8">
-        <Viewbox Stretch="Uniform">
+        <Viewbox Stretch="Uniform" Width="80" Height="80">
             <Grid Width="100" Height="100">
                 <!-- Outer Ring -->
                 <Grid Width="100" Height="100" RenderTransformOrigin="50%,50%">

@@ -76,7 +76,7 @@ public class WelcomePageService : IViewService
 
     internal async Task<GameWithStatsViewModel?> GetLatestPlayedGame()
     {
-        var latestPlayedGame = _gameDataService.GetLatestPlayedGame();
+        var latestPlayedGame = await _gameDataService.GetLatestPlayedGame();
         if (latestPlayedGame == null) 
             return null;
         var viewModel = _gameMetadataMapper.ToViewModel(latestPlayedGame, _gameWithStatsService); 

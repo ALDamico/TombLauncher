@@ -16,6 +16,7 @@ public class TombLauncherDbContext : DbContext
     public DbSet<GameLink> GameLink { get; set; }
     public DbSet<GameHashes> GameHashes { get; set; }
     public DbSet<SavegameMetadata> SavegameMetadata { get; set; }
+    public DbSet<GameEnvironmentVariable> GameEnvironmentVariables { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,5 +28,11 @@ public class TombLauncherDbContext : DbContext
             .HasForeignKey("InstalledFromLinkId")
             .IsRequired(false)
             .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<GameEnvironmentVariable>()
+            .HasOne(e => e.Game)
+            .WithMany(g => g.EnvironmentVariables)
+            .HasForeignKey(e => e.GameId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

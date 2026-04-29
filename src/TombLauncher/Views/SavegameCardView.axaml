@@ -17,6 +17,9 @@
         <valueConverters:BooleanToIconConverter x:Key="BooleanToIconConverter"
                                                         TrueValue="FlagFill"
                                                         FalseValue="FlagLine" />
+        <valueConverters:BooleanToStringConverter x:Key="MarkUnmarkTooltipConverter"
+                                                          TrueValue="UNMARK_AS_START_OF_LEVEL_SAVE"
+                                                          FalseValue="MARK_AS_START_OF_LEVEL_SAVE" />
     </UserControl.Resources>
     <Border CornerRadius="3" 
             Padding="10" 
@@ -70,7 +73,7 @@
                 <ToggleButton IsChecked="{Binding IsStartOfLevel}"
                               Command="{Binding UpdateStartOfLevelStateCommand}"
                               CommandParameter="{Binding .}"
-                              ToolTip.Tip="{loc:Translate MARK_UNMARK_AS_START_OF_LEVEL_SAVE}">
+                              ToolTip.Tip="{Binding IsStartOfLevel, Converter={StaticResource MarkUnmarkTooltipConverter}}">
                     <ToggleButton.Content>
                         <iconPacks:PackIconRemixIcon
                             Kind="{Binding IsStartOfLevel, Converter={StaticResource BooleanToIconConverter}}"/>

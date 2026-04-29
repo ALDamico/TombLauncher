@@ -11,11 +11,9 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
-using TombLauncher.Installers;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
-using TombLauncher.ViewModels.Dialogs;
 using TombLauncher.ViewModels.MessageBoxes;
 using TombLauncher.ViewModels.Pages;
 
@@ -24,24 +22,22 @@ namespace TombLauncher.Services;
 public class GameDetailsService : IViewService
 {
     public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GameLinkDataService gameLinkDataService,
-        IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider,
-        TombRaiderEngineDetector engineDetector, ILogger<GameDetailsService> logger, 
-        GameLinkDtoMapper mapper, LaunchOptionsMapper launchOptionsMapper)
+        IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider, ILogger<GameDetailsService> logger, 
+        GameLinkDtoMapper mapper, GameMetadataMapper gameMapper)
     {
         _logger = logger;
         _mapper = mapper;
-        _launchOptionsMapper = launchOptionsMapper;
+        _gameMapper = gameMapper;
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _gameLinkDataService = gameLinkDataService;
         _platformSpecificFeatures = platformSpecificFeatures;
         _settingsProvider = settingsProvider;
-        _engineDetector = engineDetector;
     }
 
     private readonly ILogger<GameDetailsService> _logger;
     private readonly GameLinkDtoMapper _mapper;
-    private readonly LaunchOptionsMapper _launchOptionsMapper;
+    private readonly GameMetadataMapper _gameMapper;
 
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
@@ -50,15 +46,16 @@ public class GameDetailsService : IViewService
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly ISettingsProvider _settingsProvider;
-    private readonly TombRaiderEngineDetector _engineDetector;
 
     public void InitializeSettings(GameDetailsViewModel target)
     {
+        _logger.LogInformation("Initializing game details settings");
         var gameDetailsSettings = _settingsProvider.GetGameDetailsSettings();
         target.AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         target.EnabledPatterns = gameDetailsSettings.EnabledPatterns.Select(p => p.Value).ToList();
         target.IgnoredFolders = gameDetailsSettings.ExcludedFolders.Select(p => p.Value).ToList();
         target.DescriptionFontSize = gameDetailsSettings.DescriptionFontSize;
+        _logger.LogInformation("Initialized game details settings");
     }
 
     public void OpenGameFolder(string gameFolder)
@@ -105,35 +102,9 @@ public class GameDetailsService : IViewService
         await NavigationManager.NavigateTo<SavegameListViewModel>(game.Game.GameMetadata);
     }
 
-    public void OpenLaunchOptions(GameDetailsViewModel gameDetailsViewModel)
+    public async Task OpenLaunchOptions(GameDetailsViewModel gameDetailsViewModel)
     {
-        ViewContext.PopupService.ShowDialog(new LaunchOptionsDialogViewModel(_engineDetector) { TargetGame = gameDetailsViewModel.Game.GameMetadata }, SaveLaunchOptions);
-    }
-
-    private async void SaveLaunchOptions(LaunchOptionsDialogViewModel vm)
-    {
-        try
-        {
-            var gameMetadata = vm.TargetGame;
-            if (NavigationManager.CurrentPage is PageViewModel currentPage)
-            {
-                using (currentPage.BusyScope("SAVING_LAUNCH_OPTIONS".GetLocalizedString()))
-                {
-                    var launchOptionsDto = _launchOptionsMapper.ToDto(vm);
-
-                    gameMetadata.ExecutablePath = vm.GameExecutable;
-                    gameMetadata.SetupExecutable = vm.SetupExecutable;
-                    gameMetadata.SetupExecutableArgs = vm.SetupArgs;
-                    gameMetadata.CommunitySetupExecutable = vm.CustomSetupExecutable;
-
-                    await _gameDataService.UpdateLaunchOptions(launchOptionsDto);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            _logger.LogWarning(e, "Error saving launch options.");
-        }
+        await NavigationManager.NavigateTo<LaunchOptionsViewModel>(gameDetailsViewModel.Game.GameMetadata);
     }
 
     public List<FileInfo> GetDocumentationFiles(string containingFolder, List<string> patterns, List<string> excludedFolders)
@@ -144,5 +115,12 @@ public class GameDetailsService : IViewService
             .Where(f => excludedFolders.All(dir => !f.Contains(dir)))
             .Select(f => new FileInfo(f))
             .ToList();
+    }
+
+    public async Task<GameMetadataViewModel> GetGame(int id, CancellationToken ct)
+    {
+        var game = await _gameDataService.GetGameById(id, ct);
+        var viewModel = _gameMapper.ToViewModel(game);
+        return viewModel;
     }
 }

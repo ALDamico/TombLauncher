@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,11 +10,11 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameListViewModel : PageViewModel
 {
-    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games = new();
+    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games = [];
     [ObservableProperty] private GameWithStatsViewModel? _selectedGame;
     [ObservableProperty] private bool _showAsGrid;
 
-    private GameListService _gameListService;
+    private readonly GameListService _gameListService;
 
     public GameListViewModel(GameListService gameListService)
     {
@@ -23,11 +23,12 @@ public partial class GameListViewModel : PageViewModel
 
     public override async Task OnNavigatedTo(object parameter)
     {
-        SetBusy("Fetching games...");
-        _gameListService.ApplySettings(this);
-        InitTopBarCommands();
-        Games = await _gameListService.FetchGames(this);
-        ClearBusy();
+        using (BusyScope("Fetching games..."))
+        {
+            _gameListService.ApplySettings(this);
+            InitTopBarCommands();
+            Games = await _gameListService.FetchGames(this);
+        }
     }
 
     private void InitTopBarCommands()

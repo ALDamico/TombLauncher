@@ -1,19 +1,19 @@
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
-using TombLauncher.ViewModels.Dialogs;
+using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.Mappers;
 
 public class LaunchOptionsMapper
 {
-    public LaunchOptionsDto ToDto(LaunchOptionsDialogViewModel vm)
+    public LaunchOptionsDto ToDto(LaunchOptionsViewModel vm)
     {
         FileBackupDto? setupExecutable = null;
         if (vm.SupportsSetup)
         {
             setupExecutable = new FileBackupDto()
             {
-                GameId = vm.TargetGame.Id,
+                GameId = vm.GameId,
                 FileName = vm.SetupExecutable ?? string.Empty,
                 Arguments = vm.SetupArgs,
                 FileType = FileType.SetupExecutable
@@ -25,7 +25,7 @@ public class LaunchOptionsMapper
         {
             communitySetupExecutable = new FileBackupDto()
             {
-                GameId = vm.TargetGame.Id,
+                GameId = vm.GameId,
                 FileName = vm.CustomSetupExecutable ?? string.Empty,
                 FileType = FileType.CommunitySetupExecutable
             };
@@ -33,7 +33,7 @@ public class LaunchOptionsMapper
 
         FileBackupDto gameExecutable = new FileBackupDto()
         {
-            GameId = vm.TargetGame.Id,
+            GameId = vm.GameId,
             FileName = vm.GameExecutable!,
             FileType = FileType.GameExecutable
         };
@@ -41,10 +41,14 @@ public class LaunchOptionsMapper
         return new LaunchOptionsDto()
         {
             GameExecutable = gameExecutable,
-            GameId = vm.TargetGame.Id,
+            GameId = vm.GameId,
             SetupExecutable = setupExecutable,
             CommunitySetupExecutable = communitySetupExecutable,
-            GameEngine = vm.SelectedEngine
+            GameEngine = vm.SelectedEngine,
+            CompatibilityPrefixPath = vm.CompatibilityPrefixPath,
+            CompatibilityTool = vm.CompatibilityTool,
+            CompatibilityToolPath = vm.CompatibilityToolPath,
+            ExtraEnvVars = vm.ExtraEnvVars
         };
     }
 }

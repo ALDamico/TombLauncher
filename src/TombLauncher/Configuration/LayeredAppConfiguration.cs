@@ -1,4 +1,5 @@
 using TombLauncher.Configuration.Sections;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.Configuration;
@@ -24,6 +25,18 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         DefaultToGridView = User.Appearance.DefaultToGridView.Coalesce(Defaults.Appearance.DefaultToGridView)
     };
 
+    public ICompatibilityConfig Compatibility => new CompatibilityConfig
+    {
+        CompatibilityTool = User.Compatibility.CompatibilityTool != CompatibilityTool.Unspecified
+            ? User.Compatibility.CompatibilityTool
+            : Defaults.Compatibility.CompatibilityTool != CompatibilityTool.Unspecified
+                ? Defaults.Compatibility.CompatibilityTool
+                : CompatibilityTool.Wine,
+        WinePath = User.Compatibility.WinePath.Coalesce(Defaults.Compatibility.WinePath),
+        CompatibilityPrefixPath = User.Compatibility.CompatibilityPrefixPath.Coalesce(Defaults.Compatibility.CompatibilityPrefixPath),
+        ProtonPath = User.Compatibility.ProtonPath.Coalesce(Defaults.Compatibility.ProtonPath),
+    };
+
     public IDownloadersConfig Downloaders => new DownloadersConfig
     {
         Sources = User.Downloaders.Sources.Coalesce(Defaults.Downloaders.Sources),
@@ -33,7 +46,6 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
     public IGameDetailsConfig GameDetails => new GameDetailsConfig
     {
         AskForConfirmationBeforeWalkthrough = User.GameDetails.AskForConfirmationBeforeWalkthrough.Coalesce(Defaults.GameDetails.AskForConfirmationBeforeWalkthrough),
-        WinePath = User.GameDetails.WinePath.Coalesce(Defaults.GameDetails.WinePath),
         DocumentationPatterns = (Defaults.GameDetails.DocumentationPatterns ?? new()).MergeWithOverrides(User.GameDetails.DocumentationPatterns ?? new()),
         DocumentationFolderExclusions = (Defaults.GameDetails.DocumentationFolderExclusions ?? new()).MergeWithOverrides(User.GameDetails.DocumentationFolderExclusions ?? new()),
         DescriptionFontSize = Defaults.GameDetails.DescriptionFontSize.Coalesce(User.GameDetails.DescriptionFontSize)

@@ -26,4 +26,8 @@ public interface IGameMetadata
     bool IsFavourite { get; set; }
     bool IsCompleted { get; set; }
     string? InstalledFromSiteDisplayName { get; set; }
+    string? CompatibilityPrefixPath { get; set; }
+    CompatibilityTool CompatibilityTool { get; set; }
+    string? CompatibilityToolPath { get; set; }
+    List<IEnvironmentVariable> ExtraEnvVars { get; set; }
 }

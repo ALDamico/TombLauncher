@@ -7,6 +7,13 @@ namespace TombLauncher.Data.Mapping;
 
 public class GameMapper
 {
+    private readonly EnvironmentVariableMapper _environmentVariableMapper;
+
+    public GameMapper(EnvironmentVariableMapper environmentVariableMapper)
+    {
+        _environmentVariableMapper = environmentVariableMapper;
+    }
+
     public GameMetadataDto ToDto(Game game)
     {
         return new GameMetadataDto()
@@ -34,7 +41,11 @@ public class GameMapper
             SetupExecutable = game.FileBackups.FirstOrDefault(b => b.FileType == FileType.SetupExecutable)?.FileName,
             SetupExecutableArgs =
                 game.FileBackups.FirstOrDefault(b => b.FileType == FileType.SetupExecutable)?.Arguments,
-            TitlePic = game.TitlePic ?? []
+            TitlePic = game.TitlePic ?? [],
+            CompatibilityPrefixPath = game.CompatibilityPrefixPath,
+            CompatibilityTool = game.CompatibilityTool,
+            CompatibilityToolPath = game.CompatibilityToolPath,
+            ExtraEnvVars = _environmentVariableMapper.ToDtos(game.EnvironmentVariables).ToList()
         };
     }
 
@@ -61,6 +72,9 @@ public class GameMapper
             ReleaseDate = dto.ReleaseDate,
             Setting = dto.Setting,
             TitlePic = dto.TitlePic,
+            CompatibilityTool = dto.CompatibilityTool,
+            CompatibilityToolPath = dto.CompatibilityToolPath,
+            CompatibilityPrefixPath = dto.CompatibilityPrefixPath,
         };
     }
 }

@@ -27,17 +27,6 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
         };
     }
 
-    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
-        string compatibilityExecutable, string workingDirectory)
-    {
-        return new ProcessStartInfo(executableFileNameOnly)
-        {
-            Arguments = arguments ?? "",
-            WorkingDirectory = workingDirectory,
-            UseShellExecute = true,
-        };
-    }
-
     public NotifyFilters GetSavegameWatcherNotifyFilters()
     {
         return NotifyFilters.LastWrite;
@@ -56,4 +45,12 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
     {
         return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
     }
+
+    public string ExpandPath(string path) => path;
+
+    public bool IsWineSupported => false;
+    public string? FindWineExecutable() => null;
+    public string? GetWineVersion(string winePath) => null;
+    public List<ProtonInstallationDto> FindAvailableProtonInstallations() => [];
+    public string? GetProtonVersion(string protonPath) => null;
 }

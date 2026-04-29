@@ -159,7 +159,8 @@
     <system:String x:Key="FETCHING_SAVEGAMES_FOR_GAMETITLE">Fetching savegames for {0}</system:String>
     <system:String x:Key="SLOT">Slot</system:String>
     <system:String x:Key="ONLY_START_OF_LEVEL">Only start of level</system:String>
-    <system:String x:Key="MARK_UNMARK_AS_START_OF_LEVEL_SAVE">Mark/unmark as start of level save</system:String>
+    <system:String x:Key="MARK_AS_START_OF_LEVEL_SAVE">Mark as start of level save</system:String>
+    <system:String x:Key="UNMARK_AS_START_OF_LEVEL_SAVE">Unmark as start of level save</system:String>
     <system:String x:Key="UPDATE_IN_PROGRESS">Update in progress...</system:String>
     <system:String x:Key="CONFIRM_DELETE">Confirm delete</system:String>
     <system:String x:Key="ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_SAVEGAME_THIS">Are you sure you want to delete this savegame? This action cannot be undone.</system:String>
@@ -182,6 +183,7 @@
     <system:String x:Key="SYNC_NOW">Sync now</system:String>
     <system:String x:Key="LEVEL_NAME">Level name</system:String>
     <system:String x:Key="SLOT_NUMBER">Slot #</system:String>
+    <system:String x:Key="SLOT_NUMBER_FORMATTABLE">Slot #{0}</system:String>
     <system:String x:Key="FILE_NAME">File name</system:String>
     <system:String x:Key="DATE_AND_TIME">Date and time</system:String>
     <system:String x:Key="ALL_SLOTS">All slots</system:String>
@@ -203,7 +205,7 @@
     <system:String x:Key="SETUP_EXECUTABLE_ARGS_TOOLTIP">The arguments to pass to the command line in order to run the setup utility. For classic engines, this is "-setup".</system:String>
     <system:String x:Key="CAN_LAUNCH_SETUP">Can launch setup utility</system:String>
     <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE">Community patch setup executable</system:String>
-    <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP">Enable this option if this level uses an enhanced community engine, like TRX or Tomb3 Community Edition, to launch its setup tool.</system:String>
+    <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP">Enable this option if this level uses an enhanced community engine, like some versions of TRX or Tomb3 Community Edition, to launch its setup tool.</system:String>
     <system:String x:Key="AUTO_DETECT_TOOLTIP">Try to detect automatically the best settings.</system:String>
     <system:String x:Key="USES_COMMUNITY_PATCH">Uses community patch</system:String>
     <system:String x:Key="LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME">Launching community patch setup for {0}</system:String>
@@ -247,7 +249,25 @@
     <system:String x:Key="WINE_EXECUTABLE_PATH">Wine executable path</system:String>
     <system:String x:Key="DESCRIPTION_FONT_SIZE">Description font size</system:String>
     <system:String x:Key="DESCRIPTION_FONT_SIZE_TOOLTIP">Controls the base font size used in game descriptions. Headings scale proportionally.</system:String>
-    <system:String x:Key="WINE_TOOLTIP_CONTENT">Wine is a compatibility layer that allows Windows programs to run under Linux. In order to play TRLE customs, you need to have it installed on your Linux system.</system:String>
+    <system:String x:Key="WINE_TOOLTIP_CONTENT">Wine is a compatibility layer that lets Windows programs run on Linux. To play custom TRLE levels, you'll need it installed on your system.</system:String>
+    <system:String x:Key="GENERAL">Launch</system:String>
+    <system:String x:Key="COMMUNITY_PATCH">Community patch</system:String>
+    <system:String x:Key="COMPATIBILITY">Compatibility</system:String>
+    <system:String x:Key="WINE_NOT_FOUND">Wine not found</system:String>
+    <system:String x:Key="WINE_NOT_FOUND_DESCRIPTION">TombLauncher uses Wine to run TRLE levels on Linux. If it is not installed on your system, you won't be able to play.</system:String>
+    <system:String x:Key="AUTODETECT_WINE">Autodetect</system:String>
+    <system:String x:Key="WINE_PREFIX_PATH">Wine data folder (optional)</system:String>
+    <system:String x:Key="WINE_PREFIX_TOOLTIP_CONTENT">A dedicated folder where Wine stores this game's settings and virtual Windows files, keeping them separate from other games. Leave empty to share the common default folder.</system:String>
+    <system:String x:Key="WINE_VERSION">Wine version</system:String>
+    <system:String x:Key="WINEPREFIX_LAUNCH_OPTION">Wine data folder (this game only)</system:String>
+    <system:String x:Key="COMPATIBILITY_TOOL">Compatibility tool</system:String>
+    <system:String x:Key="PROTON_EXECUTABLE_PATH">Proton executable path</system:String>
+    <system:String x:Key="PROTON_TOOLTIP_CONTENT">Proton is Valve's compatibility layer for running Windows games on Linux. Select an installation detected from your Steam library, or enter the path manually.</system:String>
+    <system:String x:Key="PROTON_DATA_PATH">Proton data folder (optional)</system:String>
+    <system:String x:Key="PROTON_DATA_PATH_TOOLTIP">A dedicated folder where Proton stores this game's settings and virtual Windows files (STEAM_COMPAT_DATA_PATH). Leave empty to use the global default.</system:String>
+    <system:String x:Key="PROTON_VERSION">Proton version</system:String>
+    <system:String x:Key="PROTON_NOT_FOUND">Proton not found</system:String>
+    <system:String x:Key="PROTON_NOT_FOUND_DESCRIPTION">TombLauncher is set to use Proton, but no installation was found. Make sure you have Proton installed via Steam, or set the path manually in Settings → Compatibility.</system:String>
     <system:String x:Key="UNZIP_FALLBACK_METHOD">Unzip fallback method</system:String>
     <system:String x:Key="INSERT_NEW_GAME">INSERT NEW GAME</system:String>
     <system:String x:Key="INSTALL">Install</system:String>
@@ -373,6 +393,8 @@
     <system:String x:Key="RESTART_REQUIRED_CAPTION">Restart required</system:String>
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">The language has been changed. Please restart the application to apply the new language.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Daily statistics</system:String>
+    <system:String x:Key="LOADING_SAVEGAMES">Loading savegames...</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN">Toggle full screen (F11)</system:String>
+    <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
