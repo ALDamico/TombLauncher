@@ -80,7 +80,7 @@ public partial class GameDetailsViewModel : PageViewModel
     [ObservableProperty] private ICommand? _installCommand;
 
     [RelayCommand]
-    private void OpenLaunchOptions() => _gameDetailsService.OpenLaunchOptions(this);
+    private async Task OpenLaunchOptions() => await _gameDetailsService.OpenLaunchOptions(this);
 
     [RelayCommand]
     private async Task OpenDocument(string? path)

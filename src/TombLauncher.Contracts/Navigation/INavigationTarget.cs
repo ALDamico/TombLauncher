@@ -17,6 +17,6 @@ public interface INavigationTarget
     string BusyMessage { get; }
     string CurrentFileName { get; }
     double? PercentageComplete { get; }
-    ICommand CancelCmd { get; }
     bool IsCancelable { get; }
+    public ICommand CancelCmd { get; }
 }

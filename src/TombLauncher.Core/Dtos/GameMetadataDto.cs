@@ -1,3 +1,4 @@
+using TombLauncher.Contracts;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 
@@ -30,5 +31,5 @@ public class GameMetadataDto : IGameMetadata
     public string? CompatibilityPrefixPath { get; set; }
     public CompatibilityTool CompatibilityTool { get; set; }
     public string? CompatibilityToolPath { get; set; }
-    public List<EnvironmentVariableDto> ExtraEnvVars { get; set; } = [];
+    public List<IEnvironmentVariable> ExtraEnvVars { get; set; } = [];
 }

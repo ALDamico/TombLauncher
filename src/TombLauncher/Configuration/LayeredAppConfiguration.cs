@@ -29,7 +29,9 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
     {
         CompatibilityTool = User.Compatibility.CompatibilityTool != CompatibilityTool.Unspecified
             ? User.Compatibility.CompatibilityTool
-            : Defaults.Compatibility.CompatibilityTool,
+            : Defaults.Compatibility.CompatibilityTool != CompatibilityTool.Unspecified
+                ? Defaults.Compatibility.CompatibilityTool
+                : CompatibilityTool.Wine,
         WinePath = User.Compatibility.WinePath.Coalesce(Defaults.Compatibility.WinePath),
         CompatibilityPrefixPath = User.Compatibility.CompatibilityPrefixPath.Coalesce(Defaults.Compatibility.CompatibilityPrefixPath),
         ProtonPath = User.Compatibility.ProtonPath.Coalesce(Defaults.Compatibility.ProtonPath),

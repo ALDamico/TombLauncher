@@ -8,7 +8,6 @@ using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
@@ -23,24 +22,22 @@ namespace TombLauncher.Services;
 public class GameDetailsService : IViewService
 {
     public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GameLinkDataService gameLinkDataService,
-        IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider,
-        TombRaiderEngineDetector engineDetector, ILogger<GameDetailsService> logger, 
-        GameLinkDtoMapper mapper, LaunchOptionsMapper launchOptionsMapper)
+        IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider, ILogger<GameDetailsService> logger, 
+        GameLinkDtoMapper mapper, GameMetadataMapper gameMapper)
     {
         _logger = logger;
         _mapper = mapper;
-        _launchOptionsMapper = launchOptionsMapper;
+        _gameMapper = gameMapper;
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _gameLinkDataService = gameLinkDataService;
         _platformSpecificFeatures = platformSpecificFeatures;
         _settingsProvider = settingsProvider;
-        _engineDetector = engineDetector;
     }
 
     private readonly ILogger<GameDetailsService> _logger;
     private readonly GameLinkDtoMapper _mapper;
-    private readonly LaunchOptionsMapper _launchOptionsMapper;
+    private readonly GameMetadataMapper _gameMapper;
 
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
@@ -49,15 +46,16 @@ public class GameDetailsService : IViewService
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly ISettingsProvider _settingsProvider;
-    private readonly TombRaiderEngineDetector _engineDetector;
 
     public void InitializeSettings(GameDetailsViewModel target)
     {
+        _logger.LogInformation("Initializing game details settings");
         var gameDetailsSettings = _settingsProvider.GetGameDetailsSettings();
         target.AskForConfirmationBeforeOpeningWalkthrough = gameDetailsSettings.AskForConfirmationBeforeWalkthrough;
         target.EnabledPatterns = gameDetailsSettings.EnabledPatterns.Select(p => p.Value).ToList();
         target.IgnoredFolders = gameDetailsSettings.ExcludedFolders.Select(p => p.Value).ToList();
         target.DescriptionFontSize = gameDetailsSettings.DescriptionFontSize;
+        _logger.LogInformation("Initialized game details settings");
     }
 
     public void OpenGameFolder(string gameFolder)
@@ -122,7 +120,7 @@ public class GameDetailsService : IViewService
     public async Task<GameMetadataViewModel> GetGame(int id, CancellationToken ct)
     {
         var game = await _gameDataService.GetGameById(id, ct);
-        var viewModel = ViewContext.Mapper.Map<GameMetadataViewModel>(game);
+        var viewModel = _gameMapper.ToViewModel(game);
         return viewModel;
     }
 }

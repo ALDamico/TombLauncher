@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Services;
@@ -46,6 +48,9 @@ public partial class LaunchOptionsViewModel : PageViewModel
         SetupExecutable = AvailableExecutables.FirstOrDefault(e => e == game.SetupExecutable);
         CustomSetupExecutable = AvailableExecutables.FirstOrDefault(e => e == game.CommunitySetupExecutable);
         CompatibilityPrefixPath = game.CompatibilityPrefixPath;
+        CompatibilityTool = game.CompatibilityTool;
+        CompatibilityToolPath = game.CompatibilityToolPath;
+        ExtraEnvVars = game.ExtraEnvVars;
 
         if (SetupExecutable.IsNotNullOrWhiteSpace()) SupportsSetup = true;
         if (CustomSetupExecutable.IsNotNullOrWhiteSpace()) SupportsCustomSetup = true;
@@ -63,6 +68,9 @@ public partial class LaunchOptionsViewModel : PageViewModel
     [ObservableProperty] private bool _supportsCustomSetup;
     [ObservableProperty] private string? _customSetupExecutable;
     [ObservableProperty] private string? _compatibilityPrefixPath;
+    [ObservableProperty] private CompatibilityTool _compatibilityTool;
+    [ObservableProperty] private string? _compatibilityToolPath;
+    public List<EnvironmentVariableDto> ExtraEnvVars { get; set; } = [];
     public bool IsWineSupported { get; }
 
     // ── Commands ──────────────────────────────────────────────────────────────

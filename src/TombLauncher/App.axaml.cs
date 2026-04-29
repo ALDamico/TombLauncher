@@ -6,15 +6,16 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Data.Database;
+using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -183,7 +184,7 @@ public class App : Application
             .AddFileOperations()
             .AddPageServices()
             .AddViewModels()
-            .AddLocalization()
+            .AddLocalization(application, resourceDictionary)
             .AddDatabaseAccess(appDataDirectory)
             .AddPopups()
             .AddNavigation()

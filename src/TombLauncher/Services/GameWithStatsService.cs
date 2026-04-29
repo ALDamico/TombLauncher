@@ -11,6 +11,8 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using System.Collections.Generic;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
@@ -56,6 +58,7 @@ public class GameWithStatsService : IViewService, IDisposable
         _headerProvider = headerProvider;
         _gameLauncherFactory = gameLauncherFactory;
         _globalCompatibilityPrefixPath = appConfiguration.Compatibility.CompatibilityPrefixPath;
+        _appConfiguration = appConfiguration;
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
         _mapper = mapper;
@@ -77,6 +80,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly ISavegameHeaderProvider _headerProvider;
     private readonly Func<IGameLauncher> _gameLauncherFactory;
     private readonly string? _globalCompatibilityPrefixPath;
+    private readonly IAppConfiguration _appConfiguration;
     private DateTime? _startDate;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
@@ -263,14 +267,35 @@ public class GameWithStatsService : IViewService, IDisposable
             ? game.GameMetadata.CompatibilityPrefixPath
             : _globalCompatibilityPrefixPath;
 
+        var perGameTool = game.GameMetadata.CompatibilityTool;
+        IGameLauncher launcher = perGameTool == CompatibilityTool.Unspecified
+            ? _gameLauncherFactory()
+            : perGameTool switch
+            {
+                CompatibilityTool.Proton => new ProtonGameLauncher(
+                    game.GameMetadata.CompatibilityToolPath.IsNotNullOrWhiteSpace()
+                        ? game.GameMetadata.CompatibilityToolPath!
+                        : _appConfiguration.Compatibility.ProtonPath ?? ""),
+                CompatibilityTool.None => new WindowsGameLauncher(),
+                _ => new WineGameLauncher(
+                    game.GameMetadata.CompatibilityToolPath.IsNotNullOrWhiteSpace()
+                        ? game.GameMetadata.CompatibilityToolPath!
+                        : _appConfiguration.Compatibility.WinePath ?? "wine")
+            };
+
+        var extraEnvVars = game.GameMetadata.ExtraEnvVars.Count > 0
+            ? game.GameMetadata.ExtraEnvVars.ToDictionary(e => e.VariableName, e => e.VariableValue)
+            : null;
+
         var process = new Process()
         {
-            StartInfo = _gameLauncherFactory().GetLaunchStartInfo(new GameLaunchContext
+            StartInfo = launcher.GetLaunchStartInfo(new GameLaunchContext
             {
                 ExecutableFileName = executableFileNameOnly,
                 Arguments = arguments ?? "",
                 WorkingDirectory = workingDirectory,
                 PrefixPath = winePrefix,
+                ExtraEnvVars = extraEnvVars
             }),
             EnableRaisingEvents = true
         };

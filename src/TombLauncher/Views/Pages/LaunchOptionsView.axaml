@@ -139,7 +139,7 @@
                                  Padding="16,8"
                                  Icon="Save3Line"
                                  Text="{loc:Translate SAVE}"
-                                 Command="{Binding SaveCmd}" />
+                                 Command="{Binding SaveCommand}" />
         </StackPanel>
 
     </Grid>

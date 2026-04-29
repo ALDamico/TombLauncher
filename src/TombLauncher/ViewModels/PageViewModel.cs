@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Navigation;
@@ -44,6 +45,8 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
     {
 
     }
+
+    public ICommand CancelCmd => CancelCommand;
 
     private void SetBusy(bool isBusy, string? busyMessage = null)
     {

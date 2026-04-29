@@ -1,5 +1,5 @@
 using TombLauncher.Configuration;
-using TombLauncher.Configuration.Sections;
+using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Tests;
 

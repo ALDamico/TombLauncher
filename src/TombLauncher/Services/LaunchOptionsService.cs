@@ -3,13 +3,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.Extensions.Logging;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Installers;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 
@@ -21,19 +20,21 @@ public class LaunchOptionsService : IViewService
         ViewServiceContext viewContext,
         GameDataService gameDataService,
         TombRaiderEngineDetector engineDetector,
-        ILogger<LaunchOptionsService> logger)
+        ILogger<LaunchOptionsService> logger,
+        LaunchOptionsMapper mapper)
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _engineDetector = engineDetector;
         _logger = logger;
+        _mapper = mapper;
     }
 
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
     private readonly TombRaiderEngineDetector _engineDetector;
     private readonly ILogger<LaunchOptionsService> _logger;
-    private IMapper Mapper => ViewContext.Mapper;
+    private readonly LaunchOptionsMapper _mapper;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
 
     public Task LoadAsync(LaunchOptionsViewModel vm, GameMetadataViewModel game)
@@ -82,7 +83,7 @@ public class LaunchOptionsService : IViewService
             {
                 using (currentPage.BusyScope("SAVING_LAUNCH_OPTIONS".GetLocalizedString()))
                 {
-                    var dto = Mapper.Map<LaunchOptionsDto>(vm);
+                    var dto =  _mapper.ToDto(vm);
                     await _gameDataService.UpdateLaunchOptions(dto);
                 }
             }
