@@ -24,11 +24,9 @@ public static class ImageUtils
 
     public static Bitmap? ToBitmap(byte[]? byteArr)
     {
-        if (byteArr == null)
-        {
+        if (byteArr == null || byteArr.Length == 0)
             return null;
-        }
-
+        
         using var memoryStream = new MemoryStream(byteArr);
         return new Bitmap(memoryStream);
     }

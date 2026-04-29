@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Media.Imaging;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
@@ -13,8 +16,24 @@ namespace TombLauncher.Mappers;
 
 public class GameMetadataMapper
 {
+    private readonly ILogger<GameMetadataMapper> _logger;
+
+    public GameMetadataMapper(ILogger<GameMetadataMapper> logger)
+    {
+        _logger = logger;
+    }
+
     public GameMetadataViewModel ToViewModel(IGameMetadata dto)
     {
+        Bitmap? titlePic = null;
+        try
+        {
+            titlePic = ImageUtils.ToBitmap(dto.TitlePic);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error converting title picture for {GameName} from {Downloader}", dto.Title, dto.InstalledFromSiteDisplayName);
+        }
         return new GameMetadataViewModel()
         {
             GameEngine = dto.GameEngine,
@@ -38,7 +57,7 @@ public class GameMetadataMapper
             Setting = dto.Setting,
             SetupExecutable = dto.SetupExecutable,
             SetupExecutableArgs = dto.SetupExecutableArgs,
-            TitlePic = ImageUtils.ToBitmap(dto.TitlePic),
+            TitlePic = titlePic,
             CompatibilityPrefixPath = dto.CompatibilityPrefixPath,
             CompatibilityTool = dto.CompatibilityTool,
             CompatibilityToolPath = dto.CompatibilityToolPath,

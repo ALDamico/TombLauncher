@@ -30,6 +30,7 @@ public class SearchMapper
             Setting = vm.Setting,
             SizeInMb = vm.SizeInMb,
             Title = vm.Title,
+            TitlePic = vm.TitlePic,
             ReviewCount = vm.ReviewCount,
             WalkthroughLink = vm.WalkthroughLink,
         };
@@ -57,6 +58,7 @@ public class SearchMapper
             Setting = vm.Setting,
             SizeInMb = vm.SizeInMb,
             Title = vm.Title,
+            TitlePic = vm.TitlePic,
             ReviewCount = vm.ReviewCount,
             WalkthroughLink = vm.WalkthroughLink
         };
