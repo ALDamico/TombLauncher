@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Patchers.Extensions;
 
 namespace TombLauncher.Patchers.Gameflows;
 
@@ -48,6 +49,31 @@ public class GameflowReader
         gameflow.FmvStrings = ReadTpcStringArray(gameflow.NumFmvs, sr);
         gameflow.LevelPathStrings = ReadTpcStringArray(gameflow.NumLevels, sr);
         gameflow.CutscenePathStrings = ReadTpcStringArray(gameflow.NumCutscenes, sr);
+        ReadSequenceOffsets(sr, gameflow);
+        ReadSequenceNumBytes(sr, gameflow);
+        ReadSequences(sr, gameflow);
+        ReadDemoLevelIds(sr, gameflow);
+        ReadNumGameStrings(sr, gameflow);
+        gameflow.GameStrings = ReadTpcStringArray(gameflow.NumGameStrings, sr);
+        gameflow.PcStrings = ReadTpcStringArray(Constants.NumPcStrings, sr);
+        for (var i = 0; i < Constants.NumPuzzleItemsPerLevel; i++)
+        {
+            var arr = ReadTpcStringArray(gameflow.NumLevels, sr);
+            gameflow.PuzzleStrings[i] = arr;
+        }
+
+        for (var i = 0; i < Constants.NumPickupsPerLevel; i++)
+        {
+            var arr = ReadTpcStringArray(gameflow.NumLevels, sr);
+            gameflow.PickupStrings[i] = arr;
+        }
+
+        for (var i = 0; i < Constants.NumKeysPerLevel; i++)
+        {
+            var arr = ReadTpcStringArray(gameflow.NumLevels, sr);
+            gameflow.KeyStrings[i] = arr;
+        }
+        
         return gameflow;
     }
 
@@ -199,7 +225,6 @@ public class GameflowReader
 
     private TpcStringArray ReadTpcStringArray(int length, BinaryReader reader)
     {
-
         var stringArray = new TpcStringArray(length);
 
         for (var i = 0; i < length; i++)
@@ -216,5 +241,69 @@ public class GameflowReader
             stringArray.Data![i] = currentByte;
         }
         return stringArray;
+    }
+
+    private void ReadSequenceOffsets(BinaryReader reader, Gameflow gameflow)
+    {
+        var numberOfLevels = gameflow.NumLevels + 1;
+        gameflow.SequenceOffsets = new ushort[numberOfLevels];
+
+        for (var i = 0; i < numberOfLevels; i++)
+        {
+            gameflow.SequenceOffsets[i] = reader.ReadUInt16();
+        }
+    }
+
+    private void ReadSequenceNumBytes(BinaryReader reader, Gameflow gameflow)
+    {
+        var sequenceNumBytes = reader.ReadUInt16();
+        gameflow.SequenceNumBytes = sequenceNumBytes;
+    }
+
+    private void ReadSequences(BinaryReader reader, Gameflow gameflow)
+    {
+        var bytesRead = 0;
+        var numberOfLevels = gameflow.NumLevels + 1;
+        var sequences = new List<Sequence>();
+        var currentLevel = 0;
+        while (currentLevel < numberOfLevels)
+        {
+            var opCode = (SequenceOpcode)reader.ReadUInt16();
+            bytesRead += sizeof(ushort);
+            ushort? argument = null;
+            if (opCode.RequiresArgument())
+            {
+                argument = reader.ReadUInt16();
+                bytesRead += sizeof(ushort);
+            }
+
+            var sequence = new Sequence() { Opcode = opCode, Argument = argument };
+            sequences.Add(sequence);
+            if (opCode == SequenceOpcode.End)
+                currentLevel++;
+        }
+
+        if (bytesRead != gameflow.SequenceNumBytes)
+        {
+            _logger.LogDebug("Expected {ExpectedBytes}, but read {ReadBytes} for sequences", gameflow.SequenceNumBytes, bytesRead);
+        }
+
+        gameflow.Sequences = sequences.ToArray();
+    }
+
+    private void ReadDemoLevelIds(BinaryReader reader, Gameflow gameflow)
+    {
+        var numDemoLevels = gameflow.NumDemoLevels;
+        gameflow.DemoLevelIds = new ushort[numDemoLevels];
+        for (var i = 0; i < numDemoLevels; i++)
+        {
+            gameflow.DemoLevelIds[i] = reader.ReadUInt16();
+        }
+    }
+
+    private void ReadNumGameStrings(BinaryReader reader, Gameflow gameflow)
+    {
+        var numGameStrings = reader.ReadUInt16();
+        gameflow.NumGameStrings = numGameStrings;
     }
 }

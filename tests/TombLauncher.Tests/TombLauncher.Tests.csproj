@@ -35,7 +35,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="Data\tombpc.dat">
+      <Content Include="Data\silver_machine.dat">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Data\escapade_utah.dat">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
