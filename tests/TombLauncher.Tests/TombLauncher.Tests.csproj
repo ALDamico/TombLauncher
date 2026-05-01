@@ -29,8 +29,15 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\TombLauncher.Patchers\TombLauncher.Patchers.csproj" />
       <ProjectReference Include="..\..\src\TombLauncher\TombLauncher.csproj" />
       <ProjectReference Include="..\..\src\TombLauncher.Core\TombLauncher.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Data\tombpc.dat">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

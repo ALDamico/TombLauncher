@@ -18,6 +18,7 @@
     <Project Path="src/TombLauncher.Core/TombLauncher.Core.csproj" />
     <Project Path="src/TombLauncher.Data/TombLauncher.Data.csproj" />
     <Project Path="src/TombLauncher.Localization/TombLauncher.Localization.csproj" />
+    <Project Path="src/TombLauncher.Patchers/TombLauncher.Patchers.csproj" />
     <Project Path="src/TombLauncher/TombLauncher.csproj" />
   </Folder>
   <Folder Name="/tests/">
