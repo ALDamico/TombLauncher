@@ -8,8 +8,6 @@ public class TpcStringArray
     {
         Count = count;
         Offsets = new ushort[Count];
-        //TotalSize = totalSize;
-        //Data = new byte[TotalSize];
     }
     public int Count { get; set; }
     public ushort[] Offsets { get; }

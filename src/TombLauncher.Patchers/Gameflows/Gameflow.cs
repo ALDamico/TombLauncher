@@ -32,12 +32,12 @@ public class Gameflow
     public TpcStringArray? CutscenePathStrings { get; set; }
     public ushort[]? SequenceOffsets  { get; set; }
     public ushort SequenceNumBytes { get; set; }
-    public ushort[]? Sequences { get; set; }
+    public Sequence[]? Sequences { get; set; }
     public ushort[]? DemoLevelIds { get; set; }
     public ushort NumGameStrings { get; set; }
-    public string[]? GameStrings { get; set; }
-    public string[]? PcStrings { get; set; }
-    public string[][]? PuzzleStrings { get; set; }
-    public string[][]? PickupStrings { get; set; }
-    public string[][]? KeyStrings { get; set; }
+    public TpcStringArray? GameStrings { get; set; }
+    public TpcStringArray? PcStrings { get; set; }
+    public TpcStringArray[] PuzzleStrings { get; } = new TpcStringArray[Constants.NumPuzzleItemsPerLevel];
+    public TpcStringArray[] PickupStrings { get;  } = new TpcStringArray[Constants.NumPickupsPerLevel];
+    public TpcStringArray[] KeyStrings { get; } = new TpcStringArray[Constants.NumKeysPerLevel];
 }

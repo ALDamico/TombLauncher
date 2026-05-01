@@ -2,10 +2,10 @@ using TombLauncher.Patchers.Gameflows;
 
 namespace TombLauncher.Tests;
 
-public class GameflowReaderTests
+public class EscapadeUtahGameflowReaderTests
 {
-    // https://trcustoms.org/levels/3826
-    private const string InputFile = "Data/silver_machine.dat";
+    // https://trcustoms.org/levels/3854
+    private const string InputFile = "Data/escapade_utah.dat";
     private readonly Gameflow _gameflow = new GameflowReader(null!).ReadGameflow(InputFile);
 
     [Fact]
@@ -15,9 +15,9 @@ public class GameflowReaderTests
     }
 
     [Fact]
-    public void GameflowReader_Description_ShouldContainTombRaiderII()
+    public void GameflowReader_Description_ShouldContainTombRaiderIII()
     {
-        Assert.Contains("Tomb Raider II Script File", _gameflow.Description);
+        Assert.Contains("Tomb Raider III Script File", _gameflow.Description);
     }
 
     [Fact]
@@ -51,9 +51,9 @@ public class GameflowReaderTests
     }
 
     [Fact]
-    public void GameflowReader_DemoTime_ShouldEqual900()
+    public void GameflowReader_DemoTime_ShouldEqual9000()
     {
-        Assert.Equal(900U, _gameflow.DemoTime);
+        Assert.Equal(9000U, _gameflow.DemoTime);
     }
 
     [Fact]
@@ -69,15 +69,15 @@ public class GameflowReaderTests
     }
 
     [Fact]
-    public void GameflowReader_NumLevels_ShouldEqualSix()
+    public void GameflowReader_NumLevels_ShouldEqualFour()
     {
-        Assert.Equal(6, _gameflow.NumLevels);
+        Assert.Equal(4, _gameflow.NumLevels);
     }
 
     [Fact]
-    public void GameflowReader_NumChapterScreens_ShouldEqualZero()
+    public void GameflowReader_NumChapterScreens_ShouldEqualTen()
     {
-        Assert.Equal(0, _gameflow.NumChapterScreens);
+        Assert.Equal(10, _gameflow.NumChapterScreens);
     }
 
     [Fact]
@@ -105,9 +105,9 @@ public class GameflowReaderTests
     }
 
     [Fact]
-    public void GameflowReader_TitleSoundId_ShouldEqual64()
+    public void GameflowReader_TitleSoundId_ShouldEqualFive()
     {
-        Assert.Equal(64, _gameflow.TitleSoundId);
+        Assert.Equal(5, _gameflow.TitleSoundId);
     }
 
     [Fact]
@@ -123,9 +123,9 @@ public class GameflowReaderTests
     }
 
     [Fact]
-    public void GameflowReader_Flags_ShouldContainEnableCheatCode()
+    public void GameflowReader_Flags_ShouldContainGymEnabled()
     {
-        Assert.True(_gameflow.Flags.HasFlag(GameflowFlags.EnableCheatCode));
+        Assert.True(_gameflow.Flags.HasFlag(GameflowFlags.GymEnabled));
     }
 
     [Fact]
@@ -141,9 +141,9 @@ public class GameflowReaderTests
     }
 
     [Fact]
-    public void GameflowReader_SecretSoundId_ShouldEqual47()
+    public void GameflowReader_SecretSoundId_ShouldEqualZero()
     {
-        Assert.Equal(47, _gameflow.SecretSoundId);
+        Assert.Equal(0, _gameflow.SecretSoundId);
     }
 
     // String arrays — structural
@@ -156,10 +156,11 @@ public class GameflowReaderTests
     }
 
     [Fact]
-    public void GameflowReader_ChapterScreenStrings_ShouldBeEmpty()
+    public void GameflowReader_ChapterScreenStrings_ShouldHave10Entries()
     {
         Assert.NotNull(_gameflow.ChapterScreenStrings);
-        Assert.Equal(0, _gameflow.ChapterScreenStrings.Count);
+        Assert.Equal(10, _gameflow.ChapterScreenStrings.Count);
+        Assert.Equal("pix\\house.bmp\0pix\\level1.bmp\0pix\\level2.bmp\0pix\\level3.bmp\0CREDITS1.bmp\0CREDITS2.bmp\0CREDITS3.bmp\0CREDITS4.bmp\0CREDITS5.bmp\0CREDITS6.bmp\0", _gameflow.ChapterScreenStrings.DecodeString(_gameflow.XorKey));
     }
 
     [Fact]
@@ -191,10 +192,10 @@ public class GameflowReaderTests
     }
 
     [Fact]
-    public void GameflowReader_GameStrings_ShouldHave89Entries()
+    public void GameflowReader_GameStrings_ShouldHave92Entries()
     {
         Assert.NotNull(_gameflow.GameStrings);
-        Assert.Equal(89, _gameflow.GameStrings.Count);
+        Assert.Equal(92, _gameflow.GameStrings.Count);
     }
 
     [Fact]
@@ -214,9 +215,9 @@ public class GameflowReaderTests
     }
 
     [Fact]
-    public void GameflowReader_SequenceNumBytes_ShouldEqual144()
+    public void GameflowReader_SequenceNumBytes_ShouldEqual106()
     {
-        Assert.Equal(144, _gameflow.SequenceNumBytes);
+        Assert.Equal(106, _gameflow.SequenceNumBytes);
     }
 
     [Fact]
