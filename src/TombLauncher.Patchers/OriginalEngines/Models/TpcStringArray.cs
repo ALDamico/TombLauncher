@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace TombLauncher.Patchers.Gameflows;
+namespace TombLauncher.Patchers.OriginalEngines.Models;
 
 public class TpcStringArray
 {

@@ -1,8 +1,9 @@
 using Microsoft.Extensions.Logging;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Patchers.Extensions;
+using TombLauncher.Patchers.OriginalEngines;
+using TombLauncher.Patchers.OriginalEngines.Models;
 
-namespace TombLauncher.Patchers.Gameflows;
+namespace TombLauncher.Patchers.OriginalEngines.Parsers;
 
 public class GameflowReader
 {

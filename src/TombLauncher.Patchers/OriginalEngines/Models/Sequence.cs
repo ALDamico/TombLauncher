@@ -1,4 +1,4 @@
-namespace TombLauncher.Patchers.Gameflows;
+namespace TombLauncher.Patchers.OriginalEngines.Models;
 
 public class Sequence
 {

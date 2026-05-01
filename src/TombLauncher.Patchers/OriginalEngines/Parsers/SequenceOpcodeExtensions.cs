@@ -1,6 +1,6 @@
-using TombLauncher.Patchers.Gameflows;
+using TombLauncher.Patchers.OriginalEngines.Models;
 
-namespace TombLauncher.Patchers.Extensions;
+namespace TombLauncher.Patchers.OriginalEngines.Parsers;
 
 public static class SequenceOpcodeExtensions
 {
