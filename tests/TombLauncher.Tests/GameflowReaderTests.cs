@@ -1,4 +1,5 @@
-using TombLauncher.Patchers.Gameflows;
+using TombLauncher.Patchers.OriginalEngines.Models;
+using TombLauncher.Patchers.OriginalEngines.Parsers;
 
 namespace TombLauncher.Tests;
 

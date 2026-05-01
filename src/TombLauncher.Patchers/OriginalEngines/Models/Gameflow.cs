@@ -1,4 +1,6 @@
-namespace TombLauncher.Patchers.Gameflows;
+using TombLauncher.Patchers.OriginalEngines;
+
+namespace TombLauncher.Patchers.OriginalEngines.Models;
 
 public class Gameflow
 {

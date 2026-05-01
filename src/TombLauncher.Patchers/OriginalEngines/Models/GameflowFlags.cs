@@ -1,4 +1,4 @@
-namespace TombLauncher.Patchers.Gameflows;
+namespace TombLauncher.Patchers.OriginalEngines.Models;
 
 // For documentation regarding this, see https://opentomb.github.io/TRosettaStone3/trosettastone.html#_script_flags
 [Flags]
