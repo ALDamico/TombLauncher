@@ -16,7 +16,8 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         ApplicationLanguage = User.Application.ApplicationLanguage.Coalesce(Defaults.Application.ApplicationLanguage),
         DatabasePath = User.Application.DatabasePath.Coalesce(Defaults.Application.DatabasePath),
         MinimumLogLevel = User.Application.MinimumLogLevel.Coalesce(Defaults.Application.MinimumLogLevel),
-        GitHubLink = Defaults.Application.GitHubLink
+        GitHubLink = Defaults.Application.GitHubLink,
+        WebsiteLink = Defaults.Application.WebsiteLink
     };
 
     public IAppearanceConfig Appearance => new AppearanceConfig

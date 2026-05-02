@@ -8,4 +8,5 @@ public interface IApplicationConfig
     string? DatabasePath { get; }
     LogLevel? MinimumLogLevel { get; }
     string? GitHubLink { get; }
+    string? WebsiteLink { get; }
 }

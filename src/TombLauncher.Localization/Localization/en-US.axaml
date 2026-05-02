@@ -211,6 +211,7 @@
     <system:String x:Key="LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME">Launching community patch setup for {0}</system:String>
     <system:String x:Key="COMMUNITY_PATCH_SETUP">Community patch setup</system:String>
     <system:String x:Key="OPEN_TOMB_LAUNCHER_S_GITHUB_PAGE">Open Tomb Launcher's GitHub page</system:String>
+    <system:String x:Key="OPEN_WEBSITE">Open Tomb Launcher's website</system:String>
     <system:String x:Key="GRID_VIEW">Grid view</system:String>
     <system:String x:Key="TABLE_VIEW">Table view</system:String>
     <system:String x:Key="SHOW_GAMES_AS">Show games as</system:String>

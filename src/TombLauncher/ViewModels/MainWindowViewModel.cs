@@ -71,6 +71,14 @@ public partial class MainWindowViewModel : WindowViewModelBase
             Command = new RelayCommand(OpenGithub)
         };
 
+        WebsiteLinkItem = new CommandViewModel()
+        {
+            Tooltip = "OPEN_WEBSITE".GetLocalizedString(),
+            Icon = PackIconRemixIconKind.GlobalLine,
+            Text = "OPEN_WEBSITE".GetLocalizedString(),
+            Command = new RelayCommand(OpenWebsite)
+        };
+
         Title = "Tomb Launcher";
         // Initialize default view
         SelectedMenuItem = MenuItems.First();
@@ -108,12 +116,19 @@ public partial class MainWindowViewModel : WindowViewModelBase
     [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
     [ObservableProperty] private MainMenuItemViewModel _settingsItem;
     [ObservableProperty] private CommandViewModel _gitHubLinkItem;
+    [ObservableProperty] private CommandViewModel _websiteLinkItem;
     [ObservableProperty] private bool _isSettingsOpen;
 
     private void OpenGithub()
     {
         var gitHubLink = _settingsProvider.GetApplicationSettings().GitHubLink;
         _platformSpecificFeatures.OpenUrl(gitHubLink);
+    }
+
+    private void OpenWebsite()
+    {
+        var websiteLink = _settingsProvider.GetApplicationSettings().WebsiteLink;
+        _platformSpecificFeatures.OpenUrl(websiteLink);
     }
 
     private bool _isPaneOpen;

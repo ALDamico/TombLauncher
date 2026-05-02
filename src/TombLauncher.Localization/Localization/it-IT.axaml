@@ -211,6 +211,7 @@
     <system:String x:Key="LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME">Avvio dell'utility di configurazione della patch della community per {0}</system:String>
     <system:String x:Key="COMMUNITY_PATCH_SETUP">Setup patch della community</system:String>
     <system:String x:Key="OPEN_TOMB_LAUNCHER_S_GITHUB_PAGE">Apri la pagina GitHub di Tomb Launcher</system:String>
+    <system:String x:Key="OPEN_WEBSITE">Apri il sito di Tomb Launcher</system:String>
     <system:String x:Key="GRID_VIEW">Vista griglia</system:String>
     <system:String x:Key="TABLE_VIEW">Vista tabella</system:String>
     <system:String x:Key="SHOW_GAMES_AS">Visualizza i giochi come</system:String>
