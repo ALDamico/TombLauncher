@@ -1,0 +1,35 @@
+namespace TombLauncher.Patchers.Shared.Models.Items;
+
+public enum Tr3Item
+{
+    Pistols,
+    Shotgun,
+    DesertEagle,
+    Uzis,
+    HarpoonGunm,
+    Mp5,
+    RocketLauncher,
+    GrenadeLauncher,
+    PistolClip,
+    ShotgunShells,
+    DesertEagleClip,
+    UziClip,
+    Harpoons,
+    Mp5Clip,
+    RocketPack,
+    GrenadePack,
+    FlareBox,
+    SmallMedipack,
+    LargeMedipack,
+    Pickup1,
+    Pickup2,
+    Puzzle1,
+    Puzzle2,
+    Puzzle3,
+    Puzzle4,
+    Key1,
+    Key2,
+    Key3,
+    Key4,
+    SaveCrystal
+}

@@ -37,4 +37,15 @@ public class TpcStringArray
 
         return Encoding.ASCII.GetString(data);
     }
+
+    public byte[] this[int i]
+    {
+        get
+        {
+            var start = Offsets[i];
+            var length = i < Offsets.Length - 1 ? Offsets[i + 1] - start : Data!.Length - start;
+
+            return Data!.Skip(start).Take(length).ToArray();
+        }
+    }
 }
