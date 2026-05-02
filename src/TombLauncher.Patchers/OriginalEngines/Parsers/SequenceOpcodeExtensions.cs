@@ -8,6 +8,7 @@ public static class SequenceOpcodeExtensions
     {
         return opcode switch
         {
+            SequenceOpcode.Picture => true,
             SequenceOpcode.Fmv => true,
             SequenceOpcode.Level => true,
             SequenceOpcode.Cine => true,
