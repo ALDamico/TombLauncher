@@ -8,4 +8,5 @@ public class ApplicationConfig : IApplicationConfig
     public string? DatabasePath { get; set; }
     public LogLevel? MinimumLogLevel { get; set; }
     public string? GitHubLink { get; set; }
+    public string? WebsiteLink { get; set; }
 }

@@ -5,11 +5,10 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
-using TombLauncher.Core.Utils;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Dtos.Configuration;
 
 namespace TombLauncher.Services;
 
@@ -35,6 +34,7 @@ public class SettingsProvider : ISettingsProvider
         var wp = _appConfiguration.WelcomePage;
         return new ApplicationCoreSettings(
             app.GitHubLink ?? string.Empty,
+            app.WebsiteLink ?? string.Empty,
             new CultureInfo(app.ApplicationLanguage ?? "en-US"),
             wp.RandomGameMaxRerolls.GetValueOrDefault(),
             app.DatabasePath ?? "TombLauncher.sqlite"
