@@ -23,7 +23,7 @@ public static class EmbedderRegistrationExtensions
     {
         return serviceCollection.AddScoped<ITroubleshootingServiceLoader, RagServiceLoader>()
             .AddSingleton<VectorSearchService>()
-            .AddSingleton(EmbedderFactory.GetEmbedder)
+            .AddSingleton<EmbeddingModelLoader>()
             .AddScoped<ModelParams>(sp =>
             {
                 var platformSpecificFeatures = sp.GetRequiredService<IPlatformSpecificFeatures>();
@@ -38,7 +38,7 @@ public static class EmbedderRegistrationExtensions
                     ContextSize = 8192
                 };
             })
-            .AddScoped<IWeightsLoader, WeightsLoader>()
+            .AddSingleton<IWeightsLoader, WeightsLoader>()
             .AddScoped<TroubleshootingContextService>()
             .AddScoped<IChatCompletionServiceLoader, LlamaChatCompletionServiceLoader>()
             .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings()

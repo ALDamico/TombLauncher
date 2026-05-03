@@ -26,6 +26,6 @@ public class ModelDownloadService
 
     public bool IsModelDownloaded(AiModelMetadata model) => File.Exists(GetDestinationFilePath(model));
 
-    private string GetDestinationFilePath(AiModelMetadata model) =>
+    public string GetDestinationFilePath(AiModelMetadata model) =>
         Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "Models", model.FileName);
 }

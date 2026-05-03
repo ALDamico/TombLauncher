@@ -16,6 +16,13 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <viewModels:AiChatViewModel />
     </Design.DataContext>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCommand}" />
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
     <DockPanel LastChildFill="True">
         <TextBox DockPanel.Dock="Bottom" AcceptsReturn="True" AcceptsTab="False" 
                  CornerRadius="50" 

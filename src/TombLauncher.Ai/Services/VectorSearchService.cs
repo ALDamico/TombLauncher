@@ -4,15 +4,19 @@ using Newtonsoft.Json;
 using NuGet.Versioning;
 using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Configuration;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Ai.Models;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Ai.Services;
 
 public class VectorSearchService : VectorDbService
 {
-    private readonly LLamaEmbedder _embedder;
+    private readonly EmbeddingModelLoader _embedderLoader;
+    private readonly SemaphoreSlim _loadLock = new(1, 1);
+    private LLamaEmbedder? _embedder;
 
     private const string ChunksQuery = @"SELECT document_title AS ""DocumentTitle"", section_title AS ""SectionTitle"", chunk_text AS ""ChunkText"", metadata_id AS ""MetadataId""
 FROM knowledge_chunks c
@@ -22,20 +26,37 @@ JOIN vector_quantize_scan('knowledge_chunks', 'embedding', vector_as_f32(@Vector
     private const string MetadataQuery = @"SELECT id AS ""Id"", app_version_range AS ""AppVersionRange"", engine_version AS ""EngineVersion"", applies_to AS ""AppliesTo"", platforms AS ""Platforms"", source AS ""Source""
 FROM knowledge_metadata
 WHERE id IN @Ids;";
-    public VectorSearchService(LLamaEmbedder embedder, IAiConfig configuration) : base(configuration)
+    private readonly string _knowledgeBasePath;
+
+    public VectorSearchService(EmbeddingModelLoader embedderLoaderLoader, IAiConfig configuration,
+        IPlatformSpecificFeatures platformSpecificFeatures) : base(configuration)
     {
-        _embedder = embedder;
+        _embedderLoader = embedderLoaderLoader;
+        _knowledgeBasePath = Path.Combine(platformSpecificFeatures.GetAppDataDirectory(),
+            configuration.KnowledgeBasePath ?? "");
     }
 
-    public async Task<List<KnowledgeBaseItemDto>> SearchAsync(string query, int topK = 5, CancellationToken cancellationToken = default)
+    public async Task<List<KnowledgeBaseItemDto>> SearchAsync(IProgress<DownloadProgressInfo> progress, string query, int topK = 5, CancellationToken cancellationToken = default)
     {
+        if (_embedder == null)
+        {
+            await _loadLock.WaitAsync(cancellationToken);
+            try
+            {
+                _embedder ??= await _embedderLoader.LoadEmbedder(progress, cancellationToken);
+            }
+            finally
+            {
+                _loadLock.Release();
+            }
+        }
         var embeddings = await _embedder.GetEmbeddings(query, cancellationToken);
 
         var embedding = embeddings.FirstOrDefault();
         if (embedding == null)
             return [];
 
-        using var connection = GetConnection($"Data Source={EmbedderConfiguration.KnowledgeBasePath}");
+        using var connection = GetConnection($"Data Source={_knowledgeBasePath}");
         connection.Open();
         await ExecuteVectorInit(connection);
         await ExecuteVectorQuantizePreload(connection);

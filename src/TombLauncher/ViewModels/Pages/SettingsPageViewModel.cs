@@ -156,16 +156,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
                 model.Value;
         }
         
-        _ = Task.WhenAll(aiSettings.AvailableModels.Where(m => m.FileSizeBytes == null).Select(async m => await FetchSize(m)));
-
-        Sections.Add(aiSettings);
-        Sections.Add(appearanceSettings);
-        Sections.Add(languageSettings);
-        Sections.Add(downloaderSettings);
-        Sections.Add(gameDetailsSettings);
-        Sections.Add(savegameSettings);
-        Sections.Add(welcomePageSettings);
-
         var compat = _appConfiguration.Compatibility;
         var compatVm = new CompatibilitySettingsViewModel(this, _platformSpecificFeatures)
         {
@@ -180,8 +170,18 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             compatVm.SelectedProtonInstallation =
                 compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
         }
-        Sections.Add(compatVm);
+        
+        _ = Task.WhenAll(aiSettings.AvailableModels.Where(m => m.FileSizeBytes == null).Select(async m => await FetchSize(m)));
+
+        Sections.Add(welcomePageSettings);
+        Sections.Add(appearanceSettings);
+        Sections.Add(languageSettings);
+        Sections.Add(downloaderSettings);
+        Sections.Add(gameDetailsSettings);
+        Sections.Add(savegameSettings);
         Sections.Add(aiSettings);
+        
+        Sections.Add(compatVm);
         AcceptChanges();
     }
 

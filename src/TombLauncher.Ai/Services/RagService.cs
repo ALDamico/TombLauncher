@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Models;
 using TombLauncher.Ai.Plugins;
+using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Ai.Services;
@@ -32,12 +33,12 @@ public class RagService : ITroubleshootingService
         _promptExecutionSettings = promptExecutionSettings;
     }
 
-    public async IAsyncEnumerable<string> AskAsync(string query, TroubleshootingContext? troubleshootingContext,
+    public async IAsyncEnumerable<string> AskAsync(IProgress<DownloadProgressInfo> progress, string query, TroubleshootingContext? troubleshootingContext,
         ChatHistory chatHistory,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         _gameDiagnosticsPlugin.TroubleshootingContext = troubleshootingContext;
-        var knowledgeBaseItems = await _vectorSearchService.SearchAsync(query, cancellationToken: cancellationToken);
+        var knowledgeBaseItems = await _vectorSearchService.SearchAsync(progress, query, cancellationToken: cancellationToken);
 
         var documentationSection = string.Join("\n---\n", knowledgeBaseItems.Select(WriteDocumentation));
 
