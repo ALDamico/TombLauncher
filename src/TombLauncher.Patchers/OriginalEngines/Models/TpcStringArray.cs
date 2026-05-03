@@ -1,0 +1,51 @@
+using System.Text;
+
+namespace TombLauncher.Patchers.OriginalEngines.Models;
+
+public class TpcStringArray
+{
+    public TpcStringArray(int count)
+    {
+        Count = count;
+        Offsets = new ushort[Count];
+    }
+    public int Count { get; set; }
+    public ushort[] Offsets { get; }
+    public int TotalSize
+    {
+        get;
+        set
+        {
+            field = value;
+            var newArr = new byte[value];
+            if (Data != null)
+                Array.Copy(Data, newArr, value);
+
+            Data = newArr;
+        }
+    }
+
+    public byte[]? Data { get; private set; }
+
+    public string DecodeString(byte xorKey)
+    {
+        var data = Data ?? [];
+        if (xorKey != 0)
+        {
+            data = data.Select(b => (byte)(b ^ xorKey)).ToArray();
+        }
+
+        return Encoding.ASCII.GetString(data);
+    }
+
+    public byte[] this[int i]
+    {
+        get
+        {
+            var start = Offsets[i];
+            var length = i < Offsets.Length - 1 ? Offsets[i + 1] - start : Data!.Length - start;
+
+            return Data!.Skip(start).Take(length).ToArray();
+        }
+    }
+}

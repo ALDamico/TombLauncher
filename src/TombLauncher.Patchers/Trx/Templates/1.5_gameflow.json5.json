@@ -1,0 +1,98 @@
+{
+  // NOTE: bad changes to this file may result in crashes.
+  // Lines starting with double slashes are comments and are ignored.
+
+  "engine": null,
+
+  "main_menu_picture": "title.webp",
+  "savegame_file_fmt": "save_tr1_%02d.dat",
+
+  "injections": [
+  ],
+
+  "enable_tr2_item_drops": false,
+  "convert_dropped_guns": false,
+
+  "title": {
+    "path": "title.phd",
+    "music_track": 2,
+    "inherit_injections": false,
+    "sequence": [
+      {"type": "display_picture", "path": "eidos.webp", "legal": true, "display_time": 1, "fade_in_time": 1.0, "fade_out_time": 1.0},
+      {"type": "play_fmv", "fmv_id": 0},
+      {"type": "play_fmv", "fmv_id": 1},
+      {"type": "play_fmv", "fmv_id": 2},
+      {"type": "exit_to_title"},
+    ],
+    "injections": [
+    ],
+  },
+
+  "levels": [
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+    {"type": "dummy"},
+
+    // Level 21: Current Position
+    // This level is necessary to read TombATI's save files!
+    // OG has a special level called LV_CURRENT to handle save/load logic.
+    // TRX does away without this hack. However, the existing save games
+    // expect the level count to match, otherwise the game will crash.
+    // Hence this dummy level.
+    {
+      "path": "current.phd",
+      "type": "current",
+      "music_track": 0,
+      "inherit_injections": false,
+      "sequence": [
+        {"type": "exit_to_title"},
+      ],
+    },
+  ],
+
+  "demos": [
+  ],
+
+  "cutscenes": [
+  ],
+
+  // FMVs
+  "fmvs": [
+  ],
+
+  "hidden_config": [
+    "enable_item_examining", // TR1 has no special item descriptions
+    "healthbar_poison_color",
+    "healthbar_poison_color_ps1",
+    "enemy_healthbar_color_allies",
+    "enemy_healthbar_color_allies_ps1",
+    "exposurebar_color",
+    "exposurebar_color_ps1",
+    "exposurebar_location",
+    "exposurebar_show_mode",
+    "enable_ally_targeting",
+    "enable_weather",
+    "enable_footprints",
+    "ally_hostility_policy",
+    "fix_monkey_pickup_priority",
+    "fix_pipeman_aim",
+    "enable_cinematics",
+  ],
+}

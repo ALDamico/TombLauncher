@@ -5,6 +5,7 @@ namespace TombLauncher.Core.Extensions;
 
 public static class DateTimeExtensions
 {
+    private const int FramesPerSecond = 30;
     public static DateTime GetDateAtMidnight(this DateTime dateTime)
     {
         return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
@@ -62,5 +63,10 @@ public static class DateTimeExtensions
         var daysOrdered = Enum.GetValues<DayOfWeek>()
             .OrderBy(d => d, new DayOfWeekCultureSensitiveComparer(cultureInfo)).ToList();
         return daysOrdered.IndexOf(dayOfWeek);
+    }
+
+    public static TimeSpan FromGameTicks(this uint ticks)
+    {
+        return TimeSpan.FromSeconds(ticks / FramesPerSecond);
     }
 }
