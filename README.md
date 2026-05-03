@@ -34,6 +34,23 @@ Whether you're a seasoned raider who's been playing custom levels since the earl
 
 ---
 
+## 📸 Screenshots
+
+<div align="center">
+<table>
+<tr>
+  <td align="center"><img src="https://www.tomblauncher.app/assets/images/welcome-page.png" alt="Welcome Dashboard" width="420"/><br/><sub>Welcome Dashboard</sub></td>
+  <td align="center"><img src="https://www.tomblauncher.app/assets/images/game%20search.png" alt="Game Search" width="420"/><br/><sub>Game Search</sub></td>
+</tr>
+<tr>
+  <td align="center"><img src="https://www.tomblauncher.app/assets/images/games-list%20%28grid%20view%29.png" alt="Library – Grid View" width="420"/><br/><sub>Library – Grid View</sub></td>
+  <td align="center"><img src="https://www.tomblauncher.app/assets/images/games-list%20%28datagrid%20view%29.png" alt="Library – List View" width="420"/><br/><sub>Library – List View</sub></td>
+</tr>
+</table>
+</div>
+
+---
+
 ## ✨ Features
 
 ### 🔍 Search & Discover
