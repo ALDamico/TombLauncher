@@ -9,3 +9,5 @@ public record AppearanceCoreSettings(string ApplicationTheme, bool IsGridViewDef
 public record GameDetailsCoreSettings(string UnzipFallbackMethod, (string Command, string CommandLineArguments) UnzipFallbackMethodCommandLine, List<CheckableItem<string>> EnabledPatterns, List<CheckableItem<string>> ExcludedFolders, bool AskForConfirmationBeforeWalkthrough, int DescriptionFontSize = 18);
 
 public record ApplicationCoreSettings(string GitHubLink, string WebsiteLink, CultureInfo ApplicationLanguage, int RandomGameMaxRerolls, string DatabasePath);
+
+public record AiCoreSettings(bool IsEnabled, string ModelName, double? GpuOffloadPercentage, Dictionary<string, long> ModelSizes);

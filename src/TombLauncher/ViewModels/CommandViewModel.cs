@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.Core.Navigation;
 using TombLauncher.Contracts.Navigation;
 
 namespace TombLauncher.ViewModels;

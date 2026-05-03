@@ -26,7 +26,10 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         ILayeredAppConfiguration appConfiguration,
         SettingsMapper settingsMapper,
         AiModelRegistry aiModelRegistry,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        AiMapper aiMapper,
+        ModelDownloadService modelDownloadService,
+        NotificationService notificationService)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
@@ -37,6 +40,9 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _settingsMapper = settingsMapper;
         _aiModelRegistry = aiModelRegistry;
         _httpClientFactory = httpClientFactory;
+        _aiMapper = aiMapper;
+        _modelDownloadService = modelDownloadService;
+        _notificationService = notificationService;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -72,6 +78,9 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly AiModelRegistry _aiModelRegistry;
     private readonly SettingsMapper _settingsMapper;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly AiMapper _aiMapper;
+    private readonly ModelDownloadService _modelDownloadService;
+    private readonly NotificationService _notificationService;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -131,7 +140,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
 
-        var availableModels = _mapper.Map<ObservableCollection<Ai.AiModelViewModel>>(_aiModelRegistry.AvailableModels);
+        var availableModels = _aiMapper.ToObservableCollection(_aiModelRegistry.AvailableModels, _modelDownloadService, _notificationService);
         var selectedModel = availableModels.FirstOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelName);
         selectedModel?.IsSelected = true;
         var aiSettings = new AiSettingsViewModel(this)

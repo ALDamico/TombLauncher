@@ -21,7 +21,8 @@ public static class MappingServiceCollectionExtensions
             .AddSingleton<LaunchOptionsMapper>()
             .AddSingleton<SearchMapper>()
             .AddSingleton<SavegameMapper>()
-            .AddSingleton<EnvironmentVariableMapper>();
+            .AddSingleton<EnvironmentVariableMapper>()
+            .AddSingleton<AiMapper>();
         return services;
     }
 }
