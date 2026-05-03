@@ -79,10 +79,147 @@
                 </Grid>
             </Border>
 
-            <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0, 24">
-                <StackPanel>
+            <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0,24">
+                <StackPanel Spacing="4">
                     <TextBlock Classes="section-heading"
                                Text="{localization:Translate ABOUT_ACKNOWLEDGEMENTS, Casing=Upper}" />
+
+                    <TextBlock Margin="0,8,0,2" FontWeight="SemiBold" Text="Inspiration" />
+                    <WrapPanel>
+                        <TextBlock Text="Heavily inspired by " />
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://github.com/nstlaurent/DoomLauncher">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Doom Launcher" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" by hobomaster22" />
+                    </WrapPanel>
+
+                    <TextBlock Margin="0,8,0,2" FontWeight="SemiBold" Text="Fonts &amp; Icons" />
+                    <WrapPanel>
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://github.com/lipis/flag-icons">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Lipis Flag Icons" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" — flag icons" />
+                    </WrapPanel>
+                    <WrapPanel>
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://www.dafont.com/navin-adchariyavanich.d5775">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Tomb Raider Font" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" by Navin_Ad" />
+                    </WrapPanel>
+                    <WrapPanel>
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://fonts.google.com/specimen/Figtree">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Figtree" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" by Erik Kennedy" />
+                    </WrapPanel>
+                    <WrapPanel>
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://fonts.google.com/specimen/Spectral">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Spectral" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" by Production Type" />
+                    </WrapPanel>
+
+                    <TextBlock Margin="0,8,0,2" FontWeight="SemiBold" Text="Community sites" />
+                    <Button Classes="hyperlink"
+                            Command="{Binding OpenLinkCommand}"
+                            CommandParameter="https://www.trle.net">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="TRLE.net" />
+                            <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                        </StackPanel>
+                    </Button>
+                    <WrapPanel>
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://trcustoms.org">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="TRCustoms.org" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" — special thanks to " />
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://github.com/rr-">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="dash" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" for granting access to the TRCustoms API" />
+                    </WrapPanel>
+                    <Button Classes="hyperlink"
+                            Command="{Binding OpenLinkCommand}"
+                            CommandParameter="https://aspidetr.com">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="AspideTR.com" />
+                            <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                        </StackPanel>
+                    </Button>
+
+                    <TextBlock Margin="0,8,0,2" FontWeight="SemiBold" Text="Special thanks" />
+                    <WrapPanel>
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://lostartefacts.dev/">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="TRX team" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" — particularly " />
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://github.com/rr-">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="dash" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" and " />
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://github.com/lahm86">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="lahm86" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" for answering questions about their engine" />
+                    </WrapPanel>
+                    <Button Classes="hyperlink"
+                            Command="{Binding OpenLinkCommand}"
+                            CommandParameter="https://tombengine.com/">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="Tomb Engine team" />
+                            <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Border>
         </StackPanel>
