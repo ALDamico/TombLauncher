@@ -65,90 +65,26 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <ListBoxItem Grid.Row="2"
-                             Content="{Binding AboutPageItem}"
-                             x:Name="AboutPageItem"
-                             IsSelected="{Binding IsAboutPageOpen}">
-                    <Interaction.Behaviors>
-                        <EventTriggerBehavior EventName="PointerReleased" 
-                                              SourceObject="AboutPageItem">
-                            <EventTriggerBehavior.Actions>
-                                <InvokeCommandAction Command="{Binding OpenAboutPageCommand}"/>
-                            </EventTriggerBehavior.Actions>
-                        </EventTriggerBehavior>
-                    </Interaction.Behaviors>
-                    <ListBoxItem.ContentTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
-                            <StackPanel Spacing="20"
-                                        Orientation="Horizontal">
-                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
-                                <TextBlock Text="{Binding Text}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBoxItem.ContentTemplate>
-                </ListBoxItem>
-                <ListBoxItem Grid.Row="3" Content="{Binding WebsiteLinkItem}" x:Name="WebsiteLinkItem" 
-                             ToolTip.Tip="{Binding WebsiteLinkItem.Tooltip}">
-                    <Interaction.Behaviors>
-                        <EventTriggerBehavior EventName="PointerReleased" 
-                                              SourceObject="WebsiteLinkItem">
-                            <EventTriggerBehavior.Actions>
-                                <InvokeCommandAction Command="{Binding WebsiteLinkItem.Command}"/>
-                            </EventTriggerBehavior.Actions>
-                        </EventTriggerBehavior>
-                    </Interaction.Behaviors>
-                    <ListBoxItem.ContentTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:CommandViewModel}">
-                            <StackPanel Spacing="20" 
-                                        Orientation="Horizontal">
-                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
-                                <TextBlock Text="{Binding Text}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBoxItem.ContentTemplate>
-                </ListBoxItem>
-                <ListBoxItem Grid.Row="4" Content="{Binding GitHubLinkItem}" x:Name="GitHubLinkItem" 
-                             ToolTip.Tip="{Binding GitHubLinkItem.Tooltip}">
-                    <Interaction.Behaviors>
-                        <EventTriggerBehavior EventName="PointerReleased" 
-                                              SourceObject="GitHubLinkItem">
-                            <EventTriggerBehavior.Actions>
-                                <InvokeCommandAction Command="{Binding GitHubLinkItem.Command}"/>
-                            </EventTriggerBehavior.Actions>
-                        </EventTriggerBehavior>
-                    </Interaction.Behaviors>
-                    <ListBoxItem.ContentTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:CommandViewModel}">
-                            <StackPanel Spacing="20" 
-                                        Orientation="Horizontal">
-                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
-                                <TextBlock Text="{Binding Text}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBoxItem.ContentTemplate>
-                </ListBoxItem>
-                <ListBoxItem Grid.Row="5" 
-                             Content="{Binding SettingsItem}" 
-                             x:Name="SettingsItem" 
-                             IsSelected="{Binding IsSettingsOpen}">
-                    <Interaction.Behaviors>
-                        <EventTriggerBehavior EventName="PointerReleased" 
-                                              SourceObject="SettingsItem">
-                            <EventTriggerBehavior.Actions>
-                                <InvokeCommandAction Command="{Binding OpenSettingsCommand}"/>
-                            </EventTriggerBehavior.Actions>
-                        </EventTriggerBehavior>
-                    </Interaction.Behaviors>
-                    <ListBoxItem.ContentTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
-                            <StackPanel Spacing="20" 
-                                        Orientation="Horizontal">
-                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
-                                <TextBlock Text="{Binding Text}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBoxItem.ContentTemplate>
-                </ListBoxItem>
+                <controls:SidebarNavigationItem Grid.Row="2"
+                                                Command="{Binding OpenAboutPageCommand}"
+                                                Icon="{Binding AboutPageItem.Icon}"
+                                                Text="{Binding AboutPageItem.Text}"
+                                                IsSelected="{Binding IsAboutPageOpen}" />
+                <controls:SidebarNavigationItem Grid.Row="3"
+                                                Command="{Binding WebsiteLinkItem.Command}"
+                                                Icon="{Binding WebsiteLinkItem.Icon}"
+                                                Text="{Binding WebsiteLinkItem.Text}"
+                                                ToolTip.Tip="{Binding WebsiteLinkItem.Tooltip}" />
+                <controls:SidebarNavigationItem Grid.Row="4"
+                                                Command="{Binding GitHubLinkItem.Command}"
+                                                Icon="{Binding GitHubLinkItem.Icon}"
+                                                Text="{Binding GitHubLinkItem.Text}"
+                                                ToolTip.Tip="{Binding GitHubLinkItem.Tooltip}" />
+                <controls:SidebarNavigationItem Grid.Row="5"
+                                                Command="{Binding OpenSettingsCommand}"
+                                                Icon="{Binding SettingsItem.Icon}"
+                                                Text="{Binding SettingsItem.Text}"
+                                                IsSelected="{Binding IsSettingsOpen}" />
             </Grid>
 
         </SplitView.Pane>
