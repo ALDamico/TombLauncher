@@ -8,27 +8,20 @@ namespace TombLauncher.Extensions;
 
 public static class ConfigurationServiceCollectionExtensions
 {
-    public static IServiceCollection AddAppConfiguration(
-        this IServiceCollection services,
-        string appDataDirectory)
+    public static IServiceCollection AddTombLauncherConfiguration(this IServiceCollection serviceCollection, ILayeredAppConfiguration appConfiguration, string appDataDirectory)
     {
-        var appConfiguration = new LayeredAppConfiguration();
-
-        IConfiguration defaults = new ConfigurationBuilder()
+        IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false)
             .AddJsonFile("appsettings.Development.json", optional: true)
             .Build();
-        defaults.Bind(appConfiguration.Defaults);
-
-        var userConfigPath = System.IO.Path.Combine(appDataDirectory, "appsettings.user.json");
-        IConfiguration userConfig = new ConfigurationBuilder()
+        configuration.Bind(appConfiguration.Defaults);
+        var userConfigPath = Path.Combine(appDataDirectory, "appsettings.user.json");
+        IConfiguration userConfiguration = new ConfigurationBuilder()
             .AddJsonFile(userConfigPath, optional: true)
             .Build();
-        userConfig.Bind(appConfiguration.User);
-
-        services.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
-        services.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
-        services.AddSingleton(appConfiguration.Ai);
-        return services;
+        userConfiguration.Bind(appConfiguration.User);
+        return serviceCollection.AddSingleton(appConfiguration)
+            .AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>())
+            .AddSingleton<IAiConfig>(sp => sp.GetRequiredService<ILayeredAppConfiguration>().Ai);
     }
 }

@@ -58,4 +58,26 @@ public class PlaySessionDataService
 
         return crashDto;
     }
+
+    public async Task<PlaySessionCrashDto> GetCrashInfo(int gameId, CancellationToken cancellationToken)
+    {
+        var lastPlaySession = await _dbContext.PlaySession.Where(ps => ps.GameId == gameId)
+            .OrderByDescending(ps => ps.EndDate)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        var crashDto = new PlaySessionCrashDto()
+        {
+            ExitCode = lastPlaySession?.ExitCode,
+            StdOut = lastPlaySession?.StdOut,
+            StdErr = lastPlaySession?.StdErr,
+            CrashFiles = { new CrashFileDto("retrieved", lastPlaySession?.CrashFileContent ?? "") }
+        };
+
+        if (lastPlaySession?.CrashFileContent.IsNotNullOrWhiteSpace() == true)
+        {
+            crashDto.CrashFiles.Add(new CrashFileDto("retrieved", lastPlaySession.CrashFileContent!));
+        }
+
+        return crashDto;
+    }
 }

@@ -30,6 +30,12 @@ public class GameDataService
         return game?.GameEngine ?? GameEngine.Unknown;
     }
 
+    public async Task<GameEngine> GetGameEngineById(int id, CancellationToken cancellationToken)
+    {
+        var game = await _dbContext.Games.FindAsync([id], cancellationToken);
+        return game?.GameEngine ?? GameEngine.Unknown;
+    }
+
     public async Task UpsertGame(IGameMetadata game)
     {
         Game? entity;

@@ -295,13 +295,15 @@ public class GameWithStatsService : IViewService, IDisposable
         }
     }
 
-    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false, string? arguments = null)
+    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false,
+        string? arguments = null)
     {
         var executableFileNameOnly = Path.GetFileName(executable);
         string workingDirectory = string.Empty;
         if (game.GameMetadata.InstallDirectory != null)
         {
-            workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable)) ?? string.Empty;
+            workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable)) ??
+                               string.Empty;
         }
 
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
