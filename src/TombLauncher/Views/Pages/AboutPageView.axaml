@@ -1,0 +1,90 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.AboutPageView"
+             x:DataType="pages:AboutPageViewModel">
+    <Design.DataContext>
+        <pages:AboutPageViewModel />
+    </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="iconPacks|PackIconRemixIcon">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+    <ScrollViewer>
+        <StackPanel Margin="16">
+            <controls:HeroSection />
+
+            <Border Classes="card-background" CornerRadius="8" Padding="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" MinHeight="36" />
+                        <RowDefinition Height="Auto" MinHeight="36" />
+                        <RowDefinition Height="Auto" MinHeight="36" />
+                        <RowDefinition Height="Auto" MinHeight="36" />
+                        <RowDefinition Height="Auto" MinHeight="36" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" />
+                        <ColumnDefinition Width="Auto" MinWidth="180" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Classes="section-heading"
+                               Text="{localization:Translate ABOUT_INFO, Casing=Upper}">
+                    </TextBlock>
+
+                    <iconPacks:PackIconRemixIcon Grid.Row="1" Grid.Column="0" Kind="InformationLine" />
+                    <iconPacks:PackIconRemixIcon Grid.Row="2" Grid.Column="0" Kind="GithubFill" Classes="stat-icon" />
+                    <iconPacks:PackIconRemixIcon Grid.Row="3" Grid.Column="0" Kind="GlobalLine" Classes="stat-icon" />
+                    <iconPacks:PackIconRemixIcon Grid.Row="4" Grid.Column="0" Kind="FilePaper2Line" Classes="stat-icon" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0"
+                               Text="{localization:Translate APPLICATION_VERSION}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="Github" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0"
+                               Text="{localization:Translate WEBSITE}" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0"
+                               Text="{localization:Translate LICENSE}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding ApplicationVersion}" FontWeight="Medium" />
+                    <Button Classes="hyperlink" Grid.Row="2" Grid.Column="2" FontWeight="Medium"
+                            Command="{Binding OpenLinkCommand}"
+                            CommandParameter="{Binding GithubLink}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontWeight="Medium" Text="{Binding GithubLink}" VerticalAlignment="Center" />
+                            <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Margin="8, 0, 0, 0" Width="16"
+                                                         Height="16" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="hyperlink" Grid.Row="3" Grid.Column="2" FontWeight="Medium"
+                            Command="{Binding OpenLinkCommand}"
+                            CommandParameter="{Binding WebsiteLink}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontWeight="Medium" Text="{Binding WebsiteLink}" VerticalAlignment="Center" />
+                            <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Margin="8, 0, 0, 0" Width="16"
+                                                         Height="16" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <TextBlock Grid.Row="4" Grid.Column="2" FontWeight="Medium" Text="MIT" />
+                </Grid>
+            </Border>
+
+            <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="0, 24">
+                <StackPanel>
+                    <TextBlock Classes="section-heading"
+                               Text="{localization:Translate ABOUT_ACKNOWLEDGEMENTS, Casing=Upper}" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

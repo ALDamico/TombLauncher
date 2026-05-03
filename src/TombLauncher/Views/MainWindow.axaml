@@ -37,6 +37,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <controls:IconButton Grid.Row="0" 
                                      Classes="icon-only"
@@ -64,7 +65,29 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <ListBoxItem Grid.Row="2" Content="{Binding WebsiteLinkItem}" x:Name="WebsiteLinkItem" 
+                <ListBoxItem Grid.Row="2"
+                             Content="{Binding AboutPageItem}"
+                             x:Name="AboutPageItem"
+                             IsSelected="{Binding IsAboutPageOpen}">
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior EventName="PointerReleased" 
+                                              SourceObject="AboutPageItem">
+                            <EventTriggerBehavior.Actions>
+                                <InvokeCommandAction Command="{Binding OpenAboutPageCommand}"/>
+                            </EventTriggerBehavior.Actions>
+                        </EventTriggerBehavior>
+                    </Interaction.Behaviors>
+                    <ListBoxItem.ContentTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
+                            <StackPanel Spacing="20"
+                                        Orientation="Horizontal">
+                                <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
+                                <TextBlock Text="{Binding Text}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBoxItem.ContentTemplate>
+                </ListBoxItem>
+                <ListBoxItem Grid.Row="3" Content="{Binding WebsiteLinkItem}" x:Name="WebsiteLinkItem" 
                              ToolTip.Tip="{Binding WebsiteLinkItem.Tooltip}">
                     <Interaction.Behaviors>
                         <EventTriggerBehavior EventName="PointerReleased" 
@@ -84,7 +107,7 @@
                         </DataTemplate>
                     </ListBoxItem.ContentTemplate>
                 </ListBoxItem>
-                <ListBoxItem Grid.Row="3" Content="{Binding GitHubLinkItem}" x:Name="GitHubLinkItem" 
+                <ListBoxItem Grid.Row="4" Content="{Binding GitHubLinkItem}" x:Name="GitHubLinkItem" 
                              ToolTip.Tip="{Binding GitHubLinkItem.Tooltip}">
                     <Interaction.Behaviors>
                         <EventTriggerBehavior EventName="PointerReleased" 
@@ -104,7 +127,7 @@
                         </DataTemplate>
                     </ListBoxItem.ContentTemplate>
                 </ListBoxItem>
-                <ListBoxItem Grid.Row="4" 
+                <ListBoxItem Grid.Row="5" 
                              Content="{Binding SettingsItem}" 
                              x:Name="SettingsItem" 
                              IsSelected="{Binding IsSettingsOpen}">

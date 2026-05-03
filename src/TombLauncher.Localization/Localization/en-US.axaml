@@ -397,5 +397,9 @@
     <system:String x:Key="LOADING_SAVEGAMES">Loading savegames...</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN">Toggle full screen (F11)</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
+    <system:String x:Key="ABOUT_INFO">Application info</system:String>
+    <system:String x:Key="ABOUT_ACKNOWLEDGEMENTS">Acknowledgements</system:String>
+    <system:String x:Key="WEBSITE">Website</system:String>
+    <system:String x:Key="LICENSE">License</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
