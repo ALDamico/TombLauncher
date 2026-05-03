@@ -23,6 +23,7 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
     {
         return Task.CompletedTask;
     }
+    
     protected PageViewModel()
     {
         _progress = new Progress<PageBusyState>(state =>

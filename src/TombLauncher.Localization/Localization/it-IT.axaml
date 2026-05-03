@@ -397,5 +397,9 @@
     <system:String x:Key="LOADING_SAVEGAMES">Caricamento salvataggi in corso...</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN">Commuta schermo intero (F11)</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Backup dei salvataggi in corso...</system:String>
+    <system:String x:Key="ABOUT_INFO">Informazioni applicazione</system:String>
+    <system:String x:Key="ABOUT_ACKNOWLEDGEMENTS">Riconoscimenti</system:String>
+    <system:String x:Key="WEBSITE">Sito web</system:String>
+    <system:String x:Key="LICENSE">Licenza</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

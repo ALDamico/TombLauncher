@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Core.PlatformSpecific;
