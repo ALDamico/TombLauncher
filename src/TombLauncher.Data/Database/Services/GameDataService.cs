@@ -1,9 +1,9 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Data.Mapping;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Data.Database.Services;
@@ -11,18 +11,17 @@ namespace TombLauncher.Data.Database.Services;
 public class GameDataService
 {
     private readonly TombLauncherDbContext _dbContext;
-    private readonly IMapper _mapper;
+    private readonly FileBackupMapper _fileBackupMapper;
+    private readonly GameMapper _gameMapper;
+    private readonly EnvironmentVariableMapper _environmentVariableMapper;
 
-    public GameDataService(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration)
+    public GameDataService(TombLauncherDbContext dbContext, FileBackupMapper fileBackupMapper, GameMapper gameMapper,
+        EnvironmentVariableMapper environmentVariableMapper)
     {
         _dbContext = dbContext;
-        _mapper = mapperConfiguration.CreateMapper();
-    }
-
-    public GameMetadataDto GetGameById(int id)
-    {
-        var entity = _dbContext.Games.Find(id);
-        return _mapper.Map<GameMetadataDto>(entity);
+        _fileBackupMapper = fileBackupMapper;
+        _gameMapper = gameMapper;
+        _environmentVariableMapper = environmentVariableMapper;
     }
 
     public async Task UpsertGame(IGameMetadata game)
@@ -30,7 +29,7 @@ public class GameDataService
         Game? entity;
         if (game.Id == 0)
         {
-            entity = _mapper.Map<Game>(game);
+            entity = _gameMapper.ToGame(game);
             _dbContext.Games.Add(entity);
         }
         else
@@ -72,11 +71,6 @@ public class GameDataService
         await _dbContext.SaveChangesAsync();
     }
 
-    public List<GameMetadataDto> GetGames()
-    {
-        return _mapper.Map<List<GameMetadataDto>>(_dbContext.Games.ToList());
-    }
-
     public async Task<List<GameWithStatsDto>> GetGamesWithStats(bool installedOnly = false)
     {
         var outputList = new List<GameWithStatsDto>();
@@ -90,7 +84,8 @@ public class GameDataService
         };
 
         IQueryable<Game> games = _dbContext.Games
-            .Include(g => g.FileBackups.Where(b => targetFileTypes.Contains(b.FileType)));
+            .Include(g => g.FileBackups.Where(b => targetFileTypes.Contains(b.FileType)))
+            .Include(g => g.EnvironmentVariables);
         if (installedOnly)
         {
             games = games.Where(g => g.IsInstalled);
@@ -98,7 +93,7 @@ public class GameDataService
 
         foreach (var game in games)
         {
-            var gameMetadata = _mapper.Map<GameMetadataDto>(game);
+            var gameMetadata = _gameMapper.ToDto(game);
             var thisGamePlaySessions = playSessions[game.Id].ToList();
             var gameWithStatsDto = new GameWithStatsDto()
             {
@@ -138,19 +133,20 @@ public class GameDataService
         return gameWithStatsDto;
     }
 
-    public GameWithStatsDto? GetLatestPlayedGame()
+    public async Task<GameWithStatsDto?> GetLatestPlayedGame()
     {
         var playSessionsQuery = _dbContext.PlaySession
-            .Include(ps => ps.Game).ThenInclude(g => g!.FileBackups);
-        var entity = playSessionsQuery
-            .FirstOrDefault(ps => ps.StartDate == playSessionsQuery.Max(p => p.StartDate));
+            .Include(ps => ps.Game).ThenInclude(g => g!.FileBackups)
+            .Include(ps => ps.Game).ThenInclude(g => g!.EnvironmentVariables);
+        var entity = await playSessionsQuery
+            .FirstOrDefaultAsync(ps => ps.StartDate == playSessionsQuery.Max(p => p.StartDate));
 
         if (entity == null)
             return null;
 
-        var metadataDto = _mapper.Map<GameMetadataDto>(entity.Game);
-        var allPlaySessions = playSessionsQuery
-            .Where(ps => ps.GameId == entity.GameId).ToList()
+        var metadataDto = _gameMapper.ToDto(entity.Game!);
+        var allPlaySessions = (await playSessionsQuery
+                .Where(ps => ps.GameId == entity.GameId).ToListAsync())
             .Select(ps => ps.EndDate - ps.StartDate).Sum();
 
         return new GameWithStatsDto()
@@ -165,6 +161,7 @@ public class GameDataService
     {
         var playSessions = _dbContext.PlaySession
             .Include(ps => ps.Game).ThenInclude(g => g!.FileBackups)
+            .Include(ps => ps.Game).ThenInclude(g => g!.EnvironmentVariables)
             .AsEnumerable()
             .GroupBy(ps => ps.GameId)
             .Select(g => new
@@ -181,7 +178,7 @@ public class GameDataService
 
         return playSessions.Select(g => new GameWithStatsDto
         {
-            GameMetadata = _mapper.Map<GameMetadataDto>(g.Game),
+            GameMetadata = _gameMapper.ToDto(g.Game!),
             LastPlayed = g.LastPlayed,
             TotalPlayedTime = g.TotalPlayedTime
         }).ToList();
@@ -191,6 +188,7 @@ public class GameDataService
     {
         var favouriteGames = _dbContext.Games
             .Include(g => g.FileBackups)
+            .Include(g => g.EnvironmentVariables)
             .Where(g => g.IsFavourite)
             .ToList();
 
@@ -213,7 +211,7 @@ public class GameDataService
             .Take(count)
             .Select(g => new GameWithStatsDto
             {
-                GameMetadata = _mapper.Map<GameMetadataDto>(g),
+                GameMetadata = _gameMapper.ToDto(g),
                 LastPlayed = playSessionStats.TryGetValue(g.Id, out var sessionStat) ? sessionStat.LastPlayed : null,
                 TotalPlayedTime = playSessionStats.TryGetValue(g.Id, out var playSessionStat) ? playSessionStat.TotalPlayedTime : TimeSpan.Zero
             }).ToList();
@@ -221,74 +219,70 @@ public class GameDataService
 
     public async Task UpdateLaunchOptions(LaunchOptionsDto launchOptionsDto)
     {
-        var targetFileTypes = new List<FileType>()
-        {
-            FileType.GameExecutable,
-            FileType.SetupExecutable,
-            FileType.CommunitySetupExecutable
-        };
-
-        var fileBackupQueryable = _dbContext.FileBackups
-            .Where(b => b.GameId == launchOptionsDto.GameId)
-            .Where(b => targetFileTypes.Contains(b.FileType));
-
+        // Update Game entity (engine + wine prefix)
         var gameToUpdate = (await _dbContext.Games.FindAsync(launchOptionsDto.GameId))!;
         gameToUpdate.GameEngine = launchOptionsDto.GameEngine;
-        _dbContext.Games.Update(gameToUpdate);
+        gameToUpdate.CompatibilityPrefixPath = launchOptionsDto.CompatibilityPrefixPath;
+        gameToUpdate.CompatibilityTool = launchOptionsDto.CompatibilityTool;
+        gameToUpdate.CompatibilityToolPath = launchOptionsDto.CompatibilityToolPath;
 
-        // Update game executable
-        var gameExecutable = fileBackupQueryable.Where(fb => fb.FileType == FileType.GameExecutable);
-        if (await gameExecutable.AnyAsync())
+        // Load all relevant FileBackup records as tracked entities in one query
+        var relevantTypes = new[] { FileType.GameExecutable, FileType.SetupExecutable, FileType.CommunitySetupExecutable };
+        var existingBackups = await _dbContext.FileBackups
+            .Where(b => b.GameId == launchOptionsDto.GameId && relevantTypes.Contains(b.FileType))
+            .ToListAsync();
+
+        // Game executable — always present
+        var gameExeBackup = existingBackups.FirstOrDefault(b => b.FileType == FileType.GameExecutable);
+        if (gameExeBackup != null)
         {
-            await gameExecutable.ExecuteUpdateAsync(exe =>
-                exe.SetProperty(f => f.FileName, launchOptionsDto.GameExecutable.FileName));
+            gameExeBackup.FileName = launchOptionsDto.GameExecutable.FileName;
         }
         else
         {
-            var newEntity = _mapper.Map<FileBackup>(launchOptionsDto.GameExecutable);
-            _dbContext.FileBackups.Add(newEntity);
+            _dbContext.FileBackups.Add(_fileBackupMapper.ToFileBackup(launchOptionsDto.GameExecutable));
         }
 
-        // Update setup executable
+        // Setup executable — optional
+        var setupBackup = existingBackups.FirstOrDefault(b => b.FileType == FileType.SetupExecutable);
         if (launchOptionsDto.SetupExecutable == null)
         {
-            await fileBackupQueryable.Where(b => b.FileType == FileType.SetupExecutable).ExecuteDeleteAsync();
+            if (setupBackup != null)
+                _dbContext.FileBackups.Remove(setupBackup);
+        }
+        else if (setupBackup != null)
+        {
+            setupBackup.FileName = launchOptionsDto.SetupExecutable.FileName;
+            setupBackup.Arguments = launchOptionsDto.SetupExecutable.Arguments;
         }
         else
         {
-            var setupQueryable = fileBackupQueryable.Where(fb => fb.FileType == FileType.SetupExecutable);
-            if (await setupQueryable.AnyAsync())
-            {
-                await setupQueryable.ExecuteUpdateAsync(exe =>
-                    exe.SetProperty(f => f.Arguments, launchOptionsDto.SetupExecutable.Arguments)
-                        .SetProperty(f => f.FileName, launchOptionsDto.SetupExecutable.FileName));
-            }
-            else
-            {
-                var newSetupExe = _mapper.Map<FileBackup>(launchOptionsDto.SetupExecutable);
-                _dbContext.FileBackups.Add(newSetupExe);
-            }
+            _dbContext.FileBackups.Add(_fileBackupMapper.ToFileBackup(launchOptionsDto.SetupExecutable));
         }
 
+        // Community setup executable — optional
+        var communityBackup = existingBackups.FirstOrDefault(b => b.FileType == FileType.CommunitySetupExecutable);
         if (launchOptionsDto.CommunitySetupExecutable == null)
         {
-            await fileBackupQueryable.Where(b => b.FileType == FileType.CommunitySetupExecutable).ExecuteDeleteAsync();
+            if (communityBackup != null)
+                _dbContext.FileBackups.Remove(communityBackup);
+        }
+        else if (communityBackup != null)
+        {
+            communityBackup.FileName = launchOptionsDto.CommunitySetupExecutable.FileName;
         }
         else
         {
-            var communitySetupQueryable =
-                fileBackupQueryable.Where(fb => fb.FileType == FileType.CommunitySetupExecutable);
-            if (await communitySetupQueryable.AnyAsync())
-            {
-                await communitySetupQueryable.ExecuteUpdateAsync(exe =>
-                    exe.SetProperty(f => f.FileName, launchOptionsDto.CommunitySetupExecutable.FileName));
-            }
-            else
-            {
-                var newCommunitySetupExe = _mapper.Map<FileBackup>(launchOptionsDto.CommunitySetupExecutable);
-                _dbContext.FileBackups.Add(newCommunitySetupExe);
-            }
+            _dbContext.FileBackups.Add(_fileBackupMapper.ToFileBackup(launchOptionsDto.CommunitySetupExecutable));
         }
+
+        // Extra env vars — full replace: remove old, insert new
+        var existingEnvVars = await _dbContext.GameEnvironmentVariables
+            .Where(e => e.GameId == launchOptionsDto.GameId)
+            .ToListAsync();
+        _dbContext.GameEnvironmentVariables.RemoveRange(existingEnvVars);
+        _dbContext.GameEnvironmentVariables.AddRange(
+            _environmentVariableMapper.ToEntities(launchOptionsDto.ExtraEnvVars));
 
         await _dbContext.SaveChangesAsync();
     }
@@ -309,7 +303,10 @@ public class GameDataService
         };
     }
 
-    private async Task<GameMetadataDto> GetGameWithExecutables(int id)
+    public Task<GameMetadataDto> GetGameById(int id, CancellationToken ct = default)
+        => GetGameWithExecutables(id, ct);
+
+    private async Task<GameMetadataDto> GetGameWithExecutables(int id, CancellationToken ct = default)
     {
         var targetFileTypes = new List<FileType>()
         {
@@ -321,14 +318,15 @@ public class GameDataService
         var game = await _dbContext.Games
             .Include(g => g.FileBackups.Where(f => targetFileTypes.Contains(f.FileType)))
             .Include(g => g.InstalledFromLink)
-            .SingleAsync(g => g.Id == id);
+            .Include(g => g.EnvironmentVariables)
+            .SingleAsync(g => g.Id == id, ct);
 
-        return _mapper.Map<GameMetadataDto>(game);
+        return _gameMapper.ToDto(game);
     }
 
     public async Task SetInstalledFromLink(int gameId, int linkId)
     {
-        var game = _dbContext.Games.Find(gameId);
+        var game = await _dbContext.Games.FindAsync(gameId);
         if (game == null) return;
         _dbContext.Entry(game).Property("InstalledFromLinkId").CurrentValue = linkId;
         await _dbContext.SaveChangesAsync();

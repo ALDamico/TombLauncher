@@ -9,6 +9,7 @@ public static class PageServicesServiceCollectionExtensions
     {
         services.AddSingleton<ViewServiceContext>();
         services.AddScoped<GameDetailsService>();
+        services.AddScoped<LaunchOptionsService>();
         services.AddScoped<NewGameService>();
         services.AddScoped<GameListService>();
         services.AddScoped<GameWithStatsService>();

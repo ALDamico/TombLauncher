@@ -1,0 +1,127 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Avalonia.Media.Imaging;
+using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts;
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
+using TombLauncher.Services;
+using TombLauncher.Utils;
+using TombLauncher.ViewModels;
+
+namespace TombLauncher.Mappers;
+
+public class GameMetadataMapper
+{
+    private readonly ILogger<GameMetadataMapper> _logger;
+
+    public GameMetadataMapper(ILogger<GameMetadataMapper> logger)
+    {
+        _logger = logger;
+    }
+
+    public GameMetadataViewModel ToViewModel(IGameMetadata dto)
+    {
+        Bitmap? titlePic = null;
+        try
+        {
+            titlePic = ImageUtils.ToBitmap(dto.TitlePic);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error converting title picture for {GameName} from {Downloader}", dto.Title, dto.InstalledFromSiteDisplayName);
+        }
+        return new GameMetadataViewModel()
+        {
+            GameEngine = dto.GameEngine,
+            Id = dto.Id,
+            Title = dto.Title,
+            Author = dto.Author ?? "",
+            AuthorFullName = dto.AuthorFullName,
+            CommunitySetupExecutable = dto.CommunitySetupExecutable,
+            Description = dto.Description,
+            Difficulty = dto.Difficulty,
+            ExecutablePath = dto.ExecutablePath,
+            Guid = dto.Guid,
+            InstallDate = dto.InstallDate,
+            InstallDirectory = dto.InstallDirectory,
+            InstalledFromSiteDisplayName = dto.InstalledFromSiteDisplayName,
+            IsCompleted = dto.IsCompleted,
+            IsFavourite = dto.IsFavourite,
+            IsInstalled = dto.IsInstalled,
+            Length = dto.Length,
+            ReleaseDate = dto.ReleaseDate,
+            Setting = dto.Setting,
+            SetupExecutable = dto.SetupExecutable,
+            SetupExecutableArgs = dto.SetupExecutableArgs,
+            TitlePic = titlePic,
+            CompatibilityPrefixPath = dto.CompatibilityPrefixPath,
+            CompatibilityTool = dto.CompatibilityTool,
+            CompatibilityToolPath = dto.CompatibilityToolPath,
+            ExtraEnvVars = dto.ExtraEnvVars.OfType<EnvironmentVariableDto>().ToList()
+        };
+    }
+
+    public IEnumerable<GameMetadataViewModel> ToViewModels(IEnumerable<GameMetadataDto> dtos) =>
+        dtos.Select(ToViewModel);
+
+    public ObservableCollection<GameMetadataViewModel> ToObservableCollection(IEnumerable<GameMetadataDto> dtos) =>
+        ToViewModels(dtos).ToObservableCollection();
+
+    public GameMetadataDto ToDto(GameMetadataViewModel viewModel)
+    {
+        return new GameMetadataDto()
+        {
+            Id = viewModel.Id,
+            GameEngine = viewModel.GameEngine,
+            Title = viewModel.Title,
+            Author = viewModel.Author,
+            AuthorFullName = viewModel.AuthorFullName,
+            CommunitySetupExecutable = viewModel.CommunitySetupExecutable,
+            Description = viewModel.Description,
+            Difficulty = viewModel.Difficulty,
+            ExecutablePath = viewModel.ExecutablePath,
+            Guid = viewModel.Guid,
+            InstallDate = viewModel.InstallDate,
+            InstallDirectory = viewModel.InstallDirectory,
+            InstalledFromSiteDisplayName = viewModel.InstalledFromSiteDisplayName,
+            IsCompleted = viewModel.IsCompleted,
+            IsFavourite = viewModel.IsFavourite,
+            IsInstalled = viewModel.IsInstalled,
+            Length = viewModel.Length,
+            ReleaseDate = viewModel.ReleaseDate,
+            Setting = viewModel.Setting,
+            SetupExecutable = viewModel.SetupExecutable,
+            SetupExecutableArgs = viewModel.SetupExecutableArgs,
+            TitlePic = ImageUtils.ToByteArray(viewModel.TitlePic),
+            CompatibilityPrefixPath = viewModel.CompatibilityPrefixPath,
+            CompatibilityTool = viewModel.CompatibilityTool,
+            CompatibilityToolPath = viewModel.CompatibilityToolPath,
+            ExtraEnvVars = viewModel.ExtraEnvVars.Cast<IEnvironmentVariable>().ToList()
+        };
+    }
+
+    public List<GameMetadataDto> ToDtos(IEnumerable<GameMetadataViewModel> viewModels) =>
+        viewModels.Select(ToDto).ToList();
+
+    public GameWithStatsViewModel? ToViewModel(GameWithStatsDto? dto, GameWithStatsService gameWithStatsService)
+    {
+        if (dto == null) return null;
+        return new GameWithStatsViewModel(gameWithStatsService, ToViewModel(dto.GameMetadata))
+        {
+            AreCommandsVisible = false,
+            LastPlayed = dto.LastPlayed,
+            TotalPlayedTime = dto.TotalPlayedTime
+        };
+    }
+
+    public List<GameWithStatsViewModel> ToViewModels(IEnumerable<GameWithStatsDto?> dtos,
+        GameWithStatsService gameWithStatsService) =>
+        dtos.Where(d => d != null).Select(d => ToViewModel(d, gameWithStatsService)!).ToList();
+
+    public ObservableCollection<GameWithStatsViewModel> ToObservableCollection(IEnumerable<GameWithStatsDto> dtos,
+        GameWithStatsService gameWithStatsService) => ToViewModels(dtos, gameWithStatsService).ToObservableCollection();
+}

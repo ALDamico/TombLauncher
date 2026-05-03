@@ -17,19 +17,6 @@
         <Style Selector="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
-        <Style Selector="TextBlock.section-heading">
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="15"/>
-            <Setter Property="Margin" Value="0,8,0,2"/>
-        </Style>
-        <Style Selector="iconPacks|PackIconRemixIcon.stat-icon">
-            <Setter Property="Width" Value="20"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
-            <Setter Property="Margin" Value="0,0,8,0"/>
-        </Style>
     </UserControl.Styles>
 
     <Interaction.Behaviors>
@@ -56,6 +43,7 @@
                             <RowDefinition Height="Auto" MinHeight="36"/>
                             <RowDefinition Height="Auto" MinHeight="36"/>
                             <RowDefinition Height="Auto" MinHeight="36"/>
+                            <RowDefinition Height="Auto" MinHeight="36"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="32"/>
@@ -71,6 +59,8 @@
                         <iconPacks:PackIconRemixIcon Grid.Row="4" Grid.Column="0" Kind="GamepadLine"       Classes="stat-icon" Margin="0, 0, 8, 0"/>
                         <iconPacks:PackIconRemixIcon Grid.Row="5" Grid.Column="0" Kind="TimerLine"         Classes="stat-icon" Margin="0, 0, 8, 0"/>
                         <iconPacks:PackIconRemixIcon Grid.Row="6" Grid.Column="0" Kind="TrophyLine"        Classes="stat-icon" Margin="0, 0, 8, 0"/>
+                        <iconPacks:PackIconRemixIcon Grid.Row="7" Grid.Column="0" Kind="Goblet2Line"       Classes="stat-icon" Margin="0, 0, 8, 0"
+                                                    IsVisible="{Binding IsWineSupported}"/>
 
                         <!-- Labels -->
                         <TextBlock Grid.Row="0" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate APPLICATION_VERSION}"/>
@@ -80,6 +70,8 @@
                         <TextBlock Grid.Row="4" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate LAST_PLAYED_GAME}"/>
                         <TextBlock Grid.Row="5" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate LONGEST_PLAY_SESSION}"/>
                         <TextBlock Grid.Row="6" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate MOST_PLAYED_GAME}"/>
+                        <TextBlock Grid.Row="7" Grid.Column="1" Classes="text-muted" Margin="0, 0, 8, 0" Text="{loc:Translate WINE_VERSION}"
+                                   IsVisible="{Binding IsWineSupported}"/>
 
                         <!-- Values -->
                         <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ApplicationVersion}" FontWeight="Medium"/>
@@ -88,6 +80,8 @@
                                    Text="{Binding DatabaseSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"/>
                         <TextBlock Grid.Row="3" Grid.Column="2" FontWeight="Medium"
                                    Text="{Binding GamesSize, Converter={StaticResource FileSizeFormatter}, Mode=OneWay}"/>
+                        <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding WineVersion}" FontWeight="Medium"
+                                   IsVisible="{Binding IsWineSupported}"/>
 
                         <StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal" Spacing="6">
                             <Button Classes="hyperlink"

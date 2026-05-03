@@ -1,7 +1,6 @@
 using System.Text.Json;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Data.Mapping;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Data.Database.Services;
@@ -9,17 +8,17 @@ namespace TombLauncher.Data.Database.Services;
 public class AppCrashDataService
 {
     private readonly TombLauncherDbContext _dbContext;
-    private readonly IMapper _mapper;
+    private readonly AppCrashMapper _mapper;
 
-    public AppCrashDataService(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration)
+    public AppCrashDataService(TombLauncherDbContext dbContext, AppCrashMapper appCrashMapper)
     {
         _dbContext = dbContext;
-        _mapper = mapperConfiguration.CreateMapper();
+        _mapper = appCrashMapper;
     }
 
     public void InsertAppCrash(Exception exception)
     {
-        var exceptionDto = _mapper.Map<ExceptionDto>(exception);
+        var exceptionDto = _mapper.ToDto(exception);
         var serializedException = JsonSerializer.Serialize(exceptionDto);
         var crash = new AppCrash()
         {
@@ -36,7 +35,7 @@ public class AppCrashDataService
             .Where(c => !c.WasNotified)
             .OrderByDescending(c => c.DateTime)
             .FirstOrDefault();
-        return _mapper.Map<AppCrashDto>(unseenCrash);
+        return _mapper.ToDto(unseenCrash);
     }
 
     public async Task MarkAsNotified(int id)

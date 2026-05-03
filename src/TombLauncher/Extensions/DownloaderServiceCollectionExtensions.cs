@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Installers;
+using TombLauncher.Installers.Downloaders;
 using TombLauncher.Installers.Downloaders.AspideTR.com;
 using TombLauncher.Installers.Downloaders.TRCustoms.org;
 using TombLauncher.Installers.Downloaders.TRLE.net;
@@ -55,6 +58,24 @@ public static class DownloaderServiceCollectionExtensions
             sp.GetRequiredService<IHttpClientFactory>(),
             sp.GetRequiredService<ILocalizationManager>().GetSubsetInvertedByPrefix("ATR")));
         services.AddTransient<IGameDownloader, TrCustomsGameDownloader>();
+        services.AddTransient(sp =>
+        {
+            var downloadManager = new GameDownloadManager(sp.GetRequiredService<IGameMerger>())
+            {
+                Downloaders = sp.GetRequiredService<ISettingsProvider>().GetActiveDownloaders()
+            };
+            
+            return downloadManager;
+        });
+        services.AddScoped(_ => new GameFileHashCalculator(new HashSet<string>()
+        {
+            ".tr4",
+            ".pak",
+            ".tr2",
+            ".sfx",
+            ".dat",
+            ".phd"
+        }));
         return services;
     }
 }

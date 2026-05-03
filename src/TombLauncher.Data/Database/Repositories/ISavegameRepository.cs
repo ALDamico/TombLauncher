@@ -1,7 +1,7 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Data.Mapping;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Data.Database.Repositories;
@@ -14,7 +14,7 @@ public interface ISavegameRepository
     Task UpdateSavegameStartOfLevel(FileBackupDto targetSaveGame);
     Task DeleteFileBackupById(int id);
     void DeleteFileBackupsByGameId(int gameId, IEnumerable<FileType>? fileTypes = null);
-    SavegameBackupDto GetSavegameById(int id);
+    SavegameBackupDto? GetSavegameById(int id);
     Task<List<SavegameBackupDto>> GetSavegameBackups();
     Task SyncSavegameMetadata(IEnumerable<SavegameBackupDto> dtos);
     Task Save();
@@ -24,22 +24,22 @@ public class SavegameRepository : ISavegameRepository
 {
     private readonly EfRepository<FileBackup> _backups;
     private readonly EfRepository<SavegameMetadata> _savegameMetadata;
-    private readonly IMapper _mapper;
     private readonly TombLauncherDbContext _dbContext;
+    private readonly FileBackupMapper _mapper;
 
-    public SavegameRepository(TombLauncherDbContext dbContext, MapperConfiguration mapperConfiguration)
+    public SavegameRepository(TombLauncherDbContext dbContext, FileBackupMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
         _backups = new EfRepository<FileBackup>(dbContext);
         _savegameMetadata = new EfRepository<SavegameMetadata>(dbContext);
-        _mapper = mapperConfiguration.CreateMapper();
     }
 
     public void BackupSavegames(int gameId, GameEngine engine, List<SavegameBackupDto> dtos, int? numberOfVersionsToKeep)
     {
         dtos.ForEach(f => f.GameId = gameId);
         dtos.ForEach(f => f.GameEngine = engine);
-        var entitiesToPersist = _mapper.Map<List<FileBackup>>(dtos);
+        var entitiesToPersist = _mapper.ToFileBackups(dtos);
         foreach (var entity in entitiesToPersist)
         {
             _backups.Insert(entity);
@@ -66,7 +66,9 @@ public class SavegameRepository : ISavegameRepository
             .Where(f => f.GameId == gameId)
             .OrderByDescending(f => f.BackedUpOn);
 
-        return await _mapper.ProjectTo<FileBackupDto>(backups).ToListAsync();
+        var entities = await backups.ToListAsync();
+
+        return _mapper.ToDtos(entities);
     }
 
     public async Task<List<string?>> GetSavegameMd5HashesByGameId(int gameId)
@@ -102,18 +104,20 @@ public class SavegameRepository : ISavegameRepository
         byGameId.ExecuteDelete();
     }
 
-    public SavegameBackupDto GetSavegameById(int id)
+    public SavegameBackupDto? GetSavegameById(int id)
     {
         var entity = _backups.GetEntityById(id);
-        return _mapper.Map<SavegameBackupDto>(entity);
+        return _mapper.ToSavegameBackupDto(entity);
     }
 
     public async Task<List<SavegameBackupDto>> GetSavegameBackups()
     {
-        var entities = _backups.Get().Include(b => b.SavegameMetadata)
+        var entities = await _backups.Get().Include(b => b.SavegameMetadata)
             .Include(b => b.Game)
-            .Where(b => b.FileType == FileType.Savegame || b.FileType == FileType.SavegameStartOfLevel);
-        return await _mapper.ProjectTo<SavegameBackupDto>(entities).ToListAsync();
+            .Where(b => b.FileType == FileType.Savegame || b.FileType == FileType.SavegameStartOfLevel)
+            .ToListAsync();
+
+        return _mapper.ToSavegameBackupDtos(entities);
     }
 
     public async Task SyncSavegameMetadata(IEnumerable<SavegameBackupDto> dtos)

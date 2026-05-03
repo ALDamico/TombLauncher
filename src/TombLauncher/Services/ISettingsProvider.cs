@@ -3,6 +3,7 @@ using System.Globalization;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Dtos.Configuration;
 
 namespace TombLauncher.Services;
 

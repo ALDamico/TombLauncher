@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Contracts.Downloaders;

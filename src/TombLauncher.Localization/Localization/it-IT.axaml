@@ -159,6 +159,8 @@
     <system:String x:Key="FETCHING_SAVEGAMES_FOR_GAMETITLE">Recupero partite salvate di {0}</system:String>
     <system:String x:Key="SLOT">Slot</system:String>
     <system:String x:Key="ONLY_START_OF_LEVEL">Solo di inizio livello</system:String>
+    <system:String x:Key="MARK_AS_START_OF_LEVEL_SAVE">Contrassegna come salvataggio di inizio livello</system:String>
+    <system:String x:Key="UNMARK_AS_START_OF_LEVEL_SAVE">Rimuovi contrassegno di inizio livello dal salvataggio</system:String>
     <system:String x:Key="UPDATE_IN_PROGRESS">Aggiornamento in corso...</system:String>
     <system:String x:Key="CONFIRM_DELETE">Conferma eliminazione</system:String>
     <system:String x:Key="ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_SAVEGAME_THIS">Sei sicuro di voler eliminare questo salvataggio? Questa azione non può essere annullata.</system:String>
@@ -181,6 +183,7 @@
     <system:String x:Key="SYNC_NOW">Esegui ora</system:String>
     <system:String x:Key="LEVEL_NAME">Nome livello</system:String>
     <system:String x:Key="SLOT_NUMBER">Slot #</system:String>
+    <system:String x:Key="SLOT_NUMBER_FORMATTABLE">Slot #{0}</system:String>
     <system:String x:Key="FILE_NAME">Nome file</system:String>
     <system:String x:Key="DATE_AND_TIME">Data e ora</system:String>
     <system:String x:Key="ALL_SLOTS">Tutti gli slot</system:String>
@@ -202,12 +205,13 @@
     <system:String x:Key="SETUP_EXECUTABLE_ARGS_TOOLTIP">Gli argomenti da passare alla riga di comando per avviare il setup. Nel caso dei motori dei giochi classici, il valore da utilizzare è "-setup".</system:String>
     <system:String x:Key="CAN_LAUNCH_SETUP">Può avviare la utility di setup</system:String>
     <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE">Eseguibile di setup della patch della community</system:String>
-    <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP">Abilita questa opzione se questo livello custom utilizza un motore avanzato della community come TRX o Tomb3 Community Edition, per avviare lo strumento di setup.</system:String>
+    <system:String x:Key="COMMUNITY_PATCH_SETUP_EXECUTABLE_TOOLTIP">Abilita questa opzione se questo livello custom utilizza un motore avanzato della community come alcune versioni di TRX o Tomb3 Community Edition, per avviare lo strumento di setup.</system:String>
     <system:String x:Key="AUTO_DETECT_TOOLTIP">Prova a rilevare automaticamente le impostazioni da utilizzare.</system:String>
     <system:String x:Key="USES_COMMUNITY_PATCH">Utilizza patch della community</system:String>
     <system:String x:Key="LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME">Avvio dell'utility di configurazione della patch della community per {0}</system:String>
     <system:String x:Key="COMMUNITY_PATCH_SETUP">Setup patch della community</system:String>
     <system:String x:Key="OPEN_TOMB_LAUNCHER_S_GITHUB_PAGE">Apri la pagina GitHub di Tomb Launcher</system:String>
+    <system:String x:Key="OPEN_WEBSITE">Apri il sito di Tomb Launcher</system:String>
     <system:String x:Key="GRID_VIEW">Vista griglia</system:String>
     <system:String x:Key="TABLE_VIEW">Vista tabella</system:String>
     <system:String x:Key="SHOW_GAMES_AS">Visualizza i giochi come</system:String>
@@ -246,7 +250,25 @@
     <system:String x:Key="WINE_EXECUTABLE_PATH">Percorso dell'eseguibile di Wine</system:String>
     <system:String x:Key="DESCRIPTION_FONT_SIZE">Dimensione carattere descrizione</system:String>
     <system:String x:Key="DESCRIPTION_FONT_SIZE_TOOLTIP">Controlla la dimensione del carattere di base nelle descrizioni. Gli heading si adattano proporzionalmente.</system:String>
-    <system:String x:Key="WINE_TOOLTIP_CONTENT">Wine è un layer di compataibilità che consente di eseguire programmi Windows sotto Linux. Per poter giocare ai livelli custom di TRLE, è necessario che Wine sia installato sul sistema.</system:String>
+    <system:String x:Key="WINE_TOOLTIP_CONTENT">Wine è un layer di compatibilità che permette di eseguire programmi Windows su Linux. Per giocare ai livelli custom di TRLE, è necessario averlo installato sul proprio sistema.</system:String>
+    <system:String x:Key="GENERAL">Avvio</system:String>
+    <system:String x:Key="COMMUNITY_PATCH">Community patch</system:String>
+    <system:String x:Key="COMPATIBILITY">Compatibilità</system:String>
+    <system:String x:Key="WINE_NOT_FOUND">Wine non trovato</system:String>
+    <system:String x:Key="WINE_NOT_FOUND_DESCRIPTION">TombLauncher utilizza Wine per eseguire i livelli TRLE su Linux. Se non è installato sul tuo sistema, non potrai giocare.</system:String>
+    <system:String x:Key="AUTODETECT_WINE">Rileva automaticamente</system:String>
+    <system:String x:Key="WINE_PREFIX_PATH">Cartella dati Wine (opzionale)</system:String>
+    <system:String x:Key="WINE_PREFIX_TOOLTIP_CONTENT">Una cartella dedicata in cui Wine memorizza le impostazioni e i file Windows virtuali di questo gioco, tenendoli separati dagli altri. Lascia vuoto per usare la cartella predefinita comune.</system:String>
+    <system:String x:Key="WINE_VERSION">Versione di Wine</system:String>
+    <system:String x:Key="WINEPREFIX_LAUNCH_OPTION">Cartella dati Wine (solo questo gioco)</system:String>
+    <system:String x:Key="COMPATIBILITY_TOOL">Strumento di compatibilità</system:String>
+    <system:String x:Key="PROTON_EXECUTABLE_PATH">Percorso eseguibile Proton</system:String>
+    <system:String x:Key="PROTON_TOOLTIP_CONTENT">Proton è il layer di compatibilità di Valve per eseguire giochi Windows su Linux. Seleziona un'installazione rilevata dalla libreria Steam, o inserisci il percorso manualmente.</system:String>
+    <system:String x:Key="PROTON_DATA_PATH">Cartella dati Proton (opzionale)</system:String>
+    <system:String x:Key="PROTON_DATA_PATH_TOOLTIP">Cartella dedicata dove Proton salva le impostazioni e i file Windows virtuali di questo gioco (STEAM_COMPAT_DATA_PATH). Lascia vuoto per usare la cartella predefinita globale.</system:String>
+    <system:String x:Key="PROTON_VERSION">Versione Proton</system:String>
+    <system:String x:Key="PROTON_NOT_FOUND">Proton non trovato</system:String>
+    <system:String x:Key="PROTON_NOT_FOUND_DESCRIPTION">TombLauncher è configurato per usare Proton, ma non è stata trovata alcuna installazione. Assicurati di avere Proton installato tramite Steam, oppure imposta il percorso manualmente in Impostazioni → Compatibilità.</system:String>
     <system:String x:Key="UNZIP_FALLBACK_METHOD">Metodo di decompressione di fallback</system:String>
     <system:String x:Key="INSERT_NEW_GAME">INSERISCI UN NUOVO GIOCO</system:String>
     <system:String x:Key="INSTALL">Installa</system:String>
@@ -372,6 +394,12 @@
     <system:String x:Key="RESTART_REQUIRED_CAPTION">Riavvio necessario</system:String>
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">La lingua è stata modificata. Riavvia l'applicazione per applicare la nuova lingua.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Statistiche giornaliere</system:String>
+    <system:String x:Key="LOADING_SAVEGAMES">Caricamento salvataggi in corso...</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN">Commuta schermo intero (F11)</system:String>
+    <system:String x:Key="BACKING_UP_SAVEGAMES">Backup dei salvataggi in corso...</system:String>
+    <system:String x:Key="ABOUT_INFO">Informazioni applicazione</system:String>
+    <system:String x:Key="ABOUT_ACKNOWLEDGEMENTS">Riconoscimenti</system:String>
+    <system:String x:Key="WEBSITE">Sito web</system:String>
+    <system:String x:Key="LICENSE">Licenza</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

@@ -5,7 +5,7 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
-using TombLauncher.Core.Navigation;
+using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
@@ -23,8 +23,8 @@ public partial class MainWindowViewModel : WindowViewModelBase
         NotificationListViewModel = notificationListViewModel;
         _settingsProvider = settingsProvider;
         _platformSpecificFeatures = platformSpecificFeatures;
-        MenuItems = new ObservableCollection<MainMenuItemViewModel>()
-        {
+        MenuItems =
+        [
             new MainMenuItemViewModel()
             {
                 ToolTip = "WELCOME".GetLocalizedString(),
@@ -32,6 +32,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 Text = "WELCOME".GetLocalizedString(),
                 ViewModelType = typeof(WelcomePageViewModel)
             },
+
             new MainMenuItemViewModel()
             {
                 ToolTip = "MY_MODS".GetLocalizedString(),
@@ -39,6 +40,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 Text = "MY_MODS".GetLocalizedString(),
                 ViewModelType = typeof(GameListViewModel)
             },
+
             new MainMenuItemViewModel()
             {
                 ToolTip = "SEARCH".GetLocalizedString(),
@@ -46,6 +48,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 Text = "SEARCH".GetLocalizedString(),
                 ViewModelType = typeof(GameSearchViewModel)
             },
+
             new MainMenuItemViewModel()
             {
                 ToolTip = "STATISTICS".GetLocalizedString(),
@@ -53,7 +56,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 Text = "STATISTICS".GetLocalizedString(),
                 ViewModelType = typeof(StatisticsPageViewModel)
             }
-        };
+        ];
 
         SettingsItem = new MainMenuItemViewModel()
         {
@@ -69,6 +72,22 @@ public partial class MainWindowViewModel : WindowViewModelBase
             Icon = PackIconRemixIconKind.GithubLine,
             Text = "GitHub",
             Command = new RelayCommand(OpenGithub)
+        };
+
+        WebsiteLinkItem = new CommandViewModel()
+        {
+            Tooltip = "OPEN_WEBSITE".GetLocalizedString(),
+            Icon = PackIconRemixIconKind.GlobalLine,
+            Text = "OPEN_WEBSITE".GetLocalizedString(),
+            Command = new RelayCommand(OpenWebsite)
+        };
+
+        AboutPageItem = new MainMenuItemViewModel()
+        {
+            ToolTip = "ABOUT_INFO".GetLocalizedString(),
+            Icon = PackIconRemixIconKind.InformationLine,
+            Text = "ABOUT_INFO".GetLocalizedString(),
+            ViewModelType = typeof(AboutPageViewModel),
         };
 
         Title = "Tomb Launcher";
@@ -108,12 +127,21 @@ public partial class MainWindowViewModel : WindowViewModelBase
     [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
     [ObservableProperty] private MainMenuItemViewModel _settingsItem;
     [ObservableProperty] private CommandViewModel _gitHubLinkItem;
+    [ObservableProperty] private CommandViewModel _websiteLinkItem;
+    [ObservableProperty] private MainMenuItemViewModel _aboutPageItem;
     [ObservableProperty] private bool _isSettingsOpen;
+    [ObservableProperty] private bool _isAboutPageOpen;
 
     private void OpenGithub()
     {
         var gitHubLink = _settingsProvider.GetApplicationSettings().GitHubLink;
         _platformSpecificFeatures.OpenUrl(gitHubLink);
+    }
+
+    private void OpenWebsite()
+    {
+        var websiteLink = _settingsProvider.GetApplicationSettings().WebsiteLink;
+        _platformSpecificFeatures.OpenUrl(websiteLink);
     }
 
     private bool _isPaneOpen;
@@ -139,6 +167,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
         {
             if (value != SettingsItem)
                 IsSettingsOpen = false;
+            IsAboutPageOpen = false;
             SetProperty(ref field, value);
             if (value != null && !_isSyncingSelection)
             {
@@ -164,6 +193,14 @@ public partial class MainWindowViewModel : WindowViewModelBase
         await _navigationManager.NavigateTo(SettingsItem.ViewModelType!);
         SelectedMenuItem = SettingsItem;
         IsSettingsOpen = true;
+    }
+
+    [RelayCommand]
+    private async Task OpenAboutPage()
+    {
+        await _navigationManager.NavigateTo(AboutPageItem.ViewModelType!);
+        SelectedMenuItem = AboutPageItem;
+        IsAboutPageOpen = true;
     }
 
     [ObservableProperty] private WindowState _currentWindowState;

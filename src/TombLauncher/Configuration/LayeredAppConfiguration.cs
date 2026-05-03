@@ -1,4 +1,5 @@
 using TombLauncher.Configuration.Sections;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.Configuration;
@@ -15,13 +16,26 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         ApplicationLanguage = User.Application.ApplicationLanguage.Coalesce(Defaults.Application.ApplicationLanguage),
         DatabasePath = User.Application.DatabasePath.Coalesce(Defaults.Application.DatabasePath),
         MinimumLogLevel = User.Application.MinimumLogLevel.Coalesce(Defaults.Application.MinimumLogLevel),
-        GitHubLink = Defaults.Application.GitHubLink
+        GitHubLink = Defaults.Application.GitHubLink,
+        WebsiteLink = Defaults.Application.WebsiteLink
     };
 
     public IAppearanceConfig Appearance => new AppearanceConfig
     {
         ApplicationTheme = User.Appearance.ApplicationTheme.Coalesce(Defaults.Appearance.ApplicationTheme),
         DefaultToGridView = User.Appearance.DefaultToGridView.Coalesce(Defaults.Appearance.DefaultToGridView)
+    };
+
+    public ICompatibilityConfig Compatibility => new CompatibilityConfig
+    {
+        CompatibilityTool = User.Compatibility.CompatibilityTool != CompatibilityTool.Unspecified
+            ? User.Compatibility.CompatibilityTool
+            : Defaults.Compatibility.CompatibilityTool != CompatibilityTool.Unspecified
+                ? Defaults.Compatibility.CompatibilityTool
+                : CompatibilityTool.Wine,
+        WinePath = User.Compatibility.WinePath.Coalesce(Defaults.Compatibility.WinePath),
+        CompatibilityPrefixPath = User.Compatibility.CompatibilityPrefixPath.Coalesce(Defaults.Compatibility.CompatibilityPrefixPath),
+        ProtonPath = User.Compatibility.ProtonPath.Coalesce(Defaults.Compatibility.ProtonPath),
     };
 
     public IDownloadersConfig Downloaders => new DownloadersConfig
@@ -33,7 +47,6 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
     public IGameDetailsConfig GameDetails => new GameDetailsConfig
     {
         AskForConfirmationBeforeWalkthrough = User.GameDetails.AskForConfirmationBeforeWalkthrough.Coalesce(Defaults.GameDetails.AskForConfirmationBeforeWalkthrough),
-        WinePath = User.GameDetails.WinePath.Coalesce(Defaults.GameDetails.WinePath),
         DocumentationPatterns = (Defaults.GameDetails.DocumentationPatterns ?? new()).MergeWithOverrides(User.GameDetails.DocumentationPatterns ?? new()),
         DocumentationFolderExclusions = (Defaults.GameDetails.DocumentationFolderExclusions ?? new()).MergeWithOverrides(User.GameDetails.DocumentationFolderExclusions ?? new()),
         DescriptionFontSize = Defaults.GameDetails.DescriptionFontSize.Coalesce(User.GameDetails.DescriptionFontSize)

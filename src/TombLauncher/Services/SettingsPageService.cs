@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,10 +11,10 @@ using TombLauncher.Configuration;
 using TombLauncher.Extensions;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Localization;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mappers;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
@@ -34,7 +32,8 @@ public class SettingsPageService : IViewService
         IServiceProvider serviceProvider,
         IAppFileOperationsService appFileOperations,
         ISettingsProvider settingsProvider,
-        IPlatformSpecificFeatures platformSpecificFeatures)
+        IPlatformSpecificFeatures platformSpecificFeatures,
+        SettingsMapper settingsMapper)
     {
         ViewContext = viewContext;
         _appConfiguration = appConfiguration;
@@ -44,6 +43,7 @@ public class SettingsPageService : IViewService
         _appFileOperations = appFileOperations;
         _settingsProvider = settingsProvider;
         _platformSpecificFeatures = platformSpecificFeatures;
+        _mapper = settingsMapper;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -51,7 +51,7 @@ public class SettingsPageService : IViewService
     private readonly IServiceProvider _serviceProvider;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
-    private IMapper _mapper => ViewContext.Mapper;
+    private readonly SettingsMapper _mapper;
     private readonly ILogger<SettingsPageService> _logger;
     private readonly ThemeManager _themeManager;
     private readonly IAppFileOperationsService _appFileOperations;
@@ -61,12 +61,8 @@ public class SettingsPageService : IViewService
     public List<ApplicationLanguageViewModel> GetSupportedLanguages()
     {
         var supportedLanguages = LocalizationManager.GetSupportedLanguages();
-        return _mapper.Map<List<ApplicationLanguageViewModel>>(supportedLanguages);
+        return _mapper.ToViewModels(supportedLanguages);
     }
-
-    public CultureInfo GetApplicationLanguage() => _settingsProvider.GetApplicationSettings().ApplicationLanguage;
-
-    public string GetApplicationTheme() => _settingsProvider.GetAppearanceSettings().ApplicationTheme;
 
     public async Task Save(SettingsPageViewModel viewModel)
     {
@@ -77,11 +73,20 @@ public class SettingsPageService : IViewService
 
             await ApplySideEffects(viewModel);
 
-            var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
-            await File.WriteAllTextAsync(userConfigPath,
-                JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
-                    new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
+            await PersistCurrentConfigAsync();
         }
+    }
+
+    /// <summary>
+    /// Persists only the current user-layer config to disk (without requiring a SettingsPageViewModel).
+    /// Used by startup routines that modify the config directly (e.g. Wine detection, migration).
+    /// </summary>
+    public async Task PersistCurrentConfigAsync()
+    {
+        var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
+        await File.WriteAllTextAsync(userConfigPath,
+            JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
+                new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
     }
 
     private async Task ApplySideEffects(SettingsPageViewModel viewModel)
@@ -111,7 +116,7 @@ public class SettingsPageService : IViewService
 
     public List<DownloaderViewModel> GetDownloaderViewModels()
     {
-        return _mapper.Map<List<DownloaderViewModel>>(_settingsProvider.GetDownloaderConfigurations());
+        return _mapper.ToViewModels(_settingsProvider.GetDownloaderConfigurations());
     }
 
     public GameDetailsSettingsViewModel GetGameDetailsSettings(PageViewModel settingsPage)
@@ -124,7 +129,6 @@ public class SettingsPageService : IViewService
             DescriptionFontSize = gd.DescriptionFontSize ?? 18,
             DocumentationPatterns = new EditablePatternListBoxViewModel() { TargetCollection = settings.EnabledPatterns.ToObservableCollection(), HeaderIcon = PackIconRemixIconKind.FileTextLine },
             FolderExclusions = new EditableFolderExclusionsListBoxViewModel() { TargetCollection = settings.ExcludedFolders.ToObservableCollection(), HeaderIcon = PackIconRemixIconKind.FolderLine },
-            WinePath = settings.WinePath
         };
     }
 

@@ -13,7 +13,7 @@
         <Copyright>2025 Tomb Launcher developers</Copyright>
         <PackageProjectUrl>https://tomblauncher.app</PackageProjectUrl>
         <RepositoryUrl>https://github.com/ALDamico/TombLauncher</RepositoryUrl>
-        <Version>1.1.0</Version>
+        <Version>1.2.0</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
@@ -147,6 +147,9 @@
       <Compile Update="Views\Pages\WelcomePage\FavouritesWidget.axaml.cs">
         <DependentUpon>FavouritesWidget.axaml</DependentUpon>
         <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\LaunchOptionsView.axaml.cs">
+        <DependentUpon>LaunchOptionsView.axaml</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>
