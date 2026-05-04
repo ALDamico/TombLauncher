@@ -1,4 +1,4 @@
-using LLama;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -11,18 +11,20 @@ public class EmbedderService : IHostedService
 {
     private readonly IHostApplicationLifetime _lifetime;
     private readonly ILogger<EmbedderService> _logger;
-    private readonly LLamaEmbedder _embedder;
+    private readonly IEmbeddingGenerator<string, Embedding<float>> _embedder;
     private readonly KnowledgeBaseWriter _knowledgeBaseWriter;
     private const string InputPath = "./Input";
     private const string IgnoreDir = "_ignored";
 
-    public EmbedderService(IHostApplicationLifetime lifetime, ILogger<EmbedderService> logger, LLamaEmbedder embedder, KnowledgeBaseWriter knowledgeBaseWriter)
+    public EmbedderService(IHostApplicationLifetime lifetime, ILogger<EmbedderService> logger,
+        IEmbeddingGenerator<string, Embedding<float>> embedder, KnowledgeBaseWriter knowledgeBaseWriter)
     {
         _lifetime = lifetime;
         _logger = logger;
         _embedder = embedder;
         _knowledgeBaseWriter = knowledgeBaseWriter;
     }
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var files = GetFilesToProcess(InputPath);
@@ -42,7 +44,7 @@ public class EmbedderService : IHostedService
         }
         _logger.LogInformation("Saving embeddings");
         await _knowledgeBaseWriter.WriteChunks(allChunks, cancellationToken);
-        
+
         _lifetime.StopApplication();
     }
 

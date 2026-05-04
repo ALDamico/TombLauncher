@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -79,15 +80,18 @@ public partial class AiChatViewModel : PageViewModel
         var enumerable = _ragService!.AskAsync(new Progress<DownloadProgressInfo>(), currentText, new TroubleshootingContext(), _chatHistory, cts.Token);
         var response = new AiMessageViewModel()
             { Text = "", MessageType = MessageType.Assistant, SentDate = DateTime.Now };
+        var fullResponse = new StringBuilder();
         await foreach (var token in enumerable)
         {
             response.Text += token;
+            fullResponse.Append(token);
             if (!responseAdded)
             {
                 MessageHistory.Add(response);
                 responseAdded = true;
             }
         }
+        _chatHistory.AddAssistantMessage(fullResponse.ToString());
         await cts.CancelAsync();
         IsGenerating = false;
     }

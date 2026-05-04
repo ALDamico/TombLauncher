@@ -1,5 +1,5 @@
 using Dapper;
-using LLama;
+using Microsoft.Extensions.AI;
 using Newtonsoft.Json;
 using NuGet.Versioning;
 using TombLauncher.Ai.Abstractions;
@@ -14,9 +14,8 @@ namespace TombLauncher.Ai.Services;
 
 public class VectorSearchService : VectorDbService
 {
-    private readonly EmbeddingModelLoader _embedderLoader;
-    private readonly SemaphoreSlim _loadLock = new(1, 1);
-    private LLamaEmbedder? _embedder;
+    private readonly IEmbeddingGenerator<string, Embedding<float>> _embedder;
+    private readonly EmbeddingGenerationOptions _embeddingGenerationOptions;
 
     private const string ChunksQuery = @"SELECT document_title AS ""DocumentTitle"", section_title AS ""SectionTitle"", chunk_text AS ""ChunkText"", metadata_id AS ""MetadataId""
 FROM knowledge_chunks c
@@ -28,47 +27,38 @@ FROM knowledge_metadata
 WHERE id IN @Ids;";
     private readonly string _knowledgeBasePath;
 
-    public VectorSearchService(EmbeddingModelLoader embedderLoaderLoader, IAiConfig configuration,
+    public VectorSearchService(IEmbeddingGenerator<string, Embedding<float>> embedder, IAiConfig configuration,
         IPlatformSpecificFeatures platformSpecificFeatures) : base(configuration)
     {
-        _embedderLoader = embedderLoaderLoader;
+        _embedder = embedder;
         _knowledgeBasePath = Path.Combine(platformSpecificFeatures.GetAppDataDirectory(),
             configuration.KnowledgeBasePath ?? "");
+        _embeddingGenerationOptions = new EmbeddingGenerationOptions()
+        {
+            Dimensions = 768,
+            ModelId = configuration.EmbeddingModelFileName
+        };
     }
 
     public async Task<List<KnowledgeBaseItemDto>> SearchAsync(IProgress<DownloadProgressInfo> progress, string query, int topK = 5, CancellationToken cancellationToken = default)
     {
-        if (_embedder == null)
-        {
-            await _loadLock.WaitAsync(cancellationToken);
-            try
-            {
-                _embedder ??= await _embedderLoader.LoadEmbedder(progress, cancellationToken);
-            }
-            finally
-            {
-                _loadLock.Release();
-            }
-        }
-        var embeddings = await _embedder.GetEmbeddings(query, cancellationToken);
-
-        var embedding = embeddings.FirstOrDefault();
-        if (embedding == null)
-            return [];
+        var embedding = await _embedder.GenerateAsync(query, cancellationToken: cancellationToken);
 
         using var connection = GetConnection($"Data Source={_knowledgeBasePath}");
         connection.Open();
         await ExecuteVectorInit(connection);
         await ExecuteVectorQuantizePreload(connection);
+        
+        var vector = embedding.Vector.ToArray();
 
         var result = await connection.QueryAsync<Chunk>(ChunksQuery,
-            new { Vector = JsonConvert.SerializeObject(embedding), TopK = topK });
+            new { Vector = JsonConvert.SerializeObject(vector), TopK = topK });
 
         var resultList = result.ToList();
 
         var metadataIds = resultList.Select(c => c.MetadataId).Where(id => id != null).Select(id => id.GetValueOrDefault()).ToHashSet();
 
-        IEnumerable<KnowledgeMetadata> metadataResult = Array.Empty<KnowledgeMetadata>();
+        IEnumerable<KnowledgeMetadata> metadataResult = [];
         
         if (metadataIds.Any())
             metadataResult = await connection.QueryAsync<KnowledgeMetadata>(MetadataQuery, new { Ids = metadataIds });

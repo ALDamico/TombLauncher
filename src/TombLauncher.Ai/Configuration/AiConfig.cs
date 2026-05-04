@@ -11,5 +11,7 @@ public class AiConfig : IAiConfig
     public string EmbeddingModelUrl { get; set; } = null!;
     public string ModelsPath { get; set; } = null!;
     public string EmbeddingModelFileName { get; set; } = null!;
-    public uint EmbeddingContextLength { get; set; }
+    public int EmbeddingContextLength { get; set; }
+    public string Endpoint { get; set; } = "http://localhost:11434/v1";
+    public string? ApiKey { get; set; }
 }

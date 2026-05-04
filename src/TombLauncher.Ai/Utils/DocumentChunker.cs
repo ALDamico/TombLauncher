@@ -1,13 +1,13 @@
-using LLama;
 using Markdig;
 using Markdig.Syntax;
+using Microsoft.Extensions.AI;
 using TombLauncher.Ai.Models;
 
 namespace TombLauncher.Ai.Utils;
 
 public static class DocumentChunker
 {
-    public static async Task<List<AnnotatedChunk>> GetAnnotatedChunks(string fileContent, LLamaEmbedder embedder, DocumentMetadata metadata, CancellationToken cancellationToken)
+    public static async Task<List<AnnotatedChunk>> GetAnnotatedChunks(string fileContent, IEmbeddingGenerator<string, Embedding<float>> embedder, DocumentMetadata metadata, CancellationToken cancellationToken)
     {
         var documentTitle = string.Empty;
         var output = new List<AnnotatedChunk>();
@@ -45,7 +45,7 @@ public static class DocumentChunker
                     }
                     currentHeading = heading;
                 }
-                else if (currentHeading != null) // H3+: treated as content
+                else if (currentHeading != null)
                 {
                     sectionLines.Add(ExtractRawText(block, fileContent));
                 }
@@ -56,7 +56,6 @@ public static class DocumentChunker
             }
         }
 
-        // Flush last section
         if (currentHeading != null)
         {
             var annotatedChunk = await ProcessSection(embedder, cancellationToken, currentHeading, sectionLines, groupedMetadata, identicalHeadingCount, documentTitle, metadata);
@@ -66,7 +65,7 @@ public static class DocumentChunker
         return output;
     }
 
-    private static async Task<AnnotatedChunk> ProcessSection(LLamaEmbedder embedder, CancellationToken cancellationToken,
+    private static async Task<AnnotatedChunk> ProcessSection(IEmbeddingGenerator<string, Embedding<float>> embedder, CancellationToken cancellationToken,
         HeadingBlock currentHeading, List<string> sectionLines, ILookup<string, SectionMetadata> groupedMetadata, int identicalHeadingCount,
         string documentTitle, DocumentMetadata metadata)
     {
@@ -80,13 +79,13 @@ public static class DocumentChunker
         };
         foreach (var item in split)
         {
-            var embeddings = await embedder.GetEmbeddings(item, cancellationToken);
+            var embeddings = await embedder.GenerateAsync([item], cancellationToken: cancellationToken);
             var chunk = new Chunk()
             {
                 DocumentTitle = documentTitle,
                 ChunkText = item,
                 SectionTitle = header,
-                Embedding = embeddings[0]
+                Embedding = embeddings[0].Vector.ToArray()
             };
             annotatedChunk.Chunks.Add(chunk);
         }
@@ -106,7 +105,7 @@ public static class DocumentChunker
         }
         return string.Join("", parts);
     }
-    
+
     private static string ExtractRawText(Block block, string source)
     {
         return source.Substring(block.Span.Start, block.Span.Length);

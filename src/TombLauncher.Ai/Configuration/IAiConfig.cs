@@ -11,6 +11,7 @@ public interface IAiConfig
     string EmbeddingModelUrl { get; set; }
     string ModelsPath { get; set; }
     string EmbeddingModelFileName { get; set; }
-    uint EmbeddingContextLength { get; set; }
-    
+    int EmbeddingContextLength { get; set; }
+    string Endpoint { get; set; }
+    string? ApiKey { get; set; }
 }
