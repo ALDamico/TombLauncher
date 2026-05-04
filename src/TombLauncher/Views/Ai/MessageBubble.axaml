@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ai="clr-namespace:TombLauncher.ViewModels.Ai"
              xmlns:ai1="clr-namespace:TombLauncher.Ai;assembly=TombLauncher.Ai"
-             xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
              xmlns:helpers="clr-namespace:TombLauncher.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Ai.MessageBubble"
@@ -23,14 +22,13 @@
             <Setter Property="HorizontalAlignment" Value="Left"></Setter>
         </Style>
     </UserControl.Styles>
-    <Border CornerRadius="50" Padding="8" 
+    <Border CornerRadius="12" Padding="8" 
             Classes.user="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.User}}"
             Classes.assistant="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.Assistant}}"
             Classes.tool-use="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.ToolUse}}">
         <StackPanel Orientation="Vertical" Margin="8">
             <TextBlock HorizontalAlignment="Right" Classes="text-muted small" FontWeight="DemiBold" Text="{Binding SentDate}"></TextBlock>
-            <mdxaml:MarkdownScrollViewer helpers:MarkdownTypography.FontFamily="{StaticResource Spectral}" 
-                                         Markdown="{Binding Text}" />
+            <SelectableTextBlock TextWrapping="Wrap" Text="{Binding Text}" />
         </StackPanel>
     </Border>
 </UserControl>

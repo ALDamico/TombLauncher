@@ -20,8 +20,8 @@ namespace TombLauncher.ViewModels.Pages;
 public partial class AiChatViewModel : PageViewModel
 {
     private readonly ITroubleshootingServiceLoader _troubleshootingServiceLoader;
-    [ObservableProperty] private bool _isGenerating;
-    [ObservableProperty] private string _currentText = "";
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))] private bool _isGenerating;
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))] private string _currentText = "";
     [ObservableProperty] private ObservableCollection<AiMessageViewModel> _messageHistory = new();
     [ObservableProperty] private string _currentStatusText = "";
     private ITroubleshootingService? _ragService;

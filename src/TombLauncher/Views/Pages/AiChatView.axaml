@@ -24,40 +24,44 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
     <DockPanel LastChildFill="True">
-        <TextBox DockPanel.Dock="Bottom" AcceptsReturn="True" AcceptsTab="False" 
-                 CornerRadius="50" 
-                 Watermark="{localization:Translate ASK_LAURA_SOMETHING}"
-                 MinHeight="48"
-                 MaxHeight="200"
-                 Text="{Binding CurrentText}">
-            <TextBox.KeyBindings>
-                <KeyBinding Command="{Binding SendMessageCommand}" Gesture="Enter"/>
-            </TextBox.KeyBindings>
-            <TextBox.InnerLeftContent>
-                <iconPacks:PackIconRemixIcon Classes="text-muted" 
-                                             Margin="16, 0" 
-                                             VerticalAlignment="Center" 
-                                             Width="16" 
-                                             Height="16" 
-                                             Kind="Chat1Line"/>
-            </TextBox.InnerLeftContent>
-            <TextBox.InnerRightContent>
-                <controls:IconButton Classes="btn-primary" Text="{localization:Translate SEND}" Padding="16, 8"
-                                     Height="65"
-                                     Margin="16, 0" Icon="SendPlane2Line" Command="{Binding SendMessageCommand}"/>
-            </TextBox.InnerRightContent>
-        </TextBox>
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+            <controls:IconButton DockPanel.Dock="Right" Classes="btn-primary" Text="{localization:Translate SEND}"
+                                 Padding="16, 8"
+                                 Height="65"
+                                 FontSize="24"
+                                 Margin="16, 0" Icon="SendPlane2Line" Command="{Binding SendMessageCommand}" />
+            <TextBox DockPanel.Dock="Bottom" AcceptsReturn="True" AcceptsTab="False"
+                     CornerRadius="12"
+                     Watermark="{localization:Translate ASK_LAURA_SOMETHING}"
+                     MinHeight="48"
+                     MaxHeight="200"
+                     
+                     Text="{Binding CurrentText}">
+                <TextBox.KeyBindings>
+                    <KeyBinding Command="{Binding SendMessageCommand}" Gesture="Enter" />
+                </TextBox.KeyBindings>
+                <TextBox.InnerLeftContent>
+                    <iconPacks:PackIconRemixIcon Classes="text-muted"
+                                                 Margin="16, 0"
+                                                 VerticalAlignment="Center"
+                                                 Width="16"
+                                                 Height="16"
+                                                 Kind="Chat1Line" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+        </DockPanel>
         <StackPanel Margin="32, 0" DockPanel.Dock="Bottom" Orientation="Horizontal" IsVisible="{Binding IsGenerating}">
-            <controls:RingLoader Height="32" Width="32" ></controls:RingLoader>
+            <controls:RingLoader Height="32" Width="32"></controls:RingLoader>
             <TextBlock Margin="8, 4" VerticalAlignment="Center" FontStyle="Italic" Classes="text-muted"
                        helpers:FadeOnTextChange.IsEnabled="True"
-                       Text="{Binding CurrentStatusText}"></TextBlock>
+                       Text="{Binding CurrentStatusText}">
+            </TextBlock>
         </StackPanel>
         <ScrollViewer helpers:AutoScroll.IsEnabled="True">
             <ItemsRepeater ItemsSource="{Binding MessageHistory}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <ai:MessageBubble Margin="0, 8"/>
+                        <ai:MessageBubble Margin="0, 8" />
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>

@@ -10,7 +10,7 @@
              >
         <Button.Content>
             <StackPanel Orientation="Horizontal" Margin="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:IconButton}, Path=Margin}">
-                <iconPacks:PackIconRemixIcon Kind="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:IconButton}, Path=Icon}" 
+                <iconPacks:PackIconRemixIcon VerticalAlignment="Center" Kind="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:IconButton}, Path=Icon}" 
                                        Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:IconButton}, Path=FontSize}"
                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:IconButton}, Path=FontSize}"/>
                 <TextBlock Margin="4, 0, 0, 0"
