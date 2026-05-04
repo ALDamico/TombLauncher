@@ -57,7 +57,7 @@
             <ItemsRepeater ItemsSource="{Binding MessageHistory}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <ai:MessageBubble/>
+                        <ai:MessageBubble Margin="0, 8"/>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>

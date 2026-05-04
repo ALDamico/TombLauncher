@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Newtonsoft.Json;
@@ -18,19 +19,22 @@ public class RagService : ITroubleshootingService
     private readonly IChatCompletionService _chatCompletionService;
     private readonly GameDiagnosticsPlugin _gameDiagnosticsPlugin;
     private readonly PromptExecutionSettings _promptExecutionSettings;
+    private readonly ILogger<RagService> _logger;
     private bool _disposed;
 
     public RagService(Kernel kernel,
         VectorSearchService vectorSearchService,
         IChatCompletionService chatCompletionService,
         GameDiagnosticsPlugin gameDiagnosticsPlugin,
-        PromptExecutionSettings promptExecutionSettings)
+        PromptExecutionSettings promptExecutionSettings,
+        ILogger<RagService> logger)
     {
         _kernel = kernel;
         _vectorSearchService = vectorSearchService;
         _chatCompletionService = chatCompletionService;
         _gameDiagnosticsPlugin = gameDiagnosticsPlugin;
         _promptExecutionSettings = promptExecutionSettings;
+        _logger = logger;
     }
 
     public async IAsyncEnumerable<string> AskAsync(IProgress<DownloadProgressInfo> progress, string query, TroubleshootingContext? troubleshootingContext,
@@ -52,6 +56,15 @@ Relevant documentation:
                            kernel: _kernel, executionSettings: _promptExecutionSettings,
                            cancellationToken: cancellationToken))
         {
+            _logger.LogDebug("Chunk received — Role: {Role}, Content: {Content}, Items: [{Items}]",
+                chunk.Role,
+                chunk.Content,
+                string.Join(", ", chunk.Items.Select(i => i.GetType().Name)));
+
+            if (chunk.Items.OfType<FunctionCallContent>().Any())
+                _logger.LogInformation("FunctionCallContent detected: {Calls}",
+                    string.Join(", ", chunk.Items.OfType<FunctionCallContent>().Select(f => f.FunctionName)));
+
             if (chunk.Content != null)
                 yield return chunk.Content;
         }

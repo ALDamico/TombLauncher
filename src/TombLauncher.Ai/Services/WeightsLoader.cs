@@ -20,11 +20,11 @@ public class WeightsLoader : IWeightsLoader
     public async Task<WeightsData> LoadWeightsAsync(ModelParams modelParams, IProgress<float> progressReporter, CancellationToken cancellationToken)
     {
         var weights = await LLamaWeights.LoadFromFileAsync(modelParams, cancellationToken, progressReporter);
-        var gpuOverlays = weights.Metadata.Keys.FirstOrDefault(k => k.EndsWith("block_count"));
+        var gpuOverlays = weights.Metadata.FirstOrDefault(k => k.Key.EndsWith("block_count"));
         var overlayCount = int.MaxValue;
 
-        if (gpuOverlays.IsNotNullOrWhiteSpace())
-            int.TryParse(gpuOverlays, NumberStyles.Integer, CultureInfo.InvariantCulture, out overlayCount);
+        if (gpuOverlays.Key != null && gpuOverlays.Value.IsNotNullOrWhiteSpace())
+            int.TryParse(gpuOverlays.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out overlayCount);
 
         overlayCount = AiConfigUtils.ComputeGpuLayerCount(overlayCount, _offloadPercentage);
 
