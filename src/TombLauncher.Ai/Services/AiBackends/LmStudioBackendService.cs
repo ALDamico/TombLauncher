@@ -9,12 +9,12 @@ namespace TombLauncher.Ai.Services.AiBackends;
 
 public class LmStudioBackendService : IAiBackendService
 {
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ModelMapper _modelMapper;
 
-    public LmStudioBackendService(HttpClient httpClient, ModelMapper modelMapper)
+    public LmStudioBackendService(IHttpClientFactory httpClientFactory, ModelMapper modelMapper)
     {
-        _httpClient = httpClient;
+        _httpClientFactory = httpClientFactory;
         _modelMapper = modelMapper;
     }
 
@@ -40,7 +40,7 @@ public class LmStudioBackendService : IAiBackendService
     public async Task<List<AiModelMetadata>> GetAvailableModelsAsync(string endpoint, string apiKey, CancellationToken ct)
     {
         var fullUri = GetFullUri(endpoint, "/api/v1/models");
-        var modelResponse = await _httpClient.GetFromJsonAsync<List<ModelInfo>>(fullUri, JsonOptions, ct);
+        var modelResponse = await _httpClientFactory.CreateClient().GetFromJsonAsync<List<ModelInfo>>(fullUri, JsonOptions, ct);
         return _modelMapper.ToMetadataList(modelResponse ?? []);
     }
 
@@ -58,7 +58,7 @@ public class LmStudioBackendService : IAiBackendService
             Model = modelId
         };
 
-        var response = await _httpClient.PostAsJsonAsync(fullUri, body, JsonOptions, ct);
+        var response = await _httpClientFactory.CreateClient().PostAsJsonAsync(fullUri, body, JsonOptions, ct);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -67,7 +67,7 @@ public class LmStudioBackendService : IAiBackendService
                 statusCode: response.StatusCode);
         }
 
-        var downloadModelResponse = await response.Content.ReadFromJsonAsync<DownloadModelResponse>(ct);
+        var downloadModelResponse = await response.Content.ReadFromJsonAsync<DownloadModelResponse>(JsonOptions, ct);
         if (downloadModelResponse == null)
         {
             throw new InvalidOperationException($"Response content for {fullUri} was empty");
@@ -92,9 +92,10 @@ public class LmStudioBackendService : IAiBackendService
     private async Task PollDownload(string endpoint, string? jobId, IProgress<float> progress, CancellationToken ct)
     {
         var statusUri = GetFullUri(endpoint, $"/api/v1/models/download/status/{jobId}");
+        var client = _httpClientFactory.CreateClient();
         while (!ct.IsCancellationRequested)
         {
-            var status = await _httpClient.GetFromJsonAsync<DownloadModelResponse>(statusUri, JsonOptions, ct);
+            var status = await client.GetFromJsonAsync<DownloadModelResponse>(statusUri, JsonOptions, ct);
             switch (status?.Status)
             {
                 case ModelDownloadStatus.Completed:

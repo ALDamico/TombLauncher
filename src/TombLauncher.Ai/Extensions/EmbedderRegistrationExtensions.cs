@@ -6,8 +6,12 @@ using Microsoft.SemanticKernel;
 using OpenAI;
 using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Configuration;
+using TombLauncher.Ai.Factories;
+using TombLauncher.Ai.Mappers;
 using TombLauncher.Ai.Plugins;
 using TombLauncher.Ai.Services;
+using TombLauncher.Ai.Services.AiBackends;
+using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Ai.Extensions;
 
@@ -71,6 +75,11 @@ public static class EmbedderRegistrationExtensions
                 var kernel = kernelBuilder.Build();
                 kernel.Plugins.AddFromObject(sp.GetRequiredService<GameDiagnosticsPlugin>());
                 return kernel;
-            });
+            })
+            .AddHttpClient()
+            .AddSingleton<ModelMapper>()
+            .AddKeyedSingleton<IAiBackendService, OllamaBackendService>(AiBackendType.Ollama)
+            .AddKeyedSingleton<IAiBackendService, LmStudioBackendService>(AiBackendType.LmStudio)
+            .AddSingleton<AiBackendFactory>();
     }
 }
