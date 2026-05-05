@@ -89,5 +89,8 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         ModelId = User.Ai.ModelId,
         EmbeddingModelId = Defaults.Ai.EmbeddingModelId,
         KnowledgeBasePath = Defaults.Ai.KnowledgeBasePath,
+        ApiKey = User.Ai.ApiKey.Coalesce(Defaults.Ai.ApiKey),
+        Endpoint = User.Ai.Endpoint,
+        BackendType = User.Ai.BackendType.Coalesce(Defaults.Ai.BackendType)
     };
 }

@@ -1,3 +1,5 @@
+using TombLauncher.Contracts.Enums;
+
 namespace TombLauncher.Ai.Configuration;
 
 public interface IAiConfig
@@ -9,4 +11,5 @@ public interface IAiConfig
     string? EmbeddingModelId { get; set; }
     string Endpoint { get; set; }
     string? ApiKey { get; set; }
+    AiBackendType BackendType { get; set; }
 }
