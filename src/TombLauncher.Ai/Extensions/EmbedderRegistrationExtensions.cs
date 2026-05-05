@@ -48,7 +48,6 @@ public static class EmbedderRegistrationExtensions
             .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings()
                 { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
             .AddSingleton<GameDiagnosticsPlugin>()
-            .AddSingleton<AiModelRegistry>()
             .AddSingleton<OpenAIClient>(sp =>
             {
                 var aiConfig = sp.GetRequiredService<IAiConfig>();
@@ -72,7 +71,6 @@ public static class EmbedderRegistrationExtensions
                 var kernel = kernelBuilder.Build();
                 kernel.Plugins.AddFromObject(sp.GetRequiredService<GameDiagnosticsPlugin>());
                 return kernel;
-            })
-            .AddSingleton<ModelDownloadService>();
+            });
     }
 }

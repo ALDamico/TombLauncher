@@ -2,10 +2,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
@@ -24,10 +22,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         IAppFileOperationsService appFileOperationsService, 
         ILayeredAppConfiguration appConfiguration,
         SettingsMapper settingsMapper,
-        AiModelRegistry aiModelRegistry,
         IHttpClientFactory httpClientFactory,
         AiMapper aiMapper,
-        ModelDownloadService modelDownloadService,
         NotificationService notificationService)
     {
         _settingsService = settingsService;
@@ -37,10 +33,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _appFileOperationsService = appFileOperationsService;
         _appConfiguration = appConfiguration;
         _settingsMapper = settingsMapper;
-        _aiModelRegistry = aiModelRegistry;
         _httpClientFactory = httpClientFactory;
         _aiMapper = aiMapper;
-        _modelDownloadService = modelDownloadService;
         _notificationService = notificationService;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
@@ -74,11 +68,9 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly IAppFileOperationsService _appFileOperationsService;
     private readonly ILayeredAppConfiguration _appConfiguration;
-    private readonly AiModelRegistry _aiModelRegistry;
     private readonly SettingsMapper _settingsMapper;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly AiMapper _aiMapper;
-    private readonly ModelDownloadService _modelDownloadService;
     private readonly NotificationService _notificationService;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
@@ -139,12 +131,13 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
         var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
 
-        var availableModels = _aiMapper.ToObservableCollection(_aiModelRegistry.AvailableModels, _modelDownloadService, _notificationService);
+        /*var availableModels = _aiMapper.ToObservableCollection(_aiModelRegistry.AvailableModels, _modelDownloadService, _notificationService);
         var selectedModel = availableModels.FirstOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelId);
         selectedModel?.IsSelected = true;
+        */
         var aiSettings = new AiSettingsViewModel(this)
         {
-            AvailableModels = availableModels,
+            AvailableModels = [],
             IsEnabled = aiCoreSettings.IsEnabled,
         };
         
@@ -162,8 +155,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             compatVm.SelectedProtonInstallation =
                 compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
         }
-        
-        _ = Task.WhenAll(aiSettings.AvailableModels.Where(m => m.FileSizeBytes == null).Select(async m => await FetchSize(m)));
 
         Sections.Add(welcomePageSettings);
         Sections.Add(appearanceSettings);
@@ -216,24 +207,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         get
         {
             return Sections.Any(s => s.EditInProgress);
-        }
-    }
-    
-    private async Task FetchSize(Ai.AiModelViewModel m)
-    {
-        m.IsFetchingSize = true;
-        try
-        {
-            var httpClient = _httpClientFactory.CreateClient();
-            m.FileSizeBytes = await httpClient.FetchSizeAsync(m.Metadata.DownloadLink, CancellationToken.None);
-        }
-        catch
-        {
-            // FileSizeBytes rimane null → la view mostra "dimensione sconosciuta"
-        }
-        finally
-        {
-            m.IsFetchingSize = false;
         }
     }
 }

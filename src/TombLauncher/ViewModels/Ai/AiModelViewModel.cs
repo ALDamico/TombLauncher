@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
-using TombLauncher.Ai.Services;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
@@ -16,22 +14,19 @@ namespace TombLauncher.ViewModels.Ai;
 
 public partial class AiModelViewModel : ObservableObject
 {
-    private readonly ModelDownloadService _modelDownloadService;
     private readonly NotificationService _notificationService;
 
-    public AiModelViewModel(AiModelMetadata metadata, ModelDownloadService modelDownloadService, NotificationService notificationService)
+    public AiModelViewModel(AiModelMetadata metadata, NotificationService notificationService)
     {
-        _modelDownloadService = modelDownloadService;
         _notificationService = notificationService;
         Metadata = metadata;
-        _isDownloaded = modelDownloadService.IsModelDownloaded(metadata);
+        _isDownloaded = false; // TODO
         DownloadCmd = new AsyncRelayCommand(Download, CanDownload);
         CancelDownloadCmd = new AsyncRelayCommand(CancelDownload, CanCancelDownload);
     }
 
     [ObservableProperty] private AiModelMetadata _metadata;
     [ObservableProperty] private bool _isSelected;
-    [ObservableProperty] private long? _fileSizeBytes;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CancelDownloadCmd))]
@@ -60,6 +55,7 @@ public partial class AiModelViewModel : ObservableObject
         await _notificationService.AddNotificationAsync(notification);
         try
         {
+            /*
             await _modelDownloadService.DownloadAsync(Metadata, new Progress<DownloadProgressInfo>(d =>
             {
                 if (InstallProgress == null)
@@ -74,6 +70,7 @@ public partial class AiModelViewModel : ObservableObject
             }), _cancellationTokenSource.Token);
             notification.Type = NotificationType.Success;
             IsDownloaded = true;
+            */
         }
         catch (OperationCanceledException)
         {

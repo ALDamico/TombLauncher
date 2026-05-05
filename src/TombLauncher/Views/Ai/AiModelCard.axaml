@@ -2,11 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:globalization="clr-namespace:System.Globalization;assembly=System.Runtime"
              xmlns:ai="clr-namespace:TombLauncher.ViewModels.Ai"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Ai.AiModelCard"
@@ -40,36 +38,12 @@
                     <TextBlock Classes="small text-muted" Text="{Binding Metadata.Vendor}"></TextBlock>
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate MODEL_SIZE}"></TextBlock>
                     <TextBlock Classes="small text-muted" 
-                               Text="{Binding FileSizeBytes, Converter={StaticResource FileSizeFormatter}}" 
-                               IsVisible="{Binding FileSizeBytes, Converter={x:Static ObjectConverters.IsNotNull}}"></TextBlock>
+                               Text="{Binding Metadata.FileSizeBytes, Converter={StaticResource FileSizeFormatter}}" 
+                               IsVisible="{Binding Metadata.FileSizeBytes, Converter={x:Static ObjectConverters.IsNotNull}}"></TextBlock>
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate MODEL_CLASS}"></TextBlock>
-                    <TextBlock Classes="small text-muted" Text="{Binding Metadata.AiModelClass}"></TextBlock>
                     <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate DESCRIPTION}"></TextBlock>
                     <TextBlock Classes="small text-muted" Text="{Binding Metadata.Description}"
                                TextWrapping="Wrap"></TextBlock>
-                    <TextBlock Classes="small" FontWeight="Bold" Text="{localization:Translate SUPPORTED_LANGUAGES}"/>
-                    <controls:OverflowItemsList Items="{Binding Metadata.SupportedLanguages}"
-                                                ItemsToShow="6">
-                        <controls:OverflowItemsList.OverflowTemplate>
-                            <DataTemplate x:DataType="controls:OverflowItemsList+OverflowMarker">
-                                <Border Classes="filter-chip" Padding="0" ClipToBounds="True" Margin="0,0,4,4">
-                                    <TextBlock Classes="small" Margin="8,4"
-                                               Text="{Binding Count, Converter={StaticResource LocalizedStringConverter}, ConverterParameter=LANGUAGES_AND_OTHER}"/>
-                                </Border>
-                            </DataTemplate>
-                        </controls:OverflowItemsList.OverflowTemplate>
-                        <controls:OverflowItemsList.ItemTemplate>
-                            <DataTemplate x:DataType="globalization:CultureInfo">
-                                <Border Classes="filter-chip" Padding="0" ClipToBounds="True" Margin="4,0,4,0">
-                                    <TextBlock
-                                        Classes="small"
-                                        Margin="6,4,8,4"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding NativeName}" />
-                                </Border>
-                            </DataTemplate>
-                        </controls:OverflowItemsList.ItemTemplate>
-                    </controls:OverflowItemsList>
                 </StackPanel>
             </DockPanel>
         </DockPanel>

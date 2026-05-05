@@ -5,7 +5,7 @@ using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Mappers;
 using TombLauncher.Core.Dtos;
 
-namespace TombLauncher.Ai.Services;
+namespace TombLauncher.Ai.Services.AiBackends;
 
 public class OllamaBackendService : IAiBackendService
 {
@@ -15,6 +15,7 @@ public class OllamaBackendService : IAiBackendService
     {
         _modelMapper = modelMapper;
     }
+    
     public bool SupportsModelDownload => false;
     public async Task<bool> IsReachableAsync(string endpoint, string apiKey, CancellationToken ct)
     {
