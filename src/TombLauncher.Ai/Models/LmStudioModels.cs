@@ -11,7 +11,7 @@ internal class DownloadModelResponse
     public string? JobId { get; set; }
     public ModelDownloadStatus? Status { get; set; }
     public DateTime? CompletedAt { get; set; }
-    public int TotalSizeBytes { get; set; }
+    public long TotalSizeBytes { get; set; }
     public DateTime? StartedAt { get; set; }
 }
 
@@ -24,28 +24,27 @@ internal enum ModelDownloadStatus
     AlreadyDownloaded
 }
 
+internal class LmStudioModelResponse
+{
+    public List<ModelInfo> Models { get; set; } = [];
+}
+
 internal class ModelInfo
 {
-    public ModelType Type { get; set; }
+    public required string Type { get; set; }
     public required string Publisher { get; set; }
     public required string Key { get; set; }
     public string? DisplayName { get; set; }
     public string? Architecture { get; set; }
     public QuantizationInfo? Quantization { get; set; }
-    public int SizeBytes { get; set; }
+    public long SizeBytes { get; set; }
     public string? ParamsString { get; set; }
     public int MaxContextLength { get; set; }
-    public ModelFormat? Format { get; set; }
+    public string? Format { get; set; }
     public string? Description { get; set; }
     public List<string> Variants { get; set; } = [];
     public string? SelectedVariant { get; set; }
-    public required ModelCapabilities Capabilities { get; set; }
-}
-
-internal enum ModelType
-{
-    Llm,
-    Embedding
+    public ModelCapabilities? Capabilities { get; set; }
 }
 
 internal class QuantizationInfo
@@ -54,16 +53,11 @@ internal class QuantizationInfo
     public int? BitsPerWeight { get; set; }
 }
 
-internal enum ModelFormat
-{
-    Gguf,
-    Mlx
-}
-
 internal class ModelCapabilities
 {
     public bool Vision { get; set; }
     public bool TrainedFoToolUse { get; set; }
+    public ReasoningCapability? Reasoning { get; set; }
 }
 
 internal enum ReasoningModes
@@ -77,8 +71,8 @@ internal enum ReasoningModes
 
 internal class ReasoningCapability
 {
-    public List<ReasoningModes> AllowedOptions { get; set; } = [];
-    public ReasoningModes Default { get; set; }
+    public List<string> AllowedOptions { get; set; } = [];
+    public string? Default { get; set; }
 }
 
 internal class ModelConfig

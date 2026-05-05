@@ -41,8 +41,17 @@ public class LmStudioBackendService : IAiBackendService
     public async Task<List<AiModelMetadata>> GetAvailableModelsAsync(string endpoint, string apiKey, CancellationToken ct)
     {
         var fullUri = GetFullUri(endpoint, "/api/v1/models");
-        var modelResponse = await _httpClientFactory.CreateClient().GetFromJsonAsync<List<ModelInfo>>(fullUri, JsonOptions, ct);
-        return _modelMapper.ToMetadataList(modelResponse ?? []);
+        try
+        {
+            var modelResponse = await _httpClientFactory.CreateClient()
+                .GetFromJsonAsync<LmStudioModelResponse>(fullUri, JsonOptions, ct);
+
+            return _modelMapper.ToMetadataList(modelResponse?.Models ?? []);
+        }
+        catch (Exception ex)
+        {
+            return [];
+        }
     }
 
     public async Task<bool> IsModelInstalledAsync(string endpoint, string apiKey, string modelId, CancellationToken ct)

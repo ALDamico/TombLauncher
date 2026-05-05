@@ -6,5 +6,5 @@ public class AiModelMetadata
     public required string FriendlyName { get; init; }
     public required string Vendor { get; init; }
     public required string Description { get; init; }
-    public int? FileSizeBytes { get; set; }
+    public long? FileSizeBytes { get; set; }
 }
