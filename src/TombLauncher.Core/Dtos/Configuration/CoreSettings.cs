@@ -10,4 +10,4 @@ public record GameDetailsCoreSettings(string UnzipFallbackMethod, (string Comman
 
 public record ApplicationCoreSettings(string GitHubLink, string WebsiteLink, CultureInfo ApplicationLanguage, int RandomGameMaxRerolls, string DatabasePath);
 
-public record AiCoreSettings(bool IsEnabled, string ModelName, double? GpuOffloadPercentage, Dictionary<string, long> ModelSizes);
+public record AiCoreSettings(bool IsEnabled, string ModelId);

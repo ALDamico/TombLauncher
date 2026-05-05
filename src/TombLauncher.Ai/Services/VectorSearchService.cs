@@ -36,7 +36,7 @@ WHERE id IN @Ids;";
         _embeddingGenerationOptions = new EmbeddingGenerationOptions()
         {
             Dimensions = 768,
-            ModelId = configuration.EmbeddingModelFileName
+            ModelId = configuration.EmbeddingModelId
         };
     }
 

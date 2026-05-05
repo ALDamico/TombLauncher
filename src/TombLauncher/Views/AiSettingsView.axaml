@@ -5,14 +5,10 @@
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
              xmlns:loc="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              xmlns:ai="clr-namespace:TombLauncher.Views.Ai"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.AiSettingsView"
              x:DataType="settings:AiSettingsViewModel">
-    <UserControl.Resources>
-        <valueConverters:StepToPercentageConverter x:Key="StepToPercentageConverter" MaxStep="4" DecimalPlaces="0"/>
-    </UserControl.Resources>
     <StackPanel Orientation="Vertical" Spacing="8">
         <TextBlock Text="{loc:Translate IS_ENABLED}"></TextBlock>
         <ToggleSwitch IsChecked="{Binding IsEnabled}"></ToggleSwitch>
@@ -29,16 +25,5 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <TextBlock Text="{loc:Translate GPU_OFFLOAD_LEVEL}"></TextBlock>
-        <Slider Minimum="0" Maximum="4" Orientation="Horizontal" Value="{Binding GpuOffloadLevel}"
-                IsSnapToTickEnabled="True" TickFrequency="1"
-                Classes="discrete-dots">
-        </Slider>
-        <DockPanel LastChildFill="True">
-            <TextBlock DockPanel.Dock="Left" Text="{loc:Translate FULL_CPU}"></TextBlock>
-            <TextBlock DockPanel.Dock="Right" Text="{loc:Translate FULL_GPU}"></TextBlock>
-            <TextBlock Text="{Binding GpuOffloadLevel, Converter={StaticResource StepToPercentageConverter}}"
-                       TextAlignment="Center" />
-        </DockPanel>
     </StackPanel>
 </UserControl>

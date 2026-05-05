@@ -1,11 +1,9 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Configuration;
-using TombLauncher.Contracts.Ai;
 using TombLauncher.ViewModels.Ai;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
@@ -18,7 +16,6 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
 
     [ObservableProperty] private ObservableCollection<AiModelViewModel>? _availableModels;
     public AiModelViewModel? SelectedModel => AvailableModels?.FirstOrDefault(m => m.IsSelected);
-    [ObservableProperty] [Range(0, 4)] private int _gpuOffloadLevel;
     [ObservableProperty] private bool _isEnabled;
     
     partial void OnAvailableModelsChanged(ObservableCollection<AiModelViewModel>? oldValue, ObservableCollection<AiModelViewModel>? newValue)
@@ -40,10 +37,8 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
 
     public override void ApplyTo(AppConfiguration userConfig)
     {
-        userConfig.Ai.ModelName = SelectedModel?.Metadata.ModelId;
-        userConfig.Ai.GpuOffloadPercentage = (double)GpuOffloadLevel / AiConstants.MaxOffloadLevel;
+        userConfig.Ai.ModelId = SelectedModel?.Metadata.ModelId;
         userConfig.Ai.IsAiEnabled = IsEnabled;
-        userConfig.Ai.ModelSizes = AvailableModels?.Where(m => m.FileSizeBytes != null).ToDictionary(m => m.Metadata.ModelId, m => m.FileSizeBytes.GetValueOrDefault());
         base.ApplyTo(userConfig);
     }
 }

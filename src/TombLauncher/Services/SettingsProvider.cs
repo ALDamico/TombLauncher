@@ -128,8 +128,7 @@ public class SettingsProvider : ISettingsProvider
     public AiCoreSettings GetAiCoreSettings()
     {
         var aiSettings = _appConfiguration.Ai;
-        return new AiCoreSettings(aiSettings.IsAiEnabled, aiSettings.ModelName!,
-            aiSettings.GpuOffloadPercentage, aiSettings.ModelSizes ?? new Dictionary<string, long>());
+        return new AiCoreSettings(aiSettings.IsAiEnabled, aiSettings.ModelId!);
     }
 
     public IPlatformSpecificFeatures PlatformSpecificFeatures { get; }

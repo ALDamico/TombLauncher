@@ -27,7 +27,7 @@ public static class EmbedderRegistrationExtensions
                 var config = sp.GetRequiredService<IOptions<AiConfig>>().Value;
                 var builder = Kernel.CreateBuilder();
                 builder.Services.AddOpenAIEmbeddingGenerator(
-                    config.EmbeddingModelFileName,
+                    config.EmbeddingModelId!,
                     sp.GetRequiredService<OpenAIClient>());
                 return builder.Build().Services.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
             })
@@ -62,7 +62,7 @@ public static class EmbedderRegistrationExtensions
                 try
                 {
                     kernelBuilder.Services.AddOpenAIEmbeddingGenerator(
-                        config.EmbeddingModelFileName,
+                        config.EmbeddingModelId!,
                         sp.GetRequiredService<OpenAIClient>());
                 }
                 catch (Exception ex)

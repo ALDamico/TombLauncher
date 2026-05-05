@@ -16,7 +16,7 @@ public class OpenAiCompatibleChatCompletionServiceLoader : IChatCompletionServic
     public async Task<IChatCompletionService> LoadChatCompletionService(IProgress<float> progress,
         CancellationToken cancellationToken)
     {
-        return new OpenAIChatCompletionService(_aiConfig.ModelName!, new Uri(_aiConfig.Endpoint), _aiConfig.ApiKey ?? "ollama");
+        return new OpenAIChatCompletionService(_aiConfig.ModelId!, new Uri(_aiConfig.Endpoint), _aiConfig.ApiKey ?? "ollama");
     }
 
     public bool IsLoaded { get; private set; }

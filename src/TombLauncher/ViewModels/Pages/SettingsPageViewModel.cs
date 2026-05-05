@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
-using TombLauncher.Contracts.Ai;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Mappers;
@@ -141,20 +140,13 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
 
         var availableModels = _aiMapper.ToObservableCollection(_aiModelRegistry.AvailableModels, _modelDownloadService, _notificationService);
-        var selectedModel = availableModels.FirstOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelName);
+        var selectedModel = availableModels.FirstOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelId);
         selectedModel?.IsSelected = true;
         var aiSettings = new AiSettingsViewModel(this)
         {
             AvailableModels = availableModels,
-            GpuOffloadLevel = (int)(aiCoreSettings.GpuOffloadPercentage.GetValueOrDefault() * AiConstants.MaxOffloadLevel),
             IsEnabled = aiCoreSettings.IsEnabled,
         };
-
-        foreach (var model in aiCoreSettings.ModelSizes)
-        {
-            aiSettings.AvailableModels.FirstOrDefault(m => m.Metadata.ModelId == model.Key)?.FileSizeBytes =
-                model.Value;
-        }
         
         var compat = _appConfiguration.Compatibility;
         var compatVm = new CompatibilitySettingsViewModel(this, _platformSpecificFeatures)

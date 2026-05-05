@@ -86,13 +86,8 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
     {
         IsAiEnabled = User.Ai.IsAiEnabled,
         KnowledgeBaseUrl = Defaults.Ai.KnowledgeBaseUrl,
-        GpuOffloadPercentage = User.Ai.GpuOffloadPercentage.Coalesce(Defaults.Ai.GpuOffloadPercentage),
-        ModelName = User.Ai.ModelName.Coalesce(Defaults.Ai.ModelName),
-        ModelSizes = User.Ai.ModelSizes ?? new(),
-        EmbeddingModelUrl = Defaults.Ai.EmbeddingModelUrl,
-        EmbeddingModelFileName = Defaults.Ai.EmbeddingModelFileName,
+        ModelId = User.Ai.ModelId,
+        EmbeddingModelId = Defaults.Ai.EmbeddingModelId,
         KnowledgeBasePath = Defaults.Ai.KnowledgeBasePath,
-        ModelsPath = Defaults.Ai.ModelsPath,
-        EmbeddingContextLength = Defaults.Ai.EmbeddingContextLength
     };
 }

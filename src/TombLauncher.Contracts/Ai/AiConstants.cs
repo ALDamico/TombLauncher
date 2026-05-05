@@ -6,5 +6,4 @@ public sealed class AiConstants
     public const int MaxChunkLength = 500;
     public const int Overlap = 50;
     public const int CharsPerChunk = 4;
-    public const int MaxOffloadLevel = 4;
 }
