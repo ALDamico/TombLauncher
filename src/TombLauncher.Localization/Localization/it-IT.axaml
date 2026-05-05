@@ -432,5 +432,11 @@
     <system:String x:Key="TALK_TO_LAURA">Chatta con Laura</system:String>
     <system:String x:Key="ASK_LAURA_SOMETHING">Chiedi qualcosa a Laura...</system:String>
     <system:String x:Key="SEND">Invia messaggio</system:String>
+    <system:String x:Key="AI_BACKEND_ENDPOINT">URL del server</system:String>
+    <system:String x:Key="AI_BACKEND_API_KEY">Chiave API (opzionale)</system:String>
+    <system:String x:Key="CHECKING_BACKEND_REACHABLE">Verifica connessione...</system:String>
+    <system:String x:Key="BACKEND_IS_REACHABLE">Connesso</system:String>
+    <system:String x:Key="BACKEND_DID_NOT_RESPOND">Il servizio non ha risposto: {0}</system:String>
+    <system:String x:Key="BACKEND_NOT_REACHABLE">Impossibile connettersi: {0}</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

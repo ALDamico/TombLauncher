@@ -14,9 +14,10 @@
         <valueConverters:CollectionToVisibilityConverter x:Key="CollectionNotEmptyToVisibilityConverter" Invert="True" />
 
         <!-- ── Enums ── -->
-        <valueConverters:EnumToDescriptionConverter   x:Key="EnumToDescriptionConverter" />
-        <valueConverters:EnumIsNotDefaultConverter    x:Key="EnumIsNotDefaultConverter" />
-        <valueConverters:AiBackendTypeToIconConverter x:Key="AiBackendTypeToIconConverter" />
+        <valueConverters:EnumToDescriptionConverter         x:Key="EnumToDescriptionConverter" />
+        <valueConverters:EnumIsNotDefaultConverter          x:Key="EnumIsNotDefaultConverter" />
+        <valueConverters:AiBackendTypeToIconConverter       x:Key="AiBackendTypeToIconConverter" />
+        <valueConverters:ServiceCheckStatusToColorConverter x:Key="ServiceCheckStatusToColorConverter" />
 
         <!-- ── Date / time ── -->
         <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />

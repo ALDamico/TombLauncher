@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using TombLauncher.Ai.Factories;
 using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
@@ -24,7 +25,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         SettingsMapper settingsMapper,
         IHttpClientFactory httpClientFactory,
         AiMapper aiMapper,
-        NotificationService notificationService)
+        NotificationService notificationService,
+        AiBackendFactory aiBackendFactory)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
@@ -36,6 +38,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _httpClientFactory = httpClientFactory;
         _aiMapper = aiMapper;
         _notificationService = notificationService;
+        _aiBackendFactory = aiBackendFactory;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -72,6 +75,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly AiMapper _aiMapper;
     private readonly NotificationService _notificationService;
+    private readonly AiBackendFactory _aiBackendFactory;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -135,11 +139,13 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         var selectedModel = availableModels.FirstOrDefault(m => m.Metadata.ModelId == aiCoreSettings.ModelId);
         selectedModel?.IsSelected = true;
         */
-        var aiSettings = new AiSettingsViewModel(this)
+        var aiSettings = new AiSettingsViewModel(this, _aiBackendFactory)
         {
             AvailableModels = [],
             SelectedBackendType = aiCoreSettings.BackendType,
             IsEnabled = aiCoreSettings.IsEnabled,
+            Endpoint = aiCoreSettings.Endpoint,
+            ApiKey = aiCoreSettings.ApiKey
         };
         
         var compat = _appConfiguration.Compatibility;

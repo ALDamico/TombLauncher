@@ -3,6 +3,7 @@ using System.Text.Json;
 using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Mappers;
 using TombLauncher.Ai.Models;
+using TombLauncher.Contracts.Ai;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Ai.Services.AiBackends;
@@ -24,16 +25,16 @@ public class LmStudioBackendService : IAiBackendService
     };
 
     public bool SupportsModelDownload => true;
-    public async Task<bool> IsReachableAsync(string endpoint, string apiKey, CancellationToken ct)
+    public async Task<ServiceAvailabilityResponse> IsReachableAsync(string endpoint, string apiKey, CancellationToken ct)
     {
         try
         {
             _ = await IsModelInstalledAsync(endpoint, apiKey, "dummy", ct);
-            return true;
+            return ServiceAvailabilityResponse.AvailableResponse;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            return false;
+            return ServiceAvailabilityResponse.NotAvailableResponse(ex.Message);
         }
     }
 

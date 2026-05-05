@@ -432,5 +432,11 @@
     <system:String x:Key="ABOUT_ACKNOWLEDGEMENTS">Acknowledgements</system:String>
     <system:String x:Key="WEBSITE">Website</system:String>
     <system:String x:Key="LICENSE">License</system:String>
+    <system:String x:Key="AI_BACKEND_ENDPOINT">Server URL</system:String>
+    <system:String x:Key="AI_BACKEND_API_KEY">API key (optional)</system:String>
+    <system:String x:Key="CHECKING_BACKEND_REACHABLE">Checking connection...</system:String>
+    <system:String x:Key="BACKEND_IS_REACHABLE">Connected</system:String>
+    <system:String x:Key="BACKEND_DID_NOT_RESPOND">The service did not respond: {0}</system:String>
+    <system:String x:Key="BACKEND_NOT_REACHABLE">Could not connect: {0}</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
