@@ -1,4 +1,5 @@
 using System.Globalization;
+using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Core.Dtos.Configuration;
 
@@ -10,4 +11,4 @@ public record GameDetailsCoreSettings(string UnzipFallbackMethod, (string Comman
 
 public record ApplicationCoreSettings(string GitHubLink, string WebsiteLink, CultureInfo ApplicationLanguage, int RandomGameMaxRerolls, string DatabasePath);
 
-public record AiCoreSettings(bool IsEnabled, string ModelId);
+public record AiCoreSettings(bool IsEnabled, string ModelId, AiBackendType BackendType);

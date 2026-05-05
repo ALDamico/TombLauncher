@@ -128,7 +128,7 @@ public class SettingsProvider : ISettingsProvider
     public AiCoreSettings GetAiCoreSettings()
     {
         var aiSettings = _appConfiguration.Ai;
-        return new AiCoreSettings(aiSettings.IsAiEnabled, aiSettings.ModelId!);
+        return new AiCoreSettings(aiSettings.IsAiEnabled, aiSettings.ModelId!, aiSettings.BackendType);
     }
 
     public IPlatformSpecificFeatures PlatformSpecificFeatures { get; }

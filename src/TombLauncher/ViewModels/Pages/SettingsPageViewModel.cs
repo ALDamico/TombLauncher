@@ -138,6 +138,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         var aiSettings = new AiSettingsViewModel(this)
         {
             AvailableModels = [],
+            SelectedBackendType = aiCoreSettings.BackendType,
             IsEnabled = aiCoreSettings.IsEnabled,
         };
         

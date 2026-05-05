@@ -418,6 +418,8 @@
     <system:String x:Key="SUPPORTED_LANGUAGES">Lingue supportate</system:String>
     <system:String x:Key="LANGUAGES_AND_OTHER">e altre {0}</system:String>
     <system:String x:Key="IS_ENABLED">Abilita funzionalità AI</system:String>
+    <system:String x:Key="LLM_BACKEND">Servizio AI</system:String>
+    <system:String x:Key="LLM_BACKEND_HELP">Scegli quale servizio AI Laura usa per rispondere alle tue domande. Ollama e LM Studio sono programmi gratuiti che puoi installare sul tuo computer per eseguire modelli AI in locale, senza inviare dati su Internet.</system:String>
     <system:String x:Key="LLM_MODEL">Modello AI</system:String>
     <system:String x:Key="LLM_MODEL_DESCRIPTION">Seleziona il modello AI da usare per rispondere alle domande. I modelli devono essere scaricati prima di poter essere selezionati.</system:String>
     <system:String x:Key="GPU_OFFLOAD_LEVEL">Livello di offload GPU</system:String>
