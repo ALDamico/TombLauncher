@@ -16,14 +16,19 @@ public static class EmbedderRegistrationExtensions
     public static IServiceCollection RegisterKnowledgeBaseEmbedder(this IServiceCollection serviceCollection)
     {
         return serviceCollection
+            .AddSingleton<OpenAIClient>(sp =>
+            {
+                var aiConfig = sp.GetRequiredService<IOptions<AiConfig>>().Value;
+                return new OpenAIClient(new ApiKeyCredential(aiConfig.ApiKey ?? "ollama"),
+                    new OpenAIClientOptions() { Endpoint = new Uri(aiConfig.Endpoint) });
+            })
             .AddSingleton<IEmbeddingGenerator<string, Embedding<float>>>(sp =>
             {
                 var config = sp.GetRequiredService<IOptions<AiConfig>>().Value;
                 var builder = Kernel.CreateBuilder();
                 builder.Services.AddOpenAIEmbeddingGenerator(
                     config.EmbeddingModelFileName,
-                    config.ApiKey ?? "ollama",
-                    config.Endpoint ?? "http://localhost:11434/v1");
+                    sp.GetRequiredService<OpenAIClient>());
                 return builder.Build().Services.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
             })
             .AddHostedService<EmbedderService>()

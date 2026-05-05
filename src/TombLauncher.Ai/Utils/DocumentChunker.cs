@@ -79,7 +79,7 @@ public static class DocumentChunker
         };
         foreach (var item in split)
         {
-            var embeddings = await embedder.GenerateAsync([item], cancellationToken: cancellationToken);
+            var embeddings = await embedder.GenerateAsync([$"{header}\n\n{item}"], cancellationToken: cancellationToken);
             var chunk = new Chunk()
             {
                 DocumentTitle = documentTitle,

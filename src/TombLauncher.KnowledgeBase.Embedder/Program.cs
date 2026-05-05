@@ -24,12 +24,12 @@ Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
 var cancellationToken = cts.Token;
 var options = host.Services.GetRequiredService<IOptions<AiConfig>>().Value;
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
-var modelPath = Path.Combine(options.ModelsPath, options.EmbeddingModelFileName);
+/*var modelPath = Path.Combine(options.ModelsPath, options.EmbeddingModelFileName);
 Directory.CreateDirectory(options.ModelsPath);
 if (!File.Exists(modelPath))
 {
     await DownloadModel(options.EmbeddingModelUrl, modelPath, logger, cancellationToken);
-}
+}*/
     
 await host.RunAsync();
 return;

@@ -9,10 +9,6 @@ namespace TombLauncher.Ai.Plugins;
 
 public class GameDiagnosticsPlugin
 {
-    public GameDiagnosticsPlugin()
-    {
-        Console.WriteLine("In Plugin!");
-    }
     public TroubleshootingContext? TroubleshootingContext { get; set; }
     private const string NoTroubleshootingContextMessage = "No troubleshooting context in this session.";
     
