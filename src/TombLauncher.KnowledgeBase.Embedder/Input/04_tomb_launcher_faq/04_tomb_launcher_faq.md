@@ -26,6 +26,13 @@ There are a few:
   * A renewed version was supposed to be released in 2017, but it hasn't materialized since
   * More geared towards level builders
   * Lacks many quality-of-life improvements that Tomb Launcher introduced
+* TombRaiderLinuxLauncher
+  * https://github.com/noisecode3/TombRaiderLinuxLauncher
+  * Linux-first, uses Wine/Proton to run classic TR games (1–5)
+  * Supports downloading and playing custom levels from trle.net
+  * Can be used with Steam, Lutris, or plain bash
+  * Windows support is planned but not yet available
+  * Requires manually building from source and is mostly aimed at more advanced users
 * Tomb Launcher
   * https://github.com/ALDamico/TombLauncher
   * https://tomblauncher.app
