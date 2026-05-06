@@ -22,8 +22,10 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     {
         _backendFactory = backendFactory;
         AvailableBackendTypes = new List<AiBackendType>() { AiBackendType.Ollama, AiBackendType.LmStudio };
-        CheckResultMessage = "";
-        EmbeddingModelCheckResultMessage = "";
+        EmbeddingServiceCheckViewModel = new ServiceCheckViewModel()
+            { CheckResultMessage = "", Status = ServiceCheckStatus.Checking };
+        ApiServiceCheckViewModel = new ServiceCheckViewModel()
+            { CheckResultMessage = "", Status = ServiceCheckStatus.Checking };
     }
 
     [ObservableProperty] private ObservableCollection<AiModelViewModel>? _availableModels;
@@ -33,10 +35,8 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private AiBackendType _selectedBackendType;
     [ObservableProperty] private string _endpoint = string.Empty;
     [ObservableProperty] private string? _apiKey;
-    [ObservableProperty] private ServiceCheckStatus _aiBackendCheckStatus;
-    [ObservableProperty] private ServiceCheckStatus _embeddingModelCheckStatus;
-    [ObservableProperty] private string _checkResultMessage;
-    [ObservableProperty] private string _embeddingModelCheckResultMessage;
+    [ObservableProperty] private ServiceCheckViewModel _apiServiceCheckViewModel;
+    [ObservableProperty] private ServiceCheckViewModel _embeddingServiceCheckViewModel;
     [ObservableProperty] private string _embeddingModelId = null!;
 
     private readonly AiBackendFactory _backendFactory;
@@ -58,8 +58,8 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
         var backend = _backendFactory.Create(SelectedBackendType);
         Dispatcher.UIThread.Post(() =>
         {
-            EmbeddingModelCheckStatus = ServiceCheckStatus.Checking;
-            EmbeddingModelCheckResultMessage = "CHECKING_EMBEDDING_MODEL".GetLocalizedString();
+            EmbeddingServiceCheckViewModel.Status = ServiceCheckStatus.Checking;
+            EmbeddingServiceCheckViewModel.CheckResultMessage = "CHECKING_EMBEDDING_MODEL".GetLocalizedString();
         });
         try
         {
@@ -68,8 +68,8 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
                 return;
             Dispatcher.UIThread.Post(() =>
             {
-                EmbeddingModelCheckStatus = result ? ServiceCheckStatus.Okay : ServiceCheckStatus.Error;
-                EmbeddingModelCheckResultMessage = result
+                EmbeddingServiceCheckViewModel.Status = result ? ServiceCheckStatus.Okay : ServiceCheckStatus.Error;
+                EmbeddingServiceCheckViewModel.CheckResultMessage = result
                     ? "EMBEDDING_MODEL_AVAILABLE".GetLocalizedString()
                     : "EMBEDDING_MODEL_NOT_AVAILABLE".GetLocalizedString();
             });
@@ -81,8 +81,8 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
         {
             Dispatcher.UIThread.Post(() =>
             {
-                EmbeddingModelCheckStatus = ServiceCheckStatus.Error;
-                EmbeddingModelCheckResultMessage = "EMBEDDING_MODEL_CHECK_ERROR".GetLocalizedString(ex.Message);
+                EmbeddingServiceCheckViewModel.Status = ServiceCheckStatus.Error;
+                EmbeddingServiceCheckViewModel.CheckResultMessage = "EMBEDDING_MODEL_CHECK_ERROR".GetLocalizedString(ex.Message);
             });
         }
     }
@@ -95,8 +95,8 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
         var backend = _backendFactory.Create(SelectedBackendType);
         Dispatcher.UIThread.Post(() =>
         {
-            AiBackendCheckStatus = ServiceCheckStatus.Checking;
-            CheckResultMessage = "CHECKING_BACKEND_REACHABLE".GetLocalizedString();
+            ApiServiceCheckViewModel.Status = ServiceCheckStatus.Checking;
+            ApiServiceCheckViewModel.CheckResultMessage = "CHECKING_BACKEND_REACHABLE".GetLocalizedString();
         });
         try
         {
@@ -104,8 +104,8 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
             if (ct.IsCancellationRequested) return;
             Dispatcher.UIThread.Post(() =>
             {
-                AiBackendCheckStatus = result.IsReachable ? ServiceCheckStatus.Okay : ServiceCheckStatus.Error;
-                CheckResultMessage = result.IsReachable
+                ApiServiceCheckViewModel.Status = result.IsReachable ? ServiceCheckStatus.Okay : ServiceCheckStatus.Error;
+                ApiServiceCheckViewModel.CheckResultMessage = result.IsReachable
                     ? "BACKEND_IS_REACHABLE".GetLocalizedString()
                     : "BACKEND_DID_NOT_RESPOND".GetLocalizedString(result.Error!);
             });
@@ -115,8 +115,8 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
         {
             Dispatcher.UIThread.Post(() =>
             {
-                AiBackendCheckStatus = ServiceCheckStatus.Error;
-                CheckResultMessage = "BACKEND_NOT_REACHABLE".GetLocalizedString(ex.Message);
+                ApiServiceCheckViewModel.Status = ServiceCheckStatus.Error;
+                ApiServiceCheckViewModel.CheckResultMessage = "BACKEND_NOT_REACHABLE".GetLocalizedString(ex.Message);
             });
         }
     }

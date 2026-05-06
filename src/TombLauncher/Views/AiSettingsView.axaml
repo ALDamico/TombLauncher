@@ -8,6 +8,7 @@
              xmlns:ai="clr-namespace:TombLauncher.Views.Ai"
              xmlns:svg="clr-namespace:Avalonia.Svg;assembly=Svg.Controls.Avalonia"
              xmlns:enums="clr-namespace:TombLauncher.Contracts.Enums;assembly=TombLauncher.Contracts"
+             xmlns:views="clr-namespace:TombLauncher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.AiSettingsView"
              x:DataType="settings:AiSettingsViewModel">
@@ -34,22 +35,7 @@
         </ComboBox>
         <TextBlock Text="{loc:Translate AI_BACKEND_ENDPOINT}" />
         <DockPanel LastChildFill="True">
-            <Ellipse DockPanel.Dock="Right" Width="12" Height="12" Margin="8, 0"
-                     ToolTip.Tip="{Binding CheckResultMessage}"
-                     Classes.checking="{Binding AiBackendCheckStatus, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static enums:ServiceCheckStatus.Checking}}"
-                     Fill="{Binding AiBackendCheckStatus, Converter={StaticResource ServiceCheckStatusToColorConverter}}">
-                <Ellipse.Styles>
-                    <Style Selector="Ellipse.checking">
-                        <Style.Animations>
-                            <Animation Duration="0:0:0.8" IterationCount="INFINITE" Easing="SineEaseInOut">
-                                <KeyFrame Cue="0%"><Setter Property="Opacity" Value="1" /></KeyFrame>
-                                <KeyFrame Cue="50%"><Setter Property="Opacity" Value="0.15" /></KeyFrame>
-                                <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /></KeyFrame>
-                            </Animation>
-                        </Style.Animations>
-                    </Style>
-                </Ellipse.Styles>
-            </Ellipse>
+            <views:ServiceCheckView DockPanel.Dock="Right" DataContext="{Binding ApiServiceCheckViewModel}" />
             <TextBox Text="{Binding Endpoint}" />
         </DockPanel>
         
@@ -57,22 +43,7 @@
         <TextBox Text="{Binding ApiKey}"></TextBox>
         <TextBlock Text="{loc:Translate EMBEDDING_MODEL}"></TextBlock>
         <DockPanel LastChildFill="True">
-            <Ellipse DockPanel.Dock="Right" Width="12" Height="12" Margin="8, 0"
-                     ToolTip.Tip="{Binding EmbeddingModelCheckResultMessage}"
-                     Classes.checking="{Binding EmbeddingModelCheckStatus, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static enums:ServiceCheckStatus.Checking}}"
-                     Fill="{Binding EmbeddingModelCheckStatus, Converter={StaticResource ServiceCheckStatusToColorConverter}}">
-                <Ellipse.Styles>
-                    <Style Selector="Ellipse.checking">
-                        <Style.Animations>
-                            <Animation Duration="0:0:0.8" IterationCount="INFINITE" Easing="SineEaseInOut">
-                                <KeyFrame Cue="0%"><Setter Property="Opacity" Value="1" /></KeyFrame>
-                                <KeyFrame Cue="50%"><Setter Property="Opacity" Value="0.15" /></KeyFrame>
-                                <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /></KeyFrame>
-                            </Animation>
-                        </Style.Animations>
-                    </Style>
-                </Ellipse.Styles>
-            </Ellipse>
+            <views:ServiceCheckView DockPanel.Dock="Right" DataContext="{Binding EmbeddingServiceCheckViewModel}" />
             <TextBlock Text="{Binding EmbeddingModelId}"></TextBlock>
         </DockPanel>
         
