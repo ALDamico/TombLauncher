@@ -194,6 +194,7 @@
     <system:String x:Key="SYNC_COMPLETED">Sincronizzazione completata</system:String>
     <system:String x:Key="SYNCRONIZATION_COMPLETED_SUCCESSFULLY">Sincronizzazione completata con successo!</system:String>
     <system:String x:Key="RESTART_APPLICATION">Riavvia applicazione</system:String>
+    <system:String x:Key="AI_TROUBLESHOOTING">Chiedi aiuto a Laura</system:String>
     <system:String x:Key="LAUNCH_OPTIONS">Opzioni di avvio</system:String>
     <system:String x:Key="LAUNCH_OPTIONS_TOOLTIP">Ti consente di impostare il tipo di motore di questo gioco, l'eseguibile da usare per avviarlo, e il comando per avviare il setup.</system:String>
     <system:String x:Key="ENGINE_TYPE">Tipo di motore</system:String>

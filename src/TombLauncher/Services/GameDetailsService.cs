@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Ai.Services;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.PlatformSpecific;
@@ -23,11 +24,12 @@ public class GameDetailsService : IViewService
 {
     public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GameLinkDataService gameLinkDataService,
         IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider, ILogger<GameDetailsService> logger, 
-        GameLinkDtoMapper mapper, GameMetadataMapper gameMapper)
+        GameLinkDtoMapper mapper, GameMetadataMapper gameMapper, TroubleshootingContextService troubleshootingContextService)
     {
         _logger = logger;
         _mapper = mapper;
         _gameMapper = gameMapper;
+        _troubleshootingContextService = troubleshootingContextService;
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _gameLinkDataService = gameLinkDataService;
@@ -38,6 +40,7 @@ public class GameDetailsService : IViewService
     private readonly ILogger<GameDetailsService> _logger;
     private readonly GameLinkDtoMapper _mapper;
     private readonly GameMetadataMapper _gameMapper;
+    private readonly TroubleshootingContextService _troubleshootingContextService;
 
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
@@ -122,5 +125,17 @@ public class GameDetailsService : IViewService
         var game = await _gameDataService.GetGameById(id, ct);
         var viewModel = _gameMapper.ToViewModel(game);
         return viewModel;
+    }
+
+    public async Task OpenChat(int gameId, CancellationToken cancellationToken)
+    {
+        var troubleshootingContext =
+            await _troubleshootingContextService.GetTroubleshootingContext(gameId, cancellationToken);
+        await NavigationManager.NavigateTo<AiChatViewModel>(troubleshootingContext);
+    }
+
+    public bool CanOpenChat(GameMetadataViewModel? vm)
+    {
+        return _settingsProvider.GetAiCoreSettings().IsEnabled && vm?.IsInstalled == true;
     }
 }

@@ -194,6 +194,7 @@
     <system:String x:Key="SYNC_COMPLETED">Sync completed</system:String>
     <system:String x:Key="SYNCRONIZATION_COMPLETED_SUCCESSFULLY">Synchronization completed successfully!</system:String>
     <system:String x:Key="RESTART_APPLICATION">Restart application</system:String>
+    <system:String x:Key="AI_TROUBLESHOOTING">Ask Laura for help</system:String>
     <system:String x:Key="LAUNCH_OPTIONS">Launch options</system:String>
     <system:String x:Key="LAUNCH_OPTIONS_TOOLTIP">Allows you to set this game's engine type, the executable to run to launch it, and the command to launch setup.</system:String>
     <system:String x:Key="ENGINE_TYPE">Engine type</system:String>

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ai="clr-namespace:TombLauncher.ViewModels.Ai"
              xmlns:ai1="clr-namespace:TombLauncher.Ai;assembly=TombLauncher.Ai"
-             xmlns:helpers="clr-namespace:TombLauncher.Helpers"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Ai.MessageBubble"
              x:DataType="ai:AiMessageViewModel">
@@ -27,7 +27,14 @@
             Classes.assistant="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.Assistant}}"
             Classes.tool-use="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.ToolUse}}">
         <StackPanel Orientation="Vertical" Margin="8">
+            
             <TextBlock HorizontalAlignment="Right" Classes="text-muted small" FontWeight="DemiBold" Text="{Binding SentDate}"></TextBlock>
+            <DockPanel LastChildFill="True" 
+                       IsVisible="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.ToolUse}}">
+                <iconPacks:PackIconRemixIcon DockPanel.Dock="Left" VerticalAlignment="Center" Kind="HammerLine" 
+                                             Classes="text-muted" Width="9" Height="9" Margin="0, 0, 4, 0" />
+                <SelectableTextBlock Text="Tool used:" Classes="text-muted" FontWeight="DemiBold" />
+            </DockPanel>
             <SelectableTextBlock TextWrapping="Wrap" Text="{Binding Text}" />
         </StackPanel>
     </Border>

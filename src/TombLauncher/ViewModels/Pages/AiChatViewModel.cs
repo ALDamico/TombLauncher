@@ -10,7 +10,6 @@ using TombLauncher.Ai;
 using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Models;
 using TombLauncher.Ai.Utils;
-using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Extensions;
 using TombLauncher.ViewModels.Ai;
 using ChatHistory = Microsoft.SemanticKernel.ChatCompletion.ChatHistory;
@@ -25,11 +24,13 @@ public partial class AiChatViewModel : PageViewModel
     [ObservableProperty] private ObservableCollection<AiMessageViewModel> _messageHistory = new();
     [ObservableProperty] private string _currentStatusText = "";
     private ITroubleshootingService? _ragService;
-    private ChatHistory _chatHistory = new();
+    private readonly ChatHistory _chatHistory = new();
+    private TroubleshootingContext _troubleshootingContext;
 
-    public AiChatViewModel( ITroubleshootingServiceLoader troubleshootingServiceLoader)
+    public AiChatViewModel(ITroubleshootingServiceLoader troubleshootingServiceLoader)
     {
         _troubleshootingServiceLoader = troubleshootingServiceLoader;
+        _troubleshootingContext = new();
     }
 
     protected override async Task RaiseInitialize()
@@ -40,6 +41,16 @@ public partial class AiChatViewModel : PageViewModel
             _chatHistory.AddSystemMessage(AiConfigUtils.LoadSystemPrompt());
         }
         await base.RaiseInitialize();
+    }
+
+    public override Task OnNavigatedTo(object parameter)
+    {
+        if (parameter is TroubleshootingContext context)
+        {
+            _troubleshootingContext = context;
+        }
+
+        return Task.CompletedTask;
     }
 
     private readonly List<string> _statusTexts =
@@ -77,18 +88,34 @@ public partial class AiChatViewModel : PageViewModel
         MessageHistory.Add(userMessage);
         CurrentText = "";
         var responseAdded = false;
-        var enumerable = _ragService!.AskAsync(new Progress<DownloadProgressInfo>(), currentText, new TroubleshootingContext(), _chatHistory, cts.Token);
+        var enumerable = _ragService!.AskAsync(currentText,
+            _troubleshootingContext, _chatHistory, cts.Token);
         var response = new AiMessageViewModel()
             { Text = "", MessageType = MessageType.Assistant, SentDate = DateTime.Now };
+        var toolUse = new AiMessageViewModel()
+            { Text = "", MessageType = MessageType.ToolUse, SentDate = DateTime.Now };
+        var toolUsed = false;
         var fullResponse = new StringBuilder();
-        await foreach (var token in enumerable)
+        await foreach (var messageChunk in enumerable)
         {
-            response.Text += token;
-            fullResponse.Append(token);
-            if (!responseAdded)
+            if (messageChunk.Item1 == MessageType.ToolUse)
             {
-                MessageHistory.Add(response);
-                responseAdded = true;
+                if (!toolUsed)
+                {
+                    MessageHistory.Insert(MessageHistory.Count - 1, toolUse);
+                }
+                toolUsed = true;
+                toolUse.Text += messageChunk.Item2;
+            }
+            else
+            {
+                response.Text += messageChunk.Item2;
+                fullResponse.Append(messageChunk);
+                if (!responseAdded)
+                {
+                    MessageHistory.Add(response);
+                    responseAdded = true;
+                }
             }
         }
         _chatHistory.AddAssistantMessage(fullResponse.ToString());
