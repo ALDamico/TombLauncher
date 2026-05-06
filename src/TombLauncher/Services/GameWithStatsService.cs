@@ -183,23 +183,8 @@ public class GameWithStatsService : IViewService, IDisposable
         currentPage?.ClearBusy();
     }
 
-    private async Task<(int, string, string)> ReadProcessData(Process process)
-    {
-        var standardError = process.StandardError.ReadToEndAsync();
-        var standardOutput = process.StandardOutput.ReadToEndAsync();
-
-        await Task.WhenAll(standardOutput, standardError);
-
-        if (standardOutput.Result.IsNotNullOrWhiteSpace())
-            _logger.LogInformation("Process output: {StandardOutput}", standardOutput.Result);
-
-        if (standardError.Result.IsNotNullOrWhiteSpace())
-            _logger.LogError("Process error: {StandardError}", standardError.Result);
-
-        return (process.ExitCode, standardOutput.Result, standardError.Result);
-    }
-
-    private async Task<PlaySessionCrashDto?> ReadGameCrash(GameMetadataViewModel game, int exitCode, string standardOutput, string standardError)
+    private async Task<PlaySessionCrashDto?> ReadGameCrash(GameMetadataViewModel game, int exitCode,
+        string standardOutput, string standardError)
     {
         var crashFiles = AppUtils.GetLogFiles(game.InstallDirectory!, _startDate!.Value);
         var playSessionCrashDto = new PlaySessionCrashDto()
@@ -217,14 +202,15 @@ public class GameWithStatsService : IViewService, IDisposable
         return playSessionCrashDto;
     }
 
-    private async Task OnGameExited(GameWithStatsViewModel game, Process process)
+    private async Task OnGameExited(GameWithStatsViewModel game, Process process, string standardOutput,
+        string standardError)
     {
         _logger.LogInformation("Play session for game {GameTitle} (ID: {GameId}) ended.", game.GameMetadata.Title,
             game.GameMetadata.Id);
+        var exitCode = process.ExitCode;
         var errorOccurred = false;
         PlaySessionCrashDto? playSessionCrashDto = null;
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        var (exitCode, standardOutput, standardError) = await ReadProcessData(process);
 
         if (process.ExitCode != 0)
         {
@@ -288,7 +274,8 @@ public class GameWithStatsService : IViewService, IDisposable
     public void LaunchCommunitySetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy("LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        currentPage?.SetBusy(
+            "LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.CommunitySetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
@@ -355,8 +342,14 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
-            process.OutputDataReceived += (_, args) => { if (args.Data != null) stdoutBuilder.AppendLine(args.Data); };
-            process.ErrorDataReceived  += (_, args) => { if (args.Data != null) stderrBuilder.AppendLine(args.Data); };
+            process.OutputDataReceived += (_, args) =>
+            {
+                if (args.Data != null) stdoutBuilder.AppendLine(args.Data);
+            };
+            process.ErrorDataReceived += (_, args) =>
+            {
+                if (args.Data != null) stderrBuilder.AppendLine(args.Data);
+            };
         }
 
         if (trackPlayTime)
@@ -365,7 +358,7 @@ public class GameWithStatsService : IViewService, IDisposable
             {
                 var p = (Process)sender!;
                 LogProcessOutputOnError(p, stdoutBuilder, stderrBuilder);
-                await OnGameExited(game, p);
+                await OnGameExited(game, p, stdoutBuilder.ToString(), stderrBuilder.ToString());
             };
         }
         else
