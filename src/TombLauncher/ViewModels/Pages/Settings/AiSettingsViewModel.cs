@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,24 +11,30 @@ using TombLauncher.Ai.Factories;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.Mappers;
+using TombLauncher.Services;
 using TombLauncher.ViewModels.Ai;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class AiSettingsViewModel : SettingsSectionViewModelBase
 {
-    public AiSettingsViewModel(PageViewModel settingsPage, AiBackendFactory backendFactory) : base("AI_FEATURES", settingsPage, PackIconRemixIconKind.BrainAi3Fill)
+    public AiSettingsViewModel(PageViewModel settingsPage, AiBackendFactory backendFactory, AiMapper modelMapper, NotificationService notificationService) : base("AI_FEATURES", settingsPage, PackIconRemixIconKind.BrainAi3Fill)
     {
         _backendFactory = backendFactory;
+        _modelMapper = modelMapper;
+        _notificationService = notificationService;
         AvailableBackendTypes = new List<AiBackendType>() { AiBackendType.Ollama, AiBackendType.LmStudio };
         EmbeddingServiceCheckViewModel = new ServiceCheckViewModel()
-            { CheckResultMessage = "", Status = ServiceCheckStatus.Checking };
+            { CheckResultMessage = "CHECKING_EMBEDDING_MODEL".GetLocalizedString(), Status = ServiceCheckStatus.Checking };
         ApiServiceCheckViewModel = new ServiceCheckViewModel()
-            { CheckResultMessage = "", Status = ServiceCheckStatus.Checking };
+            { CheckResultMessage = "CHECKING_BACKEND_REACHABLE".GetLocalizedString(), Status = ServiceCheckStatus.Checking };
     }
 
     [ObservableProperty] private ObservableCollection<AiModelViewModel>? _availableModels;
-    public AiModelViewModel? SelectedModel => AvailableModels?.FirstOrDefault(m => m.IsSelected);
+    [ObservableProperty] private AiModelViewModel? _selectedModel;
+    private string? _savedModelId;
+    public string? SavedModelId { set => _savedModelId = value; }
     [ObservableProperty] private bool _isEnabled;
     [ObservableProperty] private List<AiBackendType> _availableBackendTypes;
     [ObservableProperty] private AiBackendType _selectedBackendType;
@@ -37,13 +42,16 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private string? _apiKey;
     [ObservableProperty] private ServiceCheckViewModel _apiServiceCheckViewModel;
     [ObservableProperty] private ServiceCheckViewModel _embeddingServiceCheckViewModel;
-    [ObservableProperty] private string _embeddingModelId = null!;
+    [ObservableProperty] private string _embeddingModelId;
 
     private readonly AiBackendFactory _backendFactory;
+    private readonly AiMapper _modelMapper;
+    private readonly NotificationService _notificationService;
     private CancellationTokenSource? _checkCts;
 
     partial void OnEndpointChanged(string? oldValue, string newValue) => ScheduleReachabilityCheck();
     partial void OnSelectedBackendTypeChanged(AiBackendType oldValue, AiBackendType newValue) => ScheduleReachabilityCheck();
+    partial void OnEmbeddingModelIdChanged(string? oldValue, string newValue) => ScheduleReachabilityCheck();
 
     private void ScheduleReachabilityCheck()
     {
@@ -55,6 +63,15 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
 
     private async Task CheckEmbeddingModelAsync(CancellationToken ct)
     {
+        if (string.IsNullOrEmpty(EmbeddingModelId))
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                EmbeddingServiceCheckViewModel.Status = ServiceCheckStatus.Unspecified;
+                EmbeddingServiceCheckViewModel.CheckResultMessage = "";
+            });
+            return;
+        }
         var backend = _backendFactory.Create(SelectedBackendType);
         Dispatcher.UIThread.Post(() =>
         {
@@ -101,6 +118,7 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
         try
         {
             var result = await backend.IsReachableAsync(Endpoint, ApiKey ?? "", ct);
+            
             if (ct.IsCancellationRequested) return;
             Dispatcher.UIThread.Post(() =>
             {
@@ -109,6 +127,10 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
                     ? "BACKEND_IS_REACHABLE".GetLocalizedString()
                     : "BACKEND_DID_NOT_RESPOND".GetLocalizedString(result.Error!);
             });
+            if (result.IsReachable)
+            {
+                await FetchModelsAsync(ct);
+            }
         }
         catch (OperationCanceledException) { }
         catch (Exception ex)
@@ -120,22 +142,18 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
             });
         }
     }
-    
-    partial void OnAvailableModelsChanged(ObservableCollection<AiModelViewModel>? oldValue, ObservableCollection<AiModelViewModel>? newValue)
-    {
-        if (oldValue != null)
-            foreach (var item in oldValue)
-                item.PropertyChanged -= OnModelPropertyChanged;
 
-        if (newValue != null)
-            foreach (var item in newValue)
-                item.PropertyChanged += OnModelPropertyChanged;
-    }
-    
-    private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private async Task FetchModelsAsync(CancellationToken ct)
     {
-        if (e.PropertyName == nameof(AiModelViewModel.IsSelected))
-            OnPropertyChanged(nameof(AvailableModels));
+        var backend = _backendFactory.Create(SelectedBackendType);
+        var models = await backend.GetAvailableModelsAsync(Endpoint, ApiKey!, ct);
+        if (ct.IsCancellationRequested) return;
+        var viewModels = _modelMapper.ToObservableCollection(models, _notificationService);
+        Dispatcher.UIThread.Post(() =>
+        {
+            AvailableModels = viewModels;
+            SelectedModel = viewModels.FirstOrDefault(m => m.Metadata.ModelId == _savedModelId);
+        });
     }
 
     public override void ApplyTo(AppConfiguration userConfig)

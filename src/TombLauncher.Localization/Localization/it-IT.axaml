@@ -442,6 +442,7 @@
     <system:String x:Key="CHECKING_EMBEDDING_MODEL">Verifica modello di embedding...</system:String>
     <system:String x:Key="EMBEDDING_MODEL_AVAILABLE">Il modello di embedding è disponibile</system:String>
     <system:String x:Key="EMBEDDING_MODEL_NOT_AVAILABLE">Il modello di embedding non è installato</system:String>
+    <system:String x:Key="EMBEDDING_MODEL_NOT_CONFIGURED">Nessun modello di embedding configurato</system:String>
     <system:String x:Key="EMBEDDING_MODEL_CHECK_ERROR">Impossibile verificare il modello di embedding: {0}</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

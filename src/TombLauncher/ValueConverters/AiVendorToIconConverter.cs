@@ -11,14 +11,14 @@ public class AiVendorToIconConverter : IValueConverter
     {
         if (value is string str)
         {
-            return str switch
+            return str.ToLowerInvariant() switch
             {
-                "Microsoft" => PackIconRemixIconKind.MicrosoftFill,
-                "Meta" => PackIconRemixIconKind.MetaFill,
-                "Alibaba Cloud" => PackIconRemixIconKind.AlibabaCloudFill,
-                "Mistral AI" => null,
-                "Cohere" => null,
-                _ => PackIconRemixIconKind.BrainLine
+                "microsoft" => PackIconRemixIconKind.MicrosoftFill,
+                "meta" => PackIconRemixIconKind.MetaFill,
+                "alibaba cloud" => PackIconRemixIconKind.AlibabaCloudFill,
+                "mistralai" => PackIconRemixIconKind.MixtralFill,
+                "deepseek" => PackIconRemixIconKind.DeepseekFill,
+                _ => PackIconRemixIconKind.BrainAi3Fill
             };
         }
 
