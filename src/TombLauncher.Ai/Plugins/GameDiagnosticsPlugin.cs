@@ -9,7 +9,12 @@ namespace TombLauncher.Ai.Plugins;
 
 public class GameDiagnosticsPlugin
 {
-    public TroubleshootingContext? TroubleshootingContext { get; set; }
+    public GameDiagnosticsPlugin(TroubleshootingContext? troubleshootingContext = null)
+    {
+        TroubleshootingContext = troubleshootingContext;
+    }
+
+    public TroubleshootingContext? TroubleshootingContext { get; }
     private const string NoTroubleshootingContextMessage = "No troubleshooting context in this session.";
     
     [KernelFunction]

@@ -51,8 +51,7 @@ public static class EmbedderRegistrationExtensions
             .AddScoped<TroubleshootingContextService>()
             .AddScoped<IChatCompletionServiceLoader, OpenAiCompatibleChatCompletionServiceLoader>()
             .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings()
-                { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ExtensionData = new Dictionary<string, object> { ["temperature"] = 0.45 }})
-            .AddSingleton<GameDiagnosticsPlugin>()
+                { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ExtensionData = new Dictionary<string, object> { ["temperature"] = 0.65 }})
             .AddSingleton<OpenAIClient>(sp =>
             {
                 var aiConfig = sp.GetRequiredService<IAiConfig>();
@@ -73,9 +72,7 @@ public static class EmbedderRegistrationExtensions
                 {
                     Console.WriteLine(ex);
                 }
-                var kernel = kernelBuilder.Build();
-                kernel.Plugins.AddFromObject(sp.GetRequiredService<GameDiagnosticsPlugin>());
-                return kernel;
+                return kernelBuilder.Build();
             })
             .AddHttpClient()
             .AddSingleton<ModelMapper>()

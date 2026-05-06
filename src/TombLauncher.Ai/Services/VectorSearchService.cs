@@ -7,7 +7,6 @@ using TombLauncher.Ai.Configuration;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Ai.Models;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Ai.Services;
@@ -42,7 +41,7 @@ WHERE id IN @Ids;";
         };
     }
 
-    public async Task<List<KnowledgeBaseItemDto>> SearchAsync(IProgress<DownloadProgressInfo> progress, string query, int topK = 5, CancellationToken cancellationToken = default)
+    public async Task<List<KnowledgeBaseItemDto>> SearchAsync(string query, int topK = 5, CancellationToken cancellationToken = default)
     {
         var embedding = await _embedder.GenerateAsync(query, cancellationToken: cancellationToken);
 
