@@ -11,6 +11,7 @@ using TombLauncher.Ai.Mappers;
 using TombLauncher.Ai.Plugins;
 using TombLauncher.Ai.Services;
 using TombLauncher.Ai.Services.AiBackends;
+using TombLauncher.Ai.Utils;
 using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Ai.Extensions;
@@ -24,7 +25,7 @@ public static class EmbedderRegistrationExtensions
             {
                 var aiConfig = sp.GetRequiredService<IOptions<AiConfig>>().Value;
                 return new OpenAIClient(new ApiKeyCredential(aiConfig.ApiKey ?? "ollama"),
-                    new OpenAIClientOptions() { Endpoint = new Uri(aiConfig.Endpoint) });
+                    new OpenAIClientOptions() { Endpoint = new Uri(OllamaEndpointHelper.NormalizeEndpoint(aiConfig.Endpoint ?? "http://localhost:11434")) });
             })
             .AddSingleton<IEmbeddingGenerator<string, Embedding<float>>>(sp =>
             {
@@ -50,13 +51,13 @@ public static class EmbedderRegistrationExtensions
             .AddScoped<TroubleshootingContextService>()
             .AddScoped<IChatCompletionServiceLoader, OpenAiCompatibleChatCompletionServiceLoader>()
             .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings()
-                { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() })
+                { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ExtensionData = new Dictionary<string, object> { ["temperature"] = 0.45 }})
             .AddSingleton<GameDiagnosticsPlugin>()
             .AddSingleton<OpenAIClient>(sp =>
             {
                 var aiConfig = sp.GetRequiredService<IAiConfig>();
                 return new OpenAIClient(new ApiKeyCredential(aiConfig.ApiKey ?? "ollama"),
-                    new OpenAIClientOptions() { Endpoint = new Uri(aiConfig.Endpoint) });
+                    new OpenAIClientOptions() { Endpoint = new Uri(OllamaEndpointHelper.NormalizeEndpoint(aiConfig.Endpoint ?? "http://localhost:11434")) });
             })
             .AddSingleton<Kernel>(sp =>
             {

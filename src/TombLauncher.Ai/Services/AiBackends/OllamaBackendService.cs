@@ -5,6 +5,7 @@ using OpenAI;
 using OpenAI.Models;
 using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Mappers;
+using TombLauncher.Ai.Utils;
 using TombLauncher.Contracts.Ai;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
@@ -76,15 +77,7 @@ public class OllamaBackendService : IAiBackendService
             apiKey = "tomb_launcher";
         }
         var openAiClient = new OpenAIClient(new ApiKeyCredential(apiKey),
-            new OpenAIClientOptions() { Endpoint = new Uri(GetFullEndpoint(endpoint)) });
+            new OpenAIClientOptions() { Endpoint = new Uri(OllamaEndpointHelper.NormalizeEndpoint(endpoint)) });
         return openAiClient.GetOpenAIModelClient();
-    }
-
-    private string GetFullEndpoint(string endpoint)
-    {
-        endpoint = endpoint.TrimEnd('/');
-        if (!endpoint.EndsWith("v1"))
-            endpoint += "/v1";
-        return endpoint;
     }
 }

@@ -17,9 +17,11 @@ public class VectorSearchService : VectorDbService
     private readonly IEmbeddingGenerator<string, Embedding<float>> _embedder;
     private readonly EmbeddingGenerationOptions _embeddingGenerationOptions;
 
-    private const string ChunksQuery = @"SELECT document_title AS ""DocumentTitle"", section_title AS ""SectionTitle"", chunk_text AS ""ChunkText"", metadata_id AS ""MetadataId""
+    private const string ChunksQuery = @"SELECT document_title AS ""DocumentTitle"", section_title AS ""SectionTitle"", chunk_text AS ""ChunkText"", metadata_id AS ""MetadataId"", v.distance as ""Distance""
 FROM knowledge_chunks c
 JOIN vector_quantize_scan('knowledge_chunks', 'embedding', vector_as_f32(@Vector), @TopK) AS v ON c.id = v.rowid
+WHERE v.distance <= 0.20
+ORDER BY v.distance ASC
 ";
 
     private const string MetadataQuery = @"SELECT id AS ""Id"", app_version_range AS ""AppVersionRange"", engine_version AS ""EngineVersion"", applies_to AS ""AppliesTo"", platforms AS ""Platforms"", source AS ""Source""
@@ -64,9 +66,15 @@ WHERE id IN @Ids;";
             metadataResult = await connection.QueryAsync<KnowledgeMetadata>(MetadataQuery, new { Ids = metadataIds });
         var metadataLookup = metadataResult.ToLookup(m => m.Id);
 
-        return resultList
+        var output = resultList
             .Select(c => ConvertChunk(c, metadataLookup))
             .ToList();
+        if (output.Count == 0)
+        {
+            output.Add(new KnowledgeBaseItemDto(){Text = "No relevant information found."});
+        }
+
+        return output;
     }
 
     private KnowledgeBaseItemDto ConvertChunk(Chunk c, ILookup<int, KnowledgeMetadata> metadataLookup)
