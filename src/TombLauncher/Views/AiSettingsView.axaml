@@ -55,6 +55,26 @@
         
         <TextBlock Text="{loc:Translate AI_BACKEND_API_KEY}" />
         <TextBox Text="{Binding ApiKey}"></TextBox>
+        <TextBlock Text="{loc:Translate EMBEDDING_MODEL}"></TextBlock>
+        <DockPanel LastChildFill="True">
+            <Ellipse DockPanel.Dock="Right" Width="12" Height="12" Margin="8, 0"
+                     ToolTip.Tip="{Binding EmbeddingModelCheckResultMessage}"
+                     Classes.checking="{Binding EmbeddingModelCheckStatus, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static enums:ServiceCheckStatus.Checking}}"
+                     Fill="{Binding EmbeddingModelCheckStatus, Converter={StaticResource ServiceCheckStatusToColorConverter}}">
+                <Ellipse.Styles>
+                    <Style Selector="Ellipse.checking">
+                        <Style.Animations>
+                            <Animation Duration="0:0:0.8" IterationCount="INFINITE" Easing="SineEaseInOut">
+                                <KeyFrame Cue="0%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+                                <KeyFrame Cue="50%"><Setter Property="Opacity" Value="0.15" /></KeyFrame>
+                                <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+                            </Animation>
+                        </Style.Animations>
+                    </Style>
+                </Ellipse.Styles>
+            </Ellipse>
+            <TextBlock Text="{Binding EmbeddingModelId}"></TextBlock>
+        </DockPanel>
         
         
         

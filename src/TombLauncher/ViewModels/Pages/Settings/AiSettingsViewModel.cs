@@ -22,6 +22,8 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     {
         _backendFactory = backendFactory;
         AvailableBackendTypes = new List<AiBackendType>() { AiBackendType.Ollama, AiBackendType.LmStudio };
+        CheckResultMessage = "";
+        EmbeddingModelCheckResultMessage = "";
     }
 
     [ObservableProperty] private ObservableCollection<AiModelViewModel>? _availableModels;
@@ -32,7 +34,10 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private string _endpoint = string.Empty;
     [ObservableProperty] private string? _apiKey;
     [ObservableProperty] private ServiceCheckStatus _aiBackendCheckStatus;
+    [ObservableProperty] private ServiceCheckStatus _embeddingModelCheckStatus;
     [ObservableProperty] private string _checkResultMessage;
+    [ObservableProperty] private string _embeddingModelCheckResultMessage;
+    [ObservableProperty] private string _embeddingModelId = null!;
 
     private readonly AiBackendFactory _backendFactory;
     private CancellationTokenSource? _checkCts;
@@ -45,6 +50,41 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
         _checkCts?.Cancel();
         _checkCts = new CancellationTokenSource();
         _ = CheckReachabilityWithDebounceAsync(_checkCts.Token);
+        _ = CheckEmbeddingModelAsync(_checkCts.Token);
+    }
+
+    private async Task CheckEmbeddingModelAsync(CancellationToken ct)
+    {
+        var backend = _backendFactory.Create(SelectedBackendType);
+        Dispatcher.UIThread.Post(() =>
+        {
+            EmbeddingModelCheckStatus = ServiceCheckStatus.Checking;
+            EmbeddingModelCheckResultMessage = "CHECKING_EMBEDDING_MODEL".GetLocalizedString();
+        });
+        try
+        {
+            var result = await backend.IsModelInstalledAsync(Endpoint, ApiKey!, EmbeddingModelId, ct);
+            if (ct.IsCancellationRequested)
+                return;
+            Dispatcher.UIThread.Post(() =>
+            {
+                EmbeddingModelCheckStatus = result ? ServiceCheckStatus.Okay : ServiceCheckStatus.Error;
+                EmbeddingModelCheckResultMessage = result
+                    ? "EMBEDDING_MODEL_AVAILABLE".GetLocalizedString()
+                    : "EMBEDDING_MODEL_NOT_AVAILABLE".GetLocalizedString();
+            });
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                EmbeddingModelCheckStatus = ServiceCheckStatus.Error;
+                EmbeddingModelCheckResultMessage = "EMBEDDING_MODEL_CHECK_ERROR".GetLocalizedString(ex.Message);
+            });
+        }
     }
 
     private async Task CheckReachabilityWithDebounceAsync(CancellationToken ct)

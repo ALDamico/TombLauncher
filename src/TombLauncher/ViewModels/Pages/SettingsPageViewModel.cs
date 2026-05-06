@@ -145,7 +145,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             SelectedBackendType = aiCoreSettings.BackendType,
             IsEnabled = aiCoreSettings.IsEnabled,
             Endpoint = aiCoreSettings.Endpoint,
-            ApiKey = aiCoreSettings.ApiKey
+            ApiKey = aiCoreSettings.ApiKey,
+            EmbeddingModelId = aiCoreSettings.EmbeddingModelId
         };
         
         var compat = _appConfiguration.Compatibility;
