@@ -29,7 +29,7 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private bool _isEnabled;
     [ObservableProperty] private List<AiBackendType> _availableBackendTypes;
     [ObservableProperty] private AiBackendType _selectedBackendType;
-    [ObservableProperty] private string _endpoint;
+    [ObservableProperty] private string _endpoint = string.Empty;
     [ObservableProperty] private string? _apiKey;
     [ObservableProperty] private ServiceCheckStatus _aiBackendCheckStatus;
     [ObservableProperty] private string _checkResultMessage;
@@ -102,6 +102,9 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     {
         userConfig.Ai.ModelId = SelectedModel?.Metadata.ModelId;
         userConfig.Ai.IsAiEnabled = IsEnabled;
+        userConfig.Ai.Endpoint = Endpoint;
+        userConfig.Ai.ApiKey = ApiKey;
+        userConfig.Ai.BackendType = SelectedBackendType;
         base.ApplyTo(userConfig);
     }
 }
