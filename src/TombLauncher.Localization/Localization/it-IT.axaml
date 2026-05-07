@@ -431,6 +431,8 @@
     <system:String x:Key="MODEL_DOWNLOAD_CANCELED">Download di {0} annullato</system:String>
     <system:String x:Key="ERROR_DOWNLOADING_MODEL">Errore durante il download del modello</system:String>
     <system:String x:Key="TALK_TO_LAURA">Chatta con Laura</system:String>
+    <system:String x:Key="AI_CHAT_EMPTY_TITLE">Chiedi a Laura</system:String>
+    <system:String x:Key="AI_CHAT_EMPTY_SUBTITLE">Puoi fare domande generali su Tomb Launcher, oppure aprire questa chat dalla pagina di dettaglio di un gioco per ricevere aiuto specifico.</system:String>
     <system:String x:Key="ASK_LAURA_SOMETHING">Chiedi qualcosa a Laura...</system:String>
     <system:String x:Key="SEND">Invia messaggio</system:String>
     <system:String x:Key="AI_BACKEND_ENDPOINT">URL del server</system:String>

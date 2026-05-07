@@ -14,66 +14,68 @@
     <StackPanel Orientation="Vertical" Spacing="8">
         <TextBlock Text="{loc:Translate IS_ENABLED}"></TextBlock>
         <ToggleSwitch IsChecked="{Binding IsEnabled}"></ToggleSwitch>
-        <DockPanel LastChildFill="True">
-            <controls:Infotip DockPanel.Dock="Right" Header="{loc:Translate LLM_BACKEND}" ToolTipContent="{loc:Translate LLM_BACKEND_HELP}" />
-            <TextBlock Text="{loc:Translate LLM_BACKEND}"></TextBlock>
-        </DockPanel>
-        <ComboBox ItemsSource="{Binding AvailableBackendTypes}" SelectedItem="{Binding SelectedBackendType}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="26" Height="26" Background="White">
-                            <svg:Svg HorizontalAlignment="Center" VerticalAlignment="Center" Width="24" Height="24"
-                                     Path="{Binding ., Converter={StaticResource AiBackendTypeToIconConverter}}" />
-                        </Border>
-                        <TextBlock Margin="4, 0, 0, 0"
-                                   Text="{Binding ., Converter={StaticResource EnumToDescriptionConverter}}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-        <TextBlock Text="{loc:Translate AI_BACKEND_ENDPOINT}" />
-        <DockPanel LastChildFill="True">
-            <views:ServiceCheckView DockPanel.Dock="Right" DataContext="{Binding ApiServiceCheckViewModel}" />
-            <TextBox Text="{Binding Endpoint}" />
-        </DockPanel>
-        
-        <TextBlock Text="{loc:Translate AI_BACKEND_API_KEY}" />
-        <TextBox Text="{Binding ApiKey}"></TextBox>
-        <TextBlock Text="{loc:Translate EMBEDDING_MODEL}"></TextBlock>
-        <DockPanel LastChildFill="True">
-            <views:ServiceCheckView DockPanel.Dock="Right" DataContext="{Binding EmbeddingServiceCheckViewModel}" />
-            <TextBlock Text="{Binding EmbeddingModelId}"></TextBlock>
-        </DockPanel>
-        
-        
-        
-        <DockPanel LastChildFill="True">
-            <controls:Infotip DockPanel.Dock="Right"
-                              Header="{loc:Translate LLM_MODEL}"
-                              ToolTipContent="{loc:Translate LLM_MODEL_DESCRIPTION}" />
-            <TextBlock Text="{loc:Translate LLM_MODEL}"></TextBlock>
-        </DockPanel>
-        
-        <ComboBox ItemsSource="{Binding AvailableModels}"
-                  SelectedItem="{Binding SelectedModel}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel LastChildFill="True">
-                        <iconPacks:PackIconRemixIcon DockPanel.Dock="Left"
-                                                     Width="16" Height="16" Margin="0,0,8,0"
-                                                     VerticalAlignment="Center"
-                                                     HorizontalAlignment="Center"
-                                                     Kind="{Binding Metadata.Vendor, Converter={StaticResource AiVendorToIconConverter}}" />
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Metadata.FriendlyName}" />
-                            <TextBlock Classes="small text-muted"
-                                       Text="{Binding Metadata.FileSizeBytes, Converter={StaticResource FileSizeFormatter}}"
-                                       IsVisible="{Binding Metadata.FileSizeBytes, Converter={x:Static ObjectConverters.IsNotNull}}" />
+        <StackPanel Orientation="Vertical" Spacing="8" IsEnabled="{Binding IsEnabled}">
+            <DockPanel LastChildFill="True">
+                <controls:Infotip DockPanel.Dock="Right" Header="{loc:Translate LLM_BACKEND}"
+                                  ToolTipContent="{loc:Translate LLM_BACKEND_HELP}" />
+                <TextBlock Text="{loc:Translate LLM_BACKEND}"></TextBlock>
+            </DockPanel>
+            <ComboBox ItemsSource="{Binding AvailableBackendTypes}" SelectedItem="{Binding SelectedBackendType}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="26" Height="26" Background="White">
+                                <svg:Svg HorizontalAlignment="Center" VerticalAlignment="Center" Width="24" Height="24"
+                                         Path="{Binding ., Converter={StaticResource AiBackendTypeToIconConverter}}" />
+                            </Border>
+                            <TextBlock Margin="4, 0, 0, 0"
+                                       Text="{Binding ., Converter={StaticResource EnumToDescriptionConverter}}" />
                         </StackPanel>
-                    </DockPanel>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="{loc:Translate AI_BACKEND_ENDPOINT}" />
+            <DockPanel LastChildFill="True">
+                <views:ServiceCheckView DockPanel.Dock="Right" DataContext="{Binding ApiServiceCheckViewModel}" />
+                <TextBox Text="{Binding Endpoint}" />
+            </DockPanel>
+
+            <TextBlock Text="{loc:Translate AI_BACKEND_API_KEY}" />
+            <TextBox Text="{Binding ApiKey}"></TextBox>
+            <TextBlock Text="{loc:Translate EMBEDDING_MODEL}"></TextBlock>
+            <DockPanel LastChildFill="True">
+                <views:ServiceCheckView DockPanel.Dock="Right" DataContext="{Binding EmbeddingServiceCheckViewModel}" />
+                <TextBlock Text="{Binding EmbeddingModelId}"></TextBlock>
+            </DockPanel>
+
+
+            <DockPanel LastChildFill="True">
+                <controls:Infotip DockPanel.Dock="Right"
+                                  Header="{loc:Translate LLM_MODEL}"
+                                  ToolTipContent="{loc:Translate LLM_MODEL_DESCRIPTION}" />
+                <TextBlock Text="{loc:Translate LLM_MODEL}"></TextBlock>
+            </DockPanel>
+
+            <ComboBox ItemsSource="{Binding AvailableModels}"
+                      SelectedItem="{Binding SelectedModel}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel LastChildFill="True">
+                            <iconPacks:PackIconRemixIcon DockPanel.Dock="Left"
+                                                         Width="16" Height="16" Margin="0,0,8,0"
+                                                         VerticalAlignment="Center"
+                                                         HorizontalAlignment="Center"
+                                                         Kind="{Binding Metadata.Vendor, Converter={StaticResource AiVendorToIconConverter}}" />
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Metadata.FriendlyName}" />
+                                <TextBlock Classes="small text-muted"
+                                           Text="{Binding Metadata.FileSizeBytes, Converter={StaticResource FileSizeFormatter}}"
+                                           IsVisible="{Binding Metadata.FileSizeBytes, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
     </StackPanel>
 </UserControl>

@@ -424,6 +424,8 @@
     <system:String x:Key="MODEL_DOWNLOAD_CANCELED">Download of {0} canceled</system:String>
     <system:String x:Key="ERROR_DOWNLOADING_MODEL">Error downloading model</system:String>
     <system:String x:Key="TALK_TO_LAURA">Chat with Laura</system:String>
+    <system:String x:Key="AI_CHAT_EMPTY_TITLE">Ask Laura anything</system:String>
+    <system:String x:Key="AI_CHAT_EMPTY_SUBTITLE">Ask general questions about Tomb Launcher, or open this chat from a game's detail page to get help with a specific game.</system:String>
     <system:String x:Key="ASK_LAURA_SOMETHING">Ask Laura something...</system:String>
     <system:String x:Key="SEND">Send message</system:String>
     <system:String x:Key="LOADING_SAVEGAMES">Loading savegames...</system:String>

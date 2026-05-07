@@ -57,14 +57,21 @@
                        Text="{Binding CurrentStatusText}">
             </TextBlock>
         </StackPanel>
-        <ScrollViewer helpers:AutoScroll.IsEnabled="True">
-            <ItemsRepeater ItemsSource="{Binding MessageHistory}">
-                <ItemsRepeater.ItemTemplate>
-                    <DataTemplate>
-                        <ai:MessageBubble Margin="0, 8" />
-                    </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-            </ItemsRepeater>
-        </ScrollViewer>
+        <Panel>
+            <controls:EmptyStateView
+                Icon="BrainAi3Fill"
+                Title="{localization:Translate AI_CHAT_EMPTY_TITLE}"
+                Subtitle="{localization:Translate AI_CHAT_EMPTY_SUBTITLE}"
+                IsVisible="{Binding MessageHistory, Converter={StaticResource CollectionEmptyToVisibilityConverter}}" />
+            <ScrollViewer helpers:AutoScroll.IsEnabled="True">
+                <ItemsRepeater ItemsSource="{Binding MessageHistory}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <ai:MessageBubble Margin="0, 8" />
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </Panel>
     </DockPanel>
 </UserControl>

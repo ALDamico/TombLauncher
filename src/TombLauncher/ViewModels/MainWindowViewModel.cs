@@ -56,14 +56,17 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 Text = "STATISTICS".GetLocalizedString(),
                 ViewModelType = typeof(StatisticsPageViewModel)
             },
-            new MainMenuItemViewModel()
+        ];
+
+        var aiEnabled = settingsProvider.GetAiCoreSettings().IsEnabled;
+        if (aiEnabled)
+            MenuItems.Add(new MainMenuItemViewModel()
             {
                 ToolTip = "TALK_TO_LAURA".GetLocalizedString(),
                 Icon = PackIconRemixIconKind.ChatAiLine,
                 Text = "TALK_TO_LAURA".GetLocalizedString(),
                 ViewModelType = typeof(AiChatViewModel)
-            }
-        ];
+            });
 
         SettingsItem = new MainMenuItemViewModel()
         {
