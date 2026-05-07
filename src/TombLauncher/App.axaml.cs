@@ -203,7 +203,8 @@ public class App : Application
             .AddGameManagement()
             .AddDownloaders()
             .AddNotifications()
-            .AddUpdater();
+            .AddUpdater()
+            .AddPatchers();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);

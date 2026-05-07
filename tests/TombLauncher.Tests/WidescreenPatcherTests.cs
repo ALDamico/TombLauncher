@@ -6,7 +6,7 @@ namespace TombLauncher.Tests;
 
 public class WidescreenPatcherTests
 {
-    private static readonly WidescreenPatcher Patcher = new() { EngineDetector = new TombRaiderEngineDetector() };
+    private static readonly WidescreenPatcher Patcher = new(new TombRaiderEngineDetector());
 
     public WidescreenPatcherTests()
     {

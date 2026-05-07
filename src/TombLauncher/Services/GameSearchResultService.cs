@@ -11,6 +11,7 @@ using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using IconPacks.Avalonia.RemixIcon;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
@@ -30,7 +31,7 @@ public class GameSearchResultService : IViewService
     public GameSearchResultService(ViewServiceContext viewContext, GameDataService gameDataService,
         GameLinkDataService gameLinkDataService, GameHashDataService gameHashDataService,
         TombRaiderLevelInstaller levelInstaller,
-        TombRaiderEngineDetector engineDetector,
+        IEngineDetector engineDetector,
         GameDownloadManager downloadManager,
         NotificationService notificationService, GameWithStatsService gameWithStatsService,
         ILogger<GameSearchResultService> logger, GameFileHashCalculator hashCalculator,
@@ -67,7 +68,7 @@ public class GameSearchResultService : IViewService
     private readonly GameLinkDataService _gameLinkDataService;
     private readonly GameHashDataService _gameHashDataService;
     private readonly TombRaiderLevelInstaller _levelInstaller;
-    private readonly TombRaiderEngineDetector _engineDetector;
+    private readonly IEngineDetector _engineDetector;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly GameFileHashCalculator _hashCalculator;

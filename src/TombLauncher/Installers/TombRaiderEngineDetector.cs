@@ -9,8 +9,6 @@ using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Installers;
 
-
-
 public class TombRaiderEngineDetector : IEngineDetector
 {
     public TombRaiderEngineDetector()

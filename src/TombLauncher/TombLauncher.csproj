@@ -86,6 +86,7 @@
       <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
       <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
       <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
+      <ProjectReference Include="..\TombLauncher.Patchers\TombLauncher.Patchers.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -6,6 +6,11 @@ namespace TombLauncher.Patchers.Widescreen;
 
 public class WidescreenPatcher : IPatcher
 {
+    public WidescreenPatcher(IEngineDetector engineDetector)
+    {
+        EngineDetector = engineDetector;
+    }
+
     public async Task<PatchResult> DetectChanges(string targetFolder)
     {
         var detectorResult = EngineDetector.Detect(targetFolder);
@@ -163,6 +168,6 @@ public class WidescreenPatcher : IPatcher
         } while (i < bytes.Length - 4);
     }
 
-    public required IEngineDetector EngineDetector { get; set; }
+    public IEngineDetector EngineDetector { get; set; }
     private const float FourByThreeAspectRatio = 4.0F / 3;
 }
