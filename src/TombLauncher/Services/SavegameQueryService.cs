@@ -146,7 +146,7 @@ public class SavegameQueryService
         foreach (var savegameFile in savegames)
         {
             var fileContent = await File.ReadAllBytesAsync(savegameFile);
-            var md5 = Md5Utils.ComputeMd5Hash(fileContent);
+            var md5 = CryptoUtils.ComputeMd5Hash(fileContent);
             existingGamesDict[md5] = savegameFile;
         }
 
@@ -178,7 +178,7 @@ public class SavegameQueryService
                         FileName = file,
                         FileType = FileType.Savegame,
                         BackedUpOn = DateTime.Now,
-                        Md5 = Md5Utils.ComputeMd5Hash(savegameBytes),
+                        Md5 = CryptoUtils.ComputeMd5Hash(savegameBytes),
                         LevelName = data.LevelName,
                         SaveNumber = data.SaveNumber,
                         SlotNumber = data.SlotNumber

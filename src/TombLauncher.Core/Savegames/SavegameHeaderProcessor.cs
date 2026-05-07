@@ -109,7 +109,7 @@ public class SavegameHeaderProcessor : IDisposable
             return;
 
         var fileBytes = File.ReadAllBytes(e);
-        var md5 = Md5Utils.ComputeMd5Hash(fileBytes);
+        var md5 = CryptoUtils.ComputeMd5Hash(fileBytes);
         var dto = new SavegameBackupDto()
         {
             Data = fileBytes,
