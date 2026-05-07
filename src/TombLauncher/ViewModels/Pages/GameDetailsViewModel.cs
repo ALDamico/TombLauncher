@@ -27,7 +27,12 @@ public partial class GameDetailsViewModel : PageViewModel
 
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands = [];
     [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles = [];
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanOpenChat))] private GameWithStatsViewModel _game = null!;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanOpenChat))]
+    [NotifyPropertyChangedFor(nameof(EngineSupportState))]
+    private GameWithStatsViewModel _game = null!;
+
     [ObservableProperty] private int _descriptionFontSize = 18;
     [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks = [];
     public bool CanOpenChat => _gameDetailsService.CanOpenChat(Game?.GameMetadata);
@@ -118,4 +123,6 @@ public partial class GameDetailsViewModel : PageViewModel
 
         SetupCommands = setupCommands;
     }
+
+    public EngineSupportState EngineSupportState => _gameDetailsService.GetEngineSupportState(Game?.GameMetadata);
 }

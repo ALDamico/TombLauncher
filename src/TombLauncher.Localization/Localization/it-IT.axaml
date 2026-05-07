@@ -456,5 +456,9 @@
     <system:String x:Key="KB_SCHEMA_TOO_NEW">La knowledge base remota richiede una versione più recente di TombLauncher</system:String>
     <system:String x:Key="KB_INTEGRITY_ERROR">Download della knowledge base fallito: errore di integrità</system:String>
     <system:String x:Key="KB_UPDATE_FAILED">Aggiornamento della knowledge base fallito: {0}</system:String>
+    <system:String x:Key="NATIVE_SUPPORT">Questo livello gira nativamente sul sistema operativo attuale.</system:String>
+    <system:String x:Key="SUPPORTED_WITH_COMPATIBILITY_LAYER">Questo livello gira tramite layer di compatibilità.</system:String>
+    <system:String x:Key="SUPPORTED_NATIVE_PATCHING_AVAILABLE">Questo livello gira tramite layer di compatibilità, ma è disponibile una patch per eseguirlo nativamente.</system:String>
+    <system:String x:Key="NO_SUPPORT">Questo livello non gira sul sistema operativo attuale.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

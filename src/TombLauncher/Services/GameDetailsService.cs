@@ -138,4 +138,7 @@ public class GameDetailsService : IViewService
     {
         return _settingsProvider.GetAiCoreSettings().IsEnabled && vm?.IsInstalled == true;
     }
+
+    public EngineSupportState GetEngineSupportState(GameMetadataViewModel? vm) =>
+        _platformSpecificFeatures.SupportMatrix.GetEngineSupportState(vm?.GameEngine);
 }
