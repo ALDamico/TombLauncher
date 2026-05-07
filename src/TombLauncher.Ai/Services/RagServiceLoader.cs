@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using TombLauncher.Ai.Abstractions;
-using TombLauncher.Ai.Plugins;
+using TombLauncher.Core.PlatformSpecific;
 
 namespace TombLauncher.Ai.Services;
 
@@ -12,18 +12,21 @@ public class RagServiceLoader : ITroubleshootingServiceLoader
     private readonly Kernel _kernel;
     private readonly PromptExecutionSettings _promptExecutionSettings;
     private readonly ILogger<RagService> _ragServiceLogger;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public RagServiceLoader(IChatCompletionServiceLoader chatCompletionServiceLoader,
         VectorSearchService vectorSearchService,
         Kernel kernel,
         PromptExecutionSettings promptExecutionSettings,
-        ILogger<RagService> ragServiceLogger)
+        ILogger<RagService> ragServiceLogger, 
+        IPlatformSpecificFeatures platformSpecificFeatures)
     {
         _chatCompletionServiceLoader = chatCompletionServiceLoader;
         _vectorSearchService = vectorSearchService;
         _kernel = kernel;
         _promptExecutionSettings = promptExecutionSettings;
         _ragServiceLogger = ragServiceLogger;
+        _platformSpecificFeatures = platformSpecificFeatures;
     }
 
     public async Task<ITroubleshootingService> Load(IProgress<float> progress, CancellationToken cancellationToken)
@@ -31,6 +34,6 @@ public class RagServiceLoader : ITroubleshootingServiceLoader
         var chatCompletionService =
             await _chatCompletionServiceLoader.LoadChatCompletionService(progress, cancellationToken);
 
-        return new RagService(_kernel, _vectorSearchService, chatCompletionService, _promptExecutionSettings, _ragServiceLogger);
+        return new RagService(_kernel, _vectorSearchService, chatCompletionService, _promptExecutionSettings, _ragServiceLogger, _platformSpecificFeatures);
     }
 }

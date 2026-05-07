@@ -8,6 +8,7 @@ using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Models;
 using TombLauncher.Ai.Plugins;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.PlatformSpecific;
 
 namespace TombLauncher.Ai.Services;
 
@@ -18,27 +19,31 @@ public class RagService : ITroubleshootingService
     private readonly IChatCompletionService _chatCompletionService;
     private readonly PromptExecutionSettings _promptExecutionSettings;
     private readonly ILogger<RagService> _logger;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private bool _disposed;
 
     public RagService(Kernel kernel,
         VectorSearchService vectorSearchService,
         IChatCompletionService chatCompletionService,
         PromptExecutionSettings promptExecutionSettings,
-        ILogger<RagService> logger)
+        ILogger<RagService> logger, 
+        IPlatformSpecificFeatures platformSpecificFeatures)
     {
         _kernel = kernel;
         _vectorSearchService = vectorSearchService;
         _chatCompletionService = chatCompletionService;
         _promptExecutionSettings = promptExecutionSettings;
         _logger = logger;
+        _platformSpecificFeatures = platformSpecificFeatures;
     }
 
-    public async IAsyncEnumerable<(MessageType, string)> AskAsync(string query, TroubleshootingContext? troubleshootingContext,
+    public async IAsyncEnumerable<(MessageType, string)> AskAsync(string query, TroubleshootingContext troubleshootingContext,
         ChatHistory chatHistory,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var kernel = _kernel.Clone();
         kernel.Plugins.AddFromObject(new GameDiagnosticsPlugin(troubleshootingContext));
+        kernel.Plugins.AddFromObject(new SupportMatrixPlugin(_platformSpecificFeatures.SupportMatrix, troubleshootingContext));
         var knowledgeBaseItems = await _vectorSearchService.SearchAsync(query, cancellationToken: cancellationToken);
 
         var documentationSection = string.Join("\n---\n", knowledgeBaseItems.Select(WriteDocumentation));
