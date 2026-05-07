@@ -18,6 +18,7 @@
         <valueConverters:EnumIsNotDefaultConverter          x:Key="EnumIsNotDefaultConverter" />
         <valueConverters:AiBackendTypeToIconConverter       x:Key="AiBackendTypeToIconConverter" />
         <valueConverters:ServiceCheckStatusToColorConverter x:Key="ServiceCheckStatusToColorConverter" />
+        <valueConverters:EngineSupportStateToIconConverter  x:Key="EngineSupportStateToIconConverter" />
 
         <!-- ── Date / time ── -->
         <valueConverters:TimeSpanToHumanReadableStringConverter x:Key="TimeSpanToHumanReadableStringConverter" />

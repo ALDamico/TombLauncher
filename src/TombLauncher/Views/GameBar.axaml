@@ -9,6 +9,7 @@
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:io="clr-namespace:System.IO;assembly=System.Runtime"
+             xmlns:enums="clr-namespace:TombLauncher.Contracts.Enums;assembly=TombLauncher.Contracts"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="80"
              x:DataType="pages:GameDetailsViewModel"
              x:Class="TombLauncher.Views.GameBar"
@@ -164,6 +165,15 @@
                                              Background="Transparent"
                                              IsVisible="{Binding Game.GameMetadata.IsFavourite}"
                                              ToolTip.Tip="{loc:Translate FAVOURITE}" />
+                
+                <iconPacks:PackIconRemixIcon Kind="{Binding EngineSupportState, Converter={StaticResource EngineSupportStateToIconConverter}}"
+                                             Width="22" Height="22"
+                                             VerticalAlignment="Center"
+                                             Background="Transparent"
+                                             IsVisible="{Binding Game.GameMetadata.IsInstalled}"
+                                             Classes.danger="{Binding EngineSupportState,
+                                                 Converter={x:Static ObjectConverters.Equal},
+                                                 ConverterParameter={x:Static enums:EngineSupportState.NoSupport}}" />
 
                 <!-- Last played: label + date, grouped together -->
                 <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
