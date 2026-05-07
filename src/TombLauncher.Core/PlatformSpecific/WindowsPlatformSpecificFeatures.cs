@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Reflection;
+using TombLauncher.Contracts.SupportMatrix;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.PlatformSpecific.SupportMatrix;
 
 namespace TombLauncher.Core.PlatformSpecific;
 
@@ -66,4 +68,5 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
     public string? GetWineVersion(string winePath) => null;
     public List<ProtonInstallationDto> FindAvailableProtonInstallations() => [];
     public string? GetProtonVersion(string protonPath) => null;
+    public ISupportMatrix SupportMatrix { get; } = new WindowsSupportMatrix();
 }
