@@ -78,7 +78,6 @@ public partial class AiChatViewModel : PageViewModel
         "Laura is lining up a jump",
         "Laura is not having daddy issues"
     ];
-    
 
     [RelayCommand(CanExecute = nameof(CanSendMessage))]
     private async Task SendMessage()

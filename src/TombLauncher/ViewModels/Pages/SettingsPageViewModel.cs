@@ -97,7 +97,6 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     {
         Dispatcher.UIThread.Post(() =>
         {
-            ;
             if (IsInitialized)
                 return;
 

@@ -129,7 +129,6 @@ RETURNING *
         try
         {
             await connection.ExecuteAsync("DELETE FROM knowledge_metadata");
-           
         }
         catch (SqliteException ex)
         {
