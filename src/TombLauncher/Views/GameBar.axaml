@@ -173,7 +173,8 @@
                                              IsVisible="{Binding Game.GameMetadata.IsInstalled}"
                                              Classes.danger="{Binding EngineSupportState,
                                                  Converter={x:Static ObjectConverters.Equal},
-                                                 ConverterParameter={x:Static enums:EngineSupportState.NoSupport}}" />
+                                                 ConverterParameter={x:Static enums:EngineSupportState.NoSupport}}"
+                                             ToolTip.Tip="{Binding EngineSupportState, Converter={StaticResource EngineSupportStateToTooltipConverter}}"/>
 
                 <!-- Last played: label + date, grouped together -->
                 <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
