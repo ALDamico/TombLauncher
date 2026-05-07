@@ -20,8 +20,10 @@ public class WidescreenPatcherTests
     [Fact]
     public async Task TestWidescreenAspectRatioPatcherDetectChanges()
     {
-        var patcher = new WidescreenPatcher();
-        patcher.EngineDetector = new TombRaiderEngineDetector();
+        var patcher = new WidescreenPatcher()
+        {
+            EngineDetector = new TombRaiderEngineDetector()
+        };
         var changesToMake = await patcher.DetectChanges("Data");
         Assert.NotEmpty(changesToMake.AffectedFiles);
     }
@@ -29,8 +31,10 @@ public class WidescreenPatcherTests
     [Fact]
     public async Task TestWidescreenAspectRatioPatcher()
     {
-        var patcher = new WidescreenPatcher();
-        patcher.EngineDetector = new TombRaiderEngineDetector();
+        var patcher = new WidescreenPatcher()
+        {
+            EngineDetector = new TombRaiderEngineDetector() 
+        };
         var changesToMake = await patcher.DetectChanges("Data");
         var parameters = new WidescreenPatcherParameters()
         {

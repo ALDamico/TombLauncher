@@ -65,34 +65,106 @@ public class WidescreenPatcher : IPatcher
                 parameters.OriginalAspectRatio = FourByThreeAspectRatio;
             }
 
-            // In an unpatched executable should be 0xAB 0xAA 0xAA 0X3F
-            var originalAspectRatioBytes = BitConverter.GetBytes(parameters.OriginalAspectRatio);
-            var targetAspectRatioBytes = BitConverter.GetBytes(parameters.TargetAspectRatio);
-
-            if (parameters is { UpdateAspectRatio: true, TargetAspectRatio: > 0 })
-            {
-                var i = 0;
-                do
-                {
-                    if (bytes[i] == originalAspectRatioBytes[0] && bytes[i + 1] == originalAspectRatioBytes[1] &&
-                        bytes[i + 2] == originalAspectRatioBytes[2] && bytes[i + 3] == originalAspectRatioBytes[3])
-                    {
-                        affectedFile.Offset = i;
-                        bytes[i] = targetAspectRatioBytes[0];
-                        bytes[i + 1] = targetAspectRatioBytes[1];
-                        bytes[i + 2] = targetAspectRatioBytes[2];
-                        bytes[i + 3] = targetAspectRatioBytes[3];
-                        break;
-                    }
-
-                    i++;
-                } while (i < bytes.Length - 4);
-            }
+            ApplyAspectRatioCorrection(parameters, bytes, affectedFile);
+            ApplyCameraDistanceCorrection(parameters, bytes, affectedFile);
+            ApplyFovCorrection(parameters, bytes, affectedFile);
+            Apply60Fps(parameters, bytes, affectedFile);
 
             await File.WriteAllBytesAsync(affectedFile.Filename, bytes);
         }
 
         return executablePath;
+    }
+
+    private static void Apply60Fps(WidescreenPatcherParameters parameters, byte[] bytes, FileChange affectedFile)
+    {
+        if (!parameters.Update60Fps || parameters.Engine is not (GameEngine.TombRaider2 or GameEngine.TombRaider3))
+            return;
+
+        var i = 0;
+        do
+        {
+            if (bytes[i] == 0x8B && bytes[i + 1] == 0xF8 && bytes[i + 2] == 0x83 && bytes[i + 3] == 0xFF &&
+                bytes[i + 4] == 0x02)
+            {
+                bytes[i + 4] = 0x00;
+                affectedFile.Offset = i + 4;
+                break;
+            }
+
+            i++;
+        } while (i < bytes.Length - 5);
+    }
+
+    private static void ApplyCameraDistanceCorrection(WidescreenPatcherParameters parameters, byte[] bytes,
+        FileChange affectedFile)
+    {
+        if (parameters is not { UpdateCameraDistance: true, TargetCameraDistance: > 0 })
+            return;
+
+        var cameraDistanceValue = BitConverter.GetBytes((short)parameters.TargetCameraDistance);
+
+        var i = 0;
+        do
+        {
+            if (bytes[i] == 0xC7 && bytes[i + 1] == 0x05 && bytes[i + 6] == 0x00 && bytes[i + 7] == 0x06)
+            {
+                affectedFile.Offset = i + 6;
+                bytes[i + 6] = cameraDistanceValue[0];
+                bytes[i + 7] = cameraDistanceValue[1];
+            }
+            i++;
+        } while (i < bytes.Length - 7);
+    }
+
+    private static void ApplyFovCorrection(WidescreenPatcherParameters parameters, byte[] bytes,
+        FileChange affectedFile)
+    {
+        if (!parameters.UpdateFov)
+            return;
+
+        var i = 0;
+        do
+        {
+            if (bytes[i] == 0xA1 && bytes[i + 5] == 0x99)
+            {
+                affectedFile.Offset = i;
+                var fov = ((int)(parameters.TargetFov / (4.0 / 3.0))) << 8 | 0xB8;
+                var fovBytes = BitConverter.GetBytes(fov);
+                for (var j = 0; j < 4; j++)
+                {
+                    bytes[j + i] = fovBytes[j];
+                }
+            }
+            i++;
+        } while (i < bytes.Length - 5);
+    }
+
+    private static void ApplyAspectRatioCorrection(WidescreenPatcherParameters parameters, byte[] bytes,
+        FileChange affectedFile)
+    {
+        if (parameters is not { UpdateAspectRatio: true, TargetAspectRatio: > 0 }) 
+            return;
+        
+        // In an unpatched executable should be 0xAB 0xAA 0xAA 0X3F
+        var originalAspectRatioBytes = BitConverter.GetBytes(parameters.OriginalAspectRatio);
+        var targetAspectRatioBytes = BitConverter.GetBytes(parameters.TargetAspectRatio);
+        var i = 0;
+        do
+        {
+            if (bytes[i] == originalAspectRatioBytes[0] && bytes[i + 1] == originalAspectRatioBytes[1] &&
+                bytes[i + 2] == originalAspectRatioBytes[2] && bytes[i + 3] == originalAspectRatioBytes[3])
+            {
+                affectedFile.Offset = i;
+                bytes[i] = targetAspectRatioBytes[0];
+                bytes[i + 1] = targetAspectRatioBytes[1];
+                bytes[i + 2] = targetAspectRatioBytes[2];
+                bytes[i + 3] = targetAspectRatioBytes[3];
+                break;
+            }
+
+            i++;
+        } while (i < bytes.Length - 4);
     }
 
     public required IEngineDetector EngineDetector { get; set; }
