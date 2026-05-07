@@ -3,7 +3,6 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Mappers;
-using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.Tests;

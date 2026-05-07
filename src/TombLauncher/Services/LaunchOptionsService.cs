@@ -3,9 +3,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
+using TombLauncher.Extensions;
 using TombLauncher.Installers;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
@@ -21,13 +24,15 @@ public class LaunchOptionsService : IViewService
         GameDataService gameDataService,
         TombRaiderEngineDetector engineDetector,
         ILogger<LaunchOptionsService> logger,
-        LaunchOptionsMapper mapper)
+        LaunchOptionsMapper mapper,
+        IPlatformSpecificFeatures platformSpecificFeatures)
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _engineDetector = engineDetector;
         _logger = logger;
         _mapper = mapper;
+        _platformSpecificFeatures = platformSpecificFeatures;
     }
 
     public ViewServiceContext ViewContext { get; }
@@ -35,12 +40,22 @@ public class LaunchOptionsService : IViewService
     private readonly TombRaiderEngineDetector _engineDetector;
     private readonly ILogger<LaunchOptionsService> _logger;
     private readonly LaunchOptionsMapper _mapper;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
 
-    public Task LoadAsync(LaunchOptionsViewModel vm, GameMetadataViewModel game)
+    public async Task LoadAsync(LaunchOptionsViewModel vm, GameMetadataViewModel game)
     {
-        vm.InitFromGame(game);
-        return Task.CompletedTask;
+        try
+        {
+            vm.InitFromGame(game);
+        }
+        catch (IOException ex)
+        {
+            _logger.LogError(ex, "Error reading install directory for game {GameId}", game.Id);
+            await ViewContext.PopupService.ShowLocalized("ERROR", "LAUNCH_OPTIONS_EXECUTABLE_READ_ERROR",
+                MsgBoxButton.Ok, MsgBoxImage.Error);
+            await GoBackAsync();
+        }
     }
 
     public void AutoDetect(LaunchOptionsViewModel vm)
@@ -103,7 +118,7 @@ public class LaunchOptionsService : IViewService
         var installDirectory = game.InstallDirectory ?? "";
         if (installDirectory.IsNullOrWhiteSpace())
             return [];
-        return Directory.GetFiles(installDirectory, "*.exe", SearchOption.AllDirectories)
+        return Directory.GetFiles(installDirectory, "*.exe", _platformSpecificFeatures.GetEnumerationOptions())
             .Select(p => Path.GetRelativePath(installDirectory, p))
             .ToObservableCollection();
     }

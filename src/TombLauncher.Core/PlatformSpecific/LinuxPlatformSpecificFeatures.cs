@@ -26,21 +26,8 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
             MatchCasing = MatchCasing.CaseInsensitive,
             IgnoreInaccessible = true,
             RecurseSubdirectories = true,
-            ReturnSpecialDirectories = false
-        };
-    }
-
-    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string? arguments, string compatibilityExecutable,
-        string workingDirectory)
-    {
-        arguments = executableFileNameOnly + " " + (arguments ?? "");
-        return new ProcessStartInfo(compatibilityExecutable)
-        {
-            Arguments = arguments,
-            WorkingDirectory = workingDirectory,
-            UseShellExecute = false,
-            RedirectStandardError = true,
-            RedirectStandardOutput = true
+            ReturnSpecialDirectories = false,
+            AttributesToSkip = FileAttributes.ReparsePoint
         };
     }
 

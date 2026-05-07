@@ -197,6 +197,7 @@
     <system:String x:Key="AI_TROUBLESHOOTING">Ask Laura for help</system:String>
     <system:String x:Key="LAUNCH_OPTIONS">Launch options</system:String>
     <system:String x:Key="LAUNCH_OPTIONS_TOOLTIP">Allows you to set this game's engine type, the executable to run to launch it, and the command to launch setup.</system:String>
+    <system:String x:Key="LAUNCH_OPTIONS_EXECUTABLE_READ_ERROR">An error occurred while reading the game's install directory. The launch options page could not be opened.</system:String>
     <system:String x:Key="ENGINE_TYPE">Engine type</system:String>
     <system:String x:Key="AUTO_DETECT">Auto detect</system:String>
     <system:String x:Key="GAME_EXECUTABLE">Game executable</system:String>
