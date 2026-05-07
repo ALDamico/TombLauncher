@@ -447,5 +447,14 @@
     <system:String x:Key="EMBEDDING_MODEL_NOT_AVAILABLE">Embedding model is not installed</system:String>
     <system:String x:Key="EMBEDDING_MODEL_NOT_CONFIGURED">No embedding model configured</system:String>
     <system:String x:Key="EMBEDDING_MODEL_CHECK_ERROR">Could not check embedding model: {0}</system:String>
+    <system:String x:Key="KB_UPDATE">Update knowledge base</system:String>
+    <system:String x:Key="KB_UPDATING">Updating knowledge base...</system:String>
+    <system:String x:Key="KB_DOWNLOADING">Downloading knowledge base...</system:String>
+    <system:String x:Key="KB_VERIFYING">Verifying integrity...</system:String>
+    <system:String x:Key="KB_UPDATED">Knowledge base updated</system:String>
+    <system:String x:Key="KB_UP_TO_DATE">Knowledge base is up to date</system:String>
+    <system:String x:Key="KB_SCHEMA_TOO_NEW">Remote knowledge base requires a newer version of TombLauncher</system:String>
+    <system:String x:Key="KB_INTEGRITY_ERROR">Knowledge base download failed: integrity check error</system:String>
+    <system:String x:Key="KB_UPDATE_FAILED">Knowledge base update failed: {0}</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

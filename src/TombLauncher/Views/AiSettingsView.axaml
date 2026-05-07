@@ -49,6 +49,14 @@
             </DockPanel>
 
 
+            <TextBlock Text="{loc:Translate KB_UPDATE}" />
+            <DockPanel LastChildFill="False">
+                <views:ServiceCheckView DockPanel.Dock="Right" DataContext="{Binding KbServiceCheckViewModel}" />
+                <controls:IconButton Icon="RefreshLine"
+                                     Text="{loc:Translate KB_UPDATE}"
+                                     Command="{Binding UpdateKbCommand}" />
+            </DockPanel>
+
             <DockPanel LastChildFill="True">
                 <controls:Infotip DockPanel.Dock="Right"
                                   Header="{loc:Translate LLM_MODEL}"
