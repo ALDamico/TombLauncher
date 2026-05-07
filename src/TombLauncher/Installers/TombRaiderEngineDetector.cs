@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;
-using TombLauncher.Installers.Models;
 
 namespace TombLauncher.Installers;
 
-public class TombRaiderEngineDetector
+
+
+public class TombRaiderEngineDetector : IEngineDetector
 {
     public TombRaiderEngineDetector()
     {
@@ -122,7 +124,7 @@ public class TombRaiderEngineDetector
     {
         var executables = Directory.GetFiles(containingFolder, "*.exe", SearchOption.AllDirectories);
         var fullPath = _knownGameExecutables.Join(executables, knownExecutable => knownExecutable,
-                Path.GetFileName, (s, s1) => s1, StringComparer.InvariantCultureIgnoreCase)
+                Path.GetFileName, (_, s1) => s1, StringComparer.InvariantCultureIgnoreCase)
             .FirstOrDefault();
 
         if (fullPath.IsNullOrWhiteSpace())

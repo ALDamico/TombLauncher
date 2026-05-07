@@ -1,4 +1,4 @@
-using TombLauncher.Contracts;
+using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Patchers;
 
@@ -17,7 +17,7 @@ public class WidescreenPatcher : IPatcher
             case GameEngine.TombRaider3:
             case GameEngine.TombRaider4:
             case GameEngine.TombRaider5:
-                var fileInfo = new FileInfo(Path.Combine(targetFolder, detectorResult.ExecutablePath));
+                var fileInfo = new FileInfo(Path.Combine(targetFolder, detectorResult.ExecutablePath!));
                 return new PatchResult()
                 {
                     IsSuccessful = true,
@@ -95,6 +95,6 @@ public class WidescreenPatcher : IPatcher
         return executablePath;
     }
 
-    public TombRaiderEngineDetector EngineDetector { get; set; }
+    public required IEngineDetector EngineDetector { get; set; }
     private const float FourByThreeAspectRatio = 4.0F / 3;
 }

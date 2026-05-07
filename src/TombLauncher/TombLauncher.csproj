@@ -157,4 +157,8 @@
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Installers\Models\" />
+    </ItemGroup>
 </Project>
