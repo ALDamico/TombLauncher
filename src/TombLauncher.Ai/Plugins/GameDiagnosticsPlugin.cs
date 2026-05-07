@@ -20,7 +20,6 @@ public class GameDiagnosticsPlugin
     [KernelFunction]
     [Description("Use this function to get the current version of Tomb Launcher")]
     public string GetCurrentVersion() => Assembly.GetEntryAssembly()?.GetName().Version.ToString();
-    
 
     [KernelFunction]
     [Description("Use this function to determine what Operating System the application is running on.")]
