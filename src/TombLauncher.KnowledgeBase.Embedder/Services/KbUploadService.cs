@@ -15,8 +15,6 @@ public class KbUploadService
     private readonly string _kbPath;
     private readonly ILogger<KbUploadService> _logger;
 
-    public const int KbSchemaVersion = 1;
-
     public KbUploadService(IOptions<SftpConfig> sftpOptions, IOptions<AiConfig> aiOptions, ILogger<KbUploadService> logger)
     {
         _sftp = sftpOptions.Value;
@@ -39,7 +37,7 @@ public class KbUploadService
         var manifest = new KbManifest
         {
             GeneratedAt = DateTimeOffset.UtcNow,
-            SchemaVersion = KbSchemaVersion,
+            SchemaVersion = KbManifest.SupportedSchemaVersion,
             Sha256 = sha256
         };
 

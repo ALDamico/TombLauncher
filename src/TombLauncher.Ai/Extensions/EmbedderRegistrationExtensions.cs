@@ -75,6 +75,7 @@ public static class EmbedderRegistrationExtensions
                 return kernelBuilder.Build();
             })
             .AddHttpClient()
+            .AddSingleton<KbUpdateService>()
             .AddSingleton<ModelMapper>()
             .AddKeyedSingleton<IAiBackendService, OllamaBackendService>(AiBackendType.Ollama)
             .AddKeyedSingleton<IAiBackendService, LmStudioBackendService>(AiBackendType.LmStudio)

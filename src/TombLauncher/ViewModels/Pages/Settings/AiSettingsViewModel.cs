@@ -6,8 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Ai.Factories;
+using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
@@ -19,16 +21,19 @@ namespace TombLauncher.ViewModels.Pages.Settings;
 
 public partial class AiSettingsViewModel : SettingsSectionViewModelBase
 {
-    public AiSettingsViewModel(PageViewModel settingsPage, AiBackendFactory backendFactory, AiMapper modelMapper, NotificationService notificationService) : base("AI_FEATURES", settingsPage, PackIconRemixIconKind.BrainAi3Fill)
+    public AiSettingsViewModel(PageViewModel settingsPage, AiBackendFactory backendFactory, AiMapper modelMapper, NotificationService notificationService, KbUpdateService kbUpdateService) : base("AI_FEATURES", settingsPage, PackIconRemixIconKind.BrainAi3Fill)
     {
         _backendFactory = backendFactory;
         _modelMapper = modelMapper;
         _notificationService = notificationService;
+        _kbUpdateService = kbUpdateService;
         AvailableBackendTypes = new List<AiBackendType>() { AiBackendType.Ollama, AiBackendType.LmStudio };
         EmbeddingServiceCheckViewModel = new ServiceCheckViewModel()
             { CheckResultMessage = "CHECKING_EMBEDDING_MODEL".GetLocalizedString(), Status = ServiceCheckStatus.Checking };
         ApiServiceCheckViewModel = new ServiceCheckViewModel()
             { CheckResultMessage = "CHECKING_BACKEND_REACHABLE".GetLocalizedString(), Status = ServiceCheckStatus.Checking };
+        KbServiceCheckViewModel = new ServiceCheckViewModel()
+            { CheckResultMessage = "", Status = ServiceCheckStatus.Unspecified };
     }
 
     [ObservableProperty] private ObservableCollection<AiModelViewModel>? _availableModels;
@@ -44,10 +49,36 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
     [ObservableProperty] private ServiceCheckViewModel _embeddingServiceCheckViewModel;
     [ObservableProperty] private string _embeddingModelId;
 
+    [ObservableProperty] private ServiceCheckViewModel _kbServiceCheckViewModel;
+
     private readonly AiBackendFactory _backendFactory;
     private readonly AiMapper _modelMapper;
     private readonly NotificationService _notificationService;
+    private readonly KbUpdateService _kbUpdateService;
     private CancellationTokenSource? _checkCts;
+
+    [RelayCommand]
+    private async Task UpdateKb()
+    {
+        KbServiceCheckViewModel.Status = ServiceCheckStatus.Checking;
+        KbServiceCheckViewModel.CheckResultMessage = "KB_UPDATING".GetLocalizedString();
+        try
+        {
+            var progress = new Progress<string>(key =>
+                Dispatcher.UIThread.Post(() =>
+                    KbServiceCheckViewModel.CheckResultMessage = key.GetLocalizedString()));
+            await _kbUpdateService.CheckAndUpdateAsync(progress, CancellationToken.None);
+            Dispatcher.UIThread.Post(() => KbServiceCheckViewModel.Status = ServiceCheckStatus.Okay);
+        }
+        catch (Exception ex)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                KbServiceCheckViewModel.Status = ServiceCheckStatus.Error;
+                KbServiceCheckViewModel.CheckResultMessage = "KB_UPDATE_FAILED".GetLocalizedString(ex.Message);
+            });
+        }
+    }
 
     partial void OnEndpointChanged(string? oldValue, string newValue) => ScheduleReachabilityCheck();
     partial void OnSelectedBackendTypeChanged(AiBackendType oldValue, AiBackendType newValue) => ScheduleReachabilityCheck();

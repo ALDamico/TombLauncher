@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Ai.Factories;
+using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
@@ -25,7 +26,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         SettingsMapper settingsMapper,
         AiMapper aiMapper,
         NotificationService notificationService,
-        AiBackendFactory aiBackendFactory)
+        AiBackendFactory aiBackendFactory,
+        KbUpdateService kbUpdateService)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
@@ -37,6 +39,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _aiMapper = aiMapper;
         _notificationService = notificationService;
         _aiBackendFactory = aiBackendFactory;
+        _kbUpdateService = kbUpdateService;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -73,6 +76,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly AiMapper _aiMapper;
     private readonly NotificationService _notificationService;
     private readonly AiBackendFactory _aiBackendFactory;
+    private readonly KbUpdateService _kbUpdateService;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -137,7 +141,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
             var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
 
-            var aiSettings = new AiSettingsViewModel(this, _aiBackendFactory, _aiMapper, _notificationService)
+            var aiSettings = new AiSettingsViewModel(this, _aiBackendFactory, _aiMapper, _notificationService, _kbUpdateService)
             {
                 AvailableModels = [],
                 IsEnabled = aiCoreSettings.IsEnabled,

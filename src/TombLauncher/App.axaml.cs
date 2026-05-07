@@ -13,15 +13,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using TombLauncher.Ai.Extensions;
-using TombLauncher.Configuration;
+using TombLauncher.Ai.Services;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
-using TombLauncher.Localization;
 using TombLauncher.Services;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
@@ -81,6 +79,14 @@ public class App : Application
                         using var scope = Ioc.Default.CreateScope();
                         var dbContext = scope.ServiceProvider.GetRequiredService<TombLauncherDbContext>();
                         await dbContext.Database.MigrateAsync();
+
+                        if (settingsProvider.GetAiCoreSettings().IsEnabled)
+                        {
+                            progress.Report("Updating KB database...");
+                            await Ioc.Default.GetRequiredService<KbUpdateService>()
+                                .CheckAndUpdateAsync(progress, ct: default);
+                        }
+                        
                         progress.Report("Getting ready...");
 
                         // Resolved on a background thread: MainWindowViewModel and its dependencies

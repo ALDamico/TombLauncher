@@ -27,10 +27,13 @@ public partial class AiChatViewModel : PageViewModel
     private readonly ChatHistory _chatHistory = new();
     private TroubleshootingContext _troubleshootingContext;
 
+    public bool IsHistoryEmpty => MessageHistory.Count == 0;
+
     public AiChatViewModel(ITroubleshootingServiceLoader troubleshootingServiceLoader)
     {
         _troubleshootingServiceLoader = troubleshootingServiceLoader;
         _troubleshootingContext = new();
+        MessageHistory.CollectionChanged += (_, _) => OnPropertyChanged(nameof(IsHistoryEmpty));
     }
 
     protected override async Task RaiseInitialize()

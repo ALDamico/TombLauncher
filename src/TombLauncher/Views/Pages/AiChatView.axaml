@@ -62,7 +62,7 @@
                 Icon="BrainAi3Fill"
                 Title="{localization:Translate AI_CHAT_EMPTY_TITLE}"
                 Subtitle="{localization:Translate AI_CHAT_EMPTY_SUBTITLE}"
-                IsVisible="{Binding MessageHistory, Converter={StaticResource CollectionEmptyToVisibilityConverter}}" />
+                IsVisible="{Binding IsHistoryEmpty}" />
             <ScrollViewer helpers:AutoScroll.IsEnabled="True">
                 <ItemsRepeater ItemsSource="{Binding MessageHistory}">
                     <ItemsRepeater.ItemTemplate>
