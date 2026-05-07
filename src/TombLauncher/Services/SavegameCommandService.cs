@@ -144,7 +144,7 @@ public class SavegameCommandService
                 savegame.LevelName = headerData.LevelName;
                 savegame.SlotNumber = headerData.SlotNumber;
                 savegame.SaveNumber = headerData.SaveNumber;
-                var md5 = Md5Utils.ComputeMd5Hash(savegame.Data);
+                var md5 = CryptoUtils.ComputeMd5Hash(savegame.Data);
                 if (savegame.Md5 != md5)
                 {
                     savegame.Md5 = md5;

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Tooling constraints
 
-- Do **not** use the `gh` CLI. GitHub operations (PR creation, review, etc.) are not available in this environment.
+- The `gh` CLI is available and can be used for GitHub operations (creating issues, PRs, etc.).
 
 ## Code review
 

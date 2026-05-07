@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
+             xmlns:enums="clr-namespace:TombLauncher.Contracts.Enums;assembly=TombLauncher.Contracts"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.ServiceCheckView"
+             x:DataType="viewModels:ServiceCheckViewModel">
+        <Ellipse DockPanel.Dock="Right" Width="12" Height="12" Margin="8, 0"
+                 ToolTip.Tip="{Binding CheckResultMessage}"
+                 Classes.checking="{Binding Status, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static enums:ServiceCheckStatus.Checking}}"
+                 Fill="{Binding Status, Converter={StaticResource ServiceCheckStatusToColorConverter}}">
+            <Ellipse.Styles>
+                <Style Selector="Ellipse.checking">
+                    <Style.Animations>
+                        <Animation Duration="0:0:0.8" IterationCount="INFINITE" Easing="SineEaseInOut">
+                            <KeyFrame Cue="0%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+                            <KeyFrame Cue="50%"><Setter Property="Opacity" Value="0.15" /></KeyFrame>
+                            <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+                        </Animation>
+                    </Style.Animations>
+                </Style>
+            </Ellipse.Styles>
+        </Ellipse>
+</UserControl>

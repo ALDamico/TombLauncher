@@ -9,6 +9,7 @@ riderModule.iml
 TombLauncher.Data/TombLauncher.db
 Output
 TombLauncher/appsettings.Development.json
+src/TombLauncher.KnowledgeBase.Embedder/appsettings.local.json
 build_warnings*.txt
 build_warnings*.log
 bin\\Debug/

@@ -105,7 +105,7 @@ public class GameFileHashCalculator
 
     private static async Task<GameHashDto> GetGameHashDto(int gameId, Stream stream, string relativePath)
     {
-        var md5String = await Md5Utils.ComputeMd5Hash(stream);
+        var md5String = await CryptoUtils.ComputeMd5Hash(stream);
         var dto = new GameHashDto()
         {
             FileName = relativePath,

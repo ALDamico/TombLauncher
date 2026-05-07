@@ -27,9 +27,10 @@ public partial class GameDetailsViewModel : PageViewModel
 
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands = [];
     [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles = [];
-    [ObservableProperty] private GameWithStatsViewModel _game = null!;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanOpenChat))] private GameWithStatsViewModel _game = null!;
     [ObservableProperty] private int _descriptionFontSize = 18;
     [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks = [];
+    public bool CanOpenChat => _gameDetailsService.CanOpenChat(Game?.GameMetadata);
     public List<string> EnabledPatterns { get; set; } = [];
     public List<string> IgnoredFolders { get; set; } = [];
     private readonly GameDetailsService _gameDetailsService;
@@ -88,6 +89,9 @@ public partial class GameDetailsViewModel : PageViewModel
         if (path != null)
             await _gameDetailsService.OpenWalkthrough(path, false);
     }
+
+    [RelayCommand]
+    private async Task OpenChat() => await _gameDetailsService.OpenChat(Game.GameMetadata.Id, CancellationToken.None);
 
     private void InitSetupCommands()
     {

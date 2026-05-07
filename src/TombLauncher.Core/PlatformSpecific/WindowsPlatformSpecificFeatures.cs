@@ -27,6 +27,19 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
         };
     }
 
+    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
+        string compatibilityExecutable, string workingDirectory)
+    {
+        return new ProcessStartInfo(executableFileNameOnly)
+        {
+            Arguments = arguments ?? "",
+            WorkingDirectory = workingDirectory,
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            RedirectStandardOutput = true
+        };
+    }
+
     public NotifyFilters GetSavegameWatcherNotifyFilters()
     {
         return NotifyFilters.LastWrite;

@@ -30,8 +30,7 @@
                                                  Width="20" Height="20"
                                                  Foreground="{DynamicResource PrimaryBrush}" />
                     <TextBlock Text="{Binding SectionTitle, Converter={StaticResource StringCasingConverter}, ConverterParameter=Upper}"
-                               FontSize="16" FontWeight="DemiBold"
-                               VerticalAlignment="Center" />
+                               Classes="section-title" />
                 </StackPanel>
             </DockPanel>
             <ContentControl Content="{Binding }"></ContentControl>

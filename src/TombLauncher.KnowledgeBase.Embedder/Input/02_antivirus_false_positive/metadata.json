@@ -1,0 +1,6 @@
+{
+  "documentTitle": "Antivirus false positive",
+  "appliesTo": ["TombRaider1", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti"],
+  "platforms": ["Windows"],
+  "source": "http://forum3314.trle.net/viewtopic.php?t=33085"
+}

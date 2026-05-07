@@ -49,4 +49,8 @@
     <SolidColorBrush x:Key="TextBrush">#E0E0E0</SolidColorBrush>
     <SolidColorBrush x:Key="MutedTextBrush">#A0A0A0</SolidColorBrush>
     <SolidColorBrush x:Key="SecondaryBrush">#A0A0A0</SolidColorBrush>
+
+    <!-- Chat bubbles -->
+    <SolidColorBrush x:Key="ChatBubbleUserBrush" Color="{StaticResource PrimaryColor}" Opacity="0.30"/>
+    <SolidColorBrush x:Key="ChatBubbleAssistantBrush" Color="{StaticResource CardBackgroundColor}"/>
 </ResourceDictionary>

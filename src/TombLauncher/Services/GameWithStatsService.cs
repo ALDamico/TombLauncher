@@ -11,6 +11,7 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Savegames;
@@ -20,6 +21,7 @@ using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
+using TombLauncher.Utils;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
 
@@ -112,6 +114,7 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             _watcher.Changed -= WatcherOnCreatedOrChanged;
         }
+
         try
         {
             _watcher = new FileSystemWatcher(game.GameMetadata.InstallDirectory ?? string.Empty, "save*.*")
@@ -175,32 +178,60 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             _logger.LogInformation("Setup process exited without issue");
         }
+
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.ClearBusy();
     }
 
-    private async Task OnGameExited(GameWithStatsViewModel game, Process process)
+    private async Task<PlaySessionCrashDto?> ReadGameCrash(GameMetadataViewModel game, int exitCode,
+        string standardOutput, string standardError)
     {
-        Console.WriteLine("Exited!");
+        var crashFiles = AppUtils.GetLogFiles(game.InstallDirectory!, _startDate!.Value);
+        var playSessionCrashDto = new PlaySessionCrashDto()
+        {
+            ExitCode = exitCode,
+            StdOut = standardOutput,
+            StdErr = standardError
+        };
+        foreach (var crashFile in crashFiles)
+        {
+            var dto = new CrashFileDto(Path.GetFileName(crashFile), await File.ReadAllTextAsync(crashFile));
+            playSessionCrashDto.CrashFiles.Add(dto);
+        }
+
+        return playSessionCrashDto;
+    }
+
+    private async Task OnGameExited(GameWithStatsViewModel game, Process process, string standardOutput,
+        string standardError)
+    {
+        _logger.LogInformation("Play session for game {GameTitle} (ID: {GameId}) ended.", game.GameMetadata.Title,
+            game.GameMetadata.Id);
+        var exitCode = process.ExitCode;
         var errorOccurred = false;
+        PlaySessionCrashDto? playSessionCrashDto = null;
+        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+
         if (process.ExitCode != 0)
         {
-            _logger.LogWarning("Setup process exited with exit code {ExitCode}", process.ExitCode);
+            _logger.LogWarning("Game process exited with exit code {ExitCode}", process.ExitCode);
+            currentPage?.SetBusy("SAVING_PLAY_SESSION_ERROR_DATA");
+            playSessionCrashDto = await ReadGameCrash(game.GameMetadata, exitCode, standardOutput, standardError);
         }
-        var currentPage = NavigationManager.CurrentPage as INavigationTarget;
+
         try
         {
             using (currentPage?.BusyScope("SAVING_PLAY_SESSION".GetLocalizedString()))
             {
                 var gameMetadataDto = _mapper.ToDto(game.GameMetadata);
                 await _playSessionDataService.AddPlaySessionToGame(gameMetadataDto, _startDate.GetValueOrDefault(),
-                    process.ExitTime);
+                    process.ExitTime, playSessionCrashDto);
                 currentPage?.SetBusy("BACKING_UP_SAVEGAMES".GetLocalizedString());
                 var filesToProcess = _headerProcessor?.ProcessedFiles ?? new();
 
                 foreach (var file in filesToProcess)
                 {
-                    file.Md5 = Md5Utils.ComputeMd5Hash(file.Data);
+                    file.Md5 = CryptoUtils.ComputeMd5Hash(file.Data);
                 }
 
                 filesToProcess = filesToProcess.DistinctBy(f => f.Md5).ToList();
@@ -243,21 +274,25 @@ public class GameWithStatsService : IViewService, IDisposable
     public void LaunchCommunitySetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy("LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        currentPage?.SetBusy(
+            "LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.CommunitySetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
         }
     }
 
-    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false, string? arguments = null)
+    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false,
+        string? arguments = null)
     {
         var executableFileNameOnly = Path.GetFileName(executable);
         string workingDirectory = string.Empty;
         if (game.GameMetadata.InstallDirectory != null)
         {
-            workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable)) ?? string.Empty;
+            workingDirectory = Path.GetDirectoryName(Path.Combine(game.GameMetadata.InstallDirectory, executable)) ??
+                               string.Empty;
         }
+
         // Process.StartTime is not supported under Linux. We instead keep track of the start time with this field. 
         _startDate = DateTime.Now;
 
@@ -307,8 +342,14 @@ public class GameWithStatsService : IViewService, IDisposable
         {
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
-            process.OutputDataReceived += (_, args) => { if (args.Data != null) stdoutBuilder.AppendLine(args.Data); };
-            process.ErrorDataReceived  += (_, args) => { if (args.Data != null) stderrBuilder.AppendLine(args.Data); };
+            process.OutputDataReceived += (_, args) =>
+            {
+                if (args.Data != null) stdoutBuilder.AppendLine(args.Data);
+            };
+            process.ErrorDataReceived += (_, args) =>
+            {
+                if (args.Data != null) stderrBuilder.AppendLine(args.Data);
+            };
         }
 
         if (trackPlayTime)
@@ -317,7 +358,7 @@ public class GameWithStatsService : IViewService, IDisposable
             {
                 var p = (Process)sender!;
                 LogProcessOutputOnError(p, stdoutBuilder, stderrBuilder);
-                await OnGameExited(game, p);
+                await OnGameExited(game, p, stdoutBuilder.ToString(), stderrBuilder.ToString());
             };
         }
         else
@@ -384,9 +425,11 @@ public class GameWithStatsService : IViewService, IDisposable
                 {
                     Directory.Delete(installDir, true);
                 }
+
                 await _gameDataService.MarkGameAsUninstalled(gameId);
             }
         }
+
         await NavigationManager.GoBack();
     }
 
