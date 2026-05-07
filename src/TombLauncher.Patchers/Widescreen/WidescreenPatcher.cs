@@ -60,10 +60,6 @@ public class WidescreenPatcher : IPatcher
         foreach (var affectedFile in executablePath.AffectedFiles.Where(f => f.ChangeType == ChangeType.BinaryEdit))
         {
             var bytes = await File.ReadAllBytesAsync(affectedFile.Filename);
-            if (Math.Abs(parameters.OriginalAspectRatio - 0) < float.Epsilon)
-            {
-                parameters.OriginalAspectRatio = FourByThreeAspectRatio;
-            }
 
             ApplyAspectRatioCorrection(parameters, bytes, affectedFile);
             ApplyCameraDistanceCorrection(parameters, bytes, affectedFile);
@@ -129,7 +125,7 @@ public class WidescreenPatcher : IPatcher
             if (bytes[i] == 0xA1 && bytes[i + 5] == 0x99)
             {
                 affectedFile.Offset = i;
-                var fov = ((int)(parameters.TargetFov / (4.0 / 3.0))) << 8 | 0xB8;
+                var fov = (int)(parameters.TargetFov / FourByThreeAspectRatio) << 8 | 0xB8;
                 var fovBytes = BitConverter.GetBytes(fov);
                 for (var j = 0; j < 4; j++)
                 {
@@ -147,7 +143,7 @@ public class WidescreenPatcher : IPatcher
             return;
         
         // In an unpatched executable should be 0xAB 0xAA 0xAA 0X3F
-        var originalAspectRatioBytes = BitConverter.GetBytes(parameters.OriginalAspectRatio);
+        var originalAspectRatioBytes = BitConverter.GetBytes(FourByThreeAspectRatio);
         var targetAspectRatioBytes = BitConverter.GetBytes(parameters.TargetAspectRatio);
         var i = 0;
         do

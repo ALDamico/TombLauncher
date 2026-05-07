@@ -1,4 +1,3 @@
-using TombLauncher.Contracts;
 using TombLauncher.Installers;
 using TombLauncher.Patchers.Widescreen;
 
@@ -39,7 +38,6 @@ public class WidescreenPatcherTests
         var parameters = new WidescreenPatcherParameters()
         {
             TargetFolder = "Data",
-            OriginalAspectRatio = (float)4 / 3,
             TargetAspectRatio = (float)16 / 9,
             UpdateAspectRatio = true
         };
