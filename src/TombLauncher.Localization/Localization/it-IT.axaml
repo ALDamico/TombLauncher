@@ -197,6 +197,7 @@
     <system:String x:Key="AI_TROUBLESHOOTING">Chiedi aiuto a Laura</system:String>
     <system:String x:Key="LAUNCH_OPTIONS">Opzioni di avvio</system:String>
     <system:String x:Key="LAUNCH_OPTIONS_TOOLTIP">Ti consente di impostare il tipo di motore di questo gioco, l'eseguibile da usare per avviarlo, e il comando per avviare il setup.</system:String>
+    <system:String x:Key="LAUNCH_OPTIONS_EXECUTABLE_READ_ERROR">Si è verificato un errore durante la lettura della directory di installazione del gioco. Impossibile aprire la pagina delle opzioni di avvio.</system:String>
     <system:String x:Key="ENGINE_TYPE">Tipo di motore</system:String>
     <system:String x:Key="AUTO_DETECT">Rileva automaticamente</system:String>
     <system:String x:Key="GAME_EXECUTABLE">Eseguibile</system:String>
