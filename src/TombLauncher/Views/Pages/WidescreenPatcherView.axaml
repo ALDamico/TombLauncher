@@ -26,7 +26,7 @@
                                  Padding="16,8"
                                  Icon="PlayLine"
                                  Text="{localization:Translate APPLY_WIDESCREEN_PATCH}"
-                                 IsVisible="{Binding CanApplyPatch}"
+                                 IsVisible="{Binding CanApplyPatchByFileState}"
                                  Command="{Binding ApplyPatchCommand}" />
             <controls:IconButton DockPanel.Dock="Right"
                                  Classes="btn-primary"
