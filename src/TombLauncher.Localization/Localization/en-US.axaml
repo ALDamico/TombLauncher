@@ -493,5 +493,26 @@
     <system:String x:Key="ERROR_WHILE_RESTORING_BACKUP">Error while restoring backup of {0}: {1}</system:String>
     <system:String x:Key="MD5_MISMATCH_IN_TARGET_DATA">MD5 check of the restored data failed</system:String>
     <system:String x:Key="ERROR_WHILE_READING_FILE">Error while reading file {0}: {1}</system:String>
+    <system:String x:Key="REVERT_WIDESCREEN_PATCH">Revert widescreen patch</system:String>
+    <system:String x:Key="CHECKING_60_FPS_SUPPORT">Checking 60 FPS support...</system:String>
+    <system:String x:Key="APPLYING_WIDESCREEN_PATCH">Applying widescreen patch...</system:String>
+    <system:String x:Key="REVERTING_WIDESCREEN_PATCH">Reverting widescreen patch...</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_SUCCESSFULLY_APPLIED">Widescreen patch applied successfully.</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_APPLIED_TITLE">Patch applied</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_ERROR_TITLE">Patch error</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_SUCCESSFULLY_REVERTED">Widescreen patch reverted successfully.</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_REVERTED_TITLE">Patch reverted</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_REVERSAL_ERROR_TITLE">Revert error</system:String>
+    <system:String x:Key="DETECTING_ENGINE_VERSION">Detecting engine version...</system:String>
+    <system:String x:Key="APPLYING_WIDESCREEN_PATCH_TO_FILE">Patching {0}...</system:String>
+    <system:String x:Key="APPLYING_ASPECT_RATIO_CORRECTION">Applying aspect ratio correction...</system:String>
+    <system:String x:Key="APPLYING_CAMERA_DISTANCE_CORRECTION">Applying camera distance correction...</system:String>
+    <system:String x:Key="APPLYING_FOV_CORRECTION">Applying field of view correction...</system:String>
+    <system:String x:Key="APPLYING_60_FPS_UNLOCK">Applying 60 FPS unlock...</system:String>
+    <system:String x:Key="RETRIEVING_EXISTING_BACKUP">Retrieving existing backup...</system:String>
+    <system:String x:Key="READING_EXECUTABLE_FILE">Reading executable file...</system:String>
+    <system:String x:Key="FINDING_FILE_TO_RESTORE">Locating file to restore...</system:String>
+    <system:String x:Key="CHECKING_GAME_EXECUTABLE_CONSISTENCY">Verifying integrity of restored file...</system:String>
+    <system:String x:Key="RESTORING_GAME_EXECUTABLE">Restoring original executable...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

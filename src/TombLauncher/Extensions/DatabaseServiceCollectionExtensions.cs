@@ -13,7 +13,7 @@ public static class DatabaseServiceCollectionExtensions
     public static IServiceCollection AddDatabaseAccess(this IServiceCollection services,
         string appDataDirectory)
     {
-        services.AddDbContext<TombLauncherDbContext>((sp, opts) =>
+        services.AddDbContextFactory<TombLauncherDbContext>((sp, opts) =>
         {
             var appConfiguration = sp.GetRequiredService<IAppConfiguration>();
             var databasePath = Path.Combine(appDataDirectory,

@@ -491,5 +491,26 @@
     <system:String x:Key="ERROR_WHILE_RESTORING_BACKUP">Errore durante il ripristino del backup di {0}: {1}</system:String>
     <system:String x:Key="MD5_MISMATCH_IN_TARGET_DATA">La verifica MD5 dei dati ripristinati non è riuscita</system:String>
     <system:String x:Key="ERROR_WHILE_READING_FILE">Errore durante la lettura del file {0}: {1}</system:String>
+    <system:String x:Key="REVERT_WIDESCREEN_PATCH">Ripristina patch widescreen</system:String>
+    <system:String x:Key="CHECKING_60_FPS_SUPPORT">Verifica supporto 60 FPS...</system:String>
+    <system:String x:Key="APPLYING_WIDESCREEN_PATCH">Applicazione patch widescreen...</system:String>
+    <system:String x:Key="REVERTING_WIDESCREEN_PATCH">Ripristino patch widescreen...</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_SUCCESSFULLY_APPLIED">Patch widescreen applicata con successo.</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_APPLIED_TITLE">Patch applicata</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_ERROR_TITLE">Errore patch</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_SUCCESSFULLY_REVERTED">Patch widescreen ripristinata con successo.</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_REVERTED_TITLE">Patch ripristinata</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH_REVERSAL_ERROR_TITLE">Errore ripristino</system:String>
+    <system:String x:Key="DETECTING_ENGINE_VERSION">Rilevamento versione motore grafico...</system:String>
+    <system:String x:Key="APPLYING_WIDESCREEN_PATCH_TO_FILE">Patch di {0} in corso...</system:String>
+    <system:String x:Key="APPLYING_ASPECT_RATIO_CORRECTION">Applicazione correzione rapporto di aspetto...</system:String>
+    <system:String x:Key="APPLYING_CAMERA_DISTANCE_CORRECTION">Applicazione correzione distanza telecamera...</system:String>
+    <system:String x:Key="APPLYING_FOV_CORRECTION">Applicazione correzione campo visivo...</system:String>
+    <system:String x:Key="APPLYING_60_FPS_UNLOCK">Applicazione sblocco 60 FPS...</system:String>
+    <system:String x:Key="RETRIEVING_EXISTING_BACKUP">Recupero backup esistente...</system:String>
+    <system:String x:Key="READING_EXECUTABLE_FILE">Lettura file eseguibile...</system:String>
+    <system:String x:Key="FINDING_FILE_TO_RESTORE">Ricerca del file da ripristinare...</system:String>
+    <system:String x:Key="CHECKING_GAME_EXECUTABLE_CONSISTENCY">Verifica integrità del file ripristinato...</system:String>
+    <system:String x:Key="RESTORING_GAME_EXECUTABLE">Ripristino dell'eseguibile originale...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

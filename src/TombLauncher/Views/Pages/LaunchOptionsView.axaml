@@ -141,6 +141,5 @@
                                  Text="{loc:Translate SAVE}"
                                  Command="{Binding SaveCommand}" />
         </StackPanel>
-
     </Grid>
 </UserControl>

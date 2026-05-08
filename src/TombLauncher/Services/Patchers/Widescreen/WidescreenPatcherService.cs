@@ -20,12 +20,14 @@ using TombLauncher.ViewModels;
 
 namespace TombLauncher.Services.Patchers.Widescreen;
 
-public class WidescreenPatcherService
+public class WidescreenPatcherService : IViewService
 {
     public WidescreenPatcherService(WidescreenPatcher patcher, IEngineDetector engineDetector,
         IDbContextFactory<TombLauncherDbContext> dbContextFactory, IPlatformSpecificFeatures platformSpecificFeatures,
+        ViewServiceContext viewServiceContext,
         ILogger<WidescreenPatcherService> logger)
     {
+        ViewContext = viewServiceContext;
         _patcher = patcher;
         _engineDetector = engineDetector;
         _dbContextFactory = dbContextFactory;
@@ -45,10 +47,10 @@ public class WidescreenPatcherService
         return detectionResult.GameEngine is GameEngine.TombRaider2 or GameEngine.TombRaider3;
     }
 
-    public async Task<PatchResult> IsAlreadyApplied(int gameId, CancellationToken cancellationToken)
+    public async Task<PatchResult> IsAlreadyApplied(int gameId, IProgress<string> progress, CancellationToken cancellationToken)
     {
         await using var ctx = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        var fileBackup = await RetrieveFileBackup(ctx, gameId, cancellationToken);
+        var fileBackup = await RetrieveFileBackup(ctx, gameId, progress, cancellationToken);
         if (fileBackup == null)
         {
             return new PatchResult()
@@ -73,8 +75,9 @@ public class WidescreenPatcherService
         };
     }
 
-    private static async Task<FileBackup?> RetrieveFileBackup(TombLauncherDbContext ctx, int gameId, CancellationToken cancellationToken)
+    private static async Task<FileBackup?> RetrieveFileBackup(TombLauncherDbContext ctx, int gameId, IProgress<string> progress, CancellationToken cancellationToken)
     {
+        progress.Report("RETRIEVING_EXISTING_BACKUP".GetLocalizedString());
         return await ctx.FileBackups
             .Where(f => f.GameId == gameId)
             .Where(f => f.FileType == FileType.GameExecutable)
@@ -83,10 +86,10 @@ public class WidescreenPatcherService
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<PatchResult> RevertPatch(GameMetadataViewModel gameMetadataViewModel, CancellationToken cancellationToken)
+    public async Task<PatchResult> RevertPatch(GameMetadataViewModel gameMetadataViewModel, IProgress<string> progress, CancellationToken cancellationToken)
     {
         await using var ctx = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        var fileBackup = await RetrieveFileBackup(ctx, gameMetadataViewModel.Id, cancellationToken);
+        var fileBackup = await RetrieveFileBackup(ctx, gameMetadataViewModel.Id, progress, cancellationToken);
         if (fileBackup == null)
         {
             return PatchResult.UnsuccessfulResult("NO_BACKUP_FOUND".GetLocalizedString());
@@ -97,6 +100,7 @@ public class WidescreenPatcherService
             return PatchResult.UnsuccessfulResult("BACKUP_DATA_EMPTY".GetLocalizedString());
         }
 
+        progress.Report("FINDING_FILE_TO_RESTORE".GetLocalizedString());
         var targetFiles = Directory.GetFiles(gameMetadataViewModel.InstallDirectory!, fileBackup.FileName,
             _platformSpecificFeatures.GetEnumerationOptions());
         var targetFile = targetFiles.FirstOrDefault();
@@ -117,6 +121,7 @@ public class WidescreenPatcherService
                 "ERROR_WHILE_RESTORING_BACKUP".GetLocalizedString(fileBackup.FileName, ex.Message));
         }
 
+        progress.Report("CHECKING_GAME_EXECUTABLE_CONSISTENCY".GetLocalizedString());
         var md5 = await CryptoUtils.ComputeMd5Hash(tempDestination);
         if (md5 != fileBackup.Md5)
         {
@@ -124,6 +129,7 @@ public class WidescreenPatcherService
             return PatchResult.UnsuccessfulResult("MD5_MISMATCH_IN_TARGET_DATA".GetLocalizedString());
         }
 
+        progress.Report("RESTORING_GAME_EXECUTABLE".GetLocalizedString());
         var fullExecutablePath =
             Path.Combine(gameMetadataViewModel.InstallDirectory!, gameMetadataViewModel.ExecutablePath!);
         
@@ -147,11 +153,11 @@ public class WidescreenPatcherService
         };
     }
 
-    public async Task<PatchResult> ApplyPatch(GameMetadataViewModel viewModel, WidescreenPatcherParameters parameters, CancellationToken cancellationToken)
+    public async Task<PatchResult> ApplyPatch(GameMetadataViewModel viewModel, WidescreenPatcherParameters parameters, IProgress<string> progress, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-
-        var isAlreadyApplied = await IsAlreadyApplied(viewModel.Id, cancellationToken);
+        
+        var isAlreadyApplied = await IsAlreadyApplied(viewModel.Id, progress, cancellationToken);
 
         if (isAlreadyApplied.IsSuccessful)
             return isAlreadyApplied;
@@ -159,7 +165,7 @@ public class WidescreenPatcherService
         var executablePath = Path.Combine(viewModel.InstallDirectory!, viewModel.ExecutablePath!);
 
         byte[] binaryData;
-
+        progress.Report("READING_EXECUTABLE_FILE".GetLocalizedString());
         try
         {
             binaryData = await File.ReadAllBytesAsync(executablePath, cancellationToken);
@@ -172,7 +178,7 @@ public class WidescreenPatcherService
         }
         var md5 = CryptoUtils.ComputeMd5Hash(binaryData);
         
-        var patchResult = await _patcher.ApplyPatch(viewModel.InstallDirectory!, parameters);
+        var patchResult = await _patcher.ApplyPatch(viewModel.InstallDirectory!, parameters, progress);
         if (!patchResult.IsSuccessful)
             return patchResult;
 
@@ -193,4 +199,6 @@ public class WidescreenPatcherService
 
         return patchResult;
     }
+
+    public ViewServiceContext ViewContext { get; }
 }

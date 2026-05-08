@@ -1,8 +1,12 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Patchers.Widescreen;
 using TombLauncher.Services.Patchers.Widescreen;
@@ -25,6 +29,12 @@ public partial class WidescreenPatcherViewModel : PageViewModel
     [ObservableProperty] private bool _update60Fps;
     [ObservableProperty] private bool _is60FpsAvailable;
     [ObservableProperty] private string? _fps60TooltipText;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanRevertPatch))]
+    [NotifyCanExecuteChangedFor(nameof(ApplyPatchCommand), nameof(RevertPatchCommand))]
+    private bool _canApplyPatch;
+    public bool CanRevertPatch => !CanApplyPatch;
 
     public ObservableCollection<CameraDistanceOptionViewModel> CameraDistanceOptions { get; }
 
@@ -54,18 +64,89 @@ public partial class WidescreenPatcherViewModel : PageViewModel
         SelectedCameraDistanceOption = oneAndAHalfPreset; // OneAndAHalf
     }
 
-    public override Task OnNavigatedTo(object parameter)
+    public override async Task OnNavigatedTo(object parameter)
     {
         _gameMetadata = (GameMetadataViewModel)parameter;
-        Is60FpsAvailable = _patcherService.Check60FpsSupport(_gameMetadata.InstallDirectory ?? "");
-        if (!Is60FpsAvailable)
-            Fps60TooltipText = "FPS_60_NOT_SUPPORTED".GetLocalizedString(_gameMetadata.GameEngine.GetDescription());
+        using (BusyScope("CHECKING_60_FPS_SUPPORT".GetLocalizedString()))
+        {
+            Is60FpsAvailable = _patcherService.Check60FpsSupport(_gameMetadata.InstallDirectory ?? "");
+            if (!Is60FpsAvailable)
+                Fps60TooltipText = "FPS_60_NOT_SUPPORTED".GetLocalizedString(_gameMetadata.GameEngine.GetDescription());
 
-        return Task.CompletedTask;
+            var progress = GetProgress();
+            var isPatchApplied = await _patcherService.IsAlreadyApplied(_gameMetadata.Id, progress, CancellationToken.None);
+            if (!isPatchApplied.IsSuccessful)
+            {
+                CanApplyPatch = true;
+            }
+        }
     }
 
-    [RelayCommand]
+    private IProgress<string> GetProgress() => new Progress<string>(msg => BusyMessage = msg);
+
+    private int GetCameraDistance()
+    {
+        if (SelectedCameraDistanceOption.IsCustom)
+            return CustomCameraDistance;
+
+        return (int)SelectedCameraDistanceOption.Value;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanApplyPatch))]
     private async Task ApplyPatch()
     {
+        var parameters = new WidescreenPatcherParameters()
+        {
+            Engine = _gameMetadata!.GameEngine,
+            Update60Fps = Update60Fps,
+            UpdateAspectRatio = UpdateAspectRatio,
+            UpdateCameraDistance = UpdateCameraDistance,
+            UpdateFov = UpdateFov,
+            TargetAspectRatio = AspectRatioWidth / AspectRatioHeight,
+            TargetCameraDistance = GetCameraDistance(),
+            TargetFov = TargetFov
+        };
+
+        using (BusyScope("APPLYING_WIDESCREEN_PATCH".GetLocalizedString()))
+        {
+            var progress = GetProgress();
+            var patchResult = await _patcherService.ApplyPatch(_gameMetadata, parameters, progress, CancellationToken.None);
+
+            if (patchResult.IsSuccessful)
+            {
+                CanApplyPatch = false;
+                await _patcherService.ViewContext.PopupService.ShowLocalized(
+                    "WIDESCREEN_PATCH_SUCCESSFULLY_APPLIED".GetLocalizedString(),
+                    "WIDESCREEN_PATCH_APPLIED_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Information);
+            }
+            else
+            {
+                await _patcherService.ViewContext.PopupService.ShowLocalized(patchResult.Message,
+                    "WIDESCREEN_PATCH_ERROR_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Error);
+            }
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanRevertPatch))]
+    private async Task RevertPatch()
+    {
+        using (BusyScope("REVERTING_WIDESCREEN_PATCH".GetLocalizedString()))
+        {
+            var progress = GetProgress();
+            var patchReversalResult =
+                await _patcherService.RevertPatch(_gameMetadata!, progress, CancellationToken.None);
+            if (patchReversalResult.IsSuccessful)
+            {
+                CanApplyPatch = true;
+                await _patcherService.ViewContext.PopupService.ShowLocalized(
+                    "WIDESCREEN_PATCH_SUCCESSFULLY_REVERTED".GetLocalizedString(),
+                    "WIDESCREEN_PATCH_REVERTED_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Information);
+            }
+            else
+            {
+                await _patcherService.ViewContext.PopupService.ShowLocalized(patchReversalResult.Message,
+                    "WIDESCREEN_PATCH_REVERSAL_ERROR_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Error);
+            }
+        }
     }
 }

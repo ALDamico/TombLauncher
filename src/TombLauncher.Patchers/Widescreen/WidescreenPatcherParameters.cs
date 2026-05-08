@@ -4,7 +4,6 @@ namespace TombLauncher.Patchers.Widescreen;
 
 public class WidescreenPatcherParameters
 {
-    public required string TargetFolder { get; init; }
     public bool UpdateAspectRatio { get; init; }
     public bool UpdateCameraDistance { get; init; }
     public float TargetAspectRatio { get; init; }
