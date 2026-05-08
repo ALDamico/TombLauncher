@@ -18,6 +18,26 @@ Direct code interventions are limited to **repetitive or tedious tasks** (renami
 
 When in doubt, discuss first and act only when explicitly asked.
 
+## Release flow
+
+1. Merge all feature/fix branches into `develop` via PR.
+2. Create `release/X.Y.Z` branch from `develop`:
+   ```bash
+   git checkout origin/develop -b release/X.Y.Z
+   ```
+3. Bump the version in **two files** (use the `bump-version` skill):
+   - `src/TombLauncher/TombLauncher.csproj` — `<Version>`
+   - `deploy/TombLauncher.pupnet.conf` — `AppVersionRelease`
+4. Commit: `chore(release): bump version to X.Y.Z`
+5. Tag the bump commit **before** pushing:
+   ```bash
+   git tag vX.Y.Z
+   ```
+6. Push branch and tag, then open PR `release/X.Y.Z` → `master`.
+7. The CI pipeline triggers on the tag and builds the release artifacts.
+
+Version scheme: `MAJOR.MINOR.PATCH` — bump MINOR for new features, PATCH for bugfix-only releases.
+
 ## Commands
 
 ```bash
