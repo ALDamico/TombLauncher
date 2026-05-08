@@ -13,7 +13,8 @@
         <ToolTip.Tip>
             <StackPanel Orientation="Vertical">
                 <TextBlock
-                    Text="{Binding ElementName=InfotipRoot, Path=Header}">
+                    Text="{Binding ElementName=InfotipRoot, Path=Header}" 
+                    IsVisible="{Binding ElementName=InfotipRoot, Path=Header, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                 </TextBlock>
                 <Separator IsVisible="{Binding ElementName=InfotipRoot, Path=Header, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
                 <TextBlock TextWrapping="Wrap"
