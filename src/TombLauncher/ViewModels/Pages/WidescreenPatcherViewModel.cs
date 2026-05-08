@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Patchers.Widescreen;
+using TombLauncher.Services.Patchers.Widescreen;
 
 namespace TombLauncher.ViewModels.Pages;
 

@@ -484,5 +484,12 @@
     <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_AND_HALF_BLOCKS">2 blocchi e mezzo</system:String>
     <system:String x:Key="CAMERA_DISTANCE_PRESET_THREE_BLOCKS">3 blocchi</system:String>
     <system:String x:Key="CAMERA_DISTANCE_PRESET_CUSTOM">Personalizzato</system:String>
+    <system:String x:Key="PATCH_NOT_YET_APPLIED">Patch non ancora applicata</system:String>
+    <system:String x:Key="NO_BACKUP_FOUND">Nessun backup trovato</system:String>
+    <system:String x:Key="BACKUP_DATA_EMPTY">Il backup è vuoto</system:String>
+    <system:String x:Key="DESTINATION_FILE_NOT_FOUND">File di destinazione non trovato: {0}</system:String>
+    <system:String x:Key="ERROR_WHILE_RESTORING_BACKUP">Errore durante il ripristino del backup di {0}: {1}</system:String>
+    <system:String x:Key="MD5_MISMATCH_IN_TARGET_DATA">La verifica MD5 dei dati ripristinati non è riuscita</system:String>
+    <system:String x:Key="ERROR_WHILE_READING_FILE">Errore durante la lettura del file {0}: {1}</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

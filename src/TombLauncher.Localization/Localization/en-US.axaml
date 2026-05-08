@@ -486,5 +486,12 @@
     <system:String x:Key="60_FPS">60 FPS</system:String>
     <system:String x:Key="APPLY_60_FPS">Apply 60 FPS unlock</system:String>
     <system:String x:Key="FPS_60_NOT_SUPPORTED">FPS unlock is not supported for {0}.</system:String>
+    <system:String x:Key="PATCH_NOT_YET_APPLIED">Patch not yet applied</system:String>
+    <system:String x:Key="NO_BACKUP_FOUND">No backup found</system:String>
+    <system:String x:Key="BACKUP_DATA_EMPTY">Backup data is empty</system:String>
+    <system:String x:Key="DESTINATION_FILE_NOT_FOUND">Destination file not found: {0}</system:String>
+    <system:String x:Key="ERROR_WHILE_RESTORING_BACKUP">Error while restoring backup of {0}: {1}</system:String>
+    <system:String x:Key="MD5_MISMATCH_IN_TARGET_DATA">MD5 check of the restored data failed</system:String>
+    <system:String x:Key="ERROR_WHILE_READING_FILE">Error while reading file {0}: {1}</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

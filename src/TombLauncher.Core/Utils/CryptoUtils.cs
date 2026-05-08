@@ -10,6 +10,12 @@ public static class CryptoUtils
         return Convert.ToHexStringLower(hash);
     }
 
+    public static async Task<string> ComputeMd5Hash(string path)
+    {
+        await using var stream = File.OpenRead(path);
+        return await ComputeMd5Hash(stream);
+    }
+
     public static string ComputeMd5Hash(byte[] bytes)
     {
         var hash = MD5.HashData(bytes);
