@@ -162,6 +162,11 @@
         <Setter Property="FontWeight" Value="DemiBold" />
         <Setter Property="Margin" Value="0,0,0,4" />
     </Style>
+    <Style Selector="TextBlock.section-title">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+    </Style>
     <Style Selector="TextBlock.label">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Margin" Value="5, 0"></Setter>
@@ -548,6 +553,69 @@
     <Style Selector="Border.search-bar TextBox:pointerover /template/ Border#PART_BorderElement">
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <!-- Discrete-dots Slider: round thumb + tick markers below the track -->
+    <Style Selector="Slider.discrete-dots">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="28,6" VerticalAlignment="Center">
+                    <!-- Background line -->
+                    <Border Grid.Row="0" Height="2" VerticalAlignment="Center"
+                            Background="{DynamicResource SecondaryBrush}"
+                            Margin="10,0" CornerRadius="1" IsHitTestVisible="False"/>
+                    <!-- Track -->
+                    <Track Grid.Row="0" Name="PART_Track"
+                           Minimum="{TemplateBinding Minimum}"
+                           Maximum="{TemplateBinding Maximum}"
+                           Value="{TemplateBinding Value}"
+                           IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                           Orientation="Horizontal">
+                        <Track.DecreaseButton>
+                            <RepeatButton Name="PART_DecreaseButton" Focusable="False" IsTabStop="False">
+                                <RepeatButton.Template>
+                                    <ControlTemplate>
+                                        <Border Background="{DynamicResource PrimaryBrush}"
+                                                Height="2" VerticalAlignment="Center" CornerRadius="1"/>
+                                    </ControlTemplate>
+                                </RepeatButton.Template>
+                            </RepeatButton>
+                        </Track.DecreaseButton>
+                        <Track.Thumb>
+                            <Thumb Name="PART_Thumb">
+                                <Thumb.Template>
+                                    <ControlTemplate>
+                                        <Ellipse Width="20" Height="20"
+                                                 Fill="{DynamicResource PrimaryBrush}"
+                                                 Stroke="{DynamicResource PageBackgroundBrush}"
+                                                 StrokeThickness="2"/>
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Track.Thumb>
+                        <Track.IncreaseButton>
+                            <RepeatButton Name="PART_IncreaseButton" Focusable="False" IsTabStop="False">
+                                <RepeatButton.Template>
+                                    <ControlTemplate>
+                                        <Border Background="Transparent" Height="2" VerticalAlignment="Center"/>
+                                    </ControlTemplate>
+                                </RepeatButton.Template>
+                            </RepeatButton>
+                        </Track.IncreaseButton>
+                    </Track>
+                    <!-- Tick dot markers aligned to snap positions -->
+                    <Grid Grid.Row="1" Margin="6,0" IsHitTestVisible="False"
+                          ColumnDefinitions="8,*,8,*,8,*,8,*,8">
+                        <Ellipse Grid.Column="0" Width="4" Height="4" Fill="{DynamicResource SecondaryBrush}"/>
+                        <Ellipse Grid.Column="2" Width="4" Height="4" Fill="{DynamicResource SecondaryBrush}"/>
+                        <Ellipse Grid.Column="4" Width="4" Height="4" Fill="{DynamicResource SecondaryBrush}"/>
+                        <Ellipse Grid.Column="6" Width="4" Height="4" Fill="{DynamicResource SecondaryBrush}"/>
+                        <Ellipse Grid.Column="8" Width="4" Height="4" Fill="{DynamicResource SecondaryBrush}"/>
+                    </Grid>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
     </Style>
 
     <!-- Filter Chip -->

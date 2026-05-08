@@ -1,3 +1,4 @@
+using TombLauncher.Contracts.SupportMatrix;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Core.PlatformSpecific;
@@ -19,4 +20,5 @@ public interface IPlatformSpecificFeatures
     string? GetWineVersion(string winePath);
     List<ProtonInstallationDto> FindAvailableProtonInstallations();
     string? GetProtonVersion(string protonPath);
+    ISupportMatrix SupportMatrix { get; }
 }

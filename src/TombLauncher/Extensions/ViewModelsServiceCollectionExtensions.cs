@@ -20,6 +20,8 @@ public static class ViewModelsServiceCollectionExtensions
             .AddTransient<LaunchOptionsViewModel>()
             .AddSingleton<MainWindowViewModel>()
             .AddTransient<LaunchOptionsViewModel>()
-            .AddSingleton<AboutPageViewModel>();
+            .AddSingleton<AboutPageViewModel>()
+            .AddTransient<AiChatViewModel>()
+            .AddTransient<WidescreenPatcherViewModel>();
     }
 }

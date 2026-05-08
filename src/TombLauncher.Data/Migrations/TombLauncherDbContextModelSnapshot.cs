@@ -50,6 +50,9 @@ namespace TombLauncher.Data.Migrations
                     b.Property<DateTime>("BackedUpOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("BackupSource")
+                        .HasColumnType("TEXT");
+
                     b.Property<byte[]>("Data")
                         .HasColumnType("BLOB");
 
@@ -233,13 +236,25 @@ namespace TombLauncher.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("CrashFileContent")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("ExitCode")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("GameId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StdErr")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StdOut")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

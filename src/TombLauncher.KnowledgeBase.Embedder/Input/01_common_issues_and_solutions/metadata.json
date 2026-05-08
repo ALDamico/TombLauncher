@@ -1,0 +1,46 @@
+{
+  "documentTitle": "Common Issues and Solutions",
+  "appliesTo": ["TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5"],
+  "platforms": ["Windows", "Linux"],
+  "source": "http://forum3314.trle.net/viewtopic.php?t=33220",
+  "sections": [
+    {
+      "header": "Why does the level fail to start with the error message \"Error trying to load plugin...\"?",
+      "appliesTo": ["TombRaider4", "TombRaider5"]
+    },
+    {
+      "header": "Why does the level fail to start with the error message \"Error: missing library flep.dll\"?",
+      "appliesTo": ["TombRaider4", "TombRaider5"]
+    },
+    {
+      "header": "Why does the game freeze when I try to save or load a game? Why does the game show a black screen in place of the save or load screen?",
+      "appliesTo": ["TombRaider4", "TombRaider5"]
+    },
+    {
+      "header": "Why does the game appear horizontally stretched? Why does Lara appear short and large?",
+      "appliesTo": ["TombRaider1", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5"],
+      "appVersionRange": "(,1.3.0)"
+    },
+    {
+      "header": "Why does the game appear horizontally stretched? Why does Lara appear short and large?",
+      "appliesTo": ["TombRaider1", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5"],
+      "appVersionRange": "[1.3.0,)"
+    },
+    {
+      "header": "Why does the game appear zoomed-in? Why does the game exceed the screen/window borders?",
+      "appliesTo": ["TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5"]
+    },
+    {
+      "header": "Why do some keyboard commands not work correctly? Why does the screen flips using certain key combinations?",
+      "appliesTo": ["TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5"]
+    },
+    {
+      "header": "Why does the game crash when loading a savegame I downloaded from the Internet? Why do my savegames from a while ago not work anymore?",
+      "appliesTo": ["TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5"]
+    },
+    {
+      "header": "Why don't my savegames work anymore from one play session to the next?",
+      "appliesTo": ["TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5"]
+    }
+  ]
+}

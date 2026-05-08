@@ -1,0 +1,19 @@
+{
+  "documentTitle": "Linux Compatibility",
+  "appliesTo": ["TombRaider1", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "Tr1x", "Tr2x", "Ten"],
+  "platforms": ["Linux"],
+  "sections": [
+    {
+      "header": "Why do TEN levels crash on start?",
+      "appliesTo": ["Ten"]
+    },
+    {
+      "header": "Do TR1X/TR2X levels support running with the native Linux executable?",
+      "appliesTo": ["Tr1x", "Tr2x"]
+    },
+    {
+      "header": "Can Tomb Raider 1 and Tomb Raider 2 levels be patched to run via TR1X/TR2X?",
+      "appliesTo": ["TombRaider1", "TombRaider2", "Tr1x", "Tr2x"]
+    }
+  ]
+}

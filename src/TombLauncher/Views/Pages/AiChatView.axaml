@@ -1,0 +1,77 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:ai="clr-namespace:TombLauncher.Views.Ai"
+             xmlns:helpers="clr-namespace:TombLauncher.Helpers"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.AiChatView"
+             x:DataType="viewModels:AiChatViewModel">
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <viewModels:AiChatViewModel />
+    </Design.DataContext>
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <EventTriggerBehavior.Actions>
+                <InvokeCommandAction Command="{Binding InitCommand}" />
+            </EventTriggerBehavior.Actions>
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    <DockPanel LastChildFill="True">
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+            <controls:IconButton DockPanel.Dock="Right" Classes="btn-primary" Text="{localization:Translate SEND}"
+                                 Padding="16, 8"
+                                 Height="65"
+                                 FontSize="24"
+                                 Margin="16, 0" Icon="SendPlane2Line" Command="{Binding SendMessageCommand}" />
+            <TextBox DockPanel.Dock="Bottom" AcceptsReturn="True" AcceptsTab="False"
+                     CornerRadius="12"
+                     Watermark="{localization:Translate ASK_LAURA_SOMETHING}"
+                     MinHeight="48"
+                     MaxHeight="200"
+                     
+                     Text="{Binding CurrentText}">
+                <TextBox.KeyBindings>
+                    <KeyBinding Command="{Binding SendMessageCommand}" Gesture="Enter" />
+                </TextBox.KeyBindings>
+                <TextBox.InnerLeftContent>
+                    <iconPacks:PackIconRemixIcon Classes="text-muted"
+                                                 Margin="16, 0"
+                                                 VerticalAlignment="Center"
+                                                 Width="16"
+                                                 Height="16"
+                                                 Kind="Chat1Line" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+        </DockPanel>
+        <StackPanel Margin="32, 0" DockPanel.Dock="Bottom" Orientation="Horizontal" IsVisible="{Binding IsGenerating}">
+            <controls:RingLoader Height="32" Width="32"></controls:RingLoader>
+            <TextBlock Margin="8, 4" VerticalAlignment="Center" FontStyle="Italic" Classes="text-muted"
+                       helpers:FadeOnTextChange.IsEnabled="True"
+                       Text="{Binding CurrentStatusText}">
+            </TextBlock>
+        </StackPanel>
+        <Panel>
+            <controls:EmptyStateView
+                Icon="BrainAi3Fill"
+                Title="{localization:Translate AI_CHAT_EMPTY_TITLE}"
+                Subtitle="{localization:Translate AI_CHAT_EMPTY_SUBTITLE}"
+                IsVisible="{Binding IsHistoryEmpty}" />
+            <ScrollViewer helpers:AutoScroll.IsEnabled="True">
+                <ItemsRepeater ItemsSource="{Binding MessageHistory}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <ai:MessageBubble Margin="0, 8" />
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </Panel>
+    </DockPanel>
+</UserControl>

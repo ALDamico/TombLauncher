@@ -6,6 +6,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Data.Database.Services;
@@ -22,7 +23,7 @@ public class NewGameService : IViewService
     public NewGameService(ViewServiceContext viewContext, GameDataService gameDataService, GameHashDataService gameHashDataService,
         GameFileHashCalculator hashCalculator,
         TombRaiderLevelInstaller levelInstaller,
-        TombRaiderEngineDetector engineDetector,
+        IEngineDetector engineDetector,
         ILogger<NewGameService> logger,
         GameMetadataMapper gameMetadataMapper)
     {
@@ -45,7 +46,7 @@ public class NewGameService : IViewService
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly GameFileHashCalculator _gameFileHashCalculator;
     private readonly TombRaiderLevelInstaller _levelInstaller;
-    private readonly TombRaiderEngineDetector _engineDetector;
+    private readonly IEngineDetector _engineDetector;
 
     public async Task<string> PickZipArchive()
     {

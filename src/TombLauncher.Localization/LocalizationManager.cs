@@ -66,7 +66,7 @@ public class LocalizationManager : ILocalizationManager
             }
         }
 
-        return cultureInfos;
+        return cultureInfos.OrderBy(l => l.DisplayName).ToList();
     }
 
     public void ChangeLanguage(CultureInfo targetLanguage)
@@ -135,7 +135,7 @@ public class LocalizationManager : ILocalizationManager
         return dictionary;
     }
 
-    public string GetLocalizedString(string key, params object[] parms)
+    public string GetLocalizedString(string key, params object[]? parms)
     {
         return !_localizedStrings.TryGetValue(key, out var s) ? key : string.Format((s as string) ?? key, parms);
     }

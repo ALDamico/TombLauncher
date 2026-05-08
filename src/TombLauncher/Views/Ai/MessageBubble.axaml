@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ai="clr-namespace:TombLauncher.ViewModels.Ai"
+             xmlns:ai1="clr-namespace:TombLauncher.Ai;assembly=TombLauncher.Ai"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Ai.MessageBubble"
+             x:DataType="ai:AiMessageViewModel">
+    <UserControl.Styles>
+        <Style Selector="Border.user">
+            <Setter Property="Background" Value="{DynamicResource ChatBubbleUserBrush}"/>
+            <Setter Property="HorizontalAlignment" Value="Right"></Setter>
+        </Style>
+        <Style Selector="Border.assistant">
+            <Setter Property="Background" Value="{DynamicResource ChatBubbleAssistantBrush}"/>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+        </Style>
+        <Style Selector="Border.tool-use">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+        </Style>
+    </UserControl.Styles>
+    <Border CornerRadius="12" Padding="8" 
+            Classes.user="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.User}}"
+            Classes.assistant="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.Assistant}}"
+            Classes.tool-use="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.ToolUse}}">
+        <StackPanel Orientation="Vertical" Margin="8">
+            
+            <TextBlock HorizontalAlignment="Right" Classes="text-muted small" FontWeight="DemiBold" Text="{Binding SentDate}"></TextBlock>
+            <DockPanel LastChildFill="True" 
+                       IsVisible="{Binding MessageType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static ai1:MessageType.ToolUse}}">
+                <iconPacks:PackIconRemixIcon DockPanel.Dock="Left" VerticalAlignment="Center" Kind="HammerLine" 
+                                             Classes="text-muted" Width="9" Height="9" Margin="0, 0, 4, 0" />
+                <SelectableTextBlock Text="Tool used:" Classes="text-muted" FontWeight="DemiBold" />
+            </DockPanel>
+            <SelectableTextBlock TextWrapping="Wrap" Text="{Binding Text}" />
+        </StackPanel>
+    </Border>
+</UserControl>

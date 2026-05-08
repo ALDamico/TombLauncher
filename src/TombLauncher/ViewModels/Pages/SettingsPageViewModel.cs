@@ -2,8 +2,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-
+using TombLauncher.Ai.Factories;
+using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
@@ -21,7 +23,11 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         IPlatformSpecificFeatures platformSpecificFeatures, 
         IAppFileOperationsService appFileOperationsService, 
         ILayeredAppConfiguration appConfiguration,
-        SettingsMapper settingsMapper)
+        SettingsMapper settingsMapper,
+        AiMapper aiMapper,
+        NotificationService notificationService,
+        AiBackendFactory aiBackendFactory,
+        KbUpdateService kbUpdateService)
     {
         _settingsService = settingsService;
         _settingsProvider = settingsProvider;
@@ -30,6 +36,10 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         _appFileOperationsService = appFileOperationsService;
         _appConfiguration = appConfiguration;
         _settingsMapper = settingsMapper;
+        _aiMapper = aiMapper;
+        _notificationService = notificationService;
+        _aiBackendFactory = aiBackendFactory;
+        _kbUpdateService = kbUpdateService;
         Sections = new ObservableCollection<SettingsSectionViewModelBase>();
 
         Sections.CollectionChanged += (_, args) =>
@@ -63,6 +73,10 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly IAppFileOperationsService _appFileOperationsService;
     private readonly ILayeredAppConfiguration _appConfiguration;
     private readonly SettingsMapper _settingsMapper;
+    private readonly AiMapper _aiMapper;
+    private readonly NotificationService _notificationService;
+    private readonly AiBackendFactory _aiBackendFactory;
+    private readonly KbUpdateService _kbUpdateService;
     [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -79,72 +93,91 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         RaiseCanExecuteChanged(SaveCommand);
     }
 
-    public override Task OnNavigatedTo(object parameter)
+    public override async Task OnNavigatedTo(object parameter)
     {
-        if (IsInitialized)
-            return Task.CompletedTask;
-
-        IsInitialized = true;
-        var appearanceCoreSettings = _settingsProvider.GetAppearanceSettings();
-        var currentTheme = appearanceCoreSettings.ApplicationTheme;
-        var appearanceSettings = new AppearanceSettingsViewModel(this);
-        appearanceSettings.SelectedTheme = appearanceSettings.AvailableThemes.FirstOrDefault(t => t.Value == currentTheme)
-                                           ?? appearanceSettings.AvailableThemes.First();
-        appearanceSettings.DefaultToGridView = appearanceCoreSettings.IsGridViewDefault;
-        var supportedLanguages = _settingsService.GetSupportedLanguages();
-        var languageSettings = new LanguageSettingsViewModel(this)
+        Dispatcher.UIThread.Post(() =>
         {
-            AvailableLanguages = supportedLanguages.OrderBy(l => l.DisplayName).ToObservableCollection(),
-            ApplicationLanguage = supportedLanguages.FirstOrDefault(l =>
-                _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo))
-        };
+            if (IsInitialized)
+                return;
 
-        var downloaders = _settingsService.GetDownloaderViewModels();
-        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService, _popupService, _platformSpecificFeatures, _settingsMapper)
-        {
-            AvailableDownloaders = downloaders.ToObservableCollection()
-        };
-        var gameDetailsSettings = _settingsService.GetGameDetailsSettings(this);
-        var savegameSettings = _settingsService.GetSavegameSettings(this);
+            IsInitialized = true;
+            var appearanceCoreSettings = _settingsProvider.GetAppearanceSettings();
+            var currentTheme = appearanceCoreSettings.ApplicationTheme;
+            var appearanceSettings = new AppearanceSettingsViewModel(this);
+            appearanceSettings.SelectedTheme =
+                appearanceSettings.AvailableThemes.FirstOrDefault(t => t.Value == currentTheme)
+                ?? appearanceSettings.AvailableThemes.First();
+            appearanceSettings.DefaultToGridView = appearanceCoreSettings.IsGridViewDefault;
+            var supportedLanguages = _settingsService.GetSupportedLanguages();
+            var languageSettings = new LanguageSettingsViewModel(this)
+            {
+                AvailableLanguages = supportedLanguages.OrderBy(l => l.DisplayName).ToObservableCollection(),
+                ApplicationLanguage = supportedLanguages.FirstOrDefault(l =>
+                    _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo))
+            };
 
-        var wp = _appConfiguration.WelcomePage;
-        var welcomePageSettings = new WelcomePageSettingsViewModel(this)
-        {
-            ShowQuickStats = wp.ShowQuickStats.GetValueOrDefault(true),
-            ShowQuickActions = wp.ShowQuickActions.GetValueOrDefault(true),
-            ShowRecentlyPlayed = wp.ShowRecentlyPlayed.GetValueOrDefault(true),
-            ShowFavourites = wp.ShowFavourites.GetValueOrDefault(true),
-            RecentlyPlayedCount = wp.RecentlyPlayedCount.GetValueOrDefault(5),
-            FavouritesCount = wp.FavouritesCount.GetValueOrDefault(5),
-            ShowRandomSuggestion = wp.ShowRandomSuggestion.GetValueOrDefault(true),
-            MaxRerolls = wp.RandomGameMaxRerolls.GetValueOrDefault(10)
-        };
+            var downloaders = _settingsService.GetDownloaderViewModels();
+            var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService,
+                _popupService, _platformSpecificFeatures, _settingsMapper)
+            {
+                AvailableDownloaders = downloaders.ToObservableCollection()
+            };
+            var gameDetailsSettings = _settingsService.GetGameDetailsSettings(this);
+            var savegameSettings = _settingsService.GetSavegameSettings(this);
 
-        Sections.Add(appearanceSettings);
-        Sections.Add(languageSettings);
-        Sections.Add(downloaderSettings);
-        Sections.Add(gameDetailsSettings);
-        Sections.Add(savegameSettings);
-        Sections.Add(welcomePageSettings);
+            var wp = _appConfiguration.WelcomePage;
+            var welcomePageSettings = new WelcomePageSettingsViewModel(this)
+            {
+                ShowQuickStats = wp.ShowQuickStats.GetValueOrDefault(true),
+                ShowQuickActions = wp.ShowQuickActions.GetValueOrDefault(true),
+                ShowRecentlyPlayed = wp.ShowRecentlyPlayed.GetValueOrDefault(true),
+                ShowFavourites = wp.ShowFavourites.GetValueOrDefault(true),
+                RecentlyPlayedCount = wp.RecentlyPlayedCount.GetValueOrDefault(5),
+                FavouritesCount = wp.FavouritesCount.GetValueOrDefault(5),
+                ShowRandomSuggestion = wp.ShowRandomSuggestion.GetValueOrDefault(true),
+                MaxRerolls = wp.RandomGameMaxRerolls.GetValueOrDefault(10)
+            };
 
-        var compat = _appConfiguration.Compatibility;
-        var compatVm = new CompatibilitySettingsViewModel(this, _platformSpecificFeatures)
-        {
-            WinePath = compat.WinePath ?? string.Empty,
-            CompatibilityPrefixPath = compat.CompatibilityPrefixPath ?? string.Empty,
-            SelectedTool = compat.CompatibilityTool,
-            ManualProtonPath = compat.ProtonPath,
-        };
-        // Pre-select the stored Proton installation in the ComboBox if it matches
-        if (!string.IsNullOrWhiteSpace(compat.ProtonPath))
-        {
-            compatVm.SelectedProtonInstallation =
-                compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
-        }
-        Sections.Add(compatVm);
+            var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
 
-        AcceptChanges();
-        return Task.CompletedTask;
+            var aiSettings = new AiSettingsViewModel(this, _aiBackendFactory, _aiMapper, _notificationService, _kbUpdateService)
+            {
+                AvailableModels = [],
+                IsEnabled = aiCoreSettings.IsEnabled,
+                SavedModelId = aiCoreSettings.ModelId,
+                EmbeddingModelId = aiCoreSettings.EmbeddingModelId,
+                ApiKey = aiCoreSettings.ApiKey,
+                SelectedBackendType = aiCoreSettings.BackendType,
+                Endpoint = aiCoreSettings.Endpoint,
+            };
+
+            var compat = _appConfiguration.Compatibility;
+            var compatVm = new CompatibilitySettingsViewModel(this, _platformSpecificFeatures)
+            {
+                WinePath = compat.WinePath ?? string.Empty,
+                CompatibilityPrefixPath = compat.CompatibilityPrefixPath ?? string.Empty,
+                SelectedTool = compat.CompatibilityTool,
+                ManualProtonPath = compat.ProtonPath,
+            };
+            // Pre-select the stored Proton installation in the ComboBox if it matches
+            if (!string.IsNullOrWhiteSpace(compat.ProtonPath))
+            {
+                compatVm.SelectedProtonInstallation =
+                    compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
+            }
+
+            Sections.Add(welcomePageSettings);
+            Sections.Add(appearanceSettings);
+            Sections.Add(languageSettings);
+            Sections.Add(downloaderSettings);
+            Sections.Add(gameDetailsSettings);
+            Sections.Add(savegameSettings);
+            Sections.Add(aiSettings);
+
+            Sections.Add(compatVm);
+
+            AcceptChanges();
+        });
     }
 
     protected override async Task SaveInner()

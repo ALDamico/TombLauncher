@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels;
 

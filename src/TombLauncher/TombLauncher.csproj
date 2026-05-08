@@ -13,7 +13,7 @@
         <Copyright>2025 Tomb Launcher developers</Copyright>
         <PackageProjectUrl>https://tomblauncher.app</PackageProjectUrl>
         <RepositoryUrl>https://github.com/ALDamico/TombLauncher</RepositoryUrl>
-        <Version>1.2.0</Version>
+        <Version>1.3.0</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
@@ -47,7 +47,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.1" />
         <PackageReference Include="NetSparkleUpdater.SparkleUpdater" Version="3.0.4" />
         <PackageReference Include="NetSparkleUpdater.UI.Avalonia" Version="3.0.4" />
@@ -81,10 +81,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\TombLauncher.Ai\TombLauncher.Ai.csproj" />
       <ProjectReference Include="..\TombLauncher.Controls\TombLauncher.Controls.csproj" />
       <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
       <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
       <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
+      <ProjectReference Include="..\TombLauncher.Patchers\TombLauncher.Patchers.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -151,5 +153,16 @@
       <Compile Update="Views\Pages\LaunchOptionsView.axaml.cs">
         <DependentUpon>LaunchOptionsView.axaml</DependentUpon>
       </Compile>
+      <Compile Update="Views\Pages\LaunchOptionsView.axaml.cs">
+        <DependentUpon>LaunchOptionsView.axaml</DependentUpon>
+      </Compile>
+      <Compile Update="Views\Ai\AiModelCard.axaml.cs">
+        <DependentUpon>AiModelCard.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Installers\Models\" />
     </ItemGroup>
 </Project>
