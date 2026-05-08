@@ -4,16 +4,18 @@ using TombLauncher.Contracts.Patchers;
 
 namespace TombLauncher.Patchers.Widescreen;
 
-public class WidescreenPatcher : IPatcher
+public class WidescreenPatcher
 {
     public WidescreenPatcher(IEngineDetector engineDetector)
     {
-        EngineDetector = engineDetector;
+        _engineDetector = engineDetector;
     }
+
+    private readonly IEngineDetector _engineDetector;
 
     public async Task<PatchResult> DetectChanges(string targetFolder)
     {
-        var detectorResult = EngineDetector.Detect(targetFolder);
+        var detectorResult = _engineDetector.Detect(targetFolder);
         var engine = detectorResult.GameEngine;
         switch (engine)
         {
@@ -45,19 +47,13 @@ public class WidescreenPatcher : IPatcher
         }
     }
 
-    public async Task<PatchResult> ApplyPatch(string targetFolder, IPatchParameters parameters)
+    public async Task<PatchResult> ApplyPatch(string targetFolder, WidescreenPatcherParameters parameters)
     {
-        if (parameters is not WidescreenPatcherParameters parms)
-        {
-            throw new ArgumentException("Incompatible parameters!", nameof(parameters));
-        }
         var tempResult = await DetectChanges(targetFolder);
         if (!tempResult.IsSuccessful)
-        {
             return tempResult;
-        }
 
-        return await PatchExecutable(tempResult, parms);
+        return await PatchExecutable(tempResult, parameters);
     }
 
     private async Task<PatchResult> PatchExecutable(PatchResult executablePath, WidescreenPatcherParameters parameters)
@@ -168,6 +164,5 @@ public class WidescreenPatcher : IPatcher
         } while (i < bytes.Length - 4);
     }
 
-    public IEngineDetector EngineDetector { get; set; }
     private const float FourByThreeAspectRatio = 4.0F / 3;
 }

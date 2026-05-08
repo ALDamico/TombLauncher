@@ -1,9 +1,8 @@
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Contracts.Patchers;
 
 namespace TombLauncher.Patchers.Widescreen;
 
-public class WidescreenPatcherParameters : IPatchParameters
+public class WidescreenPatcherParameters
 {
     public required string TargetFolder { get; init; }
     public bool UpdateAspectRatio { get; init; }
