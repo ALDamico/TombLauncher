@@ -57,6 +57,8 @@ public class KbUploadService
         }
 
         _logger.LogInformation("Renaming {Tmp} → {Final}", remoteTmp, remoteFinal);
+        if (client.Exists(remoteFinal))
+            client.DeleteFile(remoteFinal);
         client.RenameFile(remoteTmp, remoteFinal);
 
         _logger.LogInformation("Uploading manifest to {Remote}", remoteManifest);
