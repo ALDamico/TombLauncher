@@ -274,8 +274,7 @@ public class GameWithStatsService : IViewService, IDisposable
     public void LaunchCommunitySetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
-        currentPage?.SetBusy(
-            "LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
+        currentPage?.SetBusy("LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.CommunitySetupExecutable != null)
         {
             LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);

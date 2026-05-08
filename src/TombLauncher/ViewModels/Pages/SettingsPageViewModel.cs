@@ -175,6 +175,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             Sections.Add(aiSettings);
 
             Sections.Add(compatVm);
+
             AcceptChanges();
         });
     }

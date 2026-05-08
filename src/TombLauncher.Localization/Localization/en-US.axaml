@@ -396,6 +396,7 @@
     <system:String x:Key="RESTART_REQUIRED_CAPTION">Restart required</system:String>
     <system:String x:Key="RESTART_REQUIRED_MESSAGE">The language has been changed. Please restart the application to apply the new language.</system:String>
     <system:String x:Key="DAILY_STATISTICS">Daily statistics</system:String>
+    <system:String x:Key="LOADING_SAVEGAMES">Loading savegames...</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION_ERROR_DATA">Saving play session error information...</system:String>
     <system:String x:Key="REFRESHING_CPU_INFO">Refreshing CPU information...</system:String>
     <system:String x:Key="REFRESHING_MEMORY_INFO">Refreshing RAM information...</system:String>
@@ -429,13 +430,7 @@
     <system:String x:Key="AI_CHAT_EMPTY_SUBTITLE">Ask general questions about Tomb Launcher, or open this chat from a game's detail page to get help with a specific game.</system:String>
     <system:String x:Key="ASK_LAURA_SOMETHING">Ask Laura something...</system:String>
     <system:String x:Key="SEND">Send message</system:String>
-    <system:String x:Key="LOADING_SAVEGAMES">Loading savegames...</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN">Toggle full screen (F11)</system:String>
-    <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
-    <system:String x:Key="ABOUT_INFO">Application info</system:String>
-    <system:String x:Key="ABOUT_ACKNOWLEDGEMENTS">Acknowledgements</system:String>
-    <system:String x:Key="WEBSITE">Website</system:String>
-    <system:String x:Key="LICENSE">License</system:String>
     <system:String x:Key="AI_BACKEND_ENDPOINT">Server URL</system:String>
     <system:String x:Key="AI_BACKEND_API_KEY">API key (optional)</system:String>
     <system:String x:Key="CHECKING_BACKEND_REACHABLE">Checking connection...</system:String>
