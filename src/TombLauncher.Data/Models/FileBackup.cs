@@ -14,4 +14,5 @@ public class FileBackup
     public SavegameMetadata? SavegameMetadata { get; set; }
     public string? Arguments { get; set; }
     public Game? Game { get; set; }
+    public string? BackupSource { get; set; }
 }

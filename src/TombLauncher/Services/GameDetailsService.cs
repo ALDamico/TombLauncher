@@ -141,4 +141,7 @@ public class GameDetailsService : IViewService
 
     public EngineSupportState GetEngineSupportState(GameMetadataViewModel? vm) =>
         _platformSpecificFeatures.SupportMatrix.GetEngineSupportState(vm?.GameEngine);
+
+    public async Task OpenWidescreenPatcher(GameMetadataViewModel gameMetadata) =>
+        await NavigationManager.NavigateTo<WidescreenPatcherViewModel>(gameMetadata);
 }

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
-using TombLauncher.Installers;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
@@ -22,7 +22,7 @@ public class LaunchOptionsService : IViewService
     public LaunchOptionsService(
         ViewServiceContext viewContext,
         GameDataService gameDataService,
-        TombRaiderEngineDetector engineDetector,
+        IEngineDetector engineDetector,
         ILogger<LaunchOptionsService> logger,
         LaunchOptionsMapper mapper,
         IPlatformSpecificFeatures platformSpecificFeatures)
@@ -37,7 +37,7 @@ public class LaunchOptionsService : IViewService
 
     public ViewServiceContext ViewContext { get; }
     private readonly GameDataService _gameDataService;
-    private readonly TombRaiderEngineDetector _engineDetector;
+    private readonly IEngineDetector _engineDetector;
     private readonly ILogger<LaunchOptionsService> _logger;
     private readonly LaunchOptionsMapper _mapper;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;

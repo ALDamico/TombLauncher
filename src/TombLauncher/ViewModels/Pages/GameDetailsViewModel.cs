@@ -35,6 +35,7 @@ public partial class GameDetailsViewModel : PageViewModel
 
     [ObservableProperty] private int _descriptionFontSize = 18;
     [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks = [];
+    [ObservableProperty] private ObservableCollection<CommandViewModel> _patchers = [];
     public bool CanOpenChat => _gameDetailsService.CanOpenChat(Game?.GameMetadata);
     public List<string> EnabledPatterns { get; set; } = [];
     public List<string> IgnoredFolders { get; set; } = [];
@@ -54,6 +55,7 @@ public partial class GameDetailsViewModel : PageViewModel
 
         _gameDetailsService.InitializeSettings(this);
         InitSetupCommands();
+        InitPatchers();
 
         if (Game.GameMetadata is { IsInstalled: true, InstallDirectory: not null })
             DocumentationFiles = _gameDetailsService
@@ -123,6 +125,28 @@ public partial class GameDetailsViewModel : PageViewModel
 
         SetupCommands = setupCommands;
     }
+
+    private void InitPatchers()
+    {
+        var patchers = new ObservableCollection<CommandViewModel>();
+
+        if (Game.GameMetadata.GameEngine is GameEngine.TombRaider2 or GameEngine.TombRaider3 or GameEngine.TombRaider4
+            or GameEngine.TombRaider5)
+        {
+            patchers.Add(new CommandViewModel()
+            {
+                Command = OpenWidescreenPatcherCommand, 
+                Text = "WIDESCREEN_PATCH".GetLocalizedString(), 
+                Icon = PackIconRemixIconKind.AspectRatioLine
+            });
+        }
+
+        Patchers = patchers;
+    }
+
+    [RelayCommand]
+    private async Task OpenWidescreenPatcher() =>
+        await _gameDetailsService.OpenWidescreenPatcher(Game.GameMetadata);
 
     public EngineSupportState EngineSupportState => _gameDetailsService.GetEngineSupportState(Game?.GameMetadata);
 }

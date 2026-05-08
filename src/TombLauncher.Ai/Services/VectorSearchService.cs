@@ -19,7 +19,8 @@ public class VectorSearchService : VectorDbService
     private const string ChunksQuery = @"SELECT document_title AS ""DocumentTitle"", section_title AS ""SectionTitle"", chunk_text AS ""ChunkText"", metadata_id AS ""MetadataId"", v.distance as ""Distance""
 FROM knowledge_chunks c
 JOIN vector_quantize_scan('knowledge_chunks', 'embedding', vector_as_f32(@Vector), @TopK) AS v ON c.id = v.rowid
-WHERE v.distance <= 0.20
+WHERE 1=1
+AND v.distance <= 0.6
 ORDER BY v.distance ASC
 ";
 
