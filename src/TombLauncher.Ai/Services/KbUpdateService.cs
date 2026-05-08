@@ -9,7 +9,7 @@ namespace TombLauncher.Ai.Services;
 
 public class KbUpdateService
 {
-    private const string RemoteManifestUrl = "https://tomblauncher.app/kb/manifest.json";
+    private const string RemoteManifestUrl = "https://tomblauncher.app/kb/kb_manifest.json";
     private const string RemoteDbUrl = "https://tomblauncher.app/kb/kb_embeddings.db";
 
     private readonly IHttpClientFactory _httpClientFactory;
