@@ -87,7 +87,7 @@ public partial class WidescreenPatcherViewModel : PageViewModel
         }
     }
 
-    private IProgress<string> GetProgress() => new Progress<string>(msg => BusyMessage = msg);
+    private IProgress<string> GetProgress() => new Progress<string>(msg => BusyMessage = msg.GetLocalizedString());
 
     private int GetCameraDistance()
     {
