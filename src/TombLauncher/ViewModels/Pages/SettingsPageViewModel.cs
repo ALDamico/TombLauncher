@@ -176,23 +176,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
             Sections.Add(compatVm);
 
-        var compat = _appConfiguration.Compatibility;
-        var compatVm = new CompatibilitySettingsViewModel(this, _platformSpecificFeatures)
-        {
-            WinePath = compat.WinePath ?? string.Empty,
-            CompatibilityPrefixPath = compat.CompatibilityPrefixPath ?? string.Empty,
-            SelectedTool = compat.CompatibilityTool,
-            ManualProtonPath = compat.ProtonPath,
-        };
-        // Pre-select the stored Proton installation in the ComboBox if it matches
-        if (!string.IsNullOrWhiteSpace(compat.ProtonPath))
-        {
-            compatVm.SelectedProtonInstallation =
-                compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
-        }
-        Sections.Add(compatVm);
-
-        AcceptChanges();
+            AcceptChanges();
         });
     }
 
