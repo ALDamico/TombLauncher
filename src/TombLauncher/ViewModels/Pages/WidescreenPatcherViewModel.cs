@@ -15,26 +15,31 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class WidescreenPatcherViewModel : PageViewModel
 {
-    [ObservableProperty] private bool _updateAspectRatio;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyCanExecuteChangedFor(nameof(ApplyPatchCommand))] private bool _updateAspectRatio;
     [ObservableProperty] private float _aspectRatioWidth = 16;
     [ObservableProperty] private float _aspectRatioHeight = 9;
 
-    [ObservableProperty] private bool _updateCameraDistance;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyCanExecuteChangedFor(nameof(ApplyPatchCommand))] private bool _updateCameraDistance;
     [ObservableProperty] private CameraDistanceOptionViewModel _selectedCameraDistanceOption;
     [ObservableProperty] private short _customCameraDistance = (short)CameraDistancePreset.OneAndAHalf;
 
-    [ObservableProperty] private bool _updateFov;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyCanExecuteChangedFor(nameof(ApplyPatchCommand))] private bool _updateFov;
     [ObservableProperty] private int _targetFov = 1920;
 
-    [ObservableProperty] private bool _update60Fps;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyCanExecuteChangedFor(nameof(ApplyPatchCommand))] private bool _update60Fps;
     [ObservableProperty] private bool _is60FpsAvailable;
     [ObservableProperty] private string? _fps60TooltipText;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanRevertPatch))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPatch))]
     [NotifyCanExecuteChangedFor(nameof(ApplyPatchCommand), nameof(RevertPatchCommand))]
-    private bool _canApplyPatch;
-    public bool CanRevertPatch => !CanApplyPatch;
+    private bool _canApplyPatchByFileState;
+    public bool CanRevertPatch => !CanApplyPatchByFileState;
+
+    public bool CanApplyPatch => CanApplyPatchByFileState && CanApplyPatchByFormState;
+    
+    public bool CanApplyPatchByFormState => Update60Fps || UpdateAspectRatio || UpdateFov || UpdateCameraDistance;
 
     public ObservableCollection<CameraDistanceOptionViewModel> CameraDistanceOptions { get; }
 
@@ -77,7 +82,7 @@ public partial class WidescreenPatcherViewModel : PageViewModel
             var isPatchApplied = await _patcherService.IsAlreadyApplied(_gameMetadata.Id, progress, CancellationToken.None);
             if (!isPatchApplied.IsSuccessful)
             {
-                CanApplyPatch = true;
+                CanApplyPatchByFileState = true;
             }
         }
     }
@@ -114,7 +119,7 @@ public partial class WidescreenPatcherViewModel : PageViewModel
 
             if (patchResult.IsSuccessful)
             {
-                CanApplyPatch = false;
+                CanApplyPatchByFileState = false;
                 await _patcherService.ViewContext.PopupService.ShowLocalized(
                     "WIDESCREEN_PATCH_SUCCESSFULLY_APPLIED".GetLocalizedString(),
                     "WIDESCREEN_PATCH_APPLIED_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Information);
@@ -137,7 +142,7 @@ public partial class WidescreenPatcherViewModel : PageViewModel
                 await _patcherService.RevertPatch(_gameMetadata!, progress, CancellationToken.None);
             if (patchReversalResult.IsSuccessful)
             {
-                CanApplyPatch = true;
+                CanApplyPatchByFileState = true;
                 await _patcherService.ViewContext.PopupService.ShowLocalized(
                     "WIDESCREEN_PATCH_SUCCESSFULLY_REVERTED".GetLocalizedString(),
                     "WIDESCREEN_PATCH_REVERTED_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Information);
