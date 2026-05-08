@@ -2,7 +2,6 @@ using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Patchers;
-using TombLauncher.Localization.Extensions;
 
 namespace TombLauncher.Patchers.Widescreen;
 
@@ -19,7 +18,7 @@ public class WidescreenPatcher
 
     public async Task<PatchResult> DetectChanges(string targetFolder, IProgress<string> progress)
     {
-        progress.Report("DETECTING_ENGINE_VERSION".GetLocalizedString());
+        progress.Report("DETECTING_ENGINE_VERSION");
         var detectorResult = _engineDetector.Detect(targetFolder);
         var engine = detectorResult.GameEngine;
         switch (engine)
@@ -65,7 +64,7 @@ public class WidescreenPatcher
     {
         foreach (var affectedFile in executablePath.AffectedFiles.Where(f => f.ChangeType == ChangeType.BinaryEdit))
         {
-            progress.Report("APPLYING_WIDESCREEN_PATCH_TO_FILE".GetLocalizedString(affectedFile.Filename));
+            progress.Report("APPLYING_WIDESCREEN_PATCH_TO_FILE");
             var bytes = await File.ReadAllBytesAsync(affectedFile.Filename);
             
             ApplyAspectRatioCorrection(parameters, bytes, affectedFile, progress);
@@ -87,7 +86,7 @@ public class WidescreenPatcher
             return;
         }
 
-        progress.Report("APPLYING_60_FPS_UNLOCK".GetLocalizedString());
+        progress.Report("APPLYING_60_FPS_UNLOCK");
         var i = 0;
         do
         {
@@ -112,7 +111,7 @@ public class WidescreenPatcher
             return;
         }
         
-        progress.Report("APPLYING_CAMERA_DISTANCE_CORRECTION".GetLocalizedString());
+        progress.Report("APPLYING_CAMERA_DISTANCE_CORRECTION");
         var cameraDistanceValue = BitConverter.GetBytes((short)parameters.TargetCameraDistance);
 
         var i = 0;
@@ -137,7 +136,7 @@ public class WidescreenPatcher
             return;
         }
 
-        progress.Report("APPLYING_FOV_CORRECTION".GetLocalizedString());
+        progress.Report("APPLYING_FOV_CORRECTION");
         var i = 0;
         do
         {
@@ -164,7 +163,7 @@ public class WidescreenPatcher
             return;
         }
         
-        progress.Report("APPLYING_ASPECT_RATIO_CORRECTION".GetLocalizedString());
+        progress.Report("APPLYING_ASPECT_RATIO_CORRECTION");
         // In an unpatched executable should be 0xAB 0xAA 0xAA 0X3F
         var originalAspectRatioBytes = BitConverter.GetBytes(FourByThreeAspectRatio);
         var targetAspectRatioBytes = BitConverter.GetBytes(parameters.TargetAspectRatio);

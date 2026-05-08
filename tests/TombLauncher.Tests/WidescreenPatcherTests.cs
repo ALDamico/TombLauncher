@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Installers;
@@ -25,7 +26,7 @@ public class WidescreenPatcherTests
             platformSpecificFeatures = new LinuxPlatformSpecificFeatures();
         else
             platformSpecificFeatures = new WindowsPlatformSpecificFeatures();
-        _patcher = new(new TombRaiderEngineDetector(platformSpecificFeatures), null!);
+        _patcher = new(new TombRaiderEngineDetector(platformSpecificFeatures), NullLogger<WidescreenPatcher>.Instance);
     }
 
     [Fact]
