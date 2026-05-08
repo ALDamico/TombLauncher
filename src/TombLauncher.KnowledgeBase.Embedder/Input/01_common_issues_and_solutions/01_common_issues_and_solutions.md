@@ -62,6 +62,21 @@ If you experience this issue in a TR4 type game, you may check if the widescreen
 
 Note that a future version of Tomb Launcher will allow you to apply the widescreen patch without using external tools, but as of version 1.1.0 this is not yet implemented.
 
+## Why does the game appear horizontally stretched? Why does Lara appear short and large?
+
+This issue occurs playing old Custom Levels in widescreen monitors. The newer Custom Levels have not this problem anymore because they
+automatically detect the suitable screen resolution.
+
+If you experience this issue in a TR4 type game, you may check if the widescreen option is available for that game. If not available, you can apply the widescreen patch by opening the game details in Tomb Launcher and selecting the "Widescreen patch" option under the button with the nurse icon.
+
+Here, you can specify a few parameters for the widescreen patch:
+ * Aspect ratio width and height: these should correspond to your desired resolution's aspect ratio. For example, for 1920 x 1080 they should be 16 and 9 respectively.
+ * Camera distance: use this if you feel the camera follows Lara too closely. You can choose between a few presets (from 1 block to 3 blocks) in increments of half blocks, or specify your own camera distance, expressed in in-game units.
+ * FOV: use this to apply FOV correction, if you feel the field of view is too cramped.
+ * 60 FPS: (Tomb Raider II and III only) use this if you want to unlock the framerate from 30 FPS to 60 FPS.
+
+The widescreen patch in Tomb Launcher is a port of Mr. Blackfour's widescreen patch:  https://tombraiders.net/stella/downloads/widescreen.html
+
 ## Why does the game appear zoomed-in? Why does the game exceed the screen/window borders?
 This issue occurs in laptops with HD resolution monitors. By default Windows set the "Scale and Layout" option to 125% or 150%. To solve the issue, just go in Windows Display Control Panel and set the option to 100%
 

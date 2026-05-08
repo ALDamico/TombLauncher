@@ -81,7 +81,7 @@ RETURNING *
         return transaction.Connection!.QueryAsync<KnowledgeMetadata>(InsertMetadataQuery,
             new
             {
-                AppVersionRange = JsonConvert.SerializeObject(appVersionRange),
+                AppVersionRange = appVersionRange,
                 EngineVersion = JsonConvert.SerializeObject(engineVersions),
                 AppliesTo = JsonConvert.SerializeObject(appliesTo),
                 Platforms = JsonConvert.SerializeObject(platforms),
