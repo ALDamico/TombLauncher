@@ -27,9 +27,16 @@ public partial class GameDetailsViewModel : PageViewModel
 
     [ObservableProperty] private ObservableCollection<CommandViewModel> _setupCommands = [];
     [ObservableProperty] private ObservableCollection<FileInfo> _documentationFiles = [];
-    [ObservableProperty] private GameWithStatsViewModel _game = null!;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanOpenChat))]
+    [NotifyPropertyChangedFor(nameof(EngineSupportState))]
+    private GameWithStatsViewModel _game = null!;
+
     [ObservableProperty] private int _descriptionFontSize = 18;
     [ObservableProperty] private ObservableCollection<GameLinkViewModel> _walkthroughLinks = [];
+    [ObservableProperty] private ObservableCollection<CommandViewModel> _patchers = [];
+    public bool CanOpenChat => _gameDetailsService.CanOpenChat(Game?.GameMetadata);
     public List<string> EnabledPatterns { get; set; } = [];
     public List<string> IgnoredFolders { get; set; } = [];
     private readonly GameDetailsService _gameDetailsService;
@@ -48,6 +55,7 @@ public partial class GameDetailsViewModel : PageViewModel
 
         _gameDetailsService.InitializeSettings(this);
         InitSetupCommands();
+        InitPatchers();
 
         if (Game.GameMetadata is { IsInstalled: true, InstallDirectory: not null })
             DocumentationFiles = _gameDetailsService
@@ -89,6 +97,9 @@ public partial class GameDetailsViewModel : PageViewModel
             await _gameDetailsService.OpenWalkthrough(path, false);
     }
 
+    [RelayCommand]
+    private async Task OpenChat() => await _gameDetailsService.OpenChat(Game.GameMetadata.Id, CancellationToken.None);
+
     private void InitSetupCommands()
     {
         var setupCommands = new ObservableCollection<CommandViewModel>();
@@ -114,4 +125,28 @@ public partial class GameDetailsViewModel : PageViewModel
 
         SetupCommands = setupCommands;
     }
+
+    private void InitPatchers()
+    {
+        var patchers = new ObservableCollection<CommandViewModel>();
+
+        if (Game.GameMetadata.GameEngine is GameEngine.TombRaider2 or GameEngine.TombRaider3 or GameEngine.TombRaider4
+            or GameEngine.TombRaider5)
+        {
+            patchers.Add(new CommandViewModel()
+            {
+                Command = OpenWidescreenPatcherCommand, 
+                Text = "WIDESCREEN_PATCH".GetLocalizedString(), 
+                Icon = PackIconRemixIconKind.AspectRatioLine
+            });
+        }
+
+        Patchers = patchers;
+    }
+
+    [RelayCommand]
+    private async Task OpenWidescreenPatcher() =>
+        await _gameDetailsService.OpenWidescreenPatcher(Game.GameMetadata);
+
+    public EngineSupportState EngineSupportState => _gameDetailsService.GetEngineSupportState(Game?.GameMetadata);
 }

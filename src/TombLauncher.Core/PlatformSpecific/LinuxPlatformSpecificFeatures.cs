@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using TombLauncher.Contracts.SupportMatrix;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.PlatformSpecific.SupportMatrix;
 
 namespace TombLauncher.Core.PlatformSpecific;
 
@@ -24,7 +26,8 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
             MatchCasing = MatchCasing.CaseInsensitive,
             IgnoreInaccessible = true,
             RecurseSubdirectories = true,
-            ReturnSpecialDirectories = false
+            ReturnSpecialDirectories = false,
+            AttributesToSkip = FileAttributes.ReparsePoint
         };
     }
 
@@ -173,4 +176,6 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
         try { return File.ReadAllText(versionFile).Trim(); }
         catch { return null; }
     }
+
+    public ISupportMatrix SupportMatrix { get; } = new LinuxSupportMatrix();
 }

@@ -22,8 +22,7 @@
                                          Foreground="{DynamicResource PrimaryBrush}"
                                          VerticalAlignment="Center" />
             <TextBlock Text="{loc:Translate RESTORE_SAVEGAME, Casing=Upper}"
-                       FontSize="16" FontWeight="DemiBold"
-                       VerticalAlignment="Center" />
+                       Classes="section-title" />
         </StackPanel>
 
         <!-- Slot selection -->

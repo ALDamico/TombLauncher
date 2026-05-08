@@ -1,3 +1,4 @@
+using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration.Sections;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
@@ -79,5 +80,17 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         UpdateChannelName = User.Updater.UpdateChannelName.Coalesce(Defaults.Updater.UpdateChannelName),
         GitHubRepositoryName = Defaults.Updater.GitHubRepositoryName,
         GitHubRepositoryOwner = Defaults.Updater.GitHubRepositoryOwner
+    };
+
+    public IAiConfig Ai => new AiConfig()
+    {
+        IsAiEnabled = User.Ai.IsAiEnabled,
+        KnowledgeBaseUrl = Defaults.Ai.KnowledgeBaseUrl,
+        ModelId = User.Ai.ModelId,
+        EmbeddingModelId = Defaults.Ai.EmbeddingModelId,
+        KnowledgeBasePath = Defaults.Ai.KnowledgeBasePath,
+        ApiKey = User.Ai.ApiKey.Coalesce(Defaults.Ai.ApiKey),
+        Endpoint = User.Ai.Endpoint,
+        BackendType = User.Ai.BackendType.Coalesce(Defaults.Ai.BackendType)
     };
 }

@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Reflection;
+using TombLauncher.Contracts.SupportMatrix;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.PlatformSpecific.SupportMatrix;
 
 namespace TombLauncher.Core.PlatformSpecific;
 
@@ -24,6 +26,19 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
             MatchCasing = MatchCasing.PlatformDefault,
             RecurseSubdirectories = true,
             ReturnSpecialDirectories = false
+        };
+    }
+
+    public ProcessStartInfo GetGameLaunchStartInfo(string executableFileNameOnly, string arguments,
+        string compatibilityExecutable, string workingDirectory)
+    {
+        return new ProcessStartInfo(executableFileNameOnly)
+        {
+            Arguments = arguments ?? "",
+            WorkingDirectory = workingDirectory,
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            RedirectStandardOutput = true
         };
     }
 
@@ -53,4 +68,5 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
     public string? GetWineVersion(string winePath) => null;
     public List<ProtonInstallationDto> FindAvailableProtonInstallations() => [];
     public string? GetProtonVersion(string protonPath) => null;
+    public ISupportMatrix SupportMatrix { get; } = new WindowsSupportMatrix();
 }

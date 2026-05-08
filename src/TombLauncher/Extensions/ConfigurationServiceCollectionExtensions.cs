@@ -1,5 +1,7 @@
+using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration;
 
 namespace TombLauncher.Extensions;
@@ -18,7 +20,7 @@ public static class ConfigurationServiceCollectionExtensions
             .Build();
         defaults.Bind(appConfiguration.Defaults);
 
-        var userConfigPath = System.IO.Path.Combine(appDataDirectory, "appsettings.user.json");
+        var userConfigPath = Path.Combine(appDataDirectory, "appsettings.user.json");
         IConfiguration userConfig = new ConfigurationBuilder()
             .AddJsonFile(userConfigPath, optional: true)
             .Build();
@@ -26,6 +28,7 @@ public static class ConfigurationServiceCollectionExtensions
 
         services.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
         services.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
+        services.AddSingleton<IAiConfig>(sp => sp.GetRequiredService<ILayeredAppConfiguration>().Ai);
 
         return services;
     }

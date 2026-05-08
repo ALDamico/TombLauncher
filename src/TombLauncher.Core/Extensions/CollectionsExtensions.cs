@@ -38,4 +38,44 @@ public static class CollectionsExtensions
         var nonOverriddenDefaults = defaults.Where(d => overrides.All(o => !o.Value.Equals(d.Value)));
         return nonOverriddenDefaults.Concat(overrides).ToList();
     }
+
+    public static List<List<T>> SplitAt<T>(this IEnumerable<T>? source, T item)
+    {
+        if (source == null)
+            return [];
+        var s = source.ToArray();
+        var itemIndices = s.Select((t, i) => (t, i)).Where(i => i.t.Equals(item)).Select(i => i.i).ToArray();
+        var all = new List<List<T>>();
+
+        for (var i = 0; i < itemIndices.Length; i++)
+        {
+            var startIndex = itemIndices[i];
+            var endIndex = i < itemIndices.Length - 1 ? itemIndices[i + 1] : s.Length;
+
+            var length = endIndex - startIndex;
+            var newList = s.Skip(startIndex).Take(length).ToList();
+            all.Add(newList);
+        }
+        return all;
+    }
+
+    public static List<List<T>> SplitAt<T>(this IEnumerable<T>? source, Func<T, bool> selector)
+    {
+        if (source == null)
+            return [];
+        var s = source.ToArray();
+        var itemIndices = s.Select((t, i) => (t, i)).Where(i => selector(i.t)).Select(i => i.i).ToArray();
+        var all = new List<List<T>>();
+
+        for (var i = 0; i < itemIndices.Length; i++)
+        {
+            var startIndex = itemIndices[i] + 1;
+            var endIndex = i < itemIndices.Length - 1 ? itemIndices[i + 1] + 1 : s.Length;
+
+            var length = endIndex - startIndex;
+            var newList = s.Skip(startIndex).Take(length).ToList();
+            all.Add(newList);
+        }
+        return all;
+    }
 }

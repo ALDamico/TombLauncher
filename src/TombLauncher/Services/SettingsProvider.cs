@@ -16,7 +16,6 @@ public class SettingsProvider : ISettingsProvider
 {
     private readonly ILayeredAppConfiguration _appConfiguration;
     private readonly IServiceProvider _serviceProvider;
-    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public SettingsProvider(
         ILayeredAppConfiguration appConfiguration,
@@ -25,7 +24,7 @@ public class SettingsProvider : ISettingsProvider
     {
         _appConfiguration = appConfiguration;
         _serviceProvider = serviceProvider;
-        _platformSpecificFeatures = platformSpecificFeatures;
+        PlatformSpecificFeatures = platformSpecificFeatures;
     }
 
     public ApplicationCoreSettings GetApplicationSettings()
@@ -104,7 +103,7 @@ public class SettingsProvider : ISettingsProvider
     {
         var gd = _appConfiguration.GameDetails;
         var dl = _appConfiguration.Downloaders;
-        var methodToUse = _platformSpecificFeatures.GetPlatformSpecificZipFallbackPrograms()
+        var methodToUse = PlatformSpecificFeatures.GetPlatformSpecificZipFallbackPrograms()
             .FirstOrDefault(m => m.Name == dl.UnzipFallbackMethod);
         return new GameDetailsCoreSettings(
             dl.UnzipFallbackMethod ?? string.Empty,
@@ -125,4 +124,12 @@ public class SettingsProvider : ISettingsProvider
             sg.SavegameProcessingDelay
         );
     }
+
+    public AiCoreSettings GetAiCoreSettings()
+    {
+        var aiSettings = _appConfiguration.Ai;
+        return new AiCoreSettings(aiSettings.IsAiEnabled, aiSettings.ModelId!, aiSettings.BackendType, aiSettings.Endpoint, aiSettings.ApiKey, aiSettings.EmbeddingModelId!);
+    }
+
+    public IPlatformSpecificFeatures PlatformSpecificFeatures { get; }
 }

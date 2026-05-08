@@ -34,6 +34,23 @@ Whether you're a seasoned raider who's been playing custom levels since the earl
 
 ---
 
+## 📸 Screenshots
+
+<div align="center">
+<table>
+<tr>
+  <td align="center"><img src="https://www.tomblauncher.app/assets/images/welcome-page.png" alt="Welcome Dashboard" width="420"/><br/><sub>Welcome Dashboard</sub></td>
+  <td align="center"><img src="https://www.tomblauncher.app/assets/images/game%20search.png" alt="Game Search" width="420"/><br/><sub>Game Search</sub></td>
+</tr>
+<tr>
+  <td align="center"><img src="https://www.tomblauncher.app/assets/images/games-list%20%28grid%20view%29.png" alt="Library – Grid View" width="420"/><br/><sub>Library – Grid View</sub></td>
+  <td align="center"><img src="https://www.tomblauncher.app/assets/images/games-list%20%28datagrid%20view%29.png" alt="Library – List View" width="420"/><br/><sub>Library – List View</sub></td>
+</tr>
+</table>
+</div>
+
+---
+
 ## ✨ Features
 
 ### 🔍 Search & Discover
@@ -98,6 +115,37 @@ The app automatically detects your system language and switches accordingly. You
 Tomb Launcher runs natively on both **Windows** and **Linux**. It's built with [Avalonia UI](https://avaloniaui.net/), a modern cross-platform UI framework, so the experience is consistent regardless of your operating system.
 
 On Linux, you can run it as an AppImage, install it via DEB/RPM, or build from source. On Windows, a traditional installer gets you up and running in seconds.
+
+### 🤖 AI-Assisted Troubleshooting (Laura)
+
+> **Experimental** — this feature requires a local LLM backend and is disabled by default.
+
+Stuck on a level that won't launch? Laura is Tomb Launcher's built-in AI assistant, designed to help you diagnose and fix common issues with custom levels and legacy game engines.
+
+**Opening the chat**
+
+On any game's detail page, click the **Talk to Laura** button. Laura automatically receives context about the game you're troubleshooting — engine type, last exit code, crash logs, and stderr output — so you don't have to paste anything manually.
+
+**Enabling AI features**
+
+AI features are turned off by default. To enable them, open **Settings → AI** and choose a backend:
+
+| Backend | Notes |
+|---------|-------|
+| [Ollama](https://ollama.com/) | Run local LLMs with a single command. Recommended for most users. |
+| [LM Studio](https://lmstudio.ai/) | A desktop app for running local models with a friendly UI. |
+
+Configure the endpoint URL to match your backend (e.g. `http://localhost:11434` for Ollama). Any model supported by the chosen backend can be used, though a reasoning-capable model will give better results.
+
+**Knowledge base**
+
+Laura's answers are grounded in a curated knowledge base of troubleshooting guides and known issues for Tomb Raider custom levels. The knowledge base is fetched automatically from [tomblauncher.app](https://www.tomblauncher.app) and kept up to date in the background — no manual updates needed.
+
+**Known limitations**
+
+- Requires a running local LLM backend (Ollama or LM Studio). No cloud API keys are needed, and no data leaves your machine.
+- Answer quality depends on the model you choose. Larger models generally perform better.
+- The feature is experimental. Results may occasionally be incomplete or incorrect.
 
 ---
 
