@@ -14,6 +14,7 @@ using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Core.Utils;
 using TombLauncher.Updater;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
@@ -92,7 +93,7 @@ public class UpdateService
         if (appCastHelper != null)
         {
             _sparkle.AppCastHelper = appCastHelper;
-            _sparkle.AppCastHelper.SetupAppCastHelper(appCastDataDownloader, _appConfiguration.Updater.AppCastUrl!, AppUtils.GetApplicationVersion()?.ToString(), _sparkle.SignatureVerifier, _sparkle.LogWriter);
+            _sparkle.AppCastHelper.SetupAppCastHelper(appCastDataDownloader, _appConfiguration.Updater.AppCastUrl!, VersionUtils.GetApplicationVersion()?.ToString(), _sparkle.SignatureVerifier, _sparkle.LogWriter);
         }
 
         _sparkle.UpdateDetected += OnUpdateDetected;

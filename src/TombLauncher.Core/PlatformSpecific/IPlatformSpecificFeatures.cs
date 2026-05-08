@@ -1,3 +1,4 @@
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.SupportMatrix;
 using TombLauncher.Core.Dtos;
 
@@ -5,6 +6,7 @@ namespace TombLauncher.Core.PlatformSpecific;
 
 public interface IPlatformSpecificFeatures
 {
+    Platform Platform { get; }
     void OpenGameFolder(string gameFolder);
     void OpenUrl(string link);
     EnumerationOptions GetEnumerationOptions();

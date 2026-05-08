@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.SupportMatrix;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific.SupportMatrix;
@@ -8,6 +9,8 @@ namespace TombLauncher.Core.PlatformSpecific;
 
 public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
 {
+    public Platform Platform => Platform.Linux;
+
     public void OpenGameFolder(string gameFolder)
     {
         Process.Start("xdg-open", gameFolder);

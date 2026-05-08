@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Configuration;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Core.Utils;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -54,11 +55,11 @@ public partial class StatisticsPageViewModel : PageViewModel
     {
         using (BusyScope("GATHERING_STATISTICS".GetLocalizedString()))
         {
-            var t1 = Task.Run(() => ApplicationVersion = AppUtils.GetApplicationVersion());
+            var t1 = Task.Run(() => ApplicationVersion = VersionUtils.GetApplicationVersion());
             var t2 = Task.Run(() => DatabaseSize = _statisticsService.GetDatabaseSize());
             var t3 = Task.Run(() => GamesSize = _statisticsService.GetGamesSize());
             var t4 = _statisticsService.GetStatistics();
-            var t5 = Task.Run(() => NetVersion = AppUtils.GetDotNetVersion());
+            var t5 = Task.Run(() => NetVersion = VersionUtils.GetDotNetVersion());
             var t6 = Task.Run(() => WineVersion = _platformFeatures.GetWineVersion(
                 _appConfiguration.Compatibility.WinePath ?? string.Empty));
 

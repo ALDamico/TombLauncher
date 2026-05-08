@@ -6,6 +6,7 @@ using Octokit;
 using TombLauncher.Configuration;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Core.Utils;
 using TombLauncher.Utils;
 
 namespace TombLauncher.Services;
@@ -74,7 +75,7 @@ public class GitHubReleaseService
 
     private static string GetAppVersionString()
     {
-        var version = AppUtils.GetApplicationVersion();
+        var version = VersionUtils.GetApplicationVersion();
         return version is null
             ? "0.0.0"
             : $"{version.Major}.{version.Minor}.{version.Build}";

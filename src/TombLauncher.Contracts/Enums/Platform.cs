@@ -1,3 +1,5 @@
+namespace TombLauncher.Contracts.Enums;
+
 public enum Platform
 {
     Unknown = 0,
