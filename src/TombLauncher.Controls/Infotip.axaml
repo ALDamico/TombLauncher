@@ -22,5 +22,6 @@
                 </TextBlock>
             </StackPanel>
         </ToolTip.Tip>
+        <ToolTip.ShowOnDisabled>True</ToolTip.ShowOnDisabled>
     </iconPacks:PackIconRemixIcon>
 </UserControl>

@@ -58,9 +58,7 @@ public partial class WidescreenPatcherViewModel : PageViewModel
         _gameMetadata = (GameMetadataViewModel)parameter;
         Is60FpsAvailable = _patcherService.Check60FpsSupport(_gameMetadata.InstallDirectory ?? "");
         if (!Is60FpsAvailable)
-            Fps60TooltipText = string.Format(
-                "FPS_60_NOT_SUPPORTED".GetLocalizedString(),
-                _gameMetadata.GameEngine);
+            Fps60TooltipText = "FPS_60_NOT_SUPPORTED".GetLocalizedString(_gameMetadata.GameEngine.GetDescription());
 
         return Task.CompletedTask;
     }

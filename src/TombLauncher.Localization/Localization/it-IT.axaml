@@ -1,6 +1,5 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="using:TombLauncher.Localization"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <!-- Miscellaneous -->
     <!-- These strings SHOULD ALWAYS exist -->
@@ -461,5 +460,29 @@
     <system:String x:Key="SUPPORTED_WITH_COMPATIBILITY_LAYER">Questo livello gira tramite layer di compatibilità.</system:String>
     <system:String x:Key="SUPPORTED_NATIVE_PATCHING_AVAILABLE">Questo livello gira tramite layer di compatibilità, ma è disponibile una patch per eseguirlo nativamente.</system:String>
     <system:String x:Key="NO_SUPPORT">Questo livello non gira sul sistema operativo attuale.</system:String>
+    <system:String x:Key="PATCHES">Patch</system:String>
+    <system:String x:Key="APPLY_WIDESCREEN_PATCH">Applica la patch widescreen</system:String>
+    <system:String x:Key="WIDESCREEN_PATCH">Patch widescreen</system:String>
+    <system:String x:Key="ASPECT_RATIO">Rapporto di aspetto</system:String>
+    <system:String x:Key="ASPECT_RATIO_WIDTH">Larghezza px (es. 1920)</system:String>
+    <system:String x:Key="ASPECT_RATIO_HEIGHT">Altezza px (es. 1080)</system:String>
+    <system:String x:Key="CAMERA_DISTANCE">Distanza della telecamera</system:String>
+    <system:String x:Key="APPLY_CAMERA_DISTANCE">Modifica la distanza della telecamera</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_FROM_LARA">Distanza tra la telecamera e Lara</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_HELP_TEXT">Nei Tomb Raider classici, la telecamera segue Lara a una distanza di un blocco e mezzo, dove un blocco è un quadrato con lato lungo 1024 unità. Puoi usare questa impostazione per aumentare o diminuire questo valore. Se scegli l'opzione "Personalizzato", esprimi il valore in unità, non in numero di blocchi.</system:String>
+    <system:String x:Key="CUSTOM_DISTANCE">Distanza personalizzata</system:String>
+    <system:String x:Key="FOV">Campo visivo</system:String>
+    <system:String x:Key="APPLY_FOV_CORRECTION">Applica correzione campo visivo</system:String>
+    <system:String x:Key="FOV_HELP_TEXT">Nei Tomb Raider classici il campo visivo orizzontale è di circa 65°. Applicando la patch widescreen senza questo fix, il gioco allarga l'immagine ma mantiene il campo visivo originale pensato per il 4:3, con il risultato che l'inquadratura potrebbe apparire innaturalmente stretta e claustrofobica. Inserisci la larghezza in pixel della risoluzione usata nel setup del gioco (es. 1920) per calcolare la correzione.</system:String>
+    <system:String x:Key="SCREEN_WIDTH">Risoluzione orizzontale</system:String>
+    <system:String x:Key="60_FPS">60 FPS</system:String>
+    <system:String x:Key="APPLY_60_FPS">Applica sblocco 60 FPS</system:String>
+    <system:String x:Key="FPS_60_NOT_SUPPORTED">Lo sblocco degli FPS non è supportato per {0}.</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_BLOCK">1 blocco</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_AND_HALF_BLOCKS">1 blocco e mezzo</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_BLOCKS">2 blocchi</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_AND_HALF_BLOCKS">2 blocchi e mezzo</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_THREE_BLOCKS">3 blocchi</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_CUSTOM">Personalizzato</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

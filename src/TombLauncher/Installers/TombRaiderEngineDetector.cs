@@ -5,14 +5,18 @@ using System.Linq;
 using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Installers;
 
 public class TombRaiderEngineDetector : IEngineDetector
 {
-    public TombRaiderEngineDetector()
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
+
+    public TombRaiderEngineDetector(IPlatformSpecificFeatures platformSpecificFeatures)
     {
+        _platformSpecificFeatures = platformSpecificFeatures;
         _gameEngines = new Dictionary<string, GameEngine>()
         {
             { "tomb3.exe", GameEngine.TombRaider3 },
@@ -30,12 +34,12 @@ public class TombRaiderEngineDetector : IEngineDetector
         _knownGameExecutables = _gameEngines.Keys.ToHashSet();
     }
 
-    private Dictionary<string, GameEngine> _gameEngines;
-    private HashSet<string> _knownGameExecutables;
+    private readonly Dictionary<string, GameEngine> _gameEngines;
+    private readonly HashSet<string> _knownGameExecutables;
 
     public EngineDetectorResult Detect(string containingFolder)
     {
-        var files = Directory.GetFiles(containingFolder, "*.exe", SearchOption.AllDirectories);
+        var files = Directory.GetFiles(containingFolder, "*.exe", _platformSpecificFeatures.GetEnumerationOptions());
         var result = new EngineDetectorResult()
         {
             GameEngine = GameEngine.Unknown,
@@ -111,7 +115,7 @@ public class TombRaiderEngineDetector : IEngineDetector
 
     private string? GetUniversalLauncherPath(string containingFolder)
     {
-        var universalLauncher = Directory.GetFiles(containingFolder, "play.exe", SearchOption.AllDirectories);
+        var universalLauncher = Directory.GetFiles(containingFolder, "play.exe", _platformSpecificFeatures.GetEnumerationOptions());
         if (universalLauncher.Length > 0)
             return Path.GetRelativePath(containingFolder, universalLauncher[0]);
 
@@ -120,7 +124,7 @@ public class TombRaiderEngineDetector : IEngineDetector
 
     private string? GetGameExecutablePath(string containingFolder)
     {
-        var executables = Directory.GetFiles(containingFolder, "*.exe", SearchOption.AllDirectories);
+        var executables = Directory.GetFiles(containingFolder, "*.exe", _platformSpecificFeatures.GetEnumerationOptions());
         var fullPath = _knownGameExecutables.Join(executables, knownExecutable => knownExecutable,
                 Path.GetFileName, (_, s1) => s1, StringComparer.InvariantCultureIgnoreCase)
             .FirstOrDefault();

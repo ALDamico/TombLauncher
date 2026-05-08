@@ -1,4 +1,5 @@
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Installers;
 using TombLauncher.Patchers.Widescreen;
 
@@ -6,7 +7,7 @@ namespace TombLauncher.Tests;
 
 public class WidescreenPatcherTests
 {
-    private static readonly WidescreenPatcher Patcher = new(new TombRaiderEngineDetector());
+    private readonly WidescreenPatcher _patcher;
 
     public WidescreenPatcherTests()
     {
@@ -17,12 +18,19 @@ public class WidescreenPatcherTests
         }
 
         File.Copy("Data/tomb4.exe", "Data/tomb4.exe.bak", true);
+
+        IPlatformSpecificFeatures platformSpecificFeatures;
+        if (OperatingSystem.IsLinux())
+            platformSpecificFeatures = new LinuxPlatformSpecificFeatures();
+        else
+            platformSpecificFeatures = new WindowsPlatformSpecificFeatures();
+        _patcher = new(new TombRaiderEngineDetector(platformSpecificFeatures));
     }
 
     [Fact]
     public async Task TestWidescreenAspectRatioPatcherDetectChanges()
     {
-        var changesToMake = await Patcher.DetectChanges("Data");
+        var changesToMake = await _patcher.DetectChanges("Data");
         Assert.NotEmpty(changesToMake.AffectedFiles);
     }
 
@@ -35,7 +43,7 @@ public class WidescreenPatcherTests
             TargetAspectRatio = (float)16 / 9,
             UpdateAspectRatio = true
         };
-        var result = await Patcher.ApplyPatch("Data", parameters);
+        var result = await _patcher.ApplyPatch("Data", parameters);
         Assert.True(result.IsSuccessful);
         Assert.Equal(0xa73d0, result.AffectedFiles.FirstOrDefault()?.Offset);
     }
@@ -49,7 +57,7 @@ public class WidescreenPatcherTests
             UpdateCameraDistance = true,
             TargetCameraDistance = 2048
         };
-        var result = await Patcher.ApplyPatch("Data", parameters);
+        var result = await _patcher.ApplyPatch("Data", parameters);
         Assert.True(result.IsSuccessful);
         Assert.NotNull(result.AffectedFiles.FirstOrDefault()?.Offset);
     }
@@ -63,7 +71,7 @@ public class WidescreenPatcherTests
             UpdateFov = true,
             TargetFov = 1920
         };
-        var result = await Patcher.ApplyPatch("Data", parameters);
+        var result = await _patcher.ApplyPatch("Data", parameters);
         Assert.True(result.IsSuccessful);
         Assert.NotNull(result.AffectedFiles.FirstOrDefault()?.Offset);
     }
@@ -78,7 +86,7 @@ public class WidescreenPatcherTests
             Update60Fps = true,
             Engine = GameEngine.TombRaider4
         };
-        var result = await Patcher.ApplyPatch("Data", parameters);
+        var result = await _patcher.ApplyPatch("Data", parameters);
         var patchedBytes = await File.ReadAllBytesAsync("Data/tomb4.exe");
         Assert.True(result.IsSuccessful);
         Assert.Equal(originalBytes, patchedBytes);

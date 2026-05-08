@@ -6,13 +6,18 @@
              xmlns:vm="clr-namespace:TombLauncher.ViewModels"
              xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:enums="clr-namespace:TombLauncher.Contracts.Enums;assembly=TombLauncher.Contracts"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.Pages.WidescreenPatcherView"
              x:DataType="pages:WidescreenPatcherViewModel">
     <Design.DataContext>
         <pages:WidescreenPatcherViewModel />
     </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="TextBlock.small">
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="Opacity" Value="0.7"></Setter>
+        </Style>
+    </UserControl.Styles>
     <ScrollViewer>
         <StackPanel Orientation="Vertical" Spacing="16">
             <TextBlock Text="{localization:Translate APPLY_WIDESCREEN_PATCH, Casing=Upper}" 
@@ -22,11 +27,11 @@
             <Border Classes="card-background" CornerRadius="8" Padding="16">
                 <StackPanel Orientation="Vertical" Spacing="8">
                     <controls:CardSectionHeader IconKind="AspectRatioLine" Title="{localization:Translate ASPECT_RATIO}" />
-                    <TextBlock Text="{localization:Translate WIDESCREEN_PATCH}" Classes="small" Opacity="0.7" />
+                    <TextBlock Text="{localization:Translate WIDESCREEN_PATCH}" Classes="small" />
                     <ToggleSwitch IsChecked="{Binding UpdateAspectRatio}" />
                     <UniformGrid Rows="2" Columns="2" ColumnSpacing="8" IsEnabled="{Binding UpdateAspectRatio}">
-                        <TextBlock Text="{localization:Translate ASPECT_RATIO_WIDTH}" Classes="small" Opacity="0.7" />
-                        <TextBlock Text="{localization:Translate ASPECT_RATIO_HEIGHT}" Classes="small" Opacity="0.7" />
+                        <TextBlock Text="{localization:Translate ASPECT_RATIO_WIDTH}" Classes="small" />
+                        <TextBlock Text="{localization:Translate ASPECT_RATIO_HEIGHT}" Classes="small" />
                         <NumericUpDown Value="{Binding AspectRatioWidth}" />
                         <NumericUpDown Value="{Binding AspectRatioHeight}" />
                     </UniformGrid>
@@ -36,15 +41,16 @@
             <Border Classes="card-background" CornerRadius="8" Padding="16">
                 <StackPanel Orientation="Vertical" Spacing="8">
                     <controls:CardSectionHeader IconKind="VideoOnLine" Title="{localization:Translate CAMERA_DISTANCE}" />
-                    <TextBlock Text="{localization:Translate APPLY_CAMERA_DISTANCE}" Classes="small" Opacity="0.7" />
+                    <TextBlock Text="{localization:Translate APPLY_CAMERA_DISTANCE}" Classes="small" />
                     <ToggleSwitch IsChecked="{Binding UpdateCameraDistance}" />
                     <StackPanel Orientation="Vertical" 
-                                IsEnabled="{Binding UpdateCameraDistance}">
+                                IsEnabled="{Binding UpdateCameraDistance}"
+                                Spacing="8">
                         <DockPanel LastChildFill="True">
                             <controls:Infotip DockPanel.Dock="Right" 
                                               Icon="InformationLine" 
                                               ToolTipContent="{localization:Translate CAMERA_DISTANCE_HELP_TEXT}" />
-                            <TextBlock Text="{localization:Translate CAMERA_DISTANCE_FROM_LARA}" Classes="small" Opacity="0.7"></TextBlock>
+                            <TextBlock Text="{localization:Translate CAMERA_DISTANCE_FROM_LARA}" Classes="small"></TextBlock>
                         </DockPanel>
                         <ComboBox ItemsSource="{Binding CameraDistanceOptions}"
                                   SelectedItem="{Binding SelectedCameraDistanceOption}">
@@ -54,8 +60,8 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <StackPanel IsVisible="{Binding SelectedCameraDistanceOption.IsCustom}">
-                            <TextBlock Text="{localization:Translate CUSTOM_DISTANCE}" Classes="small" Opacity="0.7"></TextBlock>
+                        <StackPanel IsVisible="{Binding SelectedCameraDistanceOption.IsCustom}" Spacing="8">
+                            <TextBlock Text="{localization:Translate CUSTOM_DISTANCE}" Classes="small"></TextBlock>
                             <NumericUpDown Value="{Binding CustomCameraDistance}"></NumericUpDown>
                         </StackPanel>
                     </StackPanel>
@@ -65,13 +71,13 @@
             <Border Classes="card-background" CornerRadius="8" Padding="16">
                 <StackPanel Orientation="Vertical" Spacing="8">
                     <controls:CardSectionHeader IconKind="CameraLensLine" Title="{localization:Translate FOV}" />
-                    <TextBlock Text="{localization:Translate APPLY_FOV_CORRECTION}" Classes="small" Opacity="0.7" />
+                    <TextBlock Text="{localization:Translate APPLY_FOV_CORRECTION}" Classes="small" />
                     <ToggleSwitch IsChecked="{Binding UpdateFov}" />
-                    <StackPanel Orientation="Vertical" IsEnabled="{Binding UpdateFov}">
+                    <StackPanel Orientation="Vertical" IsEnabled="{Binding UpdateFov}" Spacing="8">
                         <DockPanel LastChildFill="True">
                             <controls:Infotip DockPanel.Dock="Right" Icon="InformationLine"
                                               ToolTipContent="{localization:Translate FOV_HELP_TEXT}" />
-                            <TextBlock Text="{localization:Translate SCREEN_WIDTH}" Classes="small" Opacity="0.7" />
+                            <TextBlock Text="{localization:Translate SCREEN_WIDTH}" Classes="small" />
                         </DockPanel>
                         <NumericUpDown Value="{Binding TargetFov}" />
                     </StackPanel>
@@ -81,10 +87,14 @@
             <Border Classes="card-background" CornerRadius="8" Padding="16">
                 <StackPanel Orientation="Vertical" Spacing="8">
                     <controls:CardSectionHeader IconKind="SpeedUpLine" Title="{localization:Translate 60_FPS}" />
-                    <TextBlock Text="{localization:Translate APPLY_60_FPS}" Classes="small" Opacity="0.7" />
-                    <ToggleSwitch IsChecked="{Binding Update60Fps}"
-                                 IsEnabled="{Binding Is60FpsAvailable}"
-                                 ToolTip.Tip="{Binding Fps60TooltipText}" />
+                    <TextBlock Text="{localization:Translate APPLY_60_FPS}" Classes="small" />
+                    <DockPanel LastChildFill="True">
+                        <controls:Infotip DockPanel.Dock="Right" Icon="InformationLine"
+                                          ToolTipContent="{Binding Fps60TooltipText}" 
+                                          IsVisible="{Binding !Is60FpsAvailable}" />
+                        <ToggleSwitch IsChecked="{Binding Update60Fps}"
+                                      IsEnabled="{Binding Is60FpsAvailable}" />
+                    </DockPanel>
                 </StackPanel>
             </Border>
         </StackPanel>
