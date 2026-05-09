@@ -23,7 +23,7 @@ public static class DownloaderServiceCollectionExtensions
     {
         var appVersion = VersionUtils.GetApplicationVersion();
         var versionString = appVersion is null ? "0.0.0" : $"{appVersion.Major}.{appVersion.Minor}.{appVersion.Build}";
-        services.AddSingleton(new GitHubClient(new Octokit.ProductHeaderValue("TombLauncher", versionString)));
+        services.AddSingleton(new GitHubClient(new Octokit.ProductHeaderValue("Tomb Launcher", versionString)));
 
         services.AddTransient<GitHubReleaseService>();
 

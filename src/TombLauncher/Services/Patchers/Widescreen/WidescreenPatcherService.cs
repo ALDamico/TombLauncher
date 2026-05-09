@@ -134,6 +134,9 @@ public class WidescreenPatcherService : IViewService
             Path.Combine(gameMetadataViewModel.InstallDirectory!, gameMetadataViewModel.ExecutablePath!);
         
         File.Replace(tempDestination, fullExecutablePath, null);
+        
+        ctx.FileBackups.Remove(fileBackup);
+        await ctx.SaveChangesAsync(cancellationToken);
         return new PatchResult()
         {
             IsSuccessful = true,

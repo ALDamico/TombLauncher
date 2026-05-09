@@ -1,0 +1,230 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Octokit;
+using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Patchers;
+using TombLauncher.Contracts.Progress;
+using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Core.Utils;
+using TombLauncher.Data.Database;
+using TombLauncher.Data.Models;
+using TombLauncher.Localization.Extensions;
+using TombLauncher.Patchers.Trx.Patchers;
+using TombLauncher.ViewModels;
+using ChangeType = TombLauncher.Contracts.Patchers.ChangeType;
+using FileMode = System.IO.FileMode;
+
+namespace TombLauncher.Services.Patchers.TrxNative;
+
+public class TrxNativePatcherService
+{
+    private readonly IDbContextFactory<TombLauncherDbContext> _dbContextFactory;
+    private readonly TrxNativeExecutablePatcher _patcher;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
+    private readonly GitHubClient _gitHubClient;
+    private readonly HttpClient _httpClient;
+    private readonly ILogger<TrxNativePatcherService> _logger;
+
+    public TrxNativePatcherService(IDbContextFactory<TombLauncherDbContext> dbContextFactory, 
+        TrxNativeExecutablePatcher patcher,
+        IPlatformSpecificFeatures platformSpecificFeatures, 
+        GitHubClient gitHubClient,
+        HttpClient httpClient,
+        ILogger<TrxNativePatcherService> logger)
+    {
+        _dbContextFactory = dbContextFactory;
+        _patcher = patcher;
+        _platformSpecificFeatures = platformSpecificFeatures;
+        _gitHubClient = gitHubClient;
+        _httpClient = httpClient;
+        _logger = logger;
+    }
+
+    public TrxVersionInfo GetVersionInfo(string executablePath) => VersionUtils.ReadTrxVersionInfo(executablePath);
+
+    public async Task<bool> IsAlreadyApplied(int gameId, IProgress<string> progress, CancellationToken ct)
+    {
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+        var fileBackup = await RetrieveFileBackup(dbContext, gameId, progress, ct);
+        return fileBackup != null;
+    }
+    
+    private static async Task<FileBackup?> RetrieveFileBackup(TombLauncherDbContext ctx, int gameId, IProgress<string> progress, CancellationToken cancellationToken)
+    {
+        progress.Report("RETRIEVING_EXISTING_BACKUP".GetLocalizedString());
+        return await ctx.FileBackups
+            .Where(f => f.GameId == gameId)
+            .Where(f => f.FileType == FileType.GameExecutable)
+            .Where(f => f.BackupSource == nameof(TrxNativeExecutablePatcher))
+            .OrderByDescending(f => f.BackedUpOn)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<PatchResult> ApplyPatch(GameMetadataViewModel vm, IProgress<string> progress,
+        CancellationToken ct)
+    {
+        var downloadPath = PathUtils.GetRandomTempDirectory();
+        var originalExePath = Path.Combine(vm.InstallDirectory!, vm.ExecutablePath!);
+        var targetExePath = Regex.Replace(originalExePath, @"\.exe$", "");
+        var tempExePath = "";
+        var fullFilePath = Path.Combine(downloadPath, Path.GetRandomFileName());
+        try
+        {
+            progress.Report("READING_EXECUTABLE_VERSION".GetLocalizedString());
+            var versionInfo = VersionUtils.ReadTrxVersionInfo(originalExePath);
+
+            progress.Report("DOWNLOADING_NATIVE_EXECUTABLE_FROM_GITHUB".GetLocalizedString());
+            var tag = _patcher.BuildTag(versionInfo.InternalName, versionInfo.Version);
+            var release = await _gitHubClient.Repository.Release.Get("LostArtefacts", "TRX", tag);
+
+            var nativeRelease = release.Assets
+                .Where(a => a.Name.Contains(_platformSpecificFeatures.Platform.ToString(),
+                    StringComparison.InvariantCultureIgnoreCase))
+                .FirstOrDefault(a => a.Name.EndsWith("zip"));
+
+            if (nativeRelease == null)
+                throw new NotSupportedException(
+                    $"Can't find a release for platform {_platformSpecificFeatures.Platform} for {versionInfo.InternalName} with version {versionInfo.Version}");
+
+            await using var file = new FileStream(fullFilePath, FileMode.Create);
+            await _httpClient.DownloadAsync(nativeRelease.BrowserDownloadUrl, file, new Progress<DownloadProgressInfo>(), ct);
+
+            var exeBytes = await _patcher.ExtractExecutable(fullFilePath, ct);
+
+            if (exeBytes.Length == 0)
+                return PatchResult.UnsuccessfulResult("UNABLE_TO_EXTRACT_EXECUTABLE".GetLocalizedString());
+
+            tempExePath = Path.Combine(downloadPath, versionInfo.ExecutableName);
+
+            try
+            {
+                await File.WriteAllBytesAsync(tempExePath, exeBytes, ct);
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "An error occurred while extracting the TRX executable");
+                return PatchResult.UnsuccessfulResult($"Error while applying patch: {ex.Message}");
+            }
+
+            var originalExeBytes = await File.ReadAllBytesAsync(originalExePath, ct);
+            var md5 = CryptoUtils.ComputeMd5Hash(originalExeBytes);
+
+            var fileBackup = new FileBackup()
+            {
+                Data = originalExeBytes,
+                BackedUpOn = DateTime.Now,
+                BackupSource = nameof(TrxNativeExecutablePatcher),
+                FileType = FileType.GameExecutable,
+                GameId = vm.Id,
+                Md5 = md5,
+                FileName = vm.ExecutablePath!
+            };
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+            dbContext.FileBackups.Add(fileBackup);
+            await dbContext.SaveChangesAsync(ct);
+
+            File.Move(tempExePath, targetExePath, overwrite: true);
+            File.Delete(originalExePath);
+
+            return new PatchResult()
+            {
+                IsSuccessful = true,
+                AffectedFiles =
+                [
+                    new FileChange()
+                    {
+                        ChangeType = ChangeType.FileAddition, Filename = versionInfo.ExecutableName,
+                        NewSize = exeBytes.Length, OriginalSize = 0
+                    },
+                    new FileChange()
+                    {
+                        ChangeType = ChangeType.FileDeletion, Filename = vm.ExecutablePath!, NewSize = 0,
+                        OriginalSize = originalExeBytes.Length
+                    }
+                ]
+            };
+        }
+        finally
+        {
+            if (tempExePath.Length > 0 && File.Exists(tempExePath))
+                File.Delete(tempExePath);
+            if (File.Exists(fullFilePath))
+                File.Delete(fullFilePath);
+        }
+    }
+
+    public async Task<PatchResult> RevertPatch(GameMetadataViewModel gameMetadataViewModel, IProgress<string> progress, CancellationToken cancellationToken)
+    {
+        await using var ctx = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+        var fileBackup = await RetrieveFileBackup(ctx, gameMetadataViewModel.Id, progress, cancellationToken);
+        if (fileBackup == null)
+        {
+            return PatchResult.UnsuccessfulResult("NO_BACKUP_FOUND".GetLocalizedString());
+        }
+
+        if (fileBackup.Data.IsNullOrEmpty())
+        {
+            return PatchResult.UnsuccessfulResult("BACKUP_DATA_EMPTY".GetLocalizedString());
+        }
+
+        var tempFilePath = PathUtils.GetRandomTempDirectory();
+        var tempDestination = Path.Combine(tempFilePath, fileBackup.FileName);
+        try
+        {
+            await File.WriteAllBytesAsync(tempDestination, fileBackup.Data!, cancellationToken);
+        }
+        catch (IOException ex)
+        {
+            _logger.LogError(ex, "Error while restoring backup");
+            return PatchResult.UnsuccessfulResult(
+                "ERROR_WHILE_RESTORING_BACKUP".GetLocalizedString(fileBackup.FileName, ex.Message));
+        }
+
+        progress.Report("CHECKING_GAME_EXECUTABLE_CONSISTENCY".GetLocalizedString());
+        var md5 = await CryptoUtils.ComputeMd5Hash(tempDestination);
+        if (md5 != fileBackup.Md5)
+        {
+            File.Delete(tempDestination);
+            return PatchResult.UnsuccessfulResult("MD5_MISMATCH_IN_TARGET_DATA".GetLocalizedString());
+        }
+
+        progress.Report("RESTORING_GAME_EXECUTABLE".GetLocalizedString());
+        var fullExecutablePath = Path.Combine(gameMetadataViewModel.InstallDirectory!, fileBackup.FileName);
+        var nativeBinaryPath = Path.Combine(gameMetadataViewModel.InstallDirectory!,
+            Path.GetFileNameWithoutExtension(fileBackup.FileName));
+
+        File.Move(tempDestination, fullExecutablePath, overwrite: true);
+        if (File.Exists(nativeBinaryPath))
+            File.Delete(nativeBinaryPath);
+
+        gameMetadataViewModel.ExecutablePath = fileBackup.FileName;
+        ctx.FileBackups.Remove(fileBackup);
+        await ctx.SaveChangesAsync(cancellationToken);
+        return new PatchResult()
+        {
+            IsSuccessful = true,
+            AffectedFiles = new List<FileChange>()
+            {
+                new FileChange()
+                {
+                    ChangeType = ChangeType.FileDeletion, Filename = nativeBinaryPath,
+                    NewSize = 0, OriginalSize = fileBackup.Data?.Length ?? 0
+                },
+                new FileChange()
+                {
+                    ChangeType = ChangeType.FileAddition, Filename = fullExecutablePath,
+                    NewSize = fileBackup.Data?.Length ?? 0, OriginalSize = 0
+                }
+            }
+        };
+    }
+}
