@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages;
+using TombLauncher.ViewModels.Pages.Patchers;
 
 namespace TombLauncher.Extensions;
 
@@ -22,7 +23,7 @@ public static class ViewModelsServiceCollectionExtensions
             .AddTransient<LaunchOptionsViewModel>()
             .AddSingleton<AboutPageViewModel>()
             .AddTransient<AiChatViewModel>()
-            .AddTransient<WidescreenPatcherViewModel>()
-            .AddTransient<TrxNativePatcherViewModel>();
+            .AddTransient<WidescreenPatcherPageViewModel>()
+            .AddTransient<TrxNativePatcherPageViewModel>();
     }
 }

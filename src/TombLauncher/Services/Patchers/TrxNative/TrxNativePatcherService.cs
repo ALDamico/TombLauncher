@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -9,17 +8,18 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Octokit;
+using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Patchers;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Patchers;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Models;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Patchers.Trx.Patchers;
-using TombLauncher.ViewModels;
 using ChangeType = TombLauncher.Contracts.Patchers.ChangeType;
 using FileMode = System.IO.FileMode;
 
@@ -57,16 +57,16 @@ public class TrxNativePatcherService : IViewService
         return VersionUtils.ReadTrxVersionInfo(executablePath);
     }
 
-    public async Task<bool> IsAlreadyApplied(int gameId, IProgress<string> progress, CancellationToken ct)
+    public async Task<bool> IsAlreadyApplied(int gameId, ProgressLogger progress, CancellationToken ct)
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
         var fileBackup = await RetrieveFileBackup(dbContext, gameId, progress, ct);
         return fileBackup != null;
     }
     
-    private static async Task<FileBackup?> RetrieveFileBackup(TombLauncherDbContext ctx, int gameId, IProgress<string> progress, CancellationToken cancellationToken)
+    private static async Task<FileBackup?> RetrieveFileBackup(TombLauncherDbContext ctx, int gameId, ProgressLogger progress, CancellationToken cancellationToken)
     {
-        progress.Report("RETRIEVING_EXISTING_BACKUP".GetLocalizedString());
+        progress.Info("RETRIEVING_EXISTING_BACKUP");
         return await ctx.FileBackups
             .Where(f => f.GameId == gameId)
             .Where(f => f.FileType == FileType.GameExecutable)
@@ -75,7 +75,7 @@ public class TrxNativePatcherService : IViewService
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<PatchResult> ApplyPatch(GameMetadataViewModel vm, IProgress<string> progress,
+    public async Task<PatchResult> ApplyPatch(IGameMetadataLite vm, ProgressLogger progress,
         CancellationToken ct)
     {
         var downloadPath = PathUtils.GetRandomTempDirectory();
@@ -85,10 +85,10 @@ public class TrxNativePatcherService : IViewService
         var fullFilePath = Path.Combine(downloadPath, Path.GetRandomFileName());
         try
         {
-            progress.Report("READING_EXECUTABLE_VERSION".GetLocalizedString());
+            progress.Info("READING_EXECUTABLE_VERSION");
             var versionInfo = VersionUtils.ReadTrxVersionInfo(originalExePath);
 
-            progress.Report("DOWNLOADING_NATIVE_EXECUTABLE_FROM_GITHUB".GetLocalizedString());
+            progress.Info("DOWNLOADING_NATIVE_EXECUTABLE_FROM_GITHUB");
             var tag = _patcher.BuildTag(versionInfo.InternalName, versionInfo.Version);
             var release = await _gitHubClient.Repository.Release.Get("LostArtefacts", "TRX", tag);
 
@@ -168,7 +168,7 @@ public class TrxNativePatcherService : IViewService
         }
     }
 
-    public async Task<PatchResult> RevertPatch(GameMetadataViewModel gameMetadataViewModel, IProgress<string> progress, CancellationToken cancellationToken)
+    public async Task<PatchResult> RevertPatch(IGameMetadataLite gameMetadataViewModel, ProgressLogger progress, CancellationToken cancellationToken)
     {
         await using var ctx = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         var fileBackup = await RetrieveFileBackup(ctx, gameMetadataViewModel.Id, progress, cancellationToken);
@@ -195,7 +195,7 @@ public class TrxNativePatcherService : IViewService
                 "ERROR_WHILE_RESTORING_BACKUP".GetLocalizedString(fileBackup.FileName, ex.Message));
         }
 
-        progress.Report("CHECKING_GAME_EXECUTABLE_CONSISTENCY".GetLocalizedString());
+        progress.Info("CHECKING_GAME_EXECUTABLE_CONSISTENCY");
         var md5 = await CryptoUtils.ComputeMd5Hash(tempDestination);
         if (md5 != fileBackup.Md5)
         {
@@ -203,7 +203,7 @@ public class TrxNativePatcherService : IViewService
             return PatchResult.UnsuccessfulResult("MD5_MISMATCH_IN_TARGET_DATA".GetLocalizedString());
         }
 
-        progress.Report("RESTORING_GAME_EXECUTABLE".GetLocalizedString());
+        progress.Info("RESTORING_GAME_EXECUTABLE");
         var fullExecutablePath = Path.Combine(gameMetadataViewModel.InstallDirectory!, fileBackup.FileName);
         var nativeBinaryPath = Path.Combine(gameMetadataViewModel.InstallDirectory!,
             Path.GetFileNameWithoutExtension(fileBackup.FileName));
@@ -218,19 +218,20 @@ public class TrxNativePatcherService : IViewService
         return new PatchResult()
         {
             IsSuccessful = true,
-            AffectedFiles = new List<FileChange>()
-            {
+            AffectedFiles =
+            [
                 new FileChange()
                 {
                     ChangeType = ChangeType.FileDeletion, Filename = nativeBinaryPath,
                     NewSize = 0, OriginalSize = fileBackup.Data?.Length ?? 0
                 },
+
                 new FileChange()
                 {
                     ChangeType = ChangeType.FileAddition, Filename = fullExecutablePath,
                     NewSize = fileBackup.Data?.Length ?? 0, OriginalSize = 0
                 }
-            }
+            ]
         };
     }
 
