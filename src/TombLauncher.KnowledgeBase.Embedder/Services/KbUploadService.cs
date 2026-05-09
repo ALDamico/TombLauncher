@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -42,8 +43,17 @@ public class KbUploadService
         };
 
         var manifestJson = JsonSerializer.Serialize(manifest, new JsonSerializerOptions { WriteIndented = true });
-        var remoteTmp = RemotePath("kb_embeddings.db.tmp");
-        var remoteFinal = RemotePath("kb_embeddings.db");
+        _logger.LogInformation("Zipping {Path}", _kbPath);
+        var zipPath = Path.ChangeExtension(_kbPath, ".zip");
+        await Task.Run(() =>
+        {
+            if (File.Exists(zipPath)) File.Delete(zipPath);
+            using var zip = ZipFile.Open(zipPath, ZipArchiveMode.Create);
+            zip.CreateEntryFromFile(_kbPath, Path.GetFileName(_kbPath), CompressionLevel.Optimal);
+        }, cancellationToken);
+
+        var remoteTmp = RemotePath("kb_embeddings.zip.tmp");
+        var remoteFinal = RemotePath("kb_embeddings.zip");
         var remoteManifest = RemotePath("kb_manifest.json");
 
         _logger.LogInformation("Connecting to {Host}:{Port}", _sftp.Host, _sftp.Port);
@@ -51,7 +61,7 @@ public class KbUploadService
         client.Connect();
 
         _logger.LogInformation("Uploading KB to {Remote}", remoteTmp);
-        await using (var stream = File.OpenRead(_kbPath))
+        await using (var stream = File.OpenRead(zipPath))
         {
             await Task.Run(() => client.UploadFile(stream, remoteTmp, canOverride: true), cancellationToken);
         }
