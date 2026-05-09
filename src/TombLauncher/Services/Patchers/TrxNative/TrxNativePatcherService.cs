@@ -25,7 +25,7 @@ using FileMode = System.IO.FileMode;
 
 namespace TombLauncher.Services.Patchers.TrxNative;
 
-public class TrxNativePatcherService
+public class TrxNativePatcherService : IViewService
 {
     private readonly IDbContextFactory<TombLauncherDbContext> _dbContextFactory;
     private readonly TrxNativeExecutablePatcher _patcher;
@@ -39,6 +39,7 @@ public class TrxNativePatcherService
         IPlatformSpecificFeatures platformSpecificFeatures, 
         GitHubClient gitHubClient,
         HttpClient httpClient,
+        ViewServiceContext viewContext,
         ILogger<TrxNativePatcherService> logger)
     {
         _dbContextFactory = dbContextFactory;
@@ -47,9 +48,14 @@ public class TrxNativePatcherService
         _gitHubClient = gitHubClient;
         _httpClient = httpClient;
         _logger = logger;
+        ViewContext = viewContext;
     }
 
-    public TrxVersionInfo GetVersionInfo(string executablePath) => VersionUtils.ReadTrxVersionInfo(executablePath);
+    public TrxVersionInfo GetVersionInfo(string executablePath, IProgress<string> progress)
+    {
+        progress.Report("DETECTING_VERSION_INFO".GetLocalizedString());
+        return VersionUtils.ReadTrxVersionInfo(executablePath);
+    }
 
     public async Task<bool> IsAlreadyApplied(int gameId, IProgress<string> progress, CancellationToken ct)
     {
@@ -227,4 +233,6 @@ public class TrxNativePatcherService
             }
         };
     }
+
+    public ViewServiceContext ViewContext { get; }
 }

@@ -512,5 +512,17 @@
     <system:String x:Key="FINDING_FILE_TO_RESTORE">Ricerca del file da ripristinare...</system:String>
     <system:String x:Key="CHECKING_GAME_EXECUTABLE_CONSISTENCY">Verifica integrità del file ripristinato...</system:String>
     <system:String x:Key="RESTORING_GAME_EXECUTABLE">Ripristino dell'eseguibile originale...</system:String>
+    <system:String x:Key="DETECTING_VERSION_INFO">Rilevamento informazioni versione...</system:String>
+    <system:String x:Key="DOWNLOADING_NATIVE_EXECUTABLE_FROM_GITHUB">Download dell'eseguibile nativo da GitHub...</system:String>
+    <system:String x:Key="UNABLE_TO_EXTRACT_EXECUTABLE">Impossibile estrarre l'eseguibile dall'archivio scaricato.</system:String>
+    <system:String x:Key="APPLYING_TRX_NATIVE_PATCH">Applicazione patch nativa TRX...</system:String>
+    <system:String x:Key="RESTORING_TRX_ORIGINAL_EXECUTABLE">Ripristino dell'eseguibile originale...</system:String>
+    <system:String x:Key="READING_GAME_INFO">Lettura informazioni di gioco...</system:String>
+    <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_APPLIED">L'eseguibile nativo TRX è stato applicato con successo.</system:String>
+    <system:String x:Key="NATIVE_PATCH_APPLIED_TITLE">Patch nativa applicata</system:String>
+    <system:String x:Key="NATIVE_PATCH_ERROR_TITLE">Errore patch nativa</system:String>
+    <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_REVERTED">L'eseguibile originale è stato ripristinato con successo.</system:String>
+    <system:String x:Key="NATIVE_PATCH_REVERTED_TITLE">Patch nativa ripristinata</system:String>
+    <system:String x:Key="NATIVE_PATCH_REVERSAL_ERROR_TITLE">Errore ripristino patch nativa</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

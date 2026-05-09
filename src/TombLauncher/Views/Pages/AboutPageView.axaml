@@ -182,6 +182,19 @@
                         </StackPanel>
                     </Button>
 
+                    <TextBlock Margin="0,8,0,2" FontWeight="SemiBold" Text="Widescreen patch" />
+                    <WrapPanel>
+                        <TextBlock Text="Ported to C# from the original by " />
+                        <Button Classes="hyperlink"
+                                Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://ed-kurlyak.github.io/">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Ed Kurlyak (aka Mr. Blackfour)" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+
                     <TextBlock Margin="0,8,0,2" FontWeight="SemiBold" Text="Special thanks" />
                     <WrapPanel>
                         <Button Classes="hyperlink"

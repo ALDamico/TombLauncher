@@ -22,6 +22,7 @@ public static class ViewModelsServiceCollectionExtensions
             .AddTransient<LaunchOptionsViewModel>()
             .AddSingleton<AboutPageViewModel>()
             .AddTransient<AiChatViewModel>()
-            .AddTransient<WidescreenPatcherViewModel>();
+            .AddTransient<WidescreenPatcherViewModel>()
+            .AddTransient<TrxNativePatcherViewModel>();
     }
 }

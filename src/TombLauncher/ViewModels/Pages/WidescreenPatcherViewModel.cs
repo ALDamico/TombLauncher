@@ -121,13 +121,13 @@ public partial class WidescreenPatcherViewModel : PageViewModel
             {
                 CanApplyPatchByFileState = false;
                 await _patcherService.ViewContext.PopupService.ShowLocalized(
-                    "WIDESCREEN_PATCH_SUCCESSFULLY_APPLIED".GetLocalizedString(),
-                    "WIDESCREEN_PATCH_APPLIED_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Information);
+                    "WIDESCREEN_PATCH_SUCCESSFULLY_APPLIED",
+                    "WIDESCREEN_PATCH_APPLIED_TITLE", MsgBoxButton.Ok, MsgBoxImage.Information);
             }
             else
             {
                 await _patcherService.ViewContext.PopupService.ShowLocalized(patchResult.Message,
-                    "WIDESCREEN_PATCH_ERROR_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Error);
+                    "WIDESCREEN_PATCH_ERROR_TITLE", MsgBoxButton.Ok, MsgBoxImage.Error);
             }
         }
     }
@@ -144,13 +144,13 @@ public partial class WidescreenPatcherViewModel : PageViewModel
             {
                 CanApplyPatchByFileState = true;
                 await _patcherService.ViewContext.PopupService.ShowLocalized(
-                    "WIDESCREEN_PATCH_SUCCESSFULLY_REVERTED".GetLocalizedString(),
-                    "WIDESCREEN_PATCH_REVERTED_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Information);
+                    "WIDESCREEN_PATCH_SUCCESSFULLY_REVERTED",
+                    "WIDESCREEN_PATCH_REVERTED_TITLE", MsgBoxButton.Ok, MsgBoxImage.Information);
             }
             else
             {
                 await _patcherService.ViewContext.PopupService.ShowLocalized(patchReversalResult.Message,
-                    "WIDESCREEN_PATCH_REVERSAL_ERROR_TITLE".GetLocalizedString(), MsgBoxButton.Ok, MsgBoxImage.Error);
+                    "WIDESCREEN_PATCH_REVERSAL_ERROR_TITLE", MsgBoxButton.Ok, MsgBoxImage.Error);
             }
         }
     }

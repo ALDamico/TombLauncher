@@ -509,5 +509,17 @@
     <system:String x:Key="FINDING_FILE_TO_RESTORE">Locating file to restore...</system:String>
     <system:String x:Key="CHECKING_GAME_EXECUTABLE_CONSISTENCY">Verifying integrity of restored file...</system:String>
     <system:String x:Key="RESTORING_GAME_EXECUTABLE">Restoring original executable...</system:String>
+    <system:String x:Key="DETECTING_VERSION_INFO">Detecting version info...</system:String>
+    <system:String x:Key="DOWNLOADING_NATIVE_EXECUTABLE_FROM_GITHUB">Downloading native executable from GitHub...</system:String>
+    <system:String x:Key="UNABLE_TO_EXTRACT_EXECUTABLE">Unable to extract the executable from the downloaded archive.</system:String>
+    <system:String x:Key="APPLYING_TRX_NATIVE_PATCH">Applying TRX native patch...</system:String>
+    <system:String x:Key="RESTORING_TRX_ORIGINAL_EXECUTABLE">Restoring original executable...</system:String>
+    <system:String x:Key="READING_GAME_INFO">Reading game info...</system:String>
+    <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_APPLIED">The native TRX executable has been applied successfully.</system:String>
+    <system:String x:Key="NATIVE_PATCH_APPLIED_TITLE">Native patch applied</system:String>
+    <system:String x:Key="NATIVE_PATCH_ERROR_TITLE">Native patch error</system:String>
+    <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_REVERTED">The original executable has been restored successfully.</system:String>
+    <system:String x:Key="NATIVE_PATCH_REVERTED_TITLE">Native patch reverted</system:String>
+    <system:String x:Key="NATIVE_PATCH_REVERSAL_ERROR_TITLE">Native patch reversal error</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
