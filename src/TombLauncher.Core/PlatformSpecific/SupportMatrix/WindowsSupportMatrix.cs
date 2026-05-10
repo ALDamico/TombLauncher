@@ -21,8 +21,10 @@ public class WindowsSupportMatrix : ISupportMatrix
             { GameEngine.Tr2x, EngineSupportState.FullSupport },
             { GameEngine.TombAti, EngineSupportState.FullSupport },
             { GameEngine.Tomb2Main, EngineSupportState.FullSupport },
-            { GameEngine.Tomb3CommunityEdition, EngineSupportState.FullSupport }
+            { GameEngine.Tomb3CommunityEdition, EngineSupportState.FullSupport },
+            { GameEngine.Trx, EngineSupportState.FullSupport }
         };
     }
+
     public IReadOnlyDictionary<GameEngine, EngineSupportState> Matrix { get; }
 }

@@ -17,12 +17,14 @@ public class LinuxSupportMatrix : ISupportMatrix
             { GameEngine.TombRaider4, EngineSupportState.SupportedWithCompatibilityLayer },
             { GameEngine.TombRaider5, EngineSupportState.SupportedWithCompatibilityLayer },
             { GameEngine.Ten, EngineSupportState.NoSupport },
-            { GameEngine.Tr1x, EngineSupportState.SupportedWithCompatibilityLayer },
-            { GameEngine.Tr2x, EngineSupportState.SupportedWithCompatibilityLayer },
+            { GameEngine.Tr1x, EngineSupportState.NativePatchingAvailable },
+            { GameEngine.Tr2x, EngineSupportState.NativePatchingAvailable },
             { GameEngine.TombAti, EngineSupportState.SupportedWithCompatibilityLayer },
             { GameEngine.Tomb2Main, EngineSupportState.SupportedWithCompatibilityLayer },
-            { GameEngine.Tomb3CommunityEdition, EngineSupportState.SupportedWithCompatibilityLayer }
+            { GameEngine.Tomb3CommunityEdition, EngineSupportState.SupportedWithCompatibilityLayer },
+            { GameEngine.Trx, EngineSupportState.NativePatchingAvailable }
         };
     }
+
     public IReadOnlyDictionary<GameEngine, EngineSupportState> Matrix { get; }
 }
