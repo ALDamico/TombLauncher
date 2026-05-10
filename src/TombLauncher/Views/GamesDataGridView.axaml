@@ -86,7 +86,10 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="{loc:Translate TITLE_PICTURE}" Width="72">
+                <DataGridTemplateColumn Width="72">
+                    <DataGridTemplateColumn.Header>
+                        <iconPacks:PackIconRemixIcon Kind="Image2Line" ToolTip.Tip="{loc:Translate TITLE_PICTURE}" />
+                    </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding GameMetadata.TitlePic}" Height="48" Stretch="Uniform" />

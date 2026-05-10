@@ -16,3 +16,4 @@ bin\\Debug/
 *.log
 TombLauncher_App.log
 TombLauncher.db
+.claude/settings.json
