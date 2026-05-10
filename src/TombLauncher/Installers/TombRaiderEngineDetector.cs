@@ -29,8 +29,17 @@ public class TombRaiderEngineDetector : IEngineDetector
             { "tombengine.exe", GameEngine.Ten },
             { "tomb1main.exe", GameEngine.Tr1x },
             { "tr1x.exe", GameEngine.Tr1x },
-            { "tr2x.exe", GameEngine.Tr2x }
+            { "tr2x.exe", GameEngine.Tr2x },
+            { "trx.exe", GameEngine.Trx }
         };
+
+        if (_platformSpecificFeatures.Platform == Platform.Linux)
+        {
+            // These can occur if the native patch has been applied
+            _gameEngines.Add("tr1x", GameEngine.Tr1x);
+            _gameEngines.Add("tr2x", GameEngine.Tr2x);
+            _gameEngines.Add("trx", GameEngine.Trx);
+        }
         _knownGameExecutables = _gameEngines.Keys.ToHashSet();
     }
 
@@ -47,6 +56,19 @@ public class TombRaiderEngineDetector : IEngineDetector
             ExecutablePath = GetGameExecutablePath(containingFolder),
             UniversalLauncherPath = GetUniversalLauncherPath(containingFolder)
         };
+        ProcessFiles(containingFolder, files, result);
+
+        if (files.Length != 0 || result.GameEngine != GameEngine.Unknown) 
+            return result;
+        var allFiles = Directory.GetFiles(containingFolder, "*", _platformSpecificFeatures.GetEnumerationOptions())
+            .Where(f => _gameEngines.Keys.Any(k => f.EndsWith(k, StringComparison.InvariantCultureIgnoreCase))).ToArray();
+        ProcessFiles(containingFolder, allFiles, result);
+
+        return result;
+    }
+
+    private void ProcessFiles(string containingFolder, string[] files, EngineDetectorResult result)
+    {
         foreach (var file in files)
         {
             if (_gameEngines.TryGetValue(Path.GetFileName(file).ToLowerInvariant(), out var gameEngine))
@@ -63,54 +85,52 @@ public class TombRaiderEngineDetector : IEngineDetector
                 switch (gameEngine)
                 {
                     case GameEngine.TombRaider2:
+                    {
+                        if (PathUtils.DirectoryContainsFile(containingFolder, "TR2Main.dll"))
                         {
-                            if (PathUtils.DirectoryContainsFile(containingFolder, "TR2Main.dll"))
-                            {
-                                result.GameEngine = GameEngine.Tomb2Main;
-                            }
-
-                            break;
+                            result.GameEngine = GameEngine.Tomb2Main;
                         }
+
+                        break;
+                    }
                     case GameEngine.TombRaider3:
+                    {
+                        if (PathUtils.DirectoryContainsFile(containingFolder, "tomb3.dll") || PathUtils.DirectoryContainsFile(containingFolder, "tomb3main.dll"))
                         {
-                            if (PathUtils.DirectoryContainsFile(containingFolder, "tomb3.dll") || PathUtils.DirectoryContainsFile(containingFolder, "tomb3main.dll"))
+                            result.GameEngine = GameEngine.Tomb3CommunityEdition;
+
+                            if (PathUtils.DirectoryContainsFile(containingFolder, "tomb3_ConfigTool.exe"))
                             {
-                                result.GameEngine = GameEngine.Tomb3CommunityEdition;
-
-                                if (PathUtils.DirectoryContainsFile(containingFolder, "tomb3_ConfigTool.exe"))
-                                {
-                                    result.CommunitySetupExecutablePath =
-                                        PathUtils.GetRelativePath(containingFolder, "tomb3_ConfigTool.exe");
-                                }
+                                result.CommunitySetupExecutablePath =
+                                    PathUtils.GetRelativePath(containingFolder, "tomb3_ConfigTool.exe");
                             }
-
-                            break;
                         }
+
+                        break;
+                    }
                     case GameEngine.Tr1x:
+                    {
+                        if (PathUtils.DirectoryContainsFile(containingFolder, "TR1X_ConfigTool.exe"))
                         {
-                            if (PathUtils.DirectoryContainsFile(containingFolder, "TR1X_ConfigTool.exe"))
-                            {
-                                result.CommunitySetupExecutablePath =
-                                    PathUtils.GetRelativePath(containingFolder, "TR1X_ConfigTool.exe");
-                            }
-
-                            break;
+                            result.CommunitySetupExecutablePath =
+                                PathUtils.GetRelativePath(containingFolder, "TR1X_ConfigTool.exe");
                         }
+
+                        break;
+                    }
                     case GameEngine.Tr2x:
+                    {
+                        if (PathUtils.DirectoryContainsFile(containingFolder, "TR2X_ConfigTool.exe"))
                         {
-                            if (PathUtils.DirectoryContainsFile(containingFolder, "TR2X_ConfigTool.exe"))
-                            {
-                                result.CommunitySetupExecutablePath =
-                                    PathUtils.GetRelativePath(containingFolder, "TR2X_ConfigTool.exe");
-                            }
-
-                            break;
+                            result.CommunitySetupExecutablePath =
+                                PathUtils.GetRelativePath(containingFolder, "TR2X_ConfigTool.exe");
                         }
+
+                        break;
+                    }
                 }
             }
         }
-
-        return result;
     }
 
     private string? GetUniversalLauncherPath(string containingFolder)
@@ -124,14 +144,14 @@ public class TombRaiderEngineDetector : IEngineDetector
 
     private string? GetGameExecutablePath(string containingFolder)
     {
-        var executables = Directory.GetFiles(containingFolder, "*.exe", _platformSpecificFeatures.GetEnumerationOptions());
+        var executables = Directory.GetFiles(containingFolder, "*", _platformSpecificFeatures.GetEnumerationOptions());
         var fullPath = _knownGameExecutables.Join(executables, knownExecutable => knownExecutable,
                 Path.GetFileName, (_, s1) => s1, StringComparer.InvariantCultureIgnoreCase)
             .FirstOrDefault();
 
         if (fullPath.IsNullOrWhiteSpace())
             return null;
-
+        
         return Path.GetRelativePath(containingFolder, fullPath ?? string.Empty);
     }
 }

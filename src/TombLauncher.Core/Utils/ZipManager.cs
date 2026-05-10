@@ -14,14 +14,14 @@ public class ZipManager : IDisposable
 
     private readonly ZipFile _zipFile;
 
-    public IEnumerable<ZipEntry> GetEntries()
+    public IEnumerable<ZipEntry?> GetEntries()
     {
         var enumerator = _zipFile.GetEnumerator();
         try
         {
             while (enumerator.MoveNext())
             {
-                yield return (ZipEntry)enumerator.Current;
+                yield return (ZipEntry?)enumerator.Current;
             }
         }
         finally
@@ -46,8 +46,11 @@ public class ZipManager : IDisposable
         while (enumerator.MoveNext())
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var current = (ZipEntry)enumerator.Current;
+            var current = (ZipEntry?)enumerator.Current;
             currentEntry++;
+
+            if (current == null)
+                break;
 
             if (current.IsDirectory)
             {
@@ -85,6 +88,6 @@ public class ZipManager : IDisposable
 
     public void Dispose()
     {
-        ((IDisposable)_zipFile)?.Dispose();
+        ((IDisposable)_zipFile).Dispose();
     }
 }

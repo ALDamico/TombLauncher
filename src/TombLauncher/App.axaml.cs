@@ -17,6 +17,7 @@ using TombLauncher.Ai.Services;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
@@ -50,7 +51,7 @@ public class App : Application
                 BindingPlugins.DataValidators.RemoveAt(0);
                 var splashScreen = new SplashScreen()
                 {
-                    Version = AppUtils.GetApplicationVersion()
+                    Version = VersionUtils.GetApplicationVersion()
                 };
 
                 IProgress<string> progress = new Progress<string>(p => splashScreen.StatusMessage = p);

@@ -24,6 +24,12 @@ supported under Linux.
 This is a feature that we will probably implement in a future version of Tomb Launcher. As of version 1.1.0, TR1X and 
 TR2X levels run under Linux through Wine or Proton.
 
+## Do TR1X/TR2X levels support running with the native Linux executable?
+As of version 1.4.0, Tomb Launcher allows you to patch TR1X, TR2X and TRX levels to run natively under Linux.  
+To do this, open the game details in Tomb Launcher and select the "Convert to native executable" option under the button with the nurse icon.  
+When you start the process, Tomb Launcher downloads the native Linux executable from the TRX repository, backs up the original executable, and replaces it with the executable it just downloaded.  
+The process is designed to be reversible.
+
 ## Can Tomb Raider 1 and Tomb Raider 2 levels be patched to run via TR1X/TR2X?
 This is a planned feature. We do know that it is possible to use TR1X to play Tomb Raider 1 custom levels without having 
 to use DosBox, but as of version 1.1.0 this is not supported yet.

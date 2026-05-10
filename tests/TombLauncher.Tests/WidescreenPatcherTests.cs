@@ -1,15 +1,20 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Patchers;
+using TombLauncher.Core.Patchers;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Installers;
 using TombLauncher.Patchers.Widescreen;
+using TombLauncher.Tests.Fixtures;
 
 namespace TombLauncher.Tests;
 
+[Collection("Localization")]
 public class WidescreenPatcherTests
 {
     private readonly WidescreenPatcher _patcher;
-    private readonly IProgress<string> _progress = new Progress<string>(Console.WriteLine);
+
+    private readonly ProgressLogger _progress = new(new Progress<LogEntry>(msg => Console.WriteLine(msg.Message)));
 
     public WidescreenPatcherTests()
     {

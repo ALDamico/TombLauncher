@@ -6,13 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Octokit;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Core.Utils;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Installers.Downloaders.AspideTR.com;
 using TombLauncher.Installers.Downloaders.TRCustoms.org;
 using TombLauncher.Installers.Downloaders.TRLE.net;
 using TombLauncher.Services;
-using TombLauncher.Utils;
 
 namespace TombLauncher.Extensions;
 
@@ -20,7 +20,7 @@ public static class DownloaderServiceCollectionExtensions
 {
     public static IServiceCollection AddDownloaders(this IServiceCollection services)
     {
-        var appVersion = AppUtils.GetApplicationVersion();
+        var appVersion = VersionUtils.GetApplicationVersion();
         var versionString = appVersion is null ? "0.0.0" : $"{appVersion.Major}.{appVersion.Minor}.{appVersion.Build}";
         services.AddSingleton(new GitHubClient(new Octokit.ProductHeaderValue("TombLauncher", versionString)));
 

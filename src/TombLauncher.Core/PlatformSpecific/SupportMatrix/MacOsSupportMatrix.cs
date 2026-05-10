@@ -21,7 +21,8 @@ public class MacOsSupportMatrix : ISupportMatrix
             { GameEngine.Tr2x, EngineSupportState.NoSupport },
             { GameEngine.TombAti, EngineSupportState.NoSupport },
             { GameEngine.Tomb2Main, EngineSupportState.NoSupport },
-            { GameEngine.Tomb3CommunityEdition, EngineSupportState.NoSupport }
+            { GameEngine.Tomb3CommunityEdition, EngineSupportState.NoSupport },
+            { GameEngine.Trx, EngineSupportState.NoSupport }
         };
     }
     public IReadOnlyDictionary<GameEngine, EngineSupportState> Matrix { get; }

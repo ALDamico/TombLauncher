@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:patchers="clr-namespace:TombLauncher.ViewModels.Pages.Patchers"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.Patchers.PatcherView"
+             x:DataType="patchers:PatcherPageViewModel">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="ToggleButtonBackgroundChecked">Transparent</SolidColorBrush>
+        <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver">Transparent</SolidColorBrush>
+        <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed">Transparent</SolidColorBrush>
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="TextBlock.small">
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="Opacity" Value="0.7" />
+        </Style>
+        <Style Selector="ToggleButton:checked">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        </Style>
+        <Style Selector="ToggleButton:checked:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        </Style>
+        <Style Selector="ToggleButton:checked:pressed">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        </Style>
+    </UserControl.Styles>
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Bottom">
+            <controls:IconButton DockPanel.Dock="Right"
+                                 Classes="btn-primary"
+                                 Margin="10"
+                                 Padding="16,8"
+                                 Icon="{Binding ApplyPatchButtonIcon}"
+                                 Text="{Binding ApplyPatchButtonCaption}"
+                                 IsVisible="{Binding !CanRevertPatch}"
+                                 Command="{Binding ApplyPatchCommand}" />
+            <controls:IconButton DockPanel.Dock="Right"
+                                 Classes="btn-primary"
+                                 Margin="10"
+                                 Padding="16,8"
+                                 Icon="{Binding RevertPatchButtonIcon}"
+                                 Text="{Binding RevertPatchButtonCaption}"
+                                 IsVisible="{Binding CanRevertPatch}"
+                                 Command="{Binding RevertPatchCommand}" />
+        </StackPanel>
+        <Border DockPanel.Dock="Bottom" Classes="card-background" CornerRadius="8" Margin="8,0,8,8">
+            <StackPanel>
+                <ToggleButton IsChecked="{Binding IsLogExpanded}"
+                              HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              Padding="16,10">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Text="▲" IsVisible="{Binding IsLogExpanded}" />
+                        <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Text="▼" IsVisible="{Binding !IsLogExpanded}" />
+                        <TextBlock Text="{localization:Translate PATCH_LOG}" FontWeight="SemiBold" />
+                    </DockPanel>
+                </ToggleButton>
+                <ItemsControl ItemsSource="{Binding Log}"
+                              IsVisible="{Binding IsLogExpanded}"
+                              Margin="16,0,16,12">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="28,*" Margin="0,2">
+                                <controls:Infotip Grid.Column="0" VerticalAlignment="Top"
+                                                 Icon="{Binding Severity, Converter={StaticResource SeverityToIcon}, Mode=OneWay}"
+                                                 Foreground="{Binding Severity, Converter={StaticResource SeverityToBrush}}"
+                                                 ToolTipContent="{Binding Severity}" />
+                                <TextBlock Grid.Column="1" TextWrapping="Wrap" Margin="4,0,0,0">
+                                    <Run FontStyle="Italic" Text="{Binding Timestamp, StringFormat=HH:mm:ss}" />
+                                    <Run>—</Run>
+                                    <Run Text="{Binding Message}" />
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+        <ScrollViewer>
+            <ContentControl Content="{Binding Content}" />
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.ViewModels;
 
-public partial class GameMetadataViewModel : ViewModelBase
+public partial class GameMetadataViewModel : ViewModelBase, IGameMetadataLite
 {
     public int Id { get; set; }
     [ObservableProperty] private string _title = string.Empty;

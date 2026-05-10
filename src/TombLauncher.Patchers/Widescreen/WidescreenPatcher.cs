@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Patchers;
+using TombLauncher.Core.Patchers;
 
 namespace TombLauncher.Patchers.Widescreen;
 
@@ -16,9 +17,9 @@ public class WidescreenPatcher
     private readonly IEngineDetector _engineDetector;
     private readonly ILogger<WidescreenPatcher> _logger;
 
-    public async Task<PatchResult> DetectChanges(string targetFolder, IProgress<string> progress)
+    public async Task<PatchResult> DetectChanges(string targetFolder, ProgressLogger progress)
     {
-        progress.Report("DETECTING_ENGINE_VERSION");
+        progress.Info("DETECTING_ENGINE_VERSION");
         var detectorResult = _engineDetector.Detect(targetFolder);
         var engine = detectorResult.GameEngine;
         switch (engine)
@@ -51,7 +52,7 @@ public class WidescreenPatcher
         }
     }
 
-    public async Task<PatchResult> ApplyPatch(string targetFolder, WidescreenPatcherParameters parameters, IProgress<string> progress)
+    public async Task<PatchResult> ApplyPatch(string targetFolder, WidescreenPatcherParameters parameters, ProgressLogger progress)
     {
         var tempResult = await DetectChanges(targetFolder, progress);
         if (!tempResult.IsSuccessful)
@@ -60,11 +61,11 @@ public class WidescreenPatcher
         return await PatchExecutable(tempResult, parameters, progress);
     }
 
-    private async Task<PatchResult> PatchExecutable(PatchResult executablePath, WidescreenPatcherParameters parameters, IProgress<string> progress)
+    private async Task<PatchResult> PatchExecutable(PatchResult executablePath, WidescreenPatcherParameters parameters, ProgressLogger progress)
     {
         foreach (var affectedFile in executablePath.AffectedFiles.Where(f => f.ChangeType == ChangeType.BinaryEdit))
         {
-            progress.Report("APPLYING_WIDESCREEN_PATCH_TO_FILE");
+            progress.Info("APPLYING_WIDESCREEN_PATCH_TO_FILE", affectedFile.Filename);
             var bytes = await File.ReadAllBytesAsync(affectedFile.Filename);
             
             ApplyAspectRatioCorrection(parameters, bytes, affectedFile, progress);
@@ -78,7 +79,7 @@ public class WidescreenPatcher
         return executablePath;
     }
 
-    private void Apply60Fps(WidescreenPatcherParameters parameters, byte[] bytes, FileChange affectedFile, IProgress<string> progress)
+    private void Apply60Fps(WidescreenPatcherParameters parameters, byte[] bytes, FileChange affectedFile, ProgressLogger progress)
     {
         if (!parameters.Update60Fps || parameters.Engine is not (GameEngine.TombRaider2 or GameEngine.TombRaider3))
         {
@@ -86,7 +87,7 @@ public class WidescreenPatcher
             return;
         }
 
-        progress.Report("APPLYING_60_FPS_UNLOCK");
+        progress.Info("APPLYING_60_FPS_UNLOCK");
         var i = 0;
         do
         {
@@ -103,7 +104,7 @@ public class WidescreenPatcher
     }
 
     private void ApplyCameraDistanceCorrection(WidescreenPatcherParameters parameters, byte[] bytes,
-        FileChange affectedFile, IProgress<string> progress)
+        FileChange affectedFile, ProgressLogger progress)
     {
         if (parameters is not { UpdateCameraDistance: true, TargetCameraDistance: > 0 })
         {
@@ -111,7 +112,7 @@ public class WidescreenPatcher
             return;
         }
         
-        progress.Report("APPLYING_CAMERA_DISTANCE_CORRECTION");
+        progress.Info("APPLYING_CAMERA_DISTANCE_CORRECTION");
         var cameraDistanceValue = BitConverter.GetBytes((short)parameters.TargetCameraDistance);
 
         var i = 0;
@@ -128,7 +129,7 @@ public class WidescreenPatcher
     }
 
     private void ApplyFovCorrection(WidescreenPatcherParameters parameters, byte[] bytes,
-        FileChange affectedFile, IProgress<string> progress)
+        FileChange affectedFile, ProgressLogger progress)
     {
         if (!parameters.UpdateFov)
         {
@@ -136,7 +137,7 @@ public class WidescreenPatcher
             return;
         }
 
-        progress.Report("APPLYING_FOV_CORRECTION");
+        progress.Info("APPLYING_FOV_CORRECTION");
         var i = 0;
         do
         {
@@ -155,7 +156,7 @@ public class WidescreenPatcher
     }
 
     private void ApplyAspectRatioCorrection(WidescreenPatcherParameters parameters, byte[] bytes,
-        FileChange affectedFile, IProgress<string> progress)
+        FileChange affectedFile, ProgressLogger progress)
     {
         if (parameters is not { UpdateAspectRatio: true, TargetAspectRatio: > 0 })
         {
@@ -163,7 +164,7 @@ public class WidescreenPatcher
             return;
         }
         
-        progress.Report("APPLYING_ASPECT_RATIO_CORRECTION");
+        progress.Info("APPLYING_ASPECT_RATIO_CORRECTION");
         // In an unpatched executable should be 0xAB 0xAA 0xAA 0X3F
         var originalAspectRatioBytes = BitConverter.GetBytes(FourByThreeAspectRatio);
         var targetAspectRatioBytes = BitConverter.GetBytes(parameters.TargetAspectRatio);

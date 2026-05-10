@@ -14,9 +14,11 @@ public class CompatibilityToolToIconConverter : IValueConverter
         {
             switch (compatibilityTool)
             {
-                case CompatibilityTool.None:
+                case CompatibilityTool.WindowsNative:
                 case CompatibilityTool.Unspecified:
                     return PackIconRemixIconKind.FileUnknowFill;
+                case CompatibilityTool.LinuxNative:
+                    return PackIconRemixIconKind.UbuntuLine;
                 case CompatibilityTool.Wine:
                     return PackIconRemixIconKind.Goblet2Line;
                 case CompatibilityTool.Proton:

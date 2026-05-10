@@ -1,9 +1,9 @@
 using System.ComponentModel;
-using System.Reflection;
 using Microsoft.SemanticKernel;
 using TombLauncher.Ai.Models;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Ai.Plugins;
 
@@ -16,10 +16,17 @@ public class GameDiagnosticsPlugin
 
     public TroubleshootingContext TroubleshootingContext { get; }
     private const string NoTroubleshootingContextMessage = "No troubleshooting context in this session.";
-    
+
     [KernelFunction]
     [Description("Use this function to get the current version of Tomb Launcher")]
-    public string GetCurrentVersion() => Assembly.GetEntryAssembly()?.GetName().Version.ToString();
+    public string GetCurrentVersion()
+    {
+        var version = VersionUtils.GetApplicationVersion();
+        if (version == null)
+            return "Unable to retrieve application version.";
+
+        return version.ToString();
+    }
 
     [KernelFunction]
     [Description("Use this function to determine what Operating System the application is running on.")]

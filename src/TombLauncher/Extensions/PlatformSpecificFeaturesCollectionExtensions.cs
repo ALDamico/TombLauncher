@@ -21,7 +21,7 @@ public static class PlatformSpecificFeaturesCollectionExtensions
             return cfg.CompatibilityTool switch
             {
                 CompatibilityTool.Proton => new ProtonGameLauncher(cfg.ProtonPath ?? ""),
-                CompatibilityTool.None => new WindowsGameLauncher(),
+                CompatibilityTool.WindowsNative => new WindowsGameLauncher(),
                 _ => new WineGameLauncher(cfg.WinePath ?? "wine"),
             };
         });

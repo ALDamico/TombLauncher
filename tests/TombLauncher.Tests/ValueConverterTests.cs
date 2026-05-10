@@ -2,33 +2,19 @@ using System.ComponentModel;
 using System.Globalization;
 using Avalonia.Controls;
 using Avalonia.Media;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using IconPacks.Avalonia.RemixIcon;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Contracts.Localization;
 using TombLauncher.ValueConverters;
 using TombLauncher.ViewModels;
+using TombLauncher.Tests.Fixtures;
 
 namespace TombLauncher.Tests;
 
+[Collection("Localization")]
 public class ValueConverterTests
 {
     private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
-
-    static ValueConverterTests()
-    {
-        var locManager = Substitute.For<ILocalizationManager>();
-        locManager.GetLocalizedString(Arg.Any<string>(), Arg.Any<object[]>())
-                  .Returns(x => x.ArgAt<string>(0));
-        locManager[Arg.Any<string>()].Returns(x => x.ArgAt<string>(0));
-        locManager.CurrentCulture.Returns(CultureInfo.InvariantCulture);
-        Ioc.Default.ConfigureServices(
-            new ServiceCollection()
-                .AddSingleton(locManager)
-                .BuildServiceProvider());
-    }
 
     // --- GreaterThanZeroToBoolConverter ---
 

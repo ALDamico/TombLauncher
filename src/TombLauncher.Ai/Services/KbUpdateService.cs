@@ -1,16 +1,19 @@
+using System.IO.Compression;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Ai.Models;
+using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
+using TombLauncher.Localization.Extensions;
 
 namespace TombLauncher.Ai.Services;
 
 public class KbUpdateService
 {
     private const string RemoteManifestUrl = "https://tomblauncher.app/kb/kb_manifest.json";
-    private const string RemoteDbUrl = "https://tomblauncher.app/kb/kb_embeddings.db";
+    private const string RemoteDbUrl = "https://tomblauncher.app/kb/kb_embeddings.zip";
 
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly string _localDbPath;
@@ -58,41 +61,58 @@ public class KbUpdateService
         if (local != null && remoteManifest.GeneratedAt <= local.GeneratedAt)
         {
             _logger.LogInformation("KB is already up to date ({Date})", local.GeneratedAt);
-            progress?.Report("KB_UP_TO_DATE");
+            progress?.Report("KB_UP_TO_DATE".GetLocalizedString());
             return;
         }
 
-        progress?.Report("KB_DOWNLOADING");
+        progress?.Report("KB_DOWNLOADING".GetLocalizedString());
         Directory.CreateDirectory(Path.GetDirectoryName(_localDbPath)!);
-        var tmpPath = _localDbPath + ".tmp";
+        var tmpZipPath = _localDbPath + ".zip.tmp";
+        var tmpDbPath = _localDbPath + ".tmp";
 
         try
         {
             using var client = _httpClientFactory.CreateClient();
-            await using var responseStream = await client.GetStreamAsync(RemoteDbUrl, ct);
-            await using var fileStream = File.Create(tmpPath);
-            await responseStream.CopyToAsync(fileStream, ct);
+            await using var fileStream = File.Create(tmpZipPath);
+            await client.DownloadAsync(RemoteDbUrl, fileStream, cancellationToken: ct);
         }
         catch
         {
-            File.Delete(tmpPath);
+            File.Delete(tmpZipPath);
             throw;
         }
 
+        try
+        {
+            using var zip = ZipFile.OpenRead(tmpZipPath);
+            var entry = zip.Entries.FirstOrDefault(e => e.Name.EndsWith(".db", StringComparison.OrdinalIgnoreCase));
+            if (entry == null)
+            {
+                _logger.LogError("No .db entry found in downloaded zip");
+                progress?.Report("KB_INTEGRITY_ERROR");
+                return;
+            }
+            entry.ExtractToFile(tmpDbPath, overwrite: true);
+        }
+        finally
+        {
+            File.Delete(tmpZipPath);
+        }
+
         progress?.Report("KB_VERIFYING");
-        await using (var hashStream = File.OpenRead(tmpPath))
+        await using (var hashStream = File.OpenRead(tmpDbPath))
         {
             var actual = await CryptoUtils.ComputeSha256Hash(hashStream, ct);
             if (!string.Equals(actual, remoteManifest.Sha256, StringComparison.OrdinalIgnoreCase))
             {
-                File.Delete(tmpPath);
+                File.Delete(tmpDbPath);
                 _logger.LogError("SHA-256 mismatch: expected {Expected}, got {Actual}", remoteManifest.Sha256, actual);
                 progress?.Report("KB_INTEGRITY_ERROR");
                 return;
             }
         }
 
-        File.Move(tmpPath, _localDbPath, overwrite: true);
+        File.Move(tmpDbPath, _localDbPath, overwrite: true);
         await File.WriteAllTextAsync(_localManifestPath,
             JsonSerializer.Serialize(remoteManifest), ct);
 

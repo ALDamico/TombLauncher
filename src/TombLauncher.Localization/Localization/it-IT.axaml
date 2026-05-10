@@ -512,5 +512,28 @@
     <system:String x:Key="FINDING_FILE_TO_RESTORE">Ricerca del file da ripristinare...</system:String>
     <system:String x:Key="CHECKING_GAME_EXECUTABLE_CONSISTENCY">Verifica integrità del file ripristinato...</system:String>
     <system:String x:Key="RESTORING_GAME_EXECUTABLE">Ripristino dell'eseguibile originale...</system:String>
+    <system:String x:Key="DETECTING_VERSION_INFO">Rilevamento informazioni versione...</system:String>
+    <system:String x:Key="DOWNLOADING_NATIVE_EXECUTABLE_FROM_GITHUB">Download dell'eseguibile nativo da GitHub...</system:String>
+    <system:String x:Key="UNABLE_TO_EXTRACT_EXECUTABLE">Impossibile estrarre l'eseguibile dall'archivio scaricato.</system:String>
+    <system:String x:Key="APPLYING_TRX_NATIVE_PATCH">Applicazione patch nativa TRX...</system:String>
+    <system:String x:Key="RESTORING_TRX_ORIGINAL_EXECUTABLE">Ripristino dell'eseguibile originale...</system:String>
+    <system:String x:Key="READING_GAME_INFO">Lettura informazioni di gioco...</system:String>
+    <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_APPLIED">L'eseguibile nativo TRX è stato applicato con successo.</system:String>
+    <system:String x:Key="NATIVE_PATCH_APPLIED_TITLE">Patch nativa applicata</system:String>
+    <system:String x:Key="NATIVE_PATCH_ERROR_TITLE">Errore patch nativa</system:String>
+    <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_REVERTED">L'eseguibile originale è stato ripristinato con successo.</system:String>
+    <system:String x:Key="NATIVE_PATCH_REVERTED_TITLE">Patch nativa ripristinata</system:String>
+    <system:String x:Key="NATIVE_PATCH_REVERSAL_ERROR_TITLE">Errore ripristino patch nativa</system:String>
+    <system:String x:Key="DETECTED_VERSION">Versione rilevata:</system:String>
+    <system:String x:Key="PATCH_LOG">Log operazioni</system:String>
+    <system:String x:Key="CONVERT_TO_NATIVE_EXECUTABLE">Converti all'eseguibile nativo</system:String>
+    <system:String x:Key="READING_EXECUTABLE_VERSION">Lettura versione eseguibile...</system:String>
+    <system:String x:Key="TRX_NATIVE_PATCH">Patch nativa TRX</system:String>
+    <system:String x:Key="REVERT_TO_ORIGINAL_EXECUTABLE">Ripristina eseguibile originale</system:String>
+    <system:String x:Key="AN_ERROR_OCCURRED">Si è verificato un errore</system:String>
+    <system:String x:Key="INSTALLING">Installazione in corso...</system:String>
+    <system:String x:Key="GATHERING_STATISTICS">Raccolta statistiche...</system:String>
+    <system:String x:Key="RELOAD">Ricarica</system:String>
+    <system:String x:Key="FOLDER_NAMES_CANNOT_END_WITH_A_DOR_OR_A_SPACE">I nomi delle cartelle non possono terminare con un punto o uno spazio</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

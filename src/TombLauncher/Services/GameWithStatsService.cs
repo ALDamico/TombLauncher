@@ -309,7 +309,8 @@ public class GameWithStatsService : IViewService, IDisposable
                     game.GameMetadata.CompatibilityToolPath.IsNotNullOrWhiteSpace()
                         ? game.GameMetadata.CompatibilityToolPath!
                         : _appConfiguration.Compatibility.ProtonPath ?? ""),
-                CompatibilityTool.None => new WindowsGameLauncher(),
+                CompatibilityTool.WindowsNative => new WindowsGameLauncher(),
+                CompatibilityTool.LinuxNative => new LinuxGameLauncher(),
                 _ => new WineGameLauncher(
                     game.GameMetadata.CompatibilityToolPath.IsNotNullOrWhiteSpace()
                         ? game.GameMetadata.CompatibilityToolPath!
