@@ -385,15 +385,19 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"></Setter>
     </Style>
+    
     <Style Selector=":is(ToggleButton).icon-only:checked">
         <Style Selector="^:checked /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"></Setter>
         </Style>
         <Setter Property="Background" Value="Transparent"/>
         
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"></Setter>
     </Style>
 
     <Style Selector="ListBox">
