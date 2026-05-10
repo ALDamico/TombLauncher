@@ -5,7 +5,9 @@
     <Color x:Key="CardBackgroundColor">#CC0F1A2E</Color>
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Deep Midnight Blue -->
     <SolidColorBrush x:Key="CardBorderBrush">#33FFFFFF</SolidColorBrush>
-    <SolidColorBrush x:Key="PageBackgroundBrush">#0A1020</SolidColorBrush>
+    <Color x:Key="PageBackgroundColor">#0A1020</Color>
+    <Color x:Key="PageBackgroundColorTransparent">#000A1020</Color>
+    <SolidColorBrush x:Key="PageBackgroundBrush" Color="{StaticResource PageBackgroundColor}"/>
     <SolidColorBrush x:Key="SidebarBackgroundBrush">#060C18</SolidColorBrush>
 
     <!-- Fluent Theme Overrides -->

@@ -5,7 +5,9 @@
     <Color x:Key="CardBackgroundColor">#CCF0F8F8</Color>
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Light Teal -->
     <SolidColorBrush x:Key="CardBorderBrush">#33000000</SolidColorBrush>
-    <SolidColorBrush x:Key="PageBackgroundBrush">#FFFFFF</SolidColorBrush>
+    <Color x:Key="PageBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="PageBackgroundColorTransparent">#00FFFFFF</Color>
+    <SolidColorBrush x:Key="PageBackgroundBrush" Color="{StaticResource PageBackgroundColor}"/>
     <SolidColorBrush x:Key="SidebarBackgroundBrush">#F8FDFD</SolidColorBrush>
     
     <!-- Primary Actions -->

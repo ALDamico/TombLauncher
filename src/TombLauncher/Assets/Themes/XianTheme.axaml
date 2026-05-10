@@ -5,7 +5,9 @@
     <Color x:Key="CardBackgroundColor">#CC261A1A</Color>
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Dark Rust -->
     <SolidColorBrush x:Key="CardBorderBrush">#33FFFFFF</SolidColorBrush>
-    <SolidColorBrush x:Key="PageBackgroundBrush">#150F0F</SolidColorBrush>
+    <Color x:Key="PageBackgroundColor">#150F0F</Color>
+    <Color x:Key="PageBackgroundColorTransparent">#00150F0F</Color>
+    <SolidColorBrush x:Key="PageBackgroundBrush" Color="{StaticResource PageBackgroundColor}"/>
     <SolidColorBrush x:Key="SidebarBackgroundBrush">#0F0B0B</SolidColorBrush>
 
     <!-- Fluent Theme Overrides -->
