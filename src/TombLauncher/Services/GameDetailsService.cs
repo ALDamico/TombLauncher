@@ -64,7 +64,7 @@ public class GameDetailsService : IViewService
 
     public void OpenGameFolder(string gameFolder)
     {
-        _platformSpecificFeatures.OpenGameFolder(gameFolder);
+        _platformSpecificFeatures.OpenFolder(gameFolder);
     }
 
     public async Task FetchLinks(GameDetailsViewModel game, LinkType linkType)

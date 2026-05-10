@@ -528,5 +528,7 @@
     <system:String x:Key="ABOUT_INFO">Informations sur l'application</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Sauvegarde des parties en cours...</system:String>
     <system:String x:Key="LICENSE">Licence</system:String>
+    <system:String x:Key="LOGGING">Journalisation</system:String>
+    <system:String x:Key="OPEN_LOGS_FOLDER">Ouvrir le dossier des journaux</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

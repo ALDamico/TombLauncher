@@ -166,6 +166,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
                     compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
             }
 
+            var loggingSettings = new LoggingSettingsViewModel(_platformSpecificFeatures, this);
+
             Sections.Add(welcomePageSettings);
             Sections.Add(appearanceSettings);
             Sections.Add(languageSettings);
@@ -173,8 +175,8 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             Sections.Add(gameDetailsSettings);
             Sections.Add(savegameSettings);
             Sections.Add(aiSettings);
-
             Sections.Add(compatVm);
+            Sections.Add(loggingSettings);
 
             AcceptChanges();
         });

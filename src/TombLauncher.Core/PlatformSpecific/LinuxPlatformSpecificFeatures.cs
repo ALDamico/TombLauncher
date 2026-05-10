@@ -11,9 +11,9 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
 {
     public Platform Platform => Platform.Linux;
 
-    public void OpenGameFolder(string gameFolder)
+    public void OpenFolder(string folder)
     {
-        Process.Start("xdg-open", gameFolder);
+        Process.Start("xdg-open", folder);
     }
 
     public void OpenUrl(string link)

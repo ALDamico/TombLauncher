@@ -7,7 +7,7 @@ namespace TombLauncher.Core.PlatformSpecific;
 public interface IPlatformSpecificFeatures
 {
     Platform Platform { get; }
-    void OpenGameFolder(string gameFolder);
+    void OpenFolder(string folder);
     void OpenUrl(string link);
     EnumerationOptions GetEnumerationOptions();
 

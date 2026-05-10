@@ -535,5 +535,7 @@
     <system:String x:Key="GATHERING_STATISTICS">Raccolta statistiche...</system:String>
     <system:String x:Key="RELOAD">Ricarica</system:String>
     <system:String x:Key="FOLDER_NAMES_CANNOT_END_WITH_A_DOR_OR_A_SPACE">I nomi delle cartelle non possono terminare con un punto o uno spazio</system:String>
+    <system:String x:Key="LOGGING">Log</system:String>
+    <system:String x:Key="OPEN_LOGS_FOLDER">Apri cartella log</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
