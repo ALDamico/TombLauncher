@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Octokit;
+using TombLauncher.Configuration;
+using TombLauncher.Configuration.Sections;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Patchers;
@@ -33,6 +35,7 @@ public class TrxNativePatcherService : IViewService
     private readonly GitHubClient _gitHubClient;
     private readonly HttpClient _httpClient;
     private readonly ILogger<TrxNativePatcherService> _logger;
+    private readonly ICompatibilityConfig _compatibilityConfig;
 
     public TrxNativePatcherService(IDbContextFactory<TombLauncherDbContext> dbContextFactory, 
         TrxNativeExecutablePatcher patcher,
@@ -40,6 +43,7 @@ public class TrxNativePatcherService : IViewService
         GitHubClient gitHubClient,
         HttpClient httpClient,
         ViewServiceContext viewContext,
+        ILayeredAppConfiguration appConfiguration,
         ILogger<TrxNativePatcherService> logger)
     {
         _dbContextFactory = dbContextFactory;
@@ -49,6 +53,7 @@ public class TrxNativePatcherService : IViewService
         _httpClient = httpClient;
         _logger = logger;
         ViewContext = viewContext;
+        _compatibilityConfig = appConfiguration.Compatibility;
     }
 
     public TrxVersionInfo GetVersionInfo(string executablePath, IProgress<string> progress)
@@ -71,7 +76,7 @@ public class TrxNativePatcherService : IViewService
             .Where(f => f.GameId == gameId)
             .Where(f => f.FileType == FileType.GameExecutable)
             .Where(f => f.BackupSource == nameof(TrxNativeExecutablePatcher))
-            .OrderByDescending(f => f.BackedUpOn)
+            .OrderBy(f => f.BackedUpOn)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -134,11 +139,29 @@ public class TrxNativePatcherService : IViewService
                 Md5 = md5,
                 FileName = vm.ExecutablePath!
             };
+
+            var newExecutableBackup = new FileBackup()
+            {
+                Data = exeBytes,
+                BackedUpOn = DateTime.Now.AddSeconds(1),
+                BackupSource = nameof(TrxNativeExecutablePatcher),
+                FileName = Path.GetFileNameWithoutExtension(vm.ExecutablePath!),
+                FileType = FileType.GameExecutable,
+                Md5 = CryptoUtils.ComputeMd5Hash(exeBytes),
+                GameId = vm.Id,
+            };
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
             dbContext.FileBackups.Add(fileBackup);
+            dbContext.FileBackups.Add(newExecutableBackup);
+            var game = await dbContext.Games.FindAsync([vm.Id], ct);
+            game?.CompatibilityTool = CompatibilityTool.LinuxNative;
             await dbContext.SaveChangesAsync(ct);
 
             File.Move(tempExePath, targetExePath, overwrite: true);
+            File.SetUnixFileMode(targetExePath,
+                UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute |
+                UnixFileMode.GroupRead | UnixFileMode.GroupExecute |
+                UnixFileMode.OtherRead | UnixFileMode.OtherExecute);
             File.Delete(originalExePath);
 
             return new PatchResult()
@@ -184,6 +207,8 @@ public class TrxNativePatcherService : IViewService
 
         var tempFilePath = PathUtils.GetRandomTempDirectory();
         var tempDestination = Path.Combine(tempFilePath, fileBackup.FileName);
+        var tempDestinationFolder = Path.GetDirectoryName(tempDestination);
+        Directory.CreateDirectory(tempDestinationFolder!);
         try
         {
             await File.WriteAllBytesAsync(tempDestination, fileBackup.Data!, cancellationToken);
@@ -213,7 +238,14 @@ public class TrxNativePatcherService : IViewService
             File.Delete(nativeBinaryPath);
 
         gameMetadataViewModel.ExecutablePath = fileBackup.FileName;
-        ctx.FileBackups.Remove(fileBackup);
+        var allPatcherBackups = await ctx.FileBackups
+            .Where(f => f.GameId == gameMetadataViewModel.Id)
+            .Where(f => f.FileType == FileType.GameExecutable)
+            .Where(f => f.BackupSource == nameof(TrxNativeExecutablePatcher))
+            .ToListAsync(cancellationToken);
+        ctx.FileBackups.RemoveRange(allPatcherBackups);
+        var game = await ctx.Games.FindAsync([gameMetadataViewModel.Id], cancellationToken);
+        game?.CompatibilityTool = _compatibilityConfig.CompatibilityTool;
         await ctx.SaveChangesAsync(cancellationToken);
         return new PatchResult()
         {

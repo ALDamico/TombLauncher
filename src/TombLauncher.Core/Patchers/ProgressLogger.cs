@@ -12,15 +12,15 @@ public class ProgressLogger
         _progress = progress;
     }
 
-    public void Info(string message) => _progress.Report(new LogEntry()
-        { Message = message.GetLocalizedString(), Severity = LogSeverity.Information });
+    public void Info(string message, params object[] args) => _progress.Report(new LogEntry()
+        { Message = message.GetLocalizedString(args), Severity = LogSeverity.Information });
 
-    public void Warn(string message) => _progress.Report(new LogEntry()
-        { Message = message.GetLocalizedString(), Severity = LogSeverity.Warning });
+    public void Warn(string message, params object[] args) => _progress.Report(new LogEntry()
+        { Message = message.GetLocalizedString(args), Severity = LogSeverity.Warning });
 
-    public void Error(string message) => _progress.Report(new LogEntry()
-        { Message = message.GetLocalizedString(), Severity = LogSeverity.Error });
+    public void Error(string message, params object[] args) => _progress.Report(new LogEntry()
+        { Message = message.GetLocalizedString(args), Severity = LogSeverity.Error });
 
-    public void Success(string message) => _progress.Report(new LogEntry()
-        { Message = message.GetLocalizedString(), Severity = LogSeverity.Success });
+    public void Success(string message, params object[] args) => _progress.Report(new LogEntry()
+        { Message = message.GetLocalizedString(args), Severity = LogSeverity.Success });
 }

@@ -27,7 +27,7 @@ public class GameMapper
                 .FirstOrDefault(b => b.FileType == FileType.CommunitySetupExecutable)?.FileName,
             Description = game.Description ?? "",
             Difficulty = game.Difficulty,
-            ExecutablePath = game.FileBackups.FirstOrDefault(b => b.FileType == FileType.GameExecutable)?.FileName,
+            ExecutablePath = game.FileBackups.OrderByDescending(b => b.BackedUpOn).FirstOrDefault(b => b.FileType == FileType.GameExecutable)?.FileName,
             Guid = game.Guid,
             InstallDate = game.InstallDate,
             InstallDirectory = game.InstallDirectory,

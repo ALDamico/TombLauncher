@@ -77,7 +77,7 @@ public class WidescreenPatcherService : IViewService
 
     private static async Task<FileBackup?> RetrieveFileBackup(TombLauncherDbContext ctx, int gameId, ProgressLogger progress, CancellationToken cancellationToken)
     {
-        progress.Info("RETRIEVING_EXISTING_BACKUP".GetLocalizedString());
+        progress.Info("RETRIEVING_EXISTING_BACKUP");
         return await ctx.FileBackups
             .Where(f => f.GameId == gameId)
             .Where(f => f.FileType == FileType.GameExecutable)

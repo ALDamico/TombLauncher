@@ -15,7 +15,11 @@ public partial class PatcherPageViewModel : PageViewModel
 {
     public PatcherPageViewModel()
     {
-        _progressLogger = new ProgressLogger(new Progress<LogEntry>(msg => Log.Add(msg)));
+        _progressLogger = new ProgressLogger(new Progress<LogEntry>(msg =>
+        {
+            Log.Add(msg);
+            IsLogExpanded = true;
+        }));
     }
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanApplyPatch))]
@@ -49,6 +53,7 @@ public partial class PatcherPageViewModel : PageViewModel
     }
 
     [ObservableProperty] private ObservableCollection<LogEntry> _log = new();
+    [ObservableProperty] private bool _isLogExpanded;
 
     public bool CanApplyPatch => Content?.CanApplyPatch == true;
     public bool CanRevertPatch => Content?.CanRevertPatch == true;

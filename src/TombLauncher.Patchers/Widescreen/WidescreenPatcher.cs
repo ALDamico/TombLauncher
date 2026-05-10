@@ -65,7 +65,7 @@ public class WidescreenPatcher
     {
         foreach (var affectedFile in executablePath.AffectedFiles.Where(f => f.ChangeType == ChangeType.BinaryEdit))
         {
-            progress.Info("APPLYING_WIDESCREEN_PATCH_TO_FILE");
+            progress.Info("APPLYING_WIDESCREEN_PATCH_TO_FILE", affectedFile.Filename);
             var bytes = await File.ReadAllBytesAsync(affectedFile.Filename);
             
             ApplyAspectRatioCorrection(parameters, bytes, affectedFile, progress);

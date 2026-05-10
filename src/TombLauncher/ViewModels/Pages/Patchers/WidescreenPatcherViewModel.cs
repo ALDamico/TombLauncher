@@ -16,18 +16,18 @@ namespace TombLauncher.ViewModels.Pages.Patchers;
 
 public partial class WidescreenPatcherViewModel : ObservableObject, IPatcherParametersViewModel
 {
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))] private bool _updateAspectRatio;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyPropertyChangedFor(nameof(CanApplyPatch))] private bool _updateAspectRatio;
     [ObservableProperty] private float _aspectRatioWidth = 16;
     [ObservableProperty] private float _aspectRatioHeight = 9;
 
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))] private bool _updateCameraDistance;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyPropertyChangedFor(nameof(CanApplyPatch))] private bool _updateCameraDistance;
     [ObservableProperty] private CameraDistanceOptionViewModel _selectedCameraDistanceOption;
     [ObservableProperty] private short _customCameraDistance = (short)CameraDistancePreset.OneAndAHalf;
 
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))] private bool _updateFov;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyPropertyChangedFor(nameof(CanApplyPatch))] private bool _updateFov;
     [ObservableProperty] private int _targetFov = 1920;
 
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))] private bool _update60Fps;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyPropertyChangedFor(nameof(CanApplyPatch))] private bool _update60Fps;
     [ObservableProperty] private bool _is60FpsAvailable;
     [ObservableProperty] private string? _fps60TooltipText;
 

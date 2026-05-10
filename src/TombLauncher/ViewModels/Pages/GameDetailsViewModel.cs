@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
@@ -16,9 +17,10 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameDetailsViewModel : PageViewModel
 {
-    public GameDetailsViewModel(GameDetailsService gameDetailsService)
+    public GameDetailsViewModel(GameDetailsService gameDetailsService, IPlatformSpecificFeatures platformSpecificFeatures)
     {
         _gameDetailsService = gameDetailsService;
+        _platformSpecificFeatures = platformSpecificFeatures;
     }
 
     [ObservableProperty]
@@ -40,6 +42,7 @@ public partial class GameDetailsViewModel : PageViewModel
     public List<string> EnabledPatterns { get; set; } = [];
     public List<string> IgnoredFolders { get; set; } = [];
     private readonly GameDetailsService _gameDetailsService;
+    private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public override async Task OnNavigatedTo(object? parameter)
     {
@@ -138,6 +141,18 @@ public partial class GameDetailsViewModel : PageViewModel
                 Command = OpenWidescreenPatcherCommand, 
                 Text = "WIDESCREEN_PATCH".GetLocalizedString(), 
                 Icon = PackIconRemixIconKind.AspectRatioLine
+            });
+        }
+
+        var trxEngines = new List<GameEngine>() { GameEngine.Tr1x, GameEngine.Tr2x, GameEngine.Trx };
+
+        if (_platformSpecificFeatures.Platform == Platform.Linux && trxEngines.Contains(Game.GameMetadata.GameEngine))
+        {
+            patchers.Add(new CommandViewModel()
+            {
+                Command = new AsyncRelayCommand(() => _gameDetailsService.OpenTrxNativePatcher(Game.GameMetadata)),
+                Text = "CONVERT_TO_NATIVE_EXECUTABLE".GetLocalizedString(),
+                Icon = PackIconRemixIconKind.UbuntuLine
             });
         }
 

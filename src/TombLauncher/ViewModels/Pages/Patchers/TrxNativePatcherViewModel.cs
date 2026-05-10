@@ -10,7 +10,7 @@ using TombLauncher.Extensions;
 using TombLauncher.Patchers.Shared;
 using TombLauncher.Services.Patchers.TrxNative;
 
-namespace TombLauncher.ViewModels.Pages;
+namespace TombLauncher.ViewModels.Pages.Patchers;
 
 public partial class TrxNativePatcherViewModel : ObservableObject, IPatcherParametersViewModel
 {

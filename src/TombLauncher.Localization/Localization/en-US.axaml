@@ -521,5 +521,8 @@
     <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_REVERTED">The original executable has been restored successfully.</system:String>
     <system:String x:Key="NATIVE_PATCH_REVERTED_TITLE">Native patch reverted</system:String>
     <system:String x:Key="NATIVE_PATCH_REVERSAL_ERROR_TITLE">Native patch reversal error</system:String>
+    <system:String x:Key="DETECTED_VERSION">Detected version:</system:String>
+    <system:String x:Key="PATCH_LOG">Operation log</system:String>
+    <system:String x:Key="CONVERT_TO_NATIVE_EXECUTABLE">Convert to native executable</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

@@ -160,6 +160,10 @@
         <DependentUpon>AiModelCard.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Pages\Patchers\WidescreenPatcherPageView.axaml.cs">
+        <DependentUpon>WidescreenPatcherView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

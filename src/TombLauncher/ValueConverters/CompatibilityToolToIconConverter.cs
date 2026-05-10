@@ -14,7 +14,7 @@ public class CompatibilityToolToIconConverter : IValueConverter
         {
             switch (compatibilityTool)
             {
-                case CompatibilityTool.None:
+                case CompatibilityTool.WindowsNative:
                 case CompatibilityTool.Unspecified:
                     return PackIconRemixIconKind.FileUnknowFill;
                 case CompatibilityTool.Wine:

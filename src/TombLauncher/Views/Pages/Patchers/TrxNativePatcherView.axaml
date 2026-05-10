@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:patchers="clr-namespace:TombLauncher.ViewModels.Pages.Patchers"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.Patchers.TrxNativePatcherView"
+             x:DataType="patchers:TrxNativePatcherViewModel">
+    <Border Classes="card-background" CornerRadius="8" Padding="16" Margin="16">
+        <StackPanel Orientation="Vertical" Spacing="8">
+            <controls:CardSectionHeader IconKind="DownloadLine"
+                                        Title="{localization:Translate TRX_NATIVE_PATCH}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="{localization:Translate DETECTED_VERSION}" Classes="text-muted" />
+                <TextBlock Text="{Binding DetectedVersion}" FontWeight="Medium" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

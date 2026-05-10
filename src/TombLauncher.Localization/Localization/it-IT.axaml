@@ -524,5 +524,8 @@
     <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_REVERTED">L'eseguibile originale è stato ripristinato con successo.</system:String>
     <system:String x:Key="NATIVE_PATCH_REVERTED_TITLE">Patch nativa ripristinata</system:String>
     <system:String x:Key="NATIVE_PATCH_REVERSAL_ERROR_TITLE">Errore ripristino patch nativa</system:String>
+    <system:String x:Key="DETECTED_VERSION">Versione rilevata:</system:String>
+    <system:String x:Key="PATCH_LOG">Log operazioni</system:String>
+    <system:String x:Key="CONVERT_TO_NATIVE_EXECUTABLE">Converti all'eseguibile nativo</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
