@@ -22,6 +22,26 @@
       <Content Include="Localization\it-IT.axaml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <AvaloniaXaml Remove="Localization\fr-FR.axaml" />
+      <Content Include="Localization\fr-FR.axaml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <AvaloniaXaml Remove="Localization\es-ES.axaml" />
+      <Content Include="Localization\es-ES.axaml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <AvaloniaXaml Remove="Localization\de-DE.axaml" />
+      <Content Include="Localization\de-DE.axaml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <AvaloniaXaml Remove="Localization\pl-PL.axaml" />
+      <Content Include="Localization\pl-PL.axaml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <AvaloniaXaml Remove="Localization\cs-CZ.axaml" />
+      <Content Include="Localization\cs-CZ.axaml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
