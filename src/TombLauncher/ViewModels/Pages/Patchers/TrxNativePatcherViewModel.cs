@@ -3,10 +3,12 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using IconPacks.Avalonia.RemixIcon;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Patchers;
 using TombLauncher.Extensions;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Patchers.Shared;
 using TombLauncher.Services.Patchers.TrxNative;
 
@@ -38,11 +40,13 @@ public partial class TrxNativePatcherViewModel : ObservableObject, IPatcherParam
         if (patchResult.IsSuccessful)
         {
             CanApplyPatch = false;
+            ProgressLogger.Success("NATIVE_PATCH_SUCCESSFULLY_APPLIED");
             await _trxNativePatcherService.ViewContext.PopupService.ShowLocalized("NATIVE_PATCH_SUCCESSFULLY_APPLIED",
                 "NATIVE_PATCH_APPLIED_TITLE", MsgBoxButton.Ok, MsgBoxImage.Information);
         }
         else
         {
+            ProgressLogger.Error(patchResult.Message);
             await _trxNativePatcherService.ViewContext.PopupService.ShowLocalized(patchResult.Message,
                 "NATIVE_PATCH_ERROR_TITLE", MsgBoxButton.Ok, MsgBoxImage.Error);
         }
@@ -57,11 +61,13 @@ public partial class TrxNativePatcherViewModel : ObservableObject, IPatcherParam
         if (patchResult.IsSuccessful)
         {
             CanApplyPatch = true;
+            ProgressLogger.Success("NATIVE_PATCH_SUCCESSFULLY_REVERTED");
             await _trxNativePatcherService.ViewContext.PopupService.ShowLocalized("NATIVE_PATCH_SUCCESSFULLY_REVERTED",
                 "NATIVE_PATCH_REVERTED_TITLE", MsgBoxButton.Ok, MsgBoxImage.Information);
         }
         else
         {
+            ProgressLogger.Error(patchResult.Message);
             await _trxNativePatcherService.ViewContext.PopupService.ShowLocalized(patchResult.Message,
                 "NATIVE_PATCH_REVERSAL_ERROR_TITLE", MsgBoxButton.Ok, MsgBoxImage.Error);
         }
@@ -79,4 +85,9 @@ public partial class TrxNativePatcherViewModel : ObservableObject, IPatcherParam
         CanApplyPatch =
             !await _trxNativePatcherService.IsAlreadyApplied(_gameMetadata.Id, ProgressLogger, CancellationToken.None);
     }
+
+    public string ApplyPatchButtonCaption => "CONVERT_TO_NATIVE_EXECUTABLE".GetLocalizedString();
+    public string RevertPatchButtonCaption => "REVERT_TO_ORIGINAL_EXECUTABLE".GetLocalizedString();
+    public Enum? ApplyPatchButtonIcon => PackIconRemixIconKind.UbuntuLine;
+    public Enum? RevertPatchButtonIcon => PackIconRemixIconKind.WindowsLine;
 }

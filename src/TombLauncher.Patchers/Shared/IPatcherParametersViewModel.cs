@@ -16,4 +16,9 @@ public interface IPatcherParametersViewModel : INotifyPropertyChanged
     public Task RevertPatch();
 
     public Task Init(IGameMetadataLite? gameMetadata, ProgressLogger progressLogger);
+    
+    public string ApplyPatchButtonCaption { get; }
+    public string RevertPatchButtonCaption { get; }
+    public Enum? ApplyPatchButtonIcon { get; }
+    public Enum? RevertPatchButtonIcon { get; }
 }

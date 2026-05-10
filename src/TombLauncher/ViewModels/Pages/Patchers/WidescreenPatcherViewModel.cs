@@ -1,7 +1,9 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using IconPacks.Avalonia.RemixIcon;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
@@ -89,6 +91,11 @@ public partial class WidescreenPatcherViewModel : ObservableObject, IPatcherPara
         }
     }
 
+    public string ApplyPatchButtonCaption => "APPLY_WIDESCREEN_PATCH".GetLocalizedString();
+    public string RevertPatchButtonCaption => "REVERT_WIDESCREEN_PATCH".GetLocalizedString();
+    public Enum? ApplyPatchButtonIcon => PackIconRemixIconKind.PlayLine;
+    public Enum? RevertPatchButtonIcon => PackIconRemixIconKind.RewindLine;
+
     private int GetCameraDistance()
     {
         if (SelectedCameraDistanceOption.IsCustom)
@@ -118,12 +125,14 @@ public partial class WidescreenPatcherViewModel : ObservableObject, IPatcherPara
         if (patchResult.IsSuccessful)
         {
             CanApplyPatchByFileState = false;
+            ProgressLogger.Success("WIDESCREEN_PATCH_SUCCESSFULLY_APPLIED");
             await _patcherService.ViewContext.PopupService.ShowLocalized(
                 "WIDESCREEN_PATCH_SUCCESSFULLY_APPLIED",
                 "WIDESCREEN_PATCH_APPLIED_TITLE", MsgBoxButton.Ok, MsgBoxImage.Information);
         }
         else
         {
+            ProgressLogger.Error(patchResult.Message);
             await _patcherService.ViewContext.PopupService.ShowLocalized(patchResult.Message,
                 "WIDESCREEN_PATCH_ERROR_TITLE", MsgBoxButton.Ok, MsgBoxImage.Error);
         }
@@ -138,12 +147,14 @@ public partial class WidescreenPatcherViewModel : ObservableObject, IPatcherPara
         if (patchReversalResult.IsSuccessful)
         {
             CanApplyPatchByFileState = true;
+            ProgressLogger.Success("WIDESCREEN_PATCH_SUCCESSFULLY_REVERTED");
             await _patcherService.ViewContext.PopupService.ShowLocalized(
                 "WIDESCREEN_PATCH_SUCCESSFULLY_REVERTED",
                 "WIDESCREEN_PATCH_REVERTED_TITLE", MsgBoxButton.Ok, MsgBoxImage.Information);
         }
         else
         {
+            ProgressLogger.Error(patchReversalResult.Message);
             await _patcherService.ViewContext.PopupService.ShowLocalized(patchReversalResult.Message,
                 "WIDESCREEN_PATCH_REVERSAL_ERROR_TITLE", MsgBoxButton.Ok, MsgBoxImage.Error);
         }

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Patchers;
 using TombLauncher.Core.Patchers;
@@ -84,4 +85,9 @@ public partial class PatcherPageViewModel : PageViewModel
 
         await Content.Init(_gameMetadata, _progressLogger);
     }
+
+    public string? ApplyPatchButtonCaption => Content?.ApplyPatchButtonCaption;
+    public string? RevertPatchButtonCaption => Content?.RevertPatchButtonCaption;
+    public PackIconRemixIconKind? ApplyPatchButtonIcon => (PackIconRemixIconKind?)Content?.ApplyPatchButtonIcon;
+    public PackIconRemixIconKind? RevertPatchButtonIcon => (PackIconRemixIconKind?)Content?.RevertPatchButtonIcon;
 }

@@ -34,16 +34,16 @@
                                  Classes="btn-primary"
                                  Margin="10"
                                  Padding="16,8"
-                                 Icon="PlayLine"
-                                 Text="{localization:Translate APPLY_WIDESCREEN_PATCH}"
+                                 Icon="{Binding ApplyPatchButtonIcon}"
+                                 Text="{Binding ApplyPatchButtonCaption}"
                                  IsVisible="{Binding !CanRevertPatch}"
                                  Command="{Binding ApplyPatchCommand}" />
             <controls:IconButton DockPanel.Dock="Right"
                                  Classes="btn-primary"
                                  Margin="10"
                                  Padding="16,8"
-                                 Icon="RewindLine"
-                                 Text="{localization:Translate REVERT_WIDESCREEN_PATCH}"
+                                 Icon="{Binding RevertPatchButtonIcon}"
+                                 Text="{Binding RevertPatchButtonCaption}"
                                  IsVisible="{Binding CanRevertPatch}"
                                  Command="{Binding RevertPatchCommand}" />
         </StackPanel>
