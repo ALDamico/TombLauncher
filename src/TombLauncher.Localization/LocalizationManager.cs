@@ -55,7 +55,7 @@ public class LocalizationManager : ILocalizationManager
                 {
                     Culture = cultureInfo,
                     DictionaryName = fileName,
-                    DisplayName = cultureInfo.DisplayName,
+                    DisplayName = cultureInfo.NativeName,
                     CountryIso2Code = countryCode
                 };
                 cultureInfos.Add(dto);
