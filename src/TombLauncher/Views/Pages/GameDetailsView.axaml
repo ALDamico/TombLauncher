@@ -38,16 +38,15 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid Grid.Row="0">
-            <Image Source="{Binding Game.GameMetadata.TitlePic}" Stretch="UniformToFill" HorizontalAlignment="Left">
-                <Image.OpacityMask>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%, 100%">
-                        <LinearGradientBrush.GradientStops>
-                            <GradientStop Offset="0" Color="Black"/>
-                            <GradientStop Offset="1" Color="Transparent"/>
-                        </LinearGradientBrush.GradientStops>
+            <Image Source="{Binding Game.GameMetadata.TitlePic}" Stretch="UniformToFill" HorizontalAlignment="Left" />
+            <Border>
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                        <GradientStop Offset="0.4" Color="{DynamicResource PageBackgroundColorTransparent}"/>
+                        <GradientStop Offset="1"   Color="{DynamicResource PageBackgroundColor}"/>
                     </LinearGradientBrush>
-                </Image.OpacityMask>
-            </Image>
+                </Border.Background>
+            </Border>
             <StackPanel VerticalAlignment="Bottom">
                 <TextBlock FontWeight="DemiBold"
                            FontSize="60"

@@ -5,7 +5,9 @@
     <Color x:Key="CardBackgroundColor">#CC1A2626</Color>
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Dark Teal -->
     <SolidColorBrush x:Key="CardBorderBrush">#33FFFFFF</SolidColorBrush>
-    <SolidColorBrush x:Key="PageBackgroundBrush">#0F1515</SolidColorBrush>
+    <Color x:Key="PageBackgroundColor">#0F1515</Color>
+    <Color x:Key="PageBackgroundColorTransparent">#000F1515</Color>
+    <SolidColorBrush x:Key="PageBackgroundBrush" Color="{StaticResource PageBackgroundColor}"/>
     <!-- Fluent Theme Overrides -->
     <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{StaticResource CardBackgroundColor}" />
     <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{StaticResource CardBackgroundColor}" />
