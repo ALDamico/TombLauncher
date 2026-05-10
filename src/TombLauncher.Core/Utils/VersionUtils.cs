@@ -64,7 +64,6 @@ public class VersionUtils
             throw new InvalidOperationException("Can't parse input string!");
         }
 
-
         var internalName = matches.Groups["InternalName"].Value.ToLowerInvariant();
         if (internalName.Equals("tr1x", StringComparison.InvariantCultureIgnoreCase) ||
             internalName.Equals("tr2x", StringComparison.InvariantCultureIgnoreCase))
