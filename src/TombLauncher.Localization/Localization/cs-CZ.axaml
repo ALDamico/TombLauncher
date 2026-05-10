@@ -528,5 +528,7 @@
     <system:String x:Key="ABOUT_INFO">Informace o aplikaci</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Zálohování uložených her...</system:String>
     <system:String x:Key="LICENSE">Licence</system:String>
+    <system:String x:Key="LOGGING">Protokolování</system:String>
+    <system:String x:Key="OPEN_LOGS_FOLDER">Otevřít složku protokolů</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

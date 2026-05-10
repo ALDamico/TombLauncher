@@ -11,9 +11,9 @@ public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
 {
     public Platform Platform => Platform.Windows;
 
-    public void OpenGameFolder(string gameFolder)
+    public void OpenFolder(string folder)
     {
-        Process.Start("explorer", gameFolder);
+        Process.Start("explorer", folder);
     }
 
     public void OpenUrl(string link)

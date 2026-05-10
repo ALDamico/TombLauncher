@@ -10,8 +10,8 @@ public static class LoggingServiceCollectionExtensions
 {
     public static IServiceCollection AddTombLauncherLogging(this IServiceCollection services, string appDataDirectory)
     {
-        var logPath = Path.Combine(appDataDirectory, "Logs", "TombLauncher_App.log");
-        var aiLogPath = Path.Combine(appDataDirectory, "Logs", "TombLauncher_Ai.log");
+        var logPath = Path.Combine(appDataDirectory, "Logs", "TombLauncher_App_.log");
+        var aiLogPath = Path.Combine(appDataDirectory, "Logs", "TombLauncher_Ai_.log");
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.Logger(lc => lc

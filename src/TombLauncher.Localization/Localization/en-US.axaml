@@ -536,5 +536,7 @@
     <system:String x:Key="ABOUT_INFO">Application info</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
     <system:String x:Key="LICENSE">License</system:String>
+    <system:String x:Key="LOGGING">Logging</system:String>
+    <system:String x:Key="OPEN_LOGS_FOLDER">Open logs folder</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

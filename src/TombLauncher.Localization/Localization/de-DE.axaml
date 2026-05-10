@@ -528,5 +528,7 @@
     <system:String x:Key="ABOUT_INFO">Anwendungsinformationen</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Spielstände werden gesichert...</system:String>
     <system:String x:Key="LICENSE">Lizenz</system:String>
+    <system:String x:Key="LOGGING">Protokollierung</system:String>
+    <system:String x:Key="OPEN_LOGS_FOLDER">Log-Ordner öffnen</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
