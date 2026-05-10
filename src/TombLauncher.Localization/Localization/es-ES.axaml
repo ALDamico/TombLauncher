@@ -27,6 +27,7 @@
     <system:String x:Key="NO_GAMES">Sin juegos</system:String>
     <system:String x:Key="TRY_ADDING_ONE">Intenta añadir uno</system:String>
     <system:String x:Key="TITLE">Título</system:String>
+    <system:String x:Key="TITLE_PICTURE">Portada</system:String>
     <system:String x:Key="RELEASE_DATE">Fecha de lanzamiento</system:String>
     <system:String x:Key="INSTALL_DATE">Fecha de instalación</system:String>
     <system:String x:Key="ENGINE">Motor</system:String>

@@ -641,4 +641,41 @@
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="Margin" Value="0,8,0,2"/>
     </Style>
+
+    <!-- DataGrid -->
+    <Style Selector="DataGrid">
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="RowBackground" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource CardBorderBrush}" />
+        <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource CardBorderBrush}" />
+    </Style>
+
+    <Style Selector="DataGridColumnHeader">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="SeparatorBrush" Value="{DynamicResource CardBorderBrush}" />
+    </Style>
+
+    <Style Selector="DataGridRow">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="MinHeight" Value="48" />
+    </Style>
+
+    <Style Selector="DataGridRow:nth-child(even)">
+        <Setter Property="Background" Value="{DynamicResource PageBackgroundBrush}" />
+    </Style>
+
+    <Style Selector="DataGridRow:selected">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
+    </Style>
+
+    <Style Selector="DataGridRow:selected DataGridCell">
+        <Setter Property="Foreground" Value="{DynamicResource ColoredButtonTextBrush}" />
+    </Style>
+
+    <Style Selector="DataGridCell">
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+    </Style>
 </Styles>

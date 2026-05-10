@@ -27,6 +27,7 @@
     <system:String x:Key="NO_GAMES">Žádné hry</system:String>
     <system:String x:Key="TRY_ADDING_ONE">Zkuste přidat jednu</system:String>
     <system:String x:Key="TITLE">Název</system:String>
+    <system:String x:Key="TITLE_PICTURE">Obal</system:String>
     <system:String x:Key="RELEASE_DATE">Datum vydání</system:String>
     <system:String x:Key="INSTALL_DATE">Datum instalace</system:String>
     <system:String x:Key="ENGINE">Engine</system:String>
