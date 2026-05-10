@@ -5,9 +5,11 @@ using TombLauncher.Core.Patchers;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Installers;
 using TombLauncher.Patchers.Widescreen;
+using TombLauncher.Tests.Fixtures;
 
 namespace TombLauncher.Tests;
 
+[Collection("Localization")]
 public class WidescreenPatcherTests
 {
     private readonly WidescreenPatcher _patcher;
