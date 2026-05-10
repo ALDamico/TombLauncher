@@ -524,5 +524,16 @@
     <system:String x:Key="DETECTED_VERSION">Detected version:</system:String>
     <system:String x:Key="PATCH_LOG">Operation log</system:String>
     <system:String x:Key="CONVERT_TO_NATIVE_EXECUTABLE">Convert to native executable</system:String>
+    <system:String x:Key="READING_EXECUTABLE_VERSION">Reading executable version...</system:String>
+    <system:String x:Key="TRX_NATIVE_PATCH">TRX native patch</system:String>
+    <system:String x:Key="AN_ERROR_OCCURRED">An error occurred</system:String>
+    <system:String x:Key="INSTALLING">Installing...</system:String>
+    <system:String x:Key="GATHERING_STATISTICS">Gathering statistics...</system:String>
+    <system:String x:Key="RELOAD">Reload</system:String>
+    <system:String x:Key="FOLDER_NAMES_CANNOT_END_WITH_A_DOR_OR_A_SPACE">Folder names cannot end with a dot or a space</system:String>
+    <system:String x:Key="ABOUT_ACKNOWLEDGEMENTS">Acknowledgements</system:String>
+    <system:String x:Key="ABOUT_INFO">Application info</system:String>
+    <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
+    <system:String x:Key="LICENSE">License</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

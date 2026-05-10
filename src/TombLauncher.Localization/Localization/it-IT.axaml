@@ -527,5 +527,12 @@
     <system:String x:Key="DETECTED_VERSION">Versione rilevata:</system:String>
     <system:String x:Key="PATCH_LOG">Log operazioni</system:String>
     <system:String x:Key="CONVERT_TO_NATIVE_EXECUTABLE">Converti all'eseguibile nativo</system:String>
+    <system:String x:Key="READING_EXECUTABLE_VERSION">Lettura versione eseguibile...</system:String>
+    <system:String x:Key="TRX_NATIVE_PATCH">Patch nativa TRX</system:String>
+    <system:String x:Key="AN_ERROR_OCCURRED">Si è verificato un errore</system:String>
+    <system:String x:Key="INSTALLING">Installazione in corso...</system:String>
+    <system:String x:Key="GATHERING_STATISTICS">Raccolta statistiche...</system:String>
+    <system:String x:Key="RELOAD">Ricarica</system:String>
+    <system:String x:Key="FOLDER_NAMES_CANNOT_END_WITH_A_DOR_OR_A_SPACE">I nomi delle cartelle non possono terminare con un punto o uno spazio</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
