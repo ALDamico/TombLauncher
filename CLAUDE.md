@@ -64,10 +64,12 @@ No linting/formatting tooling is configured. The project uses Rider/ReSharper co
 |---------|------|
 | `TombLauncher` | Main WinExe — Views, ViewModels, Services, DI bootstrap |
 | `TombLauncher.Contracts` | Shared enums, interfaces, and contracts (no external dependencies) |
+| `TombLauncher.Ai` | Optional AI/RAG subsystem — LLM troubleshooting, vector search, Ollama/LM Studio backends |
 | `TombLauncher.Controls` | Reusable Avalonia UI controls |
 | `TombLauncher.Core` | Platform-agnostic business logic — DTOs, launchers, savegame parsing, installers |
 | `TombLauncher.Data` | EF Core + SQLite — entities, migrations, data services |
 | `TombLauncher.Localization` | AXAML resource dictionaries for en-US and it-IT |
+| `TombLauncher.Patchers` | Game binary patching — Gameflow parsing, widescreen patching, TRX native patching |
 | `TombLauncher.Tests` | xUnit tests with NSubstitute for mocking |
 
 Dependency direction: `TombLauncher` → `Controls / Core / Data / Localization` → `Contracts`. `TombLauncher.Core` has no Avalonia dependency and can be tested in isolation.
@@ -92,6 +94,9 @@ EF Core migrations run automatically at startup via `dbContext.Database.MigrateA
 - `OnNavigatedTo(parameter)` / `OnNavigatingFrom()` lifecycle hooks
 - `BusyScope()` — disposable that sets the busy indicator while active
 - `SaveCmd` / `CancelCmd` base commands
+- `TopBarCommands` — `ObservableCollection<ITopBarCommand>` that the shell renders in the top bar; pages add commands here without any coupling to the shell
+
+Settings page ViewModels extend **`SettingsSectionViewModelBase`**, which implements `IChangeTracking`. Properties decorated with `[IgnoreChanges]` are excluded from dirty-state detection; `IsChanged` drives Save/Cancel button availability.
 
 Properties use CommunityToolkit.Mvvm source generators:
 ```csharp
@@ -115,6 +120,7 @@ ProcessStartInfo GetLaunchStartInfo(GameLaunchContext context);
 
 `GameLaunchContext` encapsulates `ExecutableFileName`, `Arguments`, `WorkingDirectory`, `PrefixPath`, and `ExtraEnvVars`. Implementations:
 - `WindowsGameLauncher` — direct execution
+- `LinuxGameLauncher` — native Linux executables
 - `WineGameLauncher` — wraps with `bash -c "wine ...; wineserver -w"` so process tracking waits for the Windows process to exit
 - `ProtonGameLauncher` — sets all required `STEAM_COMPAT_*` env vars, strips NVIDIA PRIME vars (`__NV_PRIME_RENDER_OFFLOAD`, `__GLX_VENDOR_LIBRARY_NAME`, `__VK_LAYER_NV_optimus`) that cause a black screen when inherited, uses `bash -lc` (login shell) to pick up user env
 
@@ -145,7 +151,11 @@ Three downloaders (TRLE.net, TRCustoms.org, AspideTR.com) implement `GameDownloa
 
 ### Localization
 
-Call `"STRING_KEY".GetLocalizedString()` (extension method). AXAML resource dictionaries are in `src/TombLauncher.Localization/Localization/`. Add new keys to both `en-US.axaml` and `it-IT.axaml`. The app auto-detects system language; the user can override in settings.
+Call `"STRING_KEY".GetLocalizedString()` (extension method) from C#. In AXAML, use the `{loc:Translate STRING_KEY}` markup extension instead. Resource dictionaries are in `src/TombLauncher.Localization/Localization/`. Add new keys to all language files. The app auto-detects system language; the user can override in settings.
+
+### Platform abstraction
+
+`IPlatformSpecificFeatures` has Windows/Linux implementations resolved by DI at startup. `ISupportMatrix` tracks which game engines are supported on the current OS — consult it before enabling engine-specific UI or launcher selection logic.
 
 ### Icons
 
