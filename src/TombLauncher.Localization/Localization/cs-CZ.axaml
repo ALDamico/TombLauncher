@@ -531,5 +531,9 @@
     <system:String x:Key="LICENSE">Licence</system:String>
     <system:String x:Key="LOGGING">Protokolování</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Otevřít složku protokolů</system:String>
+    <system:String x:Key="KB_UPDATE_ERROR">Chyba při aktualizaci znalostní báze</system:String>
+    <system:String x:Key="MANIFEST_FETCH_FAILURE">Nelze načíst informace o aktualizaci znalostní báze</system:String>
+    <system:String x:Key="KB_DOWNLOAD_FAILURE">Chyba při stahování znalostní báze</system:String>
+    <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Obvykle se jedná o přechodné chyby, které lze bezpečně ignorovat.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

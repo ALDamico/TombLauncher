@@ -1,3 +1,4 @@
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Patchers;
 using TombLauncher.Localization.Extensions;
 
@@ -13,14 +14,14 @@ public class ProgressLogger
     }
 
     public void Info(string message, params object[] args) => _progress.Report(new LogEntry()
-        { Message = message.GetLocalizedString(args), Severity = LogSeverity.Information });
+        { Message = message.GetLocalizedString(args), Severity = NotificationType.Info });
 
     public void Warn(string message, params object[] args) => _progress.Report(new LogEntry()
-        { Message = message.GetLocalizedString(args), Severity = LogSeverity.Warning });
+        { Message = message.GetLocalizedString(args), Severity = NotificationType.Warning });
 
     public void Error(string message, params object[] args) => _progress.Report(new LogEntry()
-        { Message = message.GetLocalizedString(args), Severity = LogSeverity.Error });
+        { Message = message.GetLocalizedString(args), Severity = NotificationType.Error });
 
     public void Success(string message, params object[] args) => _progress.Report(new LogEntry()
-        { Message = message.GetLocalizedString(args), Severity = LogSeverity.Success });
+        { Message = message.GetLocalizedString(args), Severity = NotificationType.Success });
 }

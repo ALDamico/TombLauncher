@@ -539,5 +539,9 @@
     <system:String x:Key="LICENSE">License</system:String>
     <system:String x:Key="LOGGING">Logging</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Open logs folder</system:String>
+    <system:String x:Key="KB_UPDATE_ERROR">Knowledge Base update error</system:String>
+    <system:String x:Key="MANIFEST_FETCH_FAILURE">Unable to retrieve Knowledge Base update information</system:String>
+    <system:String x:Key="KB_DOWNLOAD_FAILURE">Error downloading the Knowledge Base database</system:String>
+    <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">These are generally transient errors and can be safely ignored.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

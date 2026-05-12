@@ -30,7 +30,7 @@ public class KbUpdateService
         _logger = logger;
     }
 
-    public async Task CheckAndUpdateAsync(IProgress<string>? progress, CancellationToken ct)
+    public async Task<KbUpdateResult> CheckAndUpdateAsync(IProgress<string>? progress, CancellationToken ct)
     {
         _logger.LogInformation("Checking for KB update");
 
@@ -46,7 +46,7 @@ public class KbUpdateService
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogWarning(ex, "Failed to fetch remote KB manifest");
-            return;
+            return KbUpdateResult.Error("MANIFEST_FETCH_FAILURE", ex);
         }
 
         if (remoteManifest.SchemaVersion > KbManifest.SupportedSchemaVersion)
@@ -54,7 +54,7 @@ public class KbUpdateService
             _logger.LogWarning("Remote KB schema {Remote} > supported {Supported} — skipping",
                 remoteManifest.SchemaVersion, KbManifest.SupportedSchemaVersion);
             progress?.Report("KB_SCHEMA_TOO_NEW");
-            return;
+            return KbUpdateResult.Success();
         }
 
         var local = ReadLocalManifest();
@@ -62,7 +62,7 @@ public class KbUpdateService
         {
             _logger.LogInformation("KB is already up to date ({Date})", local.GeneratedAt);
             progress?.Report("KB_UP_TO_DATE".GetLocalizedString());
-            return;
+            return KbUpdateResult.Success();
         }
 
         progress?.Report("KB_DOWNLOADING".GetLocalizedString());
@@ -76,23 +76,24 @@ public class KbUpdateService
             await using var fileStream = File.Create(tmpZipPath);
             await client.DownloadAsync(RemoteDbUrl, fileStream, cancellationToken: ct);
         }
-        catch
+        catch(Exception ex)
         {
             File.Delete(tmpZipPath);
-            throw;
+            _logger.LogError(ex, "KB zip file download failed");
+            return KbUpdateResult.Error("KB_DOWNLOAD_FAILURE", ex);
         }
 
         try
         {
-            using var zip = ZipFile.OpenRead(tmpZipPath);
+            await using var zip = await ZipFile.OpenReadAsync(tmpZipPath, ct);
             var entry = zip.Entries.FirstOrDefault(e => e.Name.EndsWith(".db", StringComparison.OrdinalIgnoreCase));
             if (entry == null)
             {
                 _logger.LogError("No .db entry found in downloaded zip");
                 progress?.Report("KB_INTEGRITY_ERROR");
-                return;
+                return KbUpdateResult.Error("KB_INTEGRITY_ERROR");
             }
-            entry.ExtractToFile(tmpDbPath, overwrite: true);
+            await entry.ExtractToFileAsync(tmpDbPath, overwrite: true, cancellationToken:ct);
         }
         finally
         {
@@ -108,7 +109,7 @@ public class KbUpdateService
                 File.Delete(tmpDbPath);
                 _logger.LogError("SHA-256 mismatch: expected {Expected}, got {Actual}", remoteManifest.Sha256, actual);
                 progress?.Report("KB_INTEGRITY_ERROR");
-                return;
+                return KbUpdateResult.Error("KB_INTEGRITY_ERROR");
             }
         }
 
@@ -118,6 +119,7 @@ public class KbUpdateService
 
         _logger.LogInformation("KB updated to {Date}", remoteManifest.GeneratedAt);
         progress?.Report("KB_UPDATED");
+        return KbUpdateResult.Success();
     }
 
     private KbManifest? ReadLocalManifest()

@@ -531,5 +531,9 @@
     <system:String x:Key="LICENSE">Lizenz</system:String>
     <system:String x:Key="LOGGING">Protokollierung</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Log-Ordner öffnen</system:String>
+    <system:String x:Key="KB_UPDATE_ERROR">Fehler beim Aktualisieren der Wissensdatenbank</system:String>
+    <system:String x:Key="MANIFEST_FETCH_FAILURE">Aktualisierungsinformationen der Wissensdatenbank konnten nicht abgerufen werden</system:String>
+    <system:String x:Key="KB_DOWNLOAD_FAILURE">Fehler beim Herunterladen der Wissensdatenbank</system:String>
+    <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Hierbei handelt es sich in der Regel um vorübergehende Fehler, die sicher ignoriert werden können.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

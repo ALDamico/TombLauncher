@@ -71,7 +71,7 @@
                             <Grid ColumnDefinitions="28,*" Margin="0,2">
                                 <controls:Infotip Grid.Column="0" VerticalAlignment="Top"
                                                  Icon="{Binding Severity, Converter={StaticResource SeverityToIcon}, Mode=OneWay}"
-                                                 Foreground="{Binding Severity, Converter={StaticResource SeverityToBrush}}"
+                                                 Foreground="{Binding Severity, Converter={StaticResource NotificationTypeToColorConverter}}"
                                                  ToolTipContent="{Binding Severity}" />
                                 <TextBlock Grid.Column="1" TextWrapping="Wrap" Margin="4,0,0,0">
                                     <Run FontStyle="Italic" Text="{Binding Timestamp, StringFormat=HH:mm:ss}" />
