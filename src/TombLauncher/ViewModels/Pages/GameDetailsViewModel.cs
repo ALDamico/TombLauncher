@@ -33,6 +33,7 @@ public partial class GameDetailsViewModel : PageViewModel
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanOpenChat))]
     [NotifyPropertyChangedFor(nameof(EngineSupportState))]
+    [NotifyPropertyChangedFor(nameof(PlayButtonTooltip))]
     private GameWithStatsViewModel _game = null!;
 
     [ObservableProperty] private int _descriptionFontSize = 18;
@@ -43,6 +44,19 @@ public partial class GameDetailsViewModel : PageViewModel
     public List<string> IgnoredFolders { get; set; } = [];
     private readonly GameDetailsService _gameDetailsService;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
+
+    public string PlayButtonTooltip
+    {
+        get
+        {
+            if (Game?.GameMetadata.GameEngine == GameEngine.Unknown)
+            {
+                return "AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY".GetLocalizedString();
+            }
+
+            return "PLAY".GetLocalizedString();
+        }
+    }
 
     public override async Task OnNavigatedTo(object? parameter)
     {

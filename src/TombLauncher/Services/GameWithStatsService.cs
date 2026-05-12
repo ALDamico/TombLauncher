@@ -153,7 +153,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
     public bool CanPlayGame(GameWithStatsViewModel game)
     {
-        return game.GameMetadata.IsInstalled;
+        return game.GameMetadata.IsInstalled && game.GameMetadata.GameEngine != GameEngine.Unknown;
     }
 
     public bool CanLaunchSetup(GameWithStatsViewModel game)

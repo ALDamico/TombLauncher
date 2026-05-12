@@ -535,5 +535,6 @@
     <system:String x:Key="MANIFEST_FETCH_FAILURE">Nie można pobrać informacji o aktualizacji bazy wiedzy</system:String>
     <system:String x:Key="KB_DOWNLOAD_FAILURE">Błąd podczas pobierania bazy wiedzy</system:String>
     <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Są to zazwyczaj błędy przejściowe, które można bezpiecznie zignorować.</system:String>
+    <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher nie mógł automatycznie wykryć silnika dla tego poziomu. Ustaw go ręcznie, aby włączyć przycisk Graj.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

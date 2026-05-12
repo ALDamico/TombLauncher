@@ -535,5 +535,6 @@
     <system:String x:Key="MANIFEST_FETCH_FAILURE">Nelze načíst informace o aktualizaci znalostní báze</system:String>
     <system:String x:Key="KB_DOWNLOAD_FAILURE">Chyba při stahování znalostní báze</system:String>
     <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Obvykle se jedná o přechodné chyby, které lze bezpečně ignorovat.</system:String>
+    <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher nemohl automaticky rozpoznat engine tohoto levelu. Nastavte jej ručně, abyste aktivovali tlačítko Hrát.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

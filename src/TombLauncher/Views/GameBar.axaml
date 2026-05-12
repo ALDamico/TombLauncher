@@ -109,6 +109,9 @@
                 <Button Height="44"
                         Padding="16 0"
                         IsVisible="{Binding Game.GameMetadata.InstallDirectory, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        IsEnabled="{Binding Game.GameMetadata.GameEngine, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static enums:GameEngine.Unknown}}"
+                        ToolTip.Tip="{Binding PlayButtonTooltip}"
+                        ToolTip.ShowOnDisabled="True"
                         Classes="btn-success"
                         Command="{Binding Game.PlayCommand}">
                     <StackPanel Orientation="Horizontal" Spacing="8">

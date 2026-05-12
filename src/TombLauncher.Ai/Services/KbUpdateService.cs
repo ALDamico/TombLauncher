@@ -37,7 +37,7 @@ public class KbUpdateService
         KbManifest remoteManifest;
         try
         {
-            using var client = _httpClientFactory.CreateClient();
+            using var client = _httpClientFactory.CreateClient(nameof(KbUpdateService));
             client.Timeout = TimeSpan.FromSeconds(3);
             var json = await client.GetStringAsync(RemoteManifestUrl, ct);
             remoteManifest = JsonSerializer.Deserialize<KbManifest>(json,
@@ -72,7 +72,7 @@ public class KbUpdateService
 
         try
         {
-            using var client = _httpClientFactory.CreateClient();
+            using var client = _httpClientFactory.CreateClient(nameof(KbUpdateService));
             await using var fileStream = File.Create(tmpZipPath);
             await client.DownloadAsync(RemoteDbUrl, fileStream, cancellationToken: ct);
         }
