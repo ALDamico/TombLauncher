@@ -16,6 +16,19 @@ public class ValueConverterTests
 {
     private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
 
+    static ValueConverterTests()
+    {
+        var locManager = Substitute.For<ILocalizationManager>();
+        locManager.GetLocalizedString(Arg.Any<string>(), Arg.Any<object[]>())
+                  .Returns(x => x.ArgAt<string>(0));
+        locManager[Arg.Any<string>()].Returns(x => x.ArgAt<string>(0));
+        locManager.CurrentCulture.Returns(CultureInfo.InvariantCulture);
+        Ioc.Default.ConfigureServices(
+            new ServiceCollection()
+                .AddSingleton(locManager)
+                .BuildServiceProvider());
+    }
+
     // --- GreaterThanZeroToBoolConverter ---
 
     [Theory]
