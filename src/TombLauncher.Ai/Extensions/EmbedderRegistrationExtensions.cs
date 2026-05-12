@@ -1,4 +1,6 @@
 using System.ClientModel;
+using System.Net.Security;
+using System.Security.Authentication;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -8,7 +10,6 @@ using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Ai.Factories;
 using TombLauncher.Ai.Mappers;
-using TombLauncher.Ai.Plugins;
 using TombLauncher.Ai.Services;
 using TombLauncher.Ai.Services.AiBackends;
 using TombLauncher.Ai.Utils;
@@ -25,7 +26,11 @@ public static class EmbedderRegistrationExtensions
             {
                 var aiConfig = sp.GetRequiredService<IOptions<AiConfig>>().Value;
                 return new OpenAIClient(new ApiKeyCredential(aiConfig.ApiKey ?? "ollama"),
-                    new OpenAIClientOptions() { Endpoint = new Uri(OllamaEndpointHelper.NormalizeEndpoint(aiConfig.Endpoint ?? "http://localhost:11434")) });
+                    new OpenAIClientOptions()
+                    {
+                        Endpoint = new Uri(
+                            OllamaEndpointHelper.NormalizeEndpoint(aiConfig.Endpoint ?? "http://localhost:11434"))
+                    });
             })
             .AddSingleton<IEmbeddingGenerator<string, Embedding<float>>>(sp =>
             {
@@ -42,7 +47,7 @@ public static class EmbedderRegistrationExtensions
 
     public static IServiceCollection RegisterAiFeatures(this IServiceCollection serviceCollection)
     {
-        return serviceCollection
+        serviceCollection
             .AddScoped<ITroubleshootingServiceLoader, RagServiceLoader>()
             .AddSingleton<VectorSearchService>()
             .AddSingleton<IEmbeddingGenerator<string, Embedding<float>>>(sp =>
@@ -51,12 +56,19 @@ public static class EmbedderRegistrationExtensions
             .AddScoped<TroubleshootingContextService>()
             .AddScoped<IChatCompletionServiceLoader, OpenAiCompatibleChatCompletionServiceLoader>()
             .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings()
-                { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ExtensionData = new Dictionary<string, object> { ["temperature"] = 0.65 }})
+            {
+                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+                ExtensionData = new Dictionary<string, object> { ["temperature"] = 0.65 }
+            })
             .AddSingleton<OpenAIClient>(sp =>
             {
                 var aiConfig = sp.GetRequiredService<IAiConfig>();
                 return new OpenAIClient(new ApiKeyCredential(aiConfig.ApiKey ?? "ollama"),
-                    new OpenAIClientOptions() { Endpoint = new Uri(OllamaEndpointHelper.NormalizeEndpoint(aiConfig.Endpoint ?? "http://localhost:11434")) });
+                    new OpenAIClientOptions()
+                    {
+                        Endpoint = new Uri(
+                            OllamaEndpointHelper.NormalizeEndpoint(aiConfig.Endpoint ?? "http://localhost:11434"))
+                    });
             })
             .AddSingleton<Kernel>(sp =>
             {
@@ -72,13 +84,22 @@ public static class EmbedderRegistrationExtensions
                 {
                     Console.WriteLine(ex);
                 }
+
                 return kernelBuilder.Build();
             })
-            .AddHttpClient()
             .AddSingleton<KbUpdateService>()
             .AddSingleton<ModelMapper>()
             .AddKeyedSingleton<IAiBackendService, OllamaBackendService>(AiBackendType.Ollama)
             .AddKeyedSingleton<IAiBackendService, LmStudioBackendService>(AiBackendType.LmStudio)
-            .AddSingleton<AiBackendFactory>();
+            .AddSingleton<AiBackendFactory>()
+            .AddHttpClient(nameof(KbUpdateService))
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler()
+            {
+                SslOptions = new SslClientAuthenticationOptions()
+                {
+                    EnabledSslProtocols = SslProtocols.Tls13
+                }
+            });
+        return serviceCollection;
     }
 }
