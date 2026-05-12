@@ -535,5 +535,6 @@
     <system:String x:Key="MANIFEST_FETCH_FAILURE">No se pudo recuperar la información de actualización de la base de conocimientos</system:String>
     <system:String x:Key="KB_DOWNLOAD_FAILURE">Error al descargar la base de conocimientos</system:String>
     <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Por lo general, son errores transitorios que pueden ignorarse sin problema.</system:String>
+    <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher no pudo detectar automáticamente el motor de este nivel. Configúrelo manualmente para activar el botón Jugar.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

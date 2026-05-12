@@ -542,5 +542,6 @@
     <system:String x:Key="MANIFEST_FETCH_FAILURE">Impossibile recuperare le informazioni di aggiornamento della Knowledge Base</system:String>
     <system:String x:Key="KB_DOWNLOAD_FAILURE">Errore nel download del database della Knowledge Base</system:String>
     <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Generalmente si tratta di errori temporanei che puoi ignorare tranquillamente.</system:String>
+    <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher non è riuscito a rilevare automaticamente l'engine di questo livello. Impostalo manualmente per abilitare il pulsante.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

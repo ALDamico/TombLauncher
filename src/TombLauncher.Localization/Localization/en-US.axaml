@@ -543,5 +543,6 @@
     <system:String x:Key="MANIFEST_FETCH_FAILURE">Unable to retrieve Knowledge Base update information</system:String>
     <system:String x:Key="KB_DOWNLOAD_FAILURE">Error downloading the Knowledge Base database</system:String>
     <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">These are generally transient errors and can be safely ignored.</system:String>
+    <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher could not automatically detect the engine for this level. Set it manually to enable the Play button.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
