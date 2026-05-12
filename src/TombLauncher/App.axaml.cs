@@ -14,9 +14,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using TombLauncher.Ai.Extensions;
 using TombLauncher.Ai.Services;
+using TombLauncher.Configuration;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
@@ -76,6 +79,8 @@ public class App : Application
                         var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
                         Dispatcher.UIThread.Invoke(() => { ApplyUiLanguage(settingsProvider); });
 
+                        await MigrateWindowsLaunchConfig();
+
                         progress.Report("Updating application database...");
                         using var scope = Ioc.Default.CreateScope();
                         var dbContext = scope.ServiceProvider.GetRequiredService<TombLauncherDbContext>();
@@ -116,6 +121,18 @@ public class App : Application
         {
             Log.Logger.Fatal(e, "Unhandled exception occurred before OnFrameworkInitializationCompleted");
             Environment.Exit(-1);
+        }
+    }
+
+    private static async Task MigrateWindowsLaunchConfig()
+    {
+        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+        if (platformSpecificFeatures.Platform == Platform.Windows)
+        {
+            var settingsService = Ioc.Default.GetRequiredService<SettingsPageService>();
+            var appConfiguration = Ioc.Default.GetRequiredService<ILayeredAppConfiguration>();
+            appConfiguration.User.Compatibility.CompatibilityTool = CompatibilityTool.Automatic;
+            await settingsService.PersistCurrentConfigAsync();
         }
     }
 

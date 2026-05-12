@@ -157,7 +157,7 @@ public class UpdateLaunchOptionsTests : IDisposable
     // ── helper ────────────────────────────────────────────────────────────────
 
     private LaunchOptionsDto MakeDto(
-        CompatibilityTool tool = CompatibilityTool.Unspecified,
+        CompatibilityTool tool = CompatibilityTool.Automatic,
         string? toolPath = null,
         string? prefixPath = null,
         List<EnvironmentVariableDto>? envVars = null,
