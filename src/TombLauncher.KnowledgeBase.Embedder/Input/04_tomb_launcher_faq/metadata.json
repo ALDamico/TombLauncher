@@ -10,6 +10,14 @@
     {
       "header": "How do I set global compatibility defaults for Linux?",
       "platforms": ["Linux"]
+    },
+    {
+      "header": "Why does the page stays in a loading state when I click Play?",
+      "appVersionRange": "(,1.3.0]"
+    },
+    {
+      "header": "Why is the Play button greyed out?",
+      "appVersionRange": "[1.4.0,)"
     }
   ]
 }

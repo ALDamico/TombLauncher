@@ -129,3 +129,11 @@ We'd be grateful to receive your suggestions to improve our localization support
 The language files are AXAML files located in the `Localization` folder inside Tomb Launcher's installation directory. You do not need to recompile the application to add a new language — simply create a new AXAML file in that folder containing the translated strings for your language, following the same structure as the existing `en-US.axaml` or `it-IT.axaml` files.
 
 Once you have a translation ready, open an issue on the [GitHub repository](https://github.com/ALDamico/TombLauncher/issues) to share it with the developer so it can be included in a future release.
+
+## Why does the page stay in a loading state when I click Play?
+Versions of Tomb Launcher prior to 1.4.0 did not prevent you from clicking the Play button if the application was not able to determine the game engine or its executable.  
+To fix this behaviour, set its engine manually and select the game executable in the Game Launch options page.
+
+## Why is the Play button greyed out?
+This means Tomb Launcher was not able to detect the game engine automatically. Set it explicitly in the Game Launch options page, and select its executable.  
+The Play button will become active.
