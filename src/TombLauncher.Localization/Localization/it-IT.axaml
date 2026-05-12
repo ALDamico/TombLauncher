@@ -538,5 +538,9 @@
     <system:String x:Key="FOLDER_NAMES_CANNOT_END_WITH_A_DOR_OR_A_SPACE">I nomi delle cartelle non possono terminare con un punto o uno spazio</system:String>
     <system:String x:Key="LOGGING">Log</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Apri cartella log</system:String>
+    <system:String x:Key="KB_UPDATE_ERROR">Errore di aggiornamento Knowledge Base</system:String>
+    <system:String x:Key="MANIFEST_FETCH_FAILURE">Impossibile recuperare le informazioni di aggiornamento della Knowledge Base</system:String>
+    <system:String x:Key="KB_DOWNLOAD_FAILURE">Errore nel download del database della Knowledge Base</system:String>
+    <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Generalmente si tratta di errori temporanei che puoi ignorare tranquillamente.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

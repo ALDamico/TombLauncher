@@ -531,5 +531,9 @@
     <system:String x:Key="LICENSE">Licencia</system:String>
     <system:String x:Key="LOGGING">Registro</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Abrir carpeta de registros</system:String>
+    <system:String x:Key="KB_UPDATE_ERROR">Error de actualización de la base de conocimientos</system:String>
+    <system:String x:Key="MANIFEST_FETCH_FAILURE">No se pudo recuperar la información de actualización de la base de conocimientos</system:String>
+    <system:String x:Key="KB_DOWNLOAD_FAILURE">Error al descargar la base de conocimientos</system:String>
+    <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Por lo general, son errores transitorios que pueden ignorarse sin problema.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

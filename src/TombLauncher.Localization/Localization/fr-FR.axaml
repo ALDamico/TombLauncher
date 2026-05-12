@@ -531,5 +531,9 @@
     <system:String x:Key="LICENSE">Licence</system:String>
     <system:String x:Key="LOGGING">Journalisation</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Ouvrir le dossier des journaux</system:String>
+    <system:String x:Key="KB_UPDATE_ERROR">Erreur de mise à jour de la base de connaissances</system:String>
+    <system:String x:Key="MANIFEST_FETCH_FAILURE">Impossible de récupérer les informations de mise à jour de la base de connaissances</system:String>
+    <system:String x:Key="KB_DOWNLOAD_FAILURE">Erreur lors du téléchargement de la base de connaissances</system:String>
+    <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Il s'agit généralement d'erreurs temporaires qui peuvent être ignorées sans risque.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

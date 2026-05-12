@@ -531,5 +531,9 @@
     <system:String x:Key="LICENSE">Licencja</system:String>
     <system:String x:Key="LOGGING">Rejestrowanie</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Otwórz folder dzienników</system:String>
+    <system:String x:Key="KB_UPDATE_ERROR">Błąd aktualizacji bazy wiedzy</system:String>
+    <system:String x:Key="MANIFEST_FETCH_FAILURE">Nie można pobrać informacji o aktualizacji bazy wiedzy</system:String>
+    <system:String x:Key="KB_DOWNLOAD_FAILURE">Błąd podczas pobierania bazy wiedzy</system:String>
+    <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Są to zazwyczaj błędy przejściowe, które można bezpiecznie zignorować.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
