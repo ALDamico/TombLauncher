@@ -2,6 +2,7 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Core.Utils;
 using TombLauncher.Services;
 using TombLauncher.Utils;
 
@@ -15,7 +16,7 @@ public partial class AboutPageViewModel : PageViewModel
     {
         _platformSpecificFeatures = platformSpecificFeatures;
         var coreSettings = settingsProvider.GetApplicationSettings();
-        ApplicationVersion = AppUtils.GetApplicationVersion();
+        ApplicationVersion = VersionUtils.GetApplicationVersion();
         GithubLink = coreSettings.GitHubLink;
         WebsiteLink = coreSettings.WebsiteLink;
     }

@@ -5,7 +5,9 @@
     <Color x:Key="CardBackgroundColor">#CCE8F0FA</Color>
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" /> <!-- Glassy Light Azure -->
     <SolidColorBrush x:Key="CardBorderBrush">#33000000</SolidColorBrush>
-    <SolidColorBrush x:Key="PageBackgroundBrush">#FAFCFF</SolidColorBrush>
+    <Color x:Key="PageBackgroundColor">#FAFCFF</Color>
+    <Color x:Key="PageBackgroundColorTransparent">#00FAFCFF</Color>
+    <SolidColorBrush x:Key="PageBackgroundBrush" Color="{StaticResource PageBackgroundColor}"/>
     <SolidColorBrush x:Key="SidebarBackgroundBrush">#F0F5FC</SolidColorBrush>
     
     <!-- Primary Actions -->

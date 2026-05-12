@@ -79,7 +79,7 @@ public class GameMapperTests
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private static Game MakeGame(
-        CompatibilityTool tool = CompatibilityTool.Unspecified,
+        CompatibilityTool tool = CompatibilityTool.Automatic,
         string? toolPath = null,
         string? prefixPath = null) => new()
     {
@@ -91,7 +91,7 @@ public class GameMapperTests
     };
 
     private static GameMetadataDto MakeDto(
-        CompatibilityTool tool = CompatibilityTool.Unspecified,
+        CompatibilityTool tool = CompatibilityTool.Automatic,
         string? toolPath = null,
         string? prefixPath = null) => new()
     {

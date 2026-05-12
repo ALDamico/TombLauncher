@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Configuration;
-using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Contracts.Enums;
@@ -71,7 +70,6 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly GameDataService _gameDataService;
     private readonly PlaySessionDataService _playSessionDataService;
     private readonly ISavegameRepository _savegameRepository;
-    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private FileSystemWatcher? _watcher;
     private readonly bool _backupEnabled;
@@ -155,7 +153,7 @@ public class GameWithStatsService : IViewService, IDisposable
 
     public bool CanPlayGame(GameWithStatsViewModel game)
     {
-        return game.GameMetadata.IsInstalled;
+        return game.GameMetadata.IsInstalled && game.GameMetadata.GameEngine != GameEngine.Unknown;
     }
 
     public bool CanLaunchSetup(GameWithStatsViewModel game)
@@ -301,7 +299,7 @@ public class GameWithStatsService : IViewService, IDisposable
         var winePrefix = rawPrefix != null ? _platformSpecificFeatures.ExpandPath(rawPrefix) : null;
 
         var perGameTool = game.GameMetadata.CompatibilityTool;
-        IGameLauncher launcher = perGameTool == CompatibilityTool.Unspecified
+        IGameLauncher launcher = perGameTool == CompatibilityTool.Automatic
             ? _gameLauncherFactory()
             : perGameTool switch
             {
@@ -309,7 +307,8 @@ public class GameWithStatsService : IViewService, IDisposable
                     game.GameMetadata.CompatibilityToolPath.IsNotNullOrWhiteSpace()
                         ? game.GameMetadata.CompatibilityToolPath!
                         : _appConfiguration.Compatibility.ProtonPath ?? ""),
-                CompatibilityTool.None => new WindowsGameLauncher(),
+                CompatibilityTool.WindowsNative => new WindowsGameLauncher(),
+                CompatibilityTool.LinuxNative => new LinuxGameLauncher(),
                 _ => new WineGameLauncher(
                     game.GameMetadata.CompatibilityToolPath.IsNotNullOrWhiteSpace()
                         ? game.GameMetadata.CompatibilityToolPath!

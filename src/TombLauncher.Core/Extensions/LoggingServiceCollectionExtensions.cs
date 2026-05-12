@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using Serilog.Filters;
 
 namespace TombLauncher.Core.Extensions;
 
@@ -9,19 +10,26 @@ public static class LoggingServiceCollectionExtensions
 {
     public static IServiceCollection AddTombLauncherLogging(this IServiceCollection services, string appDataDirectory)
     {
-        var logPath = Path.Combine(appDataDirectory, "TombLauncher_App.log");
+        var logPath = Path.Combine(appDataDirectory, "Logs", "TombLauncher_App_.log");
+        var aiLogPath = Path.Combine(appDataDirectory, "Logs", "TombLauncher_Ai_.log");
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
-            .WriteTo
-            .File(logPath, LogEventLevel.Information)
+            .WriteTo.Logger(lc => lc
+                .Filter.ByExcluding(Matching.FromSource("TombLauncher.Ai"))
+                .WriteTo.File(logPath, LogEventLevel.Information, rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 7, fileSizeLimitBytes: 10 * 1024 * 1024, rollOnFileSizeLimit: true))
+            .WriteTo.Logger(lc => lc
+                .Filter.ByIncludingOnly(Matching.FromSource("TombLauncher.Ai"))
+                .WriteTo.File(aiLogPath, LogEventLevel.Information, rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 7, fileSizeLimitBytes: 10 * 1024 * 1024, rollOnFileSizeLimit: true))
             .CreateLogger();
-        AddLogging(services);
-        return services;
+
+        return services.AddLogging();
     }
 
-    private static void AddLogging(IServiceCollection services)
+    private static IServiceCollection AddLogging(this IServiceCollection services)
     {
-        services.AddLogging(opts =>
+        return services.AddLogging(opts =>
         {
             opts.ClearProviders();
             opts.SetMinimumLevel(LogLevel.Information);

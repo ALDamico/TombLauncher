@@ -18,10 +18,10 @@ public class CompatibilityConfigTests
     // ─── CompatibilityTool ────────────────────────────────────────────────
 
     [Fact]
-    public void CompatibilityTool_DefaultsToWine_WhenBothUnset()
+    public void CompatibilityTool_DefaultsToAutomatic_WhenBothUnset()
     {
         var config = CreateConfig();
-        Assert.Equal(CompatibilityTool.Wine, config.Compatibility.CompatibilityTool);
+        Assert.Equal(CompatibilityTool.Automatic, config.Compatibility.CompatibilityTool);
     }
 
     [Fact]

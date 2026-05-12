@@ -32,4 +32,6 @@ public enum GameEngine
     Tomb2Main = 1 << 10 | TombRaider2,
     [Description("Tomb Raider III Community Edition")]
     Tomb3CommunityEdition = 1 << 11 | TombRaider3,
+    [Description("TRX")]
+    Trx = 1 << 12
 }

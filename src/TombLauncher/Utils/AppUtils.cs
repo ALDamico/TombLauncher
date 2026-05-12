@@ -58,10 +58,6 @@ public static class AppUtils
         LiveCharts.Configure(applyTheme);
     }
 
-    public static Version? GetApplicationVersion() => Assembly.GetEntryAssembly()?.GetName().Version;
-
-    public static Version GetDotNetVersion() => Environment.Version;
-
     public static IPlatformSpecificFeatures InitPlatformSpecificFeatures()
     {
         IPlatformSpecificFeatures platformSpecificFeatures;

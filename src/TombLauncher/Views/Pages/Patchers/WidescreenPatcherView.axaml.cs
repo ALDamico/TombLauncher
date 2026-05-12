@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace TombLauncher.Views.Pages;
+namespace TombLauncher.Views.Pages.Patchers;
 
 public partial class WidescreenPatcherView : UserControl
 {

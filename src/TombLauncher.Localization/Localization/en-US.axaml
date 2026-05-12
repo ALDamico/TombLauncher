@@ -28,6 +28,7 @@
     <system:String x:Key="NO_GAMES">No games</system:String>
     <system:String x:Key="TRY_ADDING_ONE">Try adding one</system:String>
     <system:String x:Key="TITLE">Title</system:String>
+    <system:String x:Key="TITLE_PICTURE">Cover</system:String>
     <system:String x:Key="RELEASE_DATE">Release date</system:String>
     <system:String x:Key="INSTALL_DATE">Install date</system:String>
     <system:String x:Key="ENGINE">Engine</system:String>
@@ -509,5 +510,39 @@
     <system:String x:Key="FINDING_FILE_TO_RESTORE">Locating file to restore...</system:String>
     <system:String x:Key="CHECKING_GAME_EXECUTABLE_CONSISTENCY">Verifying integrity of restored file...</system:String>
     <system:String x:Key="RESTORING_GAME_EXECUTABLE">Restoring original executable...</system:String>
+    <system:String x:Key="DETECTING_VERSION_INFO">Detecting version info...</system:String>
+    <system:String x:Key="DOWNLOADING_NATIVE_EXECUTABLE_FROM_GITHUB">Downloading native executable from GitHub...</system:String>
+    <system:String x:Key="UNABLE_TO_EXTRACT_EXECUTABLE">Unable to extract the executable from the downloaded archive.</system:String>
+    <system:String x:Key="APPLYING_TRX_NATIVE_PATCH">Applying TRX native patch...</system:String>
+    <system:String x:Key="RESTORING_TRX_ORIGINAL_EXECUTABLE">Restoring original executable...</system:String>
+    <system:String x:Key="READING_GAME_INFO">Reading game info...</system:String>
+    <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_APPLIED">The native TRX executable has been applied successfully.</system:String>
+    <system:String x:Key="NATIVE_PATCH_APPLIED_TITLE">Native patch applied</system:String>
+    <system:String x:Key="NATIVE_PATCH_ERROR_TITLE">Native patch error</system:String>
+    <system:String x:Key="NATIVE_PATCH_SUCCESSFULLY_REVERTED">The original executable has been restored successfully.</system:String>
+    <system:String x:Key="NATIVE_PATCH_REVERTED_TITLE">Native patch reverted</system:String>
+    <system:String x:Key="NATIVE_PATCH_REVERSAL_ERROR_TITLE">Native patch reversal error</system:String>
+    <system:String x:Key="DETECTED_VERSION">Detected version:</system:String>
+    <system:String x:Key="PATCH_LOG">Operation log</system:String>
+    <system:String x:Key="CONVERT_TO_NATIVE_EXECUTABLE">Convert to native executable</system:String>
+    <system:String x:Key="READING_EXECUTABLE_VERSION">Reading executable version...</system:String>
+    <system:String x:Key="TRX_NATIVE_PATCH">TRX native patch</system:String>
+    <system:String x:Key="REVERT_TO_ORIGINAL_EXECUTABLE">Revert to original executable</system:String>
+    <system:String x:Key="AN_ERROR_OCCURRED">An error occurred</system:String>
+    <system:String x:Key="INSTALLING">Installing...</system:String>
+    <system:String x:Key="GATHERING_STATISTICS">Gathering statistics...</system:String>
+    <system:String x:Key="RELOAD">Reload</system:String>
+    <system:String x:Key="FOLDER_NAMES_CANNOT_END_WITH_A_DOR_OR_A_SPACE">Folder names cannot end with a dot or a space</system:String>
+    <system:String x:Key="ABOUT_ACKNOWLEDGEMENTS">Acknowledgements</system:String>
+    <system:String x:Key="ABOUT_INFO">Application info</system:String>
+    <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
+    <system:String x:Key="LICENSE">License</system:String>
+    <system:String x:Key="LOGGING">Logging</system:String>
+    <system:String x:Key="OPEN_LOGS_FOLDER">Open logs folder</system:String>
+    <system:String x:Key="KB_UPDATE_ERROR">Knowledge Base update error</system:String>
+    <system:String x:Key="MANIFEST_FETCH_FAILURE">Unable to retrieve Knowledge Base update information</system:String>
+    <system:String x:Key="KB_DOWNLOAD_FAILURE">Error downloading the Knowledge Base database</system:String>
+    <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">These are generally transient errors and can be safely ignored.</system:String>
+    <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher could not automatically detect the engine for this level. Set it manually to enable the Play button.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

@@ -28,13 +28,13 @@ public class GameLinkMapper
             {
                 BaseUrl = "",
                 Link = "",
-                DisplayName = ""
+                DisplayName = "",
+                Id = dto.Id
             };
         }
 
         extant.DisplayName = dto.DisplayName;
         extant.BaseUrl = dto.BaseUrl;
-        extant.Id = dto.Id;
         extant.Link = dto.Link;
         extant.LinkType = dto.LinkType;
         extant.GameId = dto.GameId;

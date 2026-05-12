@@ -5,16 +5,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
-             xmlns:converters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.NotificationView"
              x:DataType="viewModels:NotificationViewModel">
     <Design.DataContext>
         <viewModels:NotificationViewModel />
     </Design.DataContext>
-    <UserControl.Resources>
-        <converters:NotificationTypeToColorConverter x:Key="NotificationTypeToColorConverter"/>
-    </UserControl.Resources>
     
     <UserControl.Styles>
         <!-- Wrapper Styles: Handle Entrance and Exit Animations (Translation/Opacity) -->

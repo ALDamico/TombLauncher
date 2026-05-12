@@ -13,7 +13,7 @@
         <Copyright>2025 Tomb Launcher developers</Copyright>
         <PackageProjectUrl>https://tomblauncher.app</PackageProjectUrl>
         <RepositoryUrl>https://github.com/ALDamico/TombLauncher</RepositoryUrl>
-        <Version>1.3.0</Version>
+        <Version>1.4.0</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
@@ -158,6 +158,10 @@
       </Compile>
       <Compile Update="Views\Ai\AiModelCard.axaml.cs">
         <DependentUpon>AiModelCard.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Pages\Patchers\WidescreenPatcherPageView.axaml.cs">
+        <DependentUpon>WidescreenPatcherView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

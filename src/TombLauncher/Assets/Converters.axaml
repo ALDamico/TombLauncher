@@ -43,6 +43,8 @@
 
         <!-- ── Icons ── -->
         <valueConverters:IconKindToNullableIconConverter x:Key="IconKindToNullableIconConverter" />
+        <valueConverters:NotificationTypeToIconConverter     x:Key="SeverityToIcon" />
+        <valueConverters:NotificationTypeToColorConverter x:Key="NotificationTypeToColorConverter"/>
 
         <!-- ── Strings / files / images ── -->
         <valueConverters:UppercaseConverter              x:Key="UppercaseConverter" />

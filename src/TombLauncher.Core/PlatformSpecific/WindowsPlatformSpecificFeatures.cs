@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.SupportMatrix;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific.SupportMatrix;
@@ -8,9 +9,11 @@ namespace TombLauncher.Core.PlatformSpecific;
 
 public class WindowsPlatformSpecificFeatures : IPlatformSpecificFeatures
 {
-    public void OpenGameFolder(string gameFolder)
+    public Platform Platform => Platform.Windows;
+
+    public void OpenFolder(string folder)
     {
-        Process.Start("explorer", gameFolder);
+        Process.Start("explorer", folder);
     }
 
     public void OpenUrl(string link)

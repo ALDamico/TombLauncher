@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -9,17 +10,24 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using IconPacks.Avalonia.RemixIcon;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using TombLauncher.Ai.Extensions;
+using TombLauncher.Ai.Models;
 using TombLauncher.Ai.Services;
+using TombLauncher.Configuration;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
 using TombLauncher.ViewModels;
@@ -50,7 +58,7 @@ public class App : Application
                 BindingPlugins.DataValidators.RemoveAt(0);
                 var splashScreen = new SplashScreen()
                 {
-                    Version = AppUtils.GetApplicationVersion()
+                    Version = VersionUtils.GetApplicationVersion()
                 };
 
                 IProgress<string> progress = new Progress<string>(p => splashScreen.StatusMessage = p);
@@ -64,6 +72,8 @@ public class App : Application
                 Dispatcher.UIThread.UnhandledException += OnUnhandledException;
                 var resourceDictionary = new ResourceDictionary();
 
+                var kbUpdateResult = KbUpdateResult.Success();
+
                 try
                 {
                     // Run initialization in background to allow Splash Screen to render
@@ -75,6 +85,8 @@ public class App : Application
                         var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
                         Dispatcher.UIThread.Invoke(() => { ApplyUiLanguage(settingsProvider); });
 
+                        await MigrateWindowsLaunchConfig();
+
                         progress.Report("Updating application database...");
                         using var scope = Ioc.Default.CreateScope();
                         var dbContext = scope.ServiceProvider.GetRequiredService<TombLauncherDbContext>();
@@ -83,7 +95,7 @@ public class App : Application
                         if (settingsProvider.GetAiCoreSettings().IsEnabled)
                         {
                             progress.Report("Updating KB database...");
-                            await Ioc.Default.GetRequiredService<KbUpdateService>()
+                            kbUpdateResult = await Ioc.Default.GetRequiredService<KbUpdateService>()
                                 .CheckAndUpdateAsync(progress, ct: default);
                         }
                         
@@ -100,7 +112,7 @@ public class App : Application
                     desktop.MainWindow = mainWindow;
                     desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
-                    await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(splashScreen, mainWindow));
+                    await Dispatcher.UIThread.InvokeAsync(async () => await ShowMainWindow(splashScreen, mainWindow, kbUpdateResult));
                 }
                 catch (Exception ex)
                 {
@@ -115,6 +127,18 @@ public class App : Application
         {
             Log.Logger.Fatal(e, "Unhandled exception occurred before OnFrameworkInitializationCompleted");
             Environment.Exit(-1);
+        }
+    }
+
+    private static async Task MigrateWindowsLaunchConfig()
+    {
+        var platformSpecificFeatures = Ioc.Default.GetRequiredService<IPlatformSpecificFeatures>();
+        if (platformSpecificFeatures.Platform == Platform.Windows)
+        {
+            var settingsService = Ioc.Default.GetRequiredService<SettingsPageService>();
+            var appConfiguration = Ioc.Default.GetRequiredService<ILayeredAppConfiguration>();
+            appConfiguration.User.Compatibility.CompatibilityTool = CompatibilityTool.Automatic;
+            await settingsService.PersistCurrentConfigAsync();
         }
     }
 
@@ -167,7 +191,7 @@ public class App : Application
         }
     }
 
-    private async Task ShowMainWindow(SplashScreen splashScreen, MainWindow mainWindow)
+    private async Task ShowMainWindow(SplashScreen splashScreen, MainWindow mainWindow, KbUpdateResult kbUpdateResult)
     {
         splashScreen.Close();
         ApplyInitialSettings();
@@ -175,6 +199,22 @@ public class App : Application
         var updateService = Ioc.Default.GetRequiredService<UpdateService>();
         await updateService.StartAsync();
         await AppUtils.CheckCompatibilityToolAsync();
+        if (kbUpdateResult.Severity == NotificationType.Error)
+        {
+            var notificationsService = Ioc.Default.GetRequiredService<NotificationService>();
+            var notificationMessage = new StringBuilder()
+                .AppendLine(kbUpdateResult.Message.GetLocalizedString());
+            if (kbUpdateResult.Exception != null)
+            {
+                notificationMessage.AppendLine()
+                    .AppendLine(kbUpdateResult.Exception.Message);
+            }
+
+            notificationMessage.AppendLine()
+                .AppendLine("KB_ERROR_TRANSIENT_NOTICE");
+            await notificationsService.AddWarningNotificationAsync("KB_UPDATE_ERROR", notificationMessage.ToString(),
+                PackIconRemixIconKind.FileWarningLine);
+        }
     }
 
     private async Task InitializeServices(Application application, ResourceDictionary resourceDictionary, IProgress<string> progress)
