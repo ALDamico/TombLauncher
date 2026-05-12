@@ -15,7 +15,7 @@ public class CompatibilityToolToIconConverter : IValueConverter
             switch (compatibilityTool)
             {
                 case CompatibilityTool.WindowsNative:
-                case CompatibilityTool.Unspecified:
+                case CompatibilityTool.Automatic:
                     return PackIconRemixIconKind.FileUnknowFill;
                 case CompatibilityTool.LinuxNative:
                     return PackIconRemixIconKind.UbuntuLine;
