@@ -76,15 +76,16 @@ public class KbUpdateService
             await using var fileStream = File.Create(tmpZipPath);
             await client.DownloadAsync(RemoteDbUrl, fileStream, cancellationToken: ct);
         }
-        catch
+        catch(Exception ex)
         {
             File.Delete(tmpZipPath);
-            throw;
+            _logger.LogError(ex, "KB zip file download failed");
+            return;
         }
 
         try
         {
-            using var zip = ZipFile.OpenRead(tmpZipPath);
+            await using var zip = await ZipFile.OpenReadAsync(tmpZipPath, ct);
             var entry = zip.Entries.FirstOrDefault(e => e.Name.EndsWith(".db", StringComparison.OrdinalIgnoreCase));
             if (entry == null)
             {
@@ -92,7 +93,7 @@ public class KbUpdateService
                 progress?.Report("KB_INTEGRITY_ERROR");
                 return;
             }
-            entry.ExtractToFile(tmpDbPath, overwrite: true);
+            await entry.ExtractToFileAsync(tmpDbPath, overwrite: true, cancellationToken:ct);
         }
         finally
         {
