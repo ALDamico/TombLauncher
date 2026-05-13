@@ -14,8 +14,8 @@
   </Folder>
   <Folder Name="/libs/" />
   <Folder Name="/libs/SqliteVector/">
-    <File Path="libs/SqliteVector/vector.so"/>
-    <File Path="libs/SqliteVector/vector.dll"/>
+    <File Path="libs/SqliteVector/vector.so" />
+    <File Path="libs/SqliteVector/vector.dll" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/TombLauncher.Ai/TombLauncher.Ai.csproj" />
@@ -23,6 +23,7 @@
     <Project Path="src/TombLauncher.Controls/TombLauncher.Controls.csproj" />
     <Project Path="src/TombLauncher.Core/TombLauncher.Core.csproj" />
     <Project Path="src/TombLauncher.Data/TombLauncher.Data.csproj" />
+    <Project Path="src/TombLauncher.Integrations/TombLauncher.Integrations.csproj" />
     <Project Path="src/TombLauncher.KnowledgeBase.Embedder/TombLauncher.KnowledgeBase.Embedder.csproj" />
     <Project Path="src/TombLauncher.Localization/TombLauncher.Localization.csproj" />
     <Project Path="src/TombLauncher.Patchers/TombLauncher.Patchers.csproj" />
