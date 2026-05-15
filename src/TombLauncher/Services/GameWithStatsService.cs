@@ -10,6 +10,7 @@ using TombLauncher.Configuration;
 using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Integrations;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;
@@ -18,6 +19,7 @@ using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
+using TombLauncher.Integrations.Discord;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
 using TombLauncher.Utils;
@@ -40,7 +42,8 @@ public class GameWithStatsService : IViewService, IDisposable
         SavegameHeaderProcessor headerProcessor,
         IAppConfiguration appConfiguration,
         Func<IGameLauncher> gameLauncherFactory,
-        GameMetadataMapper mapper)
+        GameMetadataMapper mapper, 
+        DiscordRichPresenceService discordService)
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
@@ -61,11 +64,15 @@ public class GameWithStatsService : IViewService, IDisposable
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
         _mapper = mapper;
+        _discordService = discordService;
+        _isDiscordSharingEnabled = appConfiguration.Integrations.SharePlaySessionsOnDiscord ?? false;
     }
 
     public ViewServiceContext ViewContext { get; }
     private SavegameHeaderProcessor? _headerProcessor;
     private readonly GameMetadataMapper _mapper;
+    private readonly DiscordRichPresenceService _discordService;
+    private readonly bool _isDiscordSharingEnabled;
 
     private readonly GameDataService _gameDataService;
     private readonly PlaySessionDataService _playSessionDataService;
@@ -102,6 +109,22 @@ public class GameWithStatsService : IViewService, IDisposable
 
         if (game.GameMetadata.ExecutablePath != null)
         {
+            if (_isDiscordSharingEnabled)
+            {
+                _discordService.UpdateStatus(new RichPresenceDto()
+                {
+                    DiscordAppId = _appConfiguration.Integrations.DiscordAppId ?? "",
+                    LevelName = game.GameMetadata.Title, 
+                    Title = $"Playing {game.GameMetadata.Title}",
+                    State = "Powered by Tomb Launcher",
+                    AuthorName = game.GameMetadata.Author,
+                    WebsiteUrl = "https://tomblauncher.app", 
+                    WebsiteCaption = "Try Tomb Launcher",
+                    LevelUrl = game.GameMetadata.InstalledFromLink,
+                    LevelCaption = $"Try {game.GameMetadata.Title}",
+                    ScreenshotUrl = game.GameMetadata.TitlePicUrl,
+                });
+            }
             LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
         }
     }
@@ -205,6 +228,10 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         _logger.LogInformation("Play session for game {GameTitle} (ID: {GameId}) ended.", game.GameMetadata.Title,
             game.GameMetadata.Id);
+        if (_isDiscordSharingEnabled)
+        {
+            _discordService.EndPlaySession();
+        }
         var exitCode = process.ExitCode;
         var errorOccurred = false;
         PlaySessionCrashDto? playSessionCrashDto = null;

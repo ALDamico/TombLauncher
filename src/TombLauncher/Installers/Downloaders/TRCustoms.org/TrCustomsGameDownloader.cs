@@ -13,7 +13,6 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Extensions;
 using TombLauncher.Installers.Downloaders.TRCustoms.org.Requests;
 using TombLauncher.Installers.Downloaders.TRCustoms.org.Responses;
 using TombLauncher.Installers.Downloaders.TRCustoms.org.Utils;
@@ -340,6 +339,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
             GameEngine = game.Engine,
             ReleaseDate = game.ReleaseDate,
             AuthorFullName = game.AuthorFullName ?? string.Empty,
+            TitlePicUrl = game.TitlePic,
             TitlePic = game.TitlePic != null ? await HttpClient.GetByteArrayAsync(game.TitlePic!, cancellationToken) : Array.Empty<byte>(),
             Title = game.Title,
         };

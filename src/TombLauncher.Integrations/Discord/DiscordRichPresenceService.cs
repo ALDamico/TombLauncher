@@ -5,26 +5,30 @@ namespace TombLauncher.Integrations.Discord;
 
 public class DiscordRichPresenceService : IDisposable
 {
-    public DiscordRichPresenceService(string applicationId)
-    {
-        _discordClient = new DiscordRpcClient(applicationId);
-        _discordClient.Initialize();
-    }
-    private readonly DiscordRpcClient _discordClient;
+    private DiscordRpcClient? _discordClient;
+    private bool _isInitialized;
 
     public void UpdateStatus(RichPresenceDto richPresenceDto)
     {
+        if (!_isInitialized)
+        {
+            _discordClient = new DiscordRpcClient(richPresenceDto.DiscordAppId);
+            _discordClient.Initialize();
+            _isInitialized = true;
+        }
         var richPresence = new RichPresence()
         {
             Type = ActivityType.Playing,
             Details = richPresenceDto.Title,
+            State = richPresenceDto.State,
             Buttons = [],
-            Assets =
+            Assets = new Assets()
             {
                 LargeImageUrl = richPresenceDto.ScreenshotUrl,
-                LargeImageText = richPresenceDto.LevelName
+                LargeImageText = richPresenceDto.Title,
+                LargeImageKey = "tomb-launcher-logo"
             },
-            Timestamps = new Timestamps(richPresenceDto.StartTimestamp)
+            
         };
 
         var buttons = new List<Button>();
@@ -40,14 +44,18 @@ public class DiscordRichPresenceService : IDisposable
         }
 
         richPresence.Buttons = buttons.ToArray();
-        _discordClient.SetPresence(richPresence);
+        _discordClient!.SetPresence(richPresence);
     }
 
-    public void EndPlaySession() => _discordClient.ClearPresence();
+    public void EndPlaySession()
+    {
+        if (_isInitialized)
+            _discordClient!.ClearPresence();
+    }
 
     public void Dispose()
     {
-        _discordClient.Dispose();
+        _discordClient?.Dispose();
         GC.SuppressFinalize(this);
     }
 }

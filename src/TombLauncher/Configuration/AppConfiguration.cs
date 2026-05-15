@@ -14,6 +14,7 @@ public class AppConfiguration : IAppConfiguration
     public WelcomePageConfig WelcomePage { get; set; } = new();
     public UpdaterConfig Updater { get; set; } = new();
     public AiConfig Ai { get; set; } = new();
+    public IntegrationsConfig Integrations { get; set; } = new();
 
     // Explicit interface implementation — returns the same objects as read-only interfaces
     IApplicationConfig IAppConfiguration.Application => Application;
@@ -25,4 +26,5 @@ public class AppConfiguration : IAppConfiguration
     IWelcomePageConfig IAppConfiguration.WelcomePage => WelcomePage;
     IUpdaterConfig IAppConfiguration.Updater => Updater;
     IAiConfig IAppConfiguration.Ai => Ai;
+    IIntegrationsConfig IAppConfiguration.Integrations => Integrations;
 }

@@ -211,13 +211,15 @@ public class TrleGameDownloader : GameDownloaderBase
         var imageNode = htmlDocument.Body.SelectSingleNodeFromElement("//div[@align='center']/img[@class='border']");
         if (imageNode != null)
         {
-            var uri = imageNode.GetAttributeValue("src");
-            var byteArr = await HttpClient.GetByteArrayAsync(uri, cancellationToken);
+            var titlePicRelativeUrl = imageNode.GetAttributeValue("src");
+            var titlePicUri = new Uri(new Uri(game.BaseUrl), titlePicRelativeUrl).ToString();
+            var byteArr = await HttpClient.GetByteArrayAsync(titlePicRelativeUrl, cancellationToken);
             if (game.TitlePic.IsNullOrWhiteSpace())
             {
-                game.TitlePic = new Uri(new Uri(game.BaseUrl), uri).ToString();
+                game.TitlePic = titlePicUri;
             }
             metadata.TitlePic = byteArr;
+            metadata.TitlePicUrl = titlePicUri;
         }
 
         var descriptionNode =

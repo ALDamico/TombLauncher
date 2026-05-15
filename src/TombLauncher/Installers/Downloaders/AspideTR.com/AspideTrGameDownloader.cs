@@ -202,6 +202,7 @@ public class AspideTrGameDownloader : GameDownloaderBase
             Title = game.Title,
             ReleaseDate = game.ReleaseDate,
             TitlePic = await HttpClient.GetByteArrayAsync(game.TitlePic, cancellationToken),
+            TitlePicUrl = game.TitlePic,
             GameEngine = game.Engine,
             AuthorFullName = game.AuthorFullName
         };

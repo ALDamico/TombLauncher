@@ -91,4 +91,11 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         Endpoint = User.Ai.Endpoint,
         BackendType = User.Ai.BackendType.Coalesce(Defaults.Ai.BackendType)
     };
+
+    public IIntegrationsConfig Integrations => new IntegrationsConfig()
+    {
+        DiscordAppId = Defaults.Integrations.DiscordAppId,
+        SharePlaySessionsOnDiscord =
+            User.Integrations.SharePlaySessionsOnDiscord.Coalesce(Defaults.Integrations.SharePlaySessionsOnDiscord)
+    };
 }

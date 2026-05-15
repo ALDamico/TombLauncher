@@ -7,6 +7,6 @@ public static class IntegrationsServiceCollectionExtensions
 {
     public static IServiceCollection AddDiscordIntegration(this IServiceCollection services, string applicationId)
     {
-        return services.AddSingleton<DiscordRichPresenceService>(_ => new DiscordRichPresenceService(applicationId));
+        return services.AddSingleton<DiscordRichPresenceService>();
     }  
 }

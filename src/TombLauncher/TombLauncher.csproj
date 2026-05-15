@@ -85,6 +85,7 @@
       <ProjectReference Include="..\TombLauncher.Controls\TombLauncher.Controls.csproj" />
       <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
       <ProjectReference Include="..\TombLauncher.Data\TombLauncher.Data.csproj" />
+      <ProjectReference Include="..\TombLauncher.Integrations\TombLauncher.Integrations.csproj" />
       <ProjectReference Include="..\TombLauncher.Localization\TombLauncher.Localization.csproj" />
       <ProjectReference Include="..\TombLauncher.Patchers\TombLauncher.Patchers.csproj" />
     </ItemGroup>
@@ -164,9 +165,5 @@
         <DependentUpon>WidescreenPatcherView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Installers\Models\" />
     </ItemGroup>
 </Project>

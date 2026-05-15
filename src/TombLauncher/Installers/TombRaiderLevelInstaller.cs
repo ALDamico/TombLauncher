@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using ICSharpCode.SharpZipLib;
-using ICSharpCode.SharpZipLib.Zip;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.PlatformSpecific;
@@ -60,17 +59,6 @@ public class TombRaiderLevelInstaller
         }
 
         return installFolder;
-    }
-
-
-
-    private static string MakeValidFileName(string name)
-    {
-        string invalidChars =
-            System.Text.RegularExpressions.Regex.Escape(new string(System.IO.Path.GetInvalidFileNameChars()));
-        string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
-
-        return System.Text.RegularExpressions.Regex.Replace(name, invalidRegStr, "_");
     }
 
     private static void CopyDirectory(string sourceDir, string destinationDir, bool recursive, IProgress<CopyProgressInfo>? progress = null)
