@@ -1,3 +1,4 @@
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -38,6 +39,8 @@ var cancellationToken = cts.Token;
 var uploader = shouldUpload ? host.Services.GetRequiredService<KbUploadService>() : null;
 
 await host.RunAsync(cancellationToken);
+host.Dispose();
+SqliteConnection.ClearAllPools(); // svuota il pool e rilascia i file handle
 
 if (uploader != null)
     await uploader.UploadAsync(cancellationToken);
