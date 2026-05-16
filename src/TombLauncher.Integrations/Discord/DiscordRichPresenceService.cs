@@ -35,7 +35,6 @@ public class DiscordRichPresenceService : IDisposable
                 LargeImageText = $"Try {richPresenceDto.LevelName}",
                 LargeImageKey = GetLogoToUse(richPresenceDto.Engine)
             },
-            
         };
 
         var buttons = new List<Button>();
