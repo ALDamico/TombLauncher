@@ -536,5 +536,7 @@
     <system:String x:Key="KB_DOWNLOAD_FAILURE">Fehler beim Herunterladen der Wissensdatenbank</system:String>
     <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">Hierbei handelt es sich in der Regel um vorübergehende Fehler, die sicher ignoriert werden können.</system:String>
     <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher konnte die Engine für dieses Level nicht automatisch erkennen. Legen Sie sie manuell fest, um die Schaltfläche „Spielen" zu aktivieren.</system:String>
+    <system:String x:Key="EXTERNAL_INTEGRATIONS">Externe Integrationen</system:String>
+    <system:String x:Key="SHARE_PLAY_SESSIONS_ON_DISCORD">Spielsitzungen auf Discord teilen</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

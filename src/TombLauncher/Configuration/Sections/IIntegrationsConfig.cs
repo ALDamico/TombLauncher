@@ -1,7 +1,8 @@
+using TombLauncher.Contracts.Integrations;
+
 namespace TombLauncher.Configuration.Sections;
 
-public interface IIntegrationsConfig
+public interface IIntegrationsConfig : IDiscordConfiguration
 {
-    string? DiscordAppId { get; set; }
     bool? SharePlaySessionsOnDiscord { get; set; }
 }

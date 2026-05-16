@@ -27,6 +27,7 @@ using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
+using TombLauncher.Contracts.Integrations;
 using TombLauncher.Integrations.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
@@ -246,7 +247,7 @@ public class App : Application
             .AddNotifications()
             .AddUpdater()
             .AddPatchers()
-            .AddDiscordIntegration("");
+            .AddDiscordIntegration();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);

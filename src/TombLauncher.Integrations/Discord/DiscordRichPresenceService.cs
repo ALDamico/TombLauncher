@@ -6,14 +6,19 @@ namespace TombLauncher.Integrations.Discord;
 
 public class DiscordRichPresenceService : IDisposable
 {
+    public DiscordRichPresenceService(IDiscordConfiguration config)
+    {
+        _applicationId = config.DiscordAppId ?? string.Empty;
+    }
     private DiscordRpcClient? _discordClient;
     private bool _isInitialized;
+    private readonly string _applicationId;
 
     public void UpdateStatus(RichPresenceDto richPresenceDto)
     {
         if (!_isInitialized)
         {
-            _discordClient = new DiscordRpcClient(richPresenceDto.DiscordAppId);
+            _discordClient = new DiscordRpcClient(_applicationId);
             _discordClient.Initialize();
             _isInitialized = true;
         }
@@ -21,13 +26,13 @@ public class DiscordRichPresenceService : IDisposable
         var richPresence = new RichPresence()
         {
             Type = ActivityType.Playing,
-            Details = richPresenceDto.Title,
-            State = richPresenceDto.State,
+            Details = $"Playing {richPresenceDto.LevelName}",
+            State = $"by {richPresenceDto.AuthorName}",
             Buttons = [],
             Assets = new Assets()
             {
                 LargeImageUrl = richPresenceDto.LevelUrl,
-                LargeImageText = richPresenceDto.Title,
+                LargeImageText = $"Try {richPresenceDto.LevelName}",
                 LargeImageKey = GetLogoToUse(richPresenceDto.Engine)
             },
             
@@ -35,9 +40,9 @@ public class DiscordRichPresenceService : IDisposable
 
         var buttons = new List<Button>();
 
-        if (richPresenceDto is { LevelCaption: not null, LevelUrl: not null })
+        if (richPresenceDto is { LevelUrl: not null })
         {
-            buttons.Add(new Button(){Label = richPresenceDto.LevelCaption, Url = richPresenceDto.LevelUrl});
+            buttons.Add(new Button(){Label = richPresenceDto.LevelName, Url = richPresenceDto.LevelUrl});
         }
 
         if (richPresenceDto is { WebsiteCaption: not null, WebsiteUrl: not null })

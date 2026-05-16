@@ -113,15 +113,11 @@ public class GameWithStatsService : IViewService, IDisposable
             {
                 _discordService.UpdateStatus(new RichPresenceDto()
                 {
-                    DiscordAppId = _appConfiguration.Integrations.DiscordAppId ?? "",
                     LevelName = game.GameMetadata.Title, 
-                    Title = $"Playing {game.GameMetadata.Title}",
-                    State = "Powered by Tomb Launcher",
                     AuthorName = game.GameMetadata.Author,
                     WebsiteUrl = "https://tomblauncher.app", 
                     WebsiteCaption = "Try Tomb Launcher",
                     LevelUrl = game.GameMetadata.InstalledFromLink,
-                    LevelCaption = $"Try {game.GameMetadata.Title}",
                     Engine = game.GameMetadata.GameEngine
                 });
             }

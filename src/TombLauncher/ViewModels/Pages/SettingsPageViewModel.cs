@@ -168,6 +168,11 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
 
             var loggingSettings = new LoggingSettingsViewModel(_platformSpecificFeatures, this);
 
+            var externalIntegrationsSettings = new IntegrationsSettingsViewModel(this)
+            {
+                IsDiscordSharingEnabled = _appConfiguration.Integrations.SharePlaySessionsOnDiscord.GetValueOrDefault()
+            };
+
             Sections.Add(welcomePageSettings);
             Sections.Add(appearanceSettings);
             Sections.Add(languageSettings);
@@ -177,6 +182,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             Sections.Add(aiSettings);
             Sections.Add(compatVm);
             Sections.Add(loggingSettings);
+            Sections.Add(externalIntegrationsSettings);
 
             AcceptChanges();
         });
