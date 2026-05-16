@@ -12,6 +12,16 @@
     <File Path="deploy/installer-script.iss" />
     <File Path="deploy/TombLauncher.pupnet.conf" />
   </Folder>
+  <Folder Name="/discord/">
+    <File Path="discord/TEN logo.png" />
+    <File Path="discord/tomb-launcher-icon-lg.png" />
+    <File Path="discord/tr1-icon.png" />
+    <File Path="discord/tr2-logo.png" />
+    <File Path="discord/tr3-logo.png" />
+    <File Path="discord/tr4-logo.png" />
+    <File Path="discord/tr5-logo.png" />
+    <File Path="discord/trx-icon.png" />
+  </Folder>
   <Folder Name="/libs/" />
   <Folder Name="/libs/SqliteVector/">
     <File Path="libs/SqliteVector/vector.so" />

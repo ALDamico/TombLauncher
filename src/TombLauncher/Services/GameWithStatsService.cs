@@ -122,7 +122,7 @@ public class GameWithStatsService : IViewService, IDisposable
                     WebsiteCaption = "Try Tomb Launcher",
                     LevelUrl = game.GameMetadata.InstalledFromLink,
                     LevelCaption = $"Try {game.GameMetadata.Title}",
-                    ScreenshotUrl = game.GameMetadata.TitlePicUrl,
+                    Engine = game.GameMetadata.GameEngine
                 });
             }
             LaunchProcess(game, game.GameMetadata.ExecutablePath, true);

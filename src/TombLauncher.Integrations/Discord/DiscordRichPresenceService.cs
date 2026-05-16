@@ -1,4 +1,5 @@
 using DiscordRPC;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Integrations;
 
 namespace TombLauncher.Integrations.Discord;
@@ -16,6 +17,7 @@ public class DiscordRichPresenceService : IDisposable
             _discordClient.Initialize();
             _isInitialized = true;
         }
+        
         var richPresence = new RichPresence()
         {
             Type = ActivityType.Playing,
@@ -24,9 +26,9 @@ public class DiscordRichPresenceService : IDisposable
             Buttons = [],
             Assets = new Assets()
             {
-                LargeImageUrl = richPresenceDto.ScreenshotUrl,
+                LargeImageUrl = richPresenceDto.LevelUrl,
                 LargeImageText = richPresenceDto.Title,
-                LargeImageKey = "tomb-launcher-logo"
+                LargeImageKey = GetLogoToUse(richPresenceDto.Engine)
             },
             
         };
@@ -57,5 +59,31 @@ public class DiscordRichPresenceService : IDisposable
     {
         _discordClient?.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    private string GetLogoToUse(GameEngine engine)
+    {
+        if (engine.HasFlag(GameEngine.Tr1x) || engine.HasFlag(GameEngine.Tr2x) || engine.HasFlag(GameEngine.Trx))
+            return Constants.TrxLogoAsset;
+
+        if (engine.HasFlag(GameEngine.Ten))
+            return Constants.TenLogoAsset;
+
+        if (engine.HasFlag(GameEngine.TombRaider1))
+            return Constants.Tr1LogoAsset;
+
+        if (engine.HasFlag(GameEngine.TombRaider2))
+            return Constants.Tr2LogoAsset;
+        
+        if (engine.HasFlag(GameEngine.TombRaider3))
+            return Constants.Tr3LogoAsset;
+        
+        if (engine.HasFlag(GameEngine.TombRaider4))
+            return Constants.Tr4LogoAsset;
+        
+        if (engine.HasFlag(GameEngine.TombRaider5))
+            return Constants.Tr5LogoAsset;
+
+        return Constants.TombLauncherLogoAsset;
     }
 }
