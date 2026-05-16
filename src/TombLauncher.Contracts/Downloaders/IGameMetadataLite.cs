@@ -29,4 +29,6 @@ public interface IGameMetadataLite
     string? CompatibilityPrefixPath { get; set; }
     CompatibilityTool CompatibilityTool { get; set; }
     string? CompatibilityToolPath { get; set; }
+    string? TitlePicUrl { get; set; }
+    string? InstalledFromLink { get; set; }
 }

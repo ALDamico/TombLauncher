@@ -30,4 +30,5 @@ public class Game
     public CompatibilityTool CompatibilityTool { get; set; }
     public string? CompatibilityToolPath { get; set; }
     public List<GameEnvironmentVariable> EnvironmentVariables { get; set; } = [];
+    public string? TitlePicUrl { get; set; }
 }

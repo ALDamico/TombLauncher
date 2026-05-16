@@ -1,6 +1,4 @@
-﻿using TombLauncher.Contracts.Enums;
-
-namespace TombLauncher.Contracts.Downloaders;
+﻿namespace TombLauncher.Contracts.Downloaders;
 
 public interface IGameMetadata : IGameMetadataLite
 {

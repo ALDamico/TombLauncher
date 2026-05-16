@@ -14,4 +14,5 @@ public interface IAppConfiguration
     IWelcomePageConfig WelcomePage { get; }
     IUpdaterConfig Updater { get; }
     IAiConfig Ai { get; }
+    IIntegrationsConfig Integrations { get; }
 }

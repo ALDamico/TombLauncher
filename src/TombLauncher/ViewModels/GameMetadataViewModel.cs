@@ -34,6 +34,8 @@ public partial class GameMetadataViewModel : ViewModelBase, IGameMetadataLite
     [ObservableProperty] private string? _compatibilityPrefixPath;
     [ObservableProperty] private CompatibilityTool _compatibilityTool;
     [ObservableProperty] private string? _compatibilityToolPath;
+    [ObservableProperty] private string? _titlePicUrl;
+    [ObservableProperty] private string? _installedFromLink;
     public List<EnvironmentVariableDto> ExtraEnvVars { get; set; } = [];
     public Guid Guid { get; set; }
 }

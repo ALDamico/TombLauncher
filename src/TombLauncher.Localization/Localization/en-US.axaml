@@ -544,5 +544,7 @@
     <system:String x:Key="KB_DOWNLOAD_FAILURE">Error downloading the Knowledge Base database</system:String>
     <system:String x:Key="KB_ERROR_TRANSIENT_NOTICE">These are generally transient errors and can be safely ignored.</system:String>
     <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher could not automatically detect the engine for this level. Set it manually to enable the Play button.</system:String>
+    <system:String x:Key="EXTERNAL_INTEGRATIONS">External integrations</system:String>
+    <system:String x:Key="SHARE_PLAY_SESSIONS_ON_DISCORD">Share play sessions on Discord</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
