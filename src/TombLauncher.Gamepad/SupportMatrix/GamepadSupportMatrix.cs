@@ -25,4 +25,6 @@ public class GamepadSupportMatrix
         };
     }
     public IReadOnlyDictionary<GameEngine, bool> Matrix { get; }
+
+    public bool GetGamepadSupport(GameEngine gameEngine) => Matrix.GetValueOrDefault(gameEngine, false);
 }

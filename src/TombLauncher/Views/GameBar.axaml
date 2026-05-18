@@ -10,6 +10,7 @@
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:io="clr-namespace:System.IO;assembly=System.Runtime"
              xmlns:enums="clr-namespace:TombLauncher.Contracts.Enums;assembly=TombLauncher.Contracts"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="80"
              x:DataType="pages:GameDetailsViewModel"
              x:Class="TombLauncher.Views.GameBar"
@@ -17,6 +18,10 @@
     <Design.DataContext>
         <pages:GameDetailsViewModel />
     </Design.DataContext>
+    <UserControl.Resources>
+        <valueConverters:BooleanToIconConverter TrueValue="GamepadFill" FalseValue="GamepadLine" x:Key="GamepadSupportToIconConverter" />
+        <valueConverters:BooleanToStringConverter TrueValue="GAMEPAD_NATIVE_SUPPORT" FalseValue="GAMEPAD_NO_NATIVE_SUPPORT" x:Key="GamepadSupportToTooltipConverter" />
+    </UserControl.Resources>
     <Border CornerRadius="8"
             Classes="card-background"
             Padding="12 8"
@@ -187,6 +192,13 @@
                                                  Converter={x:Static ObjectConverters.Equal},
                                                  ConverterParameter={x:Static enums:EngineSupportState.NoSupport}}"
                                              ToolTip.Tip="{Binding EngineSupportState, Converter={StaticResource EngineSupportStateToTooltipConverter}}"/>
+                
+                <iconPacks:PackIconRemixIcon Kind="{Binding NativeGamepadSupport, Converter={StaticResource GamepadSupportToIconConverter}}" 
+                                             Width="22" Height="22"
+                                             VerticalAlignment="Center"
+                                             Background="Transparent"
+                                             IsVisible="{Binding Game.GameMetadata.IsInstalled}"
+                                             ToolTip.Tip="{Binding NativeGamepadSupport, Converter={StaticResource GamepadSupportToTooltipConverter}}" />
 
                 <!-- Last played: label + date, grouped together -->
                 <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"

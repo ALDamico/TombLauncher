@@ -34,6 +34,7 @@ public partial class GameDetailsViewModel : PageViewModel
     [NotifyPropertyChangedFor(nameof(CanOpenChat))]
     [NotifyPropertyChangedFor(nameof(EngineSupportState))]
     [NotifyPropertyChangedFor(nameof(PlayButtonTooltip))]
+    [NotifyPropertyChangedFor(nameof(NativeGamepadSupport))]
     private GameWithStatsViewModel _game = null!;
 
     [ObservableProperty] private int _descriptionFontSize = 18;
@@ -178,4 +179,5 @@ public partial class GameDetailsViewModel : PageViewModel
         await _gameDetailsService.OpenWidescreenPatcher(Game.GameMetadata);
 
     public EngineSupportState EngineSupportState => _gameDetailsService.GetEngineSupportState(Game?.GameMetadata);
+    public bool NativeGamepadSupport => _gameDetailsService.GetGamepadSupport(Game?.GameMetadata);
 }
