@@ -11,7 +11,7 @@
     <system:String x:Key="STARTING_GAMENAME">Spouštění {0}</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION">Ukládání herní relace...</system:String>
     <system:String x:Key="WELCOME">Vítejte</system:String>
-    <system:String x:Key="MY_MODS">Moje mody</system:String>
+    <system:String x:Key="MY_LEVELS">Moje úrovně</system:String>
     <system:String x:Key="SELECT_A_ZIP_FILE">Vyberte soubor ZIP</system:String>
     <system:String x:Key="ZIP_FILES">Soubory ZIP</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Vyberte složku</system:String>

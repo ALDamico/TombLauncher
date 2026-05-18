@@ -11,7 +11,7 @@
     <system:String x:Key="STARTING_GAMENAME">{0} wird gestartet</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION">Spielsitzung wird gespeichert...</system:String>
     <system:String x:Key="WELCOME">Willkommen</system:String>
-    <system:String x:Key="MY_MODS">Meine Mods</system:String>
+    <system:String x:Key="MY_LEVELS">Meine Level</system:String>
     <system:String x:Key="SELECT_A_ZIP_FILE">ZIP-Datei auswählen</system:String>
     <system:String x:Key="ZIP_FILES">ZIP-Dateien</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Ordner auswählen</system:String>

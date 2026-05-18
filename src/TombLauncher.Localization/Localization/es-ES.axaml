@@ -11,7 +11,7 @@
     <system:String x:Key="STARTING_GAMENAME">Iniciando {0}</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION">Guardando sesión de juego...</system:String>
     <system:String x:Key="WELCOME">Bienvenido</system:String>
-    <system:String x:Key="MY_MODS">Mis mods</system:String>
+    <system:String x:Key="MY_LEVELS">Mis niveles</system:String>
     <system:String x:Key="SELECT_A_ZIP_FILE">Seleccionar un archivo ZIP</system:String>
     <system:String x:Key="ZIP_FILES">Archivos ZIP</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Seleccionar una carpeta</system:String>

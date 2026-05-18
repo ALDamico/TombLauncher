@@ -58,7 +58,9 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type viewModels:MainMenuItemViewModel}">
                             <StackPanel Spacing="20" 
-                                        Orientation="Horizontal">
+                                        Orientation="Horizontal" 
+                                        ToolTip.Tip="{Binding ToolTip}"
+                                        Background="Transparent">
                                 <iconPacks:PackIconRemixIcon Kind="{Binding Icon}" />
                                 <TextBlock Text="{Binding Text}"/>
                             </StackPanel>

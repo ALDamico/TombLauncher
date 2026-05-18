@@ -12,7 +12,7 @@
     <system:String x:Key="STARTING_GAMENAME">Starting {0}</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION">Saving play session...</system:String>
     <system:String x:Key="WELCOME">Welcome</system:String>
-    <system:String x:Key="MY_MODS">My mods</system:String>
+    <system:String x:Key="MY_LEVELS">My levels</system:String>
     <system:String x:Key="SELECT_A_ZIP_FILE">Select a ZIP file</system:String>
     <system:String x:Key="ZIP_FILES">ZIP files</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Select a folder</system:String>
