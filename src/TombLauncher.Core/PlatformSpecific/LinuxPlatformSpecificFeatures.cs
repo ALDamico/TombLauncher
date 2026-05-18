@@ -4,6 +4,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.SupportMatrix;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific.SupportMatrix;
+using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Core.PlatformSpecific;
 
@@ -43,7 +44,7 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
     {
         return
         [
-            new UnzipBackendDto() { Name = "tar", Command  = "tar", CommandLineArguments = @"-xf ""{0}"" -C ""{1}""" },
+            new UnzipBackendDto() { Name = "tar", Command = "tar", CommandLineArguments = @"-xf ""{0}"" -C ""{1}""" },
             new UnzipBackendDto() { Name = "unzip", Command = "unzip", CommandLineArguments = @"""{0}"" -d ""{1}""" }
         ];
     }
@@ -51,12 +52,13 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
     public string GetAppDataDirectory()
     {
         var configHome = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME")
-            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
+                         ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
         var appDir = Path.Combine(configHome, "TombLauncher");
         if (!Directory.Exists(appDir))
         {
             Directory.CreateDirectory(appDir);
         }
+
         return appDir;
     }
 
@@ -160,6 +162,7 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
                     roots.Add(extra);
             }
         }
+
         // Let's filter entries that are symbolic links
         return roots
             .Where(Directory.Exists)
@@ -176,9 +179,28 @@ public class LinuxPlatformSpecificFeatures : IPlatformSpecificFeatures
         var versionFile = Path.Combine(Path.GetDirectoryName(protonPath) ?? "", "version");
         if (!File.Exists(versionFile)) return null;
 
-        try { return File.ReadAllText(versionFile).Trim(); }
-        catch { return null; }
+        try
+        {
+            return File.ReadAllText(versionFile).Trim();
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public ISupportMatrix SupportMatrix { get; } = new LinuxSupportMatrix();
+
+    public bool IsExecutable(string path)
+    {
+        var fullPath = PathUtils.GetFullPath(path);
+        if (fullPath == null) return false;
+
+#pragma warning disable CA1416
+        var fileMode = File.GetUnixFileMode(path);
+        return fileMode.HasFlag(UnixFileMode.GroupExecute) ||
+               fileMode.HasFlag(UnixFileMode.UserExecute) ||
+               fileMode.HasFlag(UnixFileMode.OtherExecute);
+#pragma warning restore CA1416
+    }
 }
