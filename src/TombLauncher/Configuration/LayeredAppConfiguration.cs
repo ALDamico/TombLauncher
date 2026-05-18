@@ -103,7 +103,8 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
 
     public IGamepadConfig Gamepad => new GamepadConfig()
     {
-        AntiMicroXPath = User.Gamepad.AntiMicroXPath.Coalesce(Defaults.Gamepad.AntiMicroXPath),
+        GamepadTool = User.Gamepad.GamepadTool.Coalesce(Defaults.Gamepad.GamepadTool),
+        ToolPath = User.Gamepad.ToolPath.Coalesce(Defaults.Gamepad.ToolPath),
         Profiles = User.Gamepad.Profiles.Merge(Defaults.Gamepad.Profiles).ToDictionary()
     };
 }

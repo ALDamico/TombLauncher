@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using TombLauncher.Gamepad;
 
 namespace TombLauncher.Configuration.Sections;
 
 public interface IGamepadConfig
 {
-    string? AntiMicroXPath { get; }
+    GamepadTool? GamepadTool { get; }
+    string? ToolPath { get; }
     Dictionary<string, string?>? Profiles { get; }
 }
