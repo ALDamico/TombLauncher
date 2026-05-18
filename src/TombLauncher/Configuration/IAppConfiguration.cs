@@ -15,4 +15,5 @@ public interface IAppConfiguration
     IUpdaterConfig Updater { get; }
     IAiConfig Ai { get; }
     IIntegrationsConfig Integrations { get; }
+    IGamepadConfig Gamepad { get; }
 }

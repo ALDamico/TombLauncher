@@ -1,7 +1,9 @@
+using System.Linq;
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration.Sections;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Utils;
 
 namespace TombLauncher.Configuration;
 
@@ -97,5 +99,11 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         DiscordAppId = Defaults.Integrations.DiscordAppId,
         SharePlaySessionsOnDiscord =
             User.Integrations.SharePlaySessionsOnDiscord.Coalesce(Defaults.Integrations.SharePlaySessionsOnDiscord)
+    };
+
+    public IGamepadConfig Gamepad => new GamepadConfig()
+    {
+        AntiMicroXPath = User.Gamepad.AntiMicroXPath.Coalesce(Defaults.Gamepad.AntiMicroXPath),
+        Profiles = User.Gamepad.Profiles.Merge(Defaults.Gamepad.Profiles).ToDictionary()
     };
 }
