@@ -1,0 +1,35 @@
+{
+  "documentTitle": "Gamepad Support",
+  "appliesTo": ["TombRaider1", "TombRaider1Dos", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti", "Ten", "Tr1x", "Tr2x", "Tomb2Main", "Tomb3CommunityEdition", "Trx"],
+  "platforms": ["Windows", "Linux"],
+  "sections": [
+    {
+      "header": "Which game engines natively support gamepads?",
+      "appliesTo": ["TombRaider1", "TombRaider1Dos", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti", "Ten", "Tr1x", "Tr2x", "Tomb2Main", "Tomb3CommunityEdition", "Trx"]
+    },
+    {
+      "header": "What is AntiMicroX and why does Tomb Launcher use it?",
+      "appliesTo": ["TombRaider1", "TombRaider1Dos", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti"]
+    },
+    {
+      "header": "How do I enable AntiMicroX integration?",
+      "appliesTo": ["TombRaider1", "TombRaider1Dos", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti"]
+    },
+    {
+      "header": "How do I configure the AntiMicroX executable path?",
+      "appliesTo": ["TombRaider1", "TombRaider1Dos", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti"]
+    },
+    {
+      "header": "What are gamepad profiles and how do I use them?",
+      "appliesTo": ["TombRaider1", "TombRaider1Dos", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti"]
+    },
+    {
+      "header": "Can I use AntiMicroX with my own custom profile for all engines?",
+      "appliesTo": ["TombRaider1", "TombRaider1Dos", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti"]
+    },
+    {
+      "header": "Does Tomb Launcher bundle AntiMicroX?",
+      "appliesTo": ["TombRaider1", "TombRaider1Dos", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti"]
+    }
+  ]
+}
