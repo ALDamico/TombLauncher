@@ -1,5 +1,6 @@
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration.Sections;
+using TombLauncher.Gamepad.Configuration;
 
 namespace TombLauncher.Configuration;
 

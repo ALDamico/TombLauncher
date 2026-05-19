@@ -4,6 +4,7 @@ using TombLauncher.Configuration.Sections;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;
+using TombLauncher.Gamepad.Configuration;
 
 namespace TombLauncher.Configuration;
 

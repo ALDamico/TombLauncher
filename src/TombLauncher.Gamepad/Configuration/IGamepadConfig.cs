@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using TombLauncher.Gamepad;
-
-namespace TombLauncher.Configuration.Sections;
+namespace TombLauncher.Gamepad.Configuration;
 
 public interface IGamepadConfig
 {

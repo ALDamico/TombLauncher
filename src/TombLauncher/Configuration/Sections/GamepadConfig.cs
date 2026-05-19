@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TombLauncher.Gamepad;
+using TombLauncher.Gamepad.Configuration;
 
 namespace TombLauncher.Configuration.Sections;
 

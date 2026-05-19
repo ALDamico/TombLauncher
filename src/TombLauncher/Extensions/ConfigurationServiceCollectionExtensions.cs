@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Integrations;
+using TombLauncher.Gamepad.Configuration;
 
 namespace TombLauncher.Extensions;
 
@@ -27,12 +28,10 @@ public static class ConfigurationServiceCollectionExtensions
             .Build();
         userConfig.Bind(appConfiguration.User);
 
-        services.AddSingleton<ILayeredAppConfiguration>(appConfiguration);
-        services.AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>());
-        services.AddSingleton<IAiConfig>(sp => sp.GetRequiredService<ILayeredAppConfiguration>().Ai);
-        services.AddSingleton<IDiscordConfiguration>(sp =>
-            sp.GetRequiredService<IAppConfiguration>().Integrations);
-
-        return services;
+        return services.AddSingleton<ILayeredAppConfiguration>(appConfiguration)
+            .AddSingleton<IAppConfiguration>(sp => sp.GetRequiredService<ILayeredAppConfiguration>())
+            .AddSingleton<IAiConfig>(sp => sp.GetRequiredService<ILayeredAppConfiguration>().Ai)
+            .AddSingleton<IDiscordConfiguration>(sp => sp.GetRequiredService<IAppConfiguration>().Integrations)
+            .AddSingleton<IGamepadConfig>(sp => sp.GetRequiredService<IAppConfiguration>().Gamepad);
     }
 }
