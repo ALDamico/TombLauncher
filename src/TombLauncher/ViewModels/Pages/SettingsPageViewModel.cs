@@ -149,6 +149,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
                 ApiKey = aiCoreSettings.ApiKey,
                 SelectedBackendType = aiCoreSettings.BackendType,
                 Endpoint = aiCoreSettings.Endpoint,
+                Temperature = aiCoreSettings.Temperature
             };
 
             var compat = _appConfiguration.Compatibility;

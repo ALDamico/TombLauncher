@@ -550,5 +550,7 @@
     <system:String x:Key="GAMEPAD_TOOL_NOT_VALID">Outil introuvable ou non valide.</system:String>
     <system:String x:Key="BROWSE">Parcourir</system:String>
     <system:String x:Key="RESET_DEFAULT">Réinitialiser par défaut</system:String>
+    <system:String x:Key="LLM_TEMPERATURE">Température du modèle</system:String>
+    <system:String x:Key="LLM_TEMPERATURE_DESCRIPTION">La température contrôle la « créativité » du modèle. Plus la valeur est élevée, plus la sortie est imprévisible. Une valeur trop basse rendra Laura plus robotique mais factuellement plus précise, tandis qu'une valeur trop élevée générera un texte plus imaginatif, mais pourra provoquer des hallucinations : Laura pourrait inventer des informations de toutes pièces.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

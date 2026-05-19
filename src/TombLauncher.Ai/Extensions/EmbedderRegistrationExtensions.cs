@@ -55,10 +55,15 @@ public static class EmbedderRegistrationExtensions
                     .GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>())
             .AddScoped<TroubleshootingContextService>()
             .AddScoped<IChatCompletionServiceLoader, OpenAiCompatibleChatCompletionServiceLoader>()
-            .AddScoped<PromptExecutionSettings>(_ => new PromptExecutionSettings()
+            .AddScoped<PromptExecutionSettings>(sp =>
             {
-                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
-                ExtensionData = new Dictionary<string, object> { ["temperature"] = 0.65 }
+                var config = sp.GetRequiredService<IAiConfig>();
+                return new PromptExecutionSettings()
+                {
+                    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+                    ExtensionData = new Dictionary<string, object>
+                        { ["temperature"] = config.Temperature.GetValueOrDefault(0.65) }
+                };
             })
             .AddSingleton<OpenAIClient>(sp =>
             {
