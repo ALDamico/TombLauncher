@@ -173,6 +173,13 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
                 IsDiscordSharingEnabled = _appConfiguration.Integrations.SharePlaySessionsOnDiscord.GetValueOrDefault()
             };
 
+            var gamepadSettings =
+                new GamepadSettingsViewModel(this, _appConfiguration, _popupService, _platformSpecificFeatures)
+                {
+                    GamepadTool = _appConfiguration.Gamepad.GamepadTool.GetValueOrDefault(),
+                    GamepadToolPath = _appConfiguration.Gamepad.ToolPath
+                };
+
             Sections.Add(welcomePageSettings);
             Sections.Add(appearanceSettings);
             Sections.Add(languageSettings);
@@ -183,6 +190,7 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
             Sections.Add(compatVm);
             Sections.Add(loggingSettings);
             Sections.Add(externalIntegrationsSettings);
+            Sections.Add(gamepadSettings);
 
             AcceptChanges();
         });

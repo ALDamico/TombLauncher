@@ -538,5 +538,17 @@
     <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher n'a pas pu détecter automatiquement le moteur de ce niveau. Définissez-le manuellement pour activer le bouton Jouer.</system:String>
     <system:String x:Key="EXTERNAL_INTEGRATIONS">Intégrations externes</system:String>
     <system:String x:Key="SHARE_PLAY_SESSIONS_ON_DISCORD">Partager les sessions de jeu sur Discord</system:String>
+    <system:String x:Key="GAMEPAD_NATIVE_SUPPORT">Ce moteur supporte nativement les manettes.</system:String>
+    <system:String x:Key="GAMEPAD_NO_NATIVE_SUPPORT">Ce moteur nécessite AntiMicroX pour le support manette.</system:String>
+    <system:String x:Key="GAMEPAD">Manette</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_SELECTION">Outil de support manette</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_PATH">Chemin de l'outil</system:String>
+    <system:String x:Key="GAMEPAD_PROFILES">Profils manette</system:String>
+    <system:String x:Key="SELECT_GAMEPAD_PROFILE">Sélectionner un profil manette</system:String>
+    <system:String x:Key="ANTIMICROX_PROFILE_FILES">Fichiers de profil AntiMicroX</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_EXISTS">Outil trouvé.</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_NOT_VALID">Outil introuvable ou non valide.</system:String>
+    <system:String x:Key="BROWSE">Parcourir</system:String>
+    <system:String x:Key="RESET_DEFAULT">Réinitialiser par défaut</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

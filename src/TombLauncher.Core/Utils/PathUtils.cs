@@ -114,6 +114,10 @@ public class PathUtils
             var fullPath = Path.Combine(path, fileName);
             if (File.Exists(fullPath))
                 return fullPath;
+
+            fullPath += ".exe";
+            if (File.Exists(fullPath))
+                return fullPath;
         }
         return null;
     }

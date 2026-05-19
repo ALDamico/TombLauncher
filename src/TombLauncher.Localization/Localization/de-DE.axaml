@@ -538,5 +538,17 @@
     <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher konnte die Engine für dieses Level nicht automatisch erkennen. Legen Sie sie manuell fest, um die Schaltfläche „Spielen" zu aktivieren.</system:String>
     <system:String x:Key="EXTERNAL_INTEGRATIONS">Externe Integrationen</system:String>
     <system:String x:Key="SHARE_PLAY_SESSIONS_ON_DISCORD">Spielsitzungen auf Discord teilen</system:String>
+    <system:String x:Key="GAMEPAD_NATIVE_SUPPORT">Dieser Engine unterstützt Gamepads nativ.</system:String>
+    <system:String x:Key="GAMEPAD_NO_NATIVE_SUPPORT">Dieser Engine benötigt AntiMicroX für Gamepad-Unterstützung.</system:String>
+    <system:String x:Key="GAMEPAD">Gamepad</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_SELECTION">Gamepad-Unterstützungswerkzeug</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_PATH">Tool-Pfad</system:String>
+    <system:String x:Key="GAMEPAD_PROFILES">Gamepad-Profile</system:String>
+    <system:String x:Key="SELECT_GAMEPAD_PROFILE">Gamepad-Profil auswählen</system:String>
+    <system:String x:Key="ANTIMICROX_PROFILE_FILES">AntiMicroX-Profildateien</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_EXISTS">Tool gefunden.</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_NOT_VALID">Tool nicht gefunden oder ungültig.</system:String>
+    <system:String x:Key="BROWSE">Durchsuchen</system:String>
+    <system:String x:Key="RESET_DEFAULT">Auf Standard zurücksetzen</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

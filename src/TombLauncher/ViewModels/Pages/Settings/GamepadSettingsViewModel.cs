@@ -10,6 +10,7 @@ using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Gamepad;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
@@ -19,7 +20,7 @@ public partial class GamepadSettingsViewModel : SettingsSectionViewModelBase
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
     public GamepadSettingsViewModel(PageViewModel settingsPage, ILayeredAppConfiguration appConfiguration,
-        ViewServiceContext viewServiceContext, IPlatformSpecificFeatures platformSpecificFeatures) : base("GAMEPAD", settingsPage,
+        IPopupService viewServiceContext, IPlatformSpecificFeatures platformSpecificFeatures) : base("GAMEPAD", settingsPage,
         PackIconRemixIconKind.GamepadLine)
     {
         _platformSpecificFeatures = platformSpecificFeatures;
@@ -27,18 +28,36 @@ public partial class GamepadSettingsViewModel : SettingsSectionViewModelBase
                 new GamepadProfileViewModel(Enum.Parse<GameEngine>(p.Key), p.Value, appConfiguration,
                     viewServiceContext))
             .ToObservableCollection();
+        AvailableGamepadTools = new ObservableCollection<EnumViewModel<GamepadTool>>([
+            new EnumViewModel<GamepadTool>(GamepadTool.None),
+            new EnumViewModel<GamepadTool>(GamepadTool.None) { IsDisabled = true },
+            new EnumViewModel<GamepadTool>(GamepadTool.AntiMicroX)
+        ]);
+        IsToolValid = new ServiceCheckViewModel() { Status = ServiceCheckStatus.Unspecified, CheckResultMessage = "" };
     }
 
     [ObservableProperty] public partial GamepadTool GamepadTool { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsToolValid))]
     public partial string? GamepadToolPath { get; set; }
 
     public ObservableCollection<GamepadProfileViewModel> Profiles { get; }
+    public ObservableCollection<EnumViewModel<GamepadTool>> AvailableGamepadTools { get; }
 
-    public bool IsToolValid => GamepadToolPath.IsNotNullOrWhiteSpace() && PathUtils.ExistsOnPath(GamepadToolPath) &&
-                               _platformSpecificFeatures.IsExecutable(GamepadToolPath!);
+    partial void OnGamepadToolPathChanged(string? value)
+    {
+        var isValid = GamepadToolPath.IsNotNullOrWhiteSpace() && PathUtils.ExistsOnPath(GamepadToolPath) &&
+                      _platformSpecificFeatures.IsExecutable(GamepadToolPath!);
+
+        IsToolValid = new ServiceCheckViewModel()
+        {
+            Status = isValid ? ServiceCheckStatus.Okay : ServiceCheckStatus.Error,
+            CheckResultMessage = isValid ? "GAMEPAD_TOOL_EXISTS".GetLocalizedString() : "GAMEPAD_TOOL_NOT_VALID".GetLocalizedString()
+        };
+    }
+
+    [ObservableProperty]
+    public partial ServiceCheckViewModel IsToolValid { get; set; }
 
     public override void ApplyTo(AppConfiguration userConfig)
     {

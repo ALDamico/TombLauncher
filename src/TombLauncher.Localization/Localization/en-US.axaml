@@ -546,5 +546,17 @@
     <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher could not automatically detect the engine for this level. Set it manually to enable the Play button.</system:String>
     <system:String x:Key="EXTERNAL_INTEGRATIONS">External integrations</system:String>
     <system:String x:Key="SHARE_PLAY_SESSIONS_ON_DISCORD">Share play sessions on Discord</system:String>
+    <system:String x:Key="GAMEPAD_NATIVE_SUPPORT">This engine natively supports gamepads.</system:String>
+    <system:String x:Key="GAMEPAD_NO_NATIVE_SUPPORT">This engine requires AntiMicroX for gamepad support.</system:String>
+    <system:String x:Key="GAMEPAD">Gamepad</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_SELECTION">Gamepad support tool</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_PATH">Tool path</system:String>
+    <system:String x:Key="GAMEPAD_PROFILES">Gamepad profiles</system:String>
+    <system:String x:Key="SELECT_GAMEPAD_PROFILE">Select a gamepad profile</system:String>
+    <system:String x:Key="ANTIMICROX_PROFILE_FILES">AntiMicroX profile files</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_EXISTS">Tool found.</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_NOT_VALID">Tool not found or not valid.</system:String>
+    <system:String x:Key="BROWSE">Browse</system:String>
+    <system:String x:Key="RESET_DEFAULT">Reset to default</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

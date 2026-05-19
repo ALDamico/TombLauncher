@@ -13,14 +13,14 @@ namespace TombLauncher.ViewModels;
 public partial class GamepadProfileViewModel : ObservableObject
 {
     private readonly ILayeredAppConfiguration _appConfiguration;
-    private readonly ViewServiceContext _viewServiceContext;
+    private readonly IPopupService _popupService;
 
-    public GamepadProfileViewModel(GameEngine engine, string? profilePath, ILayeredAppConfiguration appConfiguration, ViewServiceContext viewServiceContext)
+    public GamepadProfileViewModel(GameEngine engine, string? profilePath, ILayeredAppConfiguration appConfiguration, IPopupService popupService)
     {
         Engine = engine;
         ProfilePath = profilePath;
         _appConfiguration = appConfiguration;
-        _viewServiceContext = viewServiceContext;
+        _popupService = popupService;
     }
     [ObservableProperty]
     public partial GameEngine Engine { get; set; }
@@ -30,7 +30,7 @@ public partial class GamepadProfileViewModel : ObservableObject
     [RelayCommand]
     private async Task Browse()
     {
-        var file = await _viewServiceContext.PopupService.OpenFile("SELECT_GAMEPAD_PROFILE".GetLocalizedString(), [
+        var file = await _popupService.OpenFile("SELECT_GAMEPAD_PROFILE".GetLocalizedString(), [
             new FilePickerFileType("ANTIMICROX_PROFILE_FILES".GetLocalizedString())
             {
                 Patterns = ["*.amgp"]

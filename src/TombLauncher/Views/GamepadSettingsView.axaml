@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
+             xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
+             xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:gamepad="clr-namespace:TombLauncher.Gamepad;assembly=TombLauncher.Gamepad"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.GamepadSettingsView"
+             x:DataType="settings:GamepadSettingsViewModel">
+    <Design.DataContext>
+        <settings:GamepadSettingsViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical" Spacing="8">
+        <TextBlock Text="{localization:Translate GAMEPAD_TOOL_SELECTION}" />
+        <ComboBox ItemsSource="{Binding AvailableGamepadTools}"
+                  SelectedValue="{Binding GamepadTool}"
+                  SelectedValueBinding="{Binding Value}">
+            <ComboBox.Styles>
+                <Style Selector="ComboBoxItem">
+                    <Setter Property="IsEnabled" Value="{ReflectionBinding !IsDisabled}" />
+                </Style>
+            </ComboBox.Styles>
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Description}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <StackPanel Orientation="Vertical"
+                    Spacing="8"
+                    IsEnabled="{Binding GamepadTool, 
+                    Converter={x:Static ObjectConverters.NotEqual}, 
+                    ConverterParameter={x:Static gamepad:GamepadTool.None}}">
+            <TextBlock Text="{localization:Translate GAMEPAD_TOOL_PATH}" />
+            <DockPanel LastChildFill="True">
+                <views:ServiceCheckView DockPanel.Dock="Right"
+                                        DataContext="{Binding IsToolValid}" />
+                <TextBox Text="{Binding GamepadToolPath}" />
+            </DockPanel>
+            <TextBlock Text="{localization:Translate GAMEPAD_PROFILES}" />
+            <ItemsControl ItemsSource="{Binding Profiles}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel LastChildFill="True">
+                            <TextBlock DockPanel.Dock="Left"
+                                       Text="{Binding Engine, Converter={StaticResource EnumToDescriptionConverter}}" />
+                            <controls:IconOnlyButton DockPanel.Dock="Right"
+                                                     Icon="ResetLeftFill"
+                                                     ToolTip.Tip="{localization:Translate RESET_DEFAULT}"
+                                                     Command="{Binding ResetCommand}" />
+                            <controls:IconOnlyButton DockPanel.Dock="Right"
+                                                     Icon="FolderOpenFill"
+                                                     ToolTip.Tip="{localization:Translate BROWSE}"
+                                                     Command="{Binding BrowseCommand}" />
+                            <TextBox Text="{Binding ProfilePath}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
