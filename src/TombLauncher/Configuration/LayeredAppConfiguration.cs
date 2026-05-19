@@ -92,7 +92,8 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         KnowledgeBasePath = Defaults.Ai.KnowledgeBasePath,
         ApiKey = User.Ai.ApiKey.Coalesce(Defaults.Ai.ApiKey),
         Endpoint = User.Ai.Endpoint,
-        BackendType = User.Ai.BackendType.Coalesce(Defaults.Ai.BackendType)
+        BackendType = User.Ai.BackendType.Coalesce(Defaults.Ai.BackendType),
+        Temperature = User.Ai.Temperature.Coalesce(Defaults.Ai.Temperature)
     };
 
     public IIntegrationsConfig Integrations => new IntegrationsConfig()

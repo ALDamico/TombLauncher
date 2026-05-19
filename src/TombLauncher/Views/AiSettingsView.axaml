@@ -34,6 +34,18 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            
+            <DockPanel LastChildFill="True">
+                <controls:Infotip DockPanel.Dock="Right"
+                                  Header="{loc:Translate LLM_TEMPERATURE}"
+                                  ToolTipContent="{loc:Translate LLM_TEMPERATURE_DESCRIPTION}" />
+                <TextBlock Text="{loc:Translate LLM_TEMPERATURE}" />
+            </DockPanel>
+            <NumericUpDown Value="{Binding Temperature}"
+                           Minimum="0" Maximum="2"
+                           Increment="0.05"
+                           FormatString="0.00" />
+            
             <TextBlock Text="{loc:Translate AI_BACKEND_ENDPOINT}" />
             <DockPanel LastChildFill="True">
                 <views:ServiceCheckView DockPanel.Dock="Right" DataContext="{Binding ApiServiceCheckViewModel}" />
