@@ -19,7 +19,7 @@ public class AntiMicroXGamepadService : IGamepadService
         WasAlreadyRunning = false;
         var runningInstance = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(executablePath));
             
-        if (runningInstance.Any())
+        if (runningInstance.Length != 0)
         {
             WasAlreadyRunning = true;
         }
