@@ -9,6 +9,7 @@ using TombLauncher.Ai.Models;
 using TombLauncher.Ai.Plugins;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Gamepad.SupportMatrix;
 
 namespace TombLauncher.Ai.Services;
 
@@ -20,6 +21,7 @@ public class RagService : ITroubleshootingService
     private readonly PromptExecutionSettings _promptExecutionSettings;
     private readonly ILogger<RagService> _logger;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
+    private readonly GamepadSupportMatrix _gamepadSupportMatrix;
     private bool _disposed;
 
     public RagService(Kernel kernel,
@@ -27,7 +29,8 @@ public class RagService : ITroubleshootingService
         IChatCompletionService chatCompletionService,
         PromptExecutionSettings promptExecutionSettings,
         ILogger<RagService> logger, 
-        IPlatformSpecificFeatures platformSpecificFeatures)
+        IPlatformSpecificFeatures platformSpecificFeatures,
+        GamepadSupportMatrix gamepadSupportMatrix)
     {
         _kernel = kernel;
         _vectorSearchService = vectorSearchService;
@@ -35,6 +38,7 @@ public class RagService : ITroubleshootingService
         _promptExecutionSettings = promptExecutionSettings;
         _logger = logger;
         _platformSpecificFeatures = platformSpecificFeatures;
+        _gamepadSupportMatrix = gamepadSupportMatrix;
     }
 
     public async IAsyncEnumerable<(MessageType, string)> AskAsync(string query, TroubleshootingContext troubleshootingContext,
@@ -44,6 +48,7 @@ public class RagService : ITroubleshootingService
         var kernel = _kernel.Clone();
         kernel.Plugins.AddFromObject(new GameDiagnosticsPlugin(troubleshootingContext));
         kernel.Plugins.AddFromObject(new SupportMatrixPlugin(_platformSpecificFeatures.SupportMatrix, troubleshootingContext));
+        kernel.Plugins.AddFromObject(new GamepadSupportPlugin(_gamepadSupportMatrix, troubleshootingContext));
         var knowledgeBaseItems = await _vectorSearchService.SearchAsync(query, cancellationToken: cancellationToken);
 
         var documentationSection = string.Join("\n---\n", knowledgeBaseItems.Select(WriteDocumentation));
