@@ -14,4 +14,15 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Profiles\tr1-2.amgp" />
+      <Content Include="Profiles\tr1-2.amgp">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Profiles\tr3-5.amgp" />
+      <Content Include="Profiles\tr3-5.amgp">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
