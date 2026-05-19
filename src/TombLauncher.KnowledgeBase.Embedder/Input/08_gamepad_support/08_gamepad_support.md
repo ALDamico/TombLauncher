@@ -57,3 +57,13 @@ Yes. In the **Gamepad** settings section, each engine that requires AntiMicroX h
 ## Does Tomb Launcher bundle AntiMicroX?
 
 No, you need to install it separately.
+
+## What are the limitations of the bundled gamepad profiles?
+
+The bundled profiles aim to replicate the original PlayStation controls as faithfully as possible, but there are some known limitations:
+
+- **Exiting the pause menu (TR4 and TR5 only):** On PSX, pressing Start exits the pause menu. On PC, this is done with Escape, which is mapped to the Select button. As a result, you must press Select (not Start) to exit the pause menu in TR4 and TR5.
+
+- **Going back in menus (all profiles):** On PSX, pressing Triangle/Y navigates back in menus. On PC this is also done with Escape, so you must use Select to go back in menus rather than Y/Triangle.
+
+- **Side steps and flares in Tomb Raider 2:** AntiMicroX does not support mapping a combination of controller buttons (e.g. R1 + D-pad Left/Right) to a single keyboard key. On PSX, TR2 uses R1 + D-pad Left/Right for side steps, while on PC these are Page Up and Page Down. Because this combination cannot be replicated, the TR1/TR2 bundled profile uses the same control scheme as TR1 for TR2 as well. As a side effect, it is not possible to light flares with L2 in Tomb Raider 2 using the bundled profile.

@@ -30,6 +30,10 @@
     {
       "header": "Does Tomb Launcher bundle AntiMicroX?",
       "appliesTo": ["TombRaider1", "TombRaider1Dos", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5", "TombAti"]
+    },
+    {
+      "header": "What are the limitations of the bundled gamepad profiles?",
+      "appliesTo": ["TombRaider1", "TombRaider2", "TombRaider3", "TombRaider4", "TombRaider5"]
     }
   ]
 }
