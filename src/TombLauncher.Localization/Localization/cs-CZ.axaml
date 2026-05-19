@@ -11,7 +11,7 @@
     <system:String x:Key="STARTING_GAMENAME">Spouštění {0}</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION">Ukládání herní relace...</system:String>
     <system:String x:Key="WELCOME">Vítejte</system:String>
-    <system:String x:Key="MY_MODS">Moje mody</system:String>
+    <system:String x:Key="MY_LEVELS">Moje úrovně</system:String>
     <system:String x:Key="SELECT_A_ZIP_FILE">Vyberte soubor ZIP</system:String>
     <system:String x:Key="ZIP_FILES">Soubory ZIP</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Vyberte složku</system:String>
@@ -538,5 +538,17 @@
     <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher nemohl automaticky rozpoznat engine tohoto levelu. Nastavte jej ručně, abyste aktivovali tlačítko Hrát.</system:String>
     <system:String x:Key="EXTERNAL_INTEGRATIONS">Externí integrace</system:String>
     <system:String x:Key="SHARE_PLAY_SESSIONS_ON_DISCORD">Sdílet herní relace na Discordu</system:String>
+    <system:String x:Key="GAMEPAD_NATIVE_SUPPORT">Tento engine nativně podporuje gamepady.</system:String>
+    <system:String x:Key="GAMEPAD_NO_NATIVE_SUPPORT">Tento engine vyžaduje AntiMicroX pro podporu gamepadu.</system:String>
+    <system:String x:Key="GAMEPAD">Gamepad</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_SELECTION">Nástroj pro podporu gamepadu</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_PATH">Cesta k nástroji</system:String>
+    <system:String x:Key="GAMEPAD_PROFILES">Profily gamepadu</system:String>
+    <system:String x:Key="SELECT_GAMEPAD_PROFILE">Vyberte profil gamepadu</system:String>
+    <system:String x:Key="ANTIMICROX_PROFILE_FILES">Soubory profilu AntiMicroX</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_EXISTS">Nástroj nalezen.</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_NOT_VALID">Nástroj nenalezen nebo neplatný.</system:String>
+    <system:String x:Key="BROWSE">Procházet</system:String>
+    <system:String x:Key="RESET_DEFAULT">Obnovit výchozí</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

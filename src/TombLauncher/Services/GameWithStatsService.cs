@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,8 @@ using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
+using TombLauncher.Gamepad.Services;
+using TombLauncher.Gamepad.SupportMatrix;
 using TombLauncher.Integrations.Discord;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
@@ -43,7 +46,9 @@ public class GameWithStatsService : IViewService, IDisposable
         IAppConfiguration appConfiguration,
         Func<IGameLauncher> gameLauncherFactory,
         GameMetadataMapper mapper, 
-        DiscordRichPresenceService discordService)
+        DiscordRichPresenceService discordService,
+        IGamepadService gamepadService, 
+        GamepadSupportMatrix gamepadSupportMatrix)
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
@@ -65,6 +70,8 @@ public class GameWithStatsService : IViewService, IDisposable
         _headerProcessor = headerProcessor;
         _mapper = mapper;
         _discordService = discordService;
+        _gamepadService = gamepadService;
+        _gamepadSupportMatrix = gamepadSupportMatrix;
         _isDiscordSharingEnabled = appConfiguration.Integrations.SharePlaySessionsOnDiscord ?? false;
     }
 
@@ -72,6 +79,8 @@ public class GameWithStatsService : IViewService, IDisposable
     private SavegameHeaderProcessor? _headerProcessor;
     private readonly GameMetadataMapper _mapper;
     private readonly DiscordRichPresenceService _discordService;
+    private readonly IGamepadService _gamepadService;
+    private readonly GamepadSupportMatrix _gamepadSupportMatrix;
     private readonly bool _isDiscordSharingEnabled;
 
     private readonly GameDataService _gameDataService;
@@ -224,6 +233,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         _logger.LogInformation("Play session for game {GameTitle} (ID: {GameId}) ended.", game.GameMetadata.Title,
             game.GameMetadata.Id);
+        TeardownGamepadService(game.GameMetadata.GameEngine);
         if (_isDiscordSharingEnabled)
         {
             _discordService.EndPlaySession();
@@ -305,6 +315,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false,
         string? arguments = null)
     {
+        LaunchGamepadService(game.GameMetadata.GameEngine);
         var executableFileNameOnly = Path.GetFileName(executable);
         string workingDirectory = string.Empty;
         if (game.GameMetadata.InstallDirectory != null)
@@ -470,6 +481,38 @@ public class GameWithStatsService : IViewService, IDisposable
             _headerProcessor = null;
             _watcher = null;
         }
+    }
+
+    private void LaunchGamepadService(GameEngine engine)
+    {
+        if (_gamepadSupportMatrix.GetGamepadSupport(engine))
+            return;
+
+        var toolPath = _appConfiguration.Gamepad.ToolPath;
+        if (toolPath.IsNullOrWhiteSpace())
+            return;
+
+        var profile = _appConfiguration.Gamepad.Profiles?.GetValueOrDefault(engine.GetBaseEngine().ToString());
+        if (profile.IsNullOrWhiteSpace())
+            return;
+
+        _gamepadService.PrepareForGame(toolPath!, profile!);
+    }
+
+    private void TeardownGamepadService(GameEngine engine)
+    {
+        if (_gamepadSupportMatrix.GetGamepadSupport(engine))
+            return;
+
+        var toolPath = _appConfiguration.Gamepad.ToolPath;
+        if (toolPath.IsNullOrWhiteSpace())
+            return;
+
+        var profile = _appConfiguration.Gamepad.Profiles?.GetValueOrDefault(engine.GetBaseEngine().ToString());
+        if (profile.IsNullOrWhiteSpace())
+            return;
+
+        _gamepadService.TeardownAsync(toolPath!, profile!);
     }
 
     public void Dispose()

@@ -1,5 +1,6 @@
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration.Sections;
+using TombLauncher.Gamepad.Configuration;
 
 namespace TombLauncher.Configuration;
 
@@ -15,6 +16,7 @@ public class AppConfiguration : IAppConfiguration
     public UpdaterConfig Updater { get; set; } = new();
     public AiConfig Ai { get; set; } = new();
     public IntegrationsConfig Integrations { get; set; } = new();
+    public GamepadConfig Gamepad { get; set; } = new();
 
     // Explicit interface implementation — returns the same objects as read-only interfaces
     IApplicationConfig IAppConfiguration.Application => Application;
@@ -27,4 +29,5 @@ public class AppConfiguration : IAppConfiguration
     IUpdaterConfig IAppConfiguration.Updater => Updater;
     IAiConfig IAppConfiguration.Ai => Ai;
     IIntegrationsConfig IAppConfiguration.Integrations => Integrations;
+    IGamepadConfig IAppConfiguration.Gamepad => Gamepad;
 }

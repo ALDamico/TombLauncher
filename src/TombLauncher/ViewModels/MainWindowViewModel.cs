@@ -35,9 +35,9 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
             new MainMenuItemViewModel()
             {
-                ToolTip = "MY_MODS".GetLocalizedString(),
-                Icon = PackIconRemixIconKind.GamepadLine,
-                Text = "MY_MODS".GetLocalizedString(),
+                ToolTip = "MY_LEVELS".GetLocalizedString(),
+                Icon = PackIconRemixIconKind.TreasureMapLine,
+                Text = "MY_LEVELS".GetLocalizedString(),
                 ViewModelType = typeof(GameListViewModel)
             },
 

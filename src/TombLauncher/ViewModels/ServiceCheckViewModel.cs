@@ -5,6 +5,9 @@ namespace TombLauncher.ViewModels;
 
 public partial class ServiceCheckViewModel : ObservableObject
 {
-    [ObservableProperty] private string _checkResultMessage = null!;
-    [ObservableProperty] private ServiceCheckStatus _status;
+    [ObservableProperty]
+    public partial string CheckResultMessage { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial ServiceCheckStatus Status { get; set; }
 }

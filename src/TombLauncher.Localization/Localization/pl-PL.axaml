@@ -11,7 +11,7 @@
     <system:String x:Key="STARTING_GAMENAME">Uruchamianie {0}</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION">Zapisywanie sesji gry...</system:String>
     <system:String x:Key="WELCOME">Witaj</system:String>
-    <system:String x:Key="MY_MODS">Moje mody</system:String>
+    <system:String x:Key="MY_LEVELS">Moje poziomy</system:String>
     <system:String x:Key="SELECT_A_ZIP_FILE">Wybierz plik ZIP</system:String>
     <system:String x:Key="ZIP_FILES">Pliki ZIP</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Wybierz folder</system:String>
@@ -538,5 +538,17 @@
     <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher nie mógł automatycznie wykryć silnika dla tego poziomu. Ustaw go ręcznie, aby włączyć przycisk Graj.</system:String>
     <system:String x:Key="EXTERNAL_INTEGRATIONS">Zewnętrzne integracje</system:String>
     <system:String x:Key="SHARE_PLAY_SESSIONS_ON_DISCORD">Udostępniaj sesje gry na Discordzie</system:String>
+    <system:String x:Key="GAMEPAD_NATIVE_SUPPORT">Ten silnik natywnie obsługuje gamepady.</system:String>
+    <system:String x:Key="GAMEPAD_NO_NATIVE_SUPPORT">Ten silnik wymaga AntiMicroX do obsługi gamepada.</system:String>
+    <system:String x:Key="GAMEPAD">Gamepad</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_SELECTION">Narzędzie wsparcia pada</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_PATH">Ścieżka narzędzia</system:String>
+    <system:String x:Key="GAMEPAD_PROFILES">Profile pada</system:String>
+    <system:String x:Key="SELECT_GAMEPAD_PROFILE">Wybierz profil pada</system:String>
+    <system:String x:Key="ANTIMICROX_PROFILE_FILES">Pliki profilu AntiMicroX</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_EXISTS">Narzędzie znalezione.</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_NOT_VALID">Narzędzie nie znalezione lub nieprawidłowe.</system:String>
+    <system:String x:Key="BROWSE">Przeglądaj</system:String>
+    <system:String x:Key="RESET_DEFAULT">Przywróć domyślne</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

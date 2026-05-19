@@ -23,4 +23,6 @@ public interface IPlatformSpecificFeatures
     List<ProtonInstallationDto> FindAvailableProtonInstallations();
     string? GetProtonVersion(string protonPath);
     ISupportMatrix SupportMatrix { get; }
+
+    bool IsExecutable(string path);
 }

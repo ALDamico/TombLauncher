@@ -11,7 +11,7 @@
     <system:String x:Key="STARTING_GAMENAME">Iniciando {0}</system:String>
     <system:String x:Key="SAVING_PLAY_SESSION">Guardando sesión de juego...</system:String>
     <system:String x:Key="WELCOME">Bienvenido</system:String>
-    <system:String x:Key="MY_MODS">Mis mods</system:String>
+    <system:String x:Key="MY_LEVELS">Mis niveles</system:String>
     <system:String x:Key="SELECT_A_ZIP_FILE">Seleccionar un archivo ZIP</system:String>
     <system:String x:Key="ZIP_FILES">Archivos ZIP</system:String>
     <system:String x:Key="SELECT_A_FOLDER">Seleccionar una carpeta</system:String>
@@ -538,5 +538,17 @@
     <system:String x:Key="AUTOMATIC_ENGINE_DETECTION_FAILED_SET_MANUALLY">Tomb Launcher no pudo detectar automáticamente el motor de este nivel. Configúrelo manualmente para activar el botón Jugar.</system:String>
     <system:String x:Key="EXTERNAL_INTEGRATIONS">Integraciones externas</system:String>
     <system:String x:Key="SHARE_PLAY_SESSIONS_ON_DISCORD">Compartir partidas en Discord</system:String>
+    <system:String x:Key="GAMEPAD_NATIVE_SUPPORT">Este motor es compatible con mandos de forma nativa.</system:String>
+    <system:String x:Key="GAMEPAD_NO_NATIVE_SUPPORT">Este motor requiere AntiMicroX para el soporte de mandos.</system:String>
+    <system:String x:Key="GAMEPAD">Mando</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_SELECTION">Herramienta de soporte para mando</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_PATH">Ruta de la herramienta</system:String>
+    <system:String x:Key="GAMEPAD_PROFILES">Perfiles de mando</system:String>
+    <system:String x:Key="SELECT_GAMEPAD_PROFILE">Seleccionar un perfil de mando</system:String>
+    <system:String x:Key="ANTIMICROX_PROFILE_FILES">Archivos de perfil AntiMicroX</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_EXISTS">Herramienta encontrada.</system:String>
+    <system:String x:Key="GAMEPAD_TOOL_NOT_VALID">Herramienta no encontrada o no válida.</system:String>
+    <system:String x:Key="BROWSE">Examinar</system:String>
+    <system:String x:Key="RESET_DEFAULT">Restablecer valor predeterminado</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
