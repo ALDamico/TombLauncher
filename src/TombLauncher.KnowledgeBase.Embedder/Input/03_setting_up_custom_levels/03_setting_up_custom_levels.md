@@ -109,7 +109,7 @@ This allows you to enable or disable sound. You generally need to leave these as
 
 This tab allows you to add a joystick. However, these older games may not play very well with newer input devices.
 
-Future versions of Tomb Launcher will support improved controller integration through AntiMicroX, but as of version 1.1.0 this is not yet implemented.
+Tomb Launcher supports gamepad integration through AntiMicroX. See the **Gamepad Support** documentation for setup instructions.
 
 ### Advanced
 You rarely need to edit this page.
@@ -147,7 +147,7 @@ Sound Adapter: Leave it as is
 
 Joystick Adapter: these older games may not play very well with newer input devices.
 
-Future versions of Tomb Launcher will support improved controller integration through AntiMicroX, but as of version 1.1.0 this is not yet implemented.
+Tomb Launcher supports gamepad integration through AntiMicroX. See the **Gamepad Support** documentation for setup instructions.
 
 Tomb Raider 3 does not allow you to play windowed natively.
 
