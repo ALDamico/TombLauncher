@@ -27,7 +27,7 @@ public class AntiMicroXGamepadService : IGamepadService
         try
         {
             _ownedProcess = Process.Start(new ProcessStartInfo(executablePath)
-                { ArgumentList = { "--profile", profilePath } });
+                { ArgumentList = { "--hidden", "--profile", profilePath } });
         }
         catch (Exception ex)
         {
@@ -43,7 +43,7 @@ public class AntiMicroXGamepadService : IGamepadService
             {
                 var processStartInfo = new ProcessStartInfo(executablePath)
                 {
-                    ArgumentList = { "--unload", profilePath }
+                    ArgumentList = { "--hidden", "--unload", profilePath }
                 };
                 Process.Start(processStartInfo);
             }
