@@ -44,19 +44,27 @@
             <ItemsControl ItemsSource="{Binding Profiles}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <DockPanel LastChildFill="True">
-                            <TextBlock DockPanel.Dock="Left"
+                        <StackPanel Margin="0, 8">
+                            <TextBlock DockPanel.Dock="Left" 
+                                       Classes="small text-muted" 
+                                       FontWeight="DemiBold" 
+                                       VerticalAlignment="Bottom"
                                        Text="{Binding Engine, Converter={StaticResource EnumToDescriptionConverter}}" />
-                            <controls:IconOnlyButton DockPanel.Dock="Right"
-                                                     Icon="ResetLeftFill"
-                                                     ToolTip.Tip="{localization:Translate RESET_DEFAULT}"
-                                                     Command="{Binding ResetCommand}" />
-                            <controls:IconOnlyButton DockPanel.Dock="Right"
-                                                     Icon="FolderOpenFill"
-                                                     ToolTip.Tip="{localization:Translate BROWSE}"
-                                                     Command="{Binding BrowseCommand}" />
-                            <TextBox Text="{Binding ProfilePath}" />
-                        </DockPanel>
+                            <DockPanel LastChildFill="True">
+                            
+                                <controls:IconOnlyButton DockPanel.Dock="Right"
+                                                         Icon="ResetLeftFill"
+                                                         Margin="4, 0"
+                                                         ToolTip.Tip="{localization:Translate RESET_DEFAULT}"
+                                                         Command="{Binding ResetCommand}" />
+                                <controls:IconOnlyButton DockPanel.Dock="Right"
+                                                         Icon="FolderOpenFill"
+                                                         Margin="4, 0"
+                                                         ToolTip.Tip="{localization:Translate BROWSE}"
+                                                         Command="{Binding BrowseCommand}" />
+                                <TextBox Text="{Binding ProfilePath}" />
+                            </DockPanel>
+                        </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
