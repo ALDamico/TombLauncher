@@ -1,4 +1,5 @@
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Contracts.SupportMatrix;
 
 namespace TombLauncher.Contracts.PlatformSpecific;

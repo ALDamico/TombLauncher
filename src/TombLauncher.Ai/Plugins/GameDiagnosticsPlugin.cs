@@ -53,7 +53,7 @@ public class GameDiagnosticsPlugin
     }
 
     [KernelFunction]
-    [Description("Use this function to determine the exit code for the latest play session. A non-zero exit code indicates an error, while zero indicates no error. In case of non-zero exit codes, you can use the *get_std_err*, *get_std_out*, and *get_last_crash_log* to retrieve additional crash information to help troubleshoot the problem.")]
+    [Description("Use this function to determine the exit code for the latest play session. A non-zero exit code indicates an error, while zero indicates no error. In case of non-zero exit codes, you can use the *GetLastStdErr*, *GetLastStdOut*, and *GetLastCrashLog* to retrieve additional crash information to help troubleshoot the problem.")]
     public string GetLastExitCode()
     {
         if (!TroubleshootingContext.IsSet)
@@ -70,7 +70,7 @@ public class GameDiagnosticsPlugin
     }
 
     [KernelFunction]
-    [Description("Use this function to get the standard error for the latest play session. Not all custom levels may write to standard error. If that's the case, you can use *get_std_out* and *get_last_crash_log* to search for additional information to help troubleshoot the current issue.")]
+    [Description("Use this function to get the standard error for the latest play session. Not all custom levels may write to standard error. If that's the case, you can use *GetLastStdOut* and *GetLastCrashLog* to search for additional information to help troubleshoot the current issue.")]
     public string GetLastStdErr()
     {
         if (!TroubleshootingContext.IsSet)
@@ -87,7 +87,7 @@ public class GameDiagnosticsPlugin
     }
 
     [KernelFunction]
-    [Description("Use this function to get the standard output for the latest play session. If the standard output is empty, you can use *get_last_crash_log* to retrieve data from the executable's log.")]
+    [Description("Use this function to get the standard output for the latest play session. If the standard output is empty, you can use *GetLastCrashLog* to retrieve data from the executable's log.")]
     public string GetLastStdOut()
     {
         if (!TroubleshootingContext.IsSet)

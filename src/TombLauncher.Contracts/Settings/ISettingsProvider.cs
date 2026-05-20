@@ -1,4 +1,5 @@
 using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.PlatformSpecific;
 
 namespace TombLauncher.Contracts.Settings;
 
