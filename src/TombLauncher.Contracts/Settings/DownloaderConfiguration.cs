@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace TombLauncher.Core.Dtos;
+﻿namespace TombLauncher.Contracts.Settings;
 
 public class DownloaderConfiguration : CheckableItem, IEquatable<DownloaderConfiguration>, IEqualityComparer<DownloaderConfiguration>
 {

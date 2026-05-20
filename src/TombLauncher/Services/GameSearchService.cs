@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Installers.Downloaders;

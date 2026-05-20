@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;

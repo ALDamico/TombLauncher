@@ -6,6 +6,8 @@ using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;

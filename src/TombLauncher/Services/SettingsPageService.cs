@@ -11,6 +11,8 @@ using TombLauncher.Configuration;
 using TombLauncher.Extensions;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;

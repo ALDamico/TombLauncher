@@ -1,4 +1,4 @@
-namespace TombLauncher.Core.Dtos;
+namespace TombLauncher.Contracts.Settings;
 
 /// <summary>
 /// Represents a Proton installation discovered on the system.

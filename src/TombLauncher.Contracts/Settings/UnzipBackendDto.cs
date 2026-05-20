@@ -1,4 +1,4 @@
-﻿namespace TombLauncher.Core.Dtos;
+﻿namespace TombLauncher.Contracts.Settings;
 
 public class UnzipBackendDto
 {

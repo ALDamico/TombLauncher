@@ -9,6 +9,7 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.EngineDetectors;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Patchers;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Patchers;
 using TombLauncher.Core.PlatformSpecific;

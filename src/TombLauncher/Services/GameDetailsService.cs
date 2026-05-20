@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using TombLauncher.Ai.Services;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;

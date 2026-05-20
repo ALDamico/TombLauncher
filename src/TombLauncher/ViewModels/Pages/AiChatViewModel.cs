@@ -19,6 +19,7 @@ namespace TombLauncher.ViewModels.Pages;
 public partial class AiChatViewModel : PageViewModel
 {
     private readonly ITroubleshootingServiceLoader _troubleshootingServiceLoader;
+    private readonly SystemPromptConfiguration _systemPromptConfiguration;
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))] private bool _isGenerating;
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))] private string _currentText = "";
     [ObservableProperty] private ObservableCollection<AiMessageViewModel> _messageHistory = new();
@@ -29,9 +30,10 @@ public partial class AiChatViewModel : PageViewModel
 
     public bool IsHistoryEmpty => MessageHistory.Count == 0;
 
-    public AiChatViewModel(ITroubleshootingServiceLoader troubleshootingServiceLoader)
+    public AiChatViewModel(ITroubleshootingServiceLoader troubleshootingServiceLoader, SystemPromptConfiguration systemPromptConfiguration)
     {
         _troubleshootingServiceLoader = troubleshootingServiceLoader;
+        _systemPromptConfiguration = systemPromptConfiguration;
         _troubleshootingContext = new();
         MessageHistory.CollectionChanged += (_, _) => OnPropertyChanged(nameof(IsHistoryEmpty));
     }
@@ -41,7 +43,7 @@ public partial class AiChatViewModel : PageViewModel
         using (BusyScope("Caricamento modello AI..."))
         {
             _ragService = await _troubleshootingServiceLoader.Load(new Progress<float>(f => Console.WriteLine(f)), CancellationToken.None);
-            _chatHistory.AddSystemMessage(AiConfigUtils.LoadSystemPrompt());
+            _chatHistory.AddSystemMessage(AiConfigUtils.LoadSystemPrompt(_systemPromptConfiguration));
         }
         await base.RaiseInitialize();
     }

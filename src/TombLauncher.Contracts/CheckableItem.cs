@@ -1,4 +1,4 @@
-﻿namespace TombLauncher.Core.Dtos;
+﻿namespace TombLauncher.Contracts;
 
 public abstract class CheckableItem
 {

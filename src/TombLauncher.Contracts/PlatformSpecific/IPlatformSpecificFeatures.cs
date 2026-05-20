@@ -1,8 +1,7 @@
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.SupportMatrix;
-using TombLauncher.Core.Dtos;
 
-namespace TombLauncher.Core.PlatformSpecific;
+namespace TombLauncher.Contracts.PlatformSpecific;
 
 public interface IPlatformSpecificFeatures
 {

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Octokit;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Utils;
 using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;

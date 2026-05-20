@@ -10,10 +10,12 @@ using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Ai.Factories;
 using TombLauncher.Ai.Mappers;
+using TombLauncher.Ai.Models;
 using TombLauncher.Ai.Services;
 using TombLauncher.Ai.Services.AiBackends;
 using TombLauncher.Ai.Utils;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Settings;
 
 namespace TombLauncher.Ai.Extensions;
 
@@ -62,7 +64,10 @@ public static class EmbedderRegistrationExtensions
                 {
                     FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
                     ExtensionData = new Dictionary<string, object>
-                        { ["temperature"] = config.Temperature.GetValueOrDefault(0.65) }
+                    {
+                        ["temperature"] = config.Temperature.GetValueOrDefault(0.65),
+                        ["reasoning"] = "off"
+                    }
                 };
             })
             .AddSingleton<OpenAIClient>(sp =>
@@ -105,6 +110,18 @@ public static class EmbedderRegistrationExtensions
                     EnabledSslProtocols = SslProtocols.Tls13
                 }
             });
+
+        serviceCollection.AddTransient<SystemPromptConfiguration>(sp =>
+        {
+            var settingsProvider = sp.GetRequiredService<ISettingsProvider>();
+            var kbUpdater = sp.GetRequiredService<KbUpdateService>();
+            return new SystemPromptConfiguration()
+            {
+                ApplicationLanguage = settingsProvider.GetApplicationSettings().ApplicationLanguage,
+                ModelName = settingsProvider.GetAiCoreSettings().ModelId,
+                KnowledgeBaseGenerationDate = kbUpdater.ReadLocalManifest()?.GeneratedAt
+            };
+        });
         return serviceCollection;
     }
 }

@@ -8,6 +8,7 @@
              xmlns:dtos="clr-namespace:TombLauncher.Core.Dtos;assembly=TombLauncher.Core"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:contracts="clr-namespace:TombLauncher.Contracts;assembly=TombLauncher.Contracts"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.EditableListBox"
              x:DataType="viewModels:EditableListBoxViewModel"
@@ -49,7 +50,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <DataTemplate.DataType>
-                        <x:Type TypeName="dtos:CheckableItem" x:TypeArguments="system:String"/>
+                        <x:Type TypeName="contracts:CheckableItem" x:TypeArguments="system:String"/>
                     </DataTemplate.DataType>
                     <DockPanel LastChildFill="True">
                         <controls:IconOnlyButton DockPanel.Dock="Right" 

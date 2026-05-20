@@ -4,11 +4,11 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Core.PlatformSpecific;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Core.Dtos.Configuration;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 
 namespace TombLauncher.Services;
 

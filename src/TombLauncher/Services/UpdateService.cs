@@ -12,6 +12,8 @@ using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.SignatureVerifiers;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;

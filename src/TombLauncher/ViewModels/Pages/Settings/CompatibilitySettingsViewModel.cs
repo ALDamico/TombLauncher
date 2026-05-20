@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific;
 

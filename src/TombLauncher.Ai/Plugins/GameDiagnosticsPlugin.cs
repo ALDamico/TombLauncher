@@ -69,7 +69,7 @@ public class GameDiagnosticsPlugin
         return $"Exit code: {TroubleshootingContext.LastExitCode}";
     }
 
-    [KernelFunction("get_std_err")]
+    [KernelFunction]
     [Description("Use this function to get the standard error for the latest play session. Not all custom levels may write to standard error. If that's the case, you can use *get_std_out* and *get_last_crash_log* to search for additional information to help troubleshoot the current issue.")]
     public string GetLastStdErr()
     {
@@ -86,7 +86,7 @@ public class GameDiagnosticsPlugin
         return TroubleshootingContext.LastStdErr!;
     }
 
-    [KernelFunction("get_std_out")]
+    [KernelFunction]
     [Description("Use this function to get the standard output for the latest play session. If the standard output is empty, you can use *get_last_crash_log* to retrieve data from the executable's log.")]
     public string GetLastStdOut()
     {
@@ -103,7 +103,7 @@ public class GameDiagnosticsPlugin
         return TroubleshootingContext.LastStdOut!;
     }
 
-    [KernelFunction("get_last_crash_log")]
+    [KernelFunction]
     [Description("Use this function to retrieve the last crash log.")]
     public string[] GetLastCrashLog([Description("The number of lines *from the end of the file* to retrieve. If null, retrieves the entire log content")]int? maxLines = null)
     {

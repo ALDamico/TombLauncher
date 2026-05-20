@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 using TombLauncher.Extensions;
