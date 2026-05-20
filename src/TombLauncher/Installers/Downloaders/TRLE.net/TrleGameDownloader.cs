@@ -8,19 +8,19 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Extensions;
 using TombLauncher.Utils;
 
 namespace TombLauncher.Installers.Downloaders.TRLE.net;
 
 public class TrleGameDownloader : GameDownloaderBase
 {
-    public TrleGameDownloader(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
+    public TrleGameDownloader(IHttpClientFactory httpClientFactory, ILogger<TrleGameDownloader> logger) : base(httpClientFactory, logger)
     {
         _gameEngineMapping = new Dictionary<GameEngine, string>()
         {
