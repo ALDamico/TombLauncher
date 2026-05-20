@@ -9,12 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.XPath;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Extensions;
 using TombLauncher.Utils;
 using UtfUnknown;
 
@@ -22,7 +22,8 @@ namespace TombLauncher.Installers.Downloaders.AspideTR.com;
 
 public class AspideTrGameDownloader : GameDownloaderBase
 {
-    public AspideTrGameDownloader(IHttpClientFactory httpClientFactory, Dictionary<string, string> classMappings) : base(httpClientFactory)
+    public AspideTrGameDownloader(IHttpClientFactory httpClientFactory, Dictionary<string, string> classMappings, ILogger<AspideTrGameDownloader> logger) 
+        : base(httpClientFactory, logger)
     {
         _classMappings = classMappings;
     }

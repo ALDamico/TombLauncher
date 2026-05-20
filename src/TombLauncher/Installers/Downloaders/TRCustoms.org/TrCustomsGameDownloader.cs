@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TombLauncher.Contracts.Downloaders;
@@ -24,7 +25,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
     public override string DisplayName => "TRCustoms.org";
     public override string BaseUrl => "https://trcustoms.org/";
 
-    public TrCustomsGameDownloader(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
+    public TrCustomsGameDownloader(IHttpClientFactory httpClientFactory, ILogger<TrCustomsGameDownloader> logger) : base(httpClientFactory, logger)
     {
         _jsonSerializerSettings = new JsonSerializerSettings()
         {

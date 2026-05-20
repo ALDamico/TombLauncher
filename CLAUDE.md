@@ -143,7 +143,23 @@ Methods follow explicit naming: `ToDto`, `ToViewModel`, `ToViewModels`, `ToObser
 
 ### Multi-source downloader
 
-Three downloaders (TRLE.net, TRCustoms.org, AspideTR.com) implement `GameDownloaderBase`, which exposes `IGameSearchProvider`, `IGameDetailProvider`, and `IGameInstaller` as sub-interfaces via composition. `GameDownloadManager` routes requests across all active downloaders. `TombLauncherGameMerger` deduplicates results using `GameSearchResultMetadataDistanceCalculator` configured with `UseAuthor = true, IgnoreSubTitle = true`.
+Downloaders (TRLE.net, TRCustoms.org, AspideTR.com) implement `GameDownloaderBase`, which exposes `IGameSearchProvider`, `IGameDetailProvider`, and `IGameInstaller` as sub-interfaces via composition. `GameDownloadManager` routes requests across all active downloaders. `TombLauncherGameMerger` deduplicates results using `GameSearchResultMetadataDistanceCalculator` configured with `UseAuthor = true, IgnoreSubTitle = true`.
+
+**Adding a new downloader** — checklist:
+
+1. Create `src/TombLauncher/Installers/Downloaders/<SiteName>/` with a single `<SiteName>GameDownloader : GameDownloaderBase` class.
+2. Implement the three abstract members:
+   - `DisplayName` / `BaseUrl` / `SupportedFeatures` (flags of `DownloaderFeatures`)
+   - `FetchPage(payload, pageNumber, ct)` → scrape/call API, apply client-side filtering if the source has no server search, return `new SearchResultPage(results, totalPages)`
+   - `FetchDetails(game, ct)` → return a `GameMetadataDto`; if all fields are already in the listing response, build it from the existing `IGameSearchResultMetadata` (TRCustoms pattern) and download `TitlePic` via `HttpClient.GetByteArrayAsync`
+   - `DownloadGame(metadata, stream, progress, ct)` → `HttpClient.DownloadAsync(metadata.DownloadLink!, ...)`
+3. Populate `IGameSearchResultMetadata` / `GameSearchResultMetadataDto` fields: `Title`, `Author`, `AuthorFullName`, `Description`, `SizeInMb`, `DownloadLink`, `TitlePic`, `BaseUrl`, `SourceSiteDisplayName`. Leave `Difficulty`, `Length`, `Rating`, etc. at defaults when unavailable.
+4. Register in `DownloaderServiceCollectionExtensions.AddDownloaders()`:
+   - `services.AddHttpClient(nameof(XGameDownloader), c => { c.BaseAddress = new Uri("..."); ... });`
+   - `services.AddTransient<XGameDownloader>();`
+   - `services.AddTransient<IGameDownloader, XGameDownloader>();`
+
+HTML scraping uses AngleSharp (already a dependency). JSON APIs use `System.Text.Json` or Newtonsoft with `SnakeCaseNamingStrategy`.
 
 ### Configuration
 
