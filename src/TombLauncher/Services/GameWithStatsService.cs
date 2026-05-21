@@ -88,7 +88,7 @@ public class GameWithStatsService : IViewService, IDisposable
     private readonly GameDataService _gameDataService;
     private readonly PlaySessionDataService _playSessionDataService;
     private readonly ISavegameRepository _savegameRepository;
-    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    private NavigationManager NavigationManager => ViewContext.NavigationManager;
     private FileSystemWatcher? _watcher;
     private readonly bool _backupEnabled;
     private readonly int? _numberOfSavesToKeep;
@@ -111,7 +111,7 @@ public class GameWithStatsService : IViewService, IDisposable
         await OpenGame(game);
     }
 
-    public void PlayGame(GameWithStatsViewModel game)
+    public async Task PlayGame(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy("STARTING_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
@@ -125,14 +125,14 @@ public class GameWithStatsService : IViewService, IDisposable
                 _discordService.UpdateStatus(new RichPresenceDto()
                 {
                     LevelName = game.GameMetadata.Title, 
-                    AuthorName = game.GameMetadata.Author,
+                    AuthorName = game.GameMetadata.Author ?? "",
                     WebsiteUrl = "https://tomblauncher.app", 
                     WebsiteCaption = "Try Tomb Launcher",
                     LevelUrl = game.GameMetadata.InstalledFromLink,
                     Engine = game.GameMetadata.GameEngine
                 });
             }
-            LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
+            await LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
         }
     }
 
@@ -172,7 +172,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var gameViewModel = await GetGameById(gameId);
         await OpenGame(gameViewModel);
-        PlayGame(gameViewModel!);
+        await PlayGame(gameViewModel!);
     }
 
     private async Task<GameWithStatsViewModel?> GetGameById(int gameId)
@@ -294,27 +294,27 @@ public class GameWithStatsService : IViewService, IDisposable
         }
     }
 
-    public void LaunchSetup(GameWithStatsViewModel game)
+    public async Task LaunchSetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy("LAUNCHING_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.SetupExecutable != null)
         {
-            LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
+            await LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
         }
     }
 
-    public void LaunchCommunitySetup(GameWithStatsViewModel game)
+    public async Task LaunchCommunitySetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy("LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.CommunitySetupExecutable != null)
         {
-            LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
+            await LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
         }
     }
 
-    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false,
+    private async Task LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false,
         string? arguments = null)
     {
         LaunchGamepadService(game.GameMetadata.GameEngine);
@@ -405,12 +405,28 @@ public class GameWithStatsService : IViewService, IDisposable
             };
         }
 
+        if (game.GameMetadata.EnableBorderlessFix)
+        {
+            await BorderlessWindowHelper.ApplyWineFix(winePrefix, _logger);
+        }
+
         process.Start();
+        
+        if (game.GameMetadata.EnableBorderlessFix)
+        {
+            var screenBounds = AppUtils.GetPrimaryScreenBounds();
+            if (screenBounds == null)
+                _logger.LogWarning("Requested widescreen fix, but unable to retrieve primary screen bounds!");
+            else
+                BorderlessWindowHelper.Apply(process, screenBounds.Value.Width, screenBounds.Value.Height);
+        }
 
         if (!process.StartInfo.UseShellExecute)
         {
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            if (process.StartInfo.RedirectStandardOutput)
+                process.BeginOutputReadLine();
+            if (process.StartInfo.RedirectStandardError)
+                process.BeginErrorReadLine();
         }
     }
 

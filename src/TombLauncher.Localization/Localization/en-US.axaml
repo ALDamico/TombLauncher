@@ -560,5 +560,7 @@
     <system:String x:Key="RESET_DEFAULT">Reset to default</system:String>
     <system:String x:Key="LLM_TEMPERATURE">Model temperature</system:String>
     <system:String x:Key="LLM_TEMPERATURE_DESCRIPTION">Temperature controls the model's "creativity". The higher the value, the more unpredictable the output. A value that is too low will make Laura speak in a more robotic but factually accurate way, while a value that is too high will generate more imaginative text, but may cause hallucinations — Laura might make up information entirely.</system:String>
+    <system:String x:Key="TOGGLE_FULLSCREEN_BORDER_FIX">Toggle fullscreen border fix</system:String>
+    <system:String x:Key="BORDER_FIX_ENABLED">Border fix is enabled.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

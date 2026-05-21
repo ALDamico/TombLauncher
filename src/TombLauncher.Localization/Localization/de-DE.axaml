@@ -552,5 +552,7 @@
     <system:String x:Key="RESET_DEFAULT">Auf Standard zurücksetzen</system:String>
     <system:String x:Key="LLM_TEMPERATURE">Modelltemperatur</system:String>
     <system:String x:Key="LLM_TEMPERATURE_DESCRIPTION">Die Temperatur steuert die „Kreativität" des Modells. Je höher der Wert, desto unvorhersehbarer die Ausgabe. Ein zu niedriger Wert lässt Laura roboterhafter, aber sachlich genauer sprechen, während ein zu hoher Wert fantasievollere Texte erzeugt, aber Halluzinationen verursachen kann – Laura könnte Informationen völlig erfinden.</system:String>
+    <system:String x:Key="TOGGLE_FULLSCREEN_BORDER_FIX">Randlosen-Fix aktivieren/deaktivieren</system:String>
+    <system:String x:Key="BORDER_FIX_ENABLED">Rahmen-Fix ist aktiviert.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

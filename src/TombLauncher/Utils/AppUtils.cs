@@ -36,6 +36,7 @@ namespace TombLauncher.Utils;
 public static class AppUtils
 {
     public static string[] LogFileNamePatterns => ["LAST_CRASH*", "TENLog*.txt", "TR1X.log", "TR2X.log"];
+    
     public static IClipboard GetClipboard()
     {
         var applicationLifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
@@ -250,5 +251,15 @@ public static class AppUtils
             // WTF?! How did you get in here?
             e.Handled = false;
         }
+    }
+
+    public static PixelRect? GetPrimaryScreenBounds()
+    {
+        if (Application.Current?.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime applicationLifetime)
+        {
+            return applicationLifetime.MainWindow?.Screens.Primary?.Bounds;
+        }
+
+        return null;
     }
 }

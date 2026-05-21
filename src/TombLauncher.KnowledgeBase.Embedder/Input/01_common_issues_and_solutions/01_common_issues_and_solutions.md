@@ -39,19 +39,13 @@ if that doesn't work either, just rename/delete the Pix Folder and the game will
 
 ## Why is the window title visible when playing in full-screen mode?
 
-This issue occurs in modern Operating Systems (Windows 8, 8.1, 10) only
-with older Custom Levels. Luckily the newer ones have not this problem
-anymore.
+This issue occurs in modern Operating Systems (Windows 8, 8.1, 10) only with older Custom Levels. Luckily the newer ones have not this problem anymore.
 
 To solve the issue just download and apply this fix: https://community.pcgamingwiki.com/files/file/82-tomb-raider-series-fullscreen-border-fix/
 
-A future version of Tomb Launcher will allow you to fix this issue without applying that fix, but as of version 1.1.0 this is not yet available.
+Tomb Launcher can apply this fix automatically for you as of version 1.5.0. From the game details page, select the "Patches" button (the one with the nurse icon) and click on "Toggle fullscreen border fix". A small icon representing a window will appear on the game bar, indicating the patch is enabled.
 
-You may want to know that this Fix doesn't patch your game. It just writes some informations in Windows. Specifically, it creates an SDB file in the folder "C:\Windows\apppatch\CustomSDB\" and also writes some data in the Registry key [HKEY\_LOCAL\_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Custom]
-
-These informations are name-based instructions, in other words you inform your system that every time you run an EXE with those specific names, he must remove the border.
-
-Unfortunately there are some inconveniences, for example if you decide to play in windowed mode the border is removed anyway. Luckily the Fix can be installed and uninstalled in a simple click, so you can apply or remove it at convenience. Or even better, since it's a name-based fix, you can rename the EXE to bypass it temporally.
+This fix does not modify the Tomb Raider executable: it just tells your operating system not to draw the title bar on top of the game.
 
 ## Why does the game appear horizontally stretched? Why does Lara appear short and large?
 

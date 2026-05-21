@@ -62,7 +62,9 @@ public class GameMetadataMapper
             CompatibilityPrefixPath = dto.CompatibilityPrefixPath,
             CompatibilityTool = dto.CompatibilityTool,
             CompatibilityToolPath = dto.CompatibilityToolPath,
-            ExtraEnvVars = dto.ExtraEnvVars.OfType<EnvironmentVariableDto>().ToList()
+            ExtraEnvVars = dto.ExtraEnvVars.OfType<EnvironmentVariableDto>().ToList(),
+            EnableBorderlessFix = dto.EnableBorderlessFix,
+            InstalledFromLink = dto.InstalledFromLink
         };
     }
 
@@ -102,7 +104,9 @@ public class GameMetadataMapper
             CompatibilityPrefixPath = viewModel.CompatibilityPrefixPath,
             CompatibilityTool = viewModel.CompatibilityTool,
             CompatibilityToolPath = viewModel.CompatibilityToolPath,
-            ExtraEnvVars = viewModel.ExtraEnvVars.Cast<IEnvironmentVariable>().ToList()
+            ExtraEnvVars = viewModel.ExtraEnvVars.Cast<IEnvironmentVariable>().ToList(),
+            EnableBorderlessFix = viewModel.EnableBorderlessFix,
+            InstalledFromLink = viewModel.InstalledFromLink
         };
     }
 

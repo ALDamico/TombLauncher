@@ -47,7 +47,8 @@ public class GameMapper
             CompatibilityTool = game.CompatibilityTool,
             CompatibilityToolPath = game.CompatibilityToolPath,
             ExtraEnvVars = _environmentVariableMapper.ToDtos(game.EnvironmentVariables).ToList(),
-            InstalledFromLink = game.InstalledFromLink?.Link
+            InstalledFromLink = game.InstalledFromLink?.Link,
+            EnableBorderlessFix = game.EnableBorderlessFix
         };
     }
 
@@ -77,7 +78,8 @@ public class GameMapper
             CompatibilityTool = dto.CompatibilityTool,
             CompatibilityToolPath = dto.CompatibilityToolPath,
             CompatibilityPrefixPath = dto.CompatibilityPrefixPath,
-            TitlePicUrl = dto.TitlePicUrl
+            TitlePicUrl = dto.TitlePicUrl,
+            EnableBorderlessFix = dto.EnableBorderlessFix
         };
     }
 }

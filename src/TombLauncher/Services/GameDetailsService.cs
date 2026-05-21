@@ -160,4 +160,12 @@ public class GameDetailsService : IViewService
             return false;
         return _gamepadSupportMatrix.GetGamepadSupport(vm.GameEngine);
     }
+
+    public async Task ToggleBorderlessFix(GameMetadataViewModel game)
+    {
+        game.EnableBorderlessFix = !game.EnableBorderlessFix;
+
+        var dto = _gameMapper.ToDto(game);
+        await _gameDataService.UpsertGame(dto);
+    }
 }

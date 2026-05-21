@@ -11,31 +11,84 @@ namespace TombLauncher.ViewModels;
 public partial class GameMetadataViewModel : ViewModelBase, IGameMetadataLite
 {
     public int Id { get; set; }
-    [ObservableProperty] private string _title = string.Empty;
-    [ObservableProperty] private string _author = string.Empty;
-    [ObservableProperty] private DateTime? _releaseDate;
-    [ObservableProperty] private DateTime? _installDate;
-    [ObservableProperty] private GameEngine _gameEngine;
-    [ObservableProperty] private string? _setting;
-    [ObservableProperty] private GameLength _length;
-    [ObservableProperty] private GameDifficulty _difficulty;
-    [ObservableProperty] private string? _installDirectory;
-    [ObservableProperty] private string? _executablePath;
-    [ObservableProperty] private string _description = string.Empty;
-    [ObservableProperty] private Bitmap? _titlePic;
-    [ObservableProperty] private string? _authorFullName;
-    [ObservableProperty] private bool _isInstalled;
-    [ObservableProperty] private string? _setupExecutable;
-    [ObservableProperty] private string? _setupExecutableArgs;
-    [ObservableProperty] private string? _communitySetupExecutable;
-    [ObservableProperty] private bool _isCompleted;
-    [ObservableProperty] private bool _isFavourite;
-    [ObservableProperty] private string? _installedFromSiteDisplayName;
-    [ObservableProperty] private string? _compatibilityPrefixPath;
-    [ObservableProperty] private CompatibilityTool _compatibilityTool;
-    [ObservableProperty] private string? _compatibilityToolPath;
-    [ObservableProperty] private string? _titlePicUrl;
-    [ObservableProperty] private string? _installedFromLink;
+    [ObservableProperty]
+    public partial string Title { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string? Author { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial DateTime? ReleaseDate { get; set; }
+
+    [ObservableProperty]
+    public partial DateTime? InstallDate { get; set; }
+
+    [ObservableProperty]
+    public partial GameEngine GameEngine { get; set; }
+
+    [ObservableProperty]
+    public partial string? Setting { get; set; }
+
+    [ObservableProperty]
+    public partial GameLength Length { get; set; }
+
+    [ObservableProperty]
+    public partial GameDifficulty Difficulty { get; set; }
+
+    [ObservableProperty]
+    public partial string? InstallDirectory { get; set; }
+
+    [ObservableProperty]
+    public partial string? ExecutablePath { get; set; }
+
+    [ObservableProperty]
+    public partial string Description { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial Bitmap? TitlePic { get; set; }
+
+    [ObservableProperty]
+    public partial string? AuthorFullName { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsInstalled { get; set; }
+
+    [ObservableProperty]
+    public partial string? SetupExecutable { get; set; }
+
+    [ObservableProperty]
+    public partial string? SetupExecutableArgs { get; set; }
+
+    [ObservableProperty]
+    public partial string? CommunitySetupExecutable { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsCompleted { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsFavourite { get; set; }
+
+    [ObservableProperty]
+    public partial string? InstalledFromSiteDisplayName { get; set; }
+
+    [ObservableProperty]
+    public partial string? CompatibilityPrefixPath { get; set; }
+
+    [ObservableProperty]
+    public partial CompatibilityTool CompatibilityTool { get; set; }
+
+    [ObservableProperty]
+    public partial string? CompatibilityToolPath { get; set; }
+
+    [ObservableProperty]
+    public partial string? TitlePicUrl { get; set; }
+
+    [ObservableProperty]
+    public partial string? InstalledFromLink { get; set; }
+
     public List<EnvironmentVariableDto> ExtraEnvVars { get; set; } = [];
     public Guid Guid { get; set; }
+    
+    [ObservableProperty]
+    public partial bool EnableBorderlessFix { get; set; }
 }

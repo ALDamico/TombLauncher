@@ -31,4 +31,5 @@ public class Game
     public string? CompatibilityToolPath { get; set; }
     public List<GameEnvironmentVariable> EnvironmentVariables { get; set; } = [];
     public string? TitlePicUrl { get; set; }
+    public bool EnableBorderlessFix { get; set; }
 }
