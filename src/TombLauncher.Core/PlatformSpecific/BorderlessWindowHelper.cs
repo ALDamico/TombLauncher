@@ -7,13 +7,15 @@ namespace TombLauncher.Core.PlatformSpecific;
 
 public static class BorderlessWindowHelper
 {
-    public static async Task ApplyWineFix(string winePrefix, ILogger logger)
+    public static async Task ApplyWineFix(string? winePrefix, ILogger logger)
     {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            return;
         var startInfo = new ProcessStartInfo("wine")
         {
             Arguments = @"reg add ""HKCU\Software\Wine\X11 Driver"" /v Decorated /t REG_SZ /d N /f",
             CreateNoWindow = true,
-            UseShellExecute = true
+            UseShellExecute = false
         };
         if (winePrefix.IsNotNullOrWhiteSpace())
             startInfo.Environment["WINEPREFIX"] = winePrefix;

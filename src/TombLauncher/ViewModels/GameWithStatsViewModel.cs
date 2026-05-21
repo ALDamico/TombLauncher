@@ -25,9 +25,9 @@ public partial class GameWithStatsViewModel : ViewModelBase
     [ObservableProperty] private DateTime? _lastPlayed;
     [ObservableProperty] private bool _areCommandsVisible;
     [RelayCommand(CanExecute = nameof(CanPlay))]
-    private void Play()
+    private async Task Play()
     {
-        _gameWithStatsService.PlayGame(this);
+        await _gameWithStatsService.PlayGame(this);
     }
 
     private bool CanPlay() => _gameWithStatsService.CanPlayGame(this);
@@ -39,9 +39,9 @@ public partial class GameWithStatsViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanLaunchSetup))]
-    private void LaunchSetup()
+    private async Task LaunchSetup()
     {
-        _gameWithStatsService.LaunchSetup(this);
+        await _gameWithStatsService.LaunchSetup(this);
     }
 
     private bool CanLaunchSetup()
@@ -50,9 +50,9 @@ public partial class GameWithStatsViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanLaunchCommunitySetup))]
-    private void LaunchCommunitySetup()
+    private async Task LaunchCommunitySetup()
     {
-        _gameWithStatsService.LaunchCommunitySetup(this);
+        await _gameWithStatsService.LaunchCommunitySetup(this);
     }
 
     private bool CanLaunchCommunitySetup()

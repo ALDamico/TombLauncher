@@ -552,5 +552,7 @@
     <system:String x:Key="RESET_DEFAULT">Obnovit výchozí</system:String>
     <system:String x:Key="LLM_TEMPERATURE">Teplota modelu</system:String>
     <system:String x:Key="LLM_TEMPERATURE_DESCRIPTION">Teplota řídí „kreativitu" modelu. Čím vyšší hodnota, tím nepředvídatelnější výstup. Příliš nízká hodnota způsobí, že Laura bude mluvit robotičtěji, ale bude fakticky přesnější, zatímco příliš vysoká hodnota vygeneruje fantazijnější text, ale může způsobit halucinace – Laura by mohla informace zcela vymýšlet.</system:String>
+    <system:String x:Key="TOGGLE_FULLSCREEN_BORDER_FIX">Přepnout opravu okraje celé obrazovky</system:String>
+    <system:String x:Key="BORDER_FIX_ENABLED">Oprava okraje je aktivována.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

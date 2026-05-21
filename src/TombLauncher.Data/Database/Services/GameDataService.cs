@@ -62,6 +62,7 @@ public class GameDataService
             entity.AuthorFullName = game.AuthorFullName;
             entity.IsFavourite = game.IsFavourite;
             entity.IsCompleted = game.IsCompleted;
+            entity.EnableBorderlessFix = game.EnableBorderlessFix;
             _dbContext.Games.Update(entity);
         }
 

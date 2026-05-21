@@ -7,7 +7,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using IconPacks.Avalonia.RemixIcon;
@@ -22,12 +21,9 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Contracts.Settings;
-using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database;
-using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
 using TombLauncher.Gamepad.Extensions;
 using TombLauncher.Integrations.Extensions;
@@ -73,7 +69,7 @@ public class App : Application
                     ((IDisposable)Log.Logger).Dispose();
                 };
 
-                Dispatcher.UIThread.UnhandledException += OnUnhandledException;
+                Dispatcher.UIThread.UnhandledException += AppUtils.OnUnhandledException;
                 var resourceDictionary = new ResourceDictionary();
 
                 var kbUpdateResult = KbUpdateResult.Success();
@@ -154,51 +150,10 @@ public class App : Application
         localizationManager.ChangeLanguage(applicationLanguage);
     }
 
-    private void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-    {
-        AppCrashDataService? appCrashDataService = null;
-        try
-        {
-            appCrashDataService = Ioc.Default.GetRequiredService<AppCrashDataService>();
-        }
-        catch (InvalidOperationException)
-        {
-            // Service provider not configured yet.
-            // Log to console/debug as fallback
-            Console.Error.WriteLine("Unhandled exception occurred before IoC container was initialized.");
-            Console.Error.WriteLine(e.Exception);
-            // Cannot use database logging
-        }
-
-        var exception = e.Exception;
-        if (exception is TargetInvocationException tie)
-        {
-            exception = tie.InnerException;
-        }
-
-        Console.Error.WriteLine("--- ORIGINAL FATAL CRASH ---");
-        Console.Error.WriteLine(exception);
-        Console.Error.WriteLine("----------------------------");
-
-        if (appCrashDataService != null)
-        {
-            if (exception != null) appCrashDataService.InsertAppCrash(exception);
-            var welcomePageService = Ioc.Default.GetRequiredService<WelcomePageService>();
-            welcomePageService.HandleNotNotifiedCrashes();
-        }
-
-        e.Handled = true;
-        if (exception?.GetType() == typeof(AppRestartRequestedException))
-        {
-            // WTF?! How did you get in here?
-            e.Handled = false;
-        }
-    }
-
     private async Task ShowMainWindow(SplashScreen splashScreen, MainWindow mainWindow, KbUpdateResult kbUpdateResult)
     {
         splashScreen.Close();
-        ApplyInitialSettings();
+        AppUtils.ApplyInitialSettings();
         mainWindow.Show();
         var updateService = Ioc.Default.GetRequiredService<UpdateService>();
         await updateService.StartAsync();
@@ -257,21 +212,5 @@ public class App : Application
         Log.Logger.Information("Service initialization complete");
 
         await Task.CompletedTask;
-    }
-
-    private void ApplyInitialSettings()
-    {
-        var settingsProvider = Ioc.Default.GetRequiredService<ISettingsProvider>();
-        var themeManager = Ioc.Default.GetRequiredService<ThemeManager>();
-
-        var applicationTheme = settingsProvider.GetAppearanceSettings().ApplicationTheme;
-        themeManager.ApplyTheme(applicationTheme);
-
-        var baseVariant = ThemeVariant.Dark;
-        if (!string.IsNullOrEmpty(applicationTheme) && applicationTheme.Contains("Light"))
-        {
-            baseVariant = ThemeVariant.Light;
-        }
-        AppUtils.ChangeTheme(baseVariant);
     }
 }

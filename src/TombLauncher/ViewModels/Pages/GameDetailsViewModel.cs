@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -12,7 +11,6 @@ using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -40,9 +38,10 @@ public partial class GameDetailsViewModel : PageViewModel
     [NotifyPropertyChangedFor(nameof(EngineSupportState))]
     [NotifyPropertyChangedFor(nameof(PlayButtonTooltip))]
     [NotifyPropertyChangedFor(nameof(NativeGamepadSupport))]
-    private GameWithStatsViewModel _game = null!;
+    public partial GameWithStatsViewModel Game { get; set; } = null!;
 
-    [ObservableProperty] private int _descriptionFontSize = 18;
+    [ObservableProperty]
+    public partial int DescriptionFontSize { get; set; } = 18;
     [ObservableProperty]
     public partial ObservableCollection<GameLinkViewModel> WalkthroughLinks { get; set; } = [];
     [ObservableProperty]
@@ -111,7 +110,8 @@ public partial class GameDetailsViewModel : PageViewModel
             await _gameDetailsService.OpenWalkthrough(link.Link, AskForConfirmationBeforeOpeningWalkthrough);
     }
 
-    [ObservableProperty] private ICommand? _installCommand;
+    [ObservableProperty]
+    public partial ICommand? InstallCommand { get; set; }
 
     [RelayCommand]
     private async Task OpenLaunchOptions() => await _gameDetailsService.OpenLaunchOptions(this);
@@ -181,18 +181,24 @@ public partial class GameDetailsViewModel : PageViewModel
 
         if (Game.GameMetadata.GameEngine.GetBaseEngine().HasAnyFlags(EnumUtils.ClassicEngines))
         {
-            patchers.Add(new CommandViewModel()
+            var command = new CommandViewModel()
             {
-                Command = new AsyncRelayCommand(() => { Console.WriteLine("Implement me!");
-                    return Task.CompletedTask;
-                }), // TODO
+                Command = new AsyncRelayCommand(ToggleBorderlessFix),
                 Icon = PackIconRemixIconKind.Window2Fill,
-                Text = "ENABLE_FULLSCREEN_BORDER_FIX".GetLocalizedString(),
-                IsCheckable = true
-            });
+                Text = "TOGGLE_FULLSCREEN_BORDER_FIX".GetLocalizedString(),
+                IsCheckable = true,
+                IsChecked = Game.GameMetadata.EnableBorderlessFix
+            };
+            
+            patchers.Add(command);
         }
 
         Patchers = patchers;
+    }
+
+    private async Task ToggleBorderlessFix()
+    {
+        await _gameDetailsService.ToggleBorderlessFix(Game.GameMetadata);
     }
 
     [RelayCommand]
