@@ -1,10 +1,32 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
+using TombLauncher.Core.Extensions;
 
 namespace TombLauncher.Core.PlatformSpecific;
 
 public static class BorderlessWindowHelper
 {
+    public static async Task ApplyWineFix(string winePrefix, ILogger logger)
+    {
+        var startInfo = new ProcessStartInfo("wine")
+        {
+            Arguments = @"reg add ""HKCU\Software\Wine\X11 Driver"" /v Decorated /t REG_SZ /d N /f",
+            CreateNoWindow = true,
+            UseShellExecute = true
+        };
+        if (winePrefix.IsNotNullOrWhiteSpace())
+            startInfo.Environment["WINEPREFIX"] = winePrefix;
+
+        var process = Process.Start(startInfo);
+        if (process == null)
+        {
+            logger.LogWarning("Wine reg add process was null");
+            return;
+        }
+        await process.WaitForExitAsync(new CancellationTokenSource(WineTimeout).Token);
+    }
+    
     public static void Apply(Process process, int width, int height)
     {
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
@@ -35,6 +57,7 @@ public static class BorderlessWindowHelper
     private const uint SwpShowwindow   = 0x0040;
     private const uint SwpNozorder     = 0x0004;
     private const uint SwpNoactivate   = 0x0010;
+    private const int WineTimeout = 5000;
     private static async Task PollWindow(Process process, int width, int height)
     {
         try
