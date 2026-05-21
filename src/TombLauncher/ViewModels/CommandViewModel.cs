@@ -18,18 +18,4 @@ public partial class CommandViewModel : ViewModelBase, ITopBarCommand
 
     [ObservableProperty]
     public partial string Text { get; set; } = null!;
-    
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsChecked))]
-    public partial bool IsCheckable { get; set; }
-
-    public bool IsChecked
-    {
-        get
-        {
-            if (!IsCheckable) return false;
-            return field;
-        }
-        set => SetProperty(ref field, value);
-    }
 }

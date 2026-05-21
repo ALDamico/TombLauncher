@@ -185,9 +185,7 @@ public partial class GameDetailsViewModel : PageViewModel
             {
                 Command = new AsyncRelayCommand(ToggleBorderlessFix),
                 Icon = PackIconRemixIconKind.Window2Fill,
-                Text = "TOGGLE_FULLSCREEN_BORDER_FIX".GetLocalizedString(),
-                IsCheckable = true,
-                IsChecked = Game.GameMetadata.EnableBorderlessFix
+                Text = "TOGGLE_FULLSCREEN_BORDER_FIX".GetLocalizedString()
             };
             
             patchers.Add(command);
