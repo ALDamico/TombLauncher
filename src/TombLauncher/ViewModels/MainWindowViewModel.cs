@@ -8,7 +8,6 @@ using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Navigation;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Contracts.Settings;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
@@ -58,6 +57,13 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 Text = "STATISTICS".GetLocalizedString(),
                 ViewModelType = typeof(StatisticsPageViewModel)
             },
+            new MainMenuItemViewModel()
+            {
+                ToolTip = "GAMEPAD_SUPPORT".GetLocalizedString(),
+                Icon = PackIconRemixIconKind.GamepadLine,
+                Text = "GAMEPAD_SUPPORT".GetLocalizedString(),
+                ViewModelType = typeof(GamepadSupportMatrixViewModel)
+            }
         ];
 
         var aiEnabled = settingsProvider.GetAiCoreSettings().IsEnabled;

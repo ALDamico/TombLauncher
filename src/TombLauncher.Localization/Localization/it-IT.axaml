@@ -561,5 +561,6 @@
     <system:String x:Key="LLM_TEMPERATURE_DESCRIPTION">La temperatura determina il livello di "creatività" del modello. Più è alta, più è imprevedibile il testo in output. Un valore troppo basso farà sì che Laura parli in maniera più robotica ma fattualmente più accurata, mentre un valore troppo alto generà testo più fantasioso, ma potrebbe generare allucinazioni, ossia Laura potrebbe inventare informazioni di sana pianta.</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN_BORDER_FIX">Abilita/disabilita fix border fullscreen</system:String>
     <system:String x:Key="BORDER_FIX_ENABLED">Il border fix è attivato.</system:String>
+    <system:String x:Key="GAMEPAD_SUPPORT">Supporto controller</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

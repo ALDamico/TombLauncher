@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.GamepadSupportMatrixView"
+             x:DataType="pages:GamepadSupportMatrixViewModel">
+    <UserControl.Resources>
+        <valueConverters:BooleanToStringConverter x:Key="BooleanToStringConverter"
+                                                  TrueValue="GAMEPAD_NATIVE_SUPPORT"
+                                                  FalseValue="GAMEPAD_NO_NATIVE_SUPPORT" />
+        <valueConverters:BooleanToIconConverter x:Key="BooleanToIconConverter"
+                                                TrueValue="GamepadFill"
+                                                FalseValue="GamepadLine" />
+    </UserControl.Resources>
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" Spacing="16" Margin="8">
+            <TextBlock Classes="page-title"
+                       Text="{localization:Translate GAMEPAD_SUPPORT, Casing=Upper}" />
+
+            <ItemsControl ItemsSource="{Binding Entries}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Classes="card-background"
+                                CornerRadius="8"
+                                Padding="12 10"
+                                Margin="0 0 0 6"
+                                BorderBrush="{DynamicResource CardBorderBrush}"
+                                BorderThickness="1">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <iconPacks:PackIconRemixIcon Margin="0, 0, 12, 0" Kind="{Binding HasNativeSupport, Converter={StaticResource BooleanToIconConverter}}"
+                                                             Width="28" Height="28"
+                                                             VerticalAlignment="Center"
+                                                             Foreground="{Binding HasNativeSupport, Converter={StaticResource BooleanToBrushConverter}}" />
+                                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Engine, Converter={StaticResource EnumToDescriptionConverter}}"
+                                               FontWeight="DemiBold" />
+                                    <TextBlock Text="{Binding HasNativeSupport, Converter={StaticResource BooleanToStringConverter}}"
+                                               Classes="text-muted" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

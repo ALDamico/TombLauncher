@@ -38,6 +38,23 @@ When in doubt, discuss first and act only when explicitly asked.
 
 Version scheme: `MAJOR.MINOR.PATCH` — bump MINOR for new features, PATCH for bugfix-only releases.
 
+## Commit messages
+
+Use **Conventional Commits** format. The subject line follows `type(scope): description (#issue)`.
+
+The body should list what was added or changed, grouped by area:
+
+```
+feat(scope): short description (#123)
+
+- New class/file: brief purpose
+- Modified X to do Y
+- Localization: added KEY to all N language files
+- ...
+```
+
+Keep the subject under 72 characters. The body uses short bullet points — no prose.
+
 ## Commands
 
 ```bash
