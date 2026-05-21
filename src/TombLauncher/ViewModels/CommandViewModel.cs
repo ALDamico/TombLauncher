@@ -7,8 +7,29 @@ namespace TombLauncher.ViewModels;
 
 public partial class CommandViewModel : ViewModelBase, ITopBarCommand
 {
-    [ObservableProperty] private ICommand _command = null!;
-    [ObservableProperty] private Enum? _icon;
-    [ObservableProperty] private string _tooltip = null!;
-    [ObservableProperty] private string _text = null!;
+    [ObservableProperty]
+    public partial ICommand Command { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial Enum? Icon { get; set; }
+
+    [ObservableProperty]
+    public partial string Tooltip { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial string Text { get; set; } = null!;
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsChecked))]
+    public partial bool IsCheckable { get; set; }
+
+    public bool IsChecked
+    {
+        get
+        {
+            if (!IsCheckable) return false;
+            return field;
+        }
+        set => SetProperty(ref field, value);
+    }
 }

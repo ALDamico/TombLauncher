@@ -18,5 +18,8 @@ public static class EnumUtils
     /// Engine variants like <see cref="GameEngine.Tr1x"/> encode their base engine in the lower 6 bits
     /// (e.g. Tr1x = TombRaider1 | variant bits), so masking with 0b111111 isolates the base.
     /// </summary>
-    public static GameEngine GetBaseEngine(this GameEngine engine) => engine & (GameEngine)0b111111;
+    public static GameEngine GetBaseEngine(this GameEngine engine) => engine & ClassicEngines;
+
+    public static GameEngine ClassicEngines => GameEngine.TombRaider1 | GameEngine.TombRaider2 |
+                                               GameEngine.TombRaider3 | GameEngine.TombRaider4 | GameEngine.TombRaider5;
 }
