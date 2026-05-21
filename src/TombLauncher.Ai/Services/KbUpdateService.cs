@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Ai.Models;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
@@ -122,7 +123,7 @@ public class KbUpdateService
         return KbUpdateResult.Success();
     }
 
-    private KbManifest? ReadLocalManifest()
+    public KbManifest? ReadLocalManifest()
     {
         if (!File.Exists(_localManifestPath)) return null;
         try

@@ -1,7 +1,7 @@
 using System.Globalization;
 using TombLauncher.Contracts.Enums;
 
-namespace TombLauncher.Core.Dtos.Configuration;
+namespace TombLauncher.Contracts.Settings;
 
 public record SavegameCoreSettings(bool IsBackupEnabled, int? NumberOfVersionsToKeep, int ProcessingDelay);
 

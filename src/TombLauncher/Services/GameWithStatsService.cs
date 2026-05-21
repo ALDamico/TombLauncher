@@ -12,6 +12,8 @@ using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Integrations;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;

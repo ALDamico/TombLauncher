@@ -20,6 +20,8 @@ using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;

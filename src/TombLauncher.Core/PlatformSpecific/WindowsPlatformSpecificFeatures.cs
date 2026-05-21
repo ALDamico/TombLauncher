@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Reflection;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Contracts.SupportMatrix;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific.SupportMatrix;

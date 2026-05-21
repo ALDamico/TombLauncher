@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Savegames;
 using TombLauncher.Services;
 

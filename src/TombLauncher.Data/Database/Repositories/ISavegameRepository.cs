@@ -9,7 +9,7 @@ namespace TombLauncher.Data.Database.Repositories;
 public interface ISavegameRepository
 {
     void BackupSavegames(int gameId, GameEngine engine, List<SavegameBackupDto> dtos, int? numberOfVersionsToKeep);
-    Task<List<FileBackupDto>> GetSavegamesByGameId(int gameId);
+    Task<List<FileBackupDto>> GetSavegamesByGameId(int gameId, int? limit = null);
     Task<List<string?>> GetSavegameMd5HashesByGameId(int gameId);
     Task UpdateSavegameStartOfLevel(FileBackupDto targetSaveGame);
     Task DeleteFileBackupById(int id);
@@ -60,13 +60,17 @@ public class SavegameRepository : ISavegameRepository
         }
     }
 
-    public async Task<List<FileBackupDto>> GetSavegamesByGameId(int gameId)
+    public async Task<List<FileBackupDto>> GetSavegamesByGameId(int gameId, int? limit = null)
     {
         var backups = _backups.GetAll().Where(f => f.FileType == FileType.Savegame || f.FileType == FileType.SavegameStartOfLevel)
             .Where(f => f.GameId == gameId)
             .OrderByDescending(f => f.BackedUpOn);
 
-        var entities = await backups.ToListAsync();
+        IQueryable<FileBackup> query = backups;
+        if (limit is > 0)
+            query = query.Take(limit.Value);
+
+        var entities = await query.ToListAsync();
 
         return _mapper.ToDtos(entities);
     }

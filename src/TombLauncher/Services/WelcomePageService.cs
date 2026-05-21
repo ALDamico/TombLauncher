@@ -8,6 +8,7 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Mappers;

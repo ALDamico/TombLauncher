@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using IconPacks.Avalonia.RemixIcon;
+using TombLauncher.Contracts;
 
 namespace TombLauncher.ViewModels;
 

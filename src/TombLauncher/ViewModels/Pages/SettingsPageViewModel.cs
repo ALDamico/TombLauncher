@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Ai.Factories;
 using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Mappers;

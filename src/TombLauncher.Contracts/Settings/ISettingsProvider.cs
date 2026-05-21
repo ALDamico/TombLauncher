@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Core.Dtos;
-using TombLauncher.Core.Dtos.Configuration;
-using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Contracts.PlatformSpecific;
 
-namespace TombLauncher.Services;
+namespace TombLauncher.Contracts.Settings;
 
 public interface ISettingsProvider
 {

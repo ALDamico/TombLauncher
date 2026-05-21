@@ -2,17 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using TombLauncher.Configuration;
 using TombLauncher.Extensions;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
 using TombLauncher.Utils;
@@ -86,7 +89,23 @@ public class SettingsPageService : IViewService
         var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
         await File.WriteAllTextAsync(userConfigPath,
             JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
-                new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
+                new JsonSerializerSettings()
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ContractResolver = new UserSettingsContractResolver()
+                }));
+    }
+
+    private class UserSettingsContractResolver : DefaultContractResolver
+    {
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        {
+            var property = base.CreateProperty(member, memberSerialization);
+            if (member.DeclaringType == typeof(DownloaderConfiguration) &&
+                member.Name == nameof(DownloaderConfiguration.SupportedFeatures))
+                property.Ignored = true;
+            return property;
+        }
     }
 
     private async Task ApplySideEffects(SettingsPageViewModel viewModel)

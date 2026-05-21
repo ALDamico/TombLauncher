@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Patchers;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Patchers;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Installers;

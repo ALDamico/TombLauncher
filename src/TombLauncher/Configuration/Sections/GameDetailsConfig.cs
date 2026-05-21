@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TombLauncher.Contracts;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Configuration.Sections;

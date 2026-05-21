@@ -1,3 +1,4 @@
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.PlatformSpecific;
 
 namespace TombLauncher.Tests;
@@ -139,9 +140,9 @@ public class LinuxPlatformFeaturesTests : IDisposable
     /// Replicates the inner loop of FindAvailableProtonInstallations for a given common dir,
     /// so we can test the scanning logic without touching the real Steam root.
     /// </summary>
-    private static List<TombLauncher.Core.Dtos.ProtonInstallationDto> ScanCommonDir(string commonDir)
+    private static List<ProtonInstallationDto> ScanCommonDir(string commonDir)
     {
-        var results = new List<TombLauncher.Core.Dtos.ProtonInstallationDto>();
+        var results = new List<ProtonInstallationDto>();
         if (!Directory.Exists(commonDir)) return results;
 
         foreach (var dir in Directory.EnumerateDirectories(commonDir, "Proton*"))

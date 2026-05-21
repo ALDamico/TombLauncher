@@ -4,6 +4,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.ViewModels.Pages.Settings;

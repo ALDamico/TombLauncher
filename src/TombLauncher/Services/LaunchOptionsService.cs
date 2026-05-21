@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.EngineDetectors;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;

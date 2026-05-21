@@ -10,6 +10,7 @@ using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 using TombLauncher.Core.Extensions;
 using AvaloniaEdit.Utils;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
