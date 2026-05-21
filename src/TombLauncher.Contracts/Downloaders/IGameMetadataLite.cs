@@ -31,4 +31,5 @@ public interface IGameMetadataLite
     string? CompatibilityToolPath { get; set; }
     string? TitlePicUrl { get; set; }
     string? InstalledFromLink { get; set; }
+    bool EnableBorderlessFix { get; set; }
 }
