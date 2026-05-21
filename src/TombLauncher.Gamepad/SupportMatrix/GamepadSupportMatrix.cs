@@ -27,4 +27,7 @@ public class GamepadSupportMatrix
     public IReadOnlyDictionary<GameEngine, bool> Matrix { get; }
 
     public bool GetGamepadSupport(GameEngine gameEngine) => Matrix.GetValueOrDefault(gameEngine, false);
+
+    public IEnumerable<GamepadSupportMatrixEntry> GetEntries() => Matrix.Select(kvp => new GamepadSupportMatrixEntry()
+        { Engine = kvp.Key, HasNativeSupport = kvp.Value });
 }

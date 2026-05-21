@@ -27,6 +27,7 @@ public static class ViewModelsServiceCollectionExtensions
             .AddTransient<WidescreenPatcherPageViewModel>()
             .AddTransient<TrxNativePatcherPageViewModel>()
             .AddTransient<WidescreenPatcherViewModel>()
-            .AddTransient<TrxNativePatcherViewModel>();
+            .AddTransient<TrxNativePatcherViewModel>()
+            .AddTransient<GamepadSupportMatrixViewModel>();
     }
 }

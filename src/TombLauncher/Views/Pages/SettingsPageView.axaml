@@ -48,5 +48,4 @@
                                  Command="{Binding SaveCommand}" />
         </DockPanel>
     </Grid>
-
 </UserControl>

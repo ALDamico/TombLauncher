@@ -554,5 +554,6 @@
     <system:String x:Key="LLM_TEMPERATURE_DESCRIPTION">Temperatura kontroluje „kreatywność" modelu. Im wyższa wartość, tym bardziej nieprzewidywalne odpowiedzi. Zbyt niska wartość sprawi, że Laura będzie mówić bardziej mechanicznie, lecz będzie dokładniejsza pod względem faktycznym, natomiast zbyt wysoka wartość wygeneruje bardziej pomysłowy tekst, ale może powodować halucynacje – Laura mogłaby wymyślać informacje z powietrza.</system:String>
     <system:String x:Key="TOGGLE_FULLSCREEN_BORDER_FIX">Włącz/wyłącz poprawkę obramowania pełnego ekranu</system:String>
     <system:String x:Key="BORDER_FIX_ENABLED">Poprawka obramowania jest włączona.</system:String>
+    <system:String x:Key="GAMEPAD_SUPPORT">Obsługa gamepada</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
