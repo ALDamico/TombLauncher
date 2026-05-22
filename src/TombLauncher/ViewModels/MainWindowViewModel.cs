@@ -59,6 +59,13 @@ public partial class MainWindowViewModel : WindowViewModelBase
             },
             new MainMenuItemViewModel()
             {
+                ToolTip = "ENGINE_SUPPORT".GetLocalizedString(),
+                Icon = PackIconRemixIconKind.GridFill,
+                Text = "ENGINE_SUPPORT".GetLocalizedString(),
+                ViewModelType = typeof(GameSupportMatrixViewModel)
+            },
+            new MainMenuItemViewModel()
+            {
                 ToolTip = "GAMEPAD_SUPPORT".GetLocalizedString(),
                 Icon = PackIconRemixIconKind.GamepadLine,
                 Text = "GAMEPAD_SUPPORT".GetLocalizedString(),

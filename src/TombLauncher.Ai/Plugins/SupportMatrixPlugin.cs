@@ -2,7 +2,7 @@ using System.ComponentModel;
 using Microsoft.SemanticKernel;
 using TombLauncher.Ai.Models;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Contracts.SupportMatrix;
+using TombLauncher.Contracts.PlatformSpecific.SupportMatrix;
 
 namespace TombLauncher.Ai.Plugins;
 
