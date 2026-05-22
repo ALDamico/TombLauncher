@@ -611,5 +611,10 @@
     <system:String x:Key="TOMB_3_COMMUNITY_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS non è attualmente supportato da Tomb Launcher.</system:String>
     <system:String x:Key="TRX_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS non è attualmente supportato da Tomb Launcher.</system:String>
     <system:String x:Key="ENGINE_SUPPORT">Engine supportati</system:String>
+    <system:String x:Key="DOWNLOADER_PERFORMANCE_DEGRADED">Il downloader {0} mostra performance degradate. Ha risposto in {1}.</system:String>
+    <system:String x:Key="DOWNLOADER_RESPONDED_IN_MS">Il downloader {0} ha risposto in {1} ms. È tutto in ordine.</system:String>
+    <system:String x:Key="NOT_ENOUGH_DATA_FOR_DOWNLOADER">Non sono ancora presenti dati a sufficienza per valutare il downloader {0}.</system:String>
+    <system:String x:Key="CIRCUIT_BREAKER_HALF_OPEN">Il meccanismo di circuit breaker di {0} è in stato semi-aperto. Sarà possibile ritentarne l'utilizzo a breve.</system:String>
+    <system:String x:Key="CIRCUIT_BREAKER_OPEN">Il downloader {0} non è raggiungibile. Sarà possibile ritentarne l'utilizzo tra circa un minuto.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

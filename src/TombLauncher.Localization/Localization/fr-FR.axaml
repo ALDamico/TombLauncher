@@ -1,4 +1,4 @@
-<ResourceDictionary xmlns="https://github.com/avaloniaui"
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <!-- Miscellaneous -->
@@ -604,5 +604,10 @@
     <system:String x:Key="TOMB_2_MAIN_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS is not currently supported by Tomb Launcher.</system:String>
     <system:String x:Key="TOMB_3_COMMUNITY_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS is not currently supported by Tomb Launcher.</system:String>
     <system:String x:Key="TRX_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS is not currently supported by Tomb Launcher.</system:String>
+    <system:String x:Key="DOWNLOADER_PERFORMANCE_DEGRADED">Le téléchargeur {0} montre des performances dégradées. Il a répondu en {1}.</system:String>
+    <system:String x:Key="DOWNLOADER_RESPONDED_IN_MS">Le téléchargeur {0} a répondu en {1} ms. Tout est en ordre.</system:String>
+    <system:String x:Key="NOT_ENOUGH_DATA_FOR_DOWNLOADER">Pas encore assez de données pour évaluer le téléchargeur {0}.</system:String>
+    <system:String x:Key="CIRCUIT_BREAKER_HALF_OPEN">Le circuit breaker de {0} est en état semi-ouvert. Il sera disponible pour une nouvelle tentative sous peu.</system:String>
+    <system:String x:Key="CIRCUIT_BREAKER_OPEN">Le téléchargeur {0} est inaccessible. Il sera disponible pour une nouvelle tentative dans environ une minute.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

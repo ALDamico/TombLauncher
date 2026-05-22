@@ -18,6 +18,7 @@ public class ServiceCheckStatusToColorConverter : IValueConverter
                 ServiceCheckStatus.Checking => Brushes.SlateGray,
                 ServiceCheckStatus.Error => Brushes.Red,
                 ServiceCheckStatus.Okay => Brushes.ForestGreen,
+                ServiceCheckStatus.Warning => Brushes.DarkOrange,
                 _ => Brushes.SlateGray
             };
         }

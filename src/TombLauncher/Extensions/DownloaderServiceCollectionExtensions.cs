@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Octokit;
 using Polly;
 using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Utils;
@@ -40,15 +41,17 @@ public static class DownloaderServiceCollectionExtensions
         services.AddHttpClient(downloaderName, configureClient)
             .AddHttpMessageHandler(sp => new ResponseTimeMeasurementHandler(downloaderName,
                 sp.GetRequiredService<IDownloaderResponseTimeService>()))
-            .AddResilienceHandler(downloaderName, builder =>
+            .AddResilienceHandler(downloaderName, (builder, context) =>
             {
+                var responseTimeService = context.ServiceProvider.GetRequiredService<IDownloaderResponseTimeService>();
+                
                 builder.AddTimeout(TimeSpan.FromSeconds(PerAttemptTimeoutSeconds));
                 builder.AddRetry(new HttpRetryStrategyOptions()
                 {
                     MaxRetryAttempts = RetryAttempts,
                     BackoffType = DelayBackoffType.Exponential,
                     Delay = TimeSpan.FromSeconds(RetryBaseDelaySeconds),
-                    UseJitter = true
+                    UseJitter = true,
                 });
 
                 builder.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions()
@@ -56,7 +59,10 @@ public static class DownloaderServiceCollectionExtensions
                     MinimumThroughput = CircuitBreakerMinThroughput,
                     FailureRatio = CircuitBreakerFailureRatio,
                     SamplingDuration = TimeSpan.FromSeconds(CircuitBreakerSamplingSeconds),
-                    BreakDuration = TimeSpan.FromSeconds(CircuitBreakerBreakSeconds)
+                    BreakDuration = TimeSpan.FromSeconds(CircuitBreakerBreakSeconds),
+                    OnOpened = _ => responseTimeService.SetCircuitBreakerStatus(downloaderName, CircuitBreakerState.Open),
+                    OnHalfOpened = _ => responseTimeService.SetCircuitBreakerStatus(downloaderName, CircuitBreakerState.HalfOpen),
+                    OnClosed = _ => responseTimeService.SetCircuitBreakerStatus(downloaderName, CircuitBreakerState.Closed)
                 });
             });
 

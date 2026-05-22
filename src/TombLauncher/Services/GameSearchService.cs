@@ -8,7 +8,6 @@ using AvaloniaEdit.Utils;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.Services;
@@ -48,7 +47,6 @@ public class GameSearchService : IViewService
     }
 
     public ViewServiceContext ViewContext { get; }
-    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly NotificationService _notificationService;
     private readonly ILogger<GameSearchService> _logger;

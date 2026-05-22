@@ -195,7 +195,8 @@ public class TrleGameDownloader : GameDownloaderBase
         CancellationToken cancellationToken)
     {
         var detailsUrl = new Uri(new Uri(BaseUrl), game.DetailsLink).ToString();
-        var htmlDocument = await AppUtils.OpenDocument(detailsUrl, cancellationToken);
+        var detailsPage = await HttpClient.GetStringAsync(detailsUrl, cancellationToken);
+        var htmlDocument = await AppUtils.OpenDocumentFromContent(detailsPage, cancellationToken);
         var metadata = new GameMetadataDto
         {
             Author = game.Author,

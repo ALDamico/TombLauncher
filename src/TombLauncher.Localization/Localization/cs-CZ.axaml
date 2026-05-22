@@ -1,4 +1,4 @@
-<ResourceDictionary xmlns="https://github.com/avaloniaui"
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <!-- Miscellaneous -->
@@ -604,5 +604,10 @@
     <system:String x:Key="TOMB_2_MAIN_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS is not currently supported by Tomb Launcher.</system:String>
     <system:String x:Key="TOMB_3_COMMUNITY_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS is not currently supported by Tomb Launcher.</system:String>
     <system:String x:Key="TRX_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS is not currently supported by Tomb Launcher.</system:String>
+    <system:String x:Key="DOWNLOADER_PERFORMANCE_DEGRADED">Stahovač {0} vykazuje sníženou výkonnost. Odpověděl za {1}.</system:String>
+    <system:String x:Key="DOWNLOADER_RESPONDED_IN_MS">Stahovač {0} odpověděl za {1} ms. Vše je v pořádku.</system:String>
+    <system:String x:Key="NOT_ENOUGH_DATA_FOR_DOWNLOADER">Zatím není dostatek dat pro hodnocení stahovače {0}.</system:String>
+    <system:String x:Key="CIRCUIT_BREAKER_HALF_OPEN">Jistič pro {0} je v napůl otevřeném stavu. Brzy bude možné akci zopakovat.</system:String>
+    <system:String x:Key="CIRCUIT_BREAKER_OPEN">Stahovač {0} není dostupný. Akci bude možné zopakovat přibližně za minutu.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
