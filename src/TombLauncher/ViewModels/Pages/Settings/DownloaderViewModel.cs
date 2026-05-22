@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Installers.Resilience;
 using TombLauncher.Localization.Extensions;
+using TombLauncher.ValueConverters;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
@@ -44,14 +46,14 @@ public partial class DownloaderViewModel : ObservableObject, IDisposable
                 HealthStatus.Status = ServiceCheckStatus.Okay;
                 HealthStatus.CheckResultMessage =
                     "DOWNLOADER_RESPONDED_IN_MS".GetLocalizedString(DisplayName,
-                        lastResponseTime.Value.TotalMilliseconds);
+                        FormatResponseTime(lastResponseTime.Value));
             }
             else
             {
                 HealthStatus.Status = ServiceCheckStatus.Warning;
                 HealthStatus.CheckResultMessage =
                     "DOWNLOADER_PERFORMANCE_DEGRADED".GetLocalizedString(DisplayName,
-                        lastResponseTime.Value.TotalMilliseconds);
+                        FormatResponseTime(lastResponseTime.Value));
             }
         });
     }
@@ -66,6 +68,15 @@ public partial class DownloaderViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         _responseTimeService.OnMeasureUpdated -= UpdateDownloaderPerfStatus;
+    }
+
+    private static string FormatResponseTime(TimeSpan t)
+    {
+        if (t.TotalMilliseconds < 500)
+            return ((int)t.TotalMilliseconds).ToString();
+
+        return new TimeSpanToHumanReadableStringConverter()
+            .Convert(t, typeof(string), null, CultureInfo.CurrentCulture) as string ?? t.ToString();
     }
     [ObservableProperty]
     public partial string BaseUrl { get; set; } = string.Empty;
