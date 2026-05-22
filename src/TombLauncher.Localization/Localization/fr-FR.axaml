@@ -555,6 +555,8 @@
     <system:String x:Key="TOGGLE_FULLSCREEN_BORDER_FIX">Activer/désactiver la correction des bordures plein écran</system:String>
     <system:String x:Key="BORDER_FIX_ENABLED">La correction des bordures est activée.</system:String>
     <system:String x:Key="GAMEPAD_SUPPORT">Support manette</system:String>
+    <system:String x:Key="GAME_SUPPORT_MATRIX">Game support matrix</system:String>
+    <system:String x:Key="ENGINE_SUPPORT">Moteurs supportés</system:String>
     <system:String x:Key="CANT_DETERMINE_SUPPORT_FOR_UNKNOWN_ENGINE">Cannot determine support for a game with an unknown engine.</system:String>
     <system:String x:Key="TOMB_RAIDER_1_LINUX_SUPPORT_SHORT_DESCRIPTION">Tomb Raider 1 is supported on Linux via compatibility layers like Wine or Proton.</system:String>
     <system:String x:Key="TOMB_RAIDER_1_DOS_LINUX_SUPPORT_SHORT_DESCRIPTION">Tomb Raider 1 DOS is not currently supported on Linux.</system:String>

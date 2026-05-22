@@ -562,6 +562,7 @@
     <system:String x:Key="TOGGLE_FULLSCREEN_BORDER_FIX">Abilita/disabilita fix border fullscreen</system:String>
     <system:String x:Key="BORDER_FIX_ENABLED">Il border fix è attivato.</system:String>
     <system:String x:Key="GAMEPAD_SUPPORT">Supporto controller</system:String>
+    <system:String x:Key="GAME_SUPPORT_MATRIX">Matrice di compatibilità</system:String>
     <system:String x:Key="CANT_DETERMINE_SUPPORT_FOR_UNKNOWN_ENGINE">Non è possibile determinare il supporto per un gioco dall'engine ignoto.</system:String>
     <system:String x:Key="TOMB_RAIDER_1_LINUX_SUPPORT_SHORT_DESCRIPTION">Tomb Raider 1 è supportato su Linux tramite layer di compatibilità come Wine o Proton.</system:String>
     <system:String x:Key="TOMB_RAIDER_1_DOS_LINUX_SUPPORT_SHORT_DESCRIPTION">Tomb Raider 1 DOS non è attualmente supportato su Linux.</system:String>
@@ -609,5 +610,6 @@
     <system:String x:Key="TOMB_2_MAIN_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS non è attualmente supportato da Tomb Launcher.</system:String>
     <system:String x:Key="TOMB_3_COMMUNITY_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS non è attualmente supportato da Tomb Launcher.</system:String>
     <system:String x:Key="TRX_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS non è attualmente supportato da Tomb Launcher.</system:String>
+    <system:String x:Key="ENGINE_SUPPORT">Engine supportati</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
