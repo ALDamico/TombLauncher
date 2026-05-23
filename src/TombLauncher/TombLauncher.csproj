@@ -49,6 +49,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.8" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.8" />
+        <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.6.0" />
         <PackageReference Include="NetSparkleUpdater.SparkleUpdater" Version="3.1.0" />
         <PackageReference Include="NetSparkleUpdater.UI.Avalonia" Version="3.1.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />

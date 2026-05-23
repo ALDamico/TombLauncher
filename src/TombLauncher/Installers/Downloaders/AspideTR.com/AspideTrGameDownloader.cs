@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -162,8 +163,17 @@ public class AspideTrGameDownloader : GameDownloaderBase
         var urlEncodedContent = new FormUrlEncodedContent(kvpList);
         var queryString = await urlEncodedContent.ReadAsStringAsync(cancellationToken);
         var url = GetPageUrl(pageNumber, queryString);
+        string? pageContent;
+        try
+        {
+            pageContent = await HttpClient.GetStringAsync(url, cancellationToken);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            return SearchResultPage.EmptyPage;
+        }
 
-        var htmlDocument = await AppUtils.OpenDocument(url, cancellationToken);
+        var htmlDocument = await AppUtils.OpenDocumentFromContent(pageContent, cancellationToken);
         var totalPages = GetTotalPages(htmlDocument);
 
         await ParsePage(htmlDocument, result);
@@ -193,7 +203,8 @@ public class AspideTrGameDownloader : GameDownloaderBase
         CancellationToken cancellationToken)
     {
         var detailsLink = new Uri(new Uri(BaseUrl), game.DetailsLink).ToString();
-        var htmlDocument = await AppUtils.OpenDocument(detailsLink, cancellationToken);
+        var detailsPage = await HttpClient.GetStringAsync(detailsLink, cancellationToken);
+        var htmlDocument = await AppUtils.OpenDocumentFromContent(detailsPage, cancellationToken);
         var dto = new GameMetadataDto()
         {
             Author = game.Author,

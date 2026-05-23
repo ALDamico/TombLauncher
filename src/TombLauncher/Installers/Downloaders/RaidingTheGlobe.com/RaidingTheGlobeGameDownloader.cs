@@ -34,7 +34,9 @@ public class RaidingTheGlobeGameDownloader : GameDownloaderBase
         var uriBuilder = new UriBuilder(new Uri(BaseUrl));
         uriBuilder.Path = "/downloads/custom-games-tomb-raider-level-editor";
 
-        var htmlDocument = await AppUtils.OpenDocument(uriBuilder.Uri.ToString(), cancellationToken);
+        var page = await HttpClient.GetStringAsync(uriBuilder.Uri, cancellationToken);
+
+        var htmlDocument = await AppUtils.OpenDocumentFromContent(page, cancellationToken);
 
         var allLevels = new List<IGameSearchResultMetadata>();
 

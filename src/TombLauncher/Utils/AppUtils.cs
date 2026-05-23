@@ -87,13 +87,6 @@ public static class AppUtils
         return await browsingContext.OpenAsync(req => req.Content(content), cancellationToken);
     }
 
-    public static async Task<IDocument> OpenDocument(string url, CancellationToken cancellationToken)
-    {
-        var config = AngleSharpConfig.Default.WithXPath().WithDefaultLoader();
-        var browsingContext = BrowsingContext.New(config);
-        return await browsingContext.OpenAsync(url, cancellationToken);
-    }
-
     public static INode? SelectSingleNodeFromElement(this INode? node, string xpath, bool ignoreNamespaces = true)
     {
         return (node as IElement)?.SelectSingleNode(xpath, ignoreNamespaces);

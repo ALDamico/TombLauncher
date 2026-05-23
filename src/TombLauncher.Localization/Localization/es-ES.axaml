@@ -1,4 +1,4 @@
-<ResourceDictionary xmlns="https://github.com/avaloniaui"
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <!-- Miscellaneous -->
@@ -604,5 +604,12 @@
     <system:String x:Key="TOMB_2_MAIN_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS is not currently supported by Tomb Launcher.</system:String>
     <system:String x:Key="TOMB_3_COMMUNITY_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS is not currently supported by Tomb Launcher.</system:String>
     <system:String x:Key="TRX_MACOS_SUPPORT_SHORT_DESCRIPTION">macOS is not currently supported by Tomb Launcher.</system:String>
+    <system:String x:Key="DOWNLOADER_PERFORMANCE_DEGRADED">El descargador {0} muestra un rendimiento degradado. Ha respondido en {1}.</system:String>
+    <system:String x:Key="DOWNLOADER_RESPONDED_IN_MS">El descargador {0} ha respondido en {1} ms. Todo está en orden.</system:String>
+    <system:String x:Key="NOT_ENOUGH_DATA_FOR_DOWNLOADER">Aún no hay suficientes datos para evaluar el descargador {0}.</system:String>
+    <system:String x:Key="CIRCUIT_BREAKER_HALF_OPEN">El circuit breaker de {0} está en estado semiabierto. Estará disponible para reintentar en breve.</system:String>
+    <system:String x:Key="CIRCUIT_BREAKER_OPEN">El descargador {0} no es accesible. Estará disponible para reintentar en aproximadamente un minuto.</system:String>
+    <system:String x:Key="FAILED_TO_FETCH">Una fuente de descarga no está disponible temporalmente</system:String>
+    <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">No se pudo contactar con {0} — se reintentará automáticamente en aproximadamente un minuto. Si el problema persiste, considera desactivarla en la configuración.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

@@ -5,5 +5,6 @@ public enum ServiceCheckStatus
     Unspecified,
     Checking,
     Okay,
-    Error
+    Error,
+    Warning
 }

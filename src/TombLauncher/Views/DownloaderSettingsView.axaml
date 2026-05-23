@@ -6,6 +6,7 @@
              xmlns:settings="clr-namespace:TombLauncher.ViewModels.Pages.Settings"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:views="clr-namespace:TombLauncher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.DownloaderSettingsView"
              x:DataType="settings:DownloaderSettingsViewModel">
@@ -64,9 +65,12 @@
                             <!-- Content -->
                             <StackPanel Orientation="Vertical" Spacing="2"
                                         VerticalAlignment="Center">
-                                <TextBlock Text="{Binding DisplayName}"
-                                           FontWeight="DemiBold"
-                                           FontSize="14" />
+                                <StackPanel Orientation="Horizontal">
+                                    <views:ServiceCheckView DataContext="{Binding HealthStatus}" />
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               FontWeight="DemiBold"
+                                               FontSize="14" />
+                                </StackPanel>
                                 <TextBlock Text="{Binding BaseUrl}"
                                            Classes="text-muted"
                                            FontSize="12" />
