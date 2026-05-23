@@ -14,16 +14,24 @@ public partial class GameWithStatsViewModel : ViewModelBase
     }
     public GameWithStatsViewModel(GameWithStatsService gameWithStatsService)
     {
-        _gameMetadata = null!;
+        GameMetadata = null!;
         _gameWithStatsService = gameWithStatsService;
     }
 
     private readonly GameWithStatsService _gameWithStatsService;
 
-    [ObservableProperty] private GameMetadataViewModel _gameMetadata;
-    [ObservableProperty] private TimeSpan _totalPlayedTime;
-    [ObservableProperty] private DateTime? _lastPlayed;
-    [ObservableProperty] private bool _areCommandsVisible;
+    [ObservableProperty]
+    public partial GameMetadataViewModel GameMetadata { get; set; }
+
+    [ObservableProperty]
+    public partial TimeSpan TotalPlayedTime { get; set; }
+
+    [ObservableProperty]
+    public partial DateTime? LastPlayed { get; set; }
+
+    [ObservableProperty]
+    public partial bool AreCommandsVisible { get; set; }
+
     [RelayCommand(CanExecute = nameof(CanPlay))]
     private async Task Play()
     {
