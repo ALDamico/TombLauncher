@@ -10,9 +10,14 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameListViewModel : PageViewModel
 {
-    [ObservableProperty] private ObservableCollection<GameWithStatsViewModel> _games = [];
-    [ObservableProperty] private GameWithStatsViewModel? _selectedGame;
-    [ObservableProperty] private bool _showAsGrid;
+    [ObservableProperty]
+    public partial ObservableCollection<GameWithStatsViewModel> Games { get; set; } = [];
+
+    [ObservableProperty]
+    public partial GameWithStatsViewModel? SelectedGame { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShowAsGrid { get; set; }
 
     private readonly GameListService _gameListService;
 

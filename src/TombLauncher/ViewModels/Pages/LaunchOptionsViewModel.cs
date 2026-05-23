@@ -8,7 +8,6 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Services;
 using TombLauncher.Utils;
 
@@ -44,6 +43,7 @@ public partial class LaunchOptionsViewModel : PageViewModel
         AvailableExecutables = _service.GetAvailableExecutables(game);
 
         SelectedEngine = game.GameEngine;
+        InstallDirectory = game.InstallDirectory;
         GameExecutable = AvailableExecutables.FirstOrDefault(e => e == game.ExecutablePath);
         SetupArgs = game.SetupExecutableArgs;
         SetupExecutable = AvailableExecutables.FirstOrDefault(e => e == game.SetupExecutable);
@@ -59,18 +59,41 @@ public partial class LaunchOptionsViewModel : PageViewModel
 
     // ── Properties ────────────────────────────────────────────────────────────
     public string? InstallDirectory { get; private set; }
-    [ObservableProperty] private ObservableCollection<string>? _availableExecutables;
-    [ObservableProperty] private string? _gameExecutable;
-    [ObservableProperty] private ObservableCollection<EnumViewModel<GameEngine>> _availableEngines = null!;
-    [ObservableProperty] private GameEngine _selectedEngine;
-    [ObservableProperty] private string? _setupExecutable;
-    [ObservableProperty] private string? _setupArgs;
-    [ObservableProperty] private bool _supportsSetup;
-    [ObservableProperty] private bool _supportsCustomSetup;
-    [ObservableProperty] private string? _customSetupExecutable;
-    [ObservableProperty] private string? _compatibilityPrefixPath;
-    [ObservableProperty] private CompatibilityTool _compatibilityTool;
-    [ObservableProperty] private string? _compatibilityToolPath;
+    [ObservableProperty]
+    public partial ObservableCollection<string>? AvailableExecutables { get; set; }
+
+    [ObservableProperty]
+    public partial string? GameExecutable { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<EnumViewModel<GameEngine>> AvailableEngines { get; set; }
+
+    [ObservableProperty]
+    public partial GameEngine SelectedEngine { get; set; }
+
+    [ObservableProperty]
+    public partial string? SetupExecutable { get; set; }
+
+    [ObservableProperty]
+    public partial string? SetupArgs { get; set; }
+
+    [ObservableProperty]
+    public partial bool SupportsSetup { get; set; }
+
+    [ObservableProperty]
+    public partial bool SupportsCustomSetup { get; set; }
+
+    [ObservableProperty]
+    public partial string? CustomSetupExecutable { get; set; }
+
+    [ObservableProperty]
+    public partial string? CompatibilityPrefixPath { get; set; }
+
+    [ObservableProperty]
+    public partial CompatibilityTool CompatibilityTool { get; set; }
+
+    [ObservableProperty]
+    public partial string? CompatibilityToolPath { get; set; }
     public List<EnvironmentVariableDto> ExtraEnvVars { get; set; } = [];
     public bool IsWineSupported { get; }
 

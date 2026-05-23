@@ -14,10 +14,17 @@ public partial class SavegameSettingsViewModel : SettingsSectionViewModelBase
         _settingsService = settingsService;
     }
 
-    [ObservableProperty] private bool? _savegameBackupEnabled;
-    [ObservableProperty] private bool _limitNumberOfVersions;
-    [ObservableProperty] private int? _numberOfVersionsToKeep;
-    [ObservableProperty] private int _savegameProcessingDelay;
+    [ObservableProperty]
+    public partial bool? SavegameBackupEnabled { get; set; }
+
+    [ObservableProperty]
+    public partial bool LimitNumberOfVersions { get; set; }
+
+    [ObservableProperty]
+    public partial int? NumberOfVersionsToKeep { get; set; }
+
+    [ObservableProperty]
+    public partial int SavegameProcessingDelay { get; set; }
 
     private readonly SettingsPageService _settingsService;
     
