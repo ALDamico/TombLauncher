@@ -53,8 +53,11 @@ public partial class PatcherPageViewModel : PageViewModel
         }
     }
 
-    [ObservableProperty] private ObservableCollection<LogEntry> _log = new();
-    [ObservableProperty] private bool _isLogExpanded;
+    [ObservableProperty]
+    public partial ObservableCollection<LogEntry> Log { get; set; } = new();
+
+    [ObservableProperty]
+    public partial bool IsLogExpanded { get; set; }
 
     public bool CanApplyPatch => Content?.CanApplyPatch == true;
     public bool CanRevertPatch => Content?.CanRevertPatch == true;

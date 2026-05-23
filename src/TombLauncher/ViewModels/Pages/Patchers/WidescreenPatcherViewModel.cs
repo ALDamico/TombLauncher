@@ -18,20 +18,46 @@ namespace TombLauncher.ViewModels.Pages.Patchers;
 
 public partial class WidescreenPatcherViewModel : ObservableObject, IPatcherParametersViewModel
 {
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyPropertyChangedFor(nameof(CanApplyPatch))] private bool _updateAspectRatio;
-    [ObservableProperty] private float _aspectRatioWidth = 16;
-    [ObservableProperty] private float _aspectRatioHeight = 9;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPatch))]
+    public partial bool UpdateAspectRatio { get; set; }
 
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyPropertyChangedFor(nameof(CanApplyPatch))] private bool _updateCameraDistance;
-    [ObservableProperty] private CameraDistanceOptionViewModel _selectedCameraDistanceOption;
-    [ObservableProperty] private short _customCameraDistance = (short)CameraDistancePreset.OneAndAHalf;
+    [ObservableProperty]
+    public partial float AspectRatioWidth { get; set; } = 16;
 
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyPropertyChangedFor(nameof(CanApplyPatch))] private bool _updateFov;
-    [ObservableProperty] private int _targetFov = 1920;
+    [ObservableProperty]
+    public partial float AspectRatioHeight { get; set; } = 9;
 
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))][NotifyPropertyChangedFor(nameof(CanApplyPatch))] private bool _update60Fps;
-    [ObservableProperty] private bool _is60FpsAvailable;
-    [ObservableProperty] private string? _fps60TooltipText;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPatch))]
+    public partial bool UpdateCameraDistance { get; set; }
+
+    [ObservableProperty]
+    public partial CameraDistanceOptionViewModel SelectedCameraDistanceOption { get; set; }
+
+    [ObservableProperty]
+    public partial short CustomCameraDistance { get; set; } = (short)CameraDistancePreset.OneAndAHalf;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPatch))]
+    public partial bool UpdateFov { get; set; }
+
+    [ObservableProperty]
+    public partial int TargetFov { get; set; } = 1920;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanApplyPatchByFormState))]
+    [NotifyPropertyChangedFor(nameof(CanApplyPatch))]
+    public partial bool Update60Fps { get; set; }
+
+    [ObservableProperty]
+    public partial bool Is60FpsAvailable { get; set; }
+
+    [ObservableProperty]
+    public partial string? Fps60TooltipText { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanRevertPatch))]
@@ -93,8 +119,8 @@ public partial class WidescreenPatcherViewModel : ObservableObject, IPatcherPara
 
     public string ApplyPatchButtonCaption => "APPLY_WIDESCREEN_PATCH".GetLocalizedString();
     public string RevertPatchButtonCaption => "REVERT_WIDESCREEN_PATCH".GetLocalizedString();
-    public Enum? ApplyPatchButtonIcon => PackIconRemixIconKind.PlayLine;
-    public Enum? RevertPatchButtonIcon => PackIconRemixIconKind.RewindLine;
+    public Enum ApplyPatchButtonIcon => PackIconRemixIconKind.PlayLine;
+    public Enum RevertPatchButtonIcon => PackIconRemixIconKind.RewindLine;
 
     private int GetCameraDistance()
     {
