@@ -41,19 +41,9 @@ public partial class NotificationService
         await AddNotificationAsync(notificationViewModel);
     }
 
-    public void AddErrorNotification(string title, string errorMessage, PackIconRemixIconKind icon)
-    {
-        AddErrorNotificationAsync(title, errorMessage, icon).GetAwaiter().GetResult();
-    }
-
     public async Task AddErrorNotificationAsync(string errorMessage, PackIconRemixIconKind icon)
     {
         await AddErrorNotificationAsync("AN_ERROR_OCCURRED".GetLocalizedString(), errorMessage, icon);
-    }
-
-    public void AddErrorNotification(string errorMessage, PackIconRemixIconKind icon)
-    {
-        AddErrorNotificationAsync(errorMessage, icon).GetAwaiter().GetResult();
     }
 
     public async Task AddWarningNotificationAsync(string title, string message, PackIconRemixIconKind icon)

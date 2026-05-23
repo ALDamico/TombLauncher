@@ -467,6 +467,12 @@
     <system:String x:Key="CAMERA_DISTANCE_FROM_LARA">Abstand zwischen Kamera und Lara</system:String>
     <system:String x:Key="CAMERA_DISTANCE_HELP_TEXT">In klassischen Tomb-Raider-Spielen folgt die Kamera Lara in einem Abstand von eineinhalb Blöcken, wobei ein Block ein Quadrat mit einer Seitenlänge von 1024 Einheiten ist. Du kannst diese Einstellung verwenden, um diesen Wert zu erhöhen oder zu verringern. Wenn du die Option "Benutzerdefiniert" wählst, gib den Wert in Einheiten an, nicht in Anzahl der Blöcke.</system:String>
     <system:String x:Key="CUSTOM_DISTANCE">Benutzerdefinierter Abstand</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_BLOCK">1 Block</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_AND_HALF_BLOCKS">1,5 Blöcke</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_BLOCKS">2 Blöcke</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_AND_HALF_BLOCKS">2,5 Blöcke</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_THREE_BLOCKS">3 Blöcke</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_CUSTOM">Benutzerdefiniert</system:String>
     <system:String x:Key="FOV">Sichtfeld</system:String>
     <system:String x:Key="APPLY_FOV_CORRECTION">Sichtfeld-Korrektur anwenden</system:String>
     <system:String x:Key="FOV_HELP_TEXT">In klassischen Tomb-Raider-Spielen beträgt das horizontale Sichtfeld etwa 65°. Das Anwenden des Widescreen-Patches ohne diese Korrektur erweitert das Bild, behält aber das ursprüngliche Sichtfeld für 4:3 bei, was die Kamera unnatürlich eng und klaustrophobisch wirken lassen kann. Gib die in der Spielkonfiguration verwendete Bildschirmbreite in Pixeln ein (z.B. 1920), um die Korrektur zu berechnen.</system:String>
@@ -529,6 +535,7 @@
     <system:String x:Key="ABOUT_INFO">Anwendungsinformationen</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Spielstände werden gesichert...</system:String>
     <system:String x:Key="LICENSE">Lizenz</system:String>
+    <system:String x:Key="WEBSITE">Website</system:String>
     <system:String x:Key="LOGGING">Protokollierung</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Log-Ordner öffnen</system:String>
     <system:String x:Key="KB_UPDATE_ERROR">Fehler beim Aktualisieren der Wissensdatenbank</system:String>
@@ -611,5 +618,7 @@
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Der Downloader {0} ist nicht erreichbar. Er wird in etwa einer Minute wieder verfügbar sein.</system:String>
     <system:String x:Key="FAILED_TO_FETCH">Eine Download-Quelle ist vorübergehend nicht verfügbar</system:String>
     <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">{0} ist nicht erreichbar — es wird in etwa einer Minute automatisch erneut versucht. Wenn das Problem weiterhin besteht, erwägen Sie, die Quelle in den Einstellungen zu deaktivieren.</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS">Keine aktiven Download-Quellen</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS_DESCRIPTION">Du hast keine Download-Quellen ausgewählt. Aktiviere mindestens eine in den Einstellungen.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

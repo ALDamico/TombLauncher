@@ -618,5 +618,7 @@
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Il downloader {0} non è raggiungibile. Sarà possibile ritentarne l'utilizzo tra circa un minuto.</system:String>
     <system:String x:Key="FAILED_TO_FETCH">Una sorgente di download è temporaneamente non disponibile</system:String>
     <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Impossibile raggiungere {0} — verrà ritentato automaticamente tra circa un minuto. Se il problema persiste, valuta di disabilitarla nelle impostazioni.</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS">Nessuna sorgente di download attiva</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS_DESCRIPTION">Non hai selezionato nessuna sorgente di download. Abilitane almeno una nelle impostazioni.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

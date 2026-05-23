@@ -467,6 +467,12 @@
     <system:String x:Key="CAMERA_DISTANCE_FROM_LARA">Distance entre la caméra et Lara</system:String>
     <system:String x:Key="CAMERA_DISTANCE_HELP_TEXT">Dans les jeux Tomb Raider classiques, la caméra suit Lara à une distance d'un bloc et demi, où un bloc est un carré de 1024 unités de côté. Vous pouvez utiliser ce paramètre pour augmenter ou diminuer cette valeur. Si vous choisissez l'option "Personnalisé", entrez la valeur en unités, pas en nombre de blocs.</system:String>
     <system:String x:Key="CUSTOM_DISTANCE">Distance personnalisée</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_BLOCK">1 bloc</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_AND_HALF_BLOCKS">1 bloc et demi</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_BLOCKS">2 blocs</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_AND_HALF_BLOCKS">2 blocs et demi</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_THREE_BLOCKS">3 blocs</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_CUSTOM">Personnalisé</system:String>
     <system:String x:Key="FOV">Champ de vision</system:String>
     <system:String x:Key="APPLY_FOV_CORRECTION">Appliquer la correction du champ de vision</system:String>
     <system:String x:Key="FOV_HELP_TEXT">Dans les jeux Tomb Raider classiques, le champ de vision horizontal est d'environ 65°. L'application du patch widescreen sans cette correction élargit l'image mais conserve le champ de vision original conçu pour le 4:3, ce qui peut rendre la caméra étrangement étroite et claustrophobe. Entrez la largeur d'écran en pixels utilisée dans la configuration du jeu (ex. 1920) pour calculer la correction.</system:String>
@@ -529,6 +535,7 @@
     <system:String x:Key="ABOUT_INFO">Informations sur l'application</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Sauvegarde des parties en cours...</system:String>
     <system:String x:Key="LICENSE">Licence</system:String>
+    <system:String x:Key="WEBSITE">Site web</system:String>
     <system:String x:Key="LOGGING">Journalisation</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Ouvrir le dossier des journaux</system:String>
     <system:String x:Key="KB_UPDATE_ERROR">Erreur de mise à jour de la base de connaissances</system:String>
@@ -611,5 +618,7 @@
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Le téléchargeur {0} est inaccessible. Il sera disponible pour une nouvelle tentative dans environ une minute.</system:String>
     <system:String x:Key="FAILED_TO_FETCH">Une source de téléchargement est temporairement indisponible</system:String>
     <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Impossible d'atteindre {0} — une nouvelle tentative sera effectuée automatiquement dans environ une minute. Si le problème persiste, envisagez de la désactiver dans les paramètres.</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS">Aucune source de téléchargement active</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS_DESCRIPTION">Vous n'avez sélectionné aucune source de téléchargement. Activez-en au moins une dans les paramètres.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
