@@ -9,9 +9,14 @@ namespace TombLauncher.ViewModels;
 
 public partial class DayOfWeekPlaySessionCountStatisticsViewModel : ObservableObject, IChartEntity
 {
-    [ObservableProperty] private DayOfWeek _dayOfWeek;
-    [ObservableProperty] private int _playCount;
-    [ObservableProperty] private int _index;
+    [ObservableProperty]
+    public partial DayOfWeek DayOfWeek { get; set; }
+
+    [ObservableProperty]
+    public partial int PlayCount { get; set; }
+
+    [ObservableProperty]
+    public partial int Index { get; set; }
     public ChartEntityMetaData? MetaData { get; set; }
     public Coordinate Coordinate { get; set; }
 

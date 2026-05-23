@@ -7,9 +7,13 @@ namespace TombLauncher.ViewModels;
 
 public partial class DayOfWeekAverageTimeStatisticsViewModel : ObservableObject, IChartEntity
 {
-    [ObservableProperty] private DayOfWeek _dayOfWeek;
-    [ObservableProperty] private TimeSpan _averageTimePlayed;
-    [ObservableProperty] private int _index;
+    [ObservableProperty]
+    public partial DayOfWeek DayOfWeek { get; set; }
+
+    [ObservableProperty]
+    public partial TimeSpan AverageTimePlayed { get; set; }
+    [ObservableProperty]
+    public partial int Index { get; set; }
     public ChartEntityMetaData? MetaData { get; set; }
     public Coordinate Coordinate { get; set; }
 

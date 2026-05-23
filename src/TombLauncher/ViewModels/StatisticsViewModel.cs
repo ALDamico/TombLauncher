@@ -4,11 +4,24 @@ namespace TombLauncher.ViewModels;
 
 public partial class StatisticsViewModel: ObservableObject
 {
-    [ObservableProperty] private GameStatisticsViewModel? _latestPlayedGame;
-    [ObservableProperty] private GameStatisticsViewModel? _longestPlaySession;
-    [ObservableProperty] private GameStatisticsViewModel? _mostLaunches;
-    [ObservableProperty] private ChartViewModel _dayOfWeekAveragePlayTimeStatistics = null!;
-    [ObservableProperty] private ChartViewModel _dayOfWeekTotalGamesPlayedStatistics = null!;
-    [ObservableProperty] private ChartViewModel _dailyAverageGameLengthStatistics = null!;
-    [ObservableProperty] private ChartViewModel _spaceUsedStatistics = null!;
+    [ObservableProperty]
+    public partial GameStatisticsViewModel? LatestPlayedGame { get; set; }
+
+    [ObservableProperty]
+    public partial GameStatisticsViewModel? LongestPlaySession { get; set; }
+
+    [ObservableProperty]
+    public partial GameStatisticsViewModel? MostLaunches { get; set; }
+
+    [ObservableProperty]
+    public partial ChartViewModel DayOfWeekAveragePlayTimeStatistics { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial ChartViewModel DayOfWeekTotalGamesPlayedStatistics { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial ChartViewModel DailyAverageGameLengthStatistics { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial ChartViewModel SpaceUsedStatistics { get; set; } = null!;
 }

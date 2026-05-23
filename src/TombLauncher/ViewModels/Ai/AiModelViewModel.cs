@@ -9,6 +9,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
+using TombLauncher.ViewModels.Notifications;
 
 namespace TombLauncher.ViewModels.Ai;
 
@@ -20,26 +21,32 @@ public partial class AiModelViewModel : ObservableObject
     {
         _notificationService = notificationService;
         Metadata = metadata;
-        _isDownloaded = false; // TODO
+        IsDownloaded = false; // TODO
         DownloadCmd = new AsyncRelayCommand(Download, CanDownload);
         CancelDownloadCmd = new AsyncRelayCommand(CancelDownload, CanCancelDownload);
     }
 
-    [ObservableProperty] private AiModelMetadata _metadata;
-    [ObservableProperty] private bool _isSelected;
+    [ObservableProperty]
+    public partial AiModelMetadata Metadata { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsSelected { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CancelDownloadCmd))]
     [NotifyCanExecuteChangedFor(nameof(DownloadCmd))]
-    private bool _isDownloaded;
+    public partial bool IsDownloaded { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CancelDownloadCmd))]
     [NotifyCanExecuteChangedFor(nameof(DownloadCmd))]
-    private bool _isDownloading;
+    public partial bool IsDownloading { get; set; }
 
-    [ObservableProperty] private InstallProgressViewModel? _installProgress;
-    [ObservableProperty] private bool _isFetchingSize;
+    [ObservableProperty]
+    public partial InstallProgressViewModel? InstallProgress { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsFetchingSize { get; set; }
     public IAsyncRelayCommand DownloadCmd { get; }
 
     private async Task Download()

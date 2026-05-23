@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Localization.Extensions;
-using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Notifications;
 
 namespace TombLauncher.Services;

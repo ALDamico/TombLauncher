@@ -49,18 +49,29 @@ public partial class SavegameListViewModel : PageViewModel
         }
     }
 
-    [ObservableProperty] private string _gameTitle = string.Empty;
-    [ObservableProperty] private int _gameId;
-    [ObservableProperty] private GameEngine _gameEngine;
-    [ObservableProperty] private string? _installLocation;
+    [ObservableProperty]
+    public partial string GameTitle { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial int GameId { get; set; }
+    [ObservableProperty]
+    public partial GameEngine GameEngine { get; set; }
+    [ObservableProperty]
+    public partial string? InstallLocation { get; set; }
+    [ObservableProperty]
+    public partial ObservableCollection<SavegameViewModel> Savegames { get; set; } = [];
 
     [ObservableProperty]
-    private ObservableCollection<SavegameViewModel> _savegames = new ObservableCollection<SavegameViewModel>();
+    public partial ObservableCollection<SavegameViewModel> FilteredSaves { get; set; } = [];
 
-    [ObservableProperty] private ObservableCollection<SavegameViewModel> _filteredSaves = [];
-    [ObservableProperty] private ObservableCollection<SavegameSlotViewModel> _slots = [];
-    [ObservableProperty] private SavegameSlotViewModel? _selectedSlot;
-    [ObservableProperty] private SaveGameListFilter _savegameFilter;
+    [ObservableProperty]
+    public partial ObservableCollection<SavegameSlotViewModel> Slots { get; set; } = [];
+
+    [ObservableProperty]
+    public partial SavegameSlotViewModel? SelectedSlot { get; set; }
+
+    [ObservableProperty]
+    public partial SaveGameListFilter SavegameFilter { get; set; }
+
     private readonly SavegameQueryService _savegameQueryService;
     private readonly SavegameCommandService _savegameCommandService;
 

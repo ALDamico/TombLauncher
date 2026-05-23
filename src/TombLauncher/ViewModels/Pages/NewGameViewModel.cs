@@ -38,8 +38,11 @@ public partial class NewGameViewModel : PageViewModel
     }
 
     private readonly NewGameService _newGameService;
-    [ObservableProperty] private GameMetadataViewModel _gameMetadata;
-    [ObservableProperty] private string _source = string.Empty;
+    [ObservableProperty]
+    public partial GameMetadataViewModel GameMetadata { get; set; }
+
+    [ObservableProperty]
+    public partial string Source { get; set; } = string.Empty;
     public ObservableCollection<EnumViewModel<GameLength>> AvailableLengths { get; }
     public ObservableCollection<EnumViewModel<GameDifficulty>> AvailableDifficulties { get; }
     public IProgress<CopyProgressInfo> InstallProgress { get; }

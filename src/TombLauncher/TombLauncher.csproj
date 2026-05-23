@@ -167,5 +167,13 @@
         <DependentUpon>WidescreenPatcherView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Notifications\NotificationListView.axaml.cs">
+        <DependentUpon>NotificationListView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Notifications\NotificationView.axaml.cs">
+        <DependentUpon>NotificationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

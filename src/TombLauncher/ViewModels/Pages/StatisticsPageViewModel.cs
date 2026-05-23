@@ -5,11 +5,9 @@ using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.PlatformSpecific;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
-using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels.Pages;
 
@@ -38,12 +36,23 @@ public partial class StatisticsPageViewModel : PageViewModel
     private readonly IPlatformSpecificFeatures _platformFeatures;
     private readonly IAppConfiguration _appConfiguration;
 
-    [ObservableProperty] private Version? _applicationVersion;
-    [ObservableProperty] private long _databaseSize;
-    [ObservableProperty] private long _gamesSize;
-    [ObservableProperty] private Version? _netVersion;
-    [ObservableProperty] private StatisticsViewModel? _statistics;
-    [ObservableProperty] private string? _wineVersion;
+    [ObservableProperty]
+    public partial Version? ApplicationVersion { get; set; }
+
+    [ObservableProperty]
+    public partial long DatabaseSize { get; set; }
+
+    [ObservableProperty]
+    public partial long GamesSize { get; set; }
+
+    [ObservableProperty]
+    public partial Version? NetVersion { get; set; }
+
+    [ObservableProperty]
+    public partial StatisticsViewModel? Statistics { get; set; }
+
+    [ObservableProperty]
+    public partial string? WineVersion { get; set; }
 
     public bool IsWineSupported => _platformFeatures.IsWineSupported;
 

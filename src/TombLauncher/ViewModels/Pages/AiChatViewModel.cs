@@ -20,12 +20,22 @@ public partial class AiChatViewModel : PageViewModel
 {
     private readonly ITroubleshootingServiceLoader _troubleshootingServiceLoader;
     private readonly SystemPromptConfiguration _systemPromptConfiguration;
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))] private bool _isGenerating;
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))] private string _currentText = "";
-    [ObservableProperty] private ObservableCollection<AiMessageViewModel> _messageHistory = new();
-    [ObservableProperty] private string _currentStatusText = "";
+    
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
+    public partial bool IsGenerating { get; set; }
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
+    public partial string CurrentText { get; set; } = "";
+    [ObservableProperty]
+    public partial ObservableCollection<AiMessageViewModel> MessageHistory { get; set; } = [];
+
+    [ObservableProperty]
+    public partial string CurrentStatusText { get; set; } = "";
+
     private ITroubleshootingService? _ragService;
-    private readonly ChatHistory _chatHistory = new();
+    private readonly ChatHistory _chatHistory = [];
     private TroubleshootingContext _troubleshootingContext;
 
     public bool IsHistoryEmpty => MessageHistory.Count == 0;
@@ -35,7 +45,7 @@ public partial class AiChatViewModel : PageViewModel
         _troubleshootingServiceLoader = troubleshootingServiceLoader;
         _systemPromptConfiguration = systemPromptConfiguration;
         _troubleshootingContext = new();
-        MessageHistory.CollectionChanged += (_, _) => OnPropertyChanged(nameof(IsHistoryEmpty));
+        MessageHistory?.CollectionChanged += (_, _) => OnPropertyChanged(nameof(IsHistoryEmpty));
     }
 
     protected override async Task RaiseInitialize()

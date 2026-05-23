@@ -4,5 +4,6 @@ namespace TombLauncher.ViewModels.Notifications;
 
 public partial class StringNotificationViewModel : ViewModelBase
 {
-    [ObservableProperty] private string _text = string.Empty;
+    [ObservableProperty]
+    public partial string Text { get; set; } = string.Empty;
 }

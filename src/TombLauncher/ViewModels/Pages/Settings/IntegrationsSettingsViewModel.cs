@@ -10,7 +10,8 @@ public partial class IntegrationsSettingsViewModel : SettingsSectionViewModelBas
         PackIconRemixIconKind.PuzzleLine)
     {
     }
-    [ObservableProperty] private bool _isDiscordSharingEnabled;
+    [ObservableProperty]
+    public partial bool IsDiscordSharingEnabled { get; set; }
 
     public override void ApplyTo(AppConfiguration userConfig)
     {

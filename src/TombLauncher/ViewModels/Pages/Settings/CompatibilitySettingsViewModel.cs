@@ -6,8 +6,6 @@ using TombLauncher.Configuration;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Contracts.Settings;
-using TombLauncher.Core.Dtos;
-using TombLauncher.Core.PlatformSpecific;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
@@ -26,28 +24,35 @@ public partial class CompatibilitySettingsViewModel : SettingsSectionViewModelBa
 
     // ─── Wine ────────────────────────────────────────────────────────────────
 
-    [ObservableProperty] private string _winePath = string.Empty;
-    [ObservableProperty] private string _compatibilityPrefixPath = string.Empty;
-    [ObservableProperty] private string? _wineVersion;
+    [ObservableProperty]
+    public partial string WinePath { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string CompatibilityPrefixPath { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string? WineVersion { get; set; }
 
     partial void OnWinePathChanged(string value) =>
         WineVersion = _platformFeatures.GetWineVersion(value);
 
     // ─── Proton ───────────────────────────────────────────────────────────────
 
-    [ObservableProperty] private string? _protonVersion;
-    [ObservableProperty] private string? _manualProtonPath;
+    [ObservableProperty]
+    public partial string? ProtonVersion { get; set; }
+
+    [ObservableProperty]
+    public partial string? ManualProtonPath { get; set; }
 
     /// <summary>Proton installations discovered in steamapps.</summary>
     public ObservableCollection<ProtonInstallationDto> AvailableProtonInstallations { get; }
 
-    private ProtonInstallationDto? _selectedProtonInstallation;
     public ProtonInstallationDto? SelectedProtonInstallation
     {
-        get => _selectedProtonInstallation;
+        get;
         set
         {
-            if (SetProperty(ref _selectedProtonInstallation, value))
+            if (SetProperty(ref field, value))
                 ProtonVersion = value is null
                     ? _platformFeatures.GetProtonVersion(ManualProtonPath ?? "")
                     : _platformFeatures.GetProtonVersion(value.ExecutablePath);
@@ -56,20 +61,19 @@ public partial class CompatibilitySettingsViewModel : SettingsSectionViewModelBa
 
     // ─── Tool selection ───────────────────────────────────────────────────────
 
-    private CompatibilityTool _selectedTool = CompatibilityTool.Wine;
     public CompatibilityTool SelectedTool
     {
-        get => _selectedTool;
+        get;
         set
         {
-            if (SetProperty(ref _selectedTool, value))
+            if (SetProperty(ref field, value))
             {
                 OnPropertyChanged(nameof(IsWine));
                 OnPropertyChanged(nameof(IsProton));
                 OnPropertyChanged(nameof(HasNoProtonInstallations));
             }
         }
-    }
+    } = CompatibilityTool.Wine;
 
     public bool IsWine => SelectedTool == CompatibilityTool.Wine;
     public bool IsProton => SelectedTool == CompatibilityTool.Proton;

@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts;
@@ -38,11 +37,16 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
     [NotifyDataErrorInfo]
     [NotifyCanExecuteChangedFor(nameof(ClearCurrentValueCommand), nameof(AddValueCommand), nameof(EditValueCommand))]
     [CustomValidation(typeof(EditableListBoxViewModel), nameof(InvokeValidateMethod))]
-    private string _currentValue = null!;
+    public partial string CurrentValue { get; set; } = null!;
 
-    [ObservableProperty] private string _watermark = null!;
-    [ObservableProperty] private string _header = null!;
-    [ObservableProperty] private PackIconRemixIconKind? _headerIcon;
+    [ObservableProperty]
+    public partial string Watermark { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial string Header { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial PackIconRemixIconKind? HeaderIcon { get; set; }
 
     [RelayCommand(CanExecute = nameof(CanAddValue))]
     private void AddValue()

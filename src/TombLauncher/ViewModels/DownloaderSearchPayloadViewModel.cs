@@ -14,14 +14,36 @@ public partial class DownloaderSearchPayloadViewModel : ObservableValidator
         AvailableDifficulties = EnumUtils.GetEnumViewModels<GameDifficulty>().ToObservableCollection();
         AvailableEngines = EnumUtils.GetEnumViewModels<GameEngine>().ToObservableCollection();
     }
-    [ObservableProperty] private string _levelName = null!;
-    [ObservableProperty] private string _authorName = null!;
-    [ObservableProperty] private GameEngine? _gameEngine;
-    [ObservableProperty] private GameDifficulty? _gameDifficulty;
-    [ObservableProperty] private GameLength? _duration;
-    [ObservableProperty][Range(0, 10)] private int _rating;
-    [ObservableProperty] private ObservableCollection<EnumViewModel<GameDifficulty>> _availableDifficulties;
-    [ObservableProperty] private ObservableCollection<EnumViewModel<GameEngine>> _availableEngines;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasActiveFilters))]
+    public partial string LevelName { get; set; } = null!;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasActiveFilters))]
+    public partial string AuthorName { get; set; } = null!;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasActiveFilters))]
+    public partial GameEngine? GameEngine { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasActiveFilters))]
+    public partial GameDifficulty? GameDifficulty { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasActiveFilters))]
+    public partial GameLength? Duration { get; set; }
+
+    [ObservableProperty]
+    [Range(0, 10)]
+    [NotifyPropertyChangedFor(nameof(HasActiveFilters))]
+    public partial int Rating { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<EnumViewModel<GameDifficulty>> AvailableDifficulties { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<EnumViewModel<GameEngine>> AvailableEngines { get; set; }
 
     public bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(LevelName) ||
@@ -30,13 +52,6 @@ public partial class DownloaderSearchPayloadViewModel : ObservableValidator
         GameDifficulty != null ||
         Duration != null ||
         Rating != 0;
-
-    partial void OnLevelNameChanged(string value) => OnPropertyChanged(nameof(HasActiveFilters));
-    partial void OnAuthorNameChanged(string value) => OnPropertyChanged(nameof(HasActiveFilters));
-    partial void OnGameEngineChanged(GameEngine? value) => OnPropertyChanged(nameof(HasActiveFilters));
-    partial void OnGameDifficultyChanged(GameDifficulty? value) => OnPropertyChanged(nameof(HasActiveFilters));
-    partial void OnDurationChanged(GameLength? value) => OnPropertyChanged(nameof(HasActiveFilters));
-    partial void OnRatingChanged(int value) => OnPropertyChanged(nameof(HasActiveFilters));
 
     public void ClearFilters()
     {
