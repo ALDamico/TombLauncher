@@ -10,7 +10,6 @@ using TombLauncher.Configuration;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Mappers;
 using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages.Settings;
@@ -79,7 +78,9 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly NotificationService _notificationService;
     private readonly AiBackendFactory _aiBackendFactory;
     private readonly KbUpdateService _kbUpdateService;
-    [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
+    
+    [ObservableProperty]
+    public partial ObservableCollection<SettingsSectionViewModelBase> Sections { get; set; }
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
