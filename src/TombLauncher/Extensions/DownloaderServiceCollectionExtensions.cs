@@ -115,7 +115,8 @@ public static class DownloaderServiceCollectionExtensions
             .AddTransient<IGameDownloader, RaidingTheGlobeGameDownloader>()
             .AddTransient(sp =>
             {
-                var downloadManager = new GameDownloadManager(sp.GetRequiredService<IGameMerger>())
+                var downloadManager = new GameDownloadManager(sp.GetRequiredService<IGameMerger>(),
+                    sp.GetRequiredService<ILogger<GameDownloadManager>>())
                 {
                     Downloaders = sp.GetRequiredService<ISettingsProvider>().GetActiveDownloaders()
                 };

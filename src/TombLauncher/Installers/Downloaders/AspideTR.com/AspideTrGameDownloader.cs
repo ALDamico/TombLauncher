@@ -163,7 +163,15 @@ public class AspideTrGameDownloader : GameDownloaderBase
         var urlEncodedContent = new FormUrlEncodedContent(kvpList);
         var queryString = await urlEncodedContent.ReadAsStringAsync(cancellationToken);
         var url = GetPageUrl(pageNumber, queryString);
-        var pageContent = await HttpClient.GetStringAsync(url, cancellationToken);
+        string? pageContent;
+        try
+        {
+            pageContent = await HttpClient.GetStringAsync(url, cancellationToken);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            return SearchResultPage.EmptyPage;
+        }
 
         var htmlDocument = await AppUtils.OpenDocumentFromContent(pageContent, cancellationToken);
         var totalPages = GetTotalPages(htmlDocument);

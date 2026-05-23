@@ -609,5 +609,7 @@
     <system:String x:Key="NOT_ENOUGH_DATA_FOR_DOWNLOADER">Pas encore assez de données pour évaluer le téléchargeur {0}.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_HALF_OPEN">Le circuit breaker de {0} est en état semi-ouvert. Il sera disponible pour une nouvelle tentative sous peu.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Le téléchargeur {0} est inaccessible. Il sera disponible pour une nouvelle tentative dans environ une minute.</system:String>
+    <system:String x:Key="FAILED_TO_FETCH">Une source de téléchargement est temporairement indisponible</system:String>
+    <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Impossible d'atteindre {0} — une nouvelle tentative sera effectuée automatiquement dans environ une minute. Si le problème persiste, envisagez de la désactiver dans les paramètres.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using AvaloniaEdit.Utils;
+using IconPacks.Avalonia.RemixIcon;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
@@ -74,8 +75,15 @@ public class GameSearchService : IViewService
         using (target.BusyScope("LOADING_IN_PROGRESS".GetLocalizedString()))
         {
             var nextPage = target.CurrentPage + 1;
-            var (nextPageResults, _) = await _gameDownloadManager.GetGames(
+            var (nextPageResults, _, failedDownloaders) = await _gameDownloadManager.GetGames(
                 target.LastSearchDownloaders!, target.LastSearchPayload!, nextPage);
+
+            foreach (var failedDownloader in failedDownloaders)
+            {
+                await _notificationService.AddWarningNotificationAsync("FAILED_TO_FETCH".GetLocalizedString(),
+                    "FAILED_TO_FETCH_DESCRIPTION".GetLocalizedString(failedDownloader),
+                    PackIconRemixIconKind.WifiOffLine);
+            }
 
             var fetchedResults = await InvokeMerger(target, nextPageResults.SelectMany(r => r.Sources).ToList());
 
@@ -195,7 +203,13 @@ public class GameSearchService : IViewService
             try
             {
                 var searchPayloadDto = _searchPayloadMapper.ToDto(target.SearchPayload);
-                var (games, maxTotalPages) = await _gameDownloadManager.GetGames(downloaders, searchPayloadDto, 1);
+                var (games, maxTotalPages, failedDownloaders) = await _gameDownloadManager.GetGames(downloaders, searchPayloadDto, 1);
+                foreach (var failedDownloader in failedDownloaders)
+                {
+                    await _notificationService.AddWarningNotificationAsync("FAILED_TO_FETCH".GetLocalizedString(),
+                        "FAILED_TO_FETCH_DESCRIPTION".GetLocalizedString(failedDownloader),
+                        PackIconRemixIconKind.WifiOffLine);
+                }
                 target.LastSearchPayload = searchPayloadDto;
                 target.LastSearchDownloaders = downloaders;
                 target.CurrentPage = 1;

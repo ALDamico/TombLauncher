@@ -1,4 +1,4 @@
-<ResourceDictionary xmlns="https://github.com/avaloniaui"
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <!-- Miscellaneous -->
@@ -616,5 +616,7 @@
     <system:String x:Key="NOT_ENOUGH_DATA_FOR_DOWNLOADER">Non sono ancora presenti dati a sufficienza per valutare il downloader {0}.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_HALF_OPEN">Il meccanismo di circuit breaker di {0} è in stato semi-aperto. Sarà possibile ritentarne l'utilizzo a breve.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Il downloader {0} non è raggiungibile. Sarà possibile ritentarne l'utilizzo tra circa un minuto.</system:String>
+    <system:String x:Key="FAILED_TO_FETCH">Una sorgente di download è temporaneamente non disponibile</system:String>
+    <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Impossibile raggiungere {0} — verrà ritentato automaticamente tra circa un minuto. Se il problema persiste, valuta di disabilitarla nelle impostazioni.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

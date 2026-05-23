@@ -609,5 +609,7 @@
     <system:String x:Key="NOT_ENOUGH_DATA_FOR_DOWNLOADER">Aún no hay suficientes datos para evaluar el descargador {0}.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_HALF_OPEN">El circuit breaker de {0} está en estado semiabierto. Estará disponible para reintentar en breve.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">El descargador {0} no es accesible. Estará disponible para reintentar en aproximadamente un minuto.</system:String>
+    <system:String x:Key="FAILED_TO_FETCH">Una fuente de descarga no está disponible temporalmente</system:String>
+    <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">No se pudo contactar con {0} — se reintentará automáticamente en aproximadamente un minuto. Si el problema persiste, considera desactivarla en la configuración.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

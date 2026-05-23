@@ -35,7 +35,7 @@ public partial class DownloaderViewModel : ObservableObject, IDisposable
                 return;
             }
 
-            var lastResponseTime = _responseTimeService.GetLastResponseTime(ShortClassName);
+            var lastResponseTime = _responseTimeService.GetAverageResponseTime(ShortClassName);
             if (lastResponseTime == null)
             {
                 HealthStatus.Status = ServiceCheckStatus.Unspecified;

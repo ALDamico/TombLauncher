@@ -609,5 +609,7 @@
     <system:String x:Key="NOT_ENOUGH_DATA_FOR_DOWNLOADER">Zatím není dostatek dat pro hodnocení stahovače {0}.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_HALF_OPEN">Jistič pro {0} je v napůl otevřeném stavu. Brzy bude možné akci zopakovat.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Stahovač {0} není dostupný. Akci bude možné zopakovat přibližně za minutu.</system:String>
+    <system:String x:Key="FAILED_TO_FETCH">Zdroj stahování je dočasně nedostupný</system:String>
+    <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Nepodařilo se dosáhnout {0} — automatický pokus bude proveden přibližně za minutu. Pokud problém přetrvává, zvažte deaktivaci tohoto zdroje v nastavení.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

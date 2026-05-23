@@ -609,5 +609,7 @@
     <system:String x:Key="NOT_ENOUGH_DATA_FOR_DOWNLOADER">Brak wystarczających danych do oceny downloadera {0}.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_HALF_OPEN">Circuit breaker dla {0} jest w stanie półotwartym. Wkrótce będzie można ponowić próbę.</system:String>
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Downloader {0} jest niedostępny. Ponowienie próby będzie możliwe za około minutę.</system:String>
+    <system:String x:Key="FAILED_TO_FETCH">Źródło pobierania jest tymczasowo niedostępne</system:String>
+    <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Nie można połączyć się z {0} — próba zostanie ponowiona automatycznie za około minutę. Jeśli problem się utrzymuje, rozważ wyłączenie tego źródła w ustawieniach.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

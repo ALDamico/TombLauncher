@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Polly.CircuitBreaker;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Dtos;
@@ -13,37 +16,54 @@ namespace TombLauncher.Installers.Downloaders;
 
 public class GameDownloadManager
 {
-    public GameDownloadManager(IGameMerger merger)
+    public GameDownloadManager(IGameMerger merger, ILogger<GameDownloadManager> logger)
     {
         _merger = merger;
+        _logger = logger;
         Downloaders = [];
     }
 
     public List<IGameDownloader> Downloaders { get; init; }
     private CancellationTokenSource _cancellationTokenSource = new();
     private readonly IGameMerger _merger;
+    private readonly ILogger<GameDownloadManager> _logger;
 
-    public async Task<(List<IMergedGameSearchResultMetadata> Results, int? MaxTotalPages)> GetGames(
+    public async Task<(List<IMergedGameSearchResultMetadata> Results, int? MaxTotalPages, ConcurrentBag<string> FailedDownloaders)> GetGames(
         IReadOnlyList<IGameDownloader> downloaders,
         DownloaderSearchPayload searchPayload, int page)
     {
+        var failedDownloaders = new ConcurrentBag<string>();
         var outputList = new List<IMergedGameSearchResultMetadata>();
         var tasks = downloaders
-            .Select(d => d.Search.GetGames(searchPayload, page, _cancellationTokenSource.Token))
+            .Select(async d =>
+            {
+                ISearchResultPage? result = null;
+                try
+                {
+                    result = await d.Search.GetGames(searchPayload, page, _cancellationTokenSource.Token);
+                }
+                catch (BrokenCircuitException ex)
+                {
+                    failedDownloaders.Add(d.DisplayName);
+                    _logger.LogInformation(ex, "Circuit breaker was open");
+                }
+
+                return result;
+            })
             .ToList();
 
         await Task.WhenAll(tasks);
 
         var maxTotalPages = 0;
-        foreach (var completedTask in tasks.Where(t => t.IsCompleted))
+        foreach (var completedTask in tasks.Where(t => t.Result != null))
         {
-            var resultPage = completedTask.Result;
+            var resultPage = completedTask.Result!;
             _merger.Merge(outputList, resultPage.Results.ToList());
             if (resultPage.TotalPages.HasValue && resultPage.TotalPages.Value > maxTotalPages)
                 maxTotalPages = resultPage.TotalPages.Value;
         }
 
-        return (outputList, maxTotalPages > 0 ? maxTotalPages : null);
+        return (outputList, maxTotalPages > 0 ? maxTotalPages : null, failedDownloaders);
     }
 
     public async Task<IGameMetadata?> FetchDetails(IGameSearchResultMetadata game)
