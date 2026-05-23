@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IconPacks.Avalonia.RemixIcon;
 
@@ -7,11 +6,15 @@ namespace TombLauncher.ViewModels;
 
 public partial class MainMenuItemViewModel : ViewModelBase
 {
-    [ObservableProperty] private PackIconRemixIconKind _icon;
+    [ObservableProperty]
+    public partial PackIconRemixIconKind Icon { get; set; }
 
-    [ObservableProperty] private string _text = string.Empty;
+    [ObservableProperty]
+    public partial string Text { get; set; } = string.Empty;
 
-    [ObservableProperty] private string _toolTip = string.Empty;
+    [ObservableProperty]
+    public partial string ToolTip { get; set; } = string.Empty;
 
-    [ObservableProperty] private Type? _viewModelType;
+    [ObservableProperty]
+    public partial Type? ViewModelType { get; set; }
 }

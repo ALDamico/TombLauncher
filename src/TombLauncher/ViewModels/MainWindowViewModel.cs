@@ -149,13 +149,26 @@ public partial class MainWindowViewModel : WindowViewModelBase
     private readonly NavigationManager _navigationManager;
     private readonly ISettingsProvider _settingsProvider;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
-    [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
-    [ObservableProperty] private MainMenuItemViewModel _settingsItem;
-    [ObservableProperty] private CommandViewModel _gitHubLinkItem;
-    [ObservableProperty] private CommandViewModel _websiteLinkItem;
-    [ObservableProperty] private MainMenuItemViewModel _aboutPageItem;
-    [ObservableProperty] private bool _isSettingsOpen;
-    [ObservableProperty] private bool _isAboutPageOpen;
+    [ObservableProperty]
+    public partial NotificationListViewModel NotificationListViewModel { get; set; }
+
+    [ObservableProperty]
+    public partial MainMenuItemViewModel SettingsItem { get; set; }
+
+    [ObservableProperty]
+    public partial CommandViewModel GitHubLinkItem { get; set; }
+
+    [ObservableProperty]
+    public partial CommandViewModel WebsiteLinkItem { get; set; }
+
+    [ObservableProperty]
+    public partial MainMenuItemViewModel AboutPageItem { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsSettingsOpen { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsAboutPageOpen { get; set; }
 
     private void OpenGithub()
     {
@@ -228,7 +241,8 @@ public partial class MainWindowViewModel : WindowViewModelBase
         IsAboutPageOpen = true;
     }
 
-    [ObservableProperty] private WindowState _currentWindowState;
+    [ObservableProperty]
+    public partial WindowState CurrentWindowState { get; set; }
 
     [RelayCommand]
     private void ToggleFullScreen()
