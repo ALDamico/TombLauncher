@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
@@ -15,11 +14,8 @@ using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
 using TombLauncher.Updater;
-using TombLauncher.Utils;
-using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Notifications;
 
 namespace TombLauncher.Services;

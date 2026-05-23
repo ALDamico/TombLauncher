@@ -11,6 +11,7 @@ using TombLauncher.Contracts.Settings;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
+using TombLauncher.ViewModels.Notifications;
 using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;

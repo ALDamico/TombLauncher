@@ -3,13 +3,13 @@
              xmlns:loc="using:TombLauncher.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:TombLauncher.ViewModels"
              xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             xmlns:notifications="clr-namespace:TombLauncher.ViewModels.Notifications"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TombLauncher.Views.NotificationView"
-             x:DataType="viewModels:NotificationViewModel">
+             x:Class="TombLauncher.Views.Notifications.NotificationView"
+             x:DataType="notifications:NotificationViewModel">
     <Design.DataContext>
-        <viewModels:NotificationViewModel />
+        <notifications:NotificationViewModel />
     </Design.DataContext>
     
     <UserControl.Styles>

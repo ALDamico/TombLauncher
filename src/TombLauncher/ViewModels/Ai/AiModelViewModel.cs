@@ -9,6 +9,7 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
+using TombLauncher.ViewModels.Notifications;
 
 namespace TombLauncher.ViewModels.Ai;
 

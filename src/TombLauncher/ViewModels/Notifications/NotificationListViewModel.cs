@@ -4,7 +4,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace TombLauncher.ViewModels;
+namespace TombLauncher.ViewModels.Notifications;
 
 public partial class NotificationListViewModel : ViewModelBase
 {
@@ -24,8 +24,11 @@ public partial class NotificationListViewModel : ViewModelBase
         RaiseCanExecuteChanged(ClearAllCommand);
     }
 
-    [ObservableProperty] private ObservableCollection<NotificationViewModel> _notifications;
-    [ObservableProperty] private bool _hasNewItems;
+    [ObservableProperty]
+    public partial ObservableCollection<NotificationViewModel> Notifications { get; set; }
+
+    [ObservableProperty]
+    public partial bool HasNewItems { get; set; }
 
     [RelayCommand(CanExecute = nameof(CanClear))]
     private void ClearAll() => Notifications.Clear();

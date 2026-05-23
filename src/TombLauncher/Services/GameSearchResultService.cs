@@ -24,6 +24,7 @@ using TombLauncher.Installers;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
+using TombLauncher.ViewModels.Notifications;
 
 namespace TombLauncher.Services;
 

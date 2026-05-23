@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 
-namespace TombLauncher.Views;
+namespace TombLauncher.Views.Notifications;
 
 public partial class NotificationListView : UserControl
 {
