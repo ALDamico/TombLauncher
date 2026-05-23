@@ -114,7 +114,7 @@ public partial class AiChatViewModel : PageViewModel
             else
             {
                 response.Text += messageChunk.Item2;
-                fullResponse.Append(messageChunk);
+                fullResponse.Append(messageChunk.Item2);
                 if (!responseAdded)
                 {
                     MessageHistory.Add(response);
