@@ -6,7 +6,12 @@ namespace TombLauncher.ViewModels;
 
 public partial class ChartViewModel : ObservableObject
 {
-    [ObservableProperty] private Axis[] _xAxis = null!;
-    [ObservableProperty] private Axis[] _yAxis = null!;
-    [ObservableProperty] private ISeries[] _series = null!;
+    [ObservableProperty]
+    public partial Axis[] XAxis { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial Axis[] YAxis { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial ISeries[] Series { get; set; } = null!;
 }
