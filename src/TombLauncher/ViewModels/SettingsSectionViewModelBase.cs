@@ -33,24 +33,24 @@ public abstract partial class SettingsSectionViewModelBase : ObservableValidator
     }
 
     [ObservableProperty]
-    [IgnoreChanges]
-    private string _sectionTitle;
+    [field: IgnoreChanges]
+    public partial string SectionTitle { get; set; }
 
     [ObservableProperty]
-    [IgnoreChanges]
-    private PackIconRemixIconKind _sectionIcon;
+    [field: IgnoreChanges]
+    public partial PackIconRemixIconKind SectionIcon { get; set; }
 
     [ObservableProperty]
-    [IgnoreChanges]
-    private string _infoTipHeader = string.Empty;
+    [field: IgnoreChanges]
+    public partial string InfoTipHeader { get; set; } = string.Empty;
 
     [ObservableProperty]
-    [IgnoreChanges]
-    private string _infoTipContent = string.Empty;
+    [field: IgnoreChanges]
+    public partial string InfoTipContent { get; set; } = string.Empty;
 
     [ObservableProperty]
-    [IgnoreChanges]
-    private PageViewModel _settingsPage;
+    [field: IgnoreChanges]
+    public partial PageViewModel SettingsPage { get; set; }
 
     public void AcceptChanges()
     {

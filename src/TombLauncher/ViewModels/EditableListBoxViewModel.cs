@@ -45,7 +45,8 @@ public abstract partial class EditableListBoxViewModel : ObservableValidator
     [ObservableProperty]
     public partial string Header { get; set; } = null!;
 
-    [ObservableProperty] private PackIconRemixIconKind? _headerIcon;
+    [ObservableProperty]
+    public partial PackIconRemixIconKind? HeaderIcon { get; set; }
 
     [RelayCommand(CanExecute = nameof(CanAddValue))]
     private void AddValue()

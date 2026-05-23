@@ -20,7 +20,7 @@ public partial class NavigationManager : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanGoBack))]
-    private INavigableViewModel? _currentPage;
+    public partial INavigableViewModel? CurrentPage { get; set; }
 
     public bool CanGoBack => _history.Count > 0;
 
