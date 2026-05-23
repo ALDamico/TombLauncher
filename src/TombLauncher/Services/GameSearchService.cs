@@ -199,6 +199,12 @@ public class GameSearchService : IViewService
         {
             _logger.LogInformation("Started search with parameters: {Target}", target);
             var downloaders = _settingsProvider.GetActiveDownloaders();
+            if (downloaders.Count == 0)
+            {
+                await _notificationService.AddErrorNotificationAsync("NO_ACTIVE_DOWNLOADERS".GetLocalizedString(),
+                    "NO_ACTIVE_DOWNLOADERS_DESCRIPTION".GetLocalizedString(), PackIconRemixIconKind.WifiOffFill);
+                return;
+            }
             target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
             try
             {

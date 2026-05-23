@@ -467,6 +467,12 @@
     <system:String x:Key="CAMERA_DISTANCE_FROM_LARA">Distancia entre la cámara y Lara</system:String>
     <system:String x:Key="CAMERA_DISTANCE_HELP_TEXT">En los juegos clásicos de Tomb Raider, la cámara sigue a Lara a una distancia de bloque y medio, donde un bloque es un cuadrado de 1024 unidades de lado. Puedes usar esta opción para aumentar o disminuir este valor. Si eliges la opción "Personalizado", introduce el valor en unidades, no en número de bloques.</system:String>
     <system:String x:Key="CUSTOM_DISTANCE">Distancia personalizada</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_BLOCK">1 bloque</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_AND_HALF_BLOCKS">1 bloque y medio</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_BLOCKS">2 bloques</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_AND_HALF_BLOCKS">2 bloques y medio</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_THREE_BLOCKS">3 bloques</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_CUSTOM">Personalizado</system:String>
     <system:String x:Key="FOV">Campo de visión</system:String>
     <system:String x:Key="APPLY_FOV_CORRECTION">Aplicar corrección del campo de visión</system:String>
     <system:String x:Key="FOV_HELP_TEXT">En los juegos clásicos de Tomb Raider, el campo de visión horizontal es de aproximadamente 65°. Aplicar el parche de pantalla ancha sin esta corrección amplía la imagen pero mantiene el campo de visión original diseñado para 4:3, lo que puede hacer que la cámara se sienta artificialmente estrecha y claustrofóbica. Introduce la anchura de pantalla en píxeles usada en la configuración del juego (p. ej. 1920) para calcular la corrección.</system:String>
@@ -529,6 +535,7 @@
     <system:String x:Key="ABOUT_INFO">Información de la aplicación</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Haciendo copia de seguridad de las partidas guardadas...</system:String>
     <system:String x:Key="LICENSE">Licencia</system:String>
+    <system:String x:Key="WEBSITE">Sitio web</system:String>
     <system:String x:Key="LOGGING">Registro</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Abrir carpeta de registros</system:String>
     <system:String x:Key="KB_UPDATE_ERROR">Error de actualización de la base de conocimientos</system:String>
@@ -611,5 +618,7 @@
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">El descargador {0} no es accesible. Estará disponible para reintentar en aproximadamente un minuto.</system:String>
     <system:String x:Key="FAILED_TO_FETCH">Una fuente de descarga no está disponible temporalmente</system:String>
     <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">No se pudo contactar con {0} — se reintentará automáticamente en aproximadamente un minuto. Si el problema persiste, considera desactivarla en la configuración.</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS">No hay fuentes de descarga activas</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS_DESCRIPTION">No has seleccionado ninguna fuente de descarga. Habilita al menos una en la configuración.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

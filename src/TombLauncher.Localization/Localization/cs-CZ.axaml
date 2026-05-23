@@ -467,6 +467,12 @@
     <system:String x:Key="CAMERA_DISTANCE_FROM_LARA">Vzdálenost mezi kamerou a Larou</system:String>
     <system:String x:Key="CAMERA_DISTANCE_HELP_TEXT">V klasických hrách Tomb Raider kamera sleduje Laru ve vzdálenosti jednoho a půl bloku, kde jeden blok je čtverec se stranou 1024 jednotek. Toto nastavení lze použít ke zvýšení nebo snížení této hodnoty. Pokud zvolíte možnost "Vlastní", zadejte hodnotu v jednotkách, nikoli v počtu bloků.</system:String>
     <system:String x:Key="CUSTOM_DISTANCE">Vlastní vzdálenost</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_BLOCK">1 blok</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_AND_HALF_BLOCKS">1,5 bloku</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_BLOCKS">2 bloky</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_AND_HALF_BLOCKS">2,5 bloku</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_THREE_BLOCKS">3 bloky</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_CUSTOM">Vlastní</system:String>
     <system:String x:Key="FOV">Zorné pole</system:String>
     <system:String x:Key="APPLY_FOV_CORRECTION">Použít korekci zorného pole</system:String>
     <system:String x:Key="FOV_HELP_TEXT">V klasických hrách Tomb Raider je horizontální zorné pole přibližně 65°. Použití záplaty widescreen bez této korekce rozšiřuje obraz, ale zachovává původní zorné pole navržené pro 4:3, což může způsobit, že kamera bude působit nepřirozeně úzce a klaustrofobicky. Zadejte šířku obrazovky v pixelech použitou v nastavení hry (např. 1920) pro výpočet korekce.</system:String>
@@ -529,6 +535,7 @@
     <system:String x:Key="ABOUT_INFO">Informace o aplikaci</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Zálohování uložených her...</system:String>
     <system:String x:Key="LICENSE">Licence</system:String>
+    <system:String x:Key="WEBSITE">Webové stránky</system:String>
     <system:String x:Key="LOGGING">Protokolování</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Otevřít složku protokolů</system:String>
     <system:String x:Key="KB_UPDATE_ERROR">Chyba při aktualizaci znalostní báze</system:String>
@@ -611,5 +618,7 @@
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Stahovač {0} není dostupný. Akci bude možné zopakovat přibližně za minutu.</system:String>
     <system:String x:Key="FAILED_TO_FETCH">Zdroj stahování je dočasně nedostupný</system:String>
     <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Nepodařilo se dosáhnout {0} — automatický pokus bude proveden přibližně za minutu. Pokud problém přetrvává, zvažte deaktivaci tohoto zdroje v nastavení.</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS">Žádné aktivní zdroje stahování</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS_DESCRIPTION">Nevybrali jste žádné zdroje stahování. Povolte alespoň jeden v nastavení.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

@@ -467,6 +467,12 @@
     <system:String x:Key="CAMERA_DISTANCE_FROM_LARA">Odległość między kamerą a Larą</system:String>
     <system:String x:Key="CAMERA_DISTANCE_HELP_TEXT">W klasycznych grach Tomb Raider kamera podąża za Larą w odległości półtora bloku, gdzie jeden blok to kwadrat o boku 1024 jednostek. Możesz użyć tego ustawienia, aby zwiększyć lub zmniejszyć tę wartość. Jeśli wybierzesz opcję "Niestandardowy", podaj wartość w jednostkach, a nie w liczbie bloków.</system:String>
     <system:String x:Key="CUSTOM_DISTANCE">Niestandardowa odległość</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_BLOCK">1 blok</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_ONE_AND_HALF_BLOCKS">1,5 bloku</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_BLOCKS">2 bloki</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_TWO_AND_HALF_BLOCKS">2,5 bloku</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_THREE_BLOCKS">3 bloki</system:String>
+    <system:String x:Key="CAMERA_DISTANCE_PRESET_CUSTOM">Niestandardowy</system:String>
     <system:String x:Key="FOV">Pole widzenia</system:String>
     <system:String x:Key="APPLY_FOV_CORRECTION">Zastosuj korektę pola widzenia</system:String>
     <system:String x:Key="FOV_HELP_TEXT">W klasycznych grach Tomb Raider poziome pole widzenia wynosi około 65°. Zastosowanie łatki widescreen bez tej korekty poszerza obraz, ale zachowuje oryginalne pole widzenia zaprojektowane dla 4:3, co może sprawić, że kamera będzie wyglądać nienaturalnie wąsko i klaustrofobicznie. Wprowadź szerokość ekranu w pikselach używaną w konfiguracji gry (np. 1920), aby obliczyć korektę.</system:String>
@@ -529,6 +535,7 @@
     <system:String x:Key="ABOUT_INFO">Informacje o aplikacji</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Tworzenie kopii zapasowych zapisów...</system:String>
     <system:String x:Key="LICENSE">Licencja</system:String>
+    <system:String x:Key="WEBSITE">Strona internetowa</system:String>
     <system:String x:Key="LOGGING">Rejestrowanie</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Otwórz folder dzienników</system:String>
     <system:String x:Key="KB_UPDATE_ERROR">Błąd aktualizacji bazy wiedzy</system:String>
@@ -611,5 +618,7 @@
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Downloader {0} jest niedostępny. Ponowienie próby będzie możliwe za około minutę.</system:String>
     <system:String x:Key="FAILED_TO_FETCH">Źródło pobierania jest tymczasowo niedostępne</system:String>
     <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Nie można połączyć się z {0} — próba zostanie ponowiona automatycznie za około minutę. Jeśli problem się utrzymuje, rozważ wyłączenie tego źródła w ustawieniach.</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS">Brak aktywnych źródeł pobierania</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS_DESCRIPTION">Nie wybrano żadnych źródeł pobierania. Włącz przynajmniej jedno w ustawieniach.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

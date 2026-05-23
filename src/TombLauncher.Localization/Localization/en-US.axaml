@@ -537,6 +537,7 @@
     <system:String x:Key="ABOUT_INFO">Application info</system:String>
     <system:String x:Key="BACKING_UP_SAVEGAMES">Backing up savegames...</system:String>
     <system:String x:Key="LICENSE">License</system:String>
+    <system:String x:Key="WEBSITE">Website</system:String>
     <system:String x:Key="LOGGING">Logging</system:String>
     <system:String x:Key="OPEN_LOGS_FOLDER">Open logs folder</system:String>
     <system:String x:Key="KB_UPDATE_ERROR">Knowledge Base update error</system:String>
@@ -619,5 +620,7 @@
     <system:String x:Key="CIRCUIT_BREAKER_OPEN">Downloader {0} is unreachable. It will be available to retry in about a minute.</system:String>
     <system:String x:Key="FAILED_TO_FETCH">A download source is temporarily unavailable</system:String>
     <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Could not reach {0} — it will be retried automatically in about a minute. If it keeps failing, consider disabling it in the settings.</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS">No active download sources</system:String>
+    <system:String x:Key="NO_ACTIVE_DOWNLOADERS_DESCRIPTION">You haven't selected any download sources. Enable at least one in the settings.</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
