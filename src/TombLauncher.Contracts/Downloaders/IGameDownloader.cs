@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Contracts.Downloaders;
@@ -15,4 +16,6 @@ public interface IGameDownloader
     IGameSearchProvider Search { get; }
     IGameDetailProvider Details { get; }
     IGameInstaller Installer { get; }
+    
+    Regex? DetailsPageRegex { get; }
 }

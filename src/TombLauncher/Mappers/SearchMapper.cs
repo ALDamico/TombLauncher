@@ -64,6 +64,32 @@ public class SearchMapper
         };
     }
 
+    public MultiSourceGameSearchResultMetadataViewModel ToViewModel(IGameSearchResultMetadata metadata, GameSearchResultService gameSearchResultService)
+    {
+        return new MultiSourceGameSearchResultMetadataViewModel(gameSearchResultService)
+        {
+            TitlePic = metadata.TitlePic ?? "",
+            Author = metadata.Author ?? "",
+            AuthorFullName = metadata.AuthorFullName ?? "",
+            BaseUrl = metadata.BaseUrl,
+            Description = metadata.Description ?? "",
+            DetailsLink = metadata.DetailsLink ?? "",
+            Difficulty = metadata.Difficulty,
+            DownloadLink = metadata.DownloadLink ?? "",
+            Engine = metadata.Engine,
+            Length = metadata.Length,
+            Rating = metadata.Rating,
+            ReleaseDate = metadata.ReleaseDate,
+            ReviewsLink = metadata.ReviewsLink ?? "",
+            Setting = metadata.Setting ?? "",
+            SizeInMb = metadata.SizeInMb,
+            Sources = [metadata],
+            Title = metadata.Title,
+            WalkthroughLink = metadata.WalkthroughLink ?? "",
+            SourceSiteDisplayName = metadata.SourceSiteDisplayName,
+        };
+    }
+
     public MultiSourceGameSearchResultMetadataViewModel ToViewModel(IMergedGameSearchResultMetadata metadata,
         GameSearchResultService gameSearchResultService)
     {

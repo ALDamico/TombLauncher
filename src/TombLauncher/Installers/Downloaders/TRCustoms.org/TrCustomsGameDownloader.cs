@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
@@ -20,7 +21,7 @@ using TombLauncher.Installers.Downloaders.TRCustoms.org.Utils;
 
 namespace TombLauncher.Installers.Downloaders.TRCustoms.org;
 
-public class TrCustomsGameDownloader : GameDownloaderBase
+public partial class TrCustomsGameDownloader : GameDownloaderBase
 {
     public override string DisplayName => "TRCustoms.org";
     public override string BaseUrl => "https://trcustoms.org/";
@@ -59,10 +60,19 @@ public class TrCustomsGameDownloader : GameDownloaderBase
     private Dictionary<string, LevelGenreResponse> _genresMap = new();
     private readonly Dictionary<string, int> _ratingMap;
 
+    public override Regex DetailsPageRegex => DetailsRegex();
+
     public override async Task<ISearchResultPage> GetGames(DownloaderSearchPayload payload, int page, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        await InitLookups(cancellationToken);
+
+        return await FetchPage(payload, page, cancellationToken);
+    }
+
+    private async Task InitLookups(CancellationToken cancellationToken)
+    {
         if (_enginesMap.Count == 0)
         {
             var engineMapTask = FetchSupportedEngines(cancellationToken);
@@ -74,8 +84,6 @@ public class TrCustomsGameDownloader : GameDownloaderBase
             _tagsMap = tagMapTask.Result;
             _genresMap = genreMapTask.Result;
         }
-
-        return await FetchPage(payload, page, cancellationToken);
     }
 
     private async Task<TrCustomsPagedResponse<T>> GetPagedResponse<T>(string endpoint, IEnumerable<KeyValuePair<string, string?>>? trCustomsRequest = null,
@@ -189,9 +197,9 @@ public class TrCustomsGameDownloader : GameDownloaderBase
                 TitlePic = summary.Cover?.Url ?? string.Empty,
                 SizeInMb = summary.LastFile?.Size != null ? (int)Math.Ceiling(summary.LastFile.Size / (1024.0 * 1024.0)) : null,
                 ReviewCount = summary.ReviewCount,
-                ReviewsLink = $"levels/{summary.Id}/reviews".EnsureStartsWith(BaseUrl, '/'),
-                DetailsLink = $"levels/{summary.Id}".EnsureStartsWith(BaseUrl, '/'),
-                DownloadLink = summary.LastFile?.Url.EnsureStartsWith(BaseUrl, '/') ?? string.Empty
+                ReviewsLink = TrCustomsUrlUtils.GetReviewsLink(BaseUrl, summary.Id),
+                DetailsLink = TrCustomsUrlUtils.GetDetailsLink(BaseUrl, summary.Id),
+                DownloadLink = TrCustomsUrlUtils.GetDownloadLink(BaseUrl, summary.LastFile?.Url)
             };
             result.Add(metadata);
         }
@@ -321,6 +329,27 @@ public class TrCustomsGameDownloader : GameDownloaderBase
         return new SearchResultPage(result, response.LastPage);
     }
 
+    public override async Task<IGameSearchResultMetadata?> FetchDetails(string detailId, CancellationToken cancellationToken)
+    {
+        var actualId = DetailsPageRegex.Match(detailId).Groups["LEVEL_ID"].Value;
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri(TrCustomsUrlUtils.GetApiDetailsLink(BaseUrl, actualId))
+        };
+        using var response = await HttpClient.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        var data = JsonConvert.DeserializeObject<LevelSummaryResponse>(
+            await response.Content.ReadAsStringAsync(cancellationToken), _jsonSerializerSettings);
+        if (data == null)
+            return null;
+
+        await InitLookups(cancellationToken);
+        var searchResultMetadata = new List<IGameSearchResultMetadata>();
+        ParseResultPage([data], searchResultMetadata, cancellationToken);
+        return searchResultMetadata.First();
+    }
+
     public override async Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,
         IProgress<DownloadProgressInfo> downloadProgress,
         CancellationToken cancellationToken)
@@ -349,4 +378,7 @@ public class TrCustomsGameDownloader : GameDownloaderBase
     public override DownloaderFeatures SupportedFeatures => DownloaderFeatures.Rating | DownloaderFeatures.LevelName |
                                                    DownloaderFeatures.GameEngine | DownloaderFeatures.GameLength |
                                                    DownloaderFeatures.Setting;
+
+    [GeneratedRegex(@"trcustoms.org/levels/(?<LEVEL_ID>\d+)")]
+    private static partial Regex DetailsRegex();
 }

@@ -28,12 +28,24 @@ public class GameDownloadManager
     private readonly IGameMerger _merger;
     private readonly ILogger<GameDownloadManager> _logger;
 
-    public async Task<(List<IMergedGameSearchResultMetadata> Results, int? MaxTotalPages, ConcurrentBag<string> FailedDownloaders)> GetGames(
+    public async Task<DownloadManagerResult> GetGames(
         IReadOnlyList<IGameDownloader> downloaders,
         DownloaderSearchPayload searchPayload, int page)
     {
         var failedDownloaders = new ConcurrentBag<string>();
         var outputList = new List<IMergedGameSearchResultMetadata>();
+
+        foreach (var downloader in downloaders)
+        {
+            if (downloader.DetailsPageRegex != null &&
+                downloader.DetailsPageRegex.IsMatch(searchPayload.LevelName ?? ""))
+            {
+                var details =
+                    await downloader.Details.FetchDetails(searchPayload.LevelName!, _cancellationTokenSource.Token);
+                return new DownloadManagerResult() { Details = details };
+            }
+        }
+        
         var tasks = downloaders
             .Select(async d =>
             {
@@ -53,8 +65,15 @@ public class GameDownloadManager
             .ToList();
 
         await Task.WhenAll(tasks);
-
+        
         var maxTotalPages = 0;
+        
+        var result = new DownloadManagerResult()
+        {
+            Results = outputList,
+            FailedDownloaders = failedDownloaders
+        };
+
         foreach (var completedTask in tasks.Where(t => t.Result != null))
         {
             var resultPage = completedTask.Result!;
@@ -63,7 +82,9 @@ public class GameDownloadManager
                 maxTotalPages = resultPage.TotalPages.Value;
         }
 
-        return (outputList, maxTotalPages > 0 ? maxTotalPages : null, failedDownloaders);
+        result.MaxTotalPages = maxTotalPages > 0 ? maxTotalPages : null;
+
+        return result;
     }
 
     public async Task<IGameMetadata?> FetchDetails(IGameSearchResultMetadata game)
@@ -108,8 +129,6 @@ public class GameDownloadManager
             SizeInMb = game.SizeInMb,
             SourceSiteDisplayName = game.SourceSiteDisplayName
         };
-
-        //gameClone.Sources.Add(game);
 
         Merge([gameClone], allResults);
 

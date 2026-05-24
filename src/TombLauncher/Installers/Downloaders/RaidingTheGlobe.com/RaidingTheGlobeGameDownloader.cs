@@ -20,7 +20,7 @@ namespace TombLauncher.Installers.Downloaders.RaidingTheGlobe.com;
 
 public class RaidingTheGlobeGameDownloader : GameDownloaderBase
 {
-    private Dictionary<string, GameEngine> _enginesLookup = new()
+    private readonly Dictionary<string, GameEngine> _enginesLookup = new()
     {
         { "Lara Croft Tomb Raider: The Scion of Qualopec", GameEngine.TombRaider4 },
         { "Lara Croft Tomb Raider: Afterlife", GameEngine.TombRaider4 }
@@ -29,6 +29,8 @@ public class RaidingTheGlobeGameDownloader : GameDownloaderBase
     public override string DisplayName => "Raiding the Globe";
     public override string BaseUrl => "https://www.raidingtheglobe.com";
     public override DownloaderFeatures SupportedFeatures => DownloaderFeatures.LevelName;
+    public override Regex? DetailsPageRegex => null;
+
     protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         var uriBuilder = new UriBuilder(new Uri(BaseUrl));
@@ -158,6 +160,43 @@ public class RaidingTheGlobeGameDownloader : GameDownloaderBase
             TitlePic = titlePic,
             Author = game.Author,
             GameEngine = game.Engine
+        };
+    }
+
+    public override async Task<IGameSearchResultMetadata?> FetchDetails(string detailsUrl, CancellationToken cancellationToken)
+    {
+        var data = await FetchPage(new DownloaderSearchPayload(), 1, cancellationToken);
+        
+        var details = await FetchDetails(data.Results.FirstOrDefault()!, cancellationToken);
+
+        var fullUri = new UriBuilder(new Uri(BaseUrl));
+        fullUri.Path = detailsUrl;
+
+        var firstResult = data.Results.FirstOrDefault();
+        if (firstResult == null)
+            return null;
+
+        return new GameSearchResultMetadataDto()
+        {
+            BaseUrl = BaseUrl,
+            SourceSiteDisplayName = DisplayName,
+            Author = details.Author,
+            Engine = details.GameEngine,
+            Description = details.Description,
+            Length = details.Length,
+            TitlePic = details.TitlePicUrl,
+            Title = details.Title,
+            DetailsLink = firstResult.DetailsLink,
+            DownloadLink = firstResult.DownloadLink,
+            Rating = firstResult.Rating,
+            ReviewsLink = firstResult.ReviewsLink,
+            SizeInMb = firstResult.SizeInMb,
+            WalkthroughLink = firstResult.WalkthroughLink,
+            AuthorFullName = firstResult.AuthorFullName,
+            Difficulty = firstResult.Difficulty,
+            ReleaseDate = firstResult.ReleaseDate,
+            ReviewCount = firstResult.ReviewCount,
+            Setting = firstResult.Setting
         };
     }
 
