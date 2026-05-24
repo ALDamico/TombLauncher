@@ -75,21 +75,21 @@ public class GameSearchService : IViewService
         using (target.BusyScope("LOADING_IN_PROGRESS".GetLocalizedString()))
         {
             var nextPage = target.CurrentPage + 1;
-            var (nextPageResults, _, failedDownloaders) = await _gameDownloadManager.GetGames(
+            var nextPageResults = await _gameDownloadManager.GetGames(
                 target.LastSearchDownloaders!, target.LastSearchPayload!, nextPage);
 
-            foreach (var failedDownloader in failedDownloaders)
+            foreach (var failedDownloader in nextPageResults.FailedDownloaders)
             {
                 await _notificationService.AddWarningNotificationAsync("FAILED_TO_FETCH".GetLocalizedString(),
                     "FAILED_TO_FETCH_DESCRIPTION".GetLocalizedString(failedDownloader),
                     PackIconRemixIconKind.WifiOffLine);
             }
 
-            var fetchedResults = await InvokeMerger(target, nextPageResults.SelectMany(r => r.Sources).ToList());
+            var fetchedResults = await InvokeMerger(target, nextPageResults.Results.SelectMany(r => r.Sources).ToList());
 
             var gamesWithStats = await _gameDataService.GetGamesWithStats();
             var gamesByLinks = await
-                _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPageResults.SelectMany(g => g.Sources).Select(s => s.DownloadLink!).ToList(), gamesWithStats);
+                _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPageResults.Results.SelectMany(g => g.Sources).Select(s => s.DownloadLink!).ToList(), gamesWithStats);
             foreach (var game in target.FetchedResults.Where(r => r.InstalledGame == null))
             {
                 if (gamesByLinks.TryGetValue(game.DownloadLink, out var dto))
@@ -209,8 +209,16 @@ public class GameSearchService : IViewService
             try
             {
                 var searchPayloadDto = _searchPayloadMapper.ToDto(target.SearchPayload);
-                var (games, maxTotalPages, failedDownloaders) = await _gameDownloadManager.GetGames(downloaders, searchPayloadDto, 1);
-                foreach (var failedDownloader in failedDownloaders)
+                var results = await _gameDownloadManager.GetGames(downloaders, searchPayloadDto, 1);
+
+                if (results.Details != null)
+                {
+                    var vmToOpen =  _searchMapper.ToViewModel(results.Details, _gameSearchResultService);
+                    await Open(target, vmToOpen);
+                    return;
+                }
+                
+                foreach (var failedDownloader in results.FailedDownloaders)
                 {
                     await _notificationService.AddWarningNotificationAsync("FAILED_TO_FETCH".GetLocalizedString(),
                         "FAILED_TO_FETCH_DESCRIPTION".GetLocalizedString(failedDownloader),
@@ -219,9 +227,9 @@ public class GameSearchService : IViewService
                 target.LastSearchPayload = searchPayloadDto;
                 target.LastSearchDownloaders = downloaders;
                 target.CurrentPage = 1;
-                target.MaxTotalPages = maxTotalPages ?? 0;
-                var mappedGames = _searchMapper.ToViewModels(games, _gameSearchResultService).ToList();
-                var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink!)
+                target.MaxTotalPages = results.MaxTotalPages ?? 0;
+                var mappedGames = _searchMapper.ToViewModels(results.Results, _gameSearchResultService).ToList();
+                var downloadLinks = results.Results.SelectMany(g => g.Sources).Select(s => s.DownloadLink!)
                     .Where(s => s.IsNotNullOrWhiteSpace()).ToList();
                 var allGamesWithStats = await _gameDataService.GetGamesWithStats();
                 var installedGames = await _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, downloadLinks, allGamesWithStats);
