@@ -7,6 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Tomb4Plus\Furr\syntaxTREP.fln" />
+      <EmbeddedResource Include="Tomb4Plus\Furr\syntaxEarly.fln" />
+      <EmbeddedResource Include="Tomb4Plus\Furr\syntaxT4L.fln" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\TombLauncher.Contracts\TombLauncher.Contracts.csproj" />
       <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
     </ItemGroup>
