@@ -59,7 +59,6 @@ public static partial class StringExtensions
     {
         return string.IsNullOrWhiteSpace(s);
     }
-
     
     public static bool IsNotNullOrWhiteSpace([NotNullWhen(true)] this string? s)
     {
