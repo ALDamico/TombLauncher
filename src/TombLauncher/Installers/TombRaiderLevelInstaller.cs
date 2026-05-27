@@ -9,9 +9,7 @@ using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Contracts.Settings;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;
-using TombLauncher.Services;
 
 namespace TombLauncher.Installers;
 

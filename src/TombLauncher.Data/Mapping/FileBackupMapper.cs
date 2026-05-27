@@ -1,4 +1,8 @@
+using TombLauncher.Contracts.Downloaders;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
+using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Utils;
 using TombLauncher.Data.Models;
 
 namespace TombLauncher.Data.Mapping;
@@ -85,4 +89,20 @@ public class FileBackupMapper
     }
 
     public List<FileBackup> ToFileBackups(IEnumerable<SavegameBackupDto> dtos) => dtos.Select(ToFileBackup).ToList();
+
+    public FileBackup? ToGameExecutableFileBackup(IGameMetadata gameMetadata, byte[] executableBytes)
+    {
+        if (gameMetadata.ExecutablePath.IsNullOrWhiteSpace())
+            return null;
+
+        return new FileBackup()
+        {
+            BackedUpOn = DateTime.Now,
+            Data = executableBytes,
+            FileName = gameMetadata.ExecutablePath,
+            FileType = FileType.GameExecutable,
+            GameId = gameMetadata.Id,
+            Md5 = CryptoUtils.ComputeMd5Hash(executableBytes),
+        };
+    }
 }
