@@ -31,7 +31,7 @@
         </StackPanel>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Classes="style" FontSize="48" FontFamily="{StaticResource TombRaiderFont}">TOMB LAUNCHER</TextBlock>
-            <controls:RingLoader Height="64" Width="64" />
+            <controls:RingLoader Diameter="64" />
             <TextBlock Classes="style" Text="{Binding ElementName=SplashScreenRoot, Path=StatusMessage}"></TextBlock>
         </StackPanel>
     </DockPanel>
