@@ -50,8 +50,8 @@
                 </TextBox.InnerLeftContent>
             </TextBox>
         </DockPanel>
-        <StackPanel Margin="32, 0" DockPanel.Dock="Bottom" Orientation="Horizontal" IsVisible="{Binding IsGenerating}">
-            <controls:RingLoader Height="32" Width="32"></controls:RingLoader>
+        <StackPanel Margin="32, 0, 32, 8" DockPanel.Dock="Bottom" Orientation="Horizontal" IsVisible="{Binding IsGenerating}">
+            <controls:RingLoader Diameter="32"></controls:RingLoader>
             <TextBlock Margin="8, 4" VerticalAlignment="Center" FontStyle="Italic" Classes="text-muted"
                        helpers:FadeOnTextChange.IsEnabled="True"
                        Text="{Binding CurrentStatusText}">
