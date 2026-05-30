@@ -8,6 +8,7 @@
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         xmlns:loc="using:TombLauncher.Localization"
         xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+        xmlns:services="clr-namespace:TombLauncher.Services"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TombLauncher.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
@@ -147,15 +148,8 @@
                                          Margin="15" 
                                          Content="{Binding CurrentPage}">
                 <TransitioningContentControl.PageTransition>
-                    <CrossFade Duration="0:00:00.25" />
+                    <CrossFade Duration="{x:Static services:NavigationConstants.TransitionDuration}" />
                 </TransitioningContentControl.PageTransition>
-                <TransitioningContentControl.IsEnabled>
-                    <Binding Path="CurrentPage.IsBusy" Converter="{x:Static ObjectConverters.Equal}">
-                        <Binding.ConverterParameter>
-                            <system:Boolean>False</system:Boolean>
-                        </Binding.ConverterParameter>
-                    </Binding>
-                </TransitioningContentControl.IsEnabled>
             </TransitioningContentControl>
         </Grid>
     </SplitView>

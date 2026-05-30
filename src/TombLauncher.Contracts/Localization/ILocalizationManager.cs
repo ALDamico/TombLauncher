@@ -11,7 +11,7 @@ public interface ILocalizationManager : INotifyPropertyChanged
     string DateOnlyFormat { get; }
     string DateTimeFormat { get; }
     string GetLanguagesFolder();
-    List<AvailableLanguageDto> GetSupportedLanguages();
+    Task<List<AvailableLanguageDto>> GetSupportedLanguages();
     void ChangeLanguage(CultureInfo targetLanguage);
     Dictionary<string, string> GetSubsetInvertedByPrefix(string prefix);
     string GetLocalizedString(string key, params object[] parms);

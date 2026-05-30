@@ -229,7 +229,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
     [RelayCommand]
     private async Task OpenSettings()
     {
-        await _navigationManager.NavigateTo(SettingsItem.ViewModelType!);
+        await _navigationManager.NavigateTo<SettingsPageViewModel>();
         SelectedMenuItem = SettingsItem;
         IsSettingsOpen = true;
     }
@@ -237,7 +237,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
     [RelayCommand]
     private async Task OpenAboutPage()
     {
-        await _navigationManager.NavigateTo(AboutPageItem.ViewModelType!);
+        await _navigationManager.NavigateTo<AboutPageViewModel>();
         SelectedMenuItem = AboutPageItem;
         IsAboutPageOpen = true;
     }

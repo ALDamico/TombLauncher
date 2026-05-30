@@ -38,7 +38,7 @@ public class LocalizationManager : ILocalizationManager
         return $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/{_localizationRelativePath}";
     }
 
-    public List<AvailableLanguageDto> GetSupportedLanguages()
+    public async Task<List<AvailableLanguageDto>> GetSupportedLanguages()
     {
         var cultureInfos = new List<AvailableLanguageDto>();
         var languagesFolder = GetLanguagesFolder();
@@ -59,6 +59,7 @@ public class LocalizationManager : ILocalizationManager
                     CountryIso2Code = countryCode
                 };
                 cultureInfos.Add(dto);
+                await Task.Yield();
             }
             catch (CultureNotFoundException)
             {

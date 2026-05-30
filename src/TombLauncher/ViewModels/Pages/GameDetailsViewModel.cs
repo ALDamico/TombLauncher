@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EnumsNET;
@@ -19,7 +20,8 @@ namespace TombLauncher.ViewModels.Pages;
 
 public partial class GameDetailsViewModel : PageViewModel
 {
-    public GameDetailsViewModel(GameDetailsService gameDetailsService, IPlatformSpecificFeatures platformSpecificFeatures)
+    public GameDetailsViewModel(GameDetailsService gameDetailsService,
+        IPlatformSpecificFeatures platformSpecificFeatures)
     {
         _gameDetailsService = gameDetailsService;
         _platformSpecificFeatures = platformSpecificFeatures;
@@ -28,10 +30,9 @@ public partial class GameDetailsViewModel : PageViewModel
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ReadWalkthroughCommand))]
     public partial bool AskForConfirmationBeforeOpeningWalkthrough { get; set; }
-    [ObservableProperty]
-    public partial ObservableCollection<CommandViewModel> SetupCommands { get; set; } = [];
-    [ObservableProperty]
-    public partial ObservableCollection<FileInfo> DocumentationFiles { get; set; } = [];
+
+    [ObservableProperty] public partial ObservableCollection<CommandViewModel> SetupCommands { get; set; } = [];
+    [ObservableProperty] public partial ObservableCollection<FileInfo> DocumentationFiles { get; set; } = [];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanOpenChat))]
@@ -40,12 +41,9 @@ public partial class GameDetailsViewModel : PageViewModel
     [NotifyPropertyChangedFor(nameof(NativeGamepadSupport))]
     public partial GameWithStatsViewModel Game { get; set; } = null!;
 
-    [ObservableProperty]
-    public partial int DescriptionFontSize { get; set; } = 18;
-    [ObservableProperty]
-    public partial ObservableCollection<GameLinkViewModel> WalkthroughLinks { get; set; } = [];
-    [ObservableProperty]
-    public partial ObservableCollection<CommandViewModel> Patchers { get; set; } = [];
+    [ObservableProperty] public partial int DescriptionFontSize { get; set; } = 18;
+    [ObservableProperty] public partial ObservableCollection<GameLinkViewModel> WalkthroughLinks { get; set; } = [];
+    [ObservableProperty] public partial ObservableCollection<CommandViewModel> Patchers { get; set; } = [];
 
     public bool CanOpenChat => _gameDetailsService.CanOpenChat(Game?.GameMetadata);
     public List<string> EnabledPatterns { get; set; } = [];
@@ -66,29 +64,37 @@ public partial class GameDetailsViewModel : PageViewModel
         }
     }
 
-    public override async Task OnNavigatedTo(object? parameter)
+    public override Task OnNavigatingTo(object? parameter)
     {
         if (parameter is GameWithStatsViewModel game)
-        {
             Game = game;
-        }
-
-        if (parameter == null)
-        {
-            Game.GameMetadata = await _gameDetailsService.GetGame(Game.GameMetadata.Id, CancellationToken.None);
-        }
-
-        _gameDetailsService.InitializeSettings(this);
-        InitSetupCommands();
-        InitPatchers();
-
-        if (Game.GameMetadata is { IsInstalled: true, InstallDirectory: not null })
-            DocumentationFiles = _gameDetailsService
-                .GetDocumentationFiles(Game.GameMetadata.InstallDirectory, EnabledPatterns, IgnoredFolders)
-                .ToObservableCollection();
-        await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
+        return Task.CompletedTask;
     }
-    
+
+    public override async Task OnNavigatedTo(object? parameter)
+    {
+        using (BusyScope("FETCHING_DETAILS_FOR".GetLocalizedString(Game.GameMetadata.Title)))
+        {
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                if (parameter == null)
+                {
+                    Game.GameMetadata = await _gameDetailsService.GetGame(Game.GameMetadata.Id, CancellationToken.None);
+                }
+
+                _gameDetailsService.InitializeSettings(this);
+                InitSetupCommands();
+                InitPatchers();
+
+                if (Game.GameMetadata is { IsInstalled: true, InstallDirectory: not null })
+                    DocumentationFiles = _gameDetailsService
+                        .GetDocumentationFiles(Game.GameMetadata.InstallDirectory, EnabledPatterns, IgnoredFolders)
+                        .ToObservableCollection();
+                await _gameDetailsService.FetchLinks(this, LinkType.Walkthrough);
+            });
+        }
+    }
+
     [RelayCommand(CanExecute = nameof(CanBrowseFolder))]
     private void BrowseFolder()
     {
@@ -110,8 +116,7 @@ public partial class GameDetailsViewModel : PageViewModel
             await _gameDetailsService.OpenWalkthrough(link.Link, AskForConfirmationBeforeOpeningWalkthrough);
     }
 
-    [ObservableProperty]
-    public partial ICommand? InstallCommand { get; set; }
+    [ObservableProperty] public partial ICommand? InstallCommand { get; set; }
 
     [RelayCommand]
     private async Task OpenLaunchOptions() => await _gameDetailsService.OpenLaunchOptions(this);
@@ -161,8 +166,8 @@ public partial class GameDetailsViewModel : PageViewModel
         {
             patchers.Add(new CommandViewModel()
             {
-                Command = OpenWidescreenPatcherCommand, 
-                Text = "WIDESCREEN_PATCH".GetLocalizedString(), 
+                Command = OpenWidescreenPatcherCommand,
+                Text = "WIDESCREEN_PATCH".GetLocalizedString(),
                 Icon = PackIconRemixIconKind.AspectRatioLine
             });
         }
@@ -187,7 +192,7 @@ public partial class GameDetailsViewModel : PageViewModel
                 Icon = PackIconRemixIconKind.Window2Fill,
                 Text = "TOGGLE_FULLSCREEN_BORDER_FIX".GetLocalizedString()
             };
-            
+
             patchers.Add(command);
         }
 

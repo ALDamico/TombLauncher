@@ -53,7 +53,6 @@ public class SettingsPageService : IViewService
     private readonly ILayeredAppConfiguration _appConfiguration;
     private readonly IServiceProvider _serviceProvider;
     public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
-    public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly SettingsMapper _mapper;
     private readonly ILogger<SettingsPageService> _logger;
     private readonly ThemeManager _themeManager;
@@ -61,9 +60,9 @@ public class SettingsPageService : IViewService
     private readonly ISettingsProvider _settingsProvider;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
 
-    public List<ApplicationLanguageViewModel> GetSupportedLanguages()
+    public async Task<List<ApplicationLanguageViewModel>> GetSupportedLanguages()
     {
-        var supportedLanguages = LocalizationManager.GetSupportedLanguages();
+        var supportedLanguages = await LocalizationManager.GetSupportedLanguages();
         return _mapper.ToViewModels(supportedLanguages);
     }
 

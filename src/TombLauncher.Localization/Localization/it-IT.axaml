@@ -620,5 +620,7 @@
     <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Impossibile raggiungere {0} — verrà ritentato automaticamente tra circa un minuto. Se il problema persiste, valuta di disabilitarla nelle impostazioni.</system:String>
     <system:String x:Key="NO_ACTIVE_DOWNLOADERS">Nessuna sorgente di download attiva</system:String>
     <system:String x:Key="NO_ACTIVE_DOWNLOADERS_DESCRIPTION">Non hai selezionato nessuna sorgente di download. Abilitane almeno una nelle impostazioni.</system:String>
+    <system:String x:Key="FETCHING_DETAILS_FOR">Recupero dei dettagli di {0} in corso...</system:String>
+    <system:String x:Key="LOADING_SETTINGS">Caricamento impostazioni in corso...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>

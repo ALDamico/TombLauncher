@@ -622,5 +622,7 @@
     <system:String x:Key="FAILED_TO_FETCH_DESCRIPTION">Could not reach {0} — it will be retried automatically in about a minute. If it keeps failing, consider disabling it in the settings.</system:String>
     <system:String x:Key="NO_ACTIVE_DOWNLOADERS">No active download sources</system:String>
     <system:String x:Key="NO_ACTIVE_DOWNLOADERS_DESCRIPTION">You haven't selected any download sources. Enable at least one in the settings.</system:String>
+    <system:String x:Key="FETCHING_DETAILS_FOR">Fetching details for {0}...</system:String>
+    <system:String x:Key="LOADING_SETTINGS">Loading settings...</system:String>
     <!-- ReSharper restore InconsistentNaming -->
 </ResourceDictionary>
