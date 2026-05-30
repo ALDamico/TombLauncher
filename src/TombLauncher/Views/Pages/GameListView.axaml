@@ -8,6 +8,7 @@
              xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
              xmlns:views="clr-namespace:TombLauncher.Views"
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
              x:Class="TombLauncher.Views.Pages.GameListView"
              x:DataType="pages:GameListViewModel">
     <Design.DataContext>
@@ -47,15 +48,11 @@
                 </ToggleButton.Content>
             </ToggleButton>
         </WrapPanel>
-        <StackPanel Grid.Row="2" HorizontalAlignment="Center"
-                    IsVisible="{Binding Games, Converter={StaticResource CollectionEmptyToVisibilityConverter}}"
-                    Orientation="Horizontal" VerticalAlignment="Center">
-            <Image Source="/Assets/Lara_Croft_Flashlight.png" Height="320"/>
-            <StackPanel Orientation="Vertical">
-                <TextBlock FontSize="20" FontWeight="DemiBold" TextAlignment="Center" HorizontalAlignment="Center" Text="{loc:Translate NO_GAMES}" />
-                <TextBlock FontStyle="Italic" TextAlignment="Center" HorizontalAlignment="Center" Text="{loc:Translate TRY_ADDING_ONE}"/>
-            </StackPanel>
-        </StackPanel>
+        <controls:EmptyStateView Grid.Row="2" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                 IsVisible="{Binding Games, Converter={StaticResource CollectionEmptyToVisibilityConverter}}" 
+                                 Icon="PuzzleLine"
+                                 Title="{loc:Translate NO_GAMES}"
+                                 Subtitle="{loc:Translate TRY_ADDING_ONE}" />
         <views:GamesDataGridView Grid.Row="2" DataContext="{Binding .}" IsVisible="{Binding !ShowAsGrid}"/>
         <views:GamesGridView Grid.Row="2" DataContext="{Binding .}" IsVisible="{Binding ShowAsGrid}"/>
     </Grid>

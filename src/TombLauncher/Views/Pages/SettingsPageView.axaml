@@ -30,12 +30,25 @@
                    Text="{loc:Translate SETTINGS, Casing=Upper}" />
         <ScrollViewer Grid.Row="1">
             <ItemsControl ItemsSource="{Binding Sections}">
+                
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <views:SettingsSectionViewBase Margin="0, 0, 30, 0" DataContext="{Binding .}"/>
+                        <views:SettingsSectionViewBase Margin="0, 0, 30, 0" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            <!--
+            <ItemsRepeater ItemsSource="{Binding Sections}">
+                <ItemsRepeater.Layout>
+                    <StackLayout />
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <views:SettingsSectionViewBase Margin="0, 0, 30, 0" DataContext="{Binding .}"/>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+            -->
         </ScrollViewer>
 
         <DockPanel Grid.Row="2" LastChildFill="False" Margin="0,8,30,0">

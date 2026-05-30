@@ -14,12 +14,12 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
 {
     private readonly IProgress<PageBusyState> _progress;
 
-    public virtual Task OnNavigatedTo(object parameter)
+    public virtual Task OnNavigatingTo(object parameter)
     {
         return Task.CompletedTask;
     }
 
-    public virtual Task OnNavigatingFrom()
+    public virtual Task OnNavigatedTo(object parameter)
     {
         return Task.CompletedTask;
     }
