@@ -11,6 +11,7 @@ public class TrlePatchExtractor
     private readonly ILogger<TrlePatchExtractor> _logger;
     private const short DefaultBarWidth = 150;
     private const byte DefaultBarHeight = 12;
+    private const short DefaultAirBarOffset = 490;
 
     public TrlePatchExtractor(ILogger<TrlePatchExtractor> logger)
     {
@@ -100,7 +101,27 @@ public class TrlePatchExtractor
 
     private BarStyle? ReadAirBarInfo(BinaryReader reader, GradientType gradientType)
     {
-        throw new NotImplementedException();
+        var airBarInfo = new BarStyle();
+
+        var airBarMainColor = reader.GetBgrColorAtAddress(0x0007B565);
+        var airBarFadeColor = reader.GetBgrColorAtAddress(0x0007B56D);
+
+        if (airBarMainColor.R != 0 || airBarMainColor.G != 0 || airBarMainColor.B != 255 ||
+            airBarFadeColor.R != 0 || airBarFadeColor.G != 0 || airBarFadeColor.B != 0 ||
+            gradientType != GradientType.Normal)
+            ConstructBar(airBarInfo, airBarMainColor, airBarFadeColor, gradientType);
+        
+        UpdateBarBackgroundColors(reader, airBarInfo);
+        
+        airBarInfo.Width = reader.ReadShortAt(0x0007B579).NullIf(DefaultBarWidth);
+        airBarInfo.Height = reader.ReadByteAt(0x0007B575).NullIf(DefaultBarHeight);
+        airBarInfo.XOffset = reader.ReadShortAt(0x0007B57F).NullIf(DefaultAirBarOffset);
+        airBarInfo.IsAnimated = reader.CompareDataAtAddress(0x0007B587, [0x95, 0xD7]).NullIf(false);
+
+        if (airBarInfo.HasAnyValue())
+            return airBarInfo;
+
+        return null;
     }
 
     private BarStyle? ReadPoisonBarInfo(BinaryReader reader, GradientType gradientType)
