@@ -9,6 +9,8 @@ namespace TombLauncher.Patchers.Tomb4Plus.Extractors;
 public class TrlePatchExtractor
 {
     private readonly ILogger<TrlePatchExtractor> _logger;
+    private const short DefaultBarWidth = 150;
+    private const byte DefaultBarHeight = 12;
 
     public TrlePatchExtractor(ILogger<TrlePatchExtractor> logger)
     {
@@ -103,7 +105,37 @@ public class TrlePatchExtractor
 
     private BarStyle? ReadPoisonBarInfo(BinaryReader reader, GradientType gradientType)
     {
-        throw new NotImplementedException();
+        var poisonBarInfo = new BarStyle();
+        var poisonBarMainColor = reader.GetBgrColorAtAddress(0x0007B5B0);
+        var poisonBarFadeColor = reader.GetBgrColorAtAddress(0x0007B5BA);
+        var poisonBarAlternativeColor = reader.GetBgrColorAtAddress(0x0007B5AB);
+
+        if (poisonBarMainColor.R != 255 || poisonBarMainColor.G != 0 || poisonBarMainColor.B != 0 ||
+            poisonBarFadeColor.R != 0 || poisonBarFadeColor.G != 0 || poisonBarFadeColor.B != 0 ||
+            poisonBarAlternativeColor.R != 0 || poisonBarAlternativeColor.G != 255 ||
+            poisonBarAlternativeColor.B != 0 || gradientType != GradientType.Normal)
+        {
+            poisonBarMainColor = new ColorRgb()
+            {
+                R = poisonBarAlternativeColor.R,
+                G = poisonBarAlternativeColor.G,
+                B = poisonBarAlternativeColor.B,
+            };
+            
+            ConstructBar(poisonBarInfo, poisonBarMainColor, poisonBarFadeColor, gradientType);
+        }
+        
+        UpdateBarBackgroundColors(reader, poisonBarInfo);
+
+
+        poisonBarInfo.Width = reader.ReadShortAt(0x0007B5C5).NullIf(DefaultBarWidth);
+        poisonBarInfo.Height = reader.ReadByteAt(0x0007B5C3).NullIf(DefaultBarHeight);
+        poisonBarInfo.IsAnimated = reader.CompareDataAtAddress(0x0007B5CC, [0x50, 0xD7]).NullIf(false);
+
+        if (poisonBarInfo.HasAnyValue())
+            return poisonBarInfo;
+
+        return null;
     }
 
     private BarStyle? ReadHealthBarInfo(BinaryReader reader, GradientType gradientType)
@@ -122,11 +154,9 @@ public class TrlePatchExtractor
 
         UpdateBarBackgroundColors(reader, healthBarInfo);
 
-        const short defaultHealthBarWidth = 150;
-        healthBarInfo.Width = reader.ReadShortAt(0x0007B5C5).NullIf(defaultHealthBarWidth);
+        healthBarInfo.Width = reader.ReadShortAt(0x0007B5C5).NullIf(DefaultBarWidth);
 
-        const byte defaultHealthBarHeight = 12;
-        healthBarInfo.Height = reader.ReadByteAt(0x0007B5C3).NullIf(defaultHealthBarHeight);
+        healthBarInfo.Height = reader.ReadByteAt(0x0007B5C3).NullIf(DefaultBarHeight);
 
         healthBarInfo.IsAnimated = reader.CompareDataAtAddress(0x0007B5CC, [0x50, 0xD7]).NullIf(false);
         
