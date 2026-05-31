@@ -96,7 +96,27 @@ public class TrlePatchExtractor
 
     private BarStyle? ReadSprintBarInfo(BinaryReader reader, GradientType gradientType)
     {
-        throw new NotImplementedException();
+        var sprintBarInfo = new BarStyle();
+
+        var sprintBarMainColor = reader.GetBgrColorAtAddress(0x0007B523);
+        var sprintBarFadeColor = reader.GetBgrColorAtAddress(0x0007B528);
+        
+        if (sprintBarMainColor.R != 0 || sprintBarMainColor.G != 255 || sprintBarMainColor.B != 0 ||
+            sprintBarFadeColor.R != 0 || sprintBarFadeColor.G != 0 || sprintBarFadeColor.B != 0 ||
+            gradientType != GradientType.Normal)
+            ConstructBar(sprintBarInfo, sprintBarMainColor, sprintBarFadeColor, gradientType);
+        
+        UpdateBarBackgroundColors(reader, sprintBarInfo);
+
+        sprintBarInfo.Width = reader.ReadShortAt(0x0007B538).NullIf(DefaultBarWidth);
+        sprintBarInfo.Height = reader.ReadByteAt(0x0007B536).NullIf(DefaultBarHeight);
+        sprintBarInfo.XOffset = reader.ReadShortAt(0x0007B531).NullIf(DefaultAirBarOffset);
+
+        sprintBarInfo.IsAnimated = reader.CompareDataAtAddress(0x0007B541, [0xDB, 0xD7]).NullIf(false);
+
+        if (sprintBarInfo.HasAnyValue())
+            return sprintBarInfo;
+        return null;
     }
 
     private BarStyle? ReadAirBarInfo(BinaryReader reader, GradientType gradientType)
