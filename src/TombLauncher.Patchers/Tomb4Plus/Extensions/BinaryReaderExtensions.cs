@@ -1,3 +1,4 @@
+using System.Text;
 using TombLauncher.Patchers.Tomb4Plus.Models;
 
 namespace TombLauncher.Patchers.Tomb4Plus.Extensions;
@@ -44,6 +45,38 @@ public static class BinaryReaderExtensions
             G = rgbBytes[1],
             B = rgbBytes[2]
         };
+    }
+
+    public static string ReadCString(this BinaryReader reader)
+    {
+        var sb = new StringBuilder();
+
+        byte b;
+        do
+        {
+            b = reader.ReadByte();
+            if (b != 0)
+                sb.Append((char)b);
+        } while (b != 0);
+        
+        return sb.ToString();
+    }
+
+    public static void SkipBytes(this BinaryReader reader, int bytes)
+    {
+        reader.BaseStream.Seek(bytes, SeekOrigin.Current);
+    }
+
+    public static ColorRgb GetBgrColorAtAddress(this BinaryReader reader, long startAddress)
+    {
+        reader.Seek(startAddress);
+        return reader.ReadBgr();
+    }
+
+    public static ColorRgb GetRgbColorAtAddress(this BinaryReader reader, long startAddress)
+    {
+        reader.Seek(startAddress);
+        return reader.ReadRgb();
     }
 
     public static void Seek(this BinaryReader reader, long startAddress)
