@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -29,6 +30,7 @@ public abstract class GameDownloaderBase : IGameDownloader, IGameSearchProvider,
     IGameSearchProvider IGameDownloader.Search => this;
     IGameDetailProvider IGameDownloader.Details => this;
     IGameInstaller IGameDownloader.Installer => this;
+    public virtual Regex? DetailsPageRegex => null;
 
     // IGameSearchProvider — stateless: all state passed as parameters
     public virtual Task<ISearchResultPage> GetGames(DownloaderSearchPayload payload, int page, CancellationToken cancellationToken)
@@ -41,6 +43,8 @@ public abstract class GameDownloaderBase : IGameDownloader, IGameSearchProvider,
 
     // IGameDetailProvider
     public abstract Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken);
+    public virtual Task<IGameSearchResultMetadata?> FetchDetails(string detailsUrl, CancellationToken cancellationToken)
+        => Task.FromResult<IGameSearchResultMetadata?>(null);
 
     // IGameInstaller
     public abstract Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,

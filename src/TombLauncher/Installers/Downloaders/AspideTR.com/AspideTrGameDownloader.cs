@@ -21,7 +21,7 @@ using UtfUnknown;
 
 namespace TombLauncher.Installers.Downloaders.AspideTR.com;
 
-public class AspideTrGameDownloader : GameDownloaderBase
+public partial class AspideTrGameDownloader : GameDownloaderBase
 {
     public AspideTrGameDownloader(IHttpClientFactory httpClientFactory, Dictionary<string, string> classMappings, ILogger<AspideTrGameDownloader> logger) 
         : base(httpClientFactory, logger)
@@ -31,7 +31,6 @@ public class AspideTrGameDownloader : GameDownloaderBase
 
     public override string DisplayName => "AspideTR";
     public override string BaseUrl => "https://www.aspidetr.com/";
-
 
     private readonly Dictionary<GameEngine, int?> _gameEngineMappings = new()
     {
@@ -45,7 +44,6 @@ public class AspideTrGameDownloader : GameDownloaderBase
     };
 
     private readonly Dictionary<string, string> _classMappings;
-
 
     private async Task ParsePage(IDocument htmlDocument, List<IGameSearchResultMetadata> result)
     {
@@ -84,7 +82,7 @@ public class AspideTrGameDownloader : GameDownloaderBase
             var ratings = headerNode.SelectNodesFromElement("./div[@class='stars']/a/i");
             if (ratings.IsNotNullOrEmpty())
             {
-                searchResult.Rating = ratings.Count(n => n.HasClass("fa-star")) * 2 +
+                searchResult.Rating = (ratings.Count(n => n.HasClass("fa-star")) * 2) +
                                       ratings.Count(n => n.HasClass("fa-star-half-o"));
             }
 
@@ -154,7 +152,6 @@ public class AspideTrGameDownloader : GameDownloaderBase
         return targetEncoding;
     }
 
-
     protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         var result = new List<IGameSearchResultMetadata>();
@@ -199,12 +196,17 @@ public class AspideTrGameDownloader : GameDownloaderBase
         return HttpClient.DownloadAsync(metadata.DownloadLink!, stream, downloadProgress, cancellationToken);
     }
 
+    private async Task<IDocument> FetchDetailPage(string absoluteUrl, CancellationToken cancellationToken)
+    {
+        var html = await HttpClient.GetStringAsync(absoluteUrl, cancellationToken);
+        return await AppUtils.OpenDocumentFromContent(html, cancellationToken);
+    }
+
     public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         var detailsLink = new Uri(new Uri(BaseUrl), game.DetailsLink).ToString();
-        var detailsPage = await HttpClient.GetStringAsync(detailsLink, cancellationToken);
-        var htmlDocument = await AppUtils.OpenDocumentFromContent(detailsPage, cancellationToken);
+        var htmlDocument = await FetchDetailPage(detailsLink, cancellationToken);
         var dto = new GameMetadataDto()
         {
             Author = game.Author,
@@ -266,7 +268,6 @@ public class AspideTrGameDownloader : GameDownloaderBase
             }
         }
 
-
         return flags;
     }
 
@@ -289,5 +290,77 @@ public class AspideTrGameDownloader : GameDownloaderBase
         if (lastListItem == null) 
             return 1;
         return int.TryParse(lastListItem.SelectSingleNodeFromElement("./a")?.TextContent, out var val) ? val : 1;
+    }
+
+    [GeneratedRegex(@"www\.aspidetr\.com/trle/levels/")]
+    private static partial Regex DetailsPageRgx();
+
+    public override Regex DetailsPageRegex => DetailsPageRgx();
+
+    public override async Task<IGameSearchResultMetadata?> FetchDetails(string detailsUrl, CancellationToken cancellationToken)
+    {
+        var htmlDocument = await FetchDetailPage(detailsUrl, cancellationToken);
+
+        var metadata = new GameSearchResultMetadataDto
+        {
+            BaseUrl = BaseUrl,
+            SourceSiteDisplayName = DisplayName,
+            DetailsLink = detailsUrl
+        };
+
+        var titleNode = htmlDocument.Body.SelectSingleNodeFromElement("//h1[@class='level-title']");
+        if (titleNode != null)
+            metadata.Title = titleNode.TextContent.Trim();
+
+        var authorNodes = htmlDocument.Body.SelectNodesFromElement("//header[@class='level-header']/em/a");
+        if (authorNodes.IsNotNullOrEmpty())
+            metadata.Author = string.Join(", ", authorNodes.Select(n => n.TextContent.Trim()));
+
+        var dateNode = htmlDocument.Body.SelectSingleNodeFromElement("//time[contains(@class,'entry-date')]");
+        if (dateNode != null && DateTime.TryParse(dateNode.GetAttributeValue("datetime"), out var releaseDate))
+            metadata.ReleaseDate = releaseDate;
+
+        var engineTypeNode = htmlDocument.Body.SelectSingleNodeFromElement("//div[contains(@class,'level-meta')]");
+        if (engineTypeNode != null)
+        {
+            var innerText = engineTypeNode.TextContent.Remove(" ");
+            var engineMatch = new Regex(@"((TombRaider\d|TEN))").Match(innerText);
+            if (engineMatch.Success)
+            {
+                Enum.TryParse<GameEngine>(engineMatch.Groups[1].Value, true, out var engine);
+                metadata.Engine = engine;
+            }
+        }
+
+        var ratings = htmlDocument.Body.SelectNodesFromElement("//div[@class='stars']/a/i");
+        if (ratings.IsNotNullOrEmpty())
+            metadata.Rating = (ratings.Count(n => n.HasClass("fa-star")) * 2) +
+                              ratings.Count(n => n.HasClass("fa-star-half-o"));
+
+        var descriptionDiv = htmlDocument.Body.SelectSingleNodeFromElement("//div[contains(@class,'level-content') and contains(@class,'entry-content')]");
+        if (descriptionDiv != null)
+            metadata.Description = descriptionDiv.GetInnerHtmlOrEmpty().Trim();
+
+        var buttonsContainer = htmlDocument.Body.SelectSingleNodeFromElement("//div[contains(@class,'infos-buttons')]");
+        var buttonsLinks = buttonsContainer?.SelectNodesFromElement("./a");
+        if (buttonsLinks.IsNotNullOrEmpty())
+        {
+            foreach (var link in buttonsLinks)
+            {
+                var href = link.GetAttributeValue("href");
+                if (link.HasClass("reviews") && href != "#")
+                    metadata.ReviewsLink = href.EnsureStartsWith(BaseUrl, '/');
+                else if (link.HasClass("walkthroughs") && href != "#")
+                    metadata.WalkthroughLink = href.EnsureStartsWith(BaseUrl, '/');
+                else if (link.HasClass("download"))
+                    metadata.DownloadLink = href.EnsureStartsWith(BaseUrl, '/');
+            }
+        }
+
+        var galleryImg = htmlDocument.Body.SelectSingleNodeFromElement("//div[@class='level-gallery']//img");
+        if (galleryImg != null)
+            metadata.TitlePic = galleryImg.GetAttributeValue("src");
+
+        return metadata;
     }
 }

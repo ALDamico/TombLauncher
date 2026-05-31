@@ -18,7 +18,7 @@ using TombLauncher.Utils;
 
 namespace TombLauncher.Installers.Downloaders.TRLE.net;
 
-public class TrleGameDownloader : GameDownloaderBase
+public partial class TrleGameDownloader : GameDownloaderBase
 {
     public TrleGameDownloader(IHttpClientFactory httpClientFactory, ILogger<TrleGameDownloader> logger) : base(httpClientFactory, logger)
     {
@@ -191,12 +191,17 @@ public class TrleGameDownloader : GameDownloaderBase
         return HttpClient.DownloadAsync(metadata.DownloadLink!, stream, downloadProgress, cancellationToken);
     }
 
+    private async Task<IDocument> FetchDetailPage(string absoluteUrl, CancellationToken cancellationToken)
+    {
+        var html = await HttpClient.GetStringAsync(absoluteUrl, cancellationToken);
+        return await AppUtils.OpenDocumentFromContent(html, cancellationToken);
+    }
+
     public override async Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game,
         CancellationToken cancellationToken)
     {
         var detailsUrl = new Uri(new Uri(BaseUrl), game.DetailsLink).ToString();
-        var detailsPage = await HttpClient.GetStringAsync(detailsUrl, cancellationToken);
-        var htmlDocument = await AppUtils.OpenDocumentFromContent(detailsPage, cancellationToken);
+        var htmlDocument = await FetchDetailPage(detailsUrl, cancellationToken);
         var metadata = new GameMetadataDto
         {
             Author = game.Author,
@@ -267,4 +272,97 @@ public class TrleGameDownloader : GameDownloaderBase
             Idx = (pageNumber - 1) * RowsPerPage
         };
     }
+
+    public override Regex DetailsPageRegex => DetailsRegex();
+
+    public override async Task<IGameSearchResultMetadata?> FetchDetails(string detailId, CancellationToken cancellationToken)
+    {
+        var absoluteUrl = new Uri(new Uri(BaseUrl), new Uri(detailId).PathAndQuery).ToString();
+        var htmlDocument = await FetchDetailPage(absoluteUrl, cancellationToken);
+        return ScrapeSearchResultMetadata(htmlDocument, detailId);
+    }
+
+    private GameSearchResultMetadataDto ScrapeSearchResultMetadata(IDocument htmlDocument, string detailsUrl)
+    {
+        var metadata = new GameSearchResultMetadataDto
+        {
+            BaseUrl = BaseUrl,
+            SourceSiteDisplayName = DisplayName,
+            DetailsLink = detailsUrl
+        };
+
+        var headerSpan = htmlDocument.Body.SelectSingleNodeFromElement("//span[contains(@class,'subHeader')]");
+        if (headerSpan != null)
+        {
+            metadata.Title = headerSpan.ChildNodes
+                .Where(n => n.NodeType == NodeType.Text)
+                .Select(n => n.TextContent.Trim())
+                .FirstOrDefault(t => !t.IsNullOrWhiteSpace()) ?? string.Empty;
+            metadata.Author = headerSpan.SelectSingleNodeFromElement(".//a[@class='linkl']")?.TextContent.Trim();
+        }
+
+        var imageNode = htmlDocument.Body.SelectSingleNodeFromElement("//div[@align='center']/img[@class='border']");
+        if (imageNode != null)
+            metadata.TitlePic = new Uri(new Uri(BaseUrl), imageNode.GetAttributeValue("src")).ToString();
+
+        var descriptionNode = htmlDocument.Body.SelectNodesFromElement("//td[@class='medGText']").LastOrDefault();
+        metadata.Description = descriptionNode?.TextContent.Trim();
+
+        var downloadAnchor = htmlDocument.Body.SelectSingleNodeFromElement("//a[contains(@href,'trle_dl.php')]");
+        if (downloadAnchor != null)
+            metadata.DownloadLink = new Uri(new Uri(BaseUrl), downloadAnchor.GetAttributeValue("href")).ToString();
+
+        var reviewsAnchor = htmlDocument.Body.SelectSingleNodeFromElement("//a[contains(@href,'reviews.php')]");
+        if (reviewsAnchor != null)
+            metadata.ReviewsLink = new Uri(new Uri(BaseUrl), reviewsAnchor.GetAttributeValue("href")).ToString();
+
+        var walkthroughAnchor = htmlDocument.Body.SelectSingleNodeFromElement("//a[contains(@href,'Levelwalk.php')]");
+        if (walkthroughAnchor != null)
+            metadata.WalkthroughLink = new Uri(new Uri(BaseUrl), walkthroughAnchor.GetAttributeValue("href")).ToString();
+
+        var infoRows = htmlDocument.Body.SelectNodesFromElement("//tr");
+        foreach (var row in infoRows)
+        {
+            var cells = row.SelectNodesFromElement(".//td[@class='bodyText']").ToList();
+            if (cells.Count < 3) continue;
+            var label = cells[1].TextContent.Trim().TrimEnd(':');
+            var value = cells[2].TextContent.Trim();
+            if (value.IsNullOrWhiteSpace()) continue;
+            switch (label)
+            {
+                case "difficulty":
+                    metadata.Difficulty = Enum.TryParse<GameDifficulty>(value, true, out var d) ? d : GameDifficulty.Unknown;
+                    break;
+                case "duration":
+                    metadata.Length = Enum.TryParse<GameLength>(value, true, out var l) ? l : GameLength.Unknown;
+                    break;
+                case "average rating":
+                    if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var r))
+                        metadata.Rating = r;
+                    break;
+                case "file size":
+                    var sizeParts = value.Split(' ');
+                    if (sizeParts.Length >= 1 && double.TryParse(sizeParts[0], NumberStyles.Any, CultureInfo.InvariantCulture, out var sizeMb))
+                        metadata.SizeInMb = (int)Math.Ceiling(sizeMb);
+                    break;
+                case "file type":
+                    if (_inverseGameEngineMapping.TryGetValue(value, out var engine))
+                        metadata.Engine = engine;
+                    break;
+                case "release date":
+                    if (DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var rd))
+                        metadata.ReleaseDate = rd;
+                    break;
+                case "review count":
+                    if (int.TryParse(value, out var rc))
+                        metadata.ReviewCount = rc;
+                    break;
+            }
+        }
+
+        return metadata;
+    }
+
+    [GeneratedRegex(@"trle\.net/sc/levelfeatures\.php\?lid=(?<LEVEL_ID>\d+)")]
+    private static partial Regex DetailsRegex();
 }

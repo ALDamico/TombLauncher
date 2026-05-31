@@ -18,9 +18,9 @@ using TombLauncher.Utils;
 
 namespace TombLauncher.Installers.Downloaders.RaidingTheGlobe.com;
 
-public class RaidingTheGlobeGameDownloader : GameDownloaderBase
+public partial class RaidingTheGlobeGameDownloader : GameDownloaderBase
 {
-    private Dictionary<string, GameEngine> _enginesLookup = new()
+    private readonly Dictionary<string, GameEngine> _enginesLookup = new()
     {
         { "Lara Croft Tomb Raider: The Scion of Qualopec", GameEngine.TombRaider4 },
         { "Lara Croft Tomb Raider: Afterlife", GameEngine.TombRaider4 }
@@ -29,6 +29,11 @@ public class RaidingTheGlobeGameDownloader : GameDownloaderBase
     public override string DisplayName => "Raiding the Globe";
     public override string BaseUrl => "https://www.raidingtheglobe.com";
     public override DownloaderFeatures SupportedFeatures => DownloaderFeatures.LevelName;
+    public override Regex DetailsPageRegex => DetailsRegex();
+
+    [GeneratedRegex(@"raidingtheglobe.com\/downloads\/custom-games-tomb-raider-level-editor\/\d+")]
+    private static partial Regex DetailsRegex();
+
     protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
         var uriBuilder = new UriBuilder(new Uri(BaseUrl));
@@ -75,6 +80,13 @@ public class RaidingTheGlobeGameDownloader : GameDownloaderBase
                 continue;
             }
 
+            var detailsLink = level.SelectSingleNodeFromElement(".//a[contains(@class, 'koowa_header__title_link')]");
+            if (detailsLink != null)
+            {
+                var detailsUrl = new Uri(new Uri(BaseUrl), detailsLink.GetAttributeValue("href")).ToString();
+                levelMetadata.DetailsLink = detailsUrl;
+            }
+
             var downloadUrl = new Uri(new Uri(BaseUrl), downloadLink.GetAttributeValue("href")).ToString();
             levelMetadata.DownloadLink = downloadUrl;
 
@@ -102,7 +114,7 @@ public class RaidingTheGlobeGameDownloader : GameDownloaderBase
         var text = dlButton.GetInnerHtml();
         if (text.IsNullOrWhiteSpace()) return null;
 
-        var match = Regex.Match(text!, @"\(.+?,\s*(?<SIZE>\d+\.?\d*)\s*(?<UNIT>MB|KB)\)");
+        var match = SizeRegex().Match(text);
         if (!match.Success) return null;
 
         return double.TryParse(match.Groups["SIZE"].Value, NumberStyles.Any, CultureInfo.InvariantCulture, out var mb)
@@ -161,6 +173,44 @@ public class RaidingTheGlobeGameDownloader : GameDownloaderBase
         };
     }
 
+    public override async Task<IGameSearchResultMetadata?> FetchDetails(string detailsUrl, CancellationToken cancellationToken)
+    {
+        var data = await FetchPage(new DownloaderSearchPayload(), 1, cancellationToken);
+
+        var levelIdentifier = detailsUrl.Split('/').LastOrDefault();
+        if (levelIdentifier.IsNullOrWhiteSpace())
+            return null;
+
+        var matchingLink = data.Results.FirstOrDefault(r => r.DetailsLink?.Split('/').LastOrDefault() == levelIdentifier);
+        if (matchingLink == null)
+            return null;
+        
+        var details = await FetchDetails(matchingLink, cancellationToken);
+
+        return new GameSearchResultMetadataDto()
+        {
+            BaseUrl = BaseUrl,
+            SourceSiteDisplayName = DisplayName,
+            Author = details.Author,
+            Engine = details.GameEngine,
+            Description = details.Description,
+            Length = details.Length,
+            TitlePic = details.TitlePicUrl,
+            Title = details.Title,
+            DetailsLink = matchingLink.DetailsLink,
+            DownloadLink = matchingLink.DownloadLink,
+            Rating = matchingLink.Rating,
+            ReviewsLink = matchingLink.ReviewsLink,
+            SizeInMb = matchingLink.SizeInMb,
+            WalkthroughLink = matchingLink.WalkthroughLink,
+            AuthorFullName = matchingLink.AuthorFullName,
+            Difficulty = matchingLink.Difficulty,
+            ReleaseDate = matchingLink.ReleaseDate,
+            ReviewCount = matchingLink.ReviewCount,
+            Setting = matchingLink.Setting
+        };
+    }
+
     public override Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream, IProgress<DownloadProgressInfo> downloadProgress,
         CancellationToken cancellationToken)
     {
@@ -170,4 +220,7 @@ public class RaidingTheGlobeGameDownloader : GameDownloaderBase
     public RaidingTheGlobeGameDownloader(IHttpClientFactory httpClientFactory, ILogger<RaidingTheGlobeGameDownloader> logger) : base(httpClientFactory, logger)
     {
     }
+
+    [GeneratedRegex(@"\(.+?,\s*(?<SIZE>\d+\.?\d*)\s*(?<UNIT>MB|KB)\)")]
+    private static partial Regex SizeRegex();
 }
