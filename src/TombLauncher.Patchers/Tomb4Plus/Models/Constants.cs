@@ -12,4 +12,9 @@ internal static class Constants
         ["e2fb8ac766ce0c2bef0e30b20b4e5b38", "0b78a6ecec28ea2725bb163c86b6b747"];
 
     internal const int ObjectCount = 520;
+
+    internal const byte Tr5BarType = 0x74;
+    internal const byte FlatBarType = 0x6c;
+
+    internal static readonly ColorRgb BlackColor = new ColorRgb() { B = 0, G = 0, R = 0 };
 }

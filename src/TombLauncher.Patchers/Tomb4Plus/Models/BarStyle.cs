@@ -10,4 +10,9 @@ public class BarStyle
     public bool? IsAnimated { get; set; }
     public short? XOffset { get; set; }
     public bool? Hidden { get; set; }
+    
+    public bool HasAnyValue() =>
+        UpperRect != null || LowerRect != null || BorderRect != null ||
+        Width != null || Height != null || IsAnimated != null || 
+        Hidden != null || XOffset != null;
 }
