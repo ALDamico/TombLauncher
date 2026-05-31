@@ -32,7 +32,6 @@ public partial class AspideTrGameDownloader : GameDownloaderBase
     public override string DisplayName => "AspideTR";
     public override string BaseUrl => "https://www.aspidetr.com/";
 
-
     private readonly Dictionary<GameEngine, int?> _gameEngineMappings = new()
     {
         { GameEngine.Unknown, null },
@@ -45,7 +44,6 @@ public partial class AspideTrGameDownloader : GameDownloaderBase
     };
 
     private readonly Dictionary<string, string> _classMappings;
-
 
     private async Task ParsePage(IDocument htmlDocument, List<IGameSearchResultMetadata> result)
     {
@@ -84,7 +82,7 @@ public partial class AspideTrGameDownloader : GameDownloaderBase
             var ratings = headerNode.SelectNodesFromElement("./div[@class='stars']/a/i");
             if (ratings.IsNotNullOrEmpty())
             {
-                searchResult.Rating = ratings.Count(n => n.HasClass("fa-star")) * 2 +
+                searchResult.Rating = (ratings.Count(n => n.HasClass("fa-star")) * 2) +
                                       ratings.Count(n => n.HasClass("fa-star-half-o"));
             }
 
@@ -153,7 +151,6 @@ public partial class AspideTrGameDownloader : GameDownloaderBase
 
         return targetEncoding;
     }
-
 
     protected override async Task<ISearchResultPage> FetchPage(DownloaderSearchPayload payload, int pageNumber, CancellationToken cancellationToken)
     {
@@ -271,7 +268,6 @@ public partial class AspideTrGameDownloader : GameDownloaderBase
             }
         }
 
-
         return flags;
     }
 
@@ -338,7 +334,7 @@ public partial class AspideTrGameDownloader : GameDownloaderBase
 
         var ratings = htmlDocument.Body.SelectNodesFromElement("//div[@class='stars']/a/i");
         if (ratings.IsNotNullOrEmpty())
-            metadata.Rating = ratings.Count(n => n.HasClass("fa-star")) * 2 +
+            metadata.Rating = (ratings.Count(n => n.HasClass("fa-star")) * 2) +
                               ratings.Count(n => n.HasClass("fa-star-half-o"));
 
         var descriptionDiv = htmlDocument.Body.SelectSingleNodeFromElement("//div[contains(@class,'level-content') and contains(@class,'entry-content')]");
