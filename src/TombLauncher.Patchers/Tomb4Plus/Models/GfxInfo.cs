@@ -1,3 +1,5 @@
+using TombLauncher.Core.Extensions;
+
 namespace TombLauncher.Patchers.Tomb4Plus.Models;
 
 public class GfxInfo
@@ -6,4 +8,7 @@ public class GfxInfo
     public VaporInfo? VaporInfo { get; set; }
     public string? ColdBreath { get; set; }
     public List<MirrorCustomization>? MirrorCustomization { get; set; }
+
+    public bool HasAnyValue() => BloodInfo != null || VaporInfo != null || ColdBreath.IsNotNullOrWhiteSpace() ||
+                                 MirrorCustomization.IsNotNullOrEmpty();
 }

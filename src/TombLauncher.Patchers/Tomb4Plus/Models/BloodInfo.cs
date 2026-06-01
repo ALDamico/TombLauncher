@@ -7,4 +7,11 @@ public class BloodInfo
     public byte? BloodSpeed { get; set; }
     public byte? BloodSpreadFactorX { get; set; }
     public byte? BloodSpreadFactorY { get; set; }
+
+    public bool HasAnyValue() =>
+        BloodSize != null ||
+        BloodIntensity != null ||
+        BloodSpeed != null ||
+        BloodSpreadFactorX != null ||
+        BloodSpreadFactorY != null;
 }
