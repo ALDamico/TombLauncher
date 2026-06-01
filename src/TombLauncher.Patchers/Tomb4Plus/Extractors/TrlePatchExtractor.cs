@@ -91,7 +91,30 @@ public class TrlePatchExtractor
 
     private BarStyle? ReadLoadingBarInfo(BinaryReader reader, GradientType gradientType)
     {
-        throw new NotImplementedException();
+        var loadingBarInfo = new BarStyle();
+
+        var loadingBarMainColor = reader.GetBgrColorAtAddress(0x0007B65A);
+        var loadingBarFadeColor = reader.GetBgrColorAtAddress(0x0007B65F);
+
+        if (loadingBarMainColor.R != 159 || loadingBarMainColor.G != 31 || loadingBarMainColor.B != 128 ||
+            loadingBarFadeColor.R != 0 || loadingBarFadeColor.G != 0 || loadingBarFadeColor.B != 0 ||
+            gradientType != GradientType.Normal)
+            ConstructBar(loadingBarInfo, loadingBarMainColor, loadingBarFadeColor, gradientType);
+        
+        UpdateBarBackgroundColors(reader, loadingBarInfo);
+
+        const short defaultLoadingBarWidth = 600;
+        loadingBarInfo.Width = reader.ReadShortAt(0x0007B693).NullIf(defaultLoadingBarWidth);
+
+        const byte defaultLoadingBarHeight = 15;
+        loadingBarInfo.Height = reader.ReadByteAt(0x0007B68F).NullIf(defaultLoadingBarHeight);
+
+        loadingBarInfo.Hidden = reader.IsNopAtRange(0x0007B601, 0x0007B604).NullIf(false);
+
+        if (loadingBarInfo.HasAnyValue())
+            return loadingBarInfo;
+
+        return null;
     }
 
     private BarStyle? ReadSprintBarInfo(BinaryReader reader, GradientType gradientType)
