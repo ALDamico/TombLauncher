@@ -2,9 +2,9 @@ namespace TombLauncher.Patchers.Tomb4Plus.Models;
 
 public class SteamEmitter
 {
-    public required ColorRgb StartColor { get; set; }
+    public ColorRgb? StartColor { get; set; }
     public sbyte StartTime { get; set; }
-    public required ColorRgb EndColor { get; set; }
+    public ColorRgb? EndColor { get; set; }
     public sbyte EndTime { get; set; }
     public sbyte BlendingMode { get; set; }
     public sbyte Lifetime { get; set; }
