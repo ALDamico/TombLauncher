@@ -2,6 +2,17 @@ namespace TombLauncher.Patchers.Tomb4Plus.Models;
 
 public class ColorRgb
 {
+    public ColorRgb()
+    {
+        
+    }
+    
+    public ColorRgb(byte r, byte g, byte b)
+    {
+        R = r;
+        G = g;
+        B = b;
+    }
     protected bool Equals(ColorRgb other)
     {
         return R == other.R && G == other.G && B == other.B;
