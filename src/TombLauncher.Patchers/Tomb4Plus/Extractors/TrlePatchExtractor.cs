@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using TombLauncher.Patchers.Tomb4Plus.Enums;
-using TombLauncher.Patchers.Tomb4Plus.Extensions;
 using TombLauncher.Patchers.Tomb4Plus.Models;
 
 namespace TombLauncher.Patchers.Tomb4Plus.Extractors;
@@ -36,6 +35,7 @@ public partial class TrlePatchExtractor
         output.GlobalLevelInfo.CreatureInfo = ReadCreatureInfo(binaryReader);
         output.GlobalLevelInfo.CameraInfo = ReadCameraInfo(binaryReader, patchType);
         output.GlobalLevelInfo.MiscInfo = ReadMiscInfo(binaryReader, patchType);
+        output.GlobalLevelInfo.WeaponInfo = ReadWeaponInfo(binaryReader, patchType);
         return output;
     }
 }
