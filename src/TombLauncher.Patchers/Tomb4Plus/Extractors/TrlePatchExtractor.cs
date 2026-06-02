@@ -31,6 +31,7 @@ public partial class TrlePatchExtractor
         output.GlobalLevelInfo.GfxInfo = ReadGfxInfo(binaryReader, patchType);
         output.GlobalLevelInfo.ObjectsInfo = ReadObjectsInfo(binaryReader, patchType);
         output.GlobalLevelInfo.EnvironmentInfo = ReadEnvironmentInfo(binaryReader, patchType);
+        output.GlobalLevelInfo.LaraInfo = ReadLaraInfo(binaryReader, patchType);
         return output;
     }
 }
