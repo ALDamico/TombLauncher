@@ -46,14 +46,11 @@ public partial class TrlePatchExtractor
             }
         }
 
-        const short dartsIntervalDefault = 24;
-        objectsInfo.DartsInterval = binaryReader.ReadShortAt(0x00013E69).NullIf(dartsIntervalDefault);
-        const short dartsSpeedDefault = 256;
-        objectsInfo.DartsSpeed = binaryReader.ReadShortAt(0x00013F3E).NullIf(dartsSpeedDefault);
-        objectsInfo.DartsColor = binaryReader.GetBgrColorAtAddress(0x0008B121).NullIf(DartsDefaultColor);
+        objectsInfo.DartsInterval = binaryReader.ReadShortAt(0x00013E69).NullIf(EsseConstants.DartsIntervalDefault);
+        objectsInfo.DartsSpeed = binaryReader.ReadShortAt(0x00013F3E).NullIf(EsseConstants.DartsIntervalDefault);
+        objectsInfo.DartsColor = binaryReader.GetBgrColorAtAddress(0x0008B121).NullIf(EsseConstants.DartsDefaultColor);
 
-        const short fallingBlockTimerDefault = 60;
-        objectsInfo.FallingBlockTimer = binaryReader.ReadShortAt(0x00013A9F).NullIf(fallingBlockTimerDefault);
+        objectsInfo.FallingBlockTimer = binaryReader.ReadShortAt(0x00013A9F).NullIf(EsseConstants.FallingBlockTimerDefault);
 
         var fallingBlockTremble1 = binaryReader.ReadShortAt(0x00013AEF);
         var fallingBlockTremble2 = binaryReader.ReadShortAt(0x00013B02);
@@ -61,8 +58,7 @@ public partial class TrlePatchExtractor
         if (fallingBlockTremble1 != fallingBlockTremble2)
             _logger.LogWarning("Falling block tremble mismatch! {Val1} vs {Val2}", fallingBlockTremble1, fallingBlockTremble2);
 
-        const short fallingBlockTrembleDefault = 1023;
-        objectsInfo.FallingBlockTremble = fallingBlockTremble1.NullIf(fallingBlockTrembleDefault);
+        objectsInfo.FallingBlockTremble = fallingBlockTremble1.NullIf(EsseConstants.FallingBlockTrembleDefault);
 
         foreach (var row in Tomb4DataTables.EnemyDamageTable)
         {
@@ -125,6 +121,4 @@ public partial class TrlePatchExtractor
 
         return null;
     }
-
-    private static readonly ColorRgb DartsDefaultColor = new(120, 60, 20);
 }
