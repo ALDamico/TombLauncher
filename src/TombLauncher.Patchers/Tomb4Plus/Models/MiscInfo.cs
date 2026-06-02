@@ -22,4 +22,26 @@ public class MiscInfo
     public bool? EnableSmashingAndKillingRollingBalls { get; set; }
     public bool? EnableTeethSpikesKillEnemies { get; set; }
     public bool? EnableStandingPushables { get; set; }
+
+    public bool HasAnyValue() =>
+        TextOrCriticalBarBlinkInterval != null ||
+        LegendTimer != null ||
+        LaraImpalesOnSpikes != null ||
+        DartsPoisonFix != null ||
+        AlwaysExitFromStatisticsScreen != null ||
+        DisableMotorbikeHeadlights != null ||
+        DrawLegendOnFlyby != null ||
+        EnableRicochetSoundEffect != null ||
+        TrepSwitchMaker != null ||
+        TrepSwitchOnOcb1Anim != null ||
+        TrepSwitchOffOcb1Anim != null ||
+        TrepSwitchOnOcb2Anim != null ||
+        TrepSwitchOffOcb2Anim != null ||
+        TrepSwitchOnOcb5Anim != null ||
+        TrepSwitchOffOcb5Anim != null ||
+        TrepSwitchOnOcb6Anim != null ||
+        TrepSwitchOffOcb6Anim != null ||
+        EnableSmashingAndKillingRollingBalls != null ||
+        EnableTeethSpikesKillEnemies != null ||
+        EnableStandingPushables != null;
 }
