@@ -1,12 +1,15 @@
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Patchers.Tomb4Plus.Enums;
+using TombLauncher.Patchers.Tomb4Plus.Extensions;
 using TombLauncher.Patchers.Tomb4Plus.Models;
 
 namespace TombLauncher.Patchers.Tomb4Plus.Parsers;
 
 public class FurrSyntaxParser
 {
+    private readonly ILogger<FurrSyntaxParser> _logger;
     private const int MaxNops = 128;
 
     private static readonly byte[][] OneshotOpcodeDefault =
@@ -40,6 +43,11 @@ public class FurrSyntaxParser
 
     private const int FirstCustomFlipeffect = 47;
     private const int LastCustomFlipeffect = 512;
+
+    public FurrSyntaxParser(ILogger<FurrSyntaxParser> logger)
+    {
+        _logger = logger;
+    }
 
     private int GetBaseAddress(bool usingRemappedMemory) =>
         usingRemappedMemory ? BaseAddressRemappedSceneMemory : BaseAddressDefault;
@@ -299,5 +307,86 @@ public class FurrSyntaxParser
         }
 
         return commandBytesArray;
+    }
+
+    private List<(FurrOpcode Opcode, byte[]? FirstArg, byte[]? SecondArg)> ScanForPossibleCommands(
+        BinaryReader reader, List<FurrOpcode> opcodeList, int commandPosition, bool isUsingRemappedMemory)
+    {
+        var possibleCommands = new List<(FurrOpcode, byte[]?, byte[]?)>();
+
+        byte[] lastDataBuffer = [];
+
+        foreach (var opcode in opcodeList)
+        {
+            reader.Seek(commandPosition);
+
+            var byteArrays = opcode.ByteArrays;
+            var originalDataBuffer = reader.ReadBytes(opcode.TotalLength);
+            var addressedFixedDataBuffer = ConvertLocalAddressesToGlobal(originalDataBuffer, FlipeffectDataAddress,
+                opcode.AddressTable, isUsingRemappedMemory);
+
+            var offsets = new int[byteArrays.Count + 1];
+            for (var i = 0; i < byteArrays.Count; i++)
+                offsets[i + 1] = offsets[i] + byteArrays[i].Length;
+
+            byte[]? firstArg = null;
+            byte[]? secondArg = null;
+            var matched = true;
+
+            for (var i = 0; i < byteArrays.Count; i++)
+            {
+                var start = offsets[i];
+                var end = offsets[i + 1];
+                if (i % 2 == 0) // fixed segment — must match
+                {
+                    if (!byteArrays[i].SequenceEqual(addressedFixedDataBuffer[start..end]))
+                    {
+                        matched = false;
+                        break;
+                    }
+                }
+                else // argument slot — extract from original
+                {
+                    var arg = originalDataBuffer[start..end];
+                    if (i == 1) firstArg = arg;
+                    else if (i == 3) secondArg = arg;
+                }
+            }
+
+            lastDataBuffer = originalDataBuffer;
+
+            if (matched)
+                possibleCommands.Add((opcode, firstArg, secondArg));
+        }
+        
+        if (possibleCommands.Count == 0)
+            _logger.LogWarning("Could not find any commands for buffer: {BufferStr}", Convert.ToHexString(lastDataBuffer));
+            
+
+        return possibleCommands;
+    }
+
+    private FurrOptimalCommand ScanForOptimalCommand(BinaryReader reader, List<FurrOpcode> opcodeList,
+        int commandPosition, bool isUsingRemappedMemory)
+    {
+        var possibleCommands = ScanForPossibleCommands(reader, opcodeList, commandPosition, isUsingRemappedMemory);
+
+        if (possibleCommands.Count > 0)
+        {
+            var finalCommandList = possibleCommands.OrderByDescending(x => x.Opcode.ByteArrays.Count)
+                .ThenBy(x => x.Opcode.TotalLength);
+
+            var finalCommand = finalCommandList.LastOrDefault();
+            var flipeffectCommandTableEntry = CreateFlipeffectTableEntryForOpcode(finalCommand.Opcode,
+                finalCommand.FirstArg, finalCommand.SecondArg);
+
+            var wasNop = finalCommand.Opcode.FunctionName == "NOP";
+            commandPosition += finalCommand.Opcode.TotalLength;
+            reader.Seek(commandPosition);
+
+            return new FurrOptimalCommand() { NewCommand = flipeffectCommandTableEntry, WasNop = wasNop };
+        }
+
+        return new FurrOptimalCommand() { NewCommand = null, WasNop = false };
     }
 }
