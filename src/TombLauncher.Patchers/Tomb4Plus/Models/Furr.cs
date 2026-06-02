@@ -17,3 +17,9 @@ public record FurrCommand
     public object? FirstArg { get; set; }
     public object? SecondArg { get; set; }
 }
+
+public record FurrOptimalCommand
+{
+    public FurrCommand? NewCommand { get; init; }
+    public bool WasNop { get; init; }
+}
