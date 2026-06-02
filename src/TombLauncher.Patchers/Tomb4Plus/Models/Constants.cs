@@ -27,7 +27,6 @@ internal static class Constants
     internal const int FlareId = 373;
     
     // Weapons
-
     internal const byte PistolDamage = 1;
     internal const byte UziDamage = 1;
     internal const byte RevolverDamage = 21;
@@ -42,4 +41,7 @@ internal static class Constants
     internal const byte UziFlashDuration = 3;
     internal const byte RevolverFlashDuration = 3;
     internal const byte ShotgunFlashDuration = 3;
+
+    internal const string ColdBreath = "enabled_in_cold_rooms_only";
+    internal const short RoomColdFlag = 0x1000;
 }

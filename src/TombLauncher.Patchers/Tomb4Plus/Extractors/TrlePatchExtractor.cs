@@ -36,6 +36,7 @@ public partial class TrlePatchExtractor
         output.GlobalLevelInfo.CameraInfo = ReadCameraInfo(binaryReader, patchType);
         output.GlobalLevelInfo.MiscInfo = ReadMiscInfo(binaryReader, patchType);
         output.GlobalLevelInfo.WeaponInfo = ReadWeaponInfo(binaryReader, patchType);
+        ReadExtendedInfo(binaryReader, isExtendedFileSize, isUsingRemappedMemory, output, patchType);
         return output;
     }
 }
