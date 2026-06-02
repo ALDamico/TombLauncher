@@ -13,3 +13,10 @@ public enum PatchBinaryType
     FlepExe = 2,
     FlepExternalBinary = 3
 }
+
+public enum SyntaxFile
+{
+    Early,
+    Trep,
+    TrLarson,
+}
