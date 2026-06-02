@@ -265,4 +265,39 @@ public class FurrSyntaxParser
 
         return opcodes;
     }
+
+    private byte[] ConvertLocalAddressesToGlobal(byte[] commandBytes, int commandBasePosition,
+        List<int> addressTable, bool isUsingRemappedMemory)
+    {
+        var commandBytesArray = new byte[commandBytes.Length];
+        commandBytes.CopyTo(commandBytesArray);
+
+        foreach (var addressOffset in addressTable)
+        {
+            if (addressOffset > commandBytes.Length - 4)
+                continue;
+
+            var localAddressByteArray = commandBytes[addressOffset..(addressOffset + 4)];
+            var localAddressAsInt = BitConverter.ToUInt32(localAddressByteArray);
+            var globalAddressAsInt = 0L;
+            if (isUsingRemappedMemory)
+                globalAddressAsInt = (localAddressAsInt - 0xff413000) + 0x00028105 - 0x2100 + (addressOffset - 1) +
+                                     commandBasePosition;
+            else
+                globalAddressAsInt = (localAddressAsInt - 0xff813000) + 0x00028105 - 0x2100 + (addressOffset - 1) +
+                                     commandBasePosition;
+
+            if (globalAddressAsInt > 0xffffffff)
+                globalAddressAsInt -= 0xffffffff;
+            else if (globalAddressAsInt < 0)
+                globalAddressAsInt += 0xffffffff;
+            
+            var globalAddressByteArray = BitConverter.GetBytes((uint)globalAddressAsInt);
+            Array.Reverse(globalAddressByteArray);
+
+            Array.Copy(globalAddressByteArray, 0, commandBytesArray, addressOffset, 4);
+        }
+
+        return commandBytesArray;
+    }
 }
