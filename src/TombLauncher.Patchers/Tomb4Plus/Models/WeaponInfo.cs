@@ -16,4 +16,20 @@ public class WeaponInfo
     public byte? RevolverFlashDuration { get; set; }
     public byte? ShotgunFlashDuration { get; set; }
     public byte? CrossbowBoltDamage { get; set; }
+
+    public bool HasAnyValue() =>
+        PistolDamage != null ||
+        UziDamage != null ||
+        RevolverDamage != null ||
+        PistolRate != null ||
+        UziRate != null ||
+        RevolverRate != null ||
+        PistolDispertion != null ||
+        UziDispertion != null ||
+        RevolverDispertion != null ||
+        PistolFlashDuration != null ||
+        UziFlashDuration != null ||
+        RevolverFlashDuration != null ||
+        ShotgunFlashDuration != null ||
+        CrossbowBoltDamage != null;
 }

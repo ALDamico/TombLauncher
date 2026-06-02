@@ -25,4 +25,21 @@ internal static class Constants
     internal const int LargeMedipackId = 368;
     internal const int SmallMedipackId = 369;
     internal const int FlareId = 373;
+    
+    // Weapons
+
+    internal const byte PistolDamage = 1;
+    internal const byte UziDamage = 1;
+    internal const byte RevolverDamage = 21;
+    internal const byte CrossbowBoltDamage = 5;
+    internal const byte PistolRate = 9;
+    internal const byte UziRate = 3;
+    internal const byte RevolverRate = 16;
+    internal const byte PistolDispersion = 5;
+    internal const byte UziDispersion = 5;
+    internal const byte RevolverDispersion = 2;
+    internal const byte PistolFlashDuration = 3;
+    internal const byte UziFlashDuration = 3;
+    internal const byte RevolverFlashDuration = 3;
+    internal const byte ShotgunFlashDuration = 3;
 }
