@@ -11,4 +11,15 @@ public class ObjectsInfo
     public sbyte? MagicalAttackDivider { get; set; }
     public bool? DisableMutantLocustAttack { get; set; }
     public List<ObjectCustomization>? ObjectCustomization { get; set; }
+
+    public bool HasAnyValue() =>
+        DartsInterval != null ||
+        DartsSpeed != null ||
+        DartsColor != null ||
+        FallingBlockTimer != null ||
+        FallingBlockTremble != null ||
+        BeetleDispersion != null ||
+        MagicalAttackDivider != null ||
+        DisableMutantLocustAttack != null ||
+        ObjectCustomization != null;
 }
