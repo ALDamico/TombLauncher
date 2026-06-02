@@ -1,3 +1,5 @@
+using TombLauncher.Core.Extensions;
+
 namespace TombLauncher.Patchers.Tomb4Plus.Models;
 
 public class FontInfo
@@ -31,7 +33,7 @@ public class FontInfo
         CustomGlyphScaleHeight != null ||
         CustomVerticalSpacing != null ||
         CustomCompressedTextFactor != null ||
-        CustomFontTable != null;
+        CustomFontTable.IsNotNullOrEmpty();
 
     public static ColorRgb DefaultFontMainColor { get; } = new ColorRgb(128, 128, 128);
     public static ColorRgb DefaultOptionsMainColor { get; } = new ColorRgb(192, 128, 64);
