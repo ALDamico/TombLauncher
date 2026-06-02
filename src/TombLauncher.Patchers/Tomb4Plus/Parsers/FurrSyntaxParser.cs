@@ -1,3 +1,8 @@
+using System.Text.RegularExpressions;
+using TombLauncher.Core.Extensions;
+using TombLauncher.Patchers.Tomb4Plus.Enums;
+using TombLauncher.Patchers.Tomb4Plus.Models;
+
 namespace TombLauncher.Patchers.Tomb4Plus.Parsers;
 
 public class FurrSyntaxParser
@@ -53,7 +58,7 @@ public class FurrSyntaxParser
         foreach (var (pos, size) in positions.Zip(sizes))
         {
             if (pos > start)
-                result.Add(byteArray.Skip(start).Take(pos).ToArray());
+                result.Add(byteArray.Skip(start).Take(pos - start).ToArray());
             result.Add(byteArray.Skip(pos).Take(size).ToArray());
             start = pos + size;
         }
@@ -62,5 +67,202 @@ public class FurrSyntaxParser
             result.Add(byteArray.Skip(start).ToArray());
 
         return result;
+    }
+
+    private int? GetSizeForVariantType(string? type)
+    {
+        return type switch
+        {
+            "ASSIGN_BYTE" => 1,
+            "SIGNEDBYTE" => 1,
+            "UNSIGNEDBYTE" => 1,
+            "ASSIGN_INTEGER" => 2,
+            "SIGNEDINTEGER" => 2,
+            "UNSIGNEDINTEGER" => 2,
+            "ASSIGN_LONG" => 4,
+            "LONG" => 4,
+            "ADDRESS" => 4,
+            "FLIPEFFECT" => 4,
+            "TIME" => 4,
+            "ASSIGN_HEX" => 4, // OG Python code says "check this, might be 2"
+            null => null,
+            _ => throw new ArgumentException($"Unknown type: {type}", nameof(type))
+        };
+    }
+    
+    private object? ReadArg(byte[]? arg, string? type)
+    {
+        return type switch
+        {
+            "ASSIGN_BYTE"      => arg![0],
+            "UNSIGNEDBYTE"     => arg![0],
+            "SIGNEDBYTE"       => (sbyte)arg![0],
+            "ASSIGN_INTEGER"   => BitConverter.ToUInt16(arg!, 0),
+            "UNSIGNEDINTEGER"  => BitConverter.ToUInt16(arg!, 0),
+            "SIGNEDINTEGER"    => BitConverter.ToInt16(arg!, 0),
+            "ASSIGN_LONG"      => BitConverter.ToUInt32(arg!, 0),
+            "ADDRESS"          => BitConverter.ToUInt32(arg!, 0),
+            "FLIPEFFECT"       => BitConverter.ToUInt32(arg!, 0),
+            "TIME"             => BitConverter.ToUInt32(arg!, 0),
+            "ASSIGN_HEX"       => BitConverter.ToUInt32(arg!, 0), // Python: might be 2
+            "LONG"             => BitConverter.ToInt32(arg!, 0),
+            null               => null,
+            _                  => throw new ArgumentException($"Unknown type: {type}")
+        };
+    }
+
+    public FurrCommand CreateFlipeffectTableEntryForOpcode(FurrOpcode opcode, byte[]? firstArg, byte[]? secondArg)
+    {
+        object? firstArgTyped;
+        object? secondArgTyped;
+        if (opcode.ReverseArgs)
+        {
+            firstArgTyped = ReadArg(firstArg, opcode.SecondArgType);
+            secondArgTyped = ReadArg(secondArg, opcode.FirstArgType);
+        }
+        else
+        {
+            firstArgTyped = ReadArg(firstArg, opcode.FirstArgType);
+            secondArgTyped = ReadArg(secondArg, opcode.SecondArgType);
+        }
+        
+        return opcode.ReverseArgs
+            ? new FurrCommand { FunctionName = opcode.FunctionName, FirstArg = secondArgTyped, SecondArg = firstArgTyped }
+            : new FurrCommand { FunctionName = opcode.FunctionName, FirstArg = firstArgTyped, SecondArg = secondArgTyped };
+    }
+    
+    private List<byte[]> GetSplitByteArraysWithArgs(byte[] myBytes, string? firstArgType, string? secondArgType,
+        int firstArgPos, int secondArgPos, bool firstArgIsLocalOffset, bool secondArgIsLocalOffset, bool reverseArgs)
+    {
+        var positionArr = new List<int>();
+        var sizesArr = new List<int>();
+
+        var firstArgVariantSize = GetSizeForVariantType(firstArgType);
+        if (firstArgVariantSize != null)
+        {
+            if (firstArgIsLocalOffset)
+                firstArgPos -= 1;
+            positionArr.Add(firstArgPos);
+            sizesArr.Add(firstArgVariantSize.Value);
+        }
+
+        var secondArgVariantSize = GetSizeForVariantType(secondArgType);
+        if (secondArgVariantSize != null)
+        {
+            if (secondArgIsLocalOffset)
+                secondArgPos -= 1;
+
+            // Workaround for both variants being aligned next to each other
+            if (firstArgVariantSize != null && secondArgPos == firstArgPos + firstArgVariantSize.Value)
+            {
+                positionArr.Add(secondArgPos);
+                sizesArr.Add(0);
+            }
+
+            positionArr.Add(secondArgPos);
+            sizesArr.Add(secondArgVariantSize.Value);
+        }
+
+        if (reverseArgs)
+        {
+            positionArr.Reverse();
+            sizesArr.Reverse();
+        }
+
+        return positionArr.Count > 0
+            ? SplitByteArray(myBytes, positionArr, sizesArr)
+            : [myBytes];
+    }
+
+    private List<int> FindAllAddresses(string s)
+    {
+        var pattern = "//";
+        var counted = 0;
+        var addressArray = new List<int>();
+
+        foreach (var match in Regex.EnumerateMatches(s, pattern))
+        {
+            var num = match.Index;
+            addressArray.Add((num - counted) / 2);
+            counted += 2;
+        }
+
+        return addressArray;
+    }
+
+    private async Task<List<FurrOpcode>> LoadSyntaxFile(SyntaxFile syntaxFile, CancellationToken cancellationToken)
+    {
+        string fileName;
+        switch (syntaxFile)
+        {
+            case SyntaxFile.Early:
+                fileName = "syntaxEarly.fln";
+                break;
+            case SyntaxFile.Trep:
+                fileName = "syntaxTREP.fln";
+                break;
+            case SyntaxFile.TrLarson:
+                fileName = "syntaxT4L.fln";
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(syntaxFile), syntaxFile, null);
+        }
+
+        var opcodes = new List<FurrOpcode>();
+
+        fileName = $"TombLauncher.Patchers.Tomb4Plus.Furr.{fileName}";
+        var assembly = GetType().Assembly;
+        await using var stream = assembly.GetManifestResourceStream(fileName)!;
+        using var reader = new StreamReader(stream);
+        string? line;
+        while ((line = await reader.ReadLineAsync(cancellationToken)) != null)
+        {
+            if (line.IsNullOrWhiteSpace() || line.StartsWith(';') || line.StartsWith('!'))
+                continue;
+
+            var tokens = line.Split(' ');
+            var addressTable = FindAllAddresses(tokens[0]);
+            var assemblyString = tokens[0].Replace("//", "").Replace(" ", "");
+            var firstArgPos = int.Parse(tokens[1]);
+            var secondArgPos = int.Parse(tokens[2]);
+            var functionName = tokens[3];
+
+            var firstArgIsLocalOffset = false;
+            var secondArgsIsLocalOffset = false;
+
+            if (functionName == "CALL")
+                firstArgIsLocalOffset = true;
+
+            string? firstArgType = null;
+            string? secondArgType = null;
+
+            if (tokens.Length > 4)
+            {
+                firstArgType = tokens[4];
+                if (tokens.Length > 5)
+                    secondArgType = tokens[5];
+            }
+
+            var reverseArgs = secondArgPos < firstArgPos && secondArgType != null;
+            var assemblyBytes = Convert.FromHexString(assemblyString);
+            var totalLength = assemblyBytes.Length;
+
+            var splitByteArrays = GetSplitByteArraysWithArgs(assemblyBytes, firstArgType, secondArgType, firstArgPos,
+                secondArgPos, firstArgIsLocalOffset, secondArgsIsLocalOffset, reverseArgs);
+
+            var opcode = new FurrOpcode()
+            {
+                FunctionName = functionName,
+                AddressTable = addressTable,
+                ByteArrays = splitByteArrays,
+                FirstArgType = firstArgType,
+                SecondArgType = secondArgType,
+                ReverseArgs = reverseArgs,
+                TotalLength = totalLength
+            };
+            opcodes.Add(opcode);
+        }
+
+        return opcodes;
     }
 }
