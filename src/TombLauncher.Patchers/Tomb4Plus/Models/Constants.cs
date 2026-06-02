@@ -17,4 +17,12 @@ internal static class Constants
     internal const byte FlatBarType = 0x6c;
 
     internal static readonly ColorRgb BlackColor = new ColorRgb() { B = 0, G = 0, R = 0 };
+    
+    // Equipment
+    internal const int PistolsId = 349;
+    internal const int BinocularsId = 371;
+    internal const int CrowbarId = 246;
+    internal const int LargeMedipackId = 368;
+    internal const int SmallMedipackId = 369;
+    internal const int FlareId = 373;
 }
