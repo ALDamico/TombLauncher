@@ -532,4 +532,24 @@ public class FurrSyntaxParser
 
         return flipeffectTable;
     }
+
+    private void PostprocessFurrData(List<List<FurrCommand>> furrData)
+    {
+        foreach (var trigger in furrData)
+        {
+            foreach (var opcode in trigger)
+            {
+                switch (opcode.FunctionName)
+                {
+                    case "CHANGE_POSITION_X": opcode.FunctionName = "CHANGE_POSITION_Z"; break;
+                    case "CHANGE_POSITION_Z": opcode.FunctionName = "CHANGE_POSITION_X"; break;
+                    case "MOVE_ITEM_X":       opcode.FunctionName = "MOVE_ITEM_Z";        break;
+                    case "MOVE_ITEM_Z":       opcode.FunctionName = "MOVE_ITEM_X";        break;
+                    case "ADD_POSITION":
+                        (opcode.FirstArg, opcode.SecondArg) = (opcode.SecondArg, opcode.FirstArg);
+                        break;
+                }
+            }
+        }
+    }
 }
