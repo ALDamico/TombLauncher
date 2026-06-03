@@ -12,7 +12,7 @@ public class GlobalInfo
     public int TrngVersionMaintainence { get; set; }
     public int TrngVersionBuild { get; set; }
     public bool TrngVersionIsPlus { get; set; } // TODO Check if we need to replicate the OG Python bug *exactly*
-    public object? FurrData { get; set; } // TODO To be defined
+    public FurrData? FurrData { get; set; }
     public bool? TrngFlipEffectsEnabled { get; set; }
     public bool? TrngRollingBallExtendedOcb { get; set; }
     public bool? TrngStaticsExtendedOcb { get; set; }
