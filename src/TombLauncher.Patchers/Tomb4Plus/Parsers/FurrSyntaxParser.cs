@@ -34,7 +34,8 @@ public class FurrSyntaxParser
     private const int FlipeffectTableAddress = 0xC1000;
     private const int FlipeffectDataAddress = 0xc3100;
     private const int RacetimerEventDataAddress = 0x00101000;
-    private static readonly uint FunctionAddressOffset = BitConverter.ToUInt32(Convert.FromHexString("FBAE7EFF"), 0);
+    // Unused in OG code
+    // private static readonly uint FunctionAddressOffset = BitConverter.ToUInt32(Convert.FromHexString("FBAE7EFF"), 0);
     private static readonly byte[] RacetimerEventNotify = Convert.FromHexString("FF0546777F00");
     private static readonly byte[] RacetimerEventStart = Convert.FromHexString("813D46777F00");
 
@@ -52,8 +53,8 @@ public class FurrSyntaxParser
     private int GetBaseAddress(bool usingRemappedMemory) =>
         usingRemappedMemory ? BaseAddressRemappedSceneMemory : BaseAddressDefault;
 
-    private byte[][] GetOneshotOpcode(bool usingRemappedMemory) =>
-        usingRemappedMemory ? OneshotOpcodeRemappedSceneMemory : OneshotOpcodeDefault;
+    private List<byte[]> GetOneshotOpcode(bool usingRemappedMemory) =>
+        usingRemappedMemory ? OneshotOpcodeRemappedSceneMemory.ToList() : OneshotOpcodeDefault.ToList();
 
     private List<byte[]> SplitByteArray(byte[] byteArray, List<int> positions, List<int> sizes)
     {
@@ -289,7 +290,7 @@ public class FurrSyntaxParser
 
             var localAddressByteArray = commandBytes[addressOffset..(addressOffset + 4)];
             var localAddressAsInt = BitConverter.ToUInt32(localAddressByteArray);
-            var globalAddressAsInt = 0L;
+            long globalAddressAsInt;
             if (isUsingRemappedMemory)
                 globalAddressAsInt = (localAddressAsInt - 0xff413000) + 0x00028105 - 0x2100 + (addressOffset - 1) +
                                      commandBasePosition;
@@ -406,7 +407,7 @@ public class FurrSyntaxParser
             firstBlock = reader.ReadBytes(RacetimerEventStart.Length);
             if (firstBlock.SequenceEqual(RacetimerEventStart))
             {
-                var time = reader.ReadInt32();
+                reader.SkipBytes(4); //var time = reader.ReadInt32();
                 reader.SkipBytes(6);
                 var currentCommandList = new List<FurrCommand>();
                 var nopCount = 0;
@@ -425,7 +426,7 @@ public class FurrSyntaxParser
                     {
                         racetrackEvents.Add(currentCommandList);
                         currentCommandList = new List<FurrCommand>();
-                        time = reader.ReadInt32();
+                        reader.SkipBytes(4); //time = reader.ReadInt32();
                         reader.SkipBytes(6);
                         continue;
                     }
@@ -447,7 +448,7 @@ public class FurrSyntaxParser
         return racetrackEvents;
     }
 
-    private List<List<FurrOptimalCommand>> ExtractFlipEffectTableFromExe(BinaryReader reader, List<FurrOpcode> opcodeList,
+    private List<List<FurrCommand>> ExtractFlipEffectTableFromExe(BinaryReader reader, List<FurrOpcode> opcodeList,
         bool isUsingRemappedMemory)
     {
         var offsetTable = new List<long>();
@@ -461,33 +462,30 @@ public class FurrSyntaxParser
             else
                 offsetTable.Add(address - GetBaseAddress(isUsingRemappedMemory));
         }
-        
+
         // Add an extra entry for testing
         offsetTable.Add(-1);
-        var flipeffectTable = new List<List<FurrOptimalCommand>>();
+        var flipeffectTable = new List<List<FurrCommand>>();
         for (var i = 0; i < LastCustomFlipeffect - FirstCustomFlipeffect; i++)
         {
-            var flipeffectCommandTable = new List<FurrOptimalCommand>();
+            var flipeffectCommandTable = new List<FurrCommand>();
             var nopCount = 0;
             if (offsetTable[i] != -1)
             {
                 reader.Seek(FlipeffectDataAddress + offsetTable[i]);
 
-                var commandPosition = reader.BaseStream.Position;
                 while (true)
                 {
                     // Indicates we've likely reached the end
                     if (nopCount > MaxNops)
                         break;
 
-                    commandPosition = reader.BaseStream.Position;
+                    var commandPosition = reader.BaseStream.Position;
 
                     if (offsetTable[i + 1] > 0)
                     {
                         if (commandPosition - FlipeffectDataAddress >= offsetTable[i + 1])
-                        {
                             break;
-                        }
                     }
 
                     var commandResult =
@@ -496,15 +494,14 @@ public class FurrSyntaxParser
                         nopCount++;
                     else
                     {
-                        nopCount = 0;
                         if (commandResult.NewCommand != null)
                         {
-                            flipeffectCommandTable.Add(commandResult);
+                            flipeffectCommandTable.Add(commandResult.NewCommand);
                             if (commandResult.NewCommand.FunctionName == "RETN")
                                 break;
                         }
                         else
-                            flipeffectCommandTable.Add(new FurrOptimalCommand(){NewCommand = FurrCommand.UnknownCommand, WasNop = false});
+                            flipeffectCommandTable.Add(FurrCommand.UnknownCommand);
 
                         nopCount = 0;
                     }
@@ -513,16 +510,14 @@ public class FurrSyntaxParser
 
             flipeffectTable.Add(flipeffectCommandTable);
         }
-        
+
         for (var i = 0; i < flipeffectTable.Count; i++)
         {
             if (flipeffectTable[i].Count > 0)
             {
                 _logger.LogInformation("FlipEffect: {Idx}", i + FirstCustomFlipeffect);
                 foreach (var command in flipeffectTable[i])
-                {
-                    _logger.LogInformation(command.NewCommand?.FunctionName);
-                }
+                    _logger.LogInformation(command.FunctionName);
             }
             else
             {
@@ -551,5 +546,33 @@ public class FurrSyntaxParser
                 }
             }
         }
+    }
+
+    public async Task<FurrData> ReadExeFile(SyntaxFile syntaxFile, string exeFilePath, bool isUsingRemappedMemory, CancellationToken cancellationToken)
+    {
+        var opcodes = await LoadSyntaxFile(syntaxFile, cancellationToken);
+
+        var oneShotOpcode = GetOneshotOpcode(isUsingRemappedMemory);
+        var totalLength = oneShotOpcode.Sum(b => b.Length);
+
+        opcodes.Add(new FurrOpcode()
+        {
+            FunctionName = "ONESHOT", 
+            ByteArrays = oneShotOpcode, 
+            ReverseArgs = false,
+            AddressTable = [],
+            TotalLength = totalLength, 
+            FirstArgType = "LONG", 
+            SecondArgType = "UNSIGNEDINTEGER"
+        });
+
+        var furrData = new FurrData();
+
+        using var reader = new BinaryReader(File.OpenRead(exeFilePath));
+        furrData.FurrFlipeffects = ExtractFlipEffectTableFromExe(reader, opcodes, isUsingRemappedMemory);
+        furrData.FurrRacetimerEvents = ExtractRacetimerEventsFromExe(reader, opcodes, isUsingRemappedMemory);
+        
+        PostprocessFurrData(furrData.FurrFlipeffects);
+        return furrData;
     }
 }

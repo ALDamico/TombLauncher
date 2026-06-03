@@ -25,3 +25,9 @@ public record FurrOptimalCommand
     public FurrCommand? NewCommand { get; init; }
     public bool WasNop { get; init; }
 }
+
+public record FurrData
+{
+    public List<List<FurrCommand>> FurrFlipeffects { get; set; } = new();
+    public List<List<FurrCommand>> FurrRacetimerEvents { get; set; } = new();
+}
