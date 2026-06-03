@@ -18,4 +18,8 @@
       <ProjectReference Include="..\TombLauncher.Core\TombLauncher.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="INIParser" Version="1.0.4" />
+    </ItemGroup>
+
 </Project>
