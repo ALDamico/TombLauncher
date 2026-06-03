@@ -14,12 +14,12 @@ public class FurrSyntaxParser
 
     private static readonly byte[][] OneshotOpcodeDefault =
         new List<string>()
-        {
-            "5351B900009900BB",
-            "2F000000",
-            "83EB2FC6041901595B66C705FECB4A00",
-            "2F00",
-        }.Select(Convert.FromHexString)
+            {
+                "5351B900009900BB",
+                "2F000000",
+                "83EB2FC6041901595B66C705FECB4A00",
+                "2F00",
+            }.Select(Convert.FromHexString)
             .ToArray();
 
     private static readonly byte[][] OneshotOpcodeRemappedSceneMemory = new List<string>()
@@ -33,7 +33,7 @@ public class FurrSyntaxParser
 
     private const int FlipeffectTableAddress = 0xC1000;
     private const int FlipeffectDataAddress = 0xc3100;
-    private const int RacetimereventDataAddress = 0x00101000;
+    private const int RacetimerEventDataAddress = 0x00101000;
     private static readonly uint FunctionAddressOffset = BitConverter.ToUInt32(Convert.FromHexString("FBAE7EFF"), 0);
     private static readonly byte[] RacetimerEventNotify = Convert.FromHexString("FF0546777F00");
     private static readonly byte[] RacetimerEventStart = Convert.FromHexString("813D46777F00");
@@ -97,25 +97,25 @@ public class FurrSyntaxParser
             _ => throw new ArgumentException($"Unknown type: {type}", nameof(type))
         };
     }
-    
+
     private object? ReadArg(byte[]? arg, string? type)
     {
         return type switch
         {
-            "ASSIGN_BYTE"      => arg![0],
-            "UNSIGNEDBYTE"     => arg![0],
-            "SIGNEDBYTE"       => (sbyte)arg![0],
-            "ASSIGN_INTEGER"   => BitConverter.ToUInt16(arg!, 0),
-            "UNSIGNEDINTEGER"  => BitConverter.ToUInt16(arg!, 0),
-            "SIGNEDINTEGER"    => BitConverter.ToInt16(arg!, 0),
-            "ASSIGN_LONG"      => BitConverter.ToUInt32(arg!, 0),
-            "ADDRESS"          => BitConverter.ToUInt32(arg!, 0),
-            "FLIPEFFECT"       => BitConverter.ToUInt32(arg!, 0),
-            "TIME"             => BitConverter.ToUInt32(arg!, 0),
-            "ASSIGN_HEX"       => BitConverter.ToUInt32(arg!, 0), // Python: might be 2
-            "LONG"             => BitConverter.ToInt32(arg!, 0),
-            null               => null,
-            _                  => throw new ArgumentException($"Unknown type: {type}")
+            "ASSIGN_BYTE" => arg![0],
+            "UNSIGNEDBYTE" => arg![0],
+            "SIGNEDBYTE" => (sbyte)arg![0],
+            "ASSIGN_INTEGER" => BitConverter.ToUInt16(arg!, 0),
+            "UNSIGNEDINTEGER" => BitConverter.ToUInt16(arg!, 0),
+            "SIGNEDINTEGER" => BitConverter.ToInt16(arg!, 0),
+            "ASSIGN_LONG" => BitConverter.ToUInt32(arg!, 0),
+            "ADDRESS" => BitConverter.ToUInt32(arg!, 0),
+            "FLIPEFFECT" => BitConverter.ToUInt32(arg!, 0),
+            "TIME" => BitConverter.ToUInt32(arg!, 0),
+            "ASSIGN_HEX" => BitConverter.ToUInt32(arg!, 0), // Python: might be 2
+            "LONG" => BitConverter.ToInt32(arg!, 0),
+            null => null,
+            _ => throw new ArgumentException($"Unknown type: {type}")
         };
     }
 
@@ -133,12 +133,14 @@ public class FurrSyntaxParser
             firstArgTyped = ReadArg(firstArg, opcode.FirstArgType);
             secondArgTyped = ReadArg(secondArg, opcode.SecondArgType);
         }
-        
+
         return opcode.ReverseArgs
-            ? new FurrCommand { FunctionName = opcode.FunctionName, FirstArg = secondArgTyped, SecondArg = firstArgTyped }
-            : new FurrCommand { FunctionName = opcode.FunctionName, FirstArg = firstArgTyped, SecondArg = secondArgTyped };
+            ? new FurrCommand
+                { FunctionName = opcode.FunctionName, FirstArg = secondArgTyped, SecondArg = firstArgTyped }
+            : new FurrCommand
+                { FunctionName = opcode.FunctionName, FirstArg = firstArgTyped, SecondArg = secondArgTyped };
     }
-    
+
     private List<byte[]> GetSplitByteArraysWithArgs(byte[] myBytes, string? firstArgType, string? secondArgType,
         int firstArgPos, int secondArgPos, bool firstArgIsLocalOffset, bool secondArgIsLocalOffset, bool reverseArgs)
     {
@@ -299,7 +301,7 @@ public class FurrSyntaxParser
                 globalAddressAsInt -= 0xffffffff;
             else if (globalAddressAsInt < 0)
                 globalAddressAsInt += 0xffffffff;
-            
+
             var globalAddressByteArray = BitConverter.GetBytes((uint)globalAddressAsInt);
             Array.Reverse(globalAddressByteArray);
 
@@ -310,7 +312,7 @@ public class FurrSyntaxParser
     }
 
     private List<(FurrOpcode Opcode, byte[]? FirstArg, byte[]? SecondArg)> ScanForPossibleCommands(
-        BinaryReader reader, List<FurrOpcode> opcodeList, int commandPosition, bool isUsingRemappedMemory)
+        BinaryReader reader, List<FurrOpcode> opcodeList, long commandPosition, bool isUsingRemappedMemory)
     {
         var possibleCommands = new List<(FurrOpcode, byte[]?, byte[]?)>();
 
@@ -358,16 +360,17 @@ public class FurrSyntaxParser
             if (matched)
                 possibleCommands.Add((opcode, firstArg, secondArg));
         }
-        
+
         if (possibleCommands.Count == 0)
-            _logger.LogWarning("Could not find any commands for buffer: {BufferStr}", Convert.ToHexString(lastDataBuffer));
-            
+            _logger.LogWarning("Could not find any commands for buffer: {BufferStr}",
+                Convert.ToHexString(lastDataBuffer));
+
 
         return possibleCommands;
     }
 
     private FurrOptimalCommand ScanForOptimalCommand(BinaryReader reader, List<FurrOpcode> opcodeList,
-        int commandPosition, bool isUsingRemappedMemory)
+        long commandPosition, bool isUsingRemappedMemory)
     {
         var possibleCommands = ScanForPossibleCommands(reader, opcodeList, commandPosition, isUsingRemappedMemory);
 
@@ -388,5 +391,145 @@ public class FurrSyntaxParser
         }
 
         return new FurrOptimalCommand() { NewCommand = null, WasNop = false };
+    }
+
+    private List<List<FurrCommand>> ExtractRacetimerEventsFromExe(BinaryReader reader, List<FurrOpcode> opcodeList,
+        bool isUsingRemappedMemory)
+    {
+        reader.Seek(RacetimerEventDataAddress);
+
+        var racetrackEvents = new List<List<FurrCommand>>();
+
+        var firstBlock = reader.ReadBytes(RacetimerEventNotify.Length);
+        if (firstBlock.SequenceEqual(RacetimerEventNotify))
+        {
+            firstBlock = reader.ReadBytes(RacetimerEventStart.Length);
+            if (firstBlock.SequenceEqual(RacetimerEventStart))
+            {
+                var time = reader.ReadInt32();
+                reader.SkipBytes(6);
+                var currentCommandList = new List<FurrCommand>();
+                var nopCount = 0;
+
+                while (true)
+                {
+                    if (nopCount > MaxNops)
+                    {
+                        racetrackEvents.Add(currentCommandList);
+                        break;
+                    }
+
+                    var pos = reader.BaseStream.Position;
+                    var testEnd = reader.ReadBytes(RacetimerEventStart.Length);
+                    if (testEnd.SequenceEqual(RacetimerEventStart))
+                    {
+                        racetrackEvents.Add(currentCommandList);
+                        currentCommandList = new List<FurrCommand>();
+                        time = reader.ReadInt32();
+                        reader.SkipBytes(6);
+                        continue;
+                    }
+
+                    reader.Seek(pos);
+
+                    var commandResult = ScanForOptimalCommand(reader, opcodeList, pos, isUsingRemappedMemory);
+                    if (commandResult.WasNop)
+                        nopCount++;
+                    else
+                    {
+                        currentCommandList.Add(commandResult.NewCommand ?? FurrCommand.UnknownCommand);
+                        nopCount = 0;
+                    }
+                }
+            }
+        }
+
+        return racetrackEvents;
+    }
+
+    private List<List<FurrOptimalCommand>> ExtractFlipEffectTableFromExe(BinaryReader reader, List<FurrOpcode> opcodeList,
+        bool isUsingRemappedMemory)
+    {
+        var offsetTable = new List<long>();
+        reader.Seek(FlipeffectTableAddress);
+
+        for (var i = 0; i < LastCustomFlipeffect - FirstCustomFlipeffect; i++)
+        {
+            var address = reader.ReadUInt32();
+            if (address == 0)
+                offsetTable.Add(-1);
+            else
+                offsetTable.Add(address - GetBaseAddress(isUsingRemappedMemory));
+        }
+        
+        // Add an extra entry for testing
+        offsetTable.Add(-1);
+        var flipeffectTable = new List<List<FurrOptimalCommand>>();
+        for (var i = 0; i < LastCustomFlipeffect - FirstCustomFlipeffect; i++)
+        {
+            var flipeffectCommandTable = new List<FurrOptimalCommand>();
+            var nopCount = 0;
+            if (offsetTable[i] != -1)
+            {
+                reader.Seek(FlipeffectDataAddress + offsetTable[i]);
+
+                var commandPosition = reader.BaseStream.Position;
+                while (true)
+                {
+                    // Indicates we've likely reached the end
+                    if (nopCount > MaxNops)
+                        break;
+
+                    commandPosition = reader.BaseStream.Position;
+
+                    if (offsetTable[i + 1] > 0)
+                    {
+                        if (commandPosition - FlipeffectDataAddress >= offsetTable[i + 1])
+                        {
+                            break;
+                        }
+                    }
+
+                    var commandResult =
+                        ScanForOptimalCommand(reader, opcodeList, commandPosition, isUsingRemappedMemory);
+                    if (commandResult.WasNop)
+                        nopCount++;
+                    else
+                    {
+                        nopCount = 0;
+                        if (commandResult.NewCommand != null)
+                        {
+                            flipeffectCommandTable.Add(commandResult);
+                            if (commandResult.NewCommand.FunctionName == "RETN")
+                                break;
+                        }
+                        else
+                            flipeffectCommandTable.Add(new FurrOptimalCommand(){NewCommand = FurrCommand.UnknownCommand, WasNop = false});
+
+                        nopCount = 0;
+                    }
+                }
+            }
+
+            flipeffectTable.Add(flipeffectCommandTable);
+        }
+        
+        for (var i = 0; i < flipeffectTable.Count; i++)
+        {
+            if (flipeffectTable[i].Count > 0)
+            {
+                _logger.LogInformation("FlipEffect: {Idx}", i + FirstCustomFlipeffect);
+                foreach (var command in flipeffectTable[i])
+                {
+                    _logger.LogInformation(command.NewCommand?.FunctionName);
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Could not find any commands for flipeffect: {Idx}", i + FirstCustomFlipeffect);
+            }
+        }
+
+        return flipeffectTable;
     }
 }

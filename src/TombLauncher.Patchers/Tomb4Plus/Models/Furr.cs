@@ -16,6 +16,8 @@ public record FurrCommand
     public required string FunctionName { get; set; }
     public object? FirstArg { get; set; }
     public object? SecondArg { get; set; }
+
+    public static FurrCommand UnknownCommand { get; } = new FurrCommand() { FunctionName = "UNKNOWN COMMAND" };
 }
 
 public record FurrOptimalCommand
