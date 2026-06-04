@@ -4,13 +4,12 @@ using TombLauncher.Patchers.Tomb4Plus.Models;
 
 namespace TombLauncher.Patchers.Tomb4Plus.Parsers;
 
-internal class LeikkuriParser
+public class LeikkuriParser
 {
     public FontInfo? ExtractFontDataFromExe(string exeFilePath, FontInfo? fontInfo)
     {
         using var reader = new BinaryReader(File.OpenRead(exeFilePath));
-        if (fontInfo == null)
-            fontInfo = new FontInfo();
+        fontInfo ??= new FontInfo();
 
         reader.Seek(LeikkuriDataTables.FontTableAddress);
         var fontTable = new List<FontGlyph>();

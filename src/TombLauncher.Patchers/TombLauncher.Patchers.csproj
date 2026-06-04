@@ -10,7 +10,6 @@
       <EmbeddedResource Include="Tomb4Plus\Furr\syntaxTREP.fln" />
       <EmbeddedResource Include="Tomb4Plus\Furr\syntaxEarly.fln" />
       <EmbeddedResource Include="Tomb4Plus\Furr\syntaxT4L.fln" />
-      <None Remove="Tomb4Plus\Leikkuri\font_table.txt" />
     </ItemGroup>
 
     <ItemGroup>

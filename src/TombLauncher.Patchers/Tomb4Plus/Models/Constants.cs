@@ -44,4 +44,6 @@ internal static class Constants
 
     internal const string ColdBreath = "enabled_in_cold_rooms_only";
     internal const short RoomColdFlag = 0x1000;
+
+    internal const byte MemoryRemappedFlag = 0x76;
 }

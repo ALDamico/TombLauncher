@@ -81,6 +81,13 @@ public static partial class StringExtensions
         return chars.Any(c => s.EndsWith(c));
     }
 
+    public static string EnsureEndsWith(this string s, string postFix)
+    {
+        if (s.ToLowerInvariant().EndsWith(postFix))
+            return s;
+        return s + postFix;
+    }
+
     public static string EnsureStartsWith(this string? s, string? prefix, char separator = '\0')
     {
         var nonNullPrefix = prefix ?? "";
