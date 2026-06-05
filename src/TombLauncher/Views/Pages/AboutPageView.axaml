@@ -194,7 +194,25 @@
                             </StackPanel>
                         </Button>
                     </WrapPanel>
-
+                    <TextBlock Margin="0, 8, 0, 2" FontWeight="SemiBold" Text="Tomb4Plus Feature Extractor"></TextBlock>
+                    <WrapPanel>
+                        <TextBlock Text="Ported to C# from the " />
+                        <Button Classes="hyperlink" Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://github.com/SaracenOne/tomb4_feature_extractor">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="original Python script" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text=" by " />
+                        <Button Classes="hyperlink" Command="{Binding OpenLinkCommand}"
+                                CommandParameter="https://github.com/SaracenOne">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="SaracenOne" />
+                                <iconPacks:PackIconRemixIcon Kind="ExternalLinkFill" Width="12" Height="12" />
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
                     <TextBlock Margin="0,8,0,2" FontWeight="SemiBold" Text="Special thanks" />
                     <WrapPanel>
                         <Button Classes="hyperlink"
