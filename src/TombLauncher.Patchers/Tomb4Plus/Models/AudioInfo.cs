@@ -12,4 +12,9 @@ public class AudioInfo
     public byte? OutsideJeepTrack { get; set; }
     public byte? SecretTrack { get; set; }
     public byte? FirstLoopedAudioTrack { get; set; }
+
+    public bool HasAnyValue() => NewAudioSystem != null || OldCdTriggerSystem != null || DisableLaraHitSfx != null ||
+                                 LaraHitSfx != null || DisableNoAmmoSfx != null || NoAmmoSfx != null ||
+                                 InsideJeepTrack != null || OutsideJeepTrack != null || SecretTrack != null ||
+                                 FirstLoopedAudioTrack != null;
 }

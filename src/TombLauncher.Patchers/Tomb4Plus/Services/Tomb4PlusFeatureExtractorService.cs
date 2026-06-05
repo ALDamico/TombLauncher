@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Text;
 using INIParser;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Utils;
 using TombLauncher.Patchers.Tomb4Plus.Enums;
@@ -112,7 +114,9 @@ public class Tomb4PlusFeatureExtractorService
         var hasEffectsBin = DetectEffectsBin(payload.InstallDirectory);
         
         var patchData = ReadBinaryFile(payload.InstallDirectory, isExtendedExeSize, isUsingRemappedMemory, fileSize, exePath);
-        var fontInfo = _leikkuriParser.ExtractFontDataFromExe(exePath, patchData.GlobalLevelInfo?.FontInfo);
+        if (patchData.GlobalLevelInfo != null)
+            patchData.GlobalLevelInfo.FontInfo ??= new FontInfo();
+        _leikkuriParser.ExtractFontDataFromExe(exePath, patchData.GlobalLevelInfo?.FontInfo);
         var esseResult = ReadEsseData(payload, patchData);
 
         var furrData = await ReadFurrData(payload, cancellationToken, isExtendedExeSize, patchData, exePath, isUsingRemappedMemory);
@@ -136,7 +140,7 @@ public class Tomb4PlusFeatureExtractorService
                 globalInfo.TrngVersionMajor = int.Parse(splitVersion[0]);
                 globalInfo.TrngVersionMinor = int.Parse(splitVersion[1]);
                 globalInfo.TrngVersionMaintainence = int.Parse(splitVersion[2]);
-                globalInfo.TrngVersionBuild = globalInfo.TrngVersionBuild = int.Parse(new string(splitVersion[3].Where(char.IsDigit).ToArray()));
+                globalInfo.TrngVersionBuild = int.Parse(new string(splitVersion[3].Where(char.IsDigit).ToArray()));
                 globalInfo.TrngVersionIsPlus = trngVersion?.FileVersion?.Contains('+') ?? false;
             }
         }
@@ -155,6 +159,64 @@ public class Tomb4PlusFeatureExtractorService
             globalInfo.TomoEnableWeatherFlipeffect = true;
             globalInfo.TomoSwapWhitelightForTeleporter = true;
         }
+
+        var globalLevelInfo = patchData.GlobalLevelInfo;
+
+        if (!globalLevelInfo?.AudioInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.AudioInfo = null;
+
+        if (!globalLevelInfo?.BarsInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.BarsInfo = null;
+
+        if (!globalLevelInfo?.GfxInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.GfxInfo = null;
+
+        if (!globalLevelInfo?.EnvironmentInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.EnvironmentInfo = null;
+
+        if (!globalLevelInfo?.CreatureInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.CreatureInfo = null;
+
+        if (!globalLevelInfo?.CameraInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.CameraInfo = null;
+
+        if (!globalLevelInfo?.MiscInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.MiscInfo = null;
+
+        if (!globalLevelInfo?.StatInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.StatInfo = null;
+
+        if (!globalLevelInfo?.FontInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.FontInfo = null;
+
+        if (!globalLevelInfo?.LaraInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.LaraInfo = null;
+
+        if (!globalLevelInfo?.ObjectsInfo?.HasAnyValue() ?? false)
+            globalLevelInfo.ObjectsInfo = null;
+
+        outputModConfig.GlobalInfo = globalInfo;
+        if (globalLevelInfo?.HasAnyValue() ?? false)
+        {
+            outputModConfig.GlobalLevelInfo = globalLevelInfo;
+        }
+
+        if (esseResult.IsNotNullOrEmpty())
+            outputModConfig.Levels = esseResult;
+
+        var jsonData = JsonConvert.SerializeObject(outputModConfig, Formatting.Indented,
+            new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new DefaultContractResolver() { NamingStrategy = new SnakeCaseNamingStrategy() }
+            });
+
+        var jsonPath = Path.Combine(payload.InstallDirectory, "game_mod_config.json");
+
+        await File.WriteAllTextAsync(jsonPath, jsonData, cancellationToken);
+
+        var portableSettingsFileName = Path.Combine(payload.InstallDirectory, "portable.txt");
+        await File.WriteAllTextAsync(portableSettingsFileName, "", cancellationToken);
     }
 
     private List<LevelData> ReadEsseData(FeatureExtractorPayload payload, TrlePatchExecutorOutput patchData)

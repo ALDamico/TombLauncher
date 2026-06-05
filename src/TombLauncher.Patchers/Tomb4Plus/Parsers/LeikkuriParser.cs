@@ -6,7 +6,7 @@ namespace TombLauncher.Patchers.Tomb4Plus.Parsers;
 
 public class LeikkuriParser
 {
-    public FontInfo? ExtractFontDataFromExe(string exeFilePath, FontInfo? fontInfo)
+    public void ExtractFontDataFromExe(string exeFilePath, FontInfo? fontInfo)
     {
         using var reader = new BinaryReader(File.OpenRead(exeFilePath));
         fontInfo ??= new FontInfo();
@@ -58,7 +58,5 @@ public class LeikkuriParser
 
         if (LeikkuriDataTables.DefaultFontTable.Where((g, i) => g != fontTable[i]).Any())
             fontInfo.CustomFontTable = fontTable;
-
-        return fontInfo.HasAnyValue() ? fontInfo : null;
     }
 }

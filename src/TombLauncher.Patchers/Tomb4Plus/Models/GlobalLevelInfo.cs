@@ -14,4 +14,12 @@ public class GlobalLevelInfo
     public CameraInfo? CameraInfo { get; set; }
     public MiscInfo? MiscInfo { get; set; }
     public WeaponInfo? WeaponInfo { get; set; }
+
+    // WeaponInfo intentionally excluded: OG Python does not include weapon_info in global_level_info
+    public bool HasAnyValue() => (AudioInfo?.HasAnyValue() ?? false) || (BarsInfo?.HasAnyValue() ?? false) ||
+                                 (FontInfo?.HasAnyValue() ?? false) || (GfxInfo?.HasAnyValue() ?? false) ||
+                                 (ObjectsInfo?.HasAnyValue() ?? false) || (EnvironmentInfo?.HasAnyValue() ?? false) ||
+                                 (LaraInfo?.HasAnyValue() ?? false) || (StatInfo?.HasAnyValue() ?? false) ||
+                                 (CreatureInfo?.HasAnyValue() ?? false) || (CameraInfo?.HasAnyValue() ?? false) ||
+                                 (MiscInfo?.HasAnyValue() ?? false) || (WeaponInfo?.HasAnyValue() ?? false);
 }
