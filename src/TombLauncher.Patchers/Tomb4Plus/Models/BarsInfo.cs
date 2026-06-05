@@ -8,5 +8,6 @@ public class BarsInfo
     public BarStyle? SprintBar { get; set; }
     public BarStyle? LoadingBar { get; set; }
 
-    // TODO: implement HasAnyValue() and use it in TrlePatchExtractor.ReadBarsInfo to return null when all bars are null
+    public bool HasAnyValue() => HealthBar != null || PoisonBar != null || AirBar != null || SprintBar != null ||
+                                 LoadingBar != null;
 }

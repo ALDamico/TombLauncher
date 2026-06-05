@@ -7,4 +7,7 @@ public class EnvironmentInfo
     public int? FogEndRange { get; set; }
     public int? FogStartRange { get; set; }
     public int? RoomColdFlag { get; set; }
+
+    public bool HasAnyValue() => DisableDistanceLimit != null || FarView != null || FogEndRange != null ||
+                                 FogStartRange != null || RoomColdFlag != null;
 }

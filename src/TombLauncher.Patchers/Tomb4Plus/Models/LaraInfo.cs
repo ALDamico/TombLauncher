@@ -6,4 +6,7 @@ public class LaraInfo
     public short? CrawlspaceJumpPitDeepnessThreshold { get; set; }
     public short? LedgeToJumpState { get; set; }
     public short? LedgeToDownState { get; set; }
+
+    public bool HasAnyValue() => CrawlspaceJumpAnimation != null || CrawlspaceJumpPitDeepnessThreshold != null ||
+                                 LedgeToJumpState != null || LedgeToDownState != null;
 }
