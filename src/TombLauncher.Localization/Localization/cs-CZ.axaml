@@ -539,6 +539,8 @@
     <system:String x:Key="MOVING_FILE">Přesouvám {0}...</system:String>
     <system:String x:Key="REMOVING_OLD_FILE">Odstraňuji {0}...</system:String>
     <system:String x:Key="CONVERT_TO_TOMB4PLUS">Převést na Tomb4Plus</system:String>
+    <system:String x:Key="SYNTAX_FILE_TYPE">Formát patcheru</system:String>
+    <system:String x:Key="SYNTAX_FILE_TYPE_DESCRIPTION">Určuje, která verze nástroje TREP byla použita k úpravě spustitelného souboru tohoto levelu. Pokud si nejste jisti, zkontrolujte readme nebo stránku levelu; většina levelů používá Early.</system:String>
 
     <system:String x:Key="AN_ERROR_OCCURRED">Došlo k chybě</system:String>
     <system:String x:Key="INSTALLING">Instalování...</system:String>

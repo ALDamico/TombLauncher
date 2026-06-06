@@ -73,13 +73,15 @@ public class Tomb4PlusPatcherService
         await PerformBackup(originalExePath, originalExeBytes, gameMetadata, cancellationToken);
         progressLogger.Info("OLD_EXECUTABLE_BACKED_UP");
         var downloadPath = PathUtils.GetRandomTempDirectory();
+        var extractionPath = Path.Combine(downloadPath, "extracted");
         var fullFilePath = Path.Combine(downloadPath, Path.GetRandomFileName());
 
         try
         {
             progressLogger.Info("DOWNLOADING_LATEST_TOMB4PLUS_VERSION");
             _logger.LogInformation("Fetching latest Tomb4Plus release from GitHub");
-            var release = await _gitHubClient.Repository.Release.GetLatest("SaracenOne", "Tomb4Plus");
+            var releases = await _gitHubClient.Repository.Release.GetAll("SaracenOne", "Tomb4Plus");
+            var release = releases?.MaxBy(r => r.CreatedAt);
             if (release == null)
             {
                 _logger.LogError("Can't find a release for Tomb4Plus!");
@@ -100,7 +102,7 @@ public class Tomb4PlusPatcherService
             }
             
             progressLogger.Info("EXTRACTING_TOMB4PLUS_FILES");
-            await ExtractZipContent(fullFilePath, downloadPath, cancellationToken);
+            await ExtractZipContent(fullFilePath, extractionPath, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -110,7 +112,7 @@ public class Tomb4PlusPatcherService
         }
 
         var extractedFiles =
-            Directory.EnumerateFiles(downloadPath, "*", _platformSpecificFeatures.GetEnumerationOptions())
+            Directory.EnumerateFiles(extractionPath, "*", _platformSpecificFeatures.GetEnumerationOptions())
                 .ToList();
 
         var exeFile = extractedFiles.FirstOrDefault(f => f.EndsWith(".exe"));

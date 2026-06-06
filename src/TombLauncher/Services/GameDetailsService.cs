@@ -11,7 +11,6 @@ using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Contracts.Settings;
-using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
 using TombLauncher.Gamepad.SupportMatrix;
@@ -150,6 +149,9 @@ public class GameDetailsService : IViewService
 
     public async Task OpenWidescreenPatcher(GameMetadataViewModel gameMetadata) =>
         await NavigationManager.NavigateTo<WidescreenPatcherPageViewModel>(gameMetadata);
+
+    public async Task OpenTomb4PlusPatcher(GameMetadataViewModel gameMetadata) =>
+        await NavigationManager.NavigateTo<Tomb4PlusPatcherPageViewModel>(gameMetadata);
 
     public async Task OpenTrxNativePatcher(GameMetadataViewModel gameMetadata) =>
         await NavigationManager.NavigateTo<TrxNativePatcherPageViewModel>(gameMetadata);

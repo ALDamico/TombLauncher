@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace TombLauncher.Patchers.Tomb4Plus.Enums;
 
 public enum GradientType
@@ -16,7 +18,10 @@ public enum PatchBinaryType
 
 public enum SyntaxFile
 {
+    [Description("Early TREP syntax")]
     Early,
+    [Description("Common TREP syntax")]
     Trep,
+    [Description("TRLE scripting via Lua")]
     TrLarson,
 }
