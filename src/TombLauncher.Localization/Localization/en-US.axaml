@@ -528,6 +528,20 @@
     <system:String x:Key="READING_EXECUTABLE_VERSION">Reading executable version...</system:String>
     <system:String x:Key="TRX_NATIVE_PATCH">TRX native patch</system:String>
     <system:String x:Key="REVERT_TO_ORIGINAL_EXECUTABLE">Revert to original executable</system:String>
+    <system:String x:Key="TOMB4PLUS_CONVERSION_STARTED">Starting Tomb4Plus conversion...</system:String>
+    <system:String x:Key="ATTEMPTING_TOMB4PLUS_FEATURE_EXTRACTION">Extracting game features...</system:String>
+    <system:String x:Key="TOMB4PLUS_FEATURES_EXTRACTION_COMPLETE">Feature extraction complete.</system:String>
+    <system:String x:Key="BACKING_UP_OLD_EXECUTABLE">Backing up original executable...</system:String>
+    <system:String x:Key="OLD_EXECUTABLE_BACKED_UP">Original executable backed up.</system:String>
+    <system:String x:Key="DOWNLOADING_LATEST_TOMB4PLUS_VERSION">Downloading latest Tomb4Plus version...</system:String>
+    <system:String x:Key="NO_SUITABLE_TOMB4PLUS_RELEASE">No suitable Tomb4Plus release found.</system:String>
+    <system:String x:Key="EXTRACTING_TOMB4PLUS_FILES">Extracting Tomb4Plus files...</system:String>
+    <system:String x:Key="ERROR_WHILE_PATCHING">An error occurred while applying the patch.</system:String>
+    <system:String x:Key="SAVING_NEW_EXECUTABLE">Saving new executable...</system:String>
+    <system:String x:Key="MOVING_FILE">Moving {0}...</system:String>
+    <system:String x:Key="REMOVING_OLD_FILE">Removing {0}...</system:String>
+    <system:String x:Key="CONVERT_TO_TOMB4PLUS">Convert to Tomb4Plus</system:String>
+
     <system:String x:Key="AN_ERROR_OCCURRED">An error occurred</system:String>
     <system:String x:Key="INSTALLING">Installing...</system:String>
     <system:String x:Key="GATHERING_STATISTICS">Gathering statistics...</system:String>

@@ -526,6 +526,20 @@
     <system:String x:Key="READING_EXECUTABLE_VERSION">Čtení verze spustitelného souboru...</system:String>
     <system:String x:Key="TRX_NATIVE_PATCH">Nativní záplata TRX</system:String>
     <system:String x:Key="REVERT_TO_ORIGINAL_EXECUTABLE">Vrátit původní spustitelný soubor</system:String>
+    <system:String x:Key="TOMB4PLUS_CONVERSION_STARTED">Spouštění konverze Tomb4Plus...</system:String>
+    <system:String x:Key="ATTEMPTING_TOMB4PLUS_FEATURE_EXTRACTION">Extrahování herních funkcí...</system:String>
+    <system:String x:Key="TOMB4PLUS_FEATURES_EXTRACTION_COMPLETE">Extrakce herních funkcí dokončena.</system:String>
+    <system:String x:Key="BACKING_UP_OLD_EXECUTABLE">Záloha původního spustitelného souboru...</system:String>
+    <system:String x:Key="OLD_EXECUTABLE_BACKED_UP">Původní spustitelný soubor zálohován.</system:String>
+    <system:String x:Key="DOWNLOADING_LATEST_TOMB4PLUS_VERSION">Stahování nejnovější verze Tomb4Plus...</system:String>
+    <system:String x:Key="NO_SUITABLE_TOMB4PLUS_RELEASE">Nebyla nalezena žádná vhodná verze Tomb4Plus.</system:String>
+    <system:String x:Key="EXTRACTING_TOMB4PLUS_FILES">Extrahování souborů Tomb4Plus...</system:String>
+    <system:String x:Key="ERROR_WHILE_PATCHING">Při aplikaci záplaty došlo k chybě.</system:String>
+    <system:String x:Key="SAVING_NEW_EXECUTABLE">Ukládání nového spustitelného souboru...</system:String>
+    <system:String x:Key="MOVING_FILE">Přesouvám {0}...</system:String>
+    <system:String x:Key="REMOVING_OLD_FILE">Odstraňuji {0}...</system:String>
+    <system:String x:Key="CONVERT_TO_TOMB4PLUS">Převést na Tomb4Plus</system:String>
+
     <system:String x:Key="AN_ERROR_OCCURRED">Došlo k chybě</system:String>
     <system:String x:Key="INSTALLING">Instalování...</system:String>
     <system:String x:Key="GATHERING_STATISTICS">Shromažďování statistik...</system:String>

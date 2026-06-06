@@ -82,7 +82,7 @@ public class Tomb4PlusFeatureExtractorService
         return globalInfo;
     }
 
-    private async Task ExtractAsync(FeatureExtractorPayload payload, CancellationToken cancellationToken)
+    public async Task Extract(FeatureExtractorPayload payload, CancellationToken cancellationToken)
     {
         if (!Directory.Exists(payload.InstallDirectory))
             throw new ArgumentException("Invalid directory specified!");
