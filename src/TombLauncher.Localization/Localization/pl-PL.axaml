@@ -526,6 +526,20 @@
     <system:String x:Key="READING_EXECUTABLE_VERSION">Odczyt wersji pliku wykonywalnego...</system:String>
     <system:String x:Key="TRX_NATIVE_PATCH">Natywna łatka TRX</system:String>
     <system:String x:Key="REVERT_TO_ORIGINAL_EXECUTABLE">Przywróć oryginalny plik wykonywalny</system:String>
+    <system:String x:Key="TOMB4PLUS_CONVERSION_STARTED">Rozpoczynanie konwersji Tomb4Plus...</system:String>
+    <system:String x:Key="ATTEMPTING_TOMB4PLUS_FEATURE_EXTRACTION">Wyodrębnianie funkcji gry...</system:String>
+    <system:String x:Key="TOMB4PLUS_FEATURES_EXTRACTION_COMPLETE">Wyodrębnianie funkcji gry zakończone.</system:String>
+    <system:String x:Key="BACKING_UP_OLD_EXECUTABLE">Tworzenie kopii zapasowej oryginalnego pliku wykonywalnego...</system:String>
+    <system:String x:Key="OLD_EXECUTABLE_BACKED_UP">Kopia zapasowa oryginalnego pliku wykonywalnego utworzona.</system:String>
+    <system:String x:Key="DOWNLOADING_LATEST_TOMB4PLUS_VERSION">Pobieranie najnowszej wersji Tomb4Plus...</system:String>
+    <system:String x:Key="NO_SUITABLE_TOMB4PLUS_RELEASE">Nie znaleziono odpowiedniej wersji Tomb4Plus.</system:String>
+    <system:String x:Key="EXTRACTING_TOMB4PLUS_FILES">Wyodrębnianie plików Tomb4Plus...</system:String>
+    <system:String x:Key="ERROR_WHILE_PATCHING">Wystąpił błąd podczas stosowania łatki.</system:String>
+    <system:String x:Key="SAVING_NEW_EXECUTABLE">Zapisywanie nowego pliku wykonywalnego...</system:String>
+    <system:String x:Key="MOVING_FILE">Przenoszenie {0}...</system:String>
+    <system:String x:Key="REMOVING_OLD_FILE">Usuwanie {0}...</system:String>
+    <system:String x:Key="CONVERT_TO_TOMB4PLUS">Konwertuj do Tomb4Plus</system:String>
+
     <system:String x:Key="AN_ERROR_OCCURRED">Wystąpił błąd</system:String>
     <system:String x:Key="INSTALLING">Instalowanie...</system:String>
     <system:String x:Key="GATHERING_STATISTICS">Zbieranie statystyk...</system:String>

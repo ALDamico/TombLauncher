@@ -526,6 +526,20 @@
     <system:String x:Key="READING_EXECUTABLE_VERSION">Leyendo versión del ejecutable...</system:String>
     <system:String x:Key="TRX_NATIVE_PATCH">Parche nativo TRX</system:String>
     <system:String x:Key="REVERT_TO_ORIGINAL_EXECUTABLE">Volver al ejecutable original</system:String>
+    <system:String x:Key="TOMB4PLUS_CONVERSION_STARTED">Iniciando conversión a Tomb4Plus...</system:String>
+    <system:String x:Key="ATTEMPTING_TOMB4PLUS_FEATURE_EXTRACTION">Extrayendo características del juego...</system:String>
+    <system:String x:Key="TOMB4PLUS_FEATURES_EXTRACTION_COMPLETE">Extracción de características completada.</system:String>
+    <system:String x:Key="BACKING_UP_OLD_EXECUTABLE">Realizando copia de seguridad del ejecutable original...</system:String>
+    <system:String x:Key="OLD_EXECUTABLE_BACKED_UP">Copia de seguridad del ejecutable original completada.</system:String>
+    <system:String x:Key="DOWNLOADING_LATEST_TOMB4PLUS_VERSION">Descargando la última versión de Tomb4Plus...</system:String>
+    <system:String x:Key="NO_SUITABLE_TOMB4PLUS_RELEASE">No se encontró ninguna versión adecuada de Tomb4Plus.</system:String>
+    <system:String x:Key="EXTRACTING_TOMB4PLUS_FILES">Extrayendo archivos de Tomb4Plus...</system:String>
+    <system:String x:Key="ERROR_WHILE_PATCHING">Se produjo un error al aplicar el parche.</system:String>
+    <system:String x:Key="SAVING_NEW_EXECUTABLE">Guardando nuevo ejecutable...</system:String>
+    <system:String x:Key="MOVING_FILE">Moviendo {0}...</system:String>
+    <system:String x:Key="REMOVING_OLD_FILE">Eliminando {0}...</system:String>
+    <system:String x:Key="CONVERT_TO_TOMB4PLUS">Convertir a Tomb4Plus</system:String>
+
     <system:String x:Key="AN_ERROR_OCCURRED">Se ha producido un error</system:String>
     <system:String x:Key="INSTALLING">Instalando...</system:String>
     <system:String x:Key="GATHERING_STATISTICS">Recopilando estadísticas...</system:String>

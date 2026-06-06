@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
+using TombLauncher.Patchers.Tomb4Plus.Services;
 using TombLauncher.Patchers.Trx.Patchers;
 using TombLauncher.Patchers.Widescreen;
+using TombLauncher.Services.Patchers.Tomb4Plus;
 using TombLauncher.Services.Patchers.TrxNative;
 using TombLauncher.Services.Patchers.Widescreen;
 
@@ -13,6 +15,8 @@ public static class PatchersServiceCollectionExtensions
         return serviceCollection.AddSingleton<WidescreenPatcherService>()
             .AddSingleton<WidescreenPatcher>()
             .AddSingleton<TrxNativePatcherService>()
-            .AddSingleton<TrxNativeExecutablePatcher>();
+            .AddSingleton<TrxNativeExecutablePatcher>()
+            .AddSingleton<Tomb4PlusFeatureExtractorService>()
+            .AddSingleton<Tomb4PlusPatcherService>();
     }
 }

@@ -526,6 +526,20 @@
     <system:String x:Key="READING_EXECUTABLE_VERSION">Executable-Version wird gelesen...</system:String>
     <system:String x:Key="TRX_NATIVE_PATCH">TRX nativer Patch</system:String>
     <system:String x:Key="REVERT_TO_ORIGINAL_EXECUTABLE">Zur Original-Executable zurücksetzen</system:String>
+    <system:String x:Key="TOMB4PLUS_CONVERSION_STARTED">Tomb4Plus-Konvertierung wird gestartet...</system:String>
+    <system:String x:Key="ATTEMPTING_TOMB4PLUS_FEATURE_EXTRACTION">Spielfunktionen werden extrahiert...</system:String>
+    <system:String x:Key="TOMB4PLUS_FEATURES_EXTRACTION_COMPLETE">Extraktion der Spielfunktionen abgeschlossen.</system:String>
+    <system:String x:Key="BACKING_UP_OLD_EXECUTABLE">Sicherung der ursprünglichen ausführbaren Datei...</system:String>
+    <system:String x:Key="OLD_EXECUTABLE_BACKED_UP">Ursprüngliche ausführbare Datei gesichert.</system:String>
+    <system:String x:Key="DOWNLOADING_LATEST_TOMB4PLUS_VERSION">Neueste Tomb4Plus-Version wird heruntergeladen...</system:String>
+    <system:String x:Key="NO_SUITABLE_TOMB4PLUS_RELEASE">Kein geeignetes Tomb4Plus-Release gefunden.</system:String>
+    <system:String x:Key="EXTRACTING_TOMB4PLUS_FILES">Tomb4Plus-Dateien werden extrahiert...</system:String>
+    <system:String x:Key="ERROR_WHILE_PATCHING">Beim Anwenden des Patches ist ein Fehler aufgetreten.</system:String>
+    <system:String x:Key="SAVING_NEW_EXECUTABLE">Neue ausführbare Datei wird gespeichert...</system:String>
+    <system:String x:Key="MOVING_FILE">{0} wird verschoben...</system:String>
+    <system:String x:Key="REMOVING_OLD_FILE">{0} wird entfernt...</system:String>
+    <system:String x:Key="CONVERT_TO_TOMB4PLUS">In Tomb4Plus konvertieren</system:String>
+
     <system:String x:Key="AN_ERROR_OCCURRED">Ein Fehler ist aufgetreten</system:String>
     <system:String x:Key="INSTALLING">Wird installiert...</system:String>
     <system:String x:Key="GATHERING_STATISTICS">Statistiken werden gesammelt...</system:String>
