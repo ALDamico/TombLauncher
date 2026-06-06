@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:patchers="clr-namespace:TombLauncher.ViewModels.Pages.Patchers"
+             xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
+             xmlns:controls="clr-namespace:TombLauncher.Controls;assembly=TombLauncher.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.Patchers.Tomb4PlusPatcherView"
+             x:DataType="patchers:Tomb4PlusPatcherViewModel">
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" Spacing="16" Margin="16">
+            <TextBlock TemplatedParent="{localization:Translate CONVERT_TO_TOMB4PLUS, Casing=Upper}" 
+                       FontSize="18" 
+                       FontWeight="DemiBold" 
+                       VerticalAlignment="Center" />
+            
+            <Border Classes="card-background" CornerRadius="8" Padding="16">
+                <StackPanel Orientation="Vertical" Spacing="8">
+                    <DockPanel LastChildFill="True">
+                        <controls:Infotip DockPanel.Dock="Right" 
+                                          ToolTipContent="{localization:Translate SYNTAX_FILE_TYPE_DESCRIPTION}" />
+                        <controls:CardSectionHeader IconKind="FileEditLine" Title="{localization:Translate SYNTAX_FILE_TYPE}" />
+                    </DockPanel>
+                    <ComboBox ItemsSource="{Binding AvailableSyntaxFiles}"
+                              HorizontalAlignment="Stretch"
+                              SelectedItem="{Binding SelectedSyntaxFile}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Description}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

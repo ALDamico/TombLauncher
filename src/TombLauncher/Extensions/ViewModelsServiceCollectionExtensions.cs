@@ -30,6 +30,7 @@ public static class ViewModelsServiceCollectionExtensions
             .AddTransient<TrxNativePatcherViewModel>()
             .AddTransient<GamepadSupportMatrixViewModel>()
             .AddTransient<GameSupportMatrixViewModel>()
+            .AddTransient<Tomb4PlusPatcherPageViewModel>()
             .AddTransient<Tomb4PlusPatcherViewModel>();
     }
 }

@@ -539,6 +539,8 @@
     <system:String x:Key="MOVING_FILE">Przenoszenie {0}...</system:String>
     <system:String x:Key="REMOVING_OLD_FILE">Usuwanie {0}...</system:String>
     <system:String x:Key="CONVERT_TO_TOMB4PLUS">Konwertuj do Tomb4Plus</system:String>
+    <system:String x:Key="SYNTAX_FILE_TYPE">Format patchera</system:String>
+    <system:String x:Key="SYNTAX_FILE_TYPE_DESCRIPTION">Określa, która wersja narzędzia TREP została użyta do modyfikacji pliku wykonywalnego tego poziomu. W razie wątpliwości sprawdź readme lub stronę poziomu; większość poziomów używa Early.</system:String>
 
     <system:String x:Key="AN_ERROR_OCCURRED">Wystąpił błąd</system:String>
     <system:String x:Key="INSTALLING">Instalowanie...</system:String>

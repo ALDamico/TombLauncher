@@ -53,9 +53,8 @@ public class Tomb4PlusFeatureExtractorService
         return File.Exists(effectsBinPath);
     }
 
-    private void ParseIniFile(string filePath, GlobalInfo globalInfo)
+    private void ParseIniFile(IniFile iniFile, GlobalInfo globalInfo)
     {
-        var iniFile = new IniFile(filePath);
         globalInfo.GameName = iniFile["Game Information", "game_name"];
         globalInfo.Authors = iniFile["Game Information", "authors"];
         globalInfo.ReleaseDate = iniFile["Game Information", "release_date"];
@@ -65,20 +64,23 @@ public class Tomb4PlusFeatureExtractorService
     private async Task<GlobalInfo> DetectMetadataIniFile(string path, BasicGameMetadata data)
     {
         var metadataIniPath = Path.Combine(path, "metadata.ini");
+        IniFile iniFile;
         if (!File.Exists(metadataIniPath))
         {
-            var iniFile = new IniFile(metadataIniPath)
-            {
-                ["Game Information", "game_name"] = data.GameName,
-                ["Game Information", "authors"] = data.Authors,
-                ["Game Information", "release_date"] = data.ReleaseDate.ToString("dd/MM/yyyy"),
-                ["Game Information", "game_user_dir_name"] = data.GameUserDirName
-            };
+            iniFile = new IniFile();
+            iniFile["Game Information", "game_name"] = data.GameName;
+            iniFile["Game Information", "authors"] = data.Authors;
+            iniFile["Game Information", "release_date"] = data.ReleaseDate.ToString("dd/MM/yyyy");
+            iniFile["Game Information", "game_user_dir_name"] = data.GameUserDirName;
             await iniFile.WriteFileAsync(metadataIniPath, Encoding.UTF8);
+        }
+        else
+        {
+            iniFile = new IniFile(metadataIniPath);
         }
 
         var globalInfo = new GlobalInfo();
-        ParseIniFile(metadataIniPath, globalInfo);
+        ParseIniFile(iniFile, globalInfo);
         return globalInfo;
     }
 

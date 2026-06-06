@@ -173,6 +173,16 @@ public partial class GameDetailsViewModel : PageViewModel
             });
         }
 
+        if (Game.GameMetadata.GameEngine is GameEngine.TombRaider4 or GameEngine.TombRaider5)
+        {
+            patchers.Add(new CommandViewModel()
+            {
+                Command = OpenTomb4PlusPatcherCommand,
+                Text = "CONVERT_TO_TOMB4PLUS".GetLocalizedString(),
+                Icon = PackIconRemixIconKind.FunctionAddFill
+            });
+        }
+
         var trxEngines = new List<GameEngine>() { GameEngine.Tr1x, GameEngine.Tr2x, GameEngine.Trx };
 
         if (_platformSpecificFeatures.Platform == Platform.Linux && trxEngines.Contains(Game.GameMetadata.GameEngine))
@@ -208,6 +218,9 @@ public partial class GameDetailsViewModel : PageViewModel
     [RelayCommand]
     private async Task OpenWidescreenPatcher() =>
         await _gameDetailsService.OpenWidescreenPatcher(Game.GameMetadata);
+
+    [RelayCommand]
+    private async Task OpenTomb4PlusPatcher() => await _gameDetailsService.OpenTomb4PlusPatcher(Game.GameMetadata);
 
     public EngineSupportState EngineSupportState => _gameDetailsService.GetEngineSupportState(Game?.GameMetadata);
     public bool NativeGamepadSupport => _gameDetailsService.GetGamepadSupport(Game?.GameMetadata);
