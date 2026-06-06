@@ -127,10 +127,10 @@ public class Tomb4PlusPatcherService
         {
             foreach (var file in extractedFiles)
             {
-                var relativePath = Path.GetRelativePath(downloadPath, file);
+                var relativePath = Path.GetRelativePath(extractionPath, file);
                 var targetFilePath = Path.Combine(gameMetadata.InstallDirectory!, relativePath);
                 progressLogger.Info("MOVING_FILE", file);
-                File.Move(file, targetFilePath, true);
+                PathUtils.MoveFileTo(file, targetFilePath, true);
             }
             
             progressLogger.Info("REMOVING_OLD_FILE", originalExePath);

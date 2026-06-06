@@ -121,4 +121,10 @@ public class PathUtils
         }
         return null;
     }
+
+    public static void MoveFileTo(string source, string destination, bool overwrite = false)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+        File.Move(source, destination, overwrite);
+    }
 }

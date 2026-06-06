@@ -18,7 +18,7 @@ public enum PatchBinaryType
 
 public enum SyntaxFile
 {
-    [Description("Early TREP syntax")]
+    [Description("Early TRLE syntax")]
     Early,
     [Description("Common TREP syntax")]
     Trep,
