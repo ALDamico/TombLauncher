@@ -18,6 +18,8 @@ Direct code interventions are limited to **repetitive or tedious tasks** (renami
 
 When in doubt, discuss first and act only when explicitly asked.
 
+**Git discipline:** Never run `git stash` (push/pop/drop/apply) without an explicit user request. After completing a unit of work, ask "Committo?" to request permission — never tell the user "you can commit" as if it were their action to take.
+
 ## Release flow
 
 1. Merge all feature/fix branches into `develop` via PR.
@@ -69,6 +71,9 @@ dotnet test
 
 # Run a single test class
 dotnet test --filter "FullyQualifiedName~TombLauncher.Tests.ClassName"
+
+# Add an EF Core migration
+dotnet ef migrations add MigrationName --project src/TombLauncher.Data --startup-project src/TombLauncher
 ```
 
 No linting/formatting tooling is configured. The project uses Rider/ReSharper conventions. All projects have `<Nullable>enable</Nullable>` and `<ImplicitUsings>enable</ImplicitUsings>`.
@@ -85,7 +90,10 @@ No linting/formatting tooling is configured. The project uses Rider/ReSharper co
 | `TombLauncher.Controls` | Reusable Avalonia UI controls |
 | `TombLauncher.Core` | Platform-agnostic business logic — DTOs, launchers, savegame parsing, installers |
 | `TombLauncher.Data` | EF Core + SQLite — entities, migrations, data services |
-| `TombLauncher.Localization` | AXAML resource dictionaries for en-US and it-IT |
+| `TombLauncher.Gamepad` | AntiMicroX gamepad integration |
+| `TombLauncher.Integrations` | Third-party integrations (Discord Rich Presence) |
+| `TombLauncher.KnowledgeBase.Embedder` | CLI tool to build the Laura knowledge base |
+| `TombLauncher.Localization` | AXAML resource dictionaries for 7 languages (en-US, it-IT, fr-FR, es-ES, de-DE, pl-PL, cs-CZ) |
 | `TombLauncher.Patchers` | Game binary patching — Gameflow parsing, widescreen patching, TRX native patching |
 | `TombLauncher.Tests` | xUnit tests with NSubstitute for mocking |
 
@@ -99,13 +107,18 @@ Dependency direction: `TombLauncher` → `Controls / Core / Data / Localization`
 - `AddPageServices()` — registers application-layer services
 - `AddDatabaseAccess(config, appDataDir)` — registers `TombLauncherDbContext` (SQLite), repositories, and data services
 - `AddTombLauncherMappings()` — registers all manual mapper singletons
-- `AddDownloaders()` — registers the three community-site downloaders
+- `AddDownloaders()` — registers the four community-site downloaders
 
 EF Core migrations run automatically at startup via `dbContext.Database.MigrateAsync()`.
 
 ### MVVM pattern
 
-**ViewLocator** (`src/TombLauncher/ViewLocator.cs`) resolves Views from ViewModels by convention: `FooViewModel` → `FooView` (UserControl), sets `DataContext` automatically.
+**ViewLocator** (`src/TombLauncher/ViewLocator.cs`) resolves Views from ViewModels in three steps:
+1. Tries `TombLauncher.Views.{ShortName}Page` (replaces `ViewModel` → `Page` in the short class name)
+2. Tries `TombLauncher.Views.{ShortName}View` (replaces `ViewModel` → `View` in the short class name)
+3. Falls back to replacing `"ViewModel"` → `"View"` in the full type name — so `TombLauncher.ViewModels.Pages.FooViewModel` → `TombLauncher.Views.Pages.FooView`
+
+In practice most pages are resolved via step 3. Sets `DataContext` automatically.
 
 **ViewModelBase** → **PageViewModel** is the ViewModel hierarchy. `PageViewModel` provides:
 - `OnNavigatedTo(parameter)` / `OnNavigatingFrom()` lifecycle hooks
@@ -184,7 +197,7 @@ HTML scraping uses AngleSharp (already a dependency). JSON APIs use `System.Text
 
 ### Localization
 
-Call `"STRING_KEY".GetLocalizedString()` (extension method) from C#. In AXAML, use the `{loc:Translate STRING_KEY}` markup extension instead. Resource dictionaries are in `src/TombLauncher.Localization/Localization/`. Add new keys to all language files. The app auto-detects system language; the user can override in settings.
+Call `"STRING_KEY".GetLocalizedString()` (extension method) from C#. In AXAML, use the `{loc:Translate STRING_KEY}` markup extension instead. Resource dictionaries are in `src/TombLauncher.Localization/Localization/`. Add new keys to **all 7 language files** (en-US, it-IT, fr-FR, es-ES, de-DE, pl-PL, cs-CZ). The app auto-detects system language; the user can override in settings.
 
 ### Platform abstraction
 
@@ -193,3 +206,75 @@ Call `"STRING_KEY".GetLocalizedString()` (extension method) from C#. In AXAML, u
 ### Icons
 
 UI icons use `PackIconRemixIconKind` (Material Design Icons / Remix Icon set). Pass enum values via `{x:Static}` in AXAML for `ConverterParameter`.
+
+### Custom controls
+
+Reusable controls live in `TombLauncher.Controls`. Each control is a pair `NewControl.axaml` + `NewControl.axaml.cs`. Property conventions:
+- `StyledProperty<T>` — externally configurable properties (support binding and styling)
+- `DirectProperty<T>` — read-only or internal-use properties
+
+`TombLauncher.Controls` must not depend on the main `TombLauncher` project (circular reference). Value converters specific to a control go in `TombLauncher.Controls/ValueConverters/`.
+
+### Style classes
+
+All app-wide style classes are defined in `src/TombLauncher/Assets/AppStyles.axaml`. Apply with `Classes="class-name"`. Key classes:
+
+| Class | Control | Effect |
+|-------|---------|--------|
+| `btn-primary` | Button | PrimaryBrush bg, pill shape |
+| `btn-success` | Button / SplitButton / RoundIconButton | SuccessBrush bg, pill shape |
+| `btn-danger` | Button / SplitButton / RoundIconButton | DangerBrush bg, pill shape |
+| `icon-only` | Button / ToggleButton | Transparent, no border |
+| `hyperlink` | Button | Underlined AccentBrush text |
+| `stretched` | ContentControl / SplitButton / Expander | 36px height, stretch horizontal |
+| `h1` | TextBlock | TombRaider font, 48px, centered |
+| `page-title` | TextBlock | Spectral font, 28px, DemiBold |
+| `paragraph` | TextBlock | Margin `0,5` |
+| `small` | TextBlock / CheckBox | 9px, DemiBold |
+| `label` | TextBlock | Vertically centered, margin `5,0` |
+| `text-muted` | TextBlock / PackIconRemixIcon | SecondaryBrush foreground |
+| `card-background` | Border | CardBackgroundBrush background |
+| `interactive-card` | Border | Scale + shadow on hover |
+| `search-bar` | Border | Rounded, shadow, focus transitions |
+| `padded` | Control | Margin `5` on all sides |
+
+Use `DynamicResource` for theme-aware colors. When adding a new class, document it in this table.
+
+### Themes
+
+Each theme is a `ResourceDictionary` AXAML in `src/TombLauncher/Assets/Themes/`. Dark variant: `<Name>Theme.axaml`; light variant: `<Name>Light.axaml`. Use `ScionTheme.axaml` as template.
+
+Every theme must define: `CardBackgroundColor/Brush`, `CardBorderBrush`, `PageBackgroundBrush`, `SidebarBackgroundBrush`, `PrimaryColor/Brush`, `PrimaryPointerOverBrush`, `ColoredButtonTextBrush`, `AccentBrush`, `SuccessBrush/PointerOverBrush`, `DangerBrush/PointerOverBrush`, `WarningBrush/PointerOverBrush`, `TextBrush`, `MutedTextBrush`, `SecondaryBrush`. Dark themes also need Fluent overrides for ToggleSwitch, CheckBox, RadioButton.
+
+After creating the files, register in two places:
+1. `ThemeManager.cs` — add a case in the switch expression mapping name → `avares://` URI
+2. `AppearanceSettingsViewModel.cs` — add entries to `AvailableThemes`
+
+### Adding a settings section
+
+A settings section spans 6 areas. Use `WelcomePageSettingsViewModel` as a reference.
+
+1. **Config model** — create `INewSectionConfig` (read-only interface) and `NewSectionConfig` (POCO with setters) in `Configuration/Sections/`. Register both in `IAppConfiguration` / `AppConfiguration`. Add a merged property to `LayeredAppConfiguration` using `.Coalesce()`. Add default values to `appsettings.json`.
+
+2. **ViewModel** — extend `SettingsSectionViewModelBase`. Constructor takes a localization key, parent `PageViewModel`, and an icon. Implement `ApplyTo(AppConfiguration userConfig)` — it writes ViewModel values into the user config layer. Use `[IgnoreChanges]` on properties that should not trigger dirty state.
+
+3. **View** — create `Views/<NewSectionSettingsView>.axaml`. ViewLocator auto-discovers it; no registration needed.
+
+4. **Wire into SettingsPageViewModel** — in `OnNavigatedTo()`, read `_appConfiguration.NewSection`, instantiate and populate the VM, add it to `Sections`.
+
+5. **Save** — no changes needed in `SettingsPageService.Save()`; it iterates all sections and calls `ApplyTo` automatically. Add side effects (language change, theme switch, etc.) only in `SettingsPageService.ApplySideEffects()`, never in `ApplyTo`.
+
+6. **Localization** — add the section title key and all label keys to all 7 language files.
+
+### Tests
+
+Framework: **xUnit**. Mocking: **NSubstitute**. Project: `tests/TombLauncher.Tests/`.
+
+- File name: `{ClassUnderTest}Tests.cs`; namespace: `TombLauncher.Tests`
+- Method naming: `MethodName_Scenario_ExpectedResult` (e.g. `GetGamesFolder_ReturnsCorrectSubdirectory`)
+- If a test creates temp files, implement `IDisposable` for cleanup
+
+```csharp
+var mockService = Substitute.For<IMyService>();
+mockService.MyMethod(Arg.Any<string>()).Returns("result");
+```
