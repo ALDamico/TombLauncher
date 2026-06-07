@@ -55,14 +55,17 @@ Whether you're a seasoned raider who's been playing custom levels since the earl
 
 ### 🔍 Search & Discover
 
-Finding custom levels used to mean browsing three different websites with very different search experiences. Tomb Launcher brings them all together.
+Finding custom levels used to mean browsing multiple websites with very different search experiences. Tomb Launcher brings them all together.
 
 You can search for levels from within the app, pulling results simultaneously from:
 - [**TRLE.net**](https://www.trle.net) — The original and largest Tomb Raider Level Editor community site
 - [**TRCustoms.org**](https://trcustoms.org) — A modern, community-driven platform with rich metadata
 - [**AspideTR.com**](https://aspidetr.com) — An Italian community portal with a curated collection of levels
+- [**Raiding the Globe**](https://raidingtheglobe.com/) — A Tomb Raider fan site that hosts a small number of levels not available anywhere else
 
 Results from all sources appear side by side, so you can compare ratings, read descriptions, and pick the adventure that suits your mood — all without leaving the app.
+
+Each download source displays a real-time response indicator, so you can see at a glance which sites are reachable and how quickly they're responding. If a request fails, Tomb Launcher retries automatically.
 
 ### 📦 One-Click Install
 
@@ -81,7 +84,9 @@ Every level you install lives in your personal library — a clean, organized vi
 - Which levels are installed
 - When you last played each one
 - How much time you've spent on each level
-- Whether a level came from TRLE.net, TRCustoms, or AspideTR
+- Whether a level came from TRLE.net, TRCustoms, AspideTR, or Raiding the Globe
+
+If you come across a link to a level page on the web, you can open it directly in Tomb Launcher — it will navigate straight to that game without any searching.
 
 Think of it as your personal Tomb Raider dashboard.
 
@@ -100,13 +105,34 @@ All data stays local on your machine. Tomb Launcher doesn't phone home or share 
 
 Each level's savegames are tracked and associated with the level itself. You can see your save files at a glance without digging through folders. Never lose progress again — and never accidentally overwrite a save from a different level.
 
+For levels running on the **TRNG** engine, Tomb Launcher can also extract and display the in-game screenshot embedded in each savefile, so you can see exactly where you were when you last saved.
+
+### 🕹️ Gamepad Support
+
+Playing Tomb Raider from the couch? Tomb Launcher integrates with [**AntiMicroX**](https://github.com/AntiMicroX/antimicrox) to bring gamepad support to classic Tomb Raider engines that don't natively support controllers. Configure your profiles once and Tomb Launcher will launch AntiMicroX automatically alongside the game.
+
+The **Gamepad Support Matrix** gives you a quick overview of which engines support gamepads on your current platform, so you know what to expect before you start.
+
+### 🔧 Compatibility Tools
+
+Tomb Launcher includes built-in tools to improve the out-of-the-box experience for classic game engines:
+
+- **Widescreen Patcher** — Automatically patches a level to support modern 16:9 and ultrawide aspect ratios, replacing the original 4:3 display. Includes a backup/restore pipeline so you can always undo the patch.
+- **Borderless Window** — Force any classic-engine game into borderless window mode on a per-game basis, without touching the game files.
+
+A **Platform Support Matrix** is also available from the sidebar, showing at a glance which engines are supported on Windows and Linux.
+
+### 🎵 Discord Rich Presence
+
+Tomb Launcher integrates with Discord to show what you're playing in your activity status. When you launch a level, your friends can see the level name and the engine you're running — no setup required beyond having Discord open.
+
 ### 🎲 Feeling Lucky?
 
 Can't decide what to play next? Tomb Launcher can pick a random level from your library for you. It's a great way to rediscover levels you installed months ago and forgot about.
 
 ### 🌍 Localization
 
-Tomb Launcher is currently available in **English** and **Italian**, with more languages welcome (see [Contributing](#-contributing)).
+Tomb Launcher is currently available in **7 languages**: English, Italian, French, Spanish, German, Polish, and Czech. More languages are always welcome (see [Contributing](#-contributing)).
 
 The app automatically detects your system language and switches accordingly. You can also change the language manually from the settings.
 
@@ -124,7 +150,7 @@ Stuck on a level that won't launch? Laura is Tomb Launcher's built-in AI assista
 
 **Opening the chat**
 
-On any game's detail page, click the **Talk to Laura** button. Laura automatically receives context about the game you're troubleshooting — engine type, last exit code, crash logs, and stderr output — so you don't have to paste anything manually.
+On any game's detail page, click the **Talk to Laura** button. Laura automatically receives context about the game you're troubleshooting — engine type, last exit code, crash logs, stderr output, and your current savegame data — so you don't have to paste anything manually.
 
 **Enabling AI features**
 
@@ -173,10 +199,8 @@ You can also launch Tomb Launcher from the terminal with `tomb-launcher`.
 
 Tomb Launcher is under active development. Here's what's planned for future releases:
 
-- 🛠️ **Built-in troubleshooting** — Automatically detect and fix common issues with legacy game engines on modern systems
-- 🕹️ **AntiMicroX integration** — Seamless gamepad support through [AntiMicroX](https://github.com/AntiMicroX/antimicrox), so you can play from the couch
-- 🎨 **dgVoodoo integration** *(Windows only)* — A graphics wrapper that improves compatibility with modern GPUs, solving visual glitches and rendering issues
-- 🖥️ **Widescreen fix auto-apply** — Automatically patch levels to support 16:9 and ultrawide aspect ratios instead of the original 4:3
+- 🛠️ **Automatic issue detection** — Detect and fix common compatibility issues with legacy game engines on modern systems without manual intervention
+- 🎨 **dxWrapper integration** *(Windows only)* — A graphics wrapper that improves compatibility with modern GPUs, solving visual glitches and rendering issues in classic engines
 - ⚙️ **Per-game settings** — Customize resolution, keymaps, and other options for each individual level
 - 🍎 **macOS support** — A native build for macOS, bringing Tomb Launcher to Apple Silicon and Intel Macs
 
@@ -228,15 +252,20 @@ The solution follows a clean separation of concerns:
 ```
 TombLauncher/
 ├── src/
-│   ├── TombLauncher/              # Main application (UI, ViewModels, Services)
-│   ├── TombLauncher.Core/         # Core logic (platform-agnostic, no UI dependencies)
-│   ├── TombLauncher.Contracts/    # Shared interfaces and DTOs
-│   ├── TombLauncher.Controls/     # Reusable Avalonia UI controls
-│   ├── TombLauncher.Data/         # Database access and EF Core migrations
-│   └── TombLauncher.Localization/ # Localization resources (i18n)
+│   ├── TombLauncher/                        # Main application (UI, ViewModels, Services)
+│   ├── TombLauncher.Ai/                     # AI subsystem (Laura, RAG, Ollama/LM Studio backends)
+│   ├── TombLauncher.Contracts/              # Shared interfaces, enums, and contracts
+│   ├── TombLauncher.Controls/               # Reusable Avalonia UI controls
+│   ├── TombLauncher.Core/                   # Core logic (platform-agnostic, no UI dependencies)
+│   ├── TombLauncher.Data/                   # Database access and EF Core migrations
+│   ├── TombLauncher.Gamepad/                # AntiMicroX gamepad integration
+│   ├── TombLauncher.Integrations/           # Third-party integrations (Discord Rich Presence)
+│   ├── TombLauncher.KnowledgeBase.Embedder/ # CLI tool to build the Laura knowledge base
+│   ├── TombLauncher.Localization/           # Localization resources (i18n)
+│   └── TombLauncher.Patchers/               # Game binary patching (widescreen, TRX native)
 ├── tests/
-│   └── TombLauncher.Tests/        # Unit tests (xUnit)
-└── deploy/                        # Packaging configs (PupNet, InnoSetup)
+│   └── TombLauncher.Tests/                  # Unit tests (xUnit)
+└── deploy/                                  # Packaging configs (PupNet, InnoSetup)
 ```
 
 The architecture keeps the core logic decoupled from the UI layer. `TombLauncher.Core` has no knowledge of Avalonia and can be tested in isolation. The UI layer follows the MVVM pattern, with ViewModels acting as the bridge between the views and the underlying services.
@@ -245,9 +274,11 @@ The architecture keeps the core logic decoupled from the UI layer. `TombLauncher
 
 ## 🤝 Contributing
 
-Tomb Launcher is **not currently accepting code contributions**. The project is in active early development and the architecture is still evolving.
+Tomb Launcher is open to external contributions! Whether you want to fix a bug, add a feature, or improve the codebase, pull requests are welcome.
 
-However, if you'd like to help **translate Tomb Launcher into your language**, that would be wonderful! The app currently supports English and Italian, and adding a new language is straightforward. Feel free to [open an issue](https://github.com/ALDamico/TombLauncher/issues) to get in touch.
+If you'd like to **translate Tomb Launcher into your language**, that's a great place to start. The app currently supports English, Italian, French, Spanish, German, Polish, and Czech. English and Italian are maintained by hand; the other languages were generated with the help of an LLM and may contain inaccuracies — human-reviewed translations are very welcome. Adding a new language is straightforward and doesn't require deep knowledge of the codebase.
+
+Feel free to [open an issue](https://github.com/ALDamico/TombLauncher/issues) to discuss your idea before diving in.
 
 ---
 
@@ -269,7 +300,7 @@ No. Tomb Launcher is designed specifically for custom levels built with the Tomb
 
 ## 🤖 AI Disclaimer
 
-Portions of Tomb Launcher's code have been written with the assistance of AI-powered coding agents. All AI-generated code is reviewed and validated by a human developer before being merged. The project maintainer takes full responsibility for the quality, correctness, and security of the codebase.
+At one point, some features were prototyped with the help of AI coding agents. This approach was quickly abandoned — writing code for a hobby project shouldn't feel like work, and delegating the actual implementation defeated the purpose. AI agents are now used exclusively as a sounding board for design discussions and as a code review tool. All code in this repository is written by a human developer.
 
 ---
 
