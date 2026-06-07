@@ -19,21 +19,33 @@ namespace TombLauncher.ViewModels.Pages;
 public partial class AiChatViewModel : PageViewModel
 {
     private readonly ITroubleshootingServiceLoader _troubleshootingServiceLoader;
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))] private bool _isGenerating;
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))] private string _currentText = "";
-    [ObservableProperty] private ObservableCollection<AiMessageViewModel> _messageHistory = new();
-    [ObservableProperty] private string _currentStatusText = "";
+    private readonly SystemPromptConfiguration _systemPromptConfiguration;
+    
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
+    public partial bool IsGenerating { get; set; }
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
+    public partial string CurrentText { get; set; } = "";
+    [ObservableProperty]
+    public partial ObservableCollection<AiMessageViewModel> MessageHistory { get; set; } = [];
+
+    [ObservableProperty]
+    public partial string CurrentStatusText { get; set; } = "";
+
     private ITroubleshootingService? _ragService;
-    private readonly ChatHistory _chatHistory = new();
+    private readonly ChatHistory _chatHistory = [];
     private TroubleshootingContext _troubleshootingContext;
 
     public bool IsHistoryEmpty => MessageHistory.Count == 0;
 
-    public AiChatViewModel(ITroubleshootingServiceLoader troubleshootingServiceLoader)
+    public AiChatViewModel(ITroubleshootingServiceLoader troubleshootingServiceLoader, SystemPromptConfiguration systemPromptConfiguration)
     {
         _troubleshootingServiceLoader = troubleshootingServiceLoader;
+        _systemPromptConfiguration = systemPromptConfiguration;
         _troubleshootingContext = new();
-        MessageHistory.CollectionChanged += (_, _) => OnPropertyChanged(nameof(IsHistoryEmpty));
+        MessageHistory?.CollectionChanged += (_, _) => OnPropertyChanged(nameof(IsHistoryEmpty));
     }
 
     protected override async Task RaiseInitialize()
@@ -41,7 +53,7 @@ public partial class AiChatViewModel : PageViewModel
         using (BusyScope("Caricamento modello AI..."))
         {
             _ragService = await _troubleshootingServiceLoader.Load(new Progress<float>(f => Console.WriteLine(f)), CancellationToken.None);
-            _chatHistory.AddSystemMessage(AiConfigUtils.LoadSystemPrompt());
+            _chatHistory.AddSystemMessage(AiConfigUtils.LoadSystemPrompt(_systemPromptConfiguration));
         }
         await base.RaiseInitialize();
     }
@@ -112,7 +124,7 @@ public partial class AiChatViewModel : PageViewModel
             else
             {
                 response.Text += messageChunk.Item2;
-                fullResponse.Append(messageChunk);
+                fullResponse.Append(messageChunk.Item2);
                 if (!responseAdded)
                 {
                     MessageHistory.Add(response);

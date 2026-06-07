@@ -21,11 +21,12 @@ public partial class TrxNativePatcherViewModel : ObservableObject, IPatcherParam
         _trxNativePatcherService = trxNativePatcherService;
     }
 
-    [ObservableProperty] private string _detectedVersion = "";
+    [ObservableProperty]
+    public partial string DetectedVersion { get; set; } = "";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanRevertPatch))]
-    private bool _canApplyPatch;
+    public partial bool CanApplyPatch { get; set; }
 
     public bool CanRevertPatch => !CanApplyPatch;
     public ProgressLogger ProgressLogger { get; set; } = null!;

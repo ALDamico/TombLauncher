@@ -10,22 +10,27 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModelBase
 {
     public AppearanceSettingsViewModel(PageViewModel settingsPage) : base("APPEARANCE", settingsPage, PackIconRemixIconKind.PaletteLine)
     {
-        AvailableThemes = new ObservableCollection<ApplicationTheme>()
-        {
+        AvailableThemes =
+        [
             new ApplicationTheme("Scion (Dark)", "Scion", ThemeVariant.Dark),
             new ApplicationTheme("Scion (Light)", "Scion Light", ThemeVariant.Light),
             new ApplicationTheme("Xian (Dark)", "Xian", ThemeVariant.Dark),
             new ApplicationTheme("Xian (Light)", "Xian Light", ThemeVariant.Light),
             new ApplicationTheme("Horus (Dark)", "Horus", ThemeVariant.Dark),
-            new ApplicationTheme("Horus (Light)", "Horus Light", ThemeVariant.Light),
-        };
+            new ApplicationTheme("Horus (Light)", "Horus Light", ThemeVariant.Light)
+        ];
         // Default (will be overwritten by service)
         SelectedTheme = AvailableThemes[0];
     }
 
-    [ObservableProperty] private ApplicationTheme _selectedTheme;
-    [ObservableProperty] private ObservableCollection<ApplicationTheme> _availableThemes;
-    [ObservableProperty] private bool _defaultToGridView;
+    [ObservableProperty]
+    public partial ApplicationTheme? SelectedTheme { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<ApplicationTheme> AvailableThemes { get; set; }
+
+    [ObservableProperty]
+    public partial bool DefaultToGridView { get; set; }
 
     public override void ApplyTo(AppConfiguration userConfig)
     {

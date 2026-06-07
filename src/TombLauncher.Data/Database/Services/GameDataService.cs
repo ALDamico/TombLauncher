@@ -36,6 +36,14 @@ public class GameDataService
         if (game.Id == 0)
         {
             entity = _gameMapper.ToGame(game);
+            if (game.ExecutablePath.IsNotNullOrWhiteSpace())
+            {
+                var executableBytes =
+                    await File.ReadAllBytesAsync(Path.Combine(game.InstallDirectory!, game.ExecutablePath));
+                var executableBackup = _fileBackupMapper.ToGameExecutableFileBackup(game, executableBytes);
+                if (executableBackup != null)
+                    entity.FileBackups.Add(executableBackup);
+            }
             _dbContext.Games.Add(entity);
         }
         else
@@ -62,6 +70,7 @@ public class GameDataService
             entity.AuthorFullName = game.AuthorFullName;
             entity.IsFavourite = game.IsFavourite;
             entity.IsCompleted = game.IsCompleted;
+            entity.EnableBorderlessFix = game.EnableBorderlessFix;
             _dbContext.Games.Update(entity);
         }
 

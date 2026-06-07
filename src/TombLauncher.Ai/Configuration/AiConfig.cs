@@ -12,4 +12,5 @@ public class AiConfig : IAiConfig
     public string? Endpoint { get; set; }
     public string? ApiKey { get; set; }
     public AiBackendType BackendType { get; set; }
+    public double? Temperature { get; set; }
 }

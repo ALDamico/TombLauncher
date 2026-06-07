@@ -6,7 +6,8 @@ using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Configuration;
-using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
@@ -35,7 +36,8 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
             SelectedUnzipFallbackMethod = AvailableUnzipFallbackMethods.FirstOrDefault()!;
     }
 
-    [ObservableProperty] private ObservableCollection<DownloaderViewModel> _availableDownloaders = [];
+    [ObservableProperty]
+    public partial ObservableCollection<DownloaderViewModel> AvailableDownloaders { get; set; } = [];
 
     partial void OnAvailableDownloadersChanged(ObservableCollection<DownloaderViewModel>? oldValue, ObservableCollection<DownloaderViewModel> newValue)
     {
@@ -52,10 +54,15 @@ public partial class DownloaderSettingsViewModel : SettingsSectionViewModelBase
         OnPropertyChanged(nameof(AvailableDownloaders));
     }
     [ObservableProperty]
-    [IgnoreChanges]
-    private DownloaderViewModel? _selectedDownloader;
-    [ObservableProperty] private ObservableCollection<UnzipBackendViewModel> _availableUnzipFallbackMethods;
-    [ObservableProperty] private UnzipBackendViewModel _selectedUnzipFallbackMethod;
+    [field: IgnoreChanges]
+    public partial DownloaderViewModel? SelectedDownloader { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<UnzipBackendViewModel> AvailableUnzipFallbackMethods { get; set; }
+
+    [ObservableProperty]
+    public partial UnzipBackendViewModel SelectedUnzipFallbackMethod { get; set; }
+
     private readonly IAppFileOperationsService _appFileOperations;
     private readonly IPopupService _popupService;
     private readonly SettingsMapper _mapper;

@@ -1,3 +1,5 @@
+using HandlebarsDotNet;
+using TombLauncher.Ai.Models;
 using TombLauncher.Ai.Services;
 
 namespace TombLauncher.Ai.Utils;
@@ -11,11 +13,15 @@ public static class AiConfigUtils
         return (int)(maxLayers * offloadPercentage);
     }
     
-    public static string LoadSystemPrompt()
+    public static string LoadSystemPrompt(SystemPromptConfiguration config)
     {
         var asm = typeof(RagService).Assembly;
         using var stream = asm.GetManifestResourceStream("TombLauncher.Ai.Agents.SystemPrompt.md")!;
         using var reader = new StreamReader(stream);
-        return reader.ReadToEnd();
+        var data = reader.ReadToEnd();
+
+        var compiled = Handlebars.Compile(data);
+
+        return compiled(config);
     }
 }

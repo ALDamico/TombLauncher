@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,9 @@ using TombLauncher.Configuration;
 using TombLauncher.Contracts.Navigation;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.Integrations;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Launchers;
 using TombLauncher.Core.PlatformSpecific;
@@ -18,6 +22,9 @@ using TombLauncher.Core.Utils;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
+using TombLauncher.Gamepad.Services;
+using TombLauncher.Gamepad.SupportMatrix;
+using TombLauncher.Integrations.Discord;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
 using TombLauncher.Utils;
@@ -40,7 +47,10 @@ public class GameWithStatsService : IViewService, IDisposable
         SavegameHeaderProcessor headerProcessor,
         IAppConfiguration appConfiguration,
         Func<IGameLauncher> gameLauncherFactory,
-        GameMetadataMapper mapper)
+        GameMetadataMapper mapper, 
+        DiscordRichPresenceService discordService,
+        IGamepadService gamepadService, 
+        GamepadSupportMatrix gamepadSupportMatrix)
     {
         ViewContext = viewContext;
         _gameDataService = gameDataService;
@@ -61,16 +71,24 @@ public class GameWithStatsService : IViewService, IDisposable
         _platformSpecificFeatures = platformSpecificFeatures;
         _headerProcessor = headerProcessor;
         _mapper = mapper;
+        _discordService = discordService;
+        _gamepadService = gamepadService;
+        _gamepadSupportMatrix = gamepadSupportMatrix;
+        _isDiscordSharingEnabled = appConfiguration.Integrations.SharePlaySessionsOnDiscord ?? false;
     }
 
     public ViewServiceContext ViewContext { get; }
     private SavegameHeaderProcessor? _headerProcessor;
     private readonly GameMetadataMapper _mapper;
+    private readonly DiscordRichPresenceService _discordService;
+    private readonly IGamepadService _gamepadService;
+    private readonly GamepadSupportMatrix _gamepadSupportMatrix;
+    private readonly bool _isDiscordSharingEnabled;
 
     private readonly GameDataService _gameDataService;
     private readonly PlaySessionDataService _playSessionDataService;
     private readonly ISavegameRepository _savegameRepository;
-    public NavigationManager NavigationManager => ViewContext.NavigationManager;
+    private NavigationManager NavigationManager => ViewContext.NavigationManager;
     private FileSystemWatcher? _watcher;
     private readonly bool _backupEnabled;
     private readonly int? _numberOfSavesToKeep;
@@ -93,7 +111,7 @@ public class GameWithStatsService : IViewService, IDisposable
         await OpenGame(game);
     }
 
-    public void PlayGame(GameWithStatsViewModel game)
+    public async Task PlayGame(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy("STARTING_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
@@ -102,7 +120,19 @@ public class GameWithStatsService : IViewService, IDisposable
 
         if (game.GameMetadata.ExecutablePath != null)
         {
-            LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
+            if (_isDiscordSharingEnabled)
+            {
+                _discordService.UpdateStatus(new RichPresenceDto()
+                {
+                    LevelName = game.GameMetadata.Title, 
+                    AuthorName = game.GameMetadata.Author ?? "",
+                    WebsiteUrl = "https://tomblauncher.app", 
+                    WebsiteCaption = "Try Tomb Launcher",
+                    LevelUrl = game.GameMetadata.InstalledFromLink,
+                    Engine = game.GameMetadata.GameEngine
+                });
+            }
+            await LaunchProcess(game, game.GameMetadata.ExecutablePath, true);
         }
     }
 
@@ -142,7 +172,7 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         var gameViewModel = await GetGameById(gameId);
         await OpenGame(gameViewModel);
-        PlayGame(gameViewModel!);
+        await PlayGame(gameViewModel!);
     }
 
     private async Task<GameWithStatsViewModel?> GetGameById(int gameId)
@@ -205,6 +235,11 @@ public class GameWithStatsService : IViewService, IDisposable
     {
         _logger.LogInformation("Play session for game {GameTitle} (ID: {GameId}) ended.", game.GameMetadata.Title,
             game.GameMetadata.Id);
+        TeardownGamepadService(game.GameMetadata.GameEngine);
+        if (_isDiscordSharingEnabled)
+        {
+            _discordService.EndPlaySession();
+        }
         var exitCode = process.ExitCode;
         var errorOccurred = false;
         PlaySessionCrashDto? playSessionCrashDto = null;
@@ -259,29 +294,30 @@ public class GameWithStatsService : IViewService, IDisposable
         }
     }
 
-    public void LaunchSetup(GameWithStatsViewModel game)
+    public async Task LaunchSetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy("LAUNCHING_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.SetupExecutable != null)
         {
-            LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
+            await LaunchProcess(game, game.GameMetadata.SetupExecutable, false, game.GameMetadata.SetupExecutableArgs);
         }
     }
 
-    public void LaunchCommunitySetup(GameWithStatsViewModel game)
+    public async Task LaunchCommunitySetup(GameWithStatsViewModel game)
     {
         var currentPage = NavigationManager.CurrentPage as INavigationTarget;
         currentPage?.SetBusy("LAUNCHING_COMMUNITY_PATCH_SETUP_FOR_GAMENAME".GetLocalizedString(game.GameMetadata.Title));
         if (game.GameMetadata.CommunitySetupExecutable != null)
         {
-            LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
+            await LaunchProcess(game, game.GameMetadata.CommunitySetupExecutable);
         }
     }
 
-    private void LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false,
+    private async Task LaunchProcess(GameWithStatsViewModel game, string executable, bool trackPlayTime = false,
         string? arguments = null)
     {
+        LaunchGamepadService(game.GameMetadata.GameEngine);
         var executableFileNameOnly = Path.GetFileName(executable);
         string workingDirectory = string.Empty;
         if (game.GameMetadata.InstallDirectory != null)
@@ -369,12 +405,28 @@ public class GameWithStatsService : IViewService, IDisposable
             };
         }
 
+        if (game.GameMetadata.EnableBorderlessFix)
+        {
+            await BorderlessWindowHelper.ApplyWineFix(winePrefix, _logger);
+        }
+
         process.Start();
+        
+        if (game.GameMetadata.EnableBorderlessFix)
+        {
+            var screenBounds = AppUtils.GetPrimaryScreenBounds();
+            if (screenBounds == null)
+                _logger.LogWarning("Requested widescreen fix, but unable to retrieve primary screen bounds!");
+            else
+                BorderlessWindowHelper.Apply(process, screenBounds.Value.Width, screenBounds.Value.Height);
+        }
 
         if (!process.StartInfo.UseShellExecute)
         {
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            if (process.StartInfo.RedirectStandardOutput)
+                process.BeginOutputReadLine();
+            if (process.StartInfo.RedirectStandardError)
+                process.BeginErrorReadLine();
         }
     }
 
@@ -447,6 +499,38 @@ public class GameWithStatsService : IViewService, IDisposable
             _headerProcessor = null;
             _watcher = null;
         }
+    }
+
+    private void LaunchGamepadService(GameEngine engine)
+    {
+        if (_gamepadSupportMatrix.GetGamepadSupport(engine))
+            return;
+
+        var toolPath = _appConfiguration.Gamepad.ToolPath;
+        if (toolPath.IsNullOrWhiteSpace())
+            return;
+
+        var profile = _appConfiguration.Gamepad.Profiles?.GetValueOrDefault(engine.GetBaseEngine().ToString());
+        if (profile.IsNullOrWhiteSpace())
+            return;
+
+        _gamepadService.PrepareForGame(toolPath!, profile!);
+    }
+
+    private void TeardownGamepadService(GameEngine engine)
+    {
+        if (_gamepadSupportMatrix.GetGamepadSupport(engine))
+            return;
+
+        var toolPath = _appConfiguration.Gamepad.ToolPath;
+        if (toolPath.IsNullOrWhiteSpace())
+            return;
+
+        var profile = _appConfiguration.Gamepad.Profiles?.GetValueOrDefault(engine.GetBaseEngine().ToString());
+        if (profile.IsNullOrWhiteSpace())
+            return;
+
+        _gamepadService.TeardownAsync(toolPath!, profile!);
     }
 
     public void Dispose()

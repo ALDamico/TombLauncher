@@ -23,6 +23,8 @@ using LiveChartsCore.SkiaSharpView;
 using TombLauncher.Configuration;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Exceptions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
@@ -34,6 +36,7 @@ namespace TombLauncher.Utils;
 public static class AppUtils
 {
     public static string[] LogFileNamePatterns => ["LAST_CRASH*", "TENLog*.txt", "TR1X.log", "TR2X.log"];
+    
     public static IClipboard GetClipboard()
     {
         var applicationLifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
@@ -82,13 +85,6 @@ public static class AppUtils
         var config = AngleSharpConfig.Default.WithXPath().WithDefaultLoader();
         var browsingContext = BrowsingContext.New(config);
         return await browsingContext.OpenAsync(req => req.Content(content), cancellationToken);
-    }
-
-    public static async Task<IDocument> OpenDocument(string url, CancellationToken cancellationToken)
-    {
-        var config = AngleSharpConfig.Default.WithXPath().WithDefaultLoader();
-        var browsingContext = BrowsingContext.New(config);
-        return await browsingContext.OpenAsync(url, cancellationToken);
     }
 
     public static INode? SelectSingleNodeFromElement(this INode? node, string xpath, bool ignoreNamespaces = true)
@@ -248,5 +244,15 @@ public static class AppUtils
             // WTF?! How did you get in here?
             e.Handled = false;
         }
+    }
+
+    public static PixelRect? GetPrimaryScreenBounds()
+    {
+        if (Application.Current?.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime applicationLifetime)
+        {
+            return applicationLifetime.MainWindow?.Screens.Primary?.Bounds;
+        }
+
+        return null;
     }
 }

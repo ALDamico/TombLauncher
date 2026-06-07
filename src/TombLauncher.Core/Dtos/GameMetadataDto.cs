@@ -31,5 +31,8 @@ public class GameMetadataDto : IGameMetadata
     public string? CompatibilityPrefixPath { get; set; }
     public CompatibilityTool CompatibilityTool { get; set; }
     public string? CompatibilityToolPath { get; set; }
+    public string? TitlePicUrl { get; set; }
+    public string? InstalledFromLink { get; set; }
+    public bool EnableBorderlessFix { get; set; }
     public List<IEnvironmentVariable> ExtraEnvVars { get; set; } = [];
 }

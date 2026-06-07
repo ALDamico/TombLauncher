@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Services;
 
 namespace TombLauncher.Extensions;

@@ -48,6 +48,11 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Grid.Column="0">
+                <Image Source="{Binding Screenshot}"
+                       MaxHeight="160"
+                       Stretch="Uniform"
+                       Margin="0, 0, 0, 6"
+                       IsVisible="{Binding Screenshot, Converter={x:Static ObjectConverters.IsNotNull}}"></Image>
                 <controls:LabeledTextBlock Label="{loc:Translate SLOT_NUMBER}" 
                                            Text="{Binding SlotNumber}"/>
                 <TextBlock Classes="small" Text="{loc:Translate LEVEL_NAME}" />

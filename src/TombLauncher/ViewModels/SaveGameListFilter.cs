@@ -4,6 +4,9 @@ namespace TombLauncher.ViewModels;
 
 public partial class SaveGameListFilter : ObservableObject
 {
-    [ObservableProperty] private int? _slotNumber;
-    [ObservableProperty] private bool _startOfLevelOnly;
+    [ObservableProperty]
+    public partial int? SlotNumber { get; set; }
+
+    [ObservableProperty]
+    public partial bool StartOfLevelOnly { get; set; }
 }

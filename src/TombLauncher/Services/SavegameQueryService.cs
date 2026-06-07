@@ -4,12 +4,16 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Utils;
 using TombLauncher.Core.Extensions;
 using AvaloniaEdit.Utils;
+using Microsoft.Extensions.Logging;
+using TombLauncher.Contracts.Settings;
+using TombLauncher.Core.Savegames;
 using TombLauncher.Data.Database.Repositories;
 using TombLauncher.Extensions;
 using TombLauncher.Localization.Extensions;
@@ -23,17 +27,20 @@ public class SavegameQueryService
     private readonly ISavegameRepository _savegameRepository;
     private readonly ISavegameHeaderProvider _headerProvider;
     private readonly IPopupService _popupService;
+    private readonly ILogger<SavegameQueryService> _logger;
     private readonly int? _numberOfVersionsToKeep;
 
     public SavegameQueryService(
         ISavegameRepository savegameRepository,
         ISavegameHeaderProvider headerProvider,
         IPopupService popupService,
-        ISettingsProvider settingsProvider)
+        ISettingsProvider settingsProvider,
+        ILogger<SavegameQueryService> logger)
     {
         _savegameRepository = savegameRepository;
         _headerProvider = headerProvider;
         _popupService = popupService;
+        _logger = logger;
         _numberOfVersionsToKeep = settingsProvider.GetSavegameSettings().NumberOfVersionsToKeep;
     }
 
@@ -61,6 +68,22 @@ public class SavegameQueryService
                     Length = savegame.Data!.LongLength,
                     BackedUpOn = savegame.BackedUpOn
                 };
+
+                var bmp = TrngScreenshotExtractor.ExtractBitmap(savegame.Data);
+
+                if (bmp != null)
+                {
+                    try
+                    {
+                        using var memoryStream = new MemoryStream(bmp);
+                        viewModel.Screenshot = new Bitmap(memoryStream);
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Malformed BMP data found. Skip");
+                    }
+                }
+                
                 observableCollection.Add(viewModel);
             }
 

@@ -61,5 +61,8 @@
         </valueConverters:StringNullToNullBitmapConverter>
         <valueConverters:CompatibilityToolToIconConverter x:Key="CompatibilityToolToIconConverter"/>
         <valueConverters:AiVendorToIconConverter x:Key="AiVendorToIconConverter"/>
+        
+        <!-- ── Booleans ── -->
+        <valueConverters:BooleanToBrushConverter x:Key="BooleanToBrushConverter" TrueValue="{StaticResource SuccessBrush}" FalseValue="{StaticResource WarningBrush}" />
     </Styles.Resources>
 </Styles>

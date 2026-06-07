@@ -36,20 +36,43 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
             { CheckResultMessage = "", Status = ServiceCheckStatus.Unspecified };
     }
 
-    [ObservableProperty] private ObservableCollection<AiModelViewModel>? _availableModels;
-    [ObservableProperty] private AiModelViewModel? _selectedModel;
+    [ObservableProperty]
+    public partial ObservableCollection<AiModelViewModel>? AvailableModels { get; set; }
+
+    [ObservableProperty]
+    public partial AiModelViewModel? SelectedModel { get; set; }
+
     private string? _savedModelId;
     public string? SavedModelId { set => _savedModelId = value; }
-    [ObservableProperty] private bool _isEnabled;
-    [ObservableProperty] private List<AiBackendType> _availableBackendTypes;
-    [ObservableProperty] private AiBackendType _selectedBackendType;
-    [ObservableProperty] private string _endpoint = string.Empty;
-    [ObservableProperty] private string? _apiKey;
-    [ObservableProperty] private ServiceCheckViewModel _apiServiceCheckViewModel;
-    [ObservableProperty] private ServiceCheckViewModel _embeddingServiceCheckViewModel;
-    [ObservableProperty] private string _embeddingModelId;
+    [ObservableProperty]
+    public partial bool IsEnabled { get; set; }
 
-    [ObservableProperty] private ServiceCheckViewModel _kbServiceCheckViewModel;
+    [ObservableProperty]
+    public partial List<AiBackendType> AvailableBackendTypes { get; set; }
+
+    [ObservableProperty]
+    public partial AiBackendType SelectedBackendType { get; set; }
+
+    [ObservableProperty]
+    public partial string Endpoint { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string? ApiKey { get; set; }
+
+    [ObservableProperty]
+    public partial ServiceCheckViewModel ApiServiceCheckViewModel { get; set; }
+
+    [ObservableProperty]
+    public partial ServiceCheckViewModel EmbeddingServiceCheckViewModel { get; set; }
+
+    [ObservableProperty]
+    public partial string EmbeddingModelId { get; set; }
+
+    [ObservableProperty]
+    public partial ServiceCheckViewModel KbServiceCheckViewModel { get; set; }
+    
+    [ObservableProperty]
+    public partial double Temperature { get; set; }
 
     private readonly AiBackendFactory _backendFactory;
     private readonly AiMapper _modelMapper;
@@ -194,6 +217,7 @@ public partial class AiSettingsViewModel : SettingsSectionViewModelBase
         userConfig.Ai.Endpoint = Endpoint;
         userConfig.Ai.ApiKey = ApiKey;
         userConfig.Ai.BackendType = SelectedBackendType;
+        userConfig.Ai.Temperature = Temperature;
         base.ApplyTo(userConfig);
     }
 }

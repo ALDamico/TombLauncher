@@ -4,7 +4,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Configuration;
-using TombLauncher.Core.Dtos;
+using TombLauncher.Contracts;
 
 namespace TombLauncher.ViewModels.Pages.Settings;
 
@@ -14,10 +14,11 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     {
     }
 
-    [ObservableProperty] private bool _askForConfirmationBeforeWalkthrough;
-    [ObservableProperty] private int _descriptionFontSize = 18;
-
-    public IReadOnlyList<int> AvailableFontSizes { get; } = new[] { 12, 14, 16, 18, 20 };
+    [ObservableProperty]
+    public partial bool AskForConfirmationBeforeWalkthrough { get; set; }
+    [ObservableProperty]
+    public partial int DescriptionFontSize { get; set; } = 18;
+    public IReadOnlyList<int> AvailableFontSizes { get; } = [12, 14, 16, 18, 20];
 
     public EditablePatternListBoxViewModel? DocumentationPatterns
     {
@@ -73,7 +74,7 @@ public partial class GameDetailsSettingsViewModel : SettingsSectionViewModelBase
     {
         userConfig.GameDetails.AskForConfirmationBeforeWalkthrough = AskForConfirmationBeforeWalkthrough;
         userConfig.GameDetails.DescriptionFontSize = DescriptionFontSize;
-        userConfig.GameDetails.DocumentationPatterns = DocumentationPatterns?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
-        userConfig.GameDetails.DocumentationFolderExclusions = FolderExclusions?.TargetCollection.ToList() ?? new List<CheckableItem<string>>();
+        userConfig.GameDetails.DocumentationPatterns = DocumentationPatterns?.TargetCollection?.ToList() ?? new List<CheckableItem<string>>();
+        userConfig.GameDetails.DocumentationFolderExclusions = FolderExclusions?.TargetCollection?.ToList() ?? new List<CheckableItem<string>>();
     }
 }

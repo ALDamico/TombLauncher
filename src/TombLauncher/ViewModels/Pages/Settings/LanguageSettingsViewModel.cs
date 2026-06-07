@@ -14,8 +14,11 @@ public partial class LanguageSettingsViewModel : SettingsSectionViewModelBase
         InfoTipHeader = "WANT_TO_LOCALIZE_TOMB_LAUNCHER".GetLocalizedString();
     }
 
-    [ObservableProperty] private ApplicationLanguageViewModel? _applicationLanguage;
-    [ObservableProperty] private ObservableCollection<ApplicationLanguageViewModel> _availableLanguages = [];
+    [ObservableProperty]
+    public partial ApplicationLanguageViewModel? ApplicationLanguage { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<ApplicationLanguageViewModel> AvailableLanguages { get; set; } = [];
 
     public override void ApplyTo(AppConfiguration userConfig)
     {

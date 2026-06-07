@@ -27,7 +27,7 @@
             </StackPanel>
 
             <!-- Loading spinner -->
-            <controls:RingLoader Width="40" Height="40"
+            <controls:RingLoader Diameter="40"
                                  HorizontalAlignment="Center"
                                  Margin="0,16"
                                  IsVisible="{Binding IsLoadingRandomSuggestion}" />

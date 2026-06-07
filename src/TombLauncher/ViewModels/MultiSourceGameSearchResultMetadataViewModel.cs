@@ -18,11 +18,11 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
     public MultiSourceGameSearchResultMetadataViewModel(GameSearchResultService gameSearchResultService)
     {
         _gameSearchResultService = gameSearchResultService;
-        Sources = new ObservableCollection<IGameSearchResultMetadata>();
+        Sources = [];
         Sources.CollectionChanged += OnSourcesCollectionChanged;
-        _reviewsLink = string.Empty;
-        _downloadLink = string.Empty;
-        _walkthroughLink = string.Empty;
+        ReviewsLink = string.Empty;
+        DownloadLink = string.Empty;
+        WalkthroughLink = string.Empty;
     }
 
     private void OnSourcesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -33,32 +33,78 @@ public partial class MultiSourceGameSearchResultMetadataViewModel : ViewModelBas
 
     private readonly GameSearchResultService _gameSearchResultService;
 
-    [ObservableProperty] private string _author = string.Empty;
-    [ObservableProperty] private string _authorFullName = string.Empty;
-    [ObservableProperty] private string _title = string.Empty;
-    [ObservableProperty] private GameDifficulty _difficulty;
-    [ObservableProperty] private GameLength _length;
-    [ObservableProperty] private string _setting = string.Empty;
-    [ObservableProperty] private GameEngine _engine;
-    [ObservableProperty] private string _detailsLink = string.Empty;
-    [ObservableProperty] private string _baseUrl = string.Empty;
-    [ObservableProperty] private string _titlePic = string.Empty;
-    [ObservableProperty] private string _sourceSiteDisplayName = string.Empty;
-    [ObservableProperty] private string _description = string.Empty;
-    [ObservableProperty] private InstallProgressViewModel? _installProgress;
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasReviews))] private string _reviewsLink;
+    [ObservableProperty]
+    public partial string Author { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string AuthorFullName { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string Title { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial GameDifficulty Difficulty { get; set; }
+
+    [ObservableProperty]
+    public partial GameLength Length { get; set; }
+
+    [ObservableProperty]
+    public partial string Setting { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial GameEngine Engine { get; set; }
+
+    [ObservableProperty]
+    public partial string DetailsLink { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string BaseUrl { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string TitlePic { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string SourceSiteDisplayName { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string Description { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial InstallProgressViewModel? InstallProgress { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasReviews))]
+    public partial string ReviewsLink { get; set; }
+
     public bool HasReviews => ReviewsLink.IsNotNullOrWhiteSpace();
-    [ObservableProperty] private string _downloadLink;
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasWalkthrough))] private string _walkthroughLink;
+    [ObservableProperty]
+    public partial string DownloadLink { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasWalkthrough))]
+    public partial string WalkthroughLink { get; set; }
+
     public bool HasWalkthrough => WalkthroughLink.IsNotNullOrWhiteSpace();
-    [ObservableProperty] private int? _sizeInMb;
-    [ObservableProperty] private double? _rating;
+    [ObservableProperty]
+    public partial int? SizeInMb { get; set; }
+
+    [ObservableProperty]
+    public partial double? Rating { get; set; }
+
     public int ReviewCount => Sources.Sum(s => s.ReviewCount);
-    [ObservableProperty] private DateTime? _releaseDate;
-    [ObservableProperty] private ObservableCollection<IGameSearchResultMetadata> _sources;
-    [ObservableProperty] private GameWithStatsViewModel? _installedGame;
-    [ObservableProperty] private bool _isNewlyAdded;
-    [ObservableProperty] private bool _isRecentlyUpdated;
+    [ObservableProperty]
+    public partial DateTime? ReleaseDate { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<IGameSearchResultMetadata> Sources { get; set; }
+
+    [ObservableProperty]
+    public partial GameWithStatsViewModel? InstalledGame { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsNewlyAdded { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsRecentlyUpdated { get; set; }
 
     public bool HasMultipleSources => Sources.Count > 1;
 

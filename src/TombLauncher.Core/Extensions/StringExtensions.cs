@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -44,22 +45,22 @@ public static partial class StringExtensions
         return string.IsNullOrWhiteSpace(s) ? null : s;
     }
 
-    public static bool IsNullOrEmpty(this string? s)
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? s)
     {
         return string.IsNullOrEmpty(s);
     }
 
-    public static bool IsNotNullOrEmpty(this string? s)
+    public static bool IsNotNullOrEmpty([NotNullWhen(true)] this string? s)
     {
         return !s.IsNullOrEmpty();
     }
 
-    public static bool IsNullOrWhiteSpace(this string? s)
+    public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? s)
     {
         return string.IsNullOrWhiteSpace(s);
     }
-
-    public static bool IsNotNullOrWhiteSpace(this string? s)
+    
+    public static bool IsNotNullOrWhiteSpace([NotNullWhen(true)] this string? s)
     {
         return !s.IsNullOrWhiteSpace();
     }

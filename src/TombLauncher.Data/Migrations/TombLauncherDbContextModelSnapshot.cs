@@ -15,7 +15,7 @@ namespace TombLauncher.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
 
             modelBuilder.Entity("TombLauncher.Data.Models.AppCrash", b =>
                 {
@@ -103,6 +103,9 @@ namespace TombLauncher.Data.Migrations
                     b.Property<int>("Difficulty")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("EnableBorderlessFix")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("GameEngine")
                         .HasColumnType("INTEGER");
 
@@ -143,6 +146,9 @@ namespace TombLauncher.Data.Migrations
 
                     b.Property<byte[]>("TitlePic")
                         .HasColumnType("BLOB");
+
+                    b.Property<string>("TitlePicUrl")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

@@ -7,6 +7,9 @@ namespace TombLauncher.ViewModels.Ai;
 public partial class AiMessageViewModel : ObservableObject
 {
     public MessageType MessageType { get; set; }
-    [ObservableProperty] private string _text = "";
-    [ObservableProperty] private DateTime _sentDate;
+    [ObservableProperty]
+    public partial string Text { get; set; } = "";
+
+    [ObservableProperty]
+    public partial DateTime SentDate { get; set; }
 }

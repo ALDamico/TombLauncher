@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using TombLauncher.Core.Dtos;
+using TombLauncher.Contracts;
 
 namespace TombLauncher.Core.Extensions;
 

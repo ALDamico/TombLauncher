@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using TombLauncher.Contracts.Localization.Dtos;
-using TombLauncher.Core.Dtos;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Installers.Resilience;
 using TombLauncher.ViewModels;
 using TombLauncher.ViewModels.Pages.Settings;
 
@@ -11,6 +12,13 @@ namespace TombLauncher.Mappers;
 
 public class SettingsMapper
 {
+    private readonly IDownloaderResponseTimeService _downloaderResponseTimeService;
+
+    public SettingsMapper(IDownloaderResponseTimeService downloaderResponseTimeService)
+    {
+        _downloaderResponseTimeService = downloaderResponseTimeService;
+    }
+    
     public ApplicationLanguageViewModel ToViewModel(AvailableLanguageDto dto)
     {
         return new ApplicationLanguageViewModel()
@@ -55,7 +63,7 @@ public class SettingsMapper
 
     public DownloaderViewModel ToViewModel(DownloaderConfiguration dto)
     {
-        return new DownloaderViewModel()
+        return new DownloaderViewModel(_downloaderResponseTimeService)
         {
             DisplayName = dto.DisplayName,
             BaseUrl = dto.BaseUrl,

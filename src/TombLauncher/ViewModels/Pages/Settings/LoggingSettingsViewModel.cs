@@ -1,6 +1,7 @@
 using System.IO;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.PlatformSpecific;
 
 namespace TombLauncher.ViewModels.Pages.Settings;

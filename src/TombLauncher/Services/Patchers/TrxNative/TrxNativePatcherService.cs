@@ -13,6 +13,7 @@ using TombLauncher.Configuration.Sections;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Patchers;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.Patchers;

@@ -7,6 +7,7 @@ using TombLauncher.Ai.Configuration;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Ai.Models;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Dtos;
 
 namespace TombLauncher.Ai.Services;

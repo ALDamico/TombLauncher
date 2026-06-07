@@ -14,12 +14,12 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
 {
     private readonly IProgress<PageBusyState> _progress;
 
-    public virtual Task OnNavigatedTo(object parameter)
+    public virtual Task OnNavigatingTo(object parameter)
     {
         return Task.CompletedTask;
     }
 
-    public virtual Task OnNavigatingFrom()
+    public virtual Task OnNavigatedTo(object parameter)
     {
         return Task.CompletedTask;
     }
@@ -31,15 +31,26 @@ public abstract partial class PageViewModel : ViewModelBase, INavigationTarget, 
             IsBusy = state.IsBusy;
             BusyMessage = state.BusyMessage ?? string.Empty;
         });
-        TopBarCommands = new ObservableCollection<ITopBarCommand>();
+        TopBarCommands = [];
     }
 
-    [ObservableProperty] private bool _isBusy;
-    [ObservableProperty] private string _busyMessage = string.Empty;
-    [ObservableProperty] private string _currentFileName = string.Empty;
-    [ObservableProperty] private double? _percentageComplete;
-    [ObservableProperty] private bool _isCancelable;
-    [ObservableProperty] private ObservableCollection<ITopBarCommand> _topBarCommands;
+    [ObservableProperty]
+    public partial bool IsBusy { get; set; }
+
+    [ObservableProperty]
+    public partial string BusyMessage { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string CurrentFileName { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial double? PercentageComplete { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsCancelable { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<ITopBarCommand> TopBarCommands { get; set; }
 
     [RelayCommand(CanExecute = nameof(IsCancelable))]
     protected virtual void Cancel()

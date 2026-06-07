@@ -7,7 +7,7 @@ using TombLauncher.Configuration;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Mappers;
@@ -55,7 +55,6 @@ public class WelcomePageService : IViewService
     private readonly GameMetadataMapper _gameMetadataMapper;
     private readonly SearchMapper _searchMapper;
     private readonly GameSearchResultService _gameSearchResultService;
-    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly GameDataService _gameDataService;
     private readonly AppCrashHostService _appCrashHostService;

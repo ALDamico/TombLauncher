@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Octokit;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Core.Utils;

@@ -5,17 +5,22 @@ namespace TombLauncher.ViewModels;
 
 public partial class GameStatisticsViewModel : ObservableObject
 {
-    [ObservableProperty] private string _title = string.Empty;
+    [ObservableProperty]
+    public partial string Title { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Duration))]
-    private DateTime? _lastPlayed;
+    public partial DateTime? LastPlayed { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Duration))]
-    private DateTime? _lastPlayedEnd;
+    public partial DateTime? LastPlayedEnd { get; set; }
+
+    [ObservableProperty]
+    public partial uint TotalSessions { get; set; }
+
+    [ObservableProperty]
+    public partial int Id { get; set; }
 
     public TimeSpan Duration => LastPlayedEnd.GetValueOrDefault() - LastPlayed.GetValueOrDefault();
-    [ObservableProperty] private uint _totalSessions;
-    [ObservableProperty] private int _id;
 }

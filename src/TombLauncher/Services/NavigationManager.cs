@@ -20,7 +20,7 @@ public partial class NavigationManager : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanGoBack))]
-    private INavigableViewModel? _currentPage;
+    public partial INavigableViewModel? CurrentPage { get; set; }
 
     public bool CanGoBack => _history.Count > 0;
 
@@ -40,20 +40,23 @@ public partial class NavigationManager : ObservableObject
     /// </summary>
     public async Task NavigateTo<TViewModel>(object? parameter = null) where TViewModel : class, INavigableViewModel
     {
-        var nextViewModel = _serviceProvider.GetRequiredService<TViewModel>();
-        INavigableViewModel? previousPage;
+        var nextViewModel = await Task.Run(() => _serviceProvider.GetRequiredService<TViewModel>());
+
+        try
+        {
+            await nextViewModel.OnNavigatingTo(parameter!);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in OnNavigatingTo for {ViewModelType}", nextViewModel.GetType().Name);
+        }
 
         await _navigationLock.WaitAsync();
         try
         {
-            previousPage = CurrentPage;
+            if (CurrentPage != null)
+                _history.Push(CurrentPage);
 
-            if (previousPage != null)
-            {
-                _history.Push(previousPage);
-            }
-
-            // Update state (UI triggers happen here)
             CurrentPage = nextViewModel;
         }
         finally
@@ -61,25 +64,11 @@ public partial class NavigationManager : ObservableObject
             _navigationLock.Release();
         }
 
-        if (previousPage != null)
-        {
-            // Notify previous page it's about to be hidden
-            // We do this outside the lock to avoid deadlocks if OnNavigatingFrom triggers navigation
-            try
-            {
-                await previousPage.OnNavigatingFrom();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in OnNavigatingFrom for {ViewModelType}", previousPage.GetType().Name);
-            }
-        }
+        await Task.Delay(NavigationConstants.TransitionDuration + TimeSpan.FromMilliseconds(100));
 
-        // Initialize new page
-        // We do this outside the lock to avoid deadlocks and allow UI to render the new page (likely in "Busy" state)
         try
         {
-            await nextViewModel.OnNavigatedTo(parameter!);
+            await nextViewModel.OnNavigatedTo(parameter!).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -89,17 +78,14 @@ public partial class NavigationManager : ObservableObject
 
     public async Task GoBack()
     {
-        INavigableViewModel? previousPage = null;
-        INavigableViewModel? pageNavigatingFrom = null;
+        INavigableViewModel? previousPage;
 
         await _navigationLock.WaitAsync();
         try
         {
-            if (_history.TryPop(out previousPage))
-            {
-                pageNavigatingFrom = CurrentPage;
+            _history.TryPop(out previousPage);
+            if (previousPage != null)
                 CurrentPage = previousPage;
-            }
         }
         finally
         {
@@ -108,16 +94,7 @@ public partial class NavigationManager : ObservableObject
 
         if (previousPage != null)
         {
-            if (pageNavigatingFrom != null)
-            {
-                try
-                {
-                    await pageNavigatingFrom.OnNavigatingFrom();
-                }
-                catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatingFrom during GoBack for {ViewModelType}", pageNavigatingFrom.GetType().Name); }
-            }
-
-            // Re-activating the previous page
+            await Task.Delay(NavigationConstants.TransitionDuration + TimeSpan.FromMilliseconds(100));
             try
             {
                 await previousPage.OnNavigatedTo(null!);
@@ -126,90 +103,24 @@ public partial class NavigationManager : ObservableObject
         }
     }
 
-    public async Task NavigateToRoot<TViewModel>(object? parameter = null) where TViewModel : class, INavigableViewModel
-    {
-        var nextViewModel = _serviceProvider.GetRequiredService<TViewModel>();
-        INavigableViewModel? previousPage;
-
-        await _navigationLock.WaitAsync();
-        try
-        {
-            _history.Clear();
-            OnPropertyChanged(nameof(CanGoBack));
-
-            previousPage = CurrentPage;
-            CurrentPage = nextViewModel;
-        }
-        finally
-        {
-            _navigationLock.Release();
-        }
-
-        if (previousPage != null)
-        {
-            try
-            {
-                await previousPage.OnNavigatingFrom();
-            }
-            catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatingFrom during NavigateToRoot for {ViewModelType}", previousPage.GetType().Name); }
-        }
-
-        try
-        {
-            await nextViewModel.OnNavigatedTo(parameter!);
-        }
-        catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during NavigateToRoot for {ViewModelType}", nextViewModel.GetType().Name); }
-    }
-
-    public async Task NavigateTo(Type viewModelType, object? parameter = null)
-    {
-        var nextViewModel = (INavigableViewModel)_serviceProvider.GetRequiredService(viewModelType);
-        INavigableViewModel? previousPage;
-
-        await _navigationLock.WaitAsync();
-        try
-        {
-            previousPage = CurrentPage;
-            if (previousPage != null)
-            {
-                _history.Push(previousPage);
-            }
-
-            CurrentPage = nextViewModel;
-        }
-        finally
-        {
-            _navigationLock.Release();
-        }
-
-        if (previousPage != null)
-        {
-            try
-            {
-                await previousPage.OnNavigatingFrom();
-            }
-            catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatingFrom during NavigateTo(Type) for {ViewModelType}", previousPage.GetType().Name); }
-        }
-
-        try
-        {
-            await nextViewModel.OnNavigatedTo(parameter!);
-        }
-        catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatedTo during NavigateTo(Type) for {ViewModelType}", nextViewModel.GetType().Name); }
-    }
-
     public async Task NavigateToRoot(Type viewModelType, object? parameter = null)
     {
         var nextViewModel = (INavigableViewModel)_serviceProvider.GetRequiredService(viewModelType);
-        INavigableViewModel? previousPage;
+
+        try
+        {
+            await nextViewModel.OnNavigatingTo(parameter!);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in OnNavigatingTo during NavigateToRoot for {ViewModelType}", nextViewModel.GetType().Name);
+        }
 
         await _navigationLock.WaitAsync();
         try
         {
             _history.Clear();
             OnPropertyChanged(nameof(CanGoBack));
-
-            previousPage = CurrentPage;
             CurrentPage = nextViewModel;
         }
         finally
@@ -217,14 +128,7 @@ public partial class NavigationManager : ObservableObject
             _navigationLock.Release();
         }
 
-        if (previousPage != null)
-        {
-            try
-            {
-                await previousPage.OnNavigatingFrom();
-            }
-            catch (Exception ex) { _logger.LogError(ex, "Error in OnNavigatingFrom during NavigateToRoot(Type) for {ViewModelType}", previousPage.GetType().Name); }
-        }
+        await Task.Delay(NavigationConstants.TransitionDuration + TimeSpan.FromMilliseconds(100));
 
         try
         {

@@ -4,11 +4,11 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts;
 using TombLauncher.Contracts.Downloaders;
-using TombLauncher.Core.PlatformSpecific;
-using TombLauncher.Core.Dtos;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Core.Dtos.Configuration;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 
 namespace TombLauncher.Services;
 
@@ -128,7 +128,9 @@ public class SettingsProvider : ISettingsProvider
     public AiCoreSettings GetAiCoreSettings()
     {
         var aiSettings = _appConfiguration.Ai;
-        return new AiCoreSettings(aiSettings.IsAiEnabled, aiSettings.ModelId!, aiSettings.BackendType, aiSettings.Endpoint, aiSettings.ApiKey, aiSettings.EmbeddingModelId!);
+        return new AiCoreSettings(aiSettings.IsAiEnabled, aiSettings.ModelId!, aiSettings.BackendType,
+            aiSettings.Endpoint, aiSettings.ApiKey, aiSettings.EmbeddingModelId!,
+            aiSettings.Temperature.GetValueOrDefault(0.65));
     }
 
     public IPlatformSpecificFeatures PlatformSpecificFeatures { get; }

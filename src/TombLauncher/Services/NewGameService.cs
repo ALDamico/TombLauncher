@@ -7,7 +7,6 @@ using Avalonia.Threading;
 using JamSoft.AvaloniaUI.Dialogs.MsgBox;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.EngineDetectors;
-using TombLauncher.Contracts.Localization;
 using TombLauncher.Contracts.Progress;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
@@ -42,7 +41,6 @@ public class NewGameService : IViewService
     private readonly GameMetadataMapper _gameMetadataMapper;
     private readonly GameDataService _gameDataService;
     private readonly GameHashDataService _gameHashDataService;
-    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly GameFileHashCalculator _gameFileHashCalculator;
     private readonly TombRaiderLevelInstaller _levelInstaller;

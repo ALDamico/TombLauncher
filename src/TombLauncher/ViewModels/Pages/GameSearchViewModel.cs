@@ -16,19 +16,40 @@ public partial class GameSearchViewModel : PageViewModel
 {
     private readonly GameSearchService _gameSearchService;
 
-    [ObservableProperty] private DownloaderSearchPayloadViewModel _searchPayload;
-    [ObservableProperty] private ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> _fetchedResults = new();
-    [ObservableProperty] private bool _hasMoreResults;
-    [ObservableProperty] private Vector _scrollViewerOffset;
-    [ObservableProperty] private bool _hasSearched;
-    [ObservableProperty] private int _resultCount;
-    [ObservableProperty] private bool _showEmptyState;
-    [ObservableProperty] private bool _showResults;
-    [ObservableProperty] private string _loadMoreFeedback = string.Empty;
+    [ObservableProperty]
+    public partial DownloaderSearchPayloadViewModel SearchPayload { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<MultiSourceGameSearchResultMetadataViewModel> FetchedResults { get; set; } = [];
+
+    [ObservableProperty]
+    public partial bool HasMoreResults { get; set; }
+
+    [ObservableProperty]
+    public partial Vector ScrollViewerOffset { get; set; }
+
+    [ObservableProperty]
+    public partial bool HasSearched { get; set; }
+
+    [ObservableProperty]
+    public partial int ResultCount { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShowEmptyState { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShowResults { get; set; }
+
+    [ObservableProperty]
+    public partial string LoadMoreFeedback { get; set; } = string.Empty;
 
     // Pagination state — owned by the ViewModel, populated by GameSearchService
-    [ObservableProperty] private int _currentPage;
-    [ObservableProperty] private int _maxTotalPages;
+    [ObservableProperty]
+    public partial int CurrentPage { get; set; }
+
+    [ObservableProperty]
+    public partial int MaxTotalPages { get; set; }
+
     internal DownloaderSearchPayload? LastSearchPayload;
     internal IReadOnlyList<IGameDownloader>? LastSearchDownloaders;
 

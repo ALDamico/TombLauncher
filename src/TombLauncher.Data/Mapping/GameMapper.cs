@@ -42,10 +42,13 @@ public class GameMapper
             SetupExecutableArgs =
                 game.FileBackups.FirstOrDefault(b => b.FileType == FileType.SetupExecutable)?.Arguments,
             TitlePic = game.TitlePic ?? [],
+            TitlePicUrl = game.TitlePicUrl,
             CompatibilityPrefixPath = game.CompatibilityPrefixPath,
             CompatibilityTool = game.CompatibilityTool,
             CompatibilityToolPath = game.CompatibilityToolPath,
-            ExtraEnvVars = _environmentVariableMapper.ToDtos(game.EnvironmentVariables).ToList()
+            ExtraEnvVars = _environmentVariableMapper.ToDtos(game.EnvironmentVariables).ToList(),
+            InstalledFromLink = game.InstalledFromLink?.Link,
+            EnableBorderlessFix = game.EnableBorderlessFix
         };
     }
 
@@ -75,6 +78,8 @@ public class GameMapper
             CompatibilityTool = dto.CompatibilityTool,
             CompatibilityToolPath = dto.CompatibilityToolPath,
             CompatibilityPrefixPath = dto.CompatibilityPrefixPath,
+            TitlePicUrl = dto.TitlePicUrl,
+            EnableBorderlessFix = dto.EnableBorderlessFix
         };
     }
 }

@@ -1,10 +1,9 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Utils;
-using TombLauncher.Services;
-using TombLauncher.Utils;
 
 namespace TombLauncher.ViewModels.Pages;
 
@@ -20,9 +19,14 @@ public partial class AboutPageViewModel : PageViewModel
         GithubLink = coreSettings.GitHubLink;
         WebsiteLink = coreSettings.WebsiteLink;
     }
-    [ObservableProperty] private Version? _applicationVersion;
-    [ObservableProperty] private string _githubLink;
-    [ObservableProperty] private string _websiteLink;
+    [ObservableProperty]
+    public partial Version? ApplicationVersion { get; set; }
+
+    [ObservableProperty]
+    public partial string GithubLink { get; set; }
+
+    [ObservableProperty]
+    public partial string WebsiteLink { get; set; }
 
     [RelayCommand]
     private void OpenLink(string url) => _platformSpecificFeatures.OpenUrl(url);

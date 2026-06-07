@@ -7,8 +7,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Ai.Factories;
 using TombLauncher.Ai.Services;
 using TombLauncher.Configuration;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
-using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
 using TombLauncher.Services;
 using TombLauncher.ViewModels.Pages.Settings;
@@ -77,7 +79,9 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
     private readonly NotificationService _notificationService;
     private readonly AiBackendFactory _aiBackendFactory;
     private readonly KbUpdateService _kbUpdateService;
-    [ObservableProperty] private ObservableCollection<SettingsSectionViewModelBase> _sections;
+    
+    [ObservableProperty]
+    public partial ObservableCollection<SettingsSectionViewModelBase> Sections { get; set; }
 
     private void SectionPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
@@ -93,93 +97,176 @@ public partial class SettingsPageViewModel : PageViewModel, IChangeTracking
         RaiseCanExecuteChanged(SaveCommand);
     }
 
+    private async Task InitAppearanceSettings()
+    {
+        var appearanceCoreSettings = _settingsProvider.GetAppearanceSettings();
+        var currentTheme = appearanceCoreSettings.ApplicationTheme;
+        var appearanceSettings = new AppearanceSettingsViewModel(this);
+        appearanceSettings.SelectedTheme =
+            appearanceSettings.AvailableThemes.FirstOrDefault(t => t.Value == currentTheme)
+            ?? appearanceSettings.AvailableThemes.First();
+        appearanceSettings.DefaultToGridView = appearanceCoreSettings.IsGridViewDefault;
+        Sections.Add(appearanceSettings);
+    }
+
+    private async Task InitLanguageSettings()
+    {
+        var supportedLanguages = await _settingsService.GetSupportedLanguages();
+        var languageSettings = new LanguageSettingsViewModel(this)
+        {
+            AvailableLanguages = supportedLanguages.OrderBy(l => l.IsSystemLanguage)
+                .ThenBy(l => l.DisplayName).ToObservableCollection(),
+            ApplicationLanguage = supportedLanguages.FirstOrDefault(l =>
+                _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo))
+        };
+        Sections.Add(languageSettings);
+    }
+
+    private async Task InitWelcomePageSettings()
+    {
+        var wp = _appConfiguration.WelcomePage;
+        var welcomePageSettings = new WelcomePageSettingsViewModel(this)
+        {
+            ShowQuickStats = wp.ShowQuickStats.GetValueOrDefault(true),
+            ShowQuickActions = wp.ShowQuickActions.GetValueOrDefault(true),
+            ShowRecentlyPlayed = wp.ShowRecentlyPlayed.GetValueOrDefault(true),
+            ShowFavourites = wp.ShowFavourites.GetValueOrDefault(true),
+            RecentlyPlayedCount = wp.RecentlyPlayedCount.GetValueOrDefault(5),
+            FavouritesCount = wp.FavouritesCount.GetValueOrDefault(5),
+            ShowRandomSuggestion = wp.ShowRandomSuggestion.GetValueOrDefault(true),
+            MaxRerolls = wp.RandomGameMaxRerolls.GetValueOrDefault(10)
+        };
+        
+        Sections.Add(welcomePageSettings);
+    }
+
+    private async Task InitDownloaderSettings()
+    {
+        var downloaders = _settingsService.GetDownloaderViewModels();
+        var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService,
+            _popupService, _platformSpecificFeatures, _settingsMapper)
+        {
+            AvailableDownloaders = downloaders.ToObservableCollection()
+        };
+        
+        Sections.Add(downloaderSettings);
+    }
+
+    private async Task InitGameDetailsSettings()
+    {
+        var gameDetailsSettings = _settingsService.GetGameDetailsSettings(this);
+        Sections.Add(gameDetailsSettings);
+    }
+
+    private async Task InitSavegameSettings()
+    {
+        var savegameSettings = _settingsService.GetSavegameSettings(this);
+        Sections.Add(savegameSettings);
+    }
+
+    private async Task InitAiSettings()
+    {
+        var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
+
+        var aiSettings = new AiSettingsViewModel(this, _aiBackendFactory, _aiMapper, _notificationService, _kbUpdateService)
+        {
+            AvailableModels = [],
+            IsEnabled = aiCoreSettings.IsEnabled,
+            SavedModelId = aiCoreSettings.ModelId,
+            EmbeddingModelId = aiCoreSettings.EmbeddingModelId,
+            ApiKey = aiCoreSettings.ApiKey,
+            SelectedBackendType = aiCoreSettings.BackendType,
+            Endpoint = aiCoreSettings.Endpoint,
+            Temperature = aiCoreSettings.Temperature
+        };
+        Sections.Add(aiSettings);
+    }
+
+    private async Task InitCompatibilitySettings()
+    {
+        var compat = _appConfiguration.Compatibility;
+        var compatVm = new CompatibilitySettingsViewModel(this, _platformSpecificFeatures)
+        {
+            WinePath = compat.WinePath ?? string.Empty,
+            CompatibilityPrefixPath = compat.CompatibilityPrefixPath ?? string.Empty,
+            SelectedTool = compat.CompatibilityTool,
+            ManualProtonPath = compat.ProtonPath,
+        };
+        if (!string.IsNullOrWhiteSpace(compat.ProtonPath))
+        {
+            compatVm.SelectedProtonInstallation =
+                compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
+        }
+        Sections.Add(compatVm);
+    }
+
+    private async Task InitLoggingSettings()
+    {
+        var loggingSettings = new LoggingSettingsViewModel(_platformSpecificFeatures, this);
+        Sections.Add(loggingSettings);
+    }
+
+    private async Task InitIntegrationsSettings()
+    {
+        var externalIntegrationsSettings = new IntegrationsSettingsViewModel(this)
+        {
+            IsDiscordSharingEnabled = _appConfiguration.Integrations.SharePlaySessionsOnDiscord.GetValueOrDefault()
+        };
+        Sections.Add(externalIntegrationsSettings);
+    }
+
+    private async Task InitGamepadSettings()
+    {
+        var gamepadSettings = new GamepadSettingsViewModel(this, _appConfiguration, _popupService, _platformSpecificFeatures)
+        {
+            GamepadTool = _appConfiguration.Gamepad.GamepadTool.GetValueOrDefault(),
+            GamepadToolPath = _appConfiguration.Gamepad.ToolPath
+        };
+        Sections.Add(gamepadSettings);
+    }
+
     public override async Task OnNavigatedTo(object parameter)
     {
-        Dispatcher.UIThread.Post(() =>
+        if (IsInitialized)
+            return;
+
+        using (BusyScope("LOADING_SETTINGS".GetLocalizedString()))
         {
-            if (IsInitialized)
-                return;
+            await InitWelcomePageSettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
-            IsInitialized = true;
-            var appearanceCoreSettings = _settingsProvider.GetAppearanceSettings();
-            var currentTheme = appearanceCoreSettings.ApplicationTheme;
-            var appearanceSettings = new AppearanceSettingsViewModel(this);
-            appearanceSettings.SelectedTheme =
-                appearanceSettings.AvailableThemes.FirstOrDefault(t => t.Value == currentTheme)
-                ?? appearanceSettings.AvailableThemes.First();
-            appearanceSettings.DefaultToGridView = appearanceCoreSettings.IsGridViewDefault;
-            var supportedLanguages = _settingsService.GetSupportedLanguages();
-            var languageSettings = new LanguageSettingsViewModel(this)
-            {
-                AvailableLanguages = supportedLanguages.OrderBy(l => l.DisplayName).ToObservableCollection(),
-                ApplicationLanguage = supportedLanguages.FirstOrDefault(l =>
-                    _settingsService.LocalizationManager.CurrentCulture.Equals(l.CultureInfo))
-            };
+            await InitAppearanceSettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
-            var downloaders = _settingsService.GetDownloaderViewModels();
-            var downloaderSettings = new DownloaderSettingsViewModel(this, _settingsProvider, _appFileOperationsService,
-                _popupService, _platformSpecificFeatures, _settingsMapper)
-            {
-                AvailableDownloaders = downloaders.ToObservableCollection()
-            };
-            var gameDetailsSettings = _settingsService.GetGameDetailsSettings(this);
-            var savegameSettings = _settingsService.GetSavegameSettings(this);
+            await InitLanguageSettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
-            var wp = _appConfiguration.WelcomePage;
-            var welcomePageSettings = new WelcomePageSettingsViewModel(this)
-            {
-                ShowQuickStats = wp.ShowQuickStats.GetValueOrDefault(true),
-                ShowQuickActions = wp.ShowQuickActions.GetValueOrDefault(true),
-                ShowRecentlyPlayed = wp.ShowRecentlyPlayed.GetValueOrDefault(true),
-                ShowFavourites = wp.ShowFavourites.GetValueOrDefault(true),
-                RecentlyPlayedCount = wp.RecentlyPlayedCount.GetValueOrDefault(5),
-                FavouritesCount = wp.FavouritesCount.GetValueOrDefault(5),
-                ShowRandomSuggestion = wp.ShowRandomSuggestion.GetValueOrDefault(true),
-                MaxRerolls = wp.RandomGameMaxRerolls.GetValueOrDefault(10)
-            };
+            await InitDownloaderSettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
-            var aiCoreSettings = _settingsProvider.GetAiCoreSettings();
+            await InitGameDetailsSettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
-            var aiSettings = new AiSettingsViewModel(this, _aiBackendFactory, _aiMapper, _notificationService, _kbUpdateService)
-            {
-                AvailableModels = [],
-                IsEnabled = aiCoreSettings.IsEnabled,
-                SavedModelId = aiCoreSettings.ModelId,
-                EmbeddingModelId = aiCoreSettings.EmbeddingModelId,
-                ApiKey = aiCoreSettings.ApiKey,
-                SelectedBackendType = aiCoreSettings.BackendType,
-                Endpoint = aiCoreSettings.Endpoint,
-            };
+            await InitSavegameSettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
-            var compat = _appConfiguration.Compatibility;
-            var compatVm = new CompatibilitySettingsViewModel(this, _platformSpecificFeatures)
-            {
-                WinePath = compat.WinePath ?? string.Empty,
-                CompatibilityPrefixPath = compat.CompatibilityPrefixPath ?? string.Empty,
-                SelectedTool = compat.CompatibilityTool,
-                ManualProtonPath = compat.ProtonPath,
-            };
-            // Pre-select the stored Proton installation in the ComboBox if it matches
-            if (!string.IsNullOrWhiteSpace(compat.ProtonPath))
-            {
-                compatVm.SelectedProtonInstallation =
-                    compatVm.AvailableProtonInstallations.FirstOrDefault(p => p.ExecutablePath == compat.ProtonPath);
-            }
+            await InitAiSettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
-            var loggingSettings = new LoggingSettingsViewModel(_platformSpecificFeatures, this);
+            await InitCompatibilitySettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
-            Sections.Add(welcomePageSettings);
-            Sections.Add(appearanceSettings);
-            Sections.Add(languageSettings);
-            Sections.Add(downloaderSettings);
-            Sections.Add(gameDetailsSettings);
-            Sections.Add(savegameSettings);
-            Sections.Add(aiSettings);
-            Sections.Add(compatVm);
-            Sections.Add(loggingSettings);
+            await InitLoggingSettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+            await InitIntegrationsSettings();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+            await InitGamepadSettings();
 
             AcceptChanges();
-        });
+            IsInitialized = true;
+        }
     }
 
     protected override async Task SaveInner()

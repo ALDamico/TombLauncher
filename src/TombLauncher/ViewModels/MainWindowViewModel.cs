@@ -6,10 +6,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Navigation;
-using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;
+using TombLauncher.ViewModels.Notifications;
 using TombLauncher.ViewModels.Pages;
 
 namespace TombLauncher.ViewModels;
@@ -35,9 +37,9 @@ public partial class MainWindowViewModel : WindowViewModelBase
 
             new MainMenuItemViewModel()
             {
-                ToolTip = "MY_MODS".GetLocalizedString(),
-                Icon = PackIconRemixIconKind.GamepadLine,
-                Text = "MY_MODS".GetLocalizedString(),
+                ToolTip = "MY_LEVELS".GetLocalizedString(),
+                Icon = PackIconRemixIconKind.TreasureMapLine,
+                Text = "MY_LEVELS".GetLocalizedString(),
                 ViewModelType = typeof(GameListViewModel)
             },
 
@@ -56,6 +58,20 @@ public partial class MainWindowViewModel : WindowViewModelBase
                 Text = "STATISTICS".GetLocalizedString(),
                 ViewModelType = typeof(StatisticsPageViewModel)
             },
+            new MainMenuItemViewModel()
+            {
+                ToolTip = "ENGINE_SUPPORT".GetLocalizedString(),
+                Icon = PackIconRemixIconKind.GridFill,
+                Text = "ENGINE_SUPPORT".GetLocalizedString(),
+                ViewModelType = typeof(GameSupportMatrixViewModel)
+            },
+            new MainMenuItemViewModel()
+            {
+                ToolTip = "GAMEPAD_SUPPORT".GetLocalizedString(),
+                Icon = PackIconRemixIconKind.GamepadLine,
+                Text = "GAMEPAD_SUPPORT".GetLocalizedString(),
+                ViewModelType = typeof(GamepadSupportMatrixViewModel)
+            }
         ];
 
         var aiEnabled = settingsProvider.GetAiCoreSettings().IsEnabled;
@@ -134,13 +150,26 @@ public partial class MainWindowViewModel : WindowViewModelBase
     private readonly NavigationManager _navigationManager;
     private readonly ISettingsProvider _settingsProvider;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
-    [ObservableProperty] private NotificationListViewModel _notificationListViewModel;
-    [ObservableProperty] private MainMenuItemViewModel _settingsItem;
-    [ObservableProperty] private CommandViewModel _gitHubLinkItem;
-    [ObservableProperty] private CommandViewModel _websiteLinkItem;
-    [ObservableProperty] private MainMenuItemViewModel _aboutPageItem;
-    [ObservableProperty] private bool _isSettingsOpen;
-    [ObservableProperty] private bool _isAboutPageOpen;
+    [ObservableProperty]
+    public partial NotificationListViewModel NotificationListViewModel { get; set; }
+
+    [ObservableProperty]
+    public partial MainMenuItemViewModel SettingsItem { get; set; }
+
+    [ObservableProperty]
+    public partial CommandViewModel GitHubLinkItem { get; set; }
+
+    [ObservableProperty]
+    public partial CommandViewModel WebsiteLinkItem { get; set; }
+
+    [ObservableProperty]
+    public partial MainMenuItemViewModel AboutPageItem { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsSettingsOpen { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsAboutPageOpen { get; set; }
 
     private void OpenGithub()
     {
@@ -200,7 +229,7 @@ public partial class MainWindowViewModel : WindowViewModelBase
     [RelayCommand]
     private async Task OpenSettings()
     {
-        await _navigationManager.NavigateTo(SettingsItem.ViewModelType!);
+        await _navigationManager.NavigateTo<SettingsPageViewModel>();
         SelectedMenuItem = SettingsItem;
         IsSettingsOpen = true;
     }
@@ -208,12 +237,13 @@ public partial class MainWindowViewModel : WindowViewModelBase
     [RelayCommand]
     private async Task OpenAboutPage()
     {
-        await _navigationManager.NavigateTo(AboutPageItem.ViewModelType!);
+        await _navigationManager.NavigateTo<AboutPageViewModel>();
         SelectedMenuItem = AboutPageItem;
         IsAboutPageOpen = true;
     }
 
-    [ObservableProperty] private WindowState _currentWindowState;
+    [ObservableProperty]
+    public partial WindowState CurrentWindowState { get; set; }
 
     [RelayCommand]
     private void ToggleFullScreen()

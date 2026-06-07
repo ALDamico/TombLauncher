@@ -1,5 +1,6 @@
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration.Sections;
+using TombLauncher.Gamepad.Configuration;
 
 namespace TombLauncher.Configuration;
 
@@ -14,4 +15,6 @@ public interface IAppConfiguration
     IWelcomePageConfig WelcomePage { get; }
     IUpdaterConfig Updater { get; }
     IAiConfig Ai { get; }
+    IIntegrationsConfig Integrations { get; }
+    IGamepadConfig Gamepad { get; }
 }

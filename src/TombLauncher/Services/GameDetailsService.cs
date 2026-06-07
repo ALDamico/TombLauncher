@@ -9,9 +9,12 @@ using Microsoft.Extensions.Logging;
 using TombLauncher.Ai.Services;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.PlatformSpecific;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Extensions;
+using TombLauncher.Gamepad.SupportMatrix;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
@@ -25,12 +28,13 @@ public class GameDetailsService : IViewService
 {
     public GameDetailsService(ViewServiceContext viewContext, GameDataService gameDataService, GameLinkDataService gameLinkDataService,
         IPlatformSpecificFeatures platformSpecificFeatures, ISettingsProvider settingsProvider, ILogger<GameDetailsService> logger, 
-        GameLinkDtoMapper mapper, GameMetadataMapper gameMapper, TroubleshootingContextService troubleshootingContextService)
+        GameLinkDtoMapper mapper, GameMetadataMapper gameMapper, TroubleshootingContextService troubleshootingContextService, GamepadSupportMatrix gamepadSupportMatrix)
     {
         _logger = logger;
         _mapper = mapper;
         _gameMapper = gameMapper;
         _troubleshootingContextService = troubleshootingContextService;
+        _gamepadSupportMatrix = gamepadSupportMatrix;
         ViewContext = viewContext;
         _gameDataService = gameDataService;
         _gameLinkDataService = gameLinkDataService;
@@ -50,6 +54,7 @@ public class GameDetailsService : IViewService
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
     private readonly ISettingsProvider _settingsProvider;
+    private readonly GamepadSupportMatrix _gamepadSupportMatrix;
 
     public void InitializeSettings(GameDetailsViewModel target)
     {
@@ -148,4 +153,19 @@ public class GameDetailsService : IViewService
 
     public async Task OpenTrxNativePatcher(GameMetadataViewModel gameMetadata) =>
         await NavigationManager.NavigateTo<TrxNativePatcherPageViewModel>(gameMetadata);
+
+    public bool GetGamepadSupport(GameMetadataViewModel? vm)
+    {
+        if (vm == null)
+            return false;
+        return _gamepadSupportMatrix.GetGamepadSupport(vm.GameEngine);
+    }
+
+    public async Task ToggleBorderlessFix(GameMetadataViewModel game)
+    {
+        game.EnableBorderlessFix = !game.EnableBorderlessFix;
+
+        var dto = _gameMapper.ToDto(game);
+        await _gameDataService.UpsertGame(dto);
+    }
 }

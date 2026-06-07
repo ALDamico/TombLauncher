@@ -1,12 +1,11 @@
 ﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using JamSoft.AvaloniaUI.Dialogs.Events;
 using JamSoft.AvaloniaUI.Dialogs.ViewModels;
 using NetSparkleUpdater.UI.Avalonia.Helpers;
 
 namespace TombLauncher.ViewModels.Dialogs;
 
-public partial class RestoreSavegameDialogViewModel : DialogViewModel
+public class RestoreSavegameDialogViewModel : DialogViewModel
 {
     public RestoreSavegameDialogViewModel()
     {
@@ -20,42 +19,33 @@ public partial class RestoreSavegameDialogViewModel : DialogViewModel
         InvokeRequestCloseDialog(eventArgs);
     }
 
-    private ObservableCollection<SavegameSlotViewModel> _slots = null!;
-
     public ObservableCollection<SavegameSlotViewModel> Slots
     {
-        get => _slots;
-        set => RaiseAndSetIfChanged(ref _slots, value);
-    }
-    private SavegameSlotViewModel _selectedSlot = null!;
+        get;
+        set => RaiseAndSetIfChanged(ref field, value);
+    } = null!;
 
     public SavegameSlotViewModel SelectedSlot
     {
-        get => _selectedSlot;
-        set => RaiseAndSetIfChanged(ref _selectedSlot, value);
-    }
-
-    private byte[] _data = null!;
+        get;
+        set => RaiseAndSetIfChanged(ref field, value);
+    } = null!;
 
     public byte[] Data
     {
-        get => _data;
-        set => RaiseAndSetIfChanged(ref _data, value);
-    }
-
-    private string _targetDirectory = null!;
+        get;
+        init => RaiseAndSetIfChanged(ref field, value);
+    } = null!;
 
     public string TargetDirectory
     {
-        get => _targetDirectory;
-        set => RaiseAndSetIfChanged(ref _targetDirectory, value);
-    }
-
-    private string _baseFileName = null!;
+        get;
+        init => RaiseAndSetIfChanged(ref field, value);
+    } = null!;
 
     public string BaseFileName
     {
-        get => _baseFileName;
-        set => RaiseAndSetIfChanged(ref _baseFileName, value);
-    }
+        get;
+        init => RaiseAndSetIfChanged(ref field, value);
+    } = null!;
 }

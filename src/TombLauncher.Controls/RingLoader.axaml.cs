@@ -8,6 +8,7 @@ public partial class RingLoader : UserControl
 {
     public RingLoader()
     {
+        Diameter = 100;
         InitializeComponent();
     }
 
@@ -36,5 +37,14 @@ public partial class RingLoader : UserControl
     {
         get => GetValue(MessageProperty);
         set => SetValue(MessageProperty, value);
+    }
+
+    public static readonly StyledProperty<double> DiameterProperty = AvaloniaProperty.Register<RingLoader, double>(
+        nameof(Diameter));
+
+    public double Diameter
+    {
+        get => GetValue(DiameterProperty);
+        set => SetValue(DiameterProperty, value);
     }
 }

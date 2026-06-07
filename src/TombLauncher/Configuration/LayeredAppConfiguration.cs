@@ -1,7 +1,10 @@
+using System.Linq;
 using TombLauncher.Ai.Configuration;
 using TombLauncher.Configuration.Sections;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.Utils;
+using TombLauncher.Gamepad.Configuration;
 
 namespace TombLauncher.Configuration;
 
@@ -89,6 +92,21 @@ public class LayeredAppConfiguration : ILayeredAppConfiguration
         KnowledgeBasePath = Defaults.Ai.KnowledgeBasePath,
         ApiKey = User.Ai.ApiKey.Coalesce(Defaults.Ai.ApiKey),
         Endpoint = User.Ai.Endpoint,
-        BackendType = User.Ai.BackendType.Coalesce(Defaults.Ai.BackendType)
+        BackendType = User.Ai.BackendType.Coalesce(Defaults.Ai.BackendType),
+        Temperature = User.Ai.Temperature.Coalesce(Defaults.Ai.Temperature)
+    };
+
+    public IIntegrationsConfig Integrations => new IntegrationsConfig()
+    {
+        DiscordAppId = Defaults.Integrations.DiscordAppId,
+        SharePlaySessionsOnDiscord =
+            User.Integrations.SharePlaySessionsOnDiscord.Coalesce(Defaults.Integrations.SharePlaySessionsOnDiscord)
+    };
+
+    public IGamepadConfig Gamepad => new GamepadConfig()
+    {
+        GamepadTool = User.Gamepad.GamepadTool.Coalesce(Defaults.Gamepad.GamepadTool),
+        ToolPath = User.Gamepad.ToolPath.Coalesce(Defaults.Gamepad.ToolPath),
+        Profiles = User.Gamepad.Profiles.Merge(Defaults.Gamepad.Profiles).ToDictionary()
     };
 }

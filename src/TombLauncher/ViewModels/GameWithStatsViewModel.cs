@@ -14,20 +14,28 @@ public partial class GameWithStatsViewModel : ViewModelBase
     }
     public GameWithStatsViewModel(GameWithStatsService gameWithStatsService)
     {
-        _gameMetadata = null!;
+        GameMetadata = null!;
         _gameWithStatsService = gameWithStatsService;
     }
 
     private readonly GameWithStatsService _gameWithStatsService;
 
-    [ObservableProperty] private GameMetadataViewModel _gameMetadata;
-    [ObservableProperty] private TimeSpan _totalPlayedTime;
-    [ObservableProperty] private DateTime? _lastPlayed;
-    [ObservableProperty] private bool _areCommandsVisible;
+    [ObservableProperty]
+    public partial GameMetadataViewModel GameMetadata { get; set; }
+
+    [ObservableProperty]
+    public partial TimeSpan TotalPlayedTime { get; set; }
+
+    [ObservableProperty]
+    public partial DateTime? LastPlayed { get; set; }
+
+    [ObservableProperty]
+    public partial bool AreCommandsVisible { get; set; }
+
     [RelayCommand(CanExecute = nameof(CanPlay))]
-    private void Play()
+    private async Task Play()
     {
-        _gameWithStatsService.PlayGame(this);
+        await _gameWithStatsService.PlayGame(this);
     }
 
     private bool CanPlay() => _gameWithStatsService.CanPlayGame(this);
@@ -39,9 +47,9 @@ public partial class GameWithStatsViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanLaunchSetup))]
-    private void LaunchSetup()
+    private async Task LaunchSetup()
     {
-        _gameWithStatsService.LaunchSetup(this);
+        await _gameWithStatsService.LaunchSetup(this);
     }
 
     private bool CanLaunchSetup()
@@ -50,9 +58,9 @@ public partial class GameWithStatsViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanLaunchCommunitySetup))]
-    private void LaunchCommunitySetup()
+    private async Task LaunchCommunitySetup()
     {
-        _gameWithStatsService.LaunchCommunitySetup(this);
+        await _gameWithStatsService.LaunchCommunitySetup(this);
     }
 
     private bool CanLaunchCommunitySetup()

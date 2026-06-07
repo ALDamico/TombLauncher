@@ -7,8 +7,11 @@ namespace TombLauncher.ViewModels;
 
 public partial class DailyGameDurationViewModel : ObservableObject, IChartEntity
 {
-    [ObservableProperty] private DateTime _date;
-    [ObservableProperty] private TimeSpan _gameDuration;
+    [ObservableProperty]
+    public partial DateTime Date { get; set; }
+
+    [ObservableProperty]
+    public partial TimeSpan GameDuration { get; set; }
     public ChartEntityMetaData? MetaData { get; set; }
     public Coordinate Coordinate { get; set; }
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

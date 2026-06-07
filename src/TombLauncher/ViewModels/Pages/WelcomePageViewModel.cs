@@ -18,46 +18,70 @@ public partial class WelcomePageViewModel : PageViewModel
     }
 
     private readonly WelcomePageService _welcomePageService;
-    [ObservableProperty] private GameWithStatsViewModel? _latestPlayedGame;
-    [ObservableProperty] private QuickStatsDto? _quickStats;
-    [ObservableProperty] private bool _showQuickStats = true;
-    [ObservableProperty] private bool _showQuickActions = true;
-    [ObservableProperty] private bool _showRecentlyPlayed = true;
-    [ObservableProperty] private bool _showFavourites = true;
+    [ObservableProperty] public partial GameWithStatsViewModel? LatestPlayedGame { get; set; }
+    [ObservableProperty]
+    public partial QuickStatsDto? QuickStats { get; set; }
+
+    [ObservableProperty]
+    public partial bool ShowQuickStats { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool ShowQuickActions { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool ShowRecentlyPlayed { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool ShowFavourites { get; set; } = true;
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PreviousRecentGameCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextRecentGameCommand))]
-    private ObservableCollection<GameWithStatsViewModel> _recentlyPlayedGames = new();
+    public partial ObservableCollection<GameWithStatsViewModel> RecentlyPlayedGames { get; set; } = [];
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PreviousRecentGameCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextRecentGameCommand))]
-    private int _recentlyPlayedIndex;
+    public partial int RecentlyPlayedIndex { get; set; }
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PreviousRecentGameCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextRecentGameCommand))]
-    private List<int> _paginationIndices = new();
+    public partial List<int> PaginationIndices { get; set; } = [];
 
     // Favourites carousel
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PreviousFavouriteCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextFavouriteCommand))]
-    private ObservableCollection<GameWithStatsViewModel> _favouriteGames = new();
+    public partial ObservableCollection<GameWithStatsViewModel> FavouriteGames { get; set; } = new();
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PreviousFavouriteCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextFavouriteCommand))]
     private int _favouriteIndex;
-    [ObservableProperty] private List<int> _favouritePaginationIndices = new();
-
-    [ObservableProperty] private bool _showRandomSuggestion = true;
     [ObservableProperty]
-    private MultiSourceGameSearchResultMetadataViewModel? _randomSuggestion;
-    [ObservableProperty] private bool _isLoadingRandomSuggestion;
-    [ObservableProperty] private bool _randomSuggestionFailed;
+    public partial List<int> FavouritePaginationIndices { get; set; } = new();
 
-    [ObservableProperty] private string? _changeLogMarkdown;
-    [ObservableProperty] private bool _isLoadingChangelog = true;
-    [ObservableProperty] private bool _changelogLoadFailed;
+    [ObservableProperty]
+    public partial bool ShowRandomSuggestion { get; set; } = true;
 
+    [ObservableProperty]
+    public partial MultiSourceGameSearchResultMetadataViewModel? RandomSuggestion { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsLoadingRandomSuggestion { get; set; }
+
+    [ObservableProperty]
+    public partial bool RandomSuggestionFailed { get; set; }
+
+    [ObservableProperty]
+    public partial string? ChangeLogMarkdown { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsLoadingChangelog { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool ChangelogLoadFailed { get; set; }
 
     protected override async Task RaiseInitialize()
     {

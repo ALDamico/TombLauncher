@@ -73,7 +73,7 @@ Tomb Launcher searches TRLE.net, TRCustoms.org, and AspideTR.com simultaneously.
 The level may have been removed from the community site, or it may have been renamed. Levels already installed in your library are not affected — you can still play them normally.
 
 ## How do I change the application language?
-Go to Settings and select your preferred language. Tomb Launcher currently supports English and Italian.
+Go to Settings and select your preferred language. As of version 1.4.0, Tomb Launcher currently supports English, French, German, Italian, Spanish, Polish, and Czech.
 
 ## What does the game library look like?
 Every level you install lives in your personal library — a clean, organized view of your entire collection. At a glance, you can see which levels are installed, when you last played each one, how much time you spent on it, and which site it came from (TRLE.net, TRCustoms.org, or AspideTR.com).

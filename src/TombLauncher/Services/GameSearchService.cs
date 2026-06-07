@@ -5,18 +5,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using AvaloniaEdit.Utils;
+using IconPacks.Avalonia.RemixIcon;
 using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
-using TombLauncher.Contracts.Localization;
+using TombLauncher.Contracts.Settings;
 using TombLauncher.Core.Extensions;
 using TombLauncher.Data.Database.Services;
 using TombLauncher.Installers.Downloaders;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Mappers;
 using TombLauncher.ViewModels;
+using TombLauncher.ViewModels.Notifications;
 using TombLauncher.ViewModels.Pages;
-using StringNotificationViewModel = TombLauncher.ViewModels.Notifications.StringNotificationViewModel;
 
 namespace TombLauncher.Services;
 
@@ -47,7 +48,6 @@ public class GameSearchService : IViewService
     }
 
     public ViewServiceContext ViewContext { get; }
-    public ILocalizationManager LocalizationManager => ViewContext.LocalizationManager;
     public NavigationManager NavigationManager => ViewContext.NavigationManager;
     private readonly NotificationService _notificationService;
     private readonly ILogger<GameSearchService> _logger;
@@ -75,14 +75,21 @@ public class GameSearchService : IViewService
         using (target.BusyScope("LOADING_IN_PROGRESS".GetLocalizedString()))
         {
             var nextPage = target.CurrentPage + 1;
-            var (nextPageResults, _) = await _gameDownloadManager.GetGames(
+            var nextPageResults = await _gameDownloadManager.GetGames(
                 target.LastSearchDownloaders!, target.LastSearchPayload!, nextPage);
 
-            var fetchedResults = await InvokeMerger(target, nextPageResults.SelectMany(r => r.Sources).ToList());
+            foreach (var failedDownloader in nextPageResults.FailedDownloaders)
+            {
+                await _notificationService.AddWarningNotificationAsync("FAILED_TO_FETCH".GetLocalizedString(),
+                    "FAILED_TO_FETCH_DESCRIPTION".GetLocalizedString(failedDownloader),
+                    PackIconRemixIconKind.WifiOffLine);
+            }
+
+            var fetchedResults = await InvokeMerger(target, nextPageResults.Results.SelectMany(r => r.Sources).ToList());
 
             var gamesWithStats = await _gameDataService.GetGamesWithStats();
             var gamesByLinks = await
-                _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPageResults.SelectMany(g => g.Sources).Select(s => s.DownloadLink!).ToList(), gamesWithStats);
+                _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, nextPageResults.Results.SelectMany(g => g.Sources).Select(s => s.DownloadLink!).ToList(), gamesWithStats);
             foreach (var game in target.FetchedResults.Where(r => r.InstalledGame == null))
             {
                 if (gamesByLinks.TryGetValue(game.DownloadLink, out var dto))
@@ -192,17 +199,37 @@ public class GameSearchService : IViewService
         {
             _logger.LogInformation("Started search with parameters: {Target}", target);
             var downloaders = _settingsProvider.GetActiveDownloaders();
+            if (downloaders.Count == 0)
+            {
+                await _notificationService.AddErrorNotificationAsync("NO_ACTIVE_DOWNLOADERS".GetLocalizedString(),
+                    "NO_ACTIVE_DOWNLOADERS_DESCRIPTION".GetLocalizedString(), PackIconRemixIconKind.WifiOffFill);
+                return;
+            }
             target.FetchedResults = new ObservableCollection<MultiSourceGameSearchResultMetadataViewModel>();
             try
             {
                 var searchPayloadDto = _searchPayloadMapper.ToDto(target.SearchPayload);
-                var (games, maxTotalPages) = await _gameDownloadManager.GetGames(downloaders, searchPayloadDto, 1);
+                var results = await _gameDownloadManager.GetGames(downloaders, searchPayloadDto, 1);
+
+                if (results.Details != null)
+                {
+                    var vmToOpen =  _searchMapper.ToViewModel(results.Details, _gameSearchResultService);
+                    await Open(target, vmToOpen);
+                    return;
+                }
+                
+                foreach (var failedDownloader in results.FailedDownloaders)
+                {
+                    await _notificationService.AddWarningNotificationAsync("FAILED_TO_FETCH".GetLocalizedString(),
+                        "FAILED_TO_FETCH_DESCRIPTION".GetLocalizedString(failedDownloader),
+                        PackIconRemixIconKind.WifiOffLine);
+                }
                 target.LastSearchPayload = searchPayloadDto;
                 target.LastSearchDownloaders = downloaders;
                 target.CurrentPage = 1;
-                target.MaxTotalPages = maxTotalPages ?? 0;
-                var mappedGames = _searchMapper.ToViewModels(games, _gameSearchResultService).ToList();
-                var downloadLinks = games.SelectMany(g => g.Sources).Select(s => s.DownloadLink!)
+                target.MaxTotalPages = results.MaxTotalPages ?? 0;
+                var mappedGames = _searchMapper.ToViewModels(results.Results, _gameSearchResultService).ToList();
+                var downloadLinks = results.Results.SelectMany(g => g.Sources).Select(s => s.DownloadLink!)
                     .Where(s => s.IsNotNullOrWhiteSpace()).ToList();
                 var allGamesWithStats = await _gameDataService.GetGamesWithStats();
                 var installedGames = await _gameLinkDataService.GetGamesByLinksDictionary(LinkType.Download, downloadLinks, allGamesWithStats);

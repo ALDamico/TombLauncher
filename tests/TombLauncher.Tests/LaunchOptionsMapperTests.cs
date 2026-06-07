@@ -1,5 +1,6 @@
 using NSubstitute;
 using TombLauncher.Contracts.Enums;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Mappers;

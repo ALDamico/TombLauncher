@@ -1,8 +1,10 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using TombLauncher.Contracts.Downloaders;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.Progress;
@@ -11,12 +13,14 @@ namespace TombLauncher.Installers.Downloaders;
 
 public abstract class GameDownloaderBase : IGameDownloader, IGameSearchProvider, IGameDetailProvider, IGameInstaller
 {
-    protected GameDownloaderBase(IHttpClientFactory httpClientFactory)
+    protected GameDownloaderBase(IHttpClientFactory httpClientFactory, ILogger<GameDownloaderBase> logger)
     {
         HttpClient = httpClientFactory.CreateClient(GetType().Name);
+        Logger = logger;
     }
 
     protected readonly HttpClient HttpClient;
+    protected readonly ILogger<GameDownloaderBase> Logger;
 
     public abstract string DisplayName { get; }
     public abstract string BaseUrl { get; }
@@ -26,6 +30,7 @@ public abstract class GameDownloaderBase : IGameDownloader, IGameSearchProvider,
     IGameSearchProvider IGameDownloader.Search => this;
     IGameDetailProvider IGameDownloader.Details => this;
     IGameInstaller IGameDownloader.Installer => this;
+    public virtual Regex? DetailsPageRegex => null;
 
     // IGameSearchProvider — stateless: all state passed as parameters
     public virtual Task<ISearchResultPage> GetGames(DownloaderSearchPayload payload, int page, CancellationToken cancellationToken)
@@ -38,6 +43,8 @@ public abstract class GameDownloaderBase : IGameDownloader, IGameSearchProvider,
 
     // IGameDetailProvider
     public abstract Task<IGameMetadata> FetchDetails(IGameSearchResultMetadata game, CancellationToken cancellationToken);
+    public virtual Task<IGameSearchResultMetadata?> FetchDetails(string detailsUrl, CancellationToken cancellationToken)
+        => Task.FromResult<IGameSearchResultMetadata?>(null);
 
     // IGameInstaller
     public abstract Task DownloadGame(IGameSearchResultMetadata metadata, Stream stream,

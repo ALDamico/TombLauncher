@@ -1,3 +1,4 @@
+using TombLauncher.Contracts;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.Extensions;
 

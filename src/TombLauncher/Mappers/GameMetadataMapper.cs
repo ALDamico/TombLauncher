@@ -58,10 +58,13 @@ public class GameMetadataMapper
             SetupExecutable = dto.SetupExecutable,
             SetupExecutableArgs = dto.SetupExecutableArgs,
             TitlePic = titlePic,
+            TitlePicUrl = dto.TitlePicUrl,
             CompatibilityPrefixPath = dto.CompatibilityPrefixPath,
             CompatibilityTool = dto.CompatibilityTool,
             CompatibilityToolPath = dto.CompatibilityToolPath,
-            ExtraEnvVars = dto.ExtraEnvVars.OfType<EnvironmentVariableDto>().ToList()
+            ExtraEnvVars = dto.ExtraEnvVars.OfType<EnvironmentVariableDto>().ToList(),
+            EnableBorderlessFix = dto.EnableBorderlessFix,
+            InstalledFromLink = dto.InstalledFromLink
         };
     }
 
@@ -97,10 +100,13 @@ public class GameMetadataMapper
             SetupExecutable = viewModel.SetupExecutable,
             SetupExecutableArgs = viewModel.SetupExecutableArgs,
             TitlePic = ImageUtils.ToByteArray(viewModel.TitlePic),
+            TitlePicUrl = viewModel.TitlePicUrl,
             CompatibilityPrefixPath = viewModel.CompatibilityPrefixPath,
             CompatibilityTool = viewModel.CompatibilityTool,
             CompatibilityToolPath = viewModel.CompatibilityToolPath,
-            ExtraEnvVars = viewModel.ExtraEnvVars.Cast<IEnvironmentVariable>().ToList()
+            ExtraEnvVars = viewModel.ExtraEnvVars.Cast<IEnvironmentVariable>().ToList(),
+            EnableBorderlessFix = viewModel.EnableBorderlessFix,
+            InstalledFromLink = viewModel.InstalledFromLink
         };
     }
 

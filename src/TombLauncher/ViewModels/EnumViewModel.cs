@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using CommunityToolkit.Mvvm.ComponentModel;
 using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.ViewModels;
 
 [DebuggerDisplay("{Description}")]
-public class EnumViewModel<T> : ViewModelBase where T: Enum
+public partial class EnumViewModel<T> : ObservableObject where T: Enum
 {
     public EnumViewModel(T value)
     {
@@ -13,5 +14,7 @@ public class EnumViewModel<T> : ViewModelBase where T: Enum
         OnPropertyChanged(nameof(Description));
     }
     public T Value { get; }
-    public string Description => Value.GetDescription();
+    public string Description => IsDisabled ? "-----" : Value.GetDescription();
+    [ObservableProperty]
+    public partial bool IsDisabled { get; set; }
 }

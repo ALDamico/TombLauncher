@@ -5,8 +5,13 @@ namespace TombLauncher.ViewModels;
 
 public partial class SavegameSlotViewModel : ObservableObject
 {
-    [ObservableProperty] private string _header = string.Empty;
-    [ObservableProperty] private int? _saveSlot;
-    [ObservableProperty] private bool _isEnabled;
+    [ObservableProperty]
+    public partial string Header { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial int? SaveSlot { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsEnabled { get; set; }
     public ICommand? FilterCommand { get; set; }
 }

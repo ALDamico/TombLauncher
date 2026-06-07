@@ -7,8 +7,11 @@ using Newtonsoft.Json;
 using TombLauncher.Ai.Abstractions;
 using TombLauncher.Ai.Models;
 using TombLauncher.Ai.Plugins;
+using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Dtos;
 using TombLauncher.Core.PlatformSpecific;
+using TombLauncher.Data.Database.Repositories;
+using TombLauncher.Gamepad.SupportMatrix;
 
 namespace TombLauncher.Ai.Services;
 
@@ -20,6 +23,9 @@ public class RagService : ITroubleshootingService
     private readonly PromptExecutionSettings _promptExecutionSettings;
     private readonly ILogger<RagService> _logger;
     private readonly IPlatformSpecificFeatures _platformSpecificFeatures;
+    private readonly GamepadSupportMatrix _gamepadSupportMatrix;
+    private readonly ISavegameRepository _savegameRepository;
+    private readonly ILogger<SavegamePlugin> _savegamePluginLogger;
     private bool _disposed;
 
     public RagService(Kernel kernel,
@@ -27,7 +33,10 @@ public class RagService : ITroubleshootingService
         IChatCompletionService chatCompletionService,
         PromptExecutionSettings promptExecutionSettings,
         ILogger<RagService> logger, 
-        IPlatformSpecificFeatures platformSpecificFeatures)
+        IPlatformSpecificFeatures platformSpecificFeatures,
+        GamepadSupportMatrix gamepadSupportMatrix,
+        ISavegameRepository savegameRepository,
+        ILogger<SavegamePlugin> savegamePluginLogger)
     {
         _kernel = kernel;
         _vectorSearchService = vectorSearchService;
@@ -35,6 +44,9 @@ public class RagService : ITroubleshootingService
         _promptExecutionSettings = promptExecutionSettings;
         _logger = logger;
         _platformSpecificFeatures = platformSpecificFeatures;
+        _gamepadSupportMatrix = gamepadSupportMatrix;
+        _savegameRepository = savegameRepository;
+        _savegamePluginLogger = savegamePluginLogger;
     }
 
     public async IAsyncEnumerable<(MessageType, string)> AskAsync(string query, TroubleshootingContext troubleshootingContext,
@@ -44,6 +56,8 @@ public class RagService : ITroubleshootingService
         var kernel = _kernel.Clone();
         kernel.Plugins.AddFromObject(new GameDiagnosticsPlugin(troubleshootingContext));
         kernel.Plugins.AddFromObject(new SupportMatrixPlugin(_platformSpecificFeatures.SupportMatrix, troubleshootingContext));
+        kernel.Plugins.AddFromObject(new GamepadSupportPlugin(_gamepadSupportMatrix, troubleshootingContext));
+        kernel.Plugins.AddFromObject(new SavegamePlugin(troubleshootingContext, _savegameRepository, _savegamePluginLogger));
         var knowledgeBaseItems = await _vectorSearchService.SearchAsync(query, cancellationToken: cancellationToken);
 
         var documentationSection = string.Join("\n---\n", knowledgeBaseItems.Select(WriteDocumentation));

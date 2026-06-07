@@ -4,8 +4,10 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using IconPacks.Avalonia.RemixIcon;
 using NSubstitute;
+using TombLauncher.Contracts.Enums;
 using TombLauncher.ValueConverters;
 using TombLauncher.ViewModels;
+using TombLauncher.Tests.Fixtures;
 
 namespace TombLauncher.Tests;
 
@@ -475,10 +477,10 @@ public class ValueConverterTests
     // --- LocalizedStringConverter ---
 
     [Fact]
-    public void LocalizedStringConverter_ReturnsLocalizedParameter()
+    public void LocalizedStringConverter_ReturnsLocalizedValue()
     {
         var converter = new LocalizedStringConverter();
-        Assert.Equal("MY_KEY", converter.Convert("some_value", typeof(string), "MY_KEY", Culture));
+        Assert.Equal("MY_KEY", converter.Convert("MY_KEY", typeof(string), null, Culture));
     }
 
     // --- MultiSourceGameSearchResultMetadataCanDownloadToBooleanConverter ---

@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="clr-namespace:TombLauncher.ViewModels.Pages"
+             xmlns:localization="clr-namespace:TombLauncher.Localization;assembly=TombLauncher.Localization"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TombLauncher.Views.Pages.GameSupportMatrixView"
+             x:DataType="pages:GameSupportMatrixViewModel">
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" Spacing="16" Margin="8">
+            <TextBlock Classes="page-title"
+                       Text="{localization:Translate ENGINE_SUPPORT, Casing=Upper}" />
+
+            <ItemsControl ItemsSource="{Binding SupportMatrixEntries}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Classes="card-background"
+                                CornerRadius="8"
+                                Padding="12 10"
+                                Margin="0 0 0 6"
+                                BorderBrush="{DynamicResource CardBorderBrush}"
+                                BorderThickness="1"
+                                ToolTip.Tip="{Binding SupportState, Converter={StaticResource EngineSupportStateToTooltipConverter}}">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <iconPacks:PackIconRemixIcon Margin="0,0,12,0"
+                                                             Kind="{Binding SupportState, Converter={StaticResource EngineSupportStateToIconConverter}}"
+                                                             Width="28" Height="28"
+                                                             VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Engine, Converter={StaticResource EnumToDescriptionConverter}}"
+                                               FontWeight="DemiBold" />
+                                    <TextBlock Text="{Binding ShortDescription, Converter={StaticResource LocalizedStringConverter}}"
+                                               Classes="text-muted" />
+                                    <TextBlock Text="{Binding LongDescription, Converter={StaticResource LocalizedStringConverter}}"
+                                               Classes="text-muted"
+                                               IsVisible="{Binding LongDescription, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
