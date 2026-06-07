@@ -10,6 +10,7 @@
              xmlns:valueConverters="clr-namespace:TombLauncher.ValueConverters"
              xmlns:downloaders="clr-namespace:TombLauncher.Contracts.Downloaders;assembly=TombLauncher.Contracts"
              xmlns:views="clr-namespace:TombLauncher.Views"
+             xmlns:enums="clr-namespace:TombLauncher.Contracts.Enums;assembly=TombLauncher.Contracts"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TombLauncher.Views.GameSearchResultCardView"
              x:DataType="viewModels:MultiSourceGameSearchResultMetadataViewModel">
