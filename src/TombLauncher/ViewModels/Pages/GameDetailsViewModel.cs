@@ -12,6 +12,7 @@ using IconPacks.Avalonia.RemixIcon;
 using TombLauncher.Contracts.Enums;
 using TombLauncher.Contracts.PlatformSpecific;
 using TombLauncher.Core.Extensions;
+using TombLauncher.Core.PlatformSpecific;
 using TombLauncher.Localization.Extensions;
 using TombLauncher.Services;
 using TombLauncher.Utils;

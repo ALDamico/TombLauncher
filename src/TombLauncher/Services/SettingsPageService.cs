@@ -107,6 +107,18 @@ public class SettingsPageService : IViewService
         }
     }
 
+    /// <summary>
+    /// Persists only the current user-layer config to disk (without requiring a SettingsPageViewModel).
+    /// Used by startup routines that modify the config directly (e.g. Wine detection, migration).
+    /// </summary>
+    public async Task PersistCurrentConfigAsync()
+    {
+        var userConfigPath = Path.Combine(_platformSpecificFeatures.GetAppDataDirectory(), "appsettings.user.json");
+        await File.WriteAllTextAsync(userConfigPath,
+            JsonConvert.SerializeObject(_appConfiguration.User, Formatting.Indented,
+                new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
+    }
+
     private async Task ApplySideEffects(SettingsPageViewModel viewModel)
     {
         var languageSettings = viewModel.Sections.OfType<LanguageSettingsViewModel>().First();
