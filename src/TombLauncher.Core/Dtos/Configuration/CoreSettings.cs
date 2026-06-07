@@ -1,4 +1,5 @@
 using System.Globalization;
+using TombLauncher.Contracts;
 using TombLauncher.Contracts.Enums;
 
 namespace TombLauncher.Core.Dtos.Configuration;
